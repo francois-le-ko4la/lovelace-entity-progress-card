@@ -100,28 +100,27 @@ const StructureElements = {
       StructureElements.secondaryInfoLine(1, hasMain) + StructureElements.secondaryInfoLine(2, hasMain),
     ),
 
+  // Single-line counterpart to secondaryInfoLine above - same hasMain
+  // pattern, just one wrapper instead of two stacked lines.
+  secondaryInfoWrapperSingleLine: (hasMain: boolean) =>
+    Element(CARD.htmlStructure.elements.secondaryInfoWrapper).html(
+      Element(CARD.htmlStructure.elements.ellipsisWrapper).html(
+        Element(CARD.htmlStructure.elements.secondaryInfoValue).html(
+          Element(CARD.htmlStructure.elements.secondaryInfoExtra).html() +
+            (hasMain ? Element(CARD.htmlStructure.elements.secondaryInfoMain).html() : ''),
+        ),
+      ),
+    ),
+
   secondaryInfoWrapper: (options: StructureOptions = {}) =>
     options.multiline
       ? StructureElements.secondaryInfoWrapperMultiline(true)
-      : Element(CARD.htmlStructure.elements.secondaryInfoWrapper).html(
-          Element(CARD.htmlStructure.elements.ellipsisWrapper).html(
-            Element(CARD.htmlStructure.elements.secondaryInfoValue).html(
-              Element(CARD.htmlStructure.elements.secondaryInfoExtra).html() +
-                Element(CARD.htmlStructure.elements.secondaryInfoMain).html(),
-            ),
-          ),
-        ),
+      : StructureElements.secondaryInfoWrapperSingleLine(true),
 
   secondaryInfoWrapperMinimal: (options: StructureOptions = {}) =>
     options.multiline
       ? StructureElements.secondaryInfoWrapperMultiline(false)
-      : Element(CARD.htmlStructure.elements.secondaryInfoWrapper).html(
-          Element(CARD.htmlStructure.elements.ellipsisWrapper).html(
-            Element(CARD.htmlStructure.elements.secondaryInfoValue).html(
-              Element(CARD.htmlStructure.elements.secondaryInfoExtra).html(),
-            ),
-          ),
-        ),
+      : StructureElements.secondaryInfoWrapperSingleLine(false),
 
   progressBar: (options: StructureOptions) => {
     const extraClass = options.barPosition === 'overlay' ? 'overlay' : '';
@@ -158,7 +157,7 @@ const StructureElements = {
     return Element(CARD.htmlStructure.elements.progressBar.container, extraClass).html(
       Element(
         CARD.htmlStructure.elements.progressBar.bar,
-        isCenterZero ? CARD.style.dynamic.progressBar.centerZero.class : 'default',
+        isCenterZero ? CARD.style.dynamic.progressBar.centerZero : 'default',
       ).html(innerHtml) + Element(CARD.htmlStructure.elements.progressBar.valueMarker, 'mark').html(),
       isCenterZero ? { 'aria-valuemin': '-100' } : {},
     );
@@ -258,19 +257,22 @@ const StructureElements = {
   },
 };
 
+// Shared by card/template below - identical assembly, only the content
+// function (contentFull vs contentMini) differs.
+const buildCardLike = (options: StructureOptions, contentFn: (options: StructureOptions) => string) =>
+  StructureElements.wrapWithBarPosition(
+    StructureElements.container(options).replace(
+      CONTENT_SLOT,
+      StructureElements.trendIndicator(options) +
+        StructureElements.label(options) +
+        StructureElements.iconSection() +
+        contentFn(options),
+    ),
+    options,
+  );
+
 const StructureTemplates = {
-  card: (options: StructureOptions = {}) => {
-    return StructureElements.wrapWithBarPosition(
-      StructureElements.container(options).replace(
-        CONTENT_SLOT,
-        StructureElements.trendIndicator(options) +
-          StructureElements.label(options) +
-          StructureElements.iconSection() +
-          StructureElements.contentFull(options),
-      ),
-      options,
-    );
-  },
+  card: (options: StructureOptions = {}) => buildCardLike(options, StructureElements.contentFull),
 
   badge: (options: StructureOptions = {}) => {
     return StructureElements.container(options).replace(
@@ -279,18 +281,7 @@ const StructureTemplates = {
     );
   },
 
-  template: (options: StructureOptions = {}) => {
-    return StructureElements.wrapWithBarPosition(
-      StructureElements.container(options).replace(
-        CONTENT_SLOT,
-        StructureElements.trendIndicator(options) +
-          StructureElements.label(options) +
-          StructureElements.iconSection() +
-          StructureElements.contentMini(options),
-      ),
-      options,
-    );
-  },
+  template: (options: StructureOptions = {}) => buildCardLike(options, StructureElements.contentMini),
   feature: (options: StructureOptions = {}) => {
     const { barPosition = '' } = options;
     const bar = () => StructureElements.progressBar(options);
@@ -327,6 +318,22 @@ class ObjStructure {
     traceInstance(this, CARD_CONTEXT.debug.instances);
   }
 
+  // One instance per cardType, built the first time that shape is actually
+  // rendered - not eagerly per registered element class at module load, most
+  // of which a given dashboard never instantiates. A card/badge/template
+  // class only needs to say which shape it is; this resolves and caches the
+  // instance that actually builds it.
+  static #instances = new Map<string, ObjStructure>();
+
+  static forType(cardType: string): ObjStructure {
+    let instance = ObjStructure.#instances.get(cardType);
+    if (!instance) {
+      instance = new ObjStructure(cardType);
+      ObjStructure.#instances.set(cardType, instance);
+    }
+    return instance;
+  }
+
   render(options: StructureOptions = {}): string {
     return (StructureTemplates as Record<string, (options: StructureOptions) => string>)[this._cardType](options);
   }
@@ -348,7 +355,4 @@ class ObjStructure {
 }
 
 export { ObjStructure };
-export { Element };
-export { StructureElements };
-export { StructureTemplates };
 export type { StructureOptions };

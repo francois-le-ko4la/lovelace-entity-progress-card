@@ -125,7 +125,8 @@
       "icon_animation_jinja": "Returns Boolean (true)",
       "name_info": "Returns String (Living Room)",
       "returns_number": "Returns Number (42)",
-      "status_label_jinja": "Returns String (hot) or Object ({label, color})"
+      "status_label_jinja": "Returns String (hot) or Object ({label, color})",
+      "feature_entity": "Defaults to this tile's own entity when left empty"
     },
     "option": {
       "alert_animation": {

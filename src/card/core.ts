@@ -11,7 +11,7 @@ import { initLogger, type LoggerInstance } from '../utils/log.js';
 import { ObjStructure, ThemeManager, ChangeTracker } from './value-helpers.js';
 import { HassProviderSingleton, type HomeAssistant, type EntityState } from '../utils/hass-provider.js';
 import { CardView, FeatureView, type ViewCore, type ViewBase, type ResolvedWatermark } from './view.js';
-import { isMarkOverride, type WatermarkMark, statusLabelObj } from './schema.js';
+import { isMarkOverride, type WatermarkMark, statusLabelObj, jinjaOf, markValue, SCHEMA_DEFAULTS } from './schema.js';
 import { ResourceManager, DOMHelper, ActionHelper } from './dom-helpers.js';
 import type { CacheValue } from './dom-helpers.js';
 import type { LovelaceConfig, Config } from '../utils/types.js';
@@ -30,6 +30,15 @@ export type DivergingGradients = {
 // The icon element _showIcon()/_handleImgIcon()/_handleStateIcon() manage:
 // either a plain <img> (entity_picture) or a <ha-state-icon> (hass/stateObj).
 type IconElement = HTMLImageElement | (HTMLElement & { hass: HomeAssistant | null; stateObj: unknown });
+
+// HABase#_applyTrendVisuals's own icon-per-direction map - shared by every
+// instance (never overridden, never mutated), not rebuilt per card.
+const TREND_ICONS: Record<string, string> = {
+  up: HA_CONTEXT.icons.chevronUpBox,
+  down: HA_CONTEXT.icons.chevronDownBox,
+  flat: HA_CONTEXT.icons.equalBox,
+  error: HA_CONTEXT.icons.progressQuestion,
+};
 
 /**
  * Base class for Home Assistant custom elements (cards, badges, features).
@@ -69,15 +78,9 @@ type IconElement = HTMLImageElement | (HTMLElement & { hass: HomeAssistant | nul
 class HACore extends HTMLElement {
   static version = VERSION;
   static _baseClass: string = META.types.feature.typeName;
-  static _cardStructure: ObjStructure = new ObjStructure('feature');
+  static _structureType = 'feature';
   static _cardStyle = CARD_CSS;
   static _cardElement = CARD.htmlStructure.card.element;
-  // Overridden true by EntityProgressBadge/EntityProgressTemplateBadge (see
-  // cards.ts) - badges only ever have a card-level action, never the icon's
-  // own. Declared here (not just HABase) so _createCardElements's own
-  // icon-keyboard wiring, shared by every subclass including Feature, can
-  // read it without a cast.
-  static _hasDisabledIconTap = false;
   _debug = CARD_CONTEXT.debug.card;
   _log: LoggerInstance | null = null;
   // Always assigned first thing in the constructor, before anything else in
@@ -130,6 +133,9 @@ class HACore extends HTMLElement {
       '_validateProcessJinjaFields',
       '_startAutoRefresh',
       '_stopAutoRefresh',
+      '_seedPeakMarkerHistoryOnce',
+      '_seedPeakMarkerHistory',
+      '_fetchHistory',
       // abstract
       '_handleHassUpdate',
       '_updateCSS',
@@ -204,9 +210,6 @@ class HACore extends HTMLElement {
 
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
-  /**
-   * Updates the component's configuration and triggers static changes.
-   */
   setConfig(config: LovelaceConfig) {
     this._log?.debug('📎 HACore.setConfig()', config);
 
@@ -241,12 +244,6 @@ class HACore extends HTMLElement {
     }
   }
 
-  /**
-   * Sets the Home Assistant (`hass`) instance and updates dynamic elements.
-   *
-   * @param {Object} hass - The Home Assistant instance containing the current
-   *                        state and services.
-   */
   set hass(hass: HomeAssistant) {
     this._log?.debug('👉 HACore.set hass()');
     if (!hass) return;
@@ -334,15 +331,128 @@ class HACore extends HTMLElement {
     }
   }
 
+  // Shared by EntityProgressCardBase and EntityProgressFeatures - unlike
+  // trend_indicator's own seeding, which stays Card/Template-only (cards.js).
+  #peakMarkerSeedSignature: string | null = null;
+
+  // null when `window` or `entity` is absent/invalid (nothing to seed yet -
+  // Feature's own entity can still be pending its parent Tile's context).
+  _seedSignature(window: unknown): string | null {
+    const config = this._cardView.config;
+    if (!is.number(window) || !config.entity) return null;
+    return `${config.entity} ${config.attribute ?? ''} ${window}`;
+  }
+
+  _seedPeakMarkerHistoryOnce() {
+    const config = this._cardView.config.peak_marker;
+    const signature = this._seedSignature(is.plainObject(config) ? config.window : undefined);
+    if (signature === null || signature === this.#peakMarkerSeedSignature) return;
+    this.#peakMarkerSeedSignature = signature;
+    // Clears the previous entity's marks before the fetch resolves - unlike
+    // trend's TrendTracker, nothing else self-corrects in between.
+    (this._cardView as ViewBase).setPeakMarker(null);
+    this._updateCSS();
+    this._seedPeakMarkerHistory().catch(() => {
+      // best-effort: no min/max/average marks without history, card unaffected
+    });
+  }
+
+  // Shares one in-flight WS call when trend/peak_marker share a window.
+  #inFlightHistoryFetches = new Map<number, Promise<{ t: number; value: number }[]>>();
+
+  async _fetchHistory(windowSeconds: number): Promise<{ t: number; value: number }[]> {
+    const cached = this.#inFlightHistoryFetches.get(windowSeconds);
+    if (cached) return await cached;
+    const promise = this.#fetchHistoryUncached(windowSeconds).finally(() =>
+      this.#inFlightHistoryFetches.delete(windowSeconds),
+    );
+    this.#inFlightHistoryFetches.set(windowSeconds, promise);
+    // Awaited, not returned bare - log.ts's wrap() only takes its
+    // timing/error branch for a real `AsyncFunction` (fn.constructor.name).
+    return await promise;
+  }
+
+  // Raw {timestamp, state} points for `entity` over the last `windowSeconds`,
+  // or [] if the entity/window is ineligible (attribute:, timer/counter/
+  // duration - recorder keeps no attribute history) or the fetch fails.
+  async #fetchHistoryUncached(windowSeconds: number): Promise<{ t: number; value: number }[]> {
+    const entity = this._cardView.config.entity;
+    const entityType = (this._cardView as ViewBase)._currentValue.entityType;
+    const isHistoryEligible = !entityType.isTimer && !entityType.isCounter && !entityType.isDuration;
+    if (!entity || this._cardView.config.attribute || !isHistoryEligible) {
+      this._log?.debug('_fetchHistory: ineligible', {
+        entity,
+        attribute: this._cardView.config.attribute,
+        isHistoryEligible,
+      });
+      return [];
+    }
+
+    const hass = this.hass;
+    if (!hass?.connection?.connected) {
+      this._log?.debug('_fetchHistory: no live connection', { connected: hass?.connection?.connected });
+      return [];
+    }
+
+    const cappedWindow = Math.min(windowSeconds, CARD.config.history.maxWindowSeconds);
+    // Compressed-state reply (s/lu, not state/last_updated; lu is epoch
+    // seconds) - see history/websocket_api.py's _history_compressed_state().
+    const result = (await hass.connection.sendMessagePromise({
+      type: 'history/history_during_period',
+      start_time: new Date(Date.now() - cappedWindow * 1000).toISOString(),
+      entity_ids: [entity],
+      no_attributes: true,
+    })) as Record<string, { s: string; lu: number }[]> | undefined;
+    this._log?.debug('_fetchHistory: raw result', result);
+
+    const points = (result?.[entity] ?? [])
+      .map((point) => {
+        const value = Number(point.s);
+        const timestamp = point.lu * 1000;
+        return Number.isFinite(value) && Number.isFinite(timestamp) ? { t: timestamp, value } : null;
+      })
+      .filter((point): point is { t: number; value: number } => point !== null);
+    this._log?.debug(`_fetchHistory: ${points.length} usable point(s)`);
+    return points;
+  }
+
+  async _seedPeakMarkerHistory() {
+    const config = this._cardView.config.peak_marker;
+    if (!is.plainObject(config) || !is.number(config.window)) {
+      this._log?.debug('_seedPeakMarkerHistory: no eligible peak_marker config', config);
+      return;
+    }
+    const signature = this._seedSignature(config.window);
+
+    const points = await this._fetchHistory(config.window);
+    if (!points.length) {
+      this._log?.debug('_seedPeakMarkerHistory: no history points, skipping');
+      return;
+    }
+    // A newer entity/config swap may have started its own seed while this
+    // fetch was in flight - only the still-current signature applies.
+    if (signature !== this.#peakMarkerSeedSignature) return;
+    const values = points.map((p) => p.value);
+    const cardView = this._cardView as ViewBase;
+    const marker = {
+      min: cardView.percentForRawValue(Math.min(...values)),
+      max: cardView.percentForRawValue(Math.max(...values)),
+      average: cardView.percentForRawValue(values.reduce((sum, v) => sum + v, 0) / values.length),
+    };
+    this._log?.debug('_seedPeakMarkerHistory: setPeakMarker', marker);
+    cardView.setPeakMarker(marker);
+    this._updateCSS();
+  }
+
   get isRendered(): boolean {
     return this.#isRendered;
   }
 
   reset() {
-    this._dom.toggleClass(CARD.htmlStructure.card.element, 'transition-ready', false); // retire AVANT purge
+    this._dom.toggleClass(CARD.htmlStructure.card.element, 'transition-ready', false);
     this.#isRendered = false;
     this._dom.destroy();
-    this._shadow.innerHTML = ''; // purge le contenu shadow DOM
+    this._shadow.innerHTML = '';
   }
 
   get cardStyle(): string {
@@ -357,14 +467,14 @@ class HACore extends HTMLElement {
     return (this.constructor as typeof HACore)._cardElement;
   }
 
+  // Resolved (and cached) lazily by type, not eagerly per class - see
+  // ObjStructure.forType.
+  get cardStructure(): ObjStructure {
+    return ObjStructure.forType((this.constructor as typeof HACore)._structureType);
+  }
+
   // ─── CARD BUILDING ────────────────────────────────────────────────────────
 
-  /**
-   * Builds and initializes the structure of the custom card component.
-   *
-   * This method creates the visual and structural elements of the card and
-   * injects them into the component's Shadow DOM.
-   */
   render() {
     if (this.isRendered) return;
     this.#isRendered = true;
@@ -385,8 +495,10 @@ class HACore extends HTMLElement {
     };
   }
 
+  // Badges only ever have a card-level action, never the icon's own - same
+  // condition as _addBaseClasses's own 'progress-badge' class.
   get hasDisabledIconTap(): boolean {
-    return (this.constructor as typeof HACore)._hasDisabledIconTap;
+    return this.baseClass.includes('badge');
   }
 
   _createCardElements(): { style: HTMLStyleElement | null; card: HTMLElement } {
@@ -412,7 +524,7 @@ class HACore extends HTMLElement {
     // Cloned from the per-options <template> cache; _structureOptions is read
     // fresh here so a setConfig that changes the structure picks the right
     // template.
-    card.replaceChildren((this.constructor as typeof HACore)._cardStructure.clone(this._structureOptions));
+    card.replaceChildren(this.cardStructure.clone(this._structureOptions));
 
     // .ripple-zone (sibling of .container/.shape, see card-config.ts), not
     // ha-card - avoids nesting role="button" around .shape's own one below.
@@ -469,23 +581,25 @@ class HACore extends HTMLElement {
   // its first CSS class: silent collisions were possible and the map carried
   // dead weight. Only the elements actually driven through the DOMHelper are
   // registered now.
-  static get _domKeys(): string[] {
-    return [
-      CARD.htmlStructure.elements.progressBar.container.class,
-      CARD.htmlStructure.elements.icon.class,
-      CARD.htmlStructure.elements.badge.icon.class,
-      CARD.htmlStructure.elements.trendIndicator.icon.class,
-      CARD.htmlStructure.elements.label.class,
-      CARD.htmlStructure.elements.nameMain.class,
-      CARD.htmlStructure.elements.nameExtra.class,
-      CARD.htmlStructure.elements.secondaryInfoMain.class,
-      CARD.htmlStructure.elements.secondaryInfoExtra.class,
-      CARD.htmlStructure.elements.secondaryInfoExtra2.class,
-    ];
+  static _domKeys: string[] = [
+    CARD.htmlStructure.elements.progressBar.container.class,
+    CARD.htmlStructure.elements.icon.class,
+    CARD.htmlStructure.elements.badge.icon.class,
+    CARD.htmlStructure.elements.trendIndicator.icon.class,
+    CARD.htmlStructure.elements.label.class,
+    CARD.htmlStructure.elements.nameMain.class,
+    CARD.htmlStructure.elements.nameExtra.class,
+    CARD.htmlStructure.elements.secondaryInfoMain.class,
+    CARD.htmlStructure.elements.secondaryInfoExtra.class,
+    CARD.htmlStructure.elements.secondaryInfoExtra2.class,
+  ];
+
+  get domKeys(): string[] {
+    return (this.constructor as typeof HACore)._domKeys;
   }
 
   _storeDOM() {
-    for (const key of (this.constructor as typeof HACore)._domKeys) {
+    for (const key of this.domKeys) {
       const el = this._shadow.querySelector(`.${CSS.escape(key)}`);
       if (el) this._dom.register(key, el as HTMLElement);
     }
@@ -574,7 +688,7 @@ class HACore extends HTMLElement {
       this._cardView.config.bar_orientation
         ? (CARD.style.dynamic.progressBar.orientation as Record<string, string>)[this._cardView.config.bar_orientation]
         : null,
-      this._cardView.config.center_zero ? CARD.style.dynamic.progressBar.centerZero.class : null,
+      this._cardView.config.center_zero ? CARD.style.dynamic.progressBar.centerZero : null,
       this._cardView.config.bar_color_mode === 'rainbow_full' ? 'rainbow-full-bar' : null,
       (this._cardView.config.layout === 'vertical' &&
         this._cardView.config.bar_orientation === 'up' &&
@@ -705,6 +819,22 @@ class HACore extends HTMLElement {
     this._dom.setStyle(cardKey, pb.stackSizeNeg.var, diverging.negSize);
   }
 
+  // Shared by _applyWatermarkCSS/_applyPeakMarkerCSS below - one mark's own
+  // value/opacity/color vars. The bare-number `-num` companion is read by
+  // the bar_segments position compensation (styles.ts), which needs a plain
+  // number, not a percentage it would have to divide back out.
+  _applyMarkCSS(
+    cardKey: string,
+    vars: { value: { var: string }; opacity: { var: string }; color: { var: string } },
+    mark: { value: number; opacity: number; color?: string | null },
+  ) {
+    this._dom.setStyle(cardKey, vars.value.var, `${mark.value}%`);
+    this._dom.setStyle(cardKey, `${vars.value.var}-num`, mark.value);
+    this._dom.setStyle(cardKey, vars.opacity.var, mark.opacity);
+    if (mark.color) this._dom.setStyle(cardKey, vars.color.var, mark.color);
+    else this._dom.removeStyle(cardKey, vars.color.var);
+  }
+
   _applyWatermarkCSS(watermark: ResolvedWatermark | null) {
     if (!watermark) return;
     const cardKey = CARD.htmlStructure.card.element;
@@ -714,16 +844,7 @@ class HACore extends HTMLElement {
         [wm.low, watermark.low],
         [wm.high, watermark.high],
       ] as const
-    ).forEach(([vars, mark]) => {
-      this._dom.setStyle(cardKey, vars.value.var, `${mark.value}%`);
-      // Bare-number companion, read by the bar_segments position compensation
-      // (styles.ts) - a value/value calc() there would need percentage
-      // division, which isn't reliably supported for producing a number.
-      this._dom.setStyle(cardKey, `${vars.value.var}-num`, mark.value);
-      this._dom.setStyle(cardKey, vars.opacity.var, mark.opacity);
-      if (mark.color) this._dom.setStyle(cardKey, vars.color.var, mark.color);
-      else this._dom.removeStyle(cardKey, vars.color.var);
-    });
+    ).forEach(([vars, mark]) => this._applyMarkCSS(cardKey, vars, mark));
     this._dom.setStyle(cardKey, wm.opacity.var, watermark.opacity);
     this._dom.setStyle(cardKey, wm.lineSize.var, watermark.line_size);
   }
@@ -738,13 +859,7 @@ class HACore extends HTMLElement {
         [pm.max, marker.max],
         [pm.average, marker.average],
       ] as const
-    ).forEach(([vars, mark]) => {
-      this._dom.setStyle(cardKey, vars.value.var, `${mark.value}%`);
-      this._dom.setStyle(cardKey, `${vars.value.var}-num`, mark.value);
-      this._dom.setStyle(cardKey, vars.opacity.var, mark.opacity);
-      if (mark.color) this._dom.setStyle(cardKey, vars.color.var, mark.color);
-      else this._dom.removeStyle(cardKey, vars.color.var);
-    });
+    ).forEach(([vars, mark]) => this._applyMarkCSS(cardKey, vars, mark));
   }
 
   // ─── JINJA TEMPLATE RENDERING ─────────────────────────────────────────────
@@ -839,7 +954,9 @@ class HACore extends HTMLElement {
 
   _watchWebSocket() {
     const { hass } = this;
-    if (!this._resourceManager || !hass) return; // ISSUE 87
+    // #87: conditionally hiding/re-showing the card (visibility + an
+    // input_text helper) could leave resourceManager or hass momentarily null.
+    if (!this._resourceManager || !hass) return;
     this._unwatchWebSocket();
     this._resourceManager.addEventListener(
       hass.connection,
@@ -957,7 +1074,7 @@ class HACore extends HTMLElement {
         (msg: unknown) => this._renderJinja(key, (msg as { result: unknown }).result),
         {
           type: 'render_template',
-          template, //template: template,
+          template,
           variables: this._getTemplateContext(),
         },
       );
@@ -969,12 +1086,11 @@ class HACore extends HTMLElement {
       }
       if (!this._resourceManager) {
         this._log?.debug(`[Template ${key}] ResourceManager became null during subscription, cleaning up.`);
-        unsub(); // Clean up the subscription
+        unsub();
         this.#templateSignatures.delete(subscriptionKey);
         return;
       } else if (!this.isConnected) {
-        // DOM conn X
-        unsub(); // Clean up the subscription
+        unsub();
         this.#templateSignatures.delete(subscriptionKey);
         return;
       } else {
@@ -1009,20 +1125,13 @@ class HACore extends HTMLElement {
 
 class HABase extends HACore {
   static _baseClass: string = META.types.card.typeName;
-  static _cardStructure: ObjStructure = new ObjStructure('card');
-  static _hasDisabledBadge = false;
+  static _structureType = 'card';
   static _hiddenComponents: { label: string; class?: string }[] = [
     CARD.style.dynamic.hiddenComponent.icon,
     CARD.style.dynamic.hiddenComponent.name,
     CARD.style.dynamic.hiddenComponent.secondary_info,
     CARD.style.dynamic.hiddenComponent.progress_bar,
   ];
-  _trendIcons: Record<string, string> = {
-    up: HA_CONTEXT.icons.chevronUpBox,
-    down: HA_CONTEXT.icons.chevronDownBox,
-    flat: HA_CONTEXT.icons.equalBox,
-    error: HA_CONTEXT.icons.progressQuestion,
-  };
   _icon: IconElement | null = null;
   _cardView: ViewCore = new CardView();
   // _actionHelper itself inherited from HACore (nullable there) - always
@@ -1111,8 +1220,6 @@ class HABase extends HACore {
     );
   }
 
-  // disconnectedCallback() {}
-
   // custom-card-helpers' own LovelaceCard interface types this as
   // `number | Promise<number>` - async here aligns with that contract (and,
   // as with getStubConfig, turns any future throw into a rejected promise
@@ -1186,15 +1293,12 @@ class HABase extends HACore {
     return false;
   }
 
-  /**
-   * Displays an error alert with the provided message.
-   *   'info', 'warning', 'error'
-   */
+  // msg.sev is one of 'info'/'warning'/'error', ha-alert's own alert-type
+  // values.
   _renderMessage(msg: { content: string; sev: string }) {
     if (msg === this.#lastMessage) return;
     this.#lastMessage = msg;
 
-    // ha-alert exists ?
     let alert = this._shadow.querySelector('ha-alert');
 
     if (!alert) {
@@ -1202,8 +1306,8 @@ class HABase extends HACore {
       this._shadow.replaceChildren(alert);
     }
 
-    // update the message
-    alert.setAttribute('alert-type', msg.sev); // IMPORTANT: attribut
+    // ha-alert reads this as an attribute, not a property - keep setAttribute.
+    alert.setAttribute('alert-type', msg.sev);
     alert.textContent = msg.content;
   }
 
@@ -1287,8 +1391,8 @@ class HABase extends HACore {
     return new Map([
       [CARD.style.dynamic.clickable.card, this._cardView.hasClickableCard],
       [CARD.style.dynamic.clickable.icon, this._cardView.hasClickableIcon && !this.hasDisabledIconTap],
-      [CARD.style.dynamic.frameless.class, this._cardView.config.frameless ?? false],
-      [CARD.style.dynamic.marginless.class, this._cardView.config.marginless ?? false],
+      [CARD.style.dynamic.frameless, this._cardView.config.frameless ?? false],
+      [CARD.style.dynamic.marginless, this._cardView.config.marginless ?? false],
       // One card-level flag every ancestor needing to relax its single-line
       // assumptions reads via a plain descendant selector - not :has()
       // re-derived at each level, which only fixed one ancestor at a time.
@@ -1385,6 +1489,10 @@ class HABase extends HACore {
     this._applyAlertClasses();
   }
 
+  get hiddenComponents(): { label: string; class?: string }[] {
+    return (this.constructor as typeof HABase)._hiddenComponents;
+  }
+
   _handleHiddenComponents(jinjaContent: unknown = null) {
     if (jinjaContent === null && is.jinja(this._cardView.config.hide)) return;
 
@@ -1403,7 +1511,7 @@ class HABase extends HACore {
       this._cardView.setResolvedHide(items);
     }
 
-    (this.constructor as typeof HABase)._hiddenComponents.forEach((component) => {
+    this.hiddenComponents.forEach((component) => {
       this._dom.toggleClass(
         CARD.htmlStructure.card.element,
         component.class,
@@ -1446,7 +1554,7 @@ class HABase extends HACore {
     this._dom.setAttribute(
       CARD.htmlStructure.elements.trendIndicator.icon.class,
       CARD.style.icon.badge.default.attribute,
-      this._trendIcons[direction] ?? this._trendIcons.error,
+      TREND_ICONS[direction] ?? TREND_ICONS.error,
     );
 
     const cardKey = CARD.htmlStructure.card.element;
@@ -1608,11 +1716,14 @@ class HABase extends HACore {
 
   // ─── BADGE MANAGEMENT ─────────────────────────────────────────────────────
 
-  /**
-   * Displays a badge (default info)
-   */
+  // A Badge can't show an inner badge-icon overlay of its own - same
+  // condition as hasDisabledIconTap above.
+  get hasDisabledBadge(): boolean {
+    return this.baseClass.includes('badge');
+  }
+
   _showBadge() {
-    if ((this.constructor as typeof HABase)._hasDisabledBadge) return;
+    if (this.hasDisabledBadge) return;
     // badgeInfo is ViewBase-only (never present on the template views).
     const badgeInfo = (this._cardView as ViewBase).badgeInfo;
     if (badgeInfo) {
@@ -1804,6 +1915,25 @@ class HABase extends HACore {
     if (!is.nonEmptyString(this._cardView.config?.alert_when?.jinja)) return;
     this._cardView.jinjaAlertResult = content;
     this._applyAlertClasses();
+  }
+
+  // Shared by EntityProgressCardBase/EntityProgressTemplateBase's own
+  // _getJinjaHandlers below.
+  _watermarkJinjaHandlers(content: unknown): Record<string, () => void> {
+    return {
+      'watermark.low': () =>
+        this._renderWatermarkJinja(
+          content,
+          (c: Config) => jinjaOf(markValue(c.watermark?.low, SCHEMA_DEFAULTS.watermark.low)),
+          'jinjaWatermarkLow',
+        ),
+      'watermark.high': () =>
+        this._renderWatermarkJinja(
+          content,
+          (c: Config) => jinjaOf(markValue(c.watermark?.high, SCHEMA_DEFAULTS.watermark.high)),
+          'jinjaWatermarkHigh',
+        ),
+    };
   }
 
   // watermark.low/.high jinja mode - shared by Card and Template, unlike

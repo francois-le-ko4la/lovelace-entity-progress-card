@@ -10,9 +10,6 @@ import { HassProviderSingleton } from '../utils/hass-provider.js';
 import { NumberFormatter } from './formatting.js';
 import { DecimalHelper, UnitHelper, ValueHelper } from './value-primitives.js';
 
-/**
- * class for calculating and formatting percentages.
- */
 class ProgressCalc {
   #min = new ValueHelper(CARD.config.value.min);
   #max = new ValueHelper(CARD.config.value.max);
@@ -137,13 +134,8 @@ class ProgressCalc {
     return this.isValid ? this.#percent : null;
   }
 
-  /**
-   * Pourcentage de croissance/décroissance par rapport à la valeur de centrage
-   * (`zeroValue`), indépendant du ratio de remplissage de la barre (`percent`).
-   * N'a de sens que si `isCenterZero` et `growthPercent` sont actifs, et que
-   * `zeroValue` n'est pas 0 (sinon le ratio est mathématiquement indéfini — on
-   * retombe alors sur `percent`).
-   */
+  // zeroValue === 0 would make the ratio mathematically undefined - falls
+  // back to percent instead of NaN.
   get growthPercentValue(): number | null {
     if (!this.isValid) return null;
     if (this.#zeroValue === 0) return this.percent;
@@ -183,9 +175,6 @@ class ProgressCalc {
   }
 }
 
-/**
- * class for calculating and formatting percentages.
- */
 class PercentHelper extends ProgressCalc {
   #hassProvider: HassProviderSingleton = HassProviderSingleton.getInstance();
   #unit = new UnitHelper();
@@ -265,14 +254,6 @@ class PercentHelper extends ProgressCalc {
   }
 
   valueForThemes(isCustomTheme: boolean, valueBasedOnPercentage: boolean): number | null {
-    /*
-     * Calculates the value to display based on the selected theme and unit
-     * system.
-     *
-     * - If the unit is Fahrenheit, the temperature is converted to Celsius
-     * before returning. - If the theme is linear or the unit is the default,
-     * the percentage value is returned.
-     */
     let value: number | null = this.actual;
     if (isCustomTheme) return value;
     if (this.unit === CARD.config.unit.fahrenheit) value = ((value - 32) * 5) / 9;
@@ -284,25 +265,19 @@ class PercentHelper extends ProgressCalc {
   toString(): string {
     if (!this.isValid) return 'Div0';
     if (this.hasTimerOrFlexTimerUnit)
-      return NumberFormatter.formatTiming(
-        this.actual,
-        this.decimal,
-        this.#hassProvider.numberFormat,
-        this.hasFlexTimerUnit,
-        this.#unitSpacing,
-      );
-    return NumberFormatter.formatValueAndUnit(
-      this.processedValue,
-      this.decimal,
-      this.unit,
-      this.#hassProvider.numberFormat,
-      this.#unitSpacing,
-      this.#compact,
-      this.#sign,
-      this.#unitPosition,
-    );
+      return NumberFormatter.formatTiming(this.actual, this.decimal, {
+        locale: this.#hassProvider.numberFormat,
+        flex: this.hasFlexTimerUnit,
+        unitSpacing: this.#unitSpacing,
+      });
+    return NumberFormatter.formatValueAndUnit(this.processedValue, this.decimal, this.unit, {
+      locale: this.#hassProvider.numberFormat,
+      unitSpacing: this.#unitSpacing,
+      compact: this.#compact,
+      sign: this.#sign,
+      unitPosition: this.#unitPosition,
+    });
   }
 }
 
-export { ProgressCalc };
 export { PercentHelper };

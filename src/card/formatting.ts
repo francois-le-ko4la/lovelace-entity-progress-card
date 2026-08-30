@@ -6,12 +6,6 @@
 import { CARD } from '../utils/parameters.js';
 import { has, is } from '../utils/common-checks.js';
 
-/**
- * class for formatting value && unit.
- *
- * This class uses `Value`, `Unit`, and `Decimal` objects to manage and validate
- * its internal data.
- */
 const NumberFormatter = {
   unitsNoSpace: {
     'fr-FR': new Set(['j', 'd', 'h', 'min', 'ms', 'μs', '°']),
@@ -28,11 +22,19 @@ const NumberFormatter = {
     value: number | null | undefined,
     decimal = 2,
     unit = '',
-    locale = 'en-US',
-    unitSpacing: string = CARD.config.unit.unitSpacing.auto,
-    compact = false,
-    sign = false,
-    unitPosition: string = CARD.config.unit.unitPosition.after,
+    {
+      locale = 'en-US',
+      unitSpacing = CARD.config.unit.unitSpacing.auto,
+      compact = false,
+      sign = false,
+      unitPosition = CARD.config.unit.unitPosition.after,
+    }: {
+      locale?: string;
+      unitSpacing?: string;
+      compact?: boolean;
+      sign?: boolean;
+      unitPosition?: string;
+    } = {},
   ): string {
     if (is.nullish(value)) return '';
 
@@ -64,9 +66,11 @@ const NumberFormatter = {
   formatTiming(
     totalSeconds: number,
     decimal = 0,
-    locale = 'en-US',
-    flex = false,
-    unitSpacing: string = CARD.config.unit.unitSpacing.auto,
+    {
+      locale = 'en-US',
+      flex = false,
+      unitSpacing = CARD.config.unit.unitSpacing.auto,
+    }: { locale?: string; flex?: boolean; unitSpacing?: string } = {},
   ): string {
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -87,7 +91,7 @@ const NumberFormatter = {
 
     if (flex) {
       if (totalSeconds < 60)
-        return NumberFormatter.formatValueAndUnit(parseFloat(seconds), decimal, 's', locale, unitSpacing);
+        return NumberFormatter.formatValueAndUnit(parseFloat(seconds), decimal, 's', { locale, unitSpacing });
       if (totalSeconds < 3600) return `${pad(minutes)}:${seconds}`;
     }
 
@@ -96,18 +100,18 @@ const NumberFormatter = {
 
   durationToSeconds(value: number, unit: string): number | null {
     switch (unit) {
-      case 'd': // Jour
-        return value * 86400; // 1 jour = 86400 secondes
-      case 'h': // Heure
-        return value * 3600; // 1 heure = 3600 secondes
-      case 'min': // Minute
-        return value * 60; // 1 minute = 60 secondes
-      case 's': // Seconde
-        return value; // 1 seconde = 1 seconde
-      case 'ms': // Milliseconde
-        return value * 0.001; // 1 milliseconde = 0.001 seconde
-      case 'μs': // Microseconde
-        return value * 0.000001; // 1 microseconde = 0.000001 seconde
+      case 'd':
+        return value * 86400;
+      case 'h':
+        return value * 3600;
+      case 'min':
+        return value * 60;
+      case 's':
+        return value;
+      case 'ms':
+        return value * 0.001;
+      case 'μs':
+        return value * 0.000001;
       default:
         // CF5 - issue (critical) resolved - unknown/missing unit threw and
         // crashed the card; return null so the caller can flag the entity as

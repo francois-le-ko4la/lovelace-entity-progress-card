@@ -9,6 +9,10 @@
 import { HA_CONTEXT } from './ha-context.js';
 import { META, VERSION } from './meta.js';
 
+// Shared by every purely decorative element below (progress bar internals,
+// marks, icon/badge wrappers) - hidden from the accessibility tree.
+const ARIA_HIDDEN = { 'aria-hidden': 'true' } as const;
+
 // Split out of the final CARD object (below) purely so `configDefaults`
 // can reference `layout`/`style`/`configBase` by local binding instead of
 // `CARD.xxx` - CARD doesn't exist yet while its own literal is being built.
@@ -24,11 +28,10 @@ const configBase = {
     flexTimer: 'flextimer',
     second: 's',
     disable: '',
-    space: ' ', // HA dont use '\u202F'
+    space: ' ', // HA doesn't use '\u202F'
     unitSpacing: { auto: 'auto', space: 'space', noSpace: 'no-space' },
     unitPosition: { after: 'after', before: 'before' },
   },
-  showMoreInfo: true,
   reverse: false,
   decimal: { percentage: 0, timer: 0, counter: 0, duration: 0, other: 2 },
   // trend_indicator: true's dead zone (percentage points).
@@ -75,12 +78,12 @@ const htmlStructure = {
     // and adds role="button"/tabindex/aria-label/aria-describedby instead
     // whenever hasClickableCard, precisely so the interactive target stays a
     // sibling of .container/.shape instead of an ancestor.
-    rippleZone: { element: 'div', class: 'ripple-zone', extraAttr: { 'aria-hidden': 'true' } },
+    rippleZone: { element: 'div', class: 'ripple-zone', extraAttr: ARIA_HIDDEN },
     belowContainer: { element: 'div', class: 'below-container' },
     topContainer: { element: 'div', class: 'top-container' },
     bottomContainer: { element: 'div', class: 'bottom-container' },
     backgroundContainer: { element: 'div', class: 'background-container' },
-    icon: { element: 'div', class: 'icon-section', extraAttr: { 'aria-hidden': 'true' } },
+    icon: { element: 'div', class: 'icon-section', extraAttr: ARIA_HIDDEN },
     content: { element: 'div', class: 'content-section' },
     // bar_position: compact_below (#123) only - wraps name+secondary_info so
     // they can share one row, with the bar as a separate sibling row below
@@ -132,30 +135,30 @@ const htmlStructure = {
           'aria-describedby': 'entity-value',
         },
       },
-      bar: { element: 'div', class: 'progress-bar', extraAttr: { 'aria-hidden': 'true' } },
-      half: { element: 'div', class: 'bar-half', extraAttr: { 'aria-hidden': 'true' } },
-      inner: { element: 'div', class: 'inner', extraAttr: { 'aria-hidden': 'true' } },
+      bar: { element: 'div', class: 'progress-bar', extraAttr: ARIA_HIDDEN },
+      half: { element: 'div', class: 'bar-half', extraAttr: ARIA_HIDDEN },
+      inner: { element: 'div', class: 'inner', extraAttr: ARIA_HIDDEN },
       // Built in JS (HABase#_buildSegmentCells), not the static template.
       // segments: one flex row per fillable half; segmentCell: its N cells.
-      segments: { element: 'div', class: 'bar-segments', extraAttr: { 'aria-hidden': 'true' } },
-      segmentCell: { element: 'div', class: 'segment-cell', extraAttr: { 'aria-hidden': 'true' } },
-      zeroMark: { element: 'div', class: 'zero', extraAttr: { 'aria-hidden': 'true' } },
-      lowWatermark: { element: 'div', class: 'low', extraAttr: { 'aria-hidden': 'true' } },
-      highWatermark: { element: 'div', class: 'high', extraAttr: { 'aria-hidden': 'true' } },
+      segments: { element: 'div', class: 'bar-segments', extraAttr: ARIA_HIDDEN },
+      segmentCell: { element: 'div', class: 'segment-cell', extraAttr: ARIA_HIDDEN },
+      zeroMark: { element: 'div', class: 'zero', extraAttr: ARIA_HIDDEN },
+      lowWatermark: { element: 'div', class: 'low', extraAttr: ARIA_HIDDEN },
+      highWatermark: { element: 'div', class: 'high', extraAttr: ARIA_HIDDEN },
       // peak_marker's three marks - same 'watermark mark' base class as
       // low/high above, so they share the same size tokens for free.
-      minMarker: { element: 'div', class: 'peak-min', extraAttr: { 'aria-hidden': 'true' } },
-      maxMarker: { element: 'div', class: 'peak-max', extraAttr: { 'aria-hidden': 'true' } },
-      averageMarker: { element: 'div', class: 'peak-avg', extraAttr: { 'aria-hidden': 'true' } },
+      minMarker: { element: 'div', class: 'peak-min', extraAttr: ARIA_HIDDEN },
+      maxMarker: { element: 'div', class: 'peak-max', extraAttr: ARIA_HIDDEN },
+      averageMarker: { element: 'div', class: 'peak-avg', extraAttr: ARIA_HIDDEN },
       // bar_color_mode: rainbow_full's own moving cursor (see .value-mark in
       // styles.ts) - built on the same .mark mechanism as the watermarks
       // above, shown/positioned purely via CSS (--progress-bar-value is
       // already set every render), no dedicated JS wiring needed.
-      valueMarker: { element: 'div', class: 'value-mark', extraAttr: { 'aria-hidden': 'true' } },
+      valueMarker: { element: 'div', class: 'value-mark', extraAttr: ARIA_HIDDEN },
       watermark: { class: 'progress-bar-wm' },
     },
     badge: {
-      container: { element: 'div', class: 'badge', extraAttr: { 'aria-hidden': 'true' } },
+      container: { element: 'div', class: 'badge', extraAttr: ARIA_HIDDEN },
       icon: { element: 'ha-icon', class: 'badge-icon' },
     },
   },
@@ -222,11 +225,11 @@ const style = {
   },
   bar: {
     sizeOptions: {
-      xsmall: { label: 'xsmall', mdi: HA_CONTEXT.icons.sizeExtraSmall },
-      small: { label: 'small', mdi: HA_CONTEXT.icons.sizeSmall },
-      medium: { label: 'medium', mdi: HA_CONTEXT.icons.sizeMedium },
-      large: { label: 'large', mdi: HA_CONTEXT.icons.sizeLarge },
-      xlarge: { label: 'xlarge', mdi: HA_CONTEXT.icons.sizeXLarge },
+      xsmall: 'xsmall',
+      small: 'small',
+      medium: 'medium',
+      large: 'large',
+      xlarge: 'xlarge',
     },
   },
   dynamic: {
@@ -297,7 +300,7 @@ const style = {
         shimmer: ['shimmer_reverse'],
         shimmer_reverse: ['shimmer'],
       },
-      centerZero: { class: 'center-zero' },
+      centerZero: 'center-zero',
     },
     watermark: {
       low: {
@@ -332,7 +335,7 @@ const style = {
         opacity: { var: '--peak-average-opacity-value' },
       },
     },
-    secondaryInfoError: { class: 'secondary-info-error' },
+    secondaryInfoError: 'secondary-info-error',
     show: 'show',
     clickable: { card: 'clickable-card', icon: 'clickable-icon' },
     hiddenComponent: {
@@ -344,8 +347,8 @@ const style = {
       unit: { label: 'unit' },
       progress_bar: { label: 'progress_bar', class: 'hide-progress-bar' },
     },
-    frameless: { class: 'frameless' },
-    marginless: { class: 'marginless' },
+    frameless: 'frameless',
+    marginless: 'marginless',
   },
 };
 
@@ -366,7 +369,6 @@ const layout = {
         grid_min_columns: 2,
         grid_max_columns: undefined as number | undefined,
       },
-      mdi: HA_CONTEXT.icons.focusHorizontal,
     },
     vertical: {
       label: 'vertical',
@@ -378,7 +380,6 @@ const layout = {
         grid_min_columns: 1,
         grid_max_columns: undefined as number | undefined,
       },
-      mdi: HA_CONTEXT.icons.focusVertical,
     },
   },
   // HA's own getGridOptions() uses a 12-column grid; getLayoutOptions()
@@ -391,69 +392,11 @@ const layout = {
 
 const theme = {
   default: '**CUSTOM**',
-  battery: { label: 'battery', icon: 'battery' },
 };
 
 const network = {
   ready: 'ws-ready',
   disconnected: 'ws-disconnected',
-};
-
-const configDefaults = {
-  tap_action: HA_CONTEXT.actions.moreInfo,
-  hold_action: HA_CONTEXT.actions.none,
-  double_tap_action: HA_CONTEXT.actions.none,
-  icon_tap_action: HA_CONTEXT.actions.none,
-  icon_hold_action: HA_CONTEXT.actions.none,
-  icon_double_tap_action: HA_CONTEXT.actions.none,
-  unit: null,
-  layout: layout.orientations.horizontal.label,
-  decimal: null,
-  force_circular_background: false,
-  disable_unit: false,
-  unit_spacing: configBase.unit.unitSpacing.auto,
-  entity: null,
-  attribute: null,
-  icon: null,
-  name: null,
-  max_value_attribute: null,
-  color: null,
-  theme: null,
-  custom_theme: null,
-  interpolate: false,
-  bar_size: style.bar.sizeOptions.small.label,
-  bar_color: null,
-  bar_effect: [],
-  bar_orientation: null,
-  reverse: null,
-  min_value: configBase.value.min,
-  max_value: configBase.value.max,
-  hide: [],
-  badge_icon: null,
-  badge_color: null,
-  name_info: null,
-  custom_info: null,
-  state_content: [],
-  frameless: false,
-  marginless: false,
-  center_zero: false,
-  watermark: {
-    low: 20,
-    high: 80,
-    opacity: 0.8,
-    type: 'blended',
-    line_size: '1px',
-  },
-  peakMarker: {
-    window: '2h',
-    type: 'line',
-    opacity: 0.8,
-  },
-  trendIndicator: {
-    window: '2h',
-    basis: 'average',
-    threshold: 0,
-  },
 };
 
 const consoleInfo = {
@@ -475,7 +418,7 @@ const consoleInfo = {
 // exist first) is simply referenced here - no post-construction mutation,
 // so the shape TypeScript sees matches the real one from the start.
 const CARD = {
-  config: { ...configBase, defaults: configDefaults },
+  config: configBase,
   htmlStructure,
   style,
   layout,

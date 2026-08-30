@@ -96,7 +96,15 @@ const withSuggestionType = (
 
 const resolveEntry = (component: Component, targetKey: string) =>
   targetKey === TARGET_KEY.customCardFeatures
-    ? { type: component.typeName, name: component.name, supported: () => true }
+    ? {
+        type: component.typeName,
+        name: component.name,
+        supported: () => true,
+        // HA's own edit-pencil-vs-trash-only decision (hui-card-features-
+        // editor.ts) reads this field directly - without it, a feature with
+        // a real editor still only ever shows the remove icon.
+        configurable: Boolean(component.editor),
+      }
     : {
         type: component.typeName,
         name: component.name,
@@ -154,8 +162,12 @@ const RegistrationHelper = {
     registerComponent(resolveComponent(badge), TARGET_KEY.customBadges, elementClass, editorClass);
   },
 
-  registerCardFeature(cardFeature: Component, elementClass: CustomElementConstructor) {
-    registerComponent(resolveComponent(cardFeature), TARGET_KEY.customCardFeatures, elementClass);
+  registerCardFeature(
+    cardFeature: Component,
+    elementClass: CustomElementConstructor,
+    editorClass?: CustomElementConstructor,
+  ) {
+    registerComponent(resolveComponent(cardFeature), TARGET_KEY.customCardFeatures, elementClass, editorClass);
   },
 };
 

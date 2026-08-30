@@ -110,6 +110,8 @@ class ValidationError extends Error {
   errors: ErrorLike[];
   fallback: unknown;
 
+  // 23 call sites, most passing only the first 2-3 via defaults.
+  // eslint-disable-next-line max-params -- not worth an options object here.
   constructor(
     path: Path = [],
     errorCode: string | null = null,
@@ -265,9 +267,10 @@ const types = {
       }
     },
 
-  fallbackTo:
-    <T, D>(validator: Validator<T>, defaultVal: D): Validator<T | D> =>
-    (value: unknown, path: Path = []) => {
+  // defaultValue is attached so a field's real default stays introspectable
+  // (see getSchemaDefault below) instead of a hand-maintained table.
+  fallbackTo: <T, D>(validator: Validator<T>, defaultVal: D): Validator<T | D> & { defaultValue: D } => {
+    const fn = (value: unknown, path: Path = []) => {
       if (value === undefined) return defaultVal;
       try {
         return validator(value, path);
@@ -283,7 +286,9 @@ const types = {
         }
         throw error;
       }
-    },
+    };
+    return Object.assign(fn, { defaultValue: defaultVal });
+  },
 
   optionalString: () => types.optional(types.string),
   optionalNumber: () => types.optional(types.number),
@@ -295,7 +300,9 @@ const types = {
   // bare T | D union would leave a field with a real default typed as
   // possibly undefined, which it never is.
   optionalWithDefault: <T, D>(baseValidator: Validator<T>, defaultVal: D) =>
-    types.fallbackTo(types.optional(baseValidator), defaultVal) as Validator<Exclude<T, undefined> | D>,
+    types.fallbackTo(types.optional(baseValidator), defaultVal) as Validator<Exclude<T, undefined> | D> & {
+      defaultValue: D;
+    },
   optionalStringWithDefault: (defaultVal: string) => types.optionalWithDefault(types.string, defaultVal),
   optionalNumberWithDefault: (defaultVal: number) => types.optionalWithDefault(types.number, defaultVal),
   optionalBooleanWithDefault: (defaultVal: boolean) => types.optionalWithDefault(types.boolean, defaultVal),
@@ -390,8 +397,10 @@ const types = {
   // of object()'s all-or-nothing error bundling.
   watermarkObject: <S extends Record<string, Validator<unknown>>>(
     schema: S,
-  ): Validator<{ [K in keyof S]: S[K] extends Validator<infer T> ? Exclude<T, typeof SKIP_PROPERTY> : never }> =>
-    ((value: unknown, path: Path = []) => {
+  ): Validator<{ [K in keyof S]: S[K] extends Validator<infer T> ? Exclude<T, typeof SKIP_PROPERTY> : never }> & {
+    _schema: S;
+  } => {
+    const fn = (value: unknown, path: Path = []) => {
       if (is.nullish(value) || !is.plainObject(value)) return SKIP_PROPERTY;
 
       const validateEntry = (key: string, validator: Validator) => {
@@ -414,7 +423,11 @@ const types = {
       }
 
       return result;
-    }) as Validator<{ [K in keyof S]: S[K] extends Validator<infer T> ? Exclude<T, typeof SKIP_PROPERTY> : never }>,
+    };
+    return Object.assign(fn, { _schema: schema }) as Validator<{
+      [K in keyof S]: S[K] extends Validator<infer T> ? Exclude<T, typeof SKIP_PROPERTY> : never;
+    }> & { _schema: S };
+  },
 
   entityId: ((value: unknown, path: Path = []) => {
     if (is.nullish(value))
@@ -482,22 +495,23 @@ const types = {
 
   // trend_indicator: boolean | { window, basis, threshold, colored,
   // up_color, down_color, flat_color } (see TrendTracker).
-  trendIndicator: () =>
-    types.optionalWithDefault(
-      types.union(
-        types.boolean,
-        types.object({
-          window: types.optional(types.duration),
-          basis: types.enumsWithDefault(['average', 'edge', 'slope'], 'average'),
-          threshold: types.optionalNumberWithDefault(0),
-          colored: types.optionalBooleanWithDefault(false),
-          up_color: types.optionalString(),
-          down_color: types.optionalString(),
-          flat_color: types.optionalString(),
-        }),
-      ),
-      false,
-    ),
+  // _schema re-attached from the object branch (types.union/optionalWithDefault
+  // don't forward it) so getSchemaDefault can still reach basis/threshold's
+  // own defaults through the top-level boolean|object union.
+  trendIndicator: () => {
+    const objectForm = types.object({
+      window: types.optional(types.duration),
+      basis: types.enumsWithDefault(['average', 'edge', 'slope'], 'average'),
+      threshold: types.optionalNumberWithDefault(0),
+      colored: types.optionalBooleanWithDefault(false),
+      up_color: types.optionalString(),
+      down_color: types.optionalString(),
+      flat_color: types.optionalString(),
+    });
+    return Object.assign(types.optionalWithDefault(types.union(types.boolean, objectForm), false), {
+      _schema: objectForm._schema,
+    });
+  },
 
   // watermark.low/.high: false (hidden) | number|{entity,attribute}|{jinja}
   // (value only) | { value, as, type, opacity, color } (per-mark override,
@@ -555,18 +569,20 @@ const types = {
     ),
 
   // peak_marker: { window, type, opacity, min, max, average } (Card only).
-  peakMarker: () =>
-    types.optional(
-      types.object({
-        window: types.duration,
-        type: types.enumsWithDefault(['line', 'round', 'triangle'], 'line'),
-        opacity: types.optionalNumberWithDefault(0.8),
-        color: types.optionalString(),
-        min: types.optional(types.peakMark()),
-        max: types.optional(types.peakMark()),
-        average: types.optional(types.peakMark()),
-      }),
-    ),
+  // _schema re-attached (types.optional doesn't forward it) so
+  // getSchemaDefault can still reach type/opacity's own defaults.
+  peakMarker: () => {
+    const shape = types.object({
+      window: types.duration,
+      type: types.enumsWithDefault(['line', 'round', 'triangle'], 'line'),
+      opacity: types.optionalNumberWithDefault(0.8),
+      color: types.optionalString(),
+      min: types.optional(types.peakMark()),
+      max: types.optional(types.peakMark()),
+      average: types.optional(types.peakMark()),
+    });
+    return Object.assign(types.optional(shape), { _schema: shape._schema });
+  },
 
   decimal: ((value: unknown, path: Path = []) => {
     if (is.nullish(value)) return SKIP_PROPERTY;
@@ -727,6 +743,28 @@ const nameItem = types.discriminatedUnion('type', {
 
 const nameValidator = types.array(nameItem);
 
+// Reads a field's real default off the live validator instead of a
+// hand-maintained table - undefined where none exists by design (e.g.
+// watermark's shared opacity/type/color, see watermarkSchema's own comment).
+function getSchemaDefault(
+  validator: Validator<unknown> & { _schema?: Record<string, Validator<unknown>>; defaultValue?: unknown },
+): unknown {
+  // _schema wins over defaultValue when both are present (peak_marker/
+  // trend_indicator: a top-level boolean|object union default of `false`
+  // alongside the object branch's own per-field defaults) - callers want the
+  // sub-field defaults to pre-fill the object form, never the flat `false`.
+  if (validator._schema) {
+    const result: Record<string, unknown> = {};
+    for (const [key, fieldValidator] of Object.entries(validator._schema)) {
+      const value = getSchemaDefault(fieldValidator);
+      if (value !== undefined) result[key] = value;
+    }
+    return Object.keys(result).length > 0 ? result : undefined;
+  }
+  return validator.defaultValue;
+}
+
+// eslint-disable-next-line sonarjs/max-lines-per-function -- fixed call chain.
 function struct<T>(
   // skipcq: JS-0323 -- `_schema` is used for dynamic per-field introspection
   // elsewhere (extend()/config-helpers.ts/dom-helpers.ts read a field
@@ -737,48 +775,67 @@ function struct<T>(
   validator: Validator<T> & { _schema?: Record<string, Validator<any>> },
   { allowBelowBarPosition = true } = {},
 ) {
+  // Each applyXxxRule below is one independent preProcess step, pulled out
+  // for the same reason as postProcess's own rules further down: keeps
+  // preProcess itself just a fixed call sequence, not the source of its
+  // cognitive complexity.
+
+  // Card/Badge/Feature's `name` accepts a bare string/object shorthand for
+  // the full [{type:'text',text}] array form - Template's own `name` means
+  // something else, excluded here.
+  const applyNameShapeRule = (result: Record<string, unknown>) => {
+    if (String(result.type).includes('template')) return;
+    if (is.nonEmptyString(result.name)) {
+      result.name = [{ type: 'text', text: result.name }];
+    } else if (is.plainObject(result.name)) {
+      result.name = [result.name];
+    }
+  };
+
+  const applyIconTapActionDefaultRule = (result: Record<string, unknown>) => {
+    if (!is.nullish(result.icon_tap_action) || !is.string(result.entity)) return;
+    const domain = HassProviderSingleton.getEntityDomain(result.entity);
+    const shouldPatch = domain !== null && HA_CONTEXT.actions.toggleDomain.includes(domain);
+    if (shouldPatch) result.icon_tap_action = HA_CONTEXT.actions.toggle;
+  };
+
+  // top/bottom force the bar to xsmall's thickness in CSS, but rainbow_full's
+  // marker reads the bar_size class directly - a bigger bar_size stayed
+  // sized for a thickness the bar never has. overlay/background's own marker
+  // is already hardcoded regardless of bar_size (styles.ts's
+  // .vertical.up-orientation.overlay rule), so it's simply dropped there.
+  const applyBarSizeConflictRule = (result: Record<string, unknown>) => {
+    const position = String(result.bar_position);
+    if (position === 'top' || position === 'bottom') {
+      result.bar_size = CARD.style.bar.sizeOptions.xsmall;
+    } else if (position === 'overlay' || position === 'background') {
+      delete result.bar_size;
+    }
+  };
+
+  // A raw-value theme's own scale (e.g. temperature's -50..100°C) IS the
+  // entity's real range - defaults max_value to its top bound so fill % stays
+  // meaningful. min_value stays put (widening it would stretch the gradient
+  // to unreached zones); custom_theme is excluded (#129, no reliable top-bound
+  // signal there).
+  const applyThemeMaxValueDefaultRule = (result: Record<string, unknown>) => {
+    if (!is.nullish(result.max_value)) return;
+    const theme = THEME[result.theme as keyof typeof THEME];
+    if (!theme || theme.percent !== false || !is.nonEmptyArray(theme.style)) return;
+    // Cast: percent === false already rules out themes like `light`
+    // (linear, no min/max per zone - split by index instead) at runtime,
+    // but TS still unions every theme's own zone shape here since the
+    // theme key isn't statically known.
+    const maxes = (theme.style as { max?: unknown }[]).map((zone) => zone.max).filter(is.number);
+    if (maxes.length) result.max_value = Math.max(...maxes);
+  };
+
   const preProcess = (data: Record<string, unknown>) => {
     const result = { ...data };
-
-    if (!String(data.type).includes('template')) {
-      if (is.nonEmptyString(result.name)) {
-        result.name = [{ type: 'text', text: result.name }];
-      } else if (is.plainObject(result.name)) {
-        result.name = [result.name];
-      }
-    }
-
-    if (is.nullish(result.icon_tap_action) && is.string(result.entity)) {
-      const domain = HassProviderSingleton.getEntityDomain(result.entity);
-      const shouldPatch = domain !== null && HA_CONTEXT.actions.toggleDomain.includes(domain);
-      if (shouldPatch) result.icon_tap_action = HA_CONTEXT.actions.toggle;
-    }
-
-    if (['top', 'bottom', 'overlay', 'background'].includes(String(result.bar_position))) delete result.bar_size; // avoid conflict
-
-    // Built-in themes with raw-value zones (e.g. temperature's -50..100°C,
-    // voc's 0..50000ppb) mean the entity's real range genuinely is that
-    // theme's scale - default max_value to the theme's top bound (only when
-    // unset), or the fill % is meaningless for a value that exceeds the flat
-    // 100 default. min_value deliberately stays at its own default rather
-    // than the theme's low bound: pulling it down would widen the gradient's
-    // visible scope (ThemeManager.buildGradient) to the theme's full range,
-    // stretching zones for values the entity may never reach. custom_theme is
-    // excluded (issue #129): its zones are user-defined and may extend past
-    // the entity's real range on purpose, with no reliable signal that the
-    // top bound is the real range rather than just a color boundary.
-    if (is.nullish(result.max_value)) {
-      const theme = THEME[result.theme as keyof typeof THEME];
-      if (theme && theme.percent === false && is.nonEmptyArray(theme.style)) {
-        // Cast: percent === false already rules out themes like `light`
-        // (linear, no min/max per zone - split by index instead) at runtime,
-        // but TS still unions every theme's own zone shape here since the
-        // theme key isn't statically known.
-        const maxes = (theme.style as { max?: unknown }[]).map((zone) => zone.max).filter(is.number);
-        if (maxes.length) result.max_value = Math.max(...maxes);
-      }
-    }
-
+    applyNameShapeRule(result);
+    applyIconTapActionDefaultRule(result);
+    applyBarSizeConflictRule(result);
+    applyThemeMaxValueDefaultRule(result);
     return result;
   };
   // Each applyXxxRule below handles one independent config-consistency rule,
@@ -796,7 +853,7 @@ function struct<T>(
   const applyBelowBarPositionRule = (result: Record<string, unknown>) => {
     if (
       allowBelowBarPosition &&
-      result.bar_size === CARD.style.bar.sizeOptions.xlarge.label &&
+      result.bar_size === CARD.style.bar.sizeOptions.xlarge &&
       (result.bar_position === 'default' || result.bar_position === 'compact_below')
     )
       result.bar_position = 'below';
@@ -834,7 +891,7 @@ function struct<T>(
     const barMaxWidthAllowed =
       result.layout === CARD.layout.orientations.horizontal.label &&
       result.bar_position === 'default' &&
-      result.bar_size !== CARD.style.bar.sizeOptions.xlarge.label;
+      result.bar_size !== CARD.style.bar.sizeOptions.xlarge;
     if (result.bar_max_width && !barMaxWidthAllowed) result.bar_max_width = undefined;
   };
 
@@ -993,7 +1050,7 @@ function struct<T>(
           errors: [],
         };
       } catch (error) {
-        // extract error wo duplicates
+        // dedupe by path + errorCode
         const extractAllErrors = (errRoot: ErrorLike): ErrorSummary[] => {
           const allErrors: ErrorSummary[] = [];
           const seen = new Set();
@@ -1077,6 +1134,13 @@ function struct<T>(
       }
       return Object.keys(validator._schema);
     },
+
+    fieldDefault: (name: string) => {
+      if (!validator._schema) {
+        throw new Error('Can only get a field default from object schemas created with types.object');
+      }
+      return getSchemaDefault(validator._schema[name]);
+    },
   };
 }
 
@@ -1107,17 +1171,15 @@ const watermarkSchema = {
   // { value, as, type, opacity, color }, omitted falling back to 20/80 so a
   // bare `watermark: {}` still shows both sides. type/opacity/color below
   // are each side's default until it overrides its own.
-  low: types.watermarkMark(CARD.config.defaults.watermark.low),
-  high: types.watermarkMark(CARD.config.defaults.watermark.high),
-  // No *WithDefault here (unlike low/high/line_size): once neither side nor
-  // this shared field is set, staying genuinely absent (not the schema
-  // pre-filling 'blended'/0.8) is what lets the editor tell "inert" apart
-  // from "still in use by one side" - see view.ts's own fallback to
-  // CARD.config.defaults.watermark for where the real default now applies.
+  low: types.watermarkMark(20),
+  high: types.watermarkMark(80),
+  // No *WithDefault here: staying genuinely absent (not pre-filled) lets the
+  // editor tell "inert" apart from "still in use by one side" - real default
+  // lives in SCHEMA_DEFAULTS.watermark (below) instead.
   opacity: types.optionalNumber(),
   color: types.optionalString(),
   type: types.optional(types.enums(['blended', 'area', 'striped', 'triangle', 'round', 'line'])),
-  line_size: types.optionalStringWithDefault(CARD.config.defaults.watermark.line_size),
+  line_size: types.optionalStringWithDefault('1px'),
 };
 
 /**
@@ -1132,7 +1194,9 @@ const YamlSchemaFactory = {
     return struct(
       types.object({
         // ─── Entity & Data ──────────────────────────────────────────────────
-        entity: types.entityId,
+        // Optional, unlike every other variant: defaults to the parent Tile's
+        // own entity at runtime (see EntityProgressFeatures's `set context`).
+        entity: types.optional(types.entityId),
         attribute: types.optionalString(),
         // Explicit shape instead of type-sniffing a scalar (number vs entity-id
         // string vs jinja-looking string), symmetric with max_value: min_value:
@@ -1151,10 +1215,7 @@ const YamlSchemaFactory = {
         // (--feature-height, see the .entity-progress-feature CSS rule) and
         // doesn't scale with bar_size - so 'small' (8px) looks lost inside a
         // 42px row. 'xlarge' matches --feature-height by construction.
-        bar_size: types.enumsWithDefault(
-          Object.values(CARD.style.bar.sizeOptions).map((e) => e.label),
-          'xlarge',
-        ), //[('small', 'medium', 'large', 'xlarge')]
+        bar_size: types.enumsWithDefault(Object.values(CARD.style.bar.sizeOptions), 'xlarge'), //[('small', 'medium', 'large', 'xlarge')]
         // 'up' is excluded here (Card/Template only): every CSS rule for
         // up-orientation is scoped .vertical.up-orientation, and a Feature
         // never gets the .vertical class (no 'layout' option in this
@@ -1179,6 +1240,7 @@ const YamlSchemaFactory = {
         custom_theme: types.fallbackTo(types.customTheme, SKIP_PROPERTY),
         interpolate: types.optionalBooleanWithDefault(false),
         watermark: types.watermarkObject(watermarkSchema),
+        peak_marker: types.peakMarker(),
 
         // ─── Bar Stack ──────────────────────────────────────────────────────
         bar_stack: types.optional(
@@ -1192,6 +1254,7 @@ const YamlSchemaFactory = {
     );
   },
 
+  // eslint-disable-next-line sonarjs/max-lines-per-function -- flat field decl.
   get card() {
     return struct(
       types.object({
@@ -1221,10 +1284,7 @@ const YamlSchemaFactory = {
         icon: types.optionalString(),
         color: types.optionalString(),
         bar_color: types.optionalString(),
-        bar_size: types.enumsWithDefault(
-          Object.values(CARD.style.bar.sizeOptions).map((e) => e.label),
-          'small',
-        ), //[('small', 'medium', 'large', 'xlarge')]
+        bar_size: types.enumsWithDefault(Object.values(CARD.style.bar.sizeOptions), 'small'), //[('small', 'medium', 'large', 'xlarge')]
         bar_orientation: types.enumsWithDefault(Object.keys(CARD.style.dynamic.progressBar.orientation), 'ltr'), // ['ltr', 'rtl']
         bar_color_mode: types.enumsWithDefault(['auto', 'segment', 'rainbow', 'rainbow_full'], 'auto'),
         // Only engages outside center_zero with a well-formed positive range
@@ -1457,10 +1517,7 @@ const YamlSchemaFactory = {
         // to 'auto' otherwise, same safety net as Card. See ViewCore's own
         // templateThemeGradient/-DivergingGradient.
         bar_color_mode: types.enumsWithDefault(['auto', 'segment', 'rainbow', 'rainbow_full'], 'auto'),
-        bar_size: types.enumsWithDefault(
-          Object.values(CARD.style.bar.sizeOptions).map((e) => e.label),
-          'small',
-        ), //[('small', 'medium', 'large', 'xlarge')]
+        bar_size: types.enumsWithDefault(Object.values(CARD.style.bar.sizeOptions), 'small'), //[('small', 'medium', 'large', 'xlarge')]
         bar_orientation: types.enumsWithDefault(Object.keys(CARD.style.dynamic.progressBar.orientation), 'ltr'), // ['ltr', 'rtl']
         // [('radius', 'glass', 'gradient', 'shimmer')]
         bar_effect: types.jinjaOrArrayWithValidatedElem(
@@ -1579,19 +1636,44 @@ const YamlSchemaFactory = {
   },
 };
 
-export { ValidationError };
-export { SKIP_PROPERTY };
-export { ERROR_CODES };
-export { validateType };
-export { types };
-export { struct };
 export type { Infer };
 export type { ValueConfig };
 export { entityOf, attributeOf, jinjaOf };
 export { markShown, markValue, markAs, markType, markOpacity, markColor, isMarkOverride };
 export { statusLabelObj, rewrapStatusLabel };
 export type { WatermarkMark };
-export { nameItem };
-export { barStackEntity };
-export { watermarkSchema };
 export { YamlSchemaFactory };
+
+const ACTION_FIELDS = [
+  'tap_action',
+  'hold_action',
+  'double_tap_action',
+  'icon_tap_action',
+  'icon_hold_action',
+  'icon_double_tap_action',
+] as const;
+
+// Computed once at module load, straight off the live schema. opacity/type/
+// window have no schema-level default by design (see watermarkSchema/
+// peakMarker()/trendIndicator() above, staying absent lets the editor tell
+// "inert" apart from "still in use") - written in by hand here instead.
+const SCHEMA_DEFAULTS = {
+  watermark: {
+    ...(YamlSchemaFactory.card.fieldDefault('watermark') as { low: number; high: number; line_size: string }),
+    opacity: 0.8,
+    type: 'blended',
+  },
+  peakMarker: {
+    ...(YamlSchemaFactory.card.fieldDefault('peak_marker') as { type: string; opacity: number }),
+    window: '2h',
+  },
+  trendIndicator: {
+    ...(YamlSchemaFactory.card.fieldDefault('trend_indicator') as { basis: string; threshold: number }),
+    window: '2h',
+  },
+  actions: Object.fromEntries(
+    ACTION_FIELDS.map((key) => [key, (YamlSchemaFactory.card.fieldDefault(key) as { action: string }).action]),
+  ) as Record<string, string>,
+};
+
+export { SCHEMA_DEFAULTS };

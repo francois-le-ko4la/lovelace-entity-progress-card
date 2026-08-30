@@ -184,7 +184,7 @@ class EntityProgressMultiBase extends HACore {
 
   static #computeStructureKey(config: LovelaceConfig): string {
     const entities = is.array(config.entities) ? config.entities : [];
-    return entities.map((e: unknown) => (is.plainObject(e) ? String(e.entity ?? '') : String(e))).join(' ');
+    return entities.map((e: unknown) => (is.plainObject(e) ? String(e.entity ?? '') : String(e))).join(' ');
   }
 
   // ─── RENDER ───────────────────────────────────────────────────────────────
@@ -278,13 +278,10 @@ class EntityProgressMultiBase extends HACore {
         ? ''
         : (target.unit ?? (this._hassProvider.getEntityAttribute<string>(target.entity, 'unit_of_measurement') || ''));
       target.el.textContent = Number.isFinite(numeric)
-        ? NumberFormatter.formatValueAndUnit(
-            numeric,
-            target.decimal,
-            unit,
-            this._hassProvider.language,
-            target.unitSpacing,
-          )
+        ? NumberFormatter.formatValueAndUnit(numeric, target.decimal, unit, {
+            locale: this._hassProvider.language,
+            unitSpacing: target.unitSpacing,
+          })
         : raw;
     }
   }
@@ -432,4 +429,4 @@ class EntityProgressMultiFeature extends EntityProgressMultiBase {
   }
 }
 
-export { EntityProgressMultiBase, EntityProgressMultiCard, EntityProgressMultiFeature };
+export { EntityProgressMultiCard, EntityProgressMultiFeature };

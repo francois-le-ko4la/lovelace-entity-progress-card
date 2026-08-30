@@ -36,6 +36,7 @@ import {
   EntityProgressBadgeEditor,
   EntityProgressTemplateEditor,
   EntityProgressBadgeTemplateEditor,
+  EntityProgressFeatureEditor,
 } from './editor/editors.js';
 
 /******************************************************************************
@@ -58,7 +59,7 @@ RegistrationHelper.registerBadge(
   EntityProgressTemplateBadge,
   EntityProgressBadgeTemplateEditor,
 );
-RegistrationHelper.registerCardFeature(META.types.feature, EntityProgressFeatures);
+RegistrationHelper.registerCardFeature(META.types.feature, EntityProgressFeatures, EntityProgressFeatureEditor);
 RegistrationHelper.registerCard(META.types.multiCard, EntityProgressMultiCard);
 RegistrationHelper.registerCardFeature(META.types.multiFeature, EntityProgressMultiFeature);
 

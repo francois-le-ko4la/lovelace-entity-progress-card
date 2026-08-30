@@ -21,10 +21,6 @@ type ThemeZone = {
   icon?: string | null;
 };
 
-/**
- * Manages the theme and its associated icon and color based on a percentage
- * value.
- */
 class ThemeManager {
   #theme: string | null = null;
   #icon: string | null = null;
@@ -86,12 +82,10 @@ class ThemeManager {
     return this.#isBasedOnPercentage;
   }
 
-  // Only ever true for a built-in theme with signed: true (e.g.
-  // critical_when_extreme_center) - zones already span -100..100 as one
-  // continuous scale, for center_zero's own signed percent (see
-  // ViewBase.themeDivergingGradient). Not reset in set customTheme, same as
-  // isBasedOnPercentage right above - a custom_theme's zones are real-value
-  // ranges, never this shape.
+  // Only true for a signed built-in theme (e.g. critical_when_extreme_center)
+  // - zones span -100..100 as one scale (ViewBase.themeDivergingGradient).
+  // Not reset in set customTheme, same as isBasedOnPercentage above - custom
+  // zones are never this shape.
   get isSigned(): boolean {
     return this.#isSigned;
   }
@@ -205,30 +199,28 @@ class ThemeManager {
       return;
     }
     this.#icon = themeData.icon || null;
+    this.#iconColor = this.#resolveColor('icon_color', themeData, nextThemeData, ratio);
+    this.#barColor = this.#resolveColor('bar_color', themeData, nextThemeData, ratio);
+  }
 
-    if (this.#interpolate && nextThemeData) {
-      const color = ThemeManager.#interpolateColor(
-        ThemeManager.adaptColor(themeData.icon_color || themeData.color || null),
-        ThemeManager.adaptColor(nextThemeData.icon_color || nextThemeData.color || null),
-        ratio,
-      );
-      const barColor = ThemeManager.#interpolateColor(
-        ThemeManager.adaptColor(themeData.bar_color || themeData.color || null),
-        ThemeManager.adaptColor(nextThemeData.bar_color || nextThemeData.color || null),
-        ratio,
-      );
-      this.#iconColor = color;
-      this.#barColor = barColor;
-    } else {
-      this.#iconColor = ThemeManager.adaptColor(themeData.icon_color || themeData.color || null);
-      this.#barColor = ThemeManager.adaptColor(themeData.bar_color || themeData.color || null);
-    }
+  // Shared by #applyColors above - icon/bar only differ in which zone field
+  // they read, both falling back to the zone's plain color.
+  #resolveColor(
+    key: 'icon_color' | 'bar_color',
+    themeData: ThemeZone,
+    nextThemeData: ThemeZone | null,
+    ratio: number,
+  ): string | null {
+    const from = ThemeManager.adaptColor(themeData[key] || themeData.color || null);
+    if (!this.#interpolate || !nextThemeData) return from;
+    const to = ThemeManager.adaptColor(nextThemeData[key] || nextThemeData.color || null);
+    return ThemeManager.#interpolateColor(from, to, ratio);
   }
 
   static #interpolateColor(from: string | null, to: string | null, ratio: number): string | null {
     if (!from || !to) return null;
     const pct = Math.round(ratio * 100);
-    return `color-mix(in srgb, ${to} ${pct}%, ${from})`; // from/to déjà adaptés
+    return `color-mix(in srgb, ${to} ${pct}%, ${from})`; // from/to already adapted
   }
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
@@ -279,30 +271,27 @@ class ThemeManager {
     return { h: Math.round(hue * 60), s: Math.round(saturation * 100), l: Math.round(lightness * 100) };
   }
 
-  // `window` is the [start, end] slice of the theme's 0-100 scale this call
-  // covers - defaults to the whole scale for a normal single-arm bar. A
-  // center_zero arm only covers part of it (zeroValue..max / zeroValue..min,
-  // see ViewBase.themeDivergingGradient); passing that sub-range reprojects
-  // the zones inside it onto the arm's own local 0-100%. `start`/`end` don't
-  // need ascending order: the negative arm's window is (zeroPercent, 0) -
-  // reversed from the positive arm's (zeroPercent, 100), since it grows
-  // toward the opposite end of the scale.
-  // `valueRange` is the bar's own min_value/max_value - the visible scope a
-  // non-percentage theme's zone bounds (e.g. temperature's -50..100) get
-  // projected onto, converting them into the same 0-100% space fillPercent
-  // already uses. Deliberately the bar's own scope, not the theme's full
-  // range: by default only [0, max_value] is in view, widening min_value (or
-  // center_zero) widens it accordingly. Without this, a value-based theme's
-  // zones were compared directly against fillPercent as if already
-  // percentages - meaningless for bounds not already 0-100.
+  // `window`: [start,end] slice of the theme's 0-100 scale in view - a
+  // center_zero arm passes its own half (ViewBase.themeDivergingGradient),
+  // reversed for the negative arm. `valueRange`: the bar's own min/max, not
+  // the theme's - projects a raw-value theme's zone bounds onto the same
+  // 0-100% scale fillPercent uses (else compared as if already %, #129).
   buildGradient(
     fillPercent: number,
     mode: string,
-    defaultColor: string | null = null,
-    isVertical = false,
-    window: [number, number] = [0, 100],
-    valueRange: { min: number; max: number } | null = null,
-    isSegmented = false,
+    {
+      defaultColor = null,
+      isVertical = false,
+      window = [0, 100],
+      valueRange = null,
+      isSegmented = false,
+    }: {
+      defaultColor?: string | null;
+      isVertical?: boolean;
+      window?: [number, number];
+      valueRange?: { min: number; max: number } | null;
+      isSegmented?: boolean;
+    } = {},
   ) {
     const currentStyle = this.#currentStyle;
     if (!this.#isValid || !currentStyle || mode === 'auto') return null;
@@ -325,12 +314,11 @@ class ThemeManager {
           max: toValuePercent(level.max ?? 100),
         }));
 
-    // rainbow_full always paints every zone across the whole current window,
-    // not just "up to fillPercent" (the value is conveyed by a moving marker
-    // instead, see .rainbow-full-bar in styles.ts) - so the fillPercent > 0
-    // guard below doesn't apply to it. The window/toLocal/style computation
-    // right after is still shared: it's what makes center_zero's two arms
-    // each show only their own half of the theme, same as segment/rainbow.
+    // rainbow_full paints the whole window, not just up to fillPercent - the
+    // value is a moving marker instead (.rainbow-full-bar, styles.ts), so it
+    // skips the guard below. The window/toLocal/style computation right after
+    // still applies to it (same center_zero per-arm windowing as segment/
+    // rainbow).
     if (mode !== 'rainbow_full' && !(fillPercent > 0)) return null;
 
     const [windowStart, windowEnd] = window;
@@ -352,32 +340,21 @@ class ThemeManager {
         };
       })
       .filter((level) => (level.max ?? 0) > (level.min ?? 0))
-      // A reversed window (the negative arm's [zeroPercent, 0]) inverts
-      // position order relative to currentStyle's value-ascending order -
-      // e.g. temperature's indigo ends up at the highest local position. CSS
-      // linear-gradient stops must be non-decreasing or the browser clamps
-      // everything past an out-of-order stop into one flat color. Sorting by
-      // local position (a no-op for the normal window) keeps stops
-      // monotonic regardless of direction.
+      // A reversed window can invert local position order (e.g. temperature's
+      // indigo ending up highest) - CSS gradient stops must be non-decreasing
+      // or the browser clamps past an out-of-order one. Sorting keeps them
+      // monotonic regardless of direction (no-op for a normal window).
       .sort((a, b) => (a.min ?? 0) - (b.min ?? 0));
 
-    // A reversed window (center_zero's negative arm) uses the opposite CSS
-    // shift direction from every other case (styles.ts's `.negative` box
-    // slides the other way, growing from center toward the low end) - its
-    // "tip"/"anchor" land on the box's opposite edges from what toElemPos
-    // assumes. Rather than re-deriving the stop-building logic per
-    // direction, mirroring the gradient's CSS direction achieves the same
-    // result, reflected (verified against concrete pixel math, issue #129
-    // follow-up). Hoisted above the mode branches - both need it.
+    // A reversed window (center_zero's negative arm) mirrors the gradient's
+    // own CSS direction instead of re-deriving the stop logic per direction.
     const isReversedWindow = windowEnd < windowStart;
-    const direction = isReversedWindow ? (isVertical ? 'to bottom' : 'to left') : isVertical ? 'to top' : 'to right';
+    const forward = isVertical ? 'to top' : 'to right';
+    const backward = isVertical ? 'to bottom' : 'to left';
+    const direction = isReversedWindow ? backward : forward;
 
-    // rainbow_full: every zone in the current window, laid out edge-to-edge -
-    // unlike segment/rainbow just below, not clipped to "up to fillPercent"
-    // (the whole window is always shown - see .rainbow-full-bar in
-    // styles.ts). `style` is already windowed/clamped to this arm's own
-    // slice (center_zero's [zeroPercent, 100]/[zeroPercent, 0]), so this
-    // works identically for a single-arm bar and each of center_zero's two.
+    // style is already windowed to this arm's own slice, so this works
+    // identically for a single-arm bar and each of center_zero's two arms.
     if (mode === 'rainbow_full') {
       return ThemeManager.#buildFullRainbowGradient(style, defaultColor, direction);
     }
@@ -385,56 +362,72 @@ class ThemeManager {
     const visible = style.filter((level) => (level.min ?? 0) < fillPercent);
     if (visible.length === 0) return null;
 
-    // Inner element uses translateX((value-1)*100%), shifted left by
-    // (100-fillPercent)%. A zone boundary at container position B → element
-    // position B + offset. vertical-bar uses the exact same formula on
-    // translateY instead (see the CSS on .vertical-bar .inner) - only the
-    // gradient's own direction needs to follow, not this math.
-    // bar_segments has no .inner to shift - each cell windows this same
-    // gradient by its own true container position, so it needs offset 0.
+    // .inner reveals via translateX(-(100-fillPercent)%), so element position
+    // = container position + offset (vertical-bar: same via translateY).
+    // bar_segments has no .inner to shift - each cell windows this gradient
+    // by its own true position, so offset is 0 there.
     const offset = isSegmented ? 0 : 100 - fillPercent;
-    const toElemPos = (b: number) => `${(b + offset).toFixed(2)}%`;
     // '100%' below pins a stop to .inner's shifted edge (= fillPercent) -
     // segmented has no such edge, so it needs the real position instead.
     const filledEdge = isSegmented ? `${fillPercent.toFixed(2)}%` : '100%';
-    // color is optional per zone now (see types.customTheme) — a color-less
-    // zone falls back the same way iconColor/barColor already do: the entity's
-    // own negotiated color (e.g. a cover is pink open / grey closed, see
-    // EntityHelper.defaultColor), then the card's generic default, rather than
-    // a flat neutral for every domain.
-    const col = (level: ThemeZone) =>
-      ThemeManager.adaptColor(level.bar_color || level.color || null) || defaultColor || CARD.style.color.default;
 
     if (mode === 'segment') {
-      const stops = visible.flatMap((level, i) => {
-        const start = i === 0 ? '0%' : toElemPos(level.min ?? 0);
-        const end = (level.max ?? 0) >= fillPercent ? filledEdge : toElemPos(level.max ?? 0);
-        return [`${col(level)} ${start}`, `${col(level)} ${end}`];
-      });
-      return `linear-gradient(${direction}, ${stops.join(', ')})`;
+      return ThemeManager.#buildSegmentGradient(visible, direction, defaultColor, offset, fillPercent, filledEdge);
     }
-
     if (mode === 'rainbow') {
-      const first = col(visible[0]);
-      const stops = [`${first} 0%`];
-      if (offset > 0) stops.push(`${first} ${offset.toFixed(2)}%`);
-      // A stop at each zone's midpoint, not its start: the first zone holds
-      // its color through half its width instead of fading from the first
-      // instant, matching the "hold, then fade" shape every other zone gets.
-      // Two same-colored zones back to back (critical_when_* splits)
-      // naturally hold flat between their midpoints. The last visible zone
-      // is only partially filled, so its midpoint uses fillPercent instead
-      // of its not-yet-reached max.
-      visible.forEach((level, i) => {
-        const start = level.min ?? 0;
-        const end = i === visible.length - 1 ? fillPercent : (level.max ?? 100);
-        stops.push(`${col(level)} ${toElemPos((start + end) / 2)}`);
-      });
-      stops.push(`${col(visible[visible.length - 1])} ${filledEdge}`);
-      return `linear-gradient(${direction}, ${stops.join(', ')})`;
+      return ThemeManager.#buildRainbowGradient(visible, direction, defaultColor, offset, fillPercent, filledEdge);
     }
-
     return null;
+  }
+
+  // Shared by #buildSegmentGradient/#buildRainbowGradient/
+  // #buildFullRainbowGradient below - a zone's own bar/color, falling back to
+  // defaultColor then the plain default.
+  static #zoneColor(level: ThemeZone, defaultColor: string | null): string {
+    return ThemeManager.adaptColor(level.bar_color || level.color || null) || defaultColor || CARD.style.color.default;
+  }
+
+  // eslint-disable-next-line max-params -- private, single call site.
+  static #buildSegmentGradient(
+    visible: ThemeZone[],
+    direction: string,
+    defaultColor: string | null,
+    offset: number,
+    fillPercent: number,
+    filledEdge: string,
+  ): string {
+    const toElemPos = (b: number) => `${(b + offset).toFixed(2)}%`;
+    const col = (level: ThemeZone) => ThemeManager.#zoneColor(level, defaultColor);
+    const stops = visible.flatMap((level, i) => {
+      const start = i === 0 ? '0%' : toElemPos(level.min ?? 0);
+      const end = (level.max ?? 0) >= fillPercent ? filledEdge : toElemPos(level.max ?? 0);
+      return [`${col(level)} ${start}`, `${col(level)} ${end}`];
+    });
+    return `linear-gradient(${direction}, ${stops.join(', ')})`;
+  }
+
+  // Stops at each zone's midpoint, not its start - last one uses fillPercent.
+  // eslint-disable-next-line max-params -- private, single call site.
+  static #buildRainbowGradient(
+    visible: ThemeZone[],
+    direction: string,
+    defaultColor: string | null,
+    offset: number,
+    fillPercent: number,
+    filledEdge: string,
+  ): string {
+    const toElemPos = (b: number) => `${(b + offset).toFixed(2)}%`;
+    const col = (level: ThemeZone) => ThemeManager.#zoneColor(level, defaultColor);
+    const first = col(visible[0]);
+    const stops = [`${first} 0%`];
+    if (offset > 0) stops.push(`${first} ${offset.toFixed(2)}%`);
+    visible.forEach((level, i) => {
+      const start = level.min ?? 0;
+      const end = i === visible.length - 1 ? fillPercent : (level.max ?? 100);
+      stops.push(`${col(level)} ${toElemPos((start + end) / 2)}`);
+    });
+    stops.push(`${col(visible[visible.length - 1])} ${filledEdge}`);
+    return `linear-gradient(${direction}, ${stops.join(', ')})`;
   }
 
   // rainbow_full's gradient: every zone in `style` laid out edge-to-edge,
@@ -445,8 +438,7 @@ class ThemeManager {
   static #buildFullRainbowGradient(style: ThemeZone[], defaultColor: string | null, direction: string): string | null {
     if (style.length === 0) return null;
 
-    const col = (level: ThemeZone) =>
-      ThemeManager.adaptColor(level.bar_color || level.color || null) || defaultColor || CARD.style.color.default;
+    const col = (level: ThemeZone) => ThemeManager.#zoneColor(level, defaultColor);
     const first = col(style[0]);
     const last = col(style[style.length - 1]);
     const stops = [`${first} 0%`];

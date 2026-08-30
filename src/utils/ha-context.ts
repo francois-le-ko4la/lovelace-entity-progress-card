@@ -5,6 +5,10 @@
  * shapes, and misc style hooks. No logic, just data.
  */
 
+// Every HA theme color var follows this one naming convention - shared by
+// colors/haColors below so the two never encode it separately and drift.
+const cssColorVar = (name: string): string => `var(--${name}-color)`;
+
 // from:
 // https://github.com/home-assistant/frontend/blob/master/src/resources/theme/color/color.globals.ts
 const HA_CONTEXT = {
@@ -43,40 +47,40 @@ const HA_CONTEXT = {
     sizeXLarge: 'mdi:size-xl',
   },
   colors: {
-    success: 'var(--success-color)',
-    stateIcon: 'var(--state-icon-color)',
-    red: 'var(--red-color)',
-    orange: 'var(--orange-color)',
-    deepOrange: 'var(--deep-orange-color)',
-    yellow: 'var(--yellow-color)',
-    amber: 'var(--amber-color)',
-    accent: 'var(--accent-color)',
-    deepPurple: 'var(--deep-purple-color)',
-    indigo: 'var(--indigo-color)',
-    blue: 'var(--blue-color)',
-    lightBlue: 'var(--light-blue-color)',
-    cyan: 'var(--cyan-color)',
-    teal: 'var(--teal-color)',
-    green: 'var(--green-color)',
-    lightGreen: 'var(--light-green-color)',
-    lime: 'var(--lime-color)',
-    darkGrey: 'var(--dark-grey-color)',
-    unavailable: 'var(--state-unavailable-color)',
-    inactive: 'var(--state-inactive-color)',
-    active: 'var(--state-active-color)',
-    coverActive: 'var(--state-cover-active-color)',
-    fanActive: 'var(--state-fan-active-color)',
-    batteryLow: 'var(--state-sensor-battery-low-color)',
-    batteryMedium: 'var(--state-sensor-battery-medium-color)',
-    batteryHigh: 'var(--state-sensor-battery-high-color)',
-    climateDry: 'var(--state-climate-dry-color)',
-    climateCool: 'var(--state-climate-cool-color)',
-    climateHeat: 'var(--state-climate-heat-color)',
-    climateFanOnly: 'var(--state-climate-fan_only-color)',
+    success: cssColorVar('success'),
+    stateIcon: cssColorVar('state-icon'),
+    red: cssColorVar('red'),
+    orange: cssColorVar('orange'),
+    deepOrange: cssColorVar('deep-orange'),
+    yellow: cssColorVar('yellow'),
+    amber: cssColorVar('amber'),
+    accent: cssColorVar('accent'),
+    deepPurple: cssColorVar('deep-purple'),
+    indigo: cssColorVar('indigo'),
+    blue: cssColorVar('blue'),
+    lightBlue: cssColorVar('light-blue'),
+    cyan: cssColorVar('cyan'),
+    teal: cssColorVar('teal'),
+    green: cssColorVar('green'),
+    lightGreen: cssColorVar('light-green'),
+    lime: cssColorVar('lime'),
+    darkGrey: cssColorVar('dark-grey'),
+    unavailable: cssColorVar('state-unavailable'),
+    inactive: cssColorVar('state-inactive'),
+    active: cssColorVar('state-active'),
+    coverActive: cssColorVar('state-cover-active'),
+    fanActive: cssColorVar('state-fan-active'),
+    batteryLow: cssColorVar('state-sensor-battery-low'),
+    batteryMedium: cssColorVar('state-sensor-battery-medium'),
+    batteryHigh: cssColorVar('state-sensor-battery-high'),
+    climateDry: cssColorVar('state-climate-dry'),
+    climateCool: cssColorVar('state-climate-cool'),
+    climateHeat: cssColorVar('state-climate-heat'),
+    climateFanOnly: cssColorVar('state-climate-fan_only'),
   },
   haColors: new Map(
     [
-      // texte
+      // text
       'primary-text',
       'secondary-text',
       'text-primary',
@@ -206,7 +210,7 @@ const HA_CONTEXT = {
       'state-weather-sunny',
       'state-weather-windy_variant',
       'state-weather-windy',
-    ].map((c) => [c, `var(--${c}-color)`]),
+    ].map((c) => [c, cssColorVar(c)]),
   ),
   attributeMapping: {
     cover: { label: 'cover', attribute: 'current_position' },
@@ -217,9 +221,9 @@ const HA_CONTEXT = {
     weather: { label: 'weather', attribute: 'temperature' },
   },
   numberFormat: {
-    decimal_comma: 'de-DE', // 1.234,56 (Allemagne, France, etc.)
+    decimal_comma: 'de-DE', // 1.234,56 (Germany, France, etc.)
     comma_decimal: 'en-US', // 1,234.56 (USA, UK, etc.)
-    space_comma: 'fr-FR', // 1 234,56 (France, Norvège, etc.)
+    space_comma: 'fr-FR', // 1 234,56 (France, Norway, etc.)
     quote_decimal: 'de-CH', // 12'345.60 (Switzerland)
   },
   entity: {

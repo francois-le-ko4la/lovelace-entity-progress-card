@@ -6,11 +6,8 @@
  */
 
 export { ObjStructure } from './structure.js';
-export { NumberFormatter } from './formatting.js';
-export { TypedValueHelper, ValueHelper, DecimalHelper, UnitHelper } from './value-primitives.js';
-export { ProgressCalc, PercentHelper } from './progress-calc.js';
+export { PercentHelper } from './progress-calc.js';
 export { ThemeManager } from './theme-manager.js';
 export { ChangeTracker } from './change-tracker.js';
-export { EntityHelper } from './entity-helper.js';
 export { EntityCollectionHelper } from './entity-collection.js';
 export { EntityOrValue } from './entity-or-value.js';

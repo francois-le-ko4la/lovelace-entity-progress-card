@@ -18,19 +18,9 @@ import { is } from '../utils/common-checks.js';
 import { initLogger, type LoggerInstance } from '../utils/log.js';
 import { HassProviderSingleton, buildTranslationTree, type HomeAssistant } from '../utils/hass-provider.js';
 import { BaseConfigHelper } from '../card/config-helpers.js';
-import { EditorDOMHelper } from './dom-helper.js';
+import { EditorDOMHelper, type FieldUpdateContext } from './dom-helper.js';
 import type { LovelaceConfig, Config, FieldDef } from '../utils/types.js';
-import {
-  EntityProgressEffectChips,
-  EntityProgressHideChips,
-  EntityProgressValueSourceModeChips,
-  EntityProgressThemeModeChips,
-  EntityProgressBarStackModeChips,
-  EntityProgressIconAnimationModeChips,
-  EntityProgressCircularBackgroundModeChips,
-  EntityProgressSimpleAdvancedChips,
-  EntityProgressEnabledDisabledChips,
-} from './chips.js';
+import { EntityProgressEffectChips, EntityProgressHideChips, EntityProgressModeChips } from './chips.js';
 import {
   EntityProgressBarStackEditor,
   EntityProgressCustomThemeEditor,
@@ -57,6 +47,7 @@ type EditorFieldElement = HTMLElement & {
   placeholder?: string;
   helper?: string;
   items?: unknown;
+  modes?: string[];
   setLabels?: (labels: unknown) => void;
   buttonLabel?: string;
   actionLabels?: Record<string, string>;
@@ -71,9 +62,20 @@ type SectionDef = { flat?: boolean; title?: string; icon?: string; fields: Recor
 // collapsed-panel field-update skip (see EditorDOMHelper.updateAll).
 type HaExpansionPanel = HTMLElement & { header: string; outlined: boolean; expanded: boolean };
 
-// Resolves a field's current value from the (raw) config - the one closure
-// #applyUpdateFields and #refreshPanel share (see #runFieldUpdate).
-type FieldValueResolver = (def: FieldDef, config: LovelaceConfig) => unknown;
+// Per-field mode lists for EntityProgressModeChips (chips.ts) - each single-
+// select mode field passes its own list via #buildModeChipsField below,
+// instead of a dedicated chip subclass per field.
+const VALUE_SOURCE_MODES = ['standard', 'entity', 'jinja'];
+const THEME_MODE_MODES = ['preset', 'custom'];
+const BAR_STACK_MODES = ['stacked', 'proportional', 'net'];
+const SIMPLE_ADVANCED_MODES = ['simple', 'advanced'];
+// icon_animation_mode: automatic entity-based detection vs a Jinja condition.
+const ICON_ANIMATION_MODES = ['auto', 'template'];
+// force_circular_background_mode: Auto (default shape) vs always Forced.
+const CIRCULAR_BACKGROUND_MODES = ['auto', 'forced'];
+// markers()'s 5 master on/off toggles (watermark/peak_marker/badge/
+// status_label/alert_when) - a pill instead of a switch.
+const ENABLED_DISABLED_MODES = ['disabled', 'enabled'];
 
 /**
  * Shared base for every per-card-type visual editor. Builds the
@@ -231,7 +233,6 @@ class EditorBase extends HTMLElement {
   disconnectedCallback() {
     if (this.#boundOnChanged) this.#shadow.removeEventListener(VALUE_CHANGED_EVENT, this.#boundOnChanged);
     this.#boundOnChanged = null;
-    // this.#dom.destroy();
   }
 
   // ─── PUBLIC API ───────────────────────────────────────────────────────────
@@ -421,6 +422,7 @@ class EditorBase extends HTMLElement {
     return panel;
   }
 
+  // eslint-disable-next-line sonarjs/max-lines-per-function -- flat dispatch.
   #getSelectorForType(type: string): Record<string, unknown> {
     const buildSelect = (opts: Record<string, string>) => ({
       select: { options: Object.entries(opts).map(([value, label]) => ({ value, label })), mode: 'dropdown' },
@@ -442,6 +444,10 @@ class EditorBase extends HTMLElement {
       },
     });
     const options = this.#localizedOptions;
+    // Shared by every "narrower select" below (a schema variant rejecting
+    // some enum members) - keeps just the given keys, same translated labels.
+    const pickOptions = (source: Record<string, string>, keys: string[]): Record<string, string> =>
+      Object.fromEntries(keys.map((key) => [key, source[key]]));
     const tileImage = (value: string) => ({
       // see
       // https://github.com/home-assistant/frontend/blob/dev/src/panels/lovelace/editor/config-elements/hui-tile-card-editor.ts#L158
@@ -474,18 +480,12 @@ class EditorBase extends HTMLElement {
       bar_size: () => buildSelect(options.bar_size),
       // Badge/BadgeTemplate schemas reject 'xlarge' (see
       // YamlSchemaFactory.badge) - reuses the same translated labels.
-      bar_size_no_xlarge: () =>
-        buildSelect({
-          xsmall: options.bar_size.xsmall,
-          small: options.bar_size.small,
-          medium: options.bar_size.medium,
-          large: options.bar_size.large,
-        }),
+      bar_size_no_xlarge: () => buildSelect(pickOptions(options.bar_size, ['xsmall', 'small', 'medium', 'large'])),
       bar_orientation: () => buildSelect(options.bar_orientation),
       // Badge/BadgeTemplate schemas reject 'up' (see YamlSchemaFactory.badge)
       // - reuses the same translated ltr/rtl labels, just without the option
       // that would silently fall back to 'ltr' on save.
-      bar_orientation_no_up: () => buildSelect({ ltr: options.bar_orientation.ltr, rtl: options.bar_orientation.rtl }),
+      bar_orientation_no_up: () => buildSelect(pickOptions(options.bar_orientation, ['ltr', 'rtl'])),
       bar_position: () => buildSelect(options.bar_position),
       // layout: vertical rejects compact_below (see schema.ts's
       // applyCompactBelowRule, the matching save-time safety net, and
@@ -494,25 +494,17 @@ class EditorBase extends HTMLElement {
       // to silently revert it on save is a worse experience than not
       // offering it at all.
       bar_position_no_compact_below: () =>
-        buildSelect({
-          default: options.bar_position.default,
-          below: options.bar_position.below,
-          top: options.bar_position.top,
-          bottom: options.bar_position.bottom,
-          overlay: options.bar_position.overlay,
-          background: options.bar_position.background,
-        }),
+        buildSelect(pickOptions(options.bar_position, ['default', 'below', 'top', 'bottom', 'overlay', 'background'])),
       // density: compact restricts bar_position further still, to exactly
       // the three positions that don't share a row with name/secondary_info
       // (see schema.ts's applyDensityRule, the matching save-time safety
       // net) - same reasoning as bar_position_no_compact_below just above,
       // a shorter list this time.
       bar_position_density_compact: () =>
-        buildSelect({
-          top: options.bar_position.top,
-          bottom: options.bar_position.bottom,
-          background: options.bar_position.background,
-        }),
+        buildSelect(pickOptions(options.bar_position, ['top', 'bottom', 'background'])),
+      // Feature's own schema (YamlSchemaFactory.feature) allows only these
+      // three - no layout/bar_position combinations to guard against.
+      bar_position_feature: () => buildSelect(pickOptions(options.bar_position, ['default', 'top', 'bottom'])),
       bar_color_mode: () => buildSelect(options.bar_color_mode),
       bar_scale: () => buildSelect(options.bar_scale),
       icon_animation: () => buildSelect(options.icon_animation),
@@ -527,10 +519,7 @@ class EditorBase extends HTMLElement {
       // bar_orientation_no_up/bar_position_no_compact_below above, just
       // derived from PERCENT_THEME_KEYS instead of hand-picked keys (too many
       // to list).
-      theme_percent_only: () =>
-        buildSelect(
-          Object.fromEntries(Object.entries(options.theme).filter(([key]) => PERCENT_THEME_KEYS.includes(key))),
-        ),
+      theme_percent_only: () => buildSelect(pickOptions(options.theme, PERCENT_THEME_KEYS)),
       layout: () => buildBoxSelect(options.layout, tileImage),
       unit_spacing: () => buildSelect(options.unit_spacing),
       unit_position: () => buildSelect(options.unit_position),
@@ -538,12 +527,7 @@ class EditorBase extends HTMLElement {
       watermark_as: () => buildSelect(options.watermark_as),
       // Narrower than watermark_type (peak_marker's own enum) - same pattern
       // as theme_percent_only, reusing watermark_type's labels (DRY).
-      peak_marker_type: () =>
-        buildSelect({
-          line: options.watermark_type.line,
-          round: options.watermark_type.round,
-          triangle: options.watermark_type.triangle,
-        }),
+      peak_marker_type: () => buildSelect(pickOptions(options.watermark_type, ['line', 'round', 'triangle'])),
       duration_unit: () => buildSelect(options.duration_unit),
       trend_indicator_basis: () => buildSelect(options.trend_indicator_basis),
       // watermark.low/.high can be a bare {entity,...} or wrap it one level
@@ -653,11 +637,19 @@ class EditorBase extends HTMLElement {
   }
 
   // optionKey defaults to field.name; overridden below for fields sharing a
-  // chip class, so they share one translated option group instead of N copies.
-  #buildModeChipsField(field: FieldDef, tagName: string, optionKey: string = field.name): EditorFieldElement {
+  // translated option group instead of N copies. `modes` is EntityProgress
+  // ModeChips's own per-instance mode list (see chips.ts) - no per-field
+  // subclass needed.
+  #buildModeChipsField(
+    field: FieldDef,
+    tagName: string,
+    modes: string[],
+    optionKey: string = field.name,
+  ): EditorFieldElement {
     const el = document.createElement(tagName) as EditorFieldElement;
     el.id = field.name;
     el.style.width = '100%';
+    el.modes = modes;
     // #resolveFieldMeta so labelKey is honored (this used to look up
     // field.name directly, stale once a field shares another's label).
     const { label, value } = this.#resolveFieldMeta(field);
@@ -705,37 +697,28 @@ class EditorBase extends HTMLElement {
   // cognitive-complexity warning — a lookup miss just falls through to the
   // generic ha-selector path below.
   #buildSpecialField(field: FieldDef): EditorFieldElement | undefined {
+    // Shared by every mode-chips entry below - only `modes`/`optionKey` differ.
+    const modeChipsField = (modes: string[], optionKey?: string) => () =>
+      this.#buildModeChipsField(field, EntityProgressModeChips.ELEMENT_NAME, modes, optionKey);
     const builders: Record<string, () => EditorFieldElement> = {
       section_label: () => this.#buildSectionLabel(field),
       effect_chips: () => this.#buildChipsField(field, EntityProgressEffectChips.ELEMENT_NAME, 'bar_effect'),
       hide_chips: () => this.#buildChipsField(field, EntityProgressHideChips.ELEMENT_NAME, 'hide'),
-      min_value_mode: () =>
-        this.#buildModeChipsField(field, EntityProgressValueSourceModeChips.ELEMENT_NAME, 'value_source_mode'),
-      max_value_mode: () =>
-        this.#buildModeChipsField(field, EntityProgressValueSourceModeChips.ELEMENT_NAME, 'value_source_mode'),
-      watermark_low_mode: () =>
-        this.#buildModeChipsField(field, EntityProgressValueSourceModeChips.ELEMENT_NAME, 'value_source_mode'),
-      watermark_high_mode: () =>
-        this.#buildModeChipsField(field, EntityProgressValueSourceModeChips.ELEMENT_NAME, 'value_source_mode'),
-      alert_when_above_mode: () =>
-        this.#buildModeChipsField(field, EntityProgressValueSourceModeChips.ELEMENT_NAME, 'value_source_mode'),
-      alert_when_below_mode: () =>
-        this.#buildModeChipsField(field, EntityProgressValueSourceModeChips.ELEMENT_NAME, 'value_source_mode'),
-      theme_mode: () => this.#buildModeChipsField(field, EntityProgressThemeModeChips.ELEMENT_NAME),
-      bar_stack_mode: () => this.#buildModeChipsField(field, EntityProgressBarStackModeChips.ELEMENT_NAME),
-      trigger: () =>
-        this.#buildModeChipsField(field, EntityProgressSimpleAdvancedChips.ELEMENT_NAME, 'simple_advanced_mode'),
-      bar_effect_mode: () =>
-        this.#buildModeChipsField(field, EntityProgressSimpleAdvancedChips.ELEMENT_NAME, 'simple_advanced_mode'),
-      hide_mode: () =>
-        this.#buildModeChipsField(field, EntityProgressSimpleAdvancedChips.ELEMENT_NAME, 'simple_advanced_mode'),
-      trend_indicator_mode: () =>
-        this.#buildModeChipsField(field, EntityProgressSimpleAdvancedChips.ELEMENT_NAME, 'simple_advanced_mode'),
-      icon_animation_mode: () => this.#buildModeChipsField(field, EntityProgressIconAnimationModeChips.ELEMENT_NAME),
-      force_circular_background_mode: () =>
-        this.#buildModeChipsField(field, EntityProgressCircularBackgroundModeChips.ELEMENT_NAME),
-      enabled_toggle: () =>
-        this.#buildModeChipsField(field, EntityProgressEnabledDisabledChips.ELEMENT_NAME, 'enabled_disabled_mode'),
+      min_value_mode: modeChipsField(VALUE_SOURCE_MODES, 'value_source_mode'),
+      max_value_mode: modeChipsField(VALUE_SOURCE_MODES, 'value_source_mode'),
+      watermark_low_mode: modeChipsField(VALUE_SOURCE_MODES, 'value_source_mode'),
+      watermark_high_mode: modeChipsField(VALUE_SOURCE_MODES, 'value_source_mode'),
+      alert_when_above_mode: modeChipsField(VALUE_SOURCE_MODES, 'value_source_mode'),
+      alert_when_below_mode: modeChipsField(VALUE_SOURCE_MODES, 'value_source_mode'),
+      theme_mode: modeChipsField(THEME_MODE_MODES),
+      bar_stack_mode: modeChipsField(BAR_STACK_MODES),
+      trigger: modeChipsField(SIMPLE_ADVANCED_MODES, 'simple_advanced_mode'),
+      bar_effect_mode: modeChipsField(SIMPLE_ADVANCED_MODES, 'simple_advanced_mode'),
+      hide_mode: modeChipsField(SIMPLE_ADVANCED_MODES, 'simple_advanced_mode'),
+      trend_indicator_mode: modeChipsField(SIMPLE_ADVANCED_MODES, 'simple_advanced_mode'),
+      icon_animation_mode: modeChipsField(ICON_ANIMATION_MODES),
+      force_circular_background_mode: modeChipsField(CIRCULAR_BACKGROUND_MODES),
+      enabled_toggle: modeChipsField(ENABLED_DISABLED_MODES, 'enabled_disabled_mode'),
       bar_stack_editor: () =>
         this.#buildListEditorField(
           field,
@@ -906,27 +889,26 @@ class EditorBase extends HTMLElement {
   // default the moment the expression is temporarily malformed. All other
   // fields read from the negotiated config so entity defaults show up
   // immediately.
-  #runFieldUpdate(walk: (config: LovelaceConfig, resolveValue: FieldValueResolver, negotiated: Config) => void) {
+  #runFieldUpdate(walk: (ctx: FieldUpdateContext) => void) {
     const negotiated = this._configHelper.config;
-    walk(this.#config, (def, raw) => EditorBase.#resolveValue(def, raw, negotiated), negotiated);
+    walk({
+      config: this.#config,
+      resolveValue: (def, raw) => EditorBase.#resolveValue(def, raw, negotiated),
+      negotiated,
+      resolveType: (def, c) => this.#getSelectorForType(def.type(c)),
+    });
   }
 
   #applyUpdateFields() {
-    this.#runFieldUpdate((config, resolveValue, negotiated) =>
-      this.#dom.updateAll(config, resolveValue, negotiated, (def, c) => this.#getSelectorForType(def.type(c))),
-    );
+    this.#runFieldUpdate((ctx) => this.#dom.updateAll(ctx));
   }
 
   #refreshPanel(panel: HaExpansionPanel) {
-    this.#runFieldUpdate((config, resolveValue, negotiated) =>
-      this.#dom.updatePanel(panel, config, resolveValue, negotiated, (def, c) => this.#getSelectorForType(def.type(c))),
-    );
+    this.#runFieldUpdate((ctx) => this.#dom.updatePanel(panel, ctx));
   }
 
   #updateChangedFields(keys: Set<string>) {
-    this.#runFieldUpdate((config, resolveValue, negotiated) =>
-      this.#dom.updateKeys(keys, config, resolveValue, negotiated, (def, c) => this.#getSelectorForType(def.type(c))),
-    );
+    this.#runFieldUpdate((ctx) => this.#dom.updateKeys(keys, ctx));
   }
 
   // ─── EVENTS ───────────────────────────────────────────────────────────────

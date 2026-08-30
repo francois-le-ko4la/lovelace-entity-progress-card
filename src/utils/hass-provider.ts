@@ -333,25 +333,25 @@ class HassProviderSingleton {
     );
   }
 
-  getEntityArea(entityId: string): string | null {
+  // Shared by getEntityArea/getEntityFloor below - an entity's own area_id,
+  // falling back to its device's.
+  #resolveAreaId(entityId: string): string | null {
     const entityAreaId = this.#hass?.entities?.[entityId]?.area_id;
-    if (entityAreaId) return this.#hass?.areas?.[entityAreaId]?.name ?? null;
-
+    if (entityAreaId) return entityAreaId;
     const deviceId = this.#hass?.entities?.[entityId]?.device_id;
-    if (!deviceId) return null;
-    const deviceAreaId = this.#hass?.devices?.[deviceId]?.area_id;
-    if (!deviceAreaId) return null;
-    return this.#hass?.areas?.[deviceAreaId]?.name ?? null;
+    return deviceId ? (this.#hass?.devices?.[deviceId]?.area_id ?? null) : null;
+  }
+
+  getEntityArea(entityId: string): string | null {
+    const areaId = this.#resolveAreaId(entityId);
+    return areaId ? (this.#hass?.areas?.[areaId]?.name ?? null) : null;
   }
 
   getEntityFloor(entityId: string): string | null {
-    const deviceId = this.#hass?.entities?.[entityId]?.device_id;
-    const areaId =
-      this.#hass?.entities?.[entityId]?.area_id ?? (deviceId ? this.#hass?.devices?.[deviceId]?.area_id : undefined);
+    const areaId = this.#resolveAreaId(entityId);
     if (!areaId) return null;
     const floorId = this.#hass?.areas?.[areaId]?.floor_id;
-    if (!floorId) return null;
-    return this.#hass?.floors?.[floorId]?.name ?? null;
+    return floorId ? (this.#hass?.floors?.[floorId]?.name ?? null) : null;
   }
 
   static getEntityDomain(entityId: unknown): string | null {

@@ -43,29 +43,18 @@ class TypedValueHelper<T = unknown> {
   }
 }
 
-/**
- * TypedValueHelper accepting any finite number.
- *
- * @extends TypedValueHelper
- */
 class ValueHelper extends TypedValueHelper<number> {
   _validate(v: unknown): v is number {
     return is.number(v);
   }
 }
 
-/**
- * Represents a non-negative integer value that can be valid or invalid.
- */
 class DecimalHelper extends TypedValueHelper<number> {
   _validate(v: unknown): v is number {
     return Number.isInteger(v) && (v as number) >= 0;
   }
 }
 
-/**
- * Represents a unit of measurement, stored as a string.
- */
 class UnitHelper {
   #value: string = CARD.config.unit.default;
   #isDisabled = false;
@@ -109,7 +98,6 @@ class UnitHelper {
   }
 }
 
-export { TypedValueHelper };
 export { ValueHelper };
 export { DecimalHelper };
 export { UnitHelper };

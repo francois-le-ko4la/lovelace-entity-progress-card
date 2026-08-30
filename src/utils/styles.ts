@@ -77,23 +77,23 @@ const CARD_CSS = css`
   --feature-border-radius: var(--ha-standard-border-radius);
 }
 
-.${CARD.style.bar.sizeOptions.xsmall.label} {
+.${CARD.style.bar.sizeOptions.xsmall} {
   --progress-size: var(--epb-progress-bar-size, var(--progress-size-xs));
 }
 
-.${CARD.style.bar.sizeOptions.small.label} {
+.${CARD.style.bar.sizeOptions.small} {
   --progress-size: var(--epb-progress-bar-size, var(--progress-size-s));
 }
 
-.${CARD.style.bar.sizeOptions.medium.label} {
+.${CARD.style.bar.sizeOptions.medium} {
   --progress-size: var(--epb-progress-bar-size, var(--progress-size-m));
 }
 
-.${CARD.style.bar.sizeOptions.large.label} {
+.${CARD.style.bar.sizeOptions.large} {
   --progress-size: var(--epb-progress-bar-size, var(--progress-size-l));
 }
 
-.${CARD.style.bar.sizeOptions.xlarge.label} {
+.${CARD.style.bar.sizeOptions.xlarge} {
   --progress-size: var(--epb-progress-bar-size, var(--progress-size-xl));
   --progress-container-height: var(--progress-size-xl);
 }
@@ -179,7 +179,7 @@ ${CARD.htmlStructure.card.element} {
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative; /* permet top/bottom */
+  position: relative; /* positioning context for top/bottom */
   margin: var(--current-card-margin);
   padding: var(--current-card-padding);
   min-width: var(--epb-card-width, var(--current-card-min-width));
@@ -272,7 +272,7 @@ ${CARD.htmlStructure.card.element} {
 /* === FRAMELESS & ENTITIES STYLES === */
 .type-entities,
 .type-custom-vertical-stack-in-card,
-.${CARD.style.dynamic.frameless.class} {
+.${CARD.style.dynamic.frameless} {
   --ha-card-background: transparent;
   --ha-card-border-width: 0;
   --ha-card-box-shadow: none;
@@ -422,7 +422,7 @@ ${CARD.htmlStructure.card.element}:not(.${CARD.style.dynamic.clickable.card}) .$
   --current-container-gap: var(--gap-entities);
 }
 
-.${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.container.class} {
+.${CARD.style.dynamic.marginless} .${CARD.htmlStructure.sections.container.class} {
   --current-container-padding-top: 0;
 }
 
@@ -658,7 +658,7 @@ ha-card.label-left .status-label {
   --current-shape-size: var(--entities-shape-size);
 }
 
-.${CARD.layout.orientations.vertical.label}.${CARD.style.dynamic.marginless.class} .${CARD.htmlStructure.sections.icon.class} {
+.${CARD.layout.orientations.vertical.label}.${CARD.style.dynamic.marginless} .${CARD.htmlStructure.sections.icon.class} {
   margin-top: unset !important;
 }
 
@@ -967,7 +967,7 @@ ha-card.type-entities .${CARD.htmlStructure.sections.content.class} {
 
 .${CARD.htmlStructure.elements.nameContent.class},
 .${CARD.htmlStructure.elements.secondaryInfoWrapper.class} {
-  /* flex layout, dimensions, overflow, alignement*/
+  /* flex layout, dimensions, overflow, alignment */
   display: flex;
   z-index: 1;
   align-items: var(--group-align-items, center);
@@ -1086,7 +1086,7 @@ ha-card.horizontal.compact_below .${CARD.htmlStructure.elements.progressBar.cont
   --group-box-sizing: border-box;
 }
 
-.${CARD.layout.orientations.vertical.label} .${CARD.style.bar.sizeOptions.large.label} {
+.${CARD.layout.orientations.vertical.label} .${CARD.style.bar.sizeOptions.large} {
   --name-height: var(--vertical-name-large-height);
 }
 
@@ -1269,7 +1269,7 @@ ha-card.info-multiline {
   flex-direction: column;
   /* --group-justify-content/--group-align-items, not the properties directly: this is
      the same --group-* indirection .secondary-info-wrapper's own base rule already reads
-     (see "flex layout, dimensions, overflow, alignement" above) - overriding the variable
+     (see "flex layout, dimensions, overflow, alignment" above) - overriding the variable
      keeps this a one-line diff against that rule instead of a second, competing source of
      truth for the same properties. */
   --group-justify-content: center;
@@ -1365,10 +1365,10 @@ ha-card.info-multiline {
   --current-height-fallback: 100%;
 }
 
-.${CARD.layout.orientations.horizontal.label}.${CARD.style.bar.sizeOptions.xsmall.label} .${CARD.htmlStructure.elements.progressBar.container.class},
-.${CARD.layout.orientations.horizontal.label}.${CARD.style.bar.sizeOptions.small.label} .${CARD.htmlStructure.elements.progressBar.container.class},
-.${CARD.layout.orientations.horizontal.label}.${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.elements.progressBar.container.class},
-.${CARD.layout.orientations.horizontal.label}.${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.progressBar.container.class} {
+.${CARD.layout.orientations.horizontal.label}.${CARD.style.bar.sizeOptions.xsmall} .${CARD.htmlStructure.elements.progressBar.container.class},
+.${CARD.layout.orientations.horizontal.label}.${CARD.style.bar.sizeOptions.small} .${CARD.htmlStructure.elements.progressBar.container.class},
+.${CARD.layout.orientations.horizontal.label}.${CARD.style.bar.sizeOptions.medium} .${CARD.htmlStructure.elements.progressBar.container.class},
+.${CARD.layout.orientations.horizontal.label}.${CARD.style.bar.sizeOptions.large} .${CARD.htmlStructure.elements.progressBar.container.class} {
   max-width: var(--progress-bar-max-width, unset);
 }
 
@@ -1470,7 +1470,7 @@ ha-card.info-multiline {
 
 /* center zero - negativeInner (left half, grows from center to the left) */
 .center-zero.horizontal-bar .${CARD.htmlStructure.elements.progressBar.inner.class}.negative {
-  --inner-transform: translateX(100%); /* même direction de masquage qu'à value=0 une fois "ready" */
+  --inner-transform: translateX(100%); /* same hiding direction as value=0 once "ready" */
   --inner-border-radius: var(--_r) 0 0 var(--_r);
 }
 .center-zero.horizontal-bar.transition-ready .${CARD.htmlStructure.elements.progressBar.inner.class}.negative {
@@ -1482,7 +1482,7 @@ ha-card.info-multiline {
   --inner-border-radius: var(--_r) var(--_r) 0 0;
 }
 .vertical-bar.center-zero .${CARD.htmlStructure.elements.progressBar.inner.class}.negative {
-  --inner-transform: translateY(-100%); /* même direction de masquage qu'à value=0 une fois "ready" */
+  --inner-transform: translateY(-100%); /* same hiding direction as value=0 once "ready" */
   --inner-border-radius: 0 0 var(--_r) var(--_r);
 }
 .vertical-bar.center-zero.transition-ready .${CARD.htmlStructure.elements.progressBar.inner.class}.negative {
@@ -1560,9 +1560,9 @@ ha-card.info-multiline {
   }
 }
 
-.${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.elements.progressBar.bar.class},
-.${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.progressBar.bar.class},
-.${CARD.style.bar.sizeOptions.xlarge.label} .${CARD.htmlStructure.elements.progressBar.bar.class} {
+.${CARD.style.bar.sizeOptions.medium} .${CARD.htmlStructure.elements.progressBar.bar.class},
+.${CARD.style.bar.sizeOptions.large} .${CARD.htmlStructure.elements.progressBar.bar.class},
+.${CARD.style.bar.sizeOptions.xlarge} .${CARD.htmlStructure.elements.progressBar.bar.class} {
   --bar-segment-gap: 5px;
 }
 
@@ -1703,7 +1703,7 @@ ha-card.info-multiline {
    above, applied to position instead of fill fraction: continuous within a
    cell (real sub-cell precision), only crosses cells at the true boundary. */
 @supports (top: round(down, 1px, 1px)) {
-  .bar-segmented.${CARD.style.dynamic.progressBar.centerZero.class} .${CARD.htmlStructure.elements.progressBar.bar.class} {
+  .bar-segmented.${CARD.style.dynamic.progressBar.centerZero} .${CARD.htmlStructure.elements.progressBar.bar.class} {
     --bar-segment-gap-cz-floor: round(down, calc(50% / var(--bar-segments, 10) * 0.4), 1px);
     --bar-segment-gap-cz-modern: clamp(
       3px,
@@ -1714,11 +1714,11 @@ ha-card.info-multiline {
     --bar-segment-gap-cz-effective: var(--epb-bar-segment-gap, var(--bar-segment-gap-cz-final));
   }
 
-  .bar-segmented:not(.${CARD.style.dynamic.progressBar.centerZero.class}) .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-  .bar-segmented:not(.${CARD.style.dynamic.progressBar.centerZero.class}) .${CARD.htmlStructure.elements.progressBar.highWatermark.class},
-  .bar-segmented:not(.${CARD.style.dynamic.progressBar.centerZero.class}) .${CARD.htmlStructure.elements.progressBar.minMarker.class},
-  .bar-segmented:not(.${CARD.style.dynamic.progressBar.centerZero.class}) .${CARD.htmlStructure.elements.progressBar.maxMarker.class},
-  .bar-segmented:not(.${CARD.style.dynamic.progressBar.centerZero.class}) .${CARD.htmlStructure.elements.progressBar.averageMarker.class} {
+  .bar-segmented:not(.${CARD.style.dynamic.progressBar.centerZero}) .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+  .bar-segmented:not(.${CARD.style.dynamic.progressBar.centerZero}) .${CARD.htmlStructure.elements.progressBar.highWatermark.class},
+  .bar-segmented:not(.${CARD.style.dynamic.progressBar.centerZero}) .${CARD.htmlStructure.elements.progressBar.minMarker.class},
+  .bar-segmented:not(.${CARD.style.dynamic.progressBar.centerZero}) .${CARD.htmlStructure.elements.progressBar.maxMarker.class},
+  .bar-segmented:not(.${CARD.style.dynamic.progressBar.centerZero}) .${CARD.htmlStructure.elements.progressBar.averageMarker.class} {
     --segment-slot: calc(var(--wm-value-num, 0) / 100 * var(--bar-segments, 2));
     --segment-cell-index: clamp(0, round(down, var(--segment-slot), 1), calc(var(--bar-segments, 2) - 1));
     --segment-frac: calc(var(--segment-slot) - var(--segment-cell-index));
@@ -1731,11 +1731,11 @@ ha-card.info-multiline {
     );
   }
 
-  .bar-segmented.${CARD.style.dynamic.progressBar.centerZero.class} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-  .bar-segmented.${CARD.style.dynamic.progressBar.centerZero.class} .${CARD.htmlStructure.elements.progressBar.highWatermark.class},
-  .bar-segmented.${CARD.style.dynamic.progressBar.centerZero.class} .${CARD.htmlStructure.elements.progressBar.minMarker.class},
-  .bar-segmented.${CARD.style.dynamic.progressBar.centerZero.class} .${CARD.htmlStructure.elements.progressBar.maxMarker.class},
-  .bar-segmented.${CARD.style.dynamic.progressBar.centerZero.class} .${CARD.htmlStructure.elements.progressBar.averageMarker.class} {
+  .bar-segmented.${CARD.style.dynamic.progressBar.centerZero} .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
+  .bar-segmented.${CARD.style.dynamic.progressBar.centerZero} .${CARD.htmlStructure.elements.progressBar.highWatermark.class},
+  .bar-segmented.${CARD.style.dynamic.progressBar.centerZero} .${CARD.htmlStructure.elements.progressBar.minMarker.class},
+  .bar-segmented.${CARD.style.dynamic.progressBar.centerZero} .${CARD.htmlStructure.elements.progressBar.maxMarker.class},
+  .bar-segmented.${CARD.style.dynamic.progressBar.centerZero} .${CARD.htmlStructure.elements.progressBar.averageMarker.class} {
     --segment-cell-width: calc(
       (50% - (var(--bar-segments, 2) - 1) * var(--bar-segment-gap-cz-effective)) / var(--bar-segments, 2)
     );
@@ -2048,13 +2048,8 @@ ha-card.info-multiline {
   }
 }
 
-/* Base tier: ha-card's own background stays neutral - a ::before overlay
-   (solid alert color at a fixed low opacity) carries the tint instead,
-   matching modern's 15% color-mix() look without needing color-mix() at
-   all (old engines can't compute it - see issue #128). Modern tier
-   (@supports below) is untouched - still color-mix() directly on ha-card's
-   own background-color - the overlay is switched off there instead of
-   stacking both. */
+/* Same overlay-vs-background-color reasoning as epb-alert-background's own
+   comment above - old engines get this fixed-opacity tint instead. */
 .alert-active.alert-background {
   border-color: var(--epb-card-border-color, var(--ha-card-border-color, var(--divider-color, #e0e0e0)));
   background-color: var(--ha-card-background, var(--card-background-color));
@@ -2274,10 +2269,7 @@ ha-card.info-multiline {
   will-change: transform;
 }
 
-/**
- * --- Horizontal center-zero negative: gradient on ::before, scaleX from left
- * ---
- */
+/* --- Horizontal center-zero negative: gradient on ::before, scaleX from left --- */
 .horizontal-bar.center-zero:is(
   .${CARD.style.dynamic.progressBar.effect.glass.class},
   .${CARD.style.dynamic.progressBar.effect.gradient.class},
@@ -2307,10 +2299,7 @@ ha-card.info-multiline {
   will-change: transform;
 }
 
-/**
- * --- Vertical center-zero negative: gradient on ::before, scaleY from bottom
- * ---
- */
+/* --- Vertical center-zero negative: gradient on ::before, scaleY from bottom --- */
 .vertical-bar.center-zero:is(
   .${CARD.style.dynamic.progressBar.effect.glass.class},
   .${CARD.style.dynamic.progressBar.effect.gradient.class},
@@ -2325,10 +2314,7 @@ ha-card.info-multiline {
   will-change: transform;
 }
 
-/**
- * --- Transition: sync ::before scale with .inner translate (transition-ready
- * only) ---
- */
+/* --- Transition: sync ::before scale with .inner translate (transition-ready only) --- */
 .horizontal-bar.transition-ready:is(
   .${CARD.style.dynamic.progressBar.effect.glass.class},
   .${CARD.style.dynamic.progressBar.effect.gradient.class},
@@ -2375,7 +2361,7 @@ ha-card.info-multiline {
   will-change: transform;
 }
 
-/* horizontales */
+/* --- Horizontal --- */
 .${CARD.style.dynamic.progressBar.effect.shimmer.class} {
   --shimmer-direction: 90deg;
   --shimmer-animation: shimmer-ltr;
@@ -2386,7 +2372,7 @@ ha-card.info-multiline {
   --shimmer-animation: shimmer-rtl;
 }
 
-/* verticales */
+/* --- Vertical --- */
 .vertical.up-orientation.${CARD.style.dynamic.progressBar.effect.shimmer.class} {
   --shimmer-direction: 0deg;
   --shimmer-animation: shimmer-btt;
@@ -2753,18 +2739,18 @@ ha-card.info-multiline {
    plain and only the marker (below) still moves.
    ============================================================================= */
 
-.rainbow-full-bar:not(.${CARD.style.dynamic.progressBar.centerZero.class})
+.rainbow-full-bar:not(.${CARD.style.dynamic.progressBar.centerZero})
   .${CARD.htmlStructure.elements.progressBar.inner.class} {
   display: none;
 }
 
-.rainbow-full-bar:not(.${CARD.style.dynamic.progressBar.centerZero.class})
+.rainbow-full-bar:not(.${CARD.style.dynamic.progressBar.centerZero})
   .${CARD.htmlStructure.elements.progressBar.bar.class} {
   --epb-progress-bar-background-color: transparent;
   background-image: var(--epb-progress-bar-color, var(${CARD.style.dynamic.progressBar.color.var}, none));
 }
 
-.${CARD.style.dynamic.progressBar.centerZero.class}.rainbow-full-bar
+.${CARD.style.dynamic.progressBar.centerZero}.rainbow-full-bar
   .${CARD.htmlStructure.elements.progressBar.inner.class} {
   --inner-size: 1;
 }
@@ -2869,15 +2855,15 @@ ha-card.info-multiline {
    well past it already. ViewCore.minGridRows reserves one extra grid row
    for this same combination, so the card has the budget for the growth
    instead of squeezing it out of the rest of the layout. */
-ha-card.vertical.default.rainbow-full-bar.${CARD.style.bar.sizeOptions.xsmall.label},
-ha-card.vertical.default.rainbow-full-bar.${CARD.style.bar.sizeOptions.small.label},
-ha-card.vertical.default.rainbow-full-bar.${CARD.style.bar.sizeOptions.medium.label} {
+ha-card.vertical.default.rainbow-full-bar.${CARD.style.bar.sizeOptions.xsmall},
+ha-card.vertical.default.rainbow-full-bar.${CARD.style.bar.sizeOptions.small},
+ha-card.vertical.default.rainbow-full-bar.${CARD.style.bar.sizeOptions.medium} {
   --current-specific-progress-container-height: 16px;
   --current-specific-padding-top: 16px;
 }
-ha-card.vertical.default.rainbow-full-bar.${CARD.style.bar.sizeOptions.xsmall.label} .${CARD.htmlStructure.sections.content.class},
-ha-card.vertical.default.rainbow-full-bar.${CARD.style.bar.sizeOptions.small.label} .${CARD.htmlStructure.sections.content.class},
-ha-card.vertical.default.rainbow-full-bar.${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.sections.content.class} {
+ha-card.vertical.default.rainbow-full-bar.${CARD.style.bar.sizeOptions.xsmall} .${CARD.htmlStructure.sections.content.class},
+ha-card.vertical.default.rainbow-full-bar.${CARD.style.bar.sizeOptions.small} .${CARD.htmlStructure.sections.content.class},
+ha-card.vertical.default.rainbow-full-bar.${CARD.style.bar.sizeOptions.medium} .${CARD.htmlStructure.sections.content.class} {
   --current-content-height: calc(var(--name-height) + var(--detail-height) + 16px);
 }
 
@@ -2891,9 +2877,9 @@ ha-card.vertical.default.rainbow-full-bar.${CARD.style.bar.sizeOptions.medium.la
    --progress-size via inheritance the way .default's .container does, so
    --current-specific-progress-container-height needs a fallback slot on
    .below-container too, added at its own rule below). */
-ha-card.vertical.below.rainbow-full-bar.${CARD.style.bar.sizeOptions.xsmall.label},
-ha-card.vertical.below.rainbow-full-bar.${CARD.style.bar.sizeOptions.small.label},
-ha-card.vertical.below.rainbow-full-bar.${CARD.style.bar.sizeOptions.medium.label} {
+ha-card.vertical.below.rainbow-full-bar.${CARD.style.bar.sizeOptions.xsmall},
+ha-card.vertical.below.rainbow-full-bar.${CARD.style.bar.sizeOptions.small},
+ha-card.vertical.below.rainbow-full-bar.${CARD.style.bar.sizeOptions.medium} {
   --current-specific-progress-container-height: 16px;
 }
 
@@ -2925,20 +2911,47 @@ ha-card.vertical.below.rainbow-full-bar.${CARD.style.bar.sizeOptions.medium.labe
    exceeds 14px, so the box has zero slack of its own and the ring
    overshoots past .bar-container's own bounds into whatever's flush
    against it - clipped instead of a clean rounded cap. */
-.rainbow-full-bar.${CARD.style.bar.sizeOptions.medium.label} .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
+.rainbow-full-bar.${CARD.style.bar.sizeOptions.medium} .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
   --rainbow-marker-width: 7px;
   --rainbow-marker-border-width: 1.5px;
   --mark-height: calc(100% - 3px);
 }
-.rainbow-full-bar.${CARD.style.bar.sizeOptions.large.label} .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
+.rainbow-full-bar.${CARD.style.bar.sizeOptions.large} .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
   --rainbow-marker-width: 9px;
   --rainbow-marker-border-width: 2px;
   --mark-height: calc(100% - 4px);
 }
-.rainbow-full-bar.${CARD.style.bar.sizeOptions.xlarge.label} .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
+.rainbow-full-bar.${CARD.style.bar.sizeOptions.xlarge} .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
   --rainbow-marker-width: 12px;
   --rainbow-marker-border-width: 3px;
   --mark-height: calc(100% - 6px);
+}
+
+/* A Feature's row height is fixed regardless of bar_size (--feature-height,
+   see .entity-progress-feature above), so the "100%"-relative rules above
+   left the mark the same height at every bar_size. Re-anchored to the same
+   container height Card itself uses per size (--progress-size-l for every
+   size but xlarge - see the root/.xlarge rules above) for the same look. */
+.entity-progress-feature.rainbow-full-bar .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
+  --mark-height: calc(var(--progress-size-l) - 2px);
+}
+.entity-progress-feature.rainbow-full-bar.${CARD.style.bar.sizeOptions.medium} .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
+  --mark-height: calc(var(--progress-size-l) - 3px);
+}
+.entity-progress-feature.rainbow-full-bar.${CARD.style.bar.sizeOptions.large} .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
+  --mark-height: calc(var(--progress-size-l) - 4px);
+}
+.entity-progress-feature.rainbow-full-bar.${CARD.style.bar.sizeOptions.xlarge} .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
+  --mark-height: calc(var(--progress-size-xl) - 6px);
+}
+
+/* bar_position: top/bottom forces --progress-container-height back down to
+   xs regardless of bar_size (.top-container/.bottom-container above) - same
+   specificity as the per-size rules just above (so source order decides),
+   restoring the same row-relative floor Card's own top/bottom rule uses. */
+.entity-progress-feature.rainbow-full-bar .top-container .${CARD.htmlStructure.elements.progressBar.valueMarker.class},
+.entity-progress-feature.rainbow-full-bar .bottom-container .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
+  --mark-height: max(calc(100% - 2px), 10px);
 }
 
 /* Always styled like xlarge here (12px wide, 3px ring), not scaled by
@@ -2966,7 +2979,7 @@ ha-card.vertical.below.rainbow-full-bar.${CARD.style.bar.sizeOptions.medium.labe
    position) - --progress-bar-value is signed here (-1..1, see
    HABase._updateCSS/ViewBase.percent), so 0 always lands the marker at the
    visual center regardless of min_value/max_value/center_zero_value. */
-.${CARD.style.dynamic.progressBar.centerZero.class}.rainbow-full-bar .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
+.${CARD.style.dynamic.progressBar.centerZero}.rainbow-full-bar .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
   /* Same clamp reasoning as the base rule's own --mark-left above (ring
      width included), just centered on 50% (signed -1..1 value) instead of
      running 0-100%. */
@@ -2976,7 +2989,7 @@ ha-card.vertical.below.rainbow-full-bar.${CARD.style.bar.sizeOptions.medium.labe
     calc(100% - var(--mark-width) / 2 - var(--mark-border-width))
   );
 }
-.vertical.up-orientation.overlay.${CARD.style.dynamic.progressBar.centerZero.class}.rainbow-full-bar .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
+.vertical.up-orientation.overlay.${CARD.style.dynamic.progressBar.centerZero}.rainbow-full-bar .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
   /* --mark-left stays the base rule's fixed 50% (it's the cross axis here -
      centers the pill across the bar's *width* - unrelated to center_zero,
      which only ever affects position along the *fill* axis: --mark-bottom
@@ -3086,7 +3099,7 @@ ${CARD.htmlStructure.card.element}:not(.${CARD.style.dynamic.clickable.card}) {
 }
 
 /* =============================================================================
-   TRANSFORMATION VERTICALE - ORIENTATION DU BAS VERS LE HAUT
+   VERTICAL TRANSFORMATION - BOTTOM-TO-TOP ORIENTATION
    ============================================================================= */
 
 .vertical.up-orientation .container {
@@ -3111,6 +3124,39 @@ ${CARD.htmlStructure.card.element}:not(.${CARD.style.dynamic.clickable.card}) {
  * 🛠️ Editor component styles
  ******************************************************************************/
 
+// Shared by CHIPS_HOST_STYLE/BAR_STACK_EDITOR_STYLE/CUSTOM_THEME_EDITOR_STYLE
+// below - each is its own shadow root's stylesheet, so plain string sharing
+// (not a CSS-level mechanism) is enough, no cascade-order risk.
+const LABEL_STYLE = `.lbl {
+    display: block;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--primary-text-color);
+    padding-bottom: 4px;
+  }`;
+
+// Shared by BAR_STACK_EDITOR_STYLE/CUSTOM_THEME_EDITOR_STYLE below - each
+// row's own delete button and the "+ Add..." row beneath the list.
+const ROW_DELETE_STYLE = `.del-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    color: var(--secondary-text-color);
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    box-sizing: border-box;
+  }
+  .del-btn:hover { color: var(--primary-color); }
+  .del-btn ha-svg-icon { width: 16px; height: 16px; }
+  .add-row { display: flex; justify-content: flex-start; margin-top: 4px; }`;
+
 const CHIPS_HOST_STYLE = css`
   :host {
     display: block;
@@ -3123,8 +3169,7 @@ const CHIPS_HOST_STYLE = css`
     --chip-standby-hover: var(--ha-color-fill-primary-normal-hover, var(--divider-color));
     --chip-accent-hover: var(--ha-color-fill-primary-loud-hover, var(--primary-color));
   }
-  .lbl { display: block; font-size: 1rem; font-weight: 400; line-height: 1.5;
-    color: var(--primary-text-color); padding-bottom: 4px; }
+  ${LABEL_STYLE}
   /* Segmented (2-mode) sets read as one control, not a stacked list - label
      and pill share a row, set on the host itself (see chips.ts). */
   :host(.inline-row) { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
@@ -3155,14 +3200,7 @@ const CHIPS_HOST_STYLE = css`
 
 const BAR_STACK_EDITOR_STYLE = css`
   :host { display: block; width: 100%; }
-  .lbl {
-    display: block;
-    font-size: 1rem;
-    font-weight: 400;
-    line-height: 1.5;
-    color: var(--primary-text-color);
-    padding-bottom: 4px;
-  }
+  ${LABEL_STYLE}
   .row-card {
     display: flex;
     flex-direction: column;
@@ -3174,24 +3212,7 @@ const BAR_STACK_EDITOR_STYLE = css`
   }
   .row-header { display: flex; align-items: center; justify-content: space-between; }
   .row-title { font-size: 0.9rem; color: var(--secondary-text-color); }
-  .del-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-    color: var(--secondary-text-color);
-    border-radius: 50%;
-    width: 28px;
-    height: 28px;
-    box-sizing: border-box;
-  }
-  .del-btn:hover { color: var(--primary-color); }
-  .del-btn ha-svg-icon { width: 16px; height: 16px; }
-  .add-row { display: flex; justify-content: flex-start; margin-top: 4px; }
+  ${ROW_DELETE_STYLE}
 `;
 
 const ACTION_PICKER_STYLE = css`
@@ -3235,14 +3256,7 @@ const ACTION_PICKER_STYLE = css`
 
 const CUSTOM_THEME_EDITOR_STYLE = css`
   :host { display: block; width: 100%; }
-  .lbl {
-    display: block;
-    font-size: 1rem;
-    font-weight: 400;
-    line-height: 1.5;
-    color: var(--primary-text-color);
-    padding-bottom: 4px;
-  }
+  ${LABEL_STYLE}
   .zone {
     display: flex;
     flex-direction: column;
@@ -3256,24 +3270,7 @@ const CUSTOM_THEME_EDITOR_STYLE = css`
   .zone-title { font-size: 0.9rem; color: var(--secondary-text-color); }
   .numbers-row { display: flex; gap: 16px; }
   .numbers-row > * { width: calc((100% - 16px) * 0.5); }
-  .del-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-    color: var(--secondary-text-color);
-    border-radius: 50%;
-    width: 28px;
-    height: 28px;
-    box-sizing: border-box;
-  }
-  .del-btn:hover { color: var(--primary-color); }
-  .del-btn ha-svg-icon { width: 16px; height: 16px; }
-  .add-row { display: flex; justify-content: flex-start; margin-top: 4px; }
+  ${ROW_DELETE_STYLE}
 `;
 
 const EDITOR_BASE_STYLE = css`
@@ -3355,7 +3352,6 @@ const CONSTRUCTIBLE_STYLESHEETS = (() => {
   }
 })();
 
-export { css };
 export { CARD_CSS };
 export { CHIPS_HOST_STYLE };
 export { BAR_STACK_EDITOR_STYLE };

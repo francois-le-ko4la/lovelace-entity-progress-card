@@ -11,9 +11,6 @@ import type { Config } from '../utils/types.js';
 
 type CleanupFn = () => void;
 
-/**
- * Manage ressources: interval, timeout, listener, subscription.
- */
 class ResourceManager {
   #debug = CARD_CONTEXT.debug.ressourceManager;
   #log: LoggerInstance | null = null;
@@ -65,7 +62,7 @@ class ResourceManager {
   }
 
   has(id: string): boolean {
-    return this.#resources.has(id); // Vérifie si un ID existe dans la Map
+    return this.#resources.has(id);
   }
 
   setTimeout(handler: () => void, timeout: number, id?: string): string {
@@ -203,9 +200,9 @@ class ResourceManager {
  * this._dom.register("card",  this.shadowRoot.querySelector(".card"));
  * this._dom.register("title", this.shadowRoot.querySelector(".title"));
  *
- * // Mises à jour — dédupliquées + batchées automatiquement
+ * // Updates - deduplicated + batched automatically
  * this._dom.setStyle("card",  "--color-bg", "#fff");
- * this._dom.setText ("title", "Température");
+ * this._dom.setText ("title", "Temperature");
  * this._dom.setHTML  ("card",  "<span>...</span>");
  *
  * // Destroy
@@ -237,24 +234,15 @@ class DOMHelper {
 
   // ─── Element registration ─────────────────────────────────────────────────
 
-  /**
-   * Registers a DOM element under a given key.
-   */
   register(key: string, element: HTMLElement) {
     this.#log?.debug('DOMHelper.register(key, element):', { key, element });
     this._domElements.set(key, element);
   }
 
-  /**
-   * Returns the DOM element associated with the given key.
-   */
   get(key: string): HTMLElement | undefined {
     return this._domElements.get(key);
   }
 
-  /**
-   * Unregisters a DOM element and clears its associated cache entries.
-   */
   unregister(key: string) {
     this._domElements.delete(key);
     for (const cacheKey of this._appliedValues.keys()) {
@@ -266,11 +254,8 @@ class DOMHelper {
 
   // ─── RAF queue ────────────────────────────────────────────────────────────
 
-  /**
-   * Enqueues a DOM update identified by a unique key + prop combination. If the
-   * same key:prop is enqueued multiple times, only the latest function runs.
-   * Schedules a single RAF flush if not already pending.
-   */
+  // Keyed by key+prop: enqueuing the same one twice overwrites, not queues -
+  // only the latest function for that pair ever runs, in a single RAF flush.
   enqueue(key: string, prop: string, updateFn: UpdateFn) {
     this._pendingUpdates.set(`${key}:${prop}`, updateFn);
 
@@ -280,9 +265,6 @@ class DOMHelper {
     }
   }
 
-  /**
-   * Flushes all pending updates in a single RAF callback.
-   */
   _flush() {
     const updates = this._pendingUpdates;
     this._pendingUpdates = new Map();
@@ -293,22 +275,38 @@ class DOMHelper {
 
   // ─── DOM helpers with cache ───────────────────────────────────────────────
 
-  /**
-   * Sets a CSS custom property on the element registered under the given key.
-   * Skipped if the value matches the cache — no DOM read required.
-   */
-  setStyle(key: string, prop: string, value: CacheValue) {
+  // `_`-prefixed so EditorDOMHelper (src/editor/dom-helper.ts) can reuse it.
+  // skipcq: JS-0323 -- el is whatever _domElements stores (see its own comment)
+  _cachedUpdate(key: string, cacheSuffix: string, value: CacheValue, apply: (el: any, value: CacheValue) => void) {
     if (is.nullish(value)) return;
-    const cacheKey = `${key}:style:${prop}`;
+    const cacheKey = `${key}:${cacheSuffix}`;
     if (this._appliedValues.get(cacheKey) === value) return;
 
     const el = this._domElements.get(key);
     if (!el) return;
 
-    this.enqueue(key, `style:${prop}`, () => {
-      el.style.setProperty(prop, String(value));
+    this.enqueue(key, cacheSuffix, () => {
+      apply(el, value);
       this._appliedValues.set(cacheKey, value);
     });
+  }
+
+  // Sync counterpart to #cachedUpdate, for the *Now methods below - no RAF,
+  // no cache-skip, just an immediate write and cache record.
+  #applyNow(key: string, cacheKey: string, value: CacheValue, apply: (el: HTMLElement, value: CacheValue) => void) {
+    if (is.nullish(value)) return;
+    const el = this._domElements.get(key);
+    if (!el) return;
+    apply(el, value);
+    this._appliedValues.set(cacheKey, value);
+  }
+
+  /**
+   * Sets a CSS custom property on the element registered under the given key.
+   * Skipped if the value matches the cache — no DOM read required.
+   */
+  setStyle(key: string, prop: string, value: CacheValue) {
+    this._cachedUpdate(key, `style:${prop}`, value, (el, v) => el.style.setProperty(prop, String(v)));
   }
 
   /**
@@ -336,13 +334,7 @@ class DOMHelper {
    * queue. Use when immediate DOM update is required.
    */
   setStyleNow(key: string, prop: string, value: CacheValue) {
-    if (is.nullish(value)) return;
-
-    const el = this._domElements.get(key);
-    if (!el) return;
-
-    el.style.setProperty(prop, String(value));
-    this._appliedValues.set(`${key}:style:${prop}`, value); // ← met à jour le cache après
+    this.#applyNow(key, `${key}:style:${prop}`, value, (el, v) => el.style.setProperty(prop, String(v)));
   }
 
   /**
@@ -350,16 +342,8 @@ class DOMHelper {
    * Skipped if the value matches the cache.
    */
   setText(key: string, value: CacheValue) {
-    if (is.nullish(value)) return;
-    const cacheKey = `${key}:text`;
-    if (this._appliedValues.get(cacheKey) === value) return;
-
-    const el = this._domElements.get(key);
-    if (!el) return;
-
-    this.enqueue(key, 'text', () => {
-      el.textContent = String(value);
-      this._appliedValues.set(cacheKey, value);
+    this._cachedUpdate(key, 'text', value, (el, v) => {
+      el.textContent = String(v);
     });
   }
 
@@ -368,13 +352,9 @@ class DOMHelper {
    * Use when immediate DOM update is required (mirrors setStyleNow).
    */
   setTextNow(key: string, value: CacheValue) {
-    if (is.nullish(value)) return;
-
-    const el = this._domElements.get(key);
-    if (!el) return;
-
-    el.textContent = String(value);
-    this._appliedValues.set(`${key}:text`, value);
+    this.#applyNow(key, `${key}:text`, value, (el, v) => {
+      el.textContent = String(v);
+    });
   }
 
   // CF5 - issue (security) resolved - Jinja results are injected via innerHTML
@@ -457,16 +437,8 @@ class DOMHelper {
    * Skipped if the value matches the cache.
    */
   setHTML(key: string, value: CacheValue) {
-    if (is.nullish(value)) return;
-    const cacheKey = `${key}:html`;
-    if (this._appliedValues.get(cacheKey) === value) return;
-
-    const el = this._domElements.get(key);
-    if (!el) return;
-
-    this.enqueue(key, 'html', () => {
-      el.innerHTML = DOMHelper.sanitizeHTML(value);
-      this._appliedValues.set(cacheKey, value);
+    this._cachedUpdate(key, 'html', value, (el, v) => {
+      el.innerHTML = DOMHelper.sanitizeHTML(v);
     });
   }
 
@@ -509,17 +481,7 @@ class DOMHelper {
    * Skipped if the value matches the cache.
    */
   setAttribute(key: string, attr: string, value: CacheValue) {
-    if (is.nullish(value)) return;
-    const cacheKey = `${key}:attr:${attr}`;
-    if (this._appliedValues.get(cacheKey) === value) return;
-
-    const el = this._domElements.get(key);
-    if (!el) return;
-
-    this.enqueue(key, `attr:${attr}`, () => {
-      el.setAttribute(attr, String(value));
-      this._appliedValues.set(cacheKey, value);
-    });
+    this._cachedUpdate(key, `attr:${attr}`, value, (el, v) => el.setAttribute(attr, String(v)));
   }
   // ─── Walkthrough ──────────────────────────────────────────────────────────
 
@@ -532,10 +494,6 @@ class DOMHelper {
 
   // ─── Cleanup ──────────────────────────────────────────────────────────────
 
-  /**
-   * Clears all internal state: elements, cache, and pending updates.
-   * Should be called when the component is destroyed.
-   */
   destroy() {
     this._domElements.clear();
     this._appliedValues.clear();
@@ -544,14 +502,7 @@ class DOMHelper {
   }
 }
 
-/**
- * Centralized handler for `xyz_action` logic.
- * Deprecated for HA 2026.3+
- *
- * 📌 Purpose: - Encapsulates and manages the execution, validation, and
- * dispatch of `xyz_action`. - Promotes reusable, maintainable logic for
- * action-related features.
- */
+// Centralized handler for `xyz_action` logic. Deprecated for HA 2026.3+.
 
 // `config` is the raw card config (entity + per-action `*_action` bags) -
 // deliberately untyped: the action-config shape belongs to HA's own

@@ -8,8 +8,6 @@ import { is } from '../utils/common-checks.js';
 import { Logger, traceInstance, type LoggerInstance } from '../utils/log.js';
 import type { EntityState, HomeAssistant } from '../utils/hass-provider.js';
 
-/**
- */
 class ChangeTracker {
   #debug = CARD_CONTEXT.debug.hass;
   #log: LoggerInstance;

@@ -20,7 +20,15 @@ import {
 import { is, has, assertDefined } from '../utils/common-checks.js';
 import { initLogger, type LoggerInstance } from '../utils/log.js';
 import { HassProviderSingleton } from '../utils/hass-provider.js';
-import { YamlSchemaFactory, markValue, isMarkOverride } from './schema.js';
+import {
+  YamlSchemaFactory,
+  markValue,
+  isMarkOverride,
+  SCHEMA_DEFAULTS,
+  entityOf,
+  attributeOf,
+  type ValueConfig,
+} from './schema.js';
 import { EntityHelper } from './entity-helper.js';
 import { resolveDisplayUnit, resolveDisplayDecimal } from '../utils/display-defaults.js';
 import type { LovelaceConfig, Config } from '../utils/types.js';
@@ -53,9 +61,6 @@ type ParsedConfig = {
   errors: { path: (string | number)[]; errorCode: string | null; severity: string }[];
 };
 
-/**
- * base class for managing and validating all card configuration.
- */
 class BaseConfigHelper {
   #hassProvider = HassProviderSingleton.getInstance();
   #HAError: HAError = null;
@@ -75,7 +80,7 @@ class BaseConfigHelper {
     severity: null,
     errors: [],
   };
-  _configResolved: Config = {} as Config; // valeurs dérivées de la config, calculées une seule fois par set config()
+  _configResolved: Config = {} as Config; // derived from config, computed once per set config()
   // The real shape comes from YamlSchemaFactory (see schema.ts) - subclasses
   // assign a concrete schema here (see CardConfigHelper etc. below).
   _yamlSchema: Schema | null = null;
@@ -129,14 +134,13 @@ class BaseConfigHelper {
     const maxIsEntity = is.plainObject(config.max_value) && is.nonEmptyString(config.max_value.entity);
     const resolvedUnit = resolveDisplayUnit(config.unit, maxIsEntity, entity.unit);
     config.resolvedUnit = resolvedUnit;
-    config.resolvedDecimal = resolveDisplayDecimal(
-      config.decimal,
-      config.unit,
+    config.resolvedDecimal = resolveDisplayDecimal(config.decimal, {
+      configUnit: config.unit,
       resolvedUnit,
-      entity.precision,
-      entity.entityType,
-      entity.unit,
-    );
+      entityPrecision: entity.precision,
+      entityType: entity.entityType,
+      entityUnit: entity.unit,
+    });
   }
 
   // Computed once from the validated config - raw config + derived values
@@ -150,11 +154,6 @@ class BaseConfigHelper {
     } as unknown as Config;
   }
 
-  /**
-   * Normalise `center_zero` (boolean | { value: number }) en une forme
-   * exploitable. - false / undefined -> désactivé, zéro = 0 - true -> activé,
-   * zéro = 0 - { value: 230 } -> activé, zéro = 230
-   */
   static #resolveCenterZero(centerZero: boolean | { value?: number; growth_percent?: boolean } | null | undefined): {
     enabled: boolean;
     zeroValue: number;
@@ -233,20 +232,18 @@ class BaseConfigHelper {
     };
   }
 
+  static #warnDeprecated(msg: string) {
+    console.warn(`${META.types.card.typeName.toUpperCase()} - ${msg}`);
+  }
+
   static #logDeprecatedOption(config: LovelaceConfig) {
     if (config.navigate_to !== undefined)
-      console.warn(
-        `${META.types.card.typeName.toUpperCase()} - navigate_to option is deprecated and has been removed.`,
-      );
+      BaseConfigHelper.#warnDeprecated('navigate_to option is deprecated and has been removed.');
     if (config.show_more_info !== undefined)
-      console.warn(
-        `${META.types.card.typeName.toUpperCase()} - show_more_info option is deprecated and has been removed.`,
-      );
+      BaseConfigHelper.#warnDeprecated('show_more_info option is deprecated and has been removed.');
     if (['battery', 'cpu', 'memory'].includes(config.theme))
-      console.warn(
-        `${META.types.card.typeName.toUpperCase()} - theme: ${
-          config.theme
-        } is deprecated and will be removed in a future release. Please migrate to the recommended alternative...`,
+      BaseConfigHelper.#warnDeprecated(
+        `theme: ${config.theme} is deprecated and will be removed in a future release. Please migrate to the recommended alternative...`,
       );
     // max_value used to be number|entity-id-string, disambiguated by sniffing
     // the value's shape at runtime (the same pattern that caused min_value's
@@ -254,8 +251,8 @@ class BaseConfigHelper {
     // is auto-migrated for this session (see CardConfigHelper._customizeConfig)
     // but should be updated in the YAML.
     if (is.nonEmptyString(config.max_value))
-      console.warn(
-        `${META.types.card.typeName.toUpperCase()} - max_value: <entity id> is deprecated and will be removed in a future release. ` +
+      BaseConfigHelper.#warnDeprecated(
+        'max_value: <entity id> is deprecated and will be removed in a future release. ' +
           'Please migrate to max_value: { entity: <entity id>, attribute: <optional> }. Your configuration was automatically migrated for this session.',
       );
     // watermark.low/high used to accept the same bare entity-id-string form
@@ -263,13 +260,13 @@ class BaseConfigHelper {
     // high_attribute sibling key - same trap, same fix (see
     // BaseConfigHelper._migrateWatermarkOptions).
     if (is.nonEmptyString(config.watermark?.low))
-      console.warn(
-        `${META.types.card.typeName.toUpperCase()} - watermark.low: <entity id> is deprecated and will be removed in a future release. ` +
+      BaseConfigHelper.#warnDeprecated(
+        'watermark.low: <entity id> is deprecated and will be removed in a future release. ' +
           'Please migrate to watermark.low: { entity: <entity id>, attribute: <optional> }. Your configuration was automatically migrated for this session.',
       );
     if (is.nonEmptyString(config.watermark?.high))
-      console.warn(
-        `${META.types.card.typeName.toUpperCase()} - watermark.high: <entity id> is deprecated and will be removed in a future release. ` +
+      BaseConfigHelper.#warnDeprecated(
+        'watermark.high: <entity id> is deprecated and will be removed in a future release. ' +
           'Please migrate to watermark.high: { entity: <entity id>, attribute: <optional> }. Your configuration was automatically migrated for this session.',
       );
     // low_as/high_as/low_color/high_color/disable_low/disable_high are now
@@ -282,24 +279,22 @@ class BaseConfigHelper {
         config.watermark?.[`${side}_color`] !== undefined ||
         config.watermark?.[`disable_${side}`] !== undefined
       )
-        console.warn(
-          `${META.types.card.typeName.toUpperCase()} - watermark.${side}_as/${side}_color/disable_${side} are deprecated and will be removed in a future release. ` +
+        BaseConfigHelper.#warnDeprecated(
+          `watermark.${side}_as/${side}_color/disable_${side} are deprecated and will be removed in a future release. ` +
             `Please migrate to watermark.${side}: { value: ..., as, color } or watermark.${side}: false. Your configuration was automatically migrated for this session.`,
         );
     });
     if (config.disable_unit !== undefined)
-      console.warn(
-        `${META.types.card.typeName.toUpperCase()} - disable_unit is deprecated and will be removed in a future release. ` +
-          "Please migrate to hide: ['unit', ...]. Your configuration was automatically migrated for this session.",
+      BaseConfigHelper.#warnDeprecated(
+        "disable_unit is deprecated and will be removed in a future release. Please migrate to hide: ['unit', ...]. Your configuration was automatically migrated for this session.",
       );
     // additions used to be a bare array of {entity, attribute}; it is now the
     // entities list of bar_stack, alongside a mode ('stacked' by default,
     // 'proportional' preserves the legacy renormalized-total behavior exactly -
     // see CardConfigHelper._customizeConfig.
     if (is.array(config.additions))
-      console.warn(
-        `${META.types.card.typeName.toUpperCase()} - additions is deprecated and will be removed in a future release. ` +
-          "Please migrate to bar_stack: { mode: 'proportional', entities: [...] }. Your configuration was automatically migrated for this session.",
+      BaseConfigHelper.#warnDeprecated(
+        "additions is deprecated and will be removed in a future release. Please migrate to bar_stack: { mode: 'proportional', entities: [...] }. Your configuration was automatically migrated for this session.",
       );
   }
 
@@ -372,8 +367,8 @@ class BaseConfigHelper {
     // exists, attribute exists on it) apply identically to all six, just
     // against a different config value and error path.
     const checkValueConfig = (valueCfg: unknown, entityPath: string, attributePath: string) => {
-      const entityId = is.plainObject(valueCfg) ? valueCfg.entity : null;
-      const attribute = is.plainObject(valueCfg) ? valueCfg.attribute : null;
+      const entityId = entityOf(valueCfg as ValueConfig) ?? null;
+      const attribute = attributeOf(valueCfg as ValueConfig) ?? null;
       const state = resolve(entityId);
       return [
         { condition: is.nonEmptyString(entityId) && !state, path: entityPath, errorCode: ENTITY_NOT_FOUND },
@@ -398,12 +393,12 @@ class BaseConfigHelper {
       // value | { value, as, opacity, color }) - the error path picks the
       // short or the .value-nested form depending on which one is present.
       ...checkValueConfig(
-        markValue(this.config.watermark?.low, CARD.config.defaults.watermark.low),
+        markValue(this.config.watermark?.low, SCHEMA_DEFAULTS.watermark.low),
         isMarkOverride(this.config.watermark?.low) ? WATERMARK_LOW_ENTITY_PATH : 'watermark.low.entity',
         isMarkOverride(this.config.watermark?.low) ? 'watermark.low.value.attribute' : 'watermark.low.attribute',
       ),
       ...checkValueConfig(
-        markValue(this.config.watermark?.high, CARD.config.defaults.watermark.high),
+        markValue(this.config.watermark?.high, SCHEMA_DEFAULTS.watermark.high),
         isMarkOverride(this.config.watermark?.high) ? WATERMARK_HIGH_ENTITY_PATH : 'watermark.high.entity',
         isMarkOverride(this.config.watermark?.high) ? 'watermark.high.value.attribute' : 'watermark.high.attribute',
       ),

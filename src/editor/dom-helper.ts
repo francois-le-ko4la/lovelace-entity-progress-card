@@ -3,11 +3,12 @@
  * fields (value, visibility, width, selector) as the config changes.
  */
 
-import { HA_CONTEXT, CARD } from '../utils/parameters.js';
+import { HA_CONTEXT } from '../utils/parameters.js';
 import { is } from '../utils/common-checks.js';
 import { HassProviderSingleton, type HomeAssistant } from '../utils/hass-provider.js';
 import type { LovelaceConfig, Config, FieldDef } from '../utils/types.js';
 import { DOMHelper } from '../card/dom-helpers.js';
+import { SCHEMA_DEFAULTS } from '../card/schema.js';
 
 const availableSpace = (gap = 16, factor = 0.5): string => `calc((100% - ${gap}px) * ${factor})`;
 
@@ -31,6 +32,16 @@ const ownerPanel = (el: PanelAwareField): HaExpansionPanel | null => {
     el._ownerPanel = el.closest('ha-expansion-panel') as HaExpansionPanel | null;
   }
   return el._ownerPanel;
+};
+
+// What updateAll/updatePanel/updateKeys/_updateField all need to resolve one
+// field's current state - bundled since the four always travel together
+// (built once per pass by EditorBase#runFieldUpdate).
+type FieldUpdateContext = {
+  config: LovelaceConfig;
+  resolveValue: (def: FieldDef, config: LovelaceConfig) => unknown;
+  negotiated: Config | null;
+  resolveType: ((def: FieldDef, config: LovelaceConfig) => unknown) | null;
 };
 
 // Field definitions (`def`, typed `FieldDef`), the raw config (`config`,
@@ -85,14 +96,8 @@ class EditorDOMHelper extends DOMHelper {
    * Batched via RAF.
    */
   updateVisibility(name: string, visible: boolean) {
-    const cacheKey = `${name}:display`;
-    if (this._appliedValues.get(cacheKey) === visible) return;
-
-    this.enqueue(name, 'display', () => {
-      const el = this._domElements.get(name);
-      if (!el) return;
-      el.style.display = visible ? '' : 'none';
-      this._appliedValues.set(cacheKey, visible);
+    this._cachedUpdate(name, 'display', visible, (el, v) => {
+      el.style.display = v ? '' : 'none';
     });
   }
 
@@ -105,14 +110,8 @@ class EditorDOMHelper extends DOMHelper {
    * once in EditorBase#buildField and never revisited.
    */
   updateWidth(name: string, width: string) {
-    const cacheKey = `${name}:width`;
-    if (this._appliedValues.get(cacheKey) === width) return;
-
-    this.enqueue(name, 'width', () => {
-      const el = this._domElements.get(name);
-      if (!el) return;
-      el.style.width = width;
-      this._appliedValues.set(cacheKey, width);
+    this._cachedUpdate(name, 'width', width, (el, v) => {
+      el.style.width = v;
     });
   }
 
@@ -124,14 +123,8 @@ class EditorDOMHelper extends DOMHelper {
    * (decimal's default shifts with the chosen unit).
    */
   updatePlaceholder(name: string, placeholder: string) {
-    const cacheKey = `${name}:placeholder`;
-    if (this._appliedValues.get(cacheKey) === placeholder) return;
-
-    this.enqueue(name, 'placeholder', () => {
-      const el = this._domElements.get(name);
-      if (!el) return;
-      el.placeholder = placeholder;
-      this._appliedValues.set(cacheKey, placeholder);
+    this._cachedUpdate(name, 'placeholder', placeholder, (el, v) => {
+      el.placeholder = v;
     });
   }
 
@@ -151,8 +144,7 @@ class EditorDOMHelper extends DOMHelper {
    */
   _updateActionSelector(name: string, def: FieldDef, config: LovelaceConfig) {
     const key = def.target ?? def.name;
-    const defaults = CARD.config.defaults as unknown as Record<string, { action?: string }>;
-    let defaultAction = defaults[key]?.action ?? 'none';
+    let defaultAction = SCHEMA_DEFAULTS.actions[key] ?? 'none';
     if (key === 'icon_tap_action' && config.entity) {
       const domain = HassProviderSingleton.getEntityDomain(config.entity);
       if (domain && HA_CONTEXT.actions.toggleDomain.includes(domain)) defaultAction = 'toggle';
@@ -211,44 +203,30 @@ class EditorDOMHelper extends DOMHelper {
     });
   }
 
-  updateAll(
-    config: LovelaceConfig,
-    resolveValue: (def: FieldDef, config: LovelaceConfig) => unknown,
-    negotiated: Config | null = null,
-    resolveType: ((def: FieldDef, config: LovelaceConfig) => unknown) | null = null,
-  ) {
+  // Shared by updateAll/updatePanel/updateKeys below - each only differs in
+  // which fields it wants to reach, not in how a reached field gets updated.
+  #forEachField(predicate: (def: FieldDef, panel: HaExpansionPanel | null) => boolean, ctx: FieldUpdateContext) {
     for (const [name, el] of this._domElements) {
       const def = el._fieldDef;
       if (!def) continue;
-      // Skip fields inside a collapsed panel: their content isn't even
-      // projected/laid out (ha-expansion-panel lazy-renders its slot), so
-      // recomputing them every keystroke is pure waste. EditorBase re-runs a
-      // targeted pass for a panel the moment it expands (see updatePanel),
-      // which brings any change made while it was collapsed - including a
-      // switch to the raw YAML editor and back - up to date exactly when the
-      // fields become visible again.
       const panel = ownerPanel(el);
-      if (panel && !panel.expanded) continue;
-      this._updateField(name, def, config, resolveValue, negotiated, resolveType);
+      if (!predicate(def, panel)) continue;
+      this._updateField(name, def, ctx);
     }
+  }
+
+  // Skips fields inside a collapsed panel (lazy-rendered, so recomputing them
+  // is pure waste) - EditorBase's updatePanel below catches them up the
+  // moment their panel expands.
+  updateAll(ctx: FieldUpdateContext) {
+    this.#forEachField((_def, panel) => !panel || panel.expanded, ctx);
   }
 
   // Targeted counterpart to updateAll for a single panel's fields - called by
   // EditorBase on `expanded-changed` so a just-opened panel catches up on any
   // config change it skipped while collapsed.
-  updatePanel(
-    panel: HaExpansionPanel,
-    config: LovelaceConfig,
-    resolveValue: (def: FieldDef, config: LovelaceConfig) => unknown,
-    negotiated: Config | null = null,
-    resolveType: ((def: FieldDef, config: LovelaceConfig) => unknown) | null = null,
-  ) {
-    for (const [name, el] of this._domElements) {
-      const def = el._fieldDef;
-      if (def && ownerPanel(el) === panel) {
-        this._updateField(name, def, config, resolveValue, negotiated, resolveType);
-      }
-    }
+  updatePanel(panel: HaExpansionPanel, ctx: FieldUpdateContext) {
+    this.#forEachField((_def, p) => p === panel, ctx);
   }
 
   // Targeted counterpart to updateAll for just the fields writing one of
@@ -256,30 +234,12 @@ class EditorDOMHelper extends DOMHelper {
   // on-them) config keys changed, so the other fields don't need re-walking.
   // A field's config key is `target ?? name`. Collapsed panels are skipped
   // like in updateAll (the expand handler catches them up).
-  updateKeys(
-    keys: Set<string>,
-    config: LovelaceConfig,
-    resolveValue: (def: FieldDef, config: LovelaceConfig) => unknown,
-    negotiated: Config | null = null,
-    resolveType: ((def: FieldDef, config: LovelaceConfig) => unknown) | null = null,
-  ) {
-    for (const [name, el] of this._domElements) {
-      const def = el._fieldDef;
-      if (!def || !keys.has(def.target ?? def.name)) continue;
-      const panel = ownerPanel(el);
-      if (panel && !panel.expanded) continue;
-      this._updateField(name, def, config, resolveValue, negotiated, resolveType);
-    }
+  updateKeys(keys: Set<string>, ctx: FieldUpdateContext) {
+    this.#forEachField((def, panel) => keys.has(def.target ?? def.name) && (!panel || panel.expanded), ctx);
   }
 
-  _updateField(
-    name: string,
-    def: FieldDef,
-    config: LovelaceConfig,
-    resolveValue: (def: FieldDef, config: LovelaceConfig) => unknown,
-    negotiated: Config | null = null,
-    resolveType: ((def: FieldDef, config: LovelaceConfig) => unknown) | null = null,
-  ) {
+  _updateField(name: string, def: FieldDef, ctx: FieldUpdateContext) {
+    const { config, resolveValue, negotiated, resolveType } = ctx;
     if (def.showIf) {
       this.updateVisibility(name, def.showIf(config, negotiated));
     }
@@ -349,3 +309,4 @@ class EditorDOMHelper extends DOMHelper {
 
 export { availableSpace };
 export { EditorDOMHelper };
+export type { FieldUpdateContext };

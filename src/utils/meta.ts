@@ -4,7 +4,10 @@
  * dev/debug context can both import it without an import cycle.
  */
 
-const VERSION = '1.6.2-rc3';
+const VERSION = '1.6.2-rc4';
+
+const CARD_DESCRIPTION = 'A cool custom card to show current entity status with a progress bar.';
+const BADGE_DESCRIPTION = 'A cool custom badge to show current entity status with a progress bar.';
 
 const META = {
   documentation: `https://github.com/francois-le-ko4la/lovelace-entity-progress-card/tree/${VERSION}`,
@@ -12,31 +15,32 @@ const META = {
     card: {
       typeName: 'entity-progress-card',
       name: 'Entity Progress Card',
-      description: 'A cool custom card to show current entity status with a progress bar.',
+      description: CARD_DESCRIPTION,
       editor: 'entity-progress-card-editor',
     },
     template: {
       typeName: 'entity-progress-card-template',
       name: 'Entity Progress Card (Template)',
-      description: 'A cool custom card to show current entity status with a progress bar.',
+      description: CARD_DESCRIPTION,
       editor: 'entity-progress-card-template-editor',
     },
     badge: {
       typeName: 'entity-progress-badge',
       name: 'Entity Progress Badge',
-      description: 'A cool custom badge to show current entity status with a progress bar.',
+      description: BADGE_DESCRIPTION,
       editor: 'entity-progress-badge-editor',
     },
     badgeTemplate: {
       typeName: 'entity-progress-badge-template',
       name: 'Entity Progress Badge (Template)',
-      description: 'A cool custom badge to show current entity status with a progress bar.',
+      description: BADGE_DESCRIPTION,
       editor: 'entity-progress-badge-template-editor',
     },
     feature: {
       typeName: 'entity-progress-feature',
       name: 'Entity Progress Feature',
       description: 'A cool custom feature in tile to show current entity status with a progress bar.',
+      editor: 'entity-progress-feature-editor',
     },
     multiCard: {
       typeName: 'entity-progress-multi-card',

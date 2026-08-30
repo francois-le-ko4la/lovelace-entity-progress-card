@@ -6,7 +6,7 @@
 
 import { META, devName, HA_CONTEXT, CARD } from '../utils/parameters.js';
 import { is } from '../utils/common-checks.js';
-import { ObjStructure, ThemeManager } from './value-helpers.js';
+import { ThemeManager } from './value-helpers.js';
 import {
   CardView,
   BadgeView,
@@ -21,13 +21,12 @@ import { HACore, HABase } from './core.js';
 import type { DivergingGradients } from './core.js';
 import type { HomeAssistant } from '../utils/hass-provider.js';
 import type { LovelaceConfig, Config } from '../utils/types.js';
-import { jinjaOf, markValue } from './schema.js';
+import { jinjaOf } from './schema.js';
 
 /**
  * Represents the base class for all standard cards:
  *  - EntityProgressCardBase / "entity-progress-card"
  *  - EntityProgressBadge / "entity-progress-badge"
- *
  *
  * @extends HABase
  */
@@ -55,15 +54,7 @@ class EntityProgressCardBase extends HABase {
   }
 
   static get _loggedMethods() {
-    return [
-      ...super._loggedMethods,
-      '_getStandardFields',
-      '_renderCustomInfo',
-      '_renderNameInfo',
-      '_seedPeakMarkerHistoryOnce',
-      '_seedPeakMarkerHistory',
-      '_fetchHistory',
-    ];
+    return [...super._loggedMethods, '_getStandardFields', '_renderCustomInfo', '_renderNameInfo'];
   }
 
   _handleHassUpdate() {
@@ -73,20 +64,9 @@ class EntityProgressCardBase extends HABase {
     this._seedPeakMarkerHistoryOnce();
   }
 
-  // trend_indicator.window/peak_marker.window seed from HA's own history -
-  // Card only, keyed by entity/attribute/window rather than a bare boolean:
-  // the live editor reuses this instance across an entity swap, and a plain
-  // "already tried" flag would leave the PREVIOUS entity's marks/trend
-  // stuck forever since nothing else re-triggers the fetch.
+  // trend_indicator.window seeds from HA's own history - Card/Template only
+  // (peak_marker's own seeding lives on HACore, see its own comment there).
   #trendSeedSignature: string | null = null;
-  #peakMarkerSeedSignature: string | null = null;
-
-  // null when `window` itself is absent/invalid (nothing to seed).
-  _seedSignature(window: unknown): string | null {
-    if (!is.number(window)) return null;
-    const config = this._cardView.config;
-    return `${config.entity ?? ''} ${config.attribute ?? ''} ${window}`;
-  }
 
   _seedTrendHistoryOnce() {
     const config = this._cardView.config.trend_indicator;
@@ -96,79 +76,6 @@ class EntityProgressCardBase extends HABase {
     this._seedTrendHistory().catch(() => {
       // best-effort: live sampling alone still works from here
     });
-  }
-
-  _seedPeakMarkerHistoryOnce() {
-    const config = this._cardView.config.peak_marker;
-    const signature = this._seedSignature(is.plainObject(config) ? config.window : undefined);
-    if (signature === null || signature === this.#peakMarkerSeedSignature) return;
-    this.#peakMarkerSeedSignature = signature;
-    // Clears the previous entity's marks before the fetch resolves - unlike
-    // trend's TrendTracker, nothing else self-corrects in between.
-    this._cardView.setPeakMarker(null);
-    this._updateCSS();
-    this._seedPeakMarkerHistory().catch(() => {
-      // best-effort: no min/max/average marks without history, card unaffected
-    });
-  }
-
-  // Shares one in-flight WS call when trend/peak_marker share a window.
-  #inFlightHistoryFetches = new Map<number, Promise<{ t: number; value: number }[]>>();
-
-  async _fetchHistory(windowSeconds: number): Promise<{ t: number; value: number }[]> {
-    const cached = this.#inFlightHistoryFetches.get(windowSeconds);
-    if (cached) return await cached;
-    const promise = this.#fetchHistoryUncached(windowSeconds).finally(() =>
-      this.#inFlightHistoryFetches.delete(windowSeconds),
-    );
-    this.#inFlightHistoryFetches.set(windowSeconds, promise);
-    // Awaited, not returned bare - log.ts's wrap() only takes its
-    // timing/error branch for a real `AsyncFunction` (fn.constructor.name).
-    return await promise;
-  }
-
-  // Raw {timestamp, state} points for `entity` over the last `windowSeconds`,
-  // or [] if the entity/window is ineligible (attribute:, timer/counter/
-  // duration - recorder keeps no attribute history) or the fetch fails.
-  async #fetchHistoryUncached(windowSeconds: number): Promise<{ t: number; value: number }[]> {
-    const entity = this._cardView.config.entity;
-    const entityType = this._cardView._currentValue.entityType;
-    const isHistoryEligible = !entityType.isTimer && !entityType.isCounter && !entityType.isDuration;
-    if (!entity || this._cardView.config.attribute || !isHistoryEligible) {
-      this._log?.debug('_fetchHistory: ineligible', {
-        entity,
-        attribute: this._cardView.config.attribute,
-        isHistoryEligible,
-      });
-      return [];
-    }
-
-    const hass = this.hass;
-    if (!hass?.connection?.connected) {
-      this._log?.debug('_fetchHistory: no live connection', { connected: hass?.connection?.connected });
-      return [];
-    }
-
-    const cappedWindow = Math.min(windowSeconds, CARD.config.history.maxWindowSeconds);
-    // Compressed-state reply (s/lu, not state/last_updated; lu is epoch
-    // seconds) - see history/websocket_api.py's _history_compressed_state().
-    const result = (await hass.connection.sendMessagePromise({
-      type: 'history/history_during_period',
-      start_time: new Date(Date.now() - cappedWindow * 1000).toISOString(),
-      entity_ids: [entity],
-      no_attributes: true,
-    })) as Record<string, { s: string; lu: number }[]> | undefined;
-    this._log?.debug('_fetchHistory: raw result', result);
-
-    const points = (result?.[entity] ?? [])
-      .map((point) => {
-        const value = Number(point.s);
-        const timestamp = point.lu * 1000;
-        return Number.isFinite(value) && Number.isFinite(timestamp) ? { t: timestamp, value } : null;
-      })
-      .filter((point): point is { t: number; value: number } => point !== null);
-    this._log?.debug(`_fetchHistory: ${points.length} usable point(s)`);
-    return points;
   }
 
   async _seedTrendHistory() {
@@ -181,33 +88,6 @@ class EntityProgressCardBase extends HABase {
     // fetch was in flight - only the still-current signature applies.
     if (!points.length || signature !== this.#trendSeedSignature) return;
     this._cardView.seedTrend(points.map((p) => ({ t: p.t, percent: this._cardView.percentForRawValue(p.value) })));
-  }
-
-  async _seedPeakMarkerHistory() {
-    const config = this._cardView.config.peak_marker;
-    if (!is.plainObject(config) || !is.number(config.window)) {
-      this._log?.debug('_seedPeakMarkerHistory: no eligible peak_marker config', config);
-      return;
-    }
-    const signature = this._seedSignature(config.window);
-
-    const points = await this._fetchHistory(config.window);
-    if (!points.length) {
-      this._log?.debug('_seedPeakMarkerHistory: no history points, skipping');
-      return;
-    }
-    // A newer entity/config swap may have started its own seed while this
-    // fetch was in flight - only the still-current signature applies.
-    if (signature !== this.#peakMarkerSeedSignature) return;
-    const values = points.map((p) => p.value);
-    const marker = {
-      min: this._cardView.percentForRawValue(Math.min(...values)),
-      max: this._cardView.percentForRawValue(Math.max(...values)),
-      average: this._cardView.percentForRawValue(values.reduce((sum, v) => sum + v, 0) / values.length),
-    };
-    this._log?.debug('_seedPeakMarkerHistory: setPeakMarker', marker);
-    this._cardView.setPeakMarker(marker);
-    this._updateCSS();
   }
 
   // Adds the value text on top of HACore's default tick (refresh + bar CSS,
@@ -229,7 +109,7 @@ class EntityProgressCardBase extends HABase {
   get _staticStyle(): Map<string, boolean> {
     return new Map([
       ...super._staticStyle,
-      [CARD.style.dynamic.secondaryInfoError.class, this._cardView.hasStandardEntityError],
+      [CARD.style.dynamic.secondaryInfoError, this._cardView.hasStandardEntityError],
     ]);
   }
 
@@ -278,18 +158,7 @@ class EntityProgressCardBase extends HABase {
       name_info: () => this._renderNameInfo(content),
       min_value: () => this._renderJinjaNumber(content, (c: Config) => jinjaOf(c.min_value), 'jinjaMinValue'),
       max_value: () => this._renderJinjaNumber(content, (c: Config) => jinjaOf(c.max_value), 'jinjaMaxValue'),
-      'watermark.low': () =>
-        this._renderWatermarkJinja(
-          content,
-          (c: Config) => jinjaOf(markValue(c.watermark?.low, CARD.config.defaults.watermark.low)),
-          'jinjaWatermarkLow',
-        ),
-      'watermark.high': () =>
-        this._renderWatermarkJinja(
-          content,
-          (c: Config) => jinjaOf(markValue(c.watermark?.high, CARD.config.defaults.watermark.high)),
-          'jinjaWatermarkHigh',
-        ),
+      ...this._watermarkJinjaHandlers(content),
       'alert_when.above': () =>
         this._renderJinjaNumber(content, (c: Config) => jinjaOf(c.alert_when?.above), 'jinjaAlertAbove'),
       'alert_when.below': () =>
@@ -381,9 +250,7 @@ class EntityProgressCard extends EntityProgressCardBase {
 class EntityProgressBadge extends EntityProgressCardBase {
   _cardView = new BadgeView();
   static _baseClass: string = META.types.badge.typeName;
-  static _hasDisabledIconTap = true;
-  static _hasDisabledBadge = true;
-  static _cardStructure: ObjStructure = new ObjStructure('badge');
+  static _structureType = 'badge';
 
   // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION ─────────────────────────────
   // Derived from the Card map (minus the badge-only handlers) instead of
@@ -415,6 +282,36 @@ class EntityProgressFeatures extends HACore {
   // skipcq: JS-0116 -- async is intentional, no await by design.
   static async getStubConfig(): Promise<LovelaceConfig> {
     return { type: `custom:${devName(META.types.feature.typeName)}` } as unknown as LovelaceConfig;
+  }
+
+  // ─── ENTITY CONTEXT (Tile → Feature) ───────────────────────────────────────
+  #rawConfig: LovelaceConfig | null = null;
+  #contextEntityId: string | undefined;
+  #context: { entity_id?: string } | undefined;
+
+  get context(): { entity_id?: string } | undefined {
+    return this.#context;
+  }
+
+  // HA sets this from the parent Tile card's own entity, always after
+  // setConfig (LovelaceCardFeatureContext.entity_id); config.entity overrides
+  // it. Merges into _cardView.config directly, skipping setConfig's own
+  // reset()/render() - the DOM built for "no entity yet" is still valid.
+  set context(context: { entity_id?: string } | undefined) {
+    this.#context = context;
+    const entityId = context?.entity_id;
+    if (entityId === this.#contextEntityId) return;
+    this.#contextEntityId = entityId;
+    if (!this.#rawConfig || this.#rawConfig.entity) return;
+    const merged = { ...this.#rawConfig, entity: entityId };
+    this._cardView.config = merged;
+    this._registerWatchedEntities(merged);
+    if (this.hass) this._handleHassUpdate();
+  }
+
+  setConfig(config: LovelaceConfig) {
+    this.#rawConfig = config;
+    super.setConfig(config.entity ? config : { ...config, entity: this.#contextEntityId });
   }
 
   /**
@@ -508,6 +405,7 @@ class EntityProgressFeatures extends HACore {
     this.#fixCardStyles();
     this.refresh();
     this._manageAutoRefresh();
+    this._seedPeakMarkerHistoryOnce();
   }
 
   // ─── CSS MANAGEMENT ───────────────────────────────────────────────────────
@@ -523,8 +421,14 @@ class EntityProgressFeatures extends HACore {
       // gradient (see ViewBase.themeDivergingGradient) when there's no
       // bar_stack to drive the two arms instead.
       diverging: bar.divergingBarStack ?? bar.themeDivergingGradient,
+      // rainbow_full's value-mark pill reads --icon-and-shape-color for its
+      // fill (styles.ts); Feature has no icon of its own, so this var went
+      // unset and the pill fell back to a flat white.
+      iconColor: bar.iconColor,
     });
     this._applyWatermarkCSS(bar.hasWatermark ? bar.watermark : null);
+    this._applyPeakMarkerCSS(bar.peakMarker);
+    this._handlePeakMarkerClasses();
   }
 
   // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION ─────────────────────────────
@@ -541,15 +445,15 @@ class EntityProgressFeatures extends HACore {
  * display fields (name, secondary, icon, percent, badge, bar_effect) are
  * controlled via Jinja template subscriptions rather than entity state.
  *
- * Subclasses MAY override: - _cardStructure → static ObjStructure instance
- * (e.g. 'badge' for template badges) - _cardView → view instance (e.g.
+ * Subclasses MAY override: - _structureType → which shape to render (e.g.
+ * 'badge' for template badges) - _cardView → view instance (e.g.
  * BadgeTemplateView for template badges)
  *
  * @abstract
  * @extends HABase
  */
 class EntityProgressTemplateBase extends HABase {
-  static _cardStructure: ObjStructure = new ObjStructure('template');
+  static _structureType = 'template';
   // TemplateView (not the specific CardTemplateView) -
   // EntityProgressTemplateBadge below overrides this with its sibling
   // BadgeTemplateView, which wouldn't be assignable to CardTemplateView.
@@ -659,18 +563,7 @@ class EntityProgressTemplateBase extends HABase {
       secondary: () => this._renderSecondary(content),
       icon: () => this._showIcon(content),
       percent: () => this._managePercent(content),
-      'watermark.low': () =>
-        this._renderWatermarkJinja(
-          content,
-          (c: Config) => jinjaOf(markValue(c.watermark?.low, CARD.config.defaults.watermark.low)),
-          'jinjaWatermarkLow',
-        ),
-      'watermark.high': () =>
-        this._renderWatermarkJinja(
-          content,
-          (c: Config) => jinjaOf(markValue(c.watermark?.high, CARD.config.defaults.watermark.high)),
-          'jinjaWatermarkHigh',
-        ),
+      ...this._watermarkJinjaHandlers(content),
       color: () => {
         const adapted = ThemeManager.adaptColor(content as string | null);
         // Cached (not just written to CSS) so status_label.color_source:
@@ -823,9 +716,7 @@ class EntityProgressTemplateCard extends EntityProgressTemplateBase {
  */
 class EntityProgressTemplateBadge extends EntityProgressTemplateBase {
   static _baseClass: string = META.types.badgeTemplate.typeName;
-  static _hasDisabledIconTap = true;
-  static _hasDisabledBadge = true;
-  static _cardStructure: ObjStructure = new ObjStructure('badge');
+  static _structureType = 'badge';
   _cardView: TemplateView = new BadgeTemplateView();
 
   // Same reasoning as EntityProgressBadge's own override - schema.ts already
@@ -862,10 +753,8 @@ class EntityProgressTemplateBadge extends EntityProgressTemplateBase {
  * 📦 CARD/BADGE EDITOR
  ******************************************************************************/
 
-export { EntityProgressCardBase };
 export { EntityProgressCard };
 export { EntityProgressBadge };
 export { EntityProgressFeatures };
-export { EntityProgressTemplateBase };
 export { EntityProgressTemplateCard };
 export { EntityProgressTemplateBadge };

@@ -4,7 +4,6 @@
 type DurationUnit = 's' | 'min' | 'h' | 'd';
 type ParsedDuration = { value: number; unit: DurationUnit };
 
-const DURATION_UNITS: DurationUnit[] = ['s', 'min', 'h', 'd'];
 // Each unit's max is the 7-day equivalent (CARD.config.history.
 // maxWindowSeconds) - _fetchHistory's own cap, never silently exceeded here.
 const DURATION_MAX: Record<DurationUnit, number> = { s: 604800, min: 10080, h: 168, d: 7 };
@@ -23,5 +22,4 @@ const durationSliderSelector = (unit: string): Record<string, unknown> => ({
   number: { min: 1, max: DURATION_MAX[unit as DurationUnit] ?? DURATION_MAX.h, step: 1, mode: 'slider' },
 });
 
-export { parseDuration, serializeDuration, durationSliderSelector, DURATION_UNITS };
-export type { ParsedDuration, DurationUnit };
+export { parseDuration, serializeDuration, durationSliderSelector };

@@ -89,4 +89,4 @@ class TrendTracker {
 }
 
 export { TrendTracker };
-export type { Sample as TrendSample, Basis as TrendBasis };
+export type { Basis as TrendBasis };

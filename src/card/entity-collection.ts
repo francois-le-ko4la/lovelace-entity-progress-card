@@ -9,9 +9,12 @@ import { traceInstance } from '../utils/log.js';
 import { ThemeManager } from './theme-manager.js';
 import { EntityHelper } from './entity-helper.js';
 
-/**
- * Helper class for managing entities collection.
- */
+type EntityCollectionAddEntityOptions = {
+  attribute?: string | null;
+  color?: string | null;
+  subtract?: boolean;
+  isMain?: boolean;
+};
 
 class EntityCollectionHelper {
   #entities: EntityHelper[] = [];
@@ -64,10 +67,7 @@ class EntityCollectionHelper {
 
   addEntity(
     entityId: string,
-    attribute: string | null = null,
-    color: string | null = null,
-    subtract = false,
-    isMain = false,
+    { attribute = null, color = null, subtract = false, isMain = false }: EntityCollectionAddEntityOptions = {},
   ) {
     const helper = new EntityHelper();
     helper.entityId = entityId;
@@ -114,7 +114,7 @@ class EntityCollectionHelper {
   static #entityColor(helper: EntityHelper, index: number, total: number, curColor: string): string {
     if (helper.isMain) return curColor;
     if (helper.color) return ThemeManager.adaptColor(helper.color) ?? curColor;
-    const whitePercent = Math.round((1 - index / (total - 1 || 1)) * 50); // de 50 → 0
+    const whitePercent = Math.round((1 - index / (total - 1 || 1)) * 50); // 50 → 0
     return `color-mix(in srgb, ${curColor} ${100 - whitePercent}%, black ${whitePercent}%)`;
   }
 
@@ -150,6 +150,43 @@ class EntityCollectionHelper {
     return { posGradient: pos.gradient, negGradient: neg.gradient, posSize: pos.size, negSize: neg.size };
   }
 
+  // Shared by #proportionalGradient/#stackedGradient below - both walk the
+  // entities front to back, pushing each one's shaded [start, end] stops,
+  // stopping past 100% (a no-op for proportional, load-bearing for stacked's
+  // absolute widths). Only each entity's own width differs - passed as
+  // `widthOf`.
+  static #buildGradientStops(
+    available: EntityHelper[],
+    curColor: string,
+    offset: number,
+    widthOf: (helper: EntityHelper) => number,
+  ): string[] {
+    const shadeTotal = available.filter((helper) => !helper.isMain).length;
+    let shadeIndex = 0;
+    const gradientStops: string[] = [];
+    let currentPosition = offset;
+
+    for (let i = 0; i < available.length && currentPosition < 100; i++) {
+      const helper = available[i];
+      const color = EntityCollectionHelper.#entityColor(helper, shadeIndex, shadeTotal, curColor);
+      if (!helper.isMain) shadeIndex++;
+      const end = Math.min(100, currentPosition + widthOf(helper));
+
+      gradientStops.push(`${color} ${currentPosition.toFixed(2)}%`, `${color} ${end.toFixed(2)}%`);
+      currentPosition = end;
+    }
+
+    return gradientStops;
+  }
+
+  // With translateX-based fill, the inner element is 100% wide but only the
+  // rightmost progressRatio% is visible - every gradient below offsets its
+  // stops so they land inside that visible portion instead of starting from
+  // position 0.
+  static #revealOffset(progressRatio: number): number {
+    return (1 - progressRatio) * 100;
+  }
+
   // 'proportional' mode (legacy `additions` behavior, a.k.a. "100% stacked"):
   // each entity's share is renormalized against the combined total, so the
   // visible fill is always divided between entities regardless of how that
@@ -164,24 +201,12 @@ class EntityCollectionHelper {
     const total = EntityCollectionHelper.#magnitudeSum(available);
     if (total === 0) return null;
 
-    const shadeTotal = available.filter((helper) => !helper.isMain).length;
-    let shadeIndex = 0;
-    const gradientStops: string[] = [];
-    // With translateX-based fill, the inner element is 100% wide but only the
-    // rightmost progressRatio% is visible. Segment stops must be offset so that
-    // they land inside the visible portion instead of starting from position 0.
-    const offset = (1 - progressRatio) * 100;
-    let currentPosition = offset;
-
-    available.forEach((helper) => {
-      const share = (EntityCollectionHelper.#magnitude(helper) / total) * 100;
-      const color = EntityCollectionHelper.#entityColor(helper, shadeIndex, shadeTotal, curColor);
-      if (!helper.isMain) shadeIndex++;
-      const end = currentPosition + share * progressRatio;
-
-      gradientStops.push(`${color} ${currentPosition.toFixed(2)}%`, `${color} ${end.toFixed(2)}%`);
-      currentPosition = end;
-    });
+    const gradientStops = EntityCollectionHelper.#buildGradientStops(
+      available,
+      curColor,
+      EntityCollectionHelper.#revealOffset(progressRatio),
+      (helper) => (EntityCollectionHelper.#magnitude(helper) / total) * 100 * progressRatio,
+    );
 
     return `linear-gradient(${isVertical ? 'to top' : 'to right'}, ${gradientStops.join(', ')})`;
   }
@@ -201,22 +226,12 @@ class EntityCollectionHelper {
   ): string | null {
     if (!range) return null;
 
-    const shadeTotal = available.filter((helper) => !helper.isMain).length;
-    let shadeIndex = 0;
-    const gradientStops: string[] = [];
-    const offset = (1 - progressRatio) * 100;
-    let currentPosition = offset;
-
-    for (let i = 0; i < available.length && currentPosition < 100; i++) {
-      const helper = available[i];
-      const width = (EntityCollectionHelper.#magnitude(helper) / range) * 100;
-      const color = EntityCollectionHelper.#entityColor(helper, shadeIndex, shadeTotal, curColor);
-      if (!helper.isMain) shadeIndex++;
-      const end = Math.min(100, currentPosition + width);
-
-      gradientStops.push(`${color} ${currentPosition.toFixed(2)}%`, `${color} ${end.toFixed(2)}%`);
-      currentPosition = end;
-    }
+    const gradientStops = EntityCollectionHelper.#buildGradientStops(
+      available,
+      curColor,
+      EntityCollectionHelper.#revealOffset(progressRatio),
+      (helper) => (EntityCollectionHelper.#magnitude(helper) / range) * 100,
+    );
 
     return gradientStops.length
       ? `linear-gradient(${isVertical ? 'to top' : 'to right'}, ${gradientStops.join(', ')})`

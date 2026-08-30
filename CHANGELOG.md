@@ -151,7 +151,17 @@ editor predates and isn't based on `ha-form`.
   Map form works exactly as before whenever `position`/`color_source` are also
   needed. See [`status_label`](docs/configuration.md#status_label).
 
+#### 🧩 The Tile Feature gets its own visual editor
+
+Previously YAML-only, `entity-progress-feature` now has a full visual editor —
+entity, min/max value, appearance, watermark, and now `peak_marker` too. Its
+entity field is optional: leave it blank and the feature automatically shows
+whichever entity the parent Tile card is already using.
+
 ### 🔧 Improvements
+
+- **Editor**: placement and width of several appearance fields are more
+  consistent now (Card, Badge).
 
 #### `bar_segments` now works properly with `center_zero`
 
@@ -178,6 +188,11 @@ chips drop out entirely instead of sitting there with no effect.
 
 ### 🐛 Fixes
 
+- **Tile Feature**: `bar_color_mode: rainbow_full`'s marker size could ignore
+  your chosen `bar_size` when the bar was positioned at the top or bottom —
+  always looked like the largest size instead.
+- Changing the bar's position could leave an invisible, unused size setting
+  behind in your saved configuration — cleaned up automatically.
 - **Template/Badge Template never migrated `watermark.low`/`.high`'s legacy
   forms** (bare entity-id string, `low_as`/`high_as`/`low_color`/
   `high_color`/`disable_low`/`disable_high`) — an entity-sourced
@@ -273,12 +288,71 @@ chips drop out entirely instead of sitting there with no effect.
   neighboring one (`bar_position`/`unit_position` both said "Position",
   `alert_when_mode`/`icon_animation_mode` both said "Trigger mode") now share a
   single, shorter label instead of two redundant copies.
+- A new automated test suite now runs on every change (schema validation,
+  progress-bar math, theme color resolution, number/duration formatting,
+  legacy-config migration) — nothing user-facing changes, but a regression in
+  this internal logic gets caught automatically now instead of only during
+  manual testing.
+- Internal config defaults (watermark, peak marker, trend indicator, action
+  buttons) are now read directly from the validation schema itself instead of a
+  separate hand-maintained table that could silently drift out of sync with what
+  actually validates.
+- The visual editor's internal code was simplified and de-duplicated in several
+  places (mode-toggle fields, field-update logic) — no visible change, just less
+  code to maintain.
 
 > We care about getting the details right — but even so, something here might
 > have slipped through. You don't need to be a developer to notice it. If
 > something feels off, that's reason enough. Open a [GitHub issue]. Or say hi on
 > [Discord]. We'd rather know than have you go looking for a workaround on your
 > own.
+
+---
+
+## What's new (1.6.2-rc4)
+
+### ✨ New
+
+#### 🧩 The Tile Feature gets its own visual editor
+
+`entity-progress-feature` was YAML-only until now — the visual editor now covers
+entity, min/max value, theme/appearance (`bar_color_mode`, `center_zero`,
+`bar_effect`, …), watermark, and `peak_marker` (new to Feature, same
+history-backed `window`/`type`/`opacity` as Card's own). `entity` is optional:
+when omitted, the feature reads it from the parent Tile card's own entity
+automatically (`LovelaceCardFeatureContext`) — set it only to show a different
+one.
+
+### 🔧 Improvements
+
+- Editor: placement and width of several appearance fields are more consistent
+  now across `bar_color_mode`/`bar_position` combinations (Card, Badge).
+
+### 🐛 Fixes
+
+- **Tile Feature**: `bar_color_mode: rainbow_full`'s marker always rendered at
+  `bar_size: xlarge`'s width/ring thickness regardless of the `bar_size`
+  actually configured, whenever `bar_position` was `top`/ `bottom` (also
+  `overlay`/`background` on Card) — `applyBarSizeConflictRule` discarded the
+  configured `bar_size` before the marker's own per-size rule ever saw it.
+- Editor: switching `bar_position` to `top`/`bottom`/`overlay`/ `background` hid
+  the `bar_size` field but left its value sitting unused in the saved config,
+  reappearing the moment `bar_position` changed back.
+
+### 🧹 Under the hood
+
+- A new automated test suite now runs on every change (schema validation,
+  progress-bar math, theme color resolution, number/duration formatting,
+  legacy-config migration) — nothing user-facing changes, but a regression in
+  this internal logic gets caught automatically now instead of only during
+  manual testing.
+- Internal config defaults (watermark, peak marker, trend indicator, action
+  buttons) are now read directly from the validation schema itself instead of a
+  separate hand-maintained table that could silently drift out of sync with what
+  actually validates.
+- The visual editor's internal code was simplified and de-duplicated in several
+  places (mode-toggle fields, field-update logic) — no visible change, just less
+  code to maintain.
 
 ---
 

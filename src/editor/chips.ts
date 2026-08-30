@@ -16,7 +16,7 @@ import type { LovelaceConfig } from '../utils/types.js';
  * chip labels from an optional localized map (`_labels`/`_chipLabel`), and
  * wires per-chip click handlers. Concrete subclasses implement `_buildDOM()`/
  * `_render()` and the selection model (multi-select vs single-select, see
- * `SingleSelectChipsBase`).
+ * `EntityProgressModeChips`).
  *
  * @abstract
  * @extends HTMLElement
@@ -29,6 +29,9 @@ abstract class ChipsBase extends HTMLElement {
   // the element is connected, when the chips Map is still empty; labels are now
   // stored and applied at build time
   _labels: Record<string, string> | null = null;
+  // Shared by every concrete chip set - written by _buildChipSet, read by
+  // this class's own setLabels below and each subclass's own _render/toggle.
+  _chips = new Map<string, HTMLButtonElement>();
   #labelText = '';
   #labelEl: HTMLElement | null = null;
   // Always assigned first thing in connectedCallback, before _buildDOM()/
@@ -57,6 +60,11 @@ abstract class ChipsBase extends HTMLElement {
     return this._labels?.[value] ?? value;
   }
 
+  setLabels(labels: Record<string, string> | null) {
+    this._labels = labels ?? null;
+    for (const [value, chip] of this._chips) chip.textContent = this._chipLabel(value);
+  }
+
   _createChip(value: string, onToggle: (value: string) => void): HTMLButtonElement {
     const chip = document.createElement('button');
     chip.type = 'button';
@@ -69,12 +77,7 @@ abstract class ChipsBase extends HTMLElement {
     return chip;
   }
 
-  _buildChipSet(
-    values: string[],
-    onToggle: (value: string) => void,
-    chipsMap: Map<string, HTMLButtonElement>,
-    extraClass?: string,
-  ) {
+  _buildChipSet(values: string[], onToggle: (value: string) => void, extraClass?: string) {
     const style = document.createElement('style');
     style.textContent = CHIPS_HOST_STYLE;
     const frag: HTMLElement[] = [style];
@@ -89,7 +92,7 @@ abstract class ChipsBase extends HTMLElement {
     for (const value of values) {
       const chip = this._createChip(value, onToggle);
       chipSet.appendChild(chip);
-      chipsMap.set(value, chip);
+      this._chips.set(value, chip);
     }
     frag.push(chipSet);
     this.#shadow.append(...frag);
@@ -122,13 +125,11 @@ class EntityProgressEffectChips extends ChipsBase {
 
   #selected: string[] = [];
   #config: LovelaceConfig = {} as LovelaceConfig;
-  #chips = new Map<string, HTMLButtonElement>();
 
   _buildDOM() {
     this._buildChipSet(
       EntityProgressEffectChips.#EFFECTS.map((effect) => effect.value),
       (value) => this.#toggle(value),
-      this.#chips,
     );
   }
 
@@ -157,20 +158,15 @@ class EntityProgressEffectChips extends ChipsBase {
     this._render();
   }
 
-  setLabels(labels: Record<string, string> | null) {
-    this._labels = labels ?? null;
-    for (const [value, chip] of this.#chips) chip.textContent = this._chipLabel(value);
-  }
-
   _render() {
-    if (!this.#chips.size) return;
+    if (!this._chips.size) return;
     // A chip that goes from visible to hidden mid-selection (bar_color_mode
     // switched away from 'auto' while e.g. 'gradient' was picked) must drop
     // out of the selection too, not just visually disappear - otherwise it
     // stays in config with no way left to remove it from this UI.
     const stillHidden: string[] = [];
     for (const effect of EntityProgressEffectChips.#EFFECTS) {
-      const chip = this.#chips.get(effect.value);
+      const chip = this._chips.get(effect.value);
       if (!chip) continue;
       const visible = !effect.showIf || effect.showIf(this.#config);
       const blocked = (EntityProgressEffectChips.#INCOMPATIBLE[effect.value] ?? []).some((v) =>
@@ -204,7 +200,6 @@ class EntityProgressHideChips extends ChipsBase {
   static ELEMENT_NAME = devName('entity-progress-hide-chips');
   static #ITEMS = ['icon', 'name', 'value', 'unit', 'secondary_info', 'progress_bar'];
   #selected: string[] = [];
-  #chips = new Map<string, HTMLButtonElement>();
   #items: string[] = EntityProgressHideChips.#ITEMS;
   #config: LovelaceConfig = {} as LovelaceConfig;
 
@@ -221,7 +216,7 @@ class EntityProgressHideChips extends ChipsBase {
   }
 
   _buildDOM() {
-    this._buildChipSet(this.#items, (value) => this.#toggle(value), this.#chips);
+    this._buildChipSet(this.#items, (value) => this.#toggle(value));
   }
 
   // density: compact + layout: vertical forces name/secondary_info hidden
@@ -263,15 +258,10 @@ class EntityProgressHideChips extends ChipsBase {
     this._render();
   }
 
-  setLabels(labels: Record<string, string> | null) {
-    this._labels = labels ?? null;
-    for (const [item, chip] of this.#chips) chip.textContent = this._chipLabel(item);
-  }
-
   _render() {
     const forced = this.#forcedItems();
     const moot = this.#mootItems();
-    for (const [item, chip] of this.#chips) {
+    for (const [item, chip] of this._chips) {
       const isForced = forced.includes(item);
       chip.classList.toggle('selected', isForced || this.#selected.includes(item));
       chip.classList.toggle('forced', isForced);
@@ -282,24 +272,22 @@ class EntityProgressHideChips extends ChipsBase {
 
 defineElement(EntityProgressHideChips.ELEMENT_NAME, EntityProgressHideChips);
 
-/**
- * Single-select variant: exactly one mode is always active (no
- * deselect-to-empty), unlike EffectChips/HideChips which toggle membership in
- * an array. Concrete subclasses only need to declare `static MODES`;
- * `this.constructor.MODES` resolves polymorphically.
- *
- * @abstract
- * @extends ChipsBase
- */
-// Concrete subclasses only declare `static MODES` (see the classes below);
-// this cast is how each instance reaches its own subclass's list.
-abstract class SingleSelectChipsBase extends ChipsBase {
-  static MODES: string[] = [];
+// Single-select: exactly one mode is always active (no deselect-to-empty),
+// unlike EffectChips/HideChips's own array membership. One element for every
+// single-select mode field (value source, theme mode, simple/advanced...) -
+// `modes` is per-instance, set by EditorBase#buildModeChipsField, same
+// pattern as EntityProgressHideChips's own `items`.
+class EntityProgressModeChips extends ChipsBase {
+  static ELEMENT_NAME = devName('entity-progress-mode-chips');
   #selected: string | null = null;
-  #chips = new Map<string, HTMLButtonElement>();
+  #modes: string[] = [];
 
-  get #modes(): string[] {
-    return (this.constructor as typeof SingleSelectChipsBase).MODES;
+  get modes(): string[] {
+    return this.#modes;
+  }
+
+  set modes(list: string[]) {
+    this.#modes = is.nonEmptyArray(list) ? (list as string[]) : [];
   }
 
   _buildDOM() {
@@ -308,7 +296,7 @@ abstract class SingleSelectChipsBase extends ChipsBase {
     // segmented pill instead of separate chips - see .chip-set.segmented.
     const segmented = this.#modes.length === 2;
     if (segmented) this.classList.add('inline-row');
-    this._buildChipSet(this.#modes, (value) => this.#select(value), this.#chips, segmented ? 'segmented' : undefined);
+    this._buildChipSet(this.#modes, (value) => this.#select(value), segmented ? 'segmented' : undefined);
   }
 
   #select(value: string) {
@@ -327,94 +315,12 @@ abstract class SingleSelectChipsBase extends ChipsBase {
     this._render();
   }
 
-  setLabels(labels: Record<string, string> | null) {
-    this._labels = labels ?? null;
-    for (const [item, chip] of this.#chips) chip.textContent = this._chipLabel(item);
-  }
-
   _render() {
-    for (const [item, chip] of this.#chips) chip.classList.toggle('selected', item === this.#selected);
+    for (const [item, chip] of this._chips) chip.classList.toggle('selected', item === this.#selected);
   }
 }
+defineElement(EntityProgressModeChips.ELEMENT_NAME, EntityProgressModeChips);
 
-/**
- * One element for every "value source" selector (min_value, max_value,
- * watermark.low, watermark.high): the modes are identical, and everything
- * field-specific (id, label, localized option labels,
- * resolveVirtual/onVirtualChange) is per-instance, set by #buildModeChipsField
- * from the field definition — the class itself carries nothing to specialize. A
- * field whose modes ever diverge stops being a "value source" and gets its own
- * class, like theme_mode/bar_stack_mode below.
- *
- * @extends SingleSelectChipsBase
- */
-class EntityProgressValueSourceModeChips extends SingleSelectChipsBase {
-  static ELEMENT_NAME = devName('entity-progress-value-source-mode-chips');
-  static MODES = ['standard', 'entity', 'jinja'];
-}
-defineElement(EntityProgressValueSourceModeChips.ELEMENT_NAME, EntityProgressValueSourceModeChips);
-
-/**
- * Single-select chips for `theme_mode`: preset theme vs custom_theme zones.
- *
- * @extends SingleSelectChipsBase
- */
-class EntityProgressThemeModeChips extends SingleSelectChipsBase {
-  static ELEMENT_NAME = devName('entity-progress-theme-mode-chips');
-  static MODES = ['preset', 'custom'];
-}
-defineElement(EntityProgressThemeModeChips.ELEMENT_NAME, EntityProgressThemeModeChips);
-
-/**
- * Single-select chips for `bar_stack.mode`: stacked/proportional/net
- * aggregation of the additional bar_stack entities.
- *
- * @extends SingleSelectChipsBase
- */
-class EntityProgressBarStackModeChips extends SingleSelectChipsBase {
-  static ELEMENT_NAME = devName('entity-progress-bar-stack-mode-chips');
-  static MODES = ['stacked', 'proportional', 'net'];
-}
-defineElement(EntityProgressBarStackModeChips.ELEMENT_NAME, EntityProgressBarStackModeChips);
-
-// icon_animation_mode: automatic entity-based detection vs a Jinja condition.
-class EntityProgressIconAnimationModeChips extends SingleSelectChipsBase {
-  static ELEMENT_NAME = devName('entity-progress-icon-animation-mode-chips');
-  static MODES = ['auto', 'template'];
-}
-defineElement(EntityProgressIconAnimationModeChips.ELEMENT_NAME, EntityProgressIconAnimationModeChips);
-
-// force_circular_background_mode: Auto (default shape) vs always Forced.
-class EntityProgressCircularBackgroundModeChips extends SingleSelectChipsBase {
-  static ELEMENT_NAME = devName('entity-progress-circular-background-mode-chips');
-  static MODES = ['auto', 'forced'];
-}
-defineElement(EntityProgressCircularBackgroundModeChips.ELEMENT_NAME, EntityProgressCircularBackgroundModeChips);
-
-// Shared by trigger/bar_effect_mode/hide_mode (Simple/Advanced).
-class EntityProgressSimpleAdvancedChips extends SingleSelectChipsBase {
-  static ELEMENT_NAME = devName('entity-progress-simple-advanced-chips');
-  static MODES = ['simple', 'advanced'];
-}
-defineElement(EntityProgressSimpleAdvancedChips.ELEMENT_NAME, EntityProgressSimpleAdvancedChips);
-
-// markers()'s 5 master on/off toggles (watermark/peak_marker/badge/
-// status_label/alert_when) - a pill instead of a switch, distinct from the
-// plain toggles nested under them once enabled.
-class EntityProgressEnabledDisabledChips extends SingleSelectChipsBase {
-  static ELEMENT_NAME = devName('entity-progress-enabled-disabled-chips');
-  static MODES = ['disabled', 'enabled'];
-}
-defineElement(EntityProgressEnabledDisabledChips.ELEMENT_NAME, EntityProgressEnabledDisabledChips);
-
-export { ChipsBase };
 export { EntityProgressEffectChips };
 export { EntityProgressHideChips };
-export { SingleSelectChipsBase };
-export { EntityProgressValueSourceModeChips };
-export { EntityProgressThemeModeChips };
-export { EntityProgressBarStackModeChips };
-export { EntityProgressIconAnimationModeChips };
-export { EntityProgressCircularBackgroundModeChips };
-export { EntityProgressEnabledDisabledChips };
-export { EntityProgressSimpleAdvancedChips };
+export { EntityProgressModeChips };

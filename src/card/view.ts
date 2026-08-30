@@ -16,6 +16,7 @@ import {
   markType,
   markOpacity,
   markColor,
+  SCHEMA_DEFAULTS,
   type WatermarkMark,
 } from './schema.js';
 import { cloneValue } from '../utils/browser-support.js';
@@ -42,7 +43,7 @@ type WatermarkConfig = {
   high: WatermarkMark;
   // No schema default (unlike low/high/line_size) - genuinely absent once
   // neither side needs it, see the `watermark` getter's own fallback to
-  // CARD.config.defaults.watermark for the real default.
+  // SCHEMA_DEFAULTS.watermark for the real default.
   opacity?: number;
   color?: string;
   type?: WatermarkType;
@@ -52,8 +53,7 @@ type WatermarkConfig = {
 // What ViewCore/ViewBase's `watermark` getter resolves each side to -
 // consumed by HACore._applyWatermarkCSS/_handleWatermarkClasses (core.ts).
 // type/opacity are never undefined here (unlike WatermarkConfig's own) -
-// the getter always resolves them against CARD.config.defaults.watermark
-// first.
+// the getter always resolves them against SCHEMA_DEFAULTS.watermark first.
 type ResolvedWatermarkMark = {
   shown: boolean;
   value: number;
@@ -76,6 +76,47 @@ type ResolvedPeakMark = { shown: boolean; type: PeakMarkType; opacity: number; c
 
 // Mirrors schema.ts's barStackEntity - one row of bar_stack.entities.
 type BarStackEntityConfig = { entity: string; attribute?: string; color?: string; subtract?: boolean };
+
+// Shared by ViewBase.themeDivergingGradient/ViewCore's own
+// templateThemeDivergingGradient below - center_zero's two independent
+// per-arm theme gradients, differing only in how each resolves its own
+// window/valueRange/defaultColor.
+const buildDivergingGradient = (params: {
+  theme: ThemeManager;
+  signedPercent: number;
+  mode: string;
+  defaultColor: string | null;
+  isVertical: boolean;
+  isSegmented: boolean;
+  posWindow: [number, number];
+  negWindow: [number, number];
+  valueRange: { min: number; max: number } | null;
+}) => {
+  const { theme, signedPercent, mode, defaultColor, isVertical, isSegmented, posWindow, negWindow, valueRange } =
+    params;
+  // Capped at 100, not just floored at 0 - a raw/Jinja percent isn't bounded
+  // the way ProgressCalc's own division is; posSize/negSize feed
+  // --epb-stack-size-pos/-neg directly, and a value above 1 there pushes the
+  // fill past .half's own overflow: hidden instead of just filling it.
+  const posFill = Math.min(100, Math.max(0, signedPercent));
+  const negFill = Math.min(100, Math.max(0, -signedPercent));
+  const posGradient = theme.buildGradient(posFill, mode, {
+    defaultColor,
+    isVertical,
+    window: posWindow,
+    valueRange,
+    isSegmented,
+  });
+  const negGradient = theme.buildGradient(negFill, mode, {
+    defaultColor,
+    isVertical,
+    window: negWindow,
+    valueRange,
+    isSegmented,
+  });
+  if (!posGradient && !negGradient) return null;
+  return { posGradient, negGradient, posSize: posFill / 100, negSize: negFill / 100 };
+};
 
 /**
  * A view class for rendering minimal cards in a user interface. This class
@@ -184,14 +225,14 @@ class ViewCore {
     Object.assign(
       this._lowValue,
       ViewCore._resolveValueConfig(
-        markValue(this._configHelper.config?.watermark?.low, CARD.config.defaults.watermark.low),
+        markValue(this._configHelper.config?.watermark?.low, SCHEMA_DEFAULTS.watermark.low),
         null,
       ),
     );
     Object.assign(
       this._highValue,
       ViewCore._resolveValueConfig(
-        markValue(this._configHelper.config?.watermark?.high, CARD.config.defaults.watermark.high),
+        markValue(this._configHelper.config?.watermark?.high, SCHEMA_DEFAULTS.watermark.high),
         null,
       ),
     );
@@ -349,12 +390,12 @@ class ViewCore {
         ? 1
         : layout.grid.grid_min_rows;
     const needsExtraRow =
-      this.config.bar_size === CARD.style.bar.sizeOptions.xlarge.label ||
+      this.config.bar_size === CARD.style.bar.sizeOptions.xlarge ||
       (this.config.layout === 'horizontal' && this.config.bar_position === 'below') ||
       (this.config.layout === 'vertical' &&
         ['default', 'below'].includes(this.config.bar_position ?? '') &&
-        this.config.bar_size !== CARD.style.bar.sizeOptions.small.label &&
-        this.config.bar_size !== CARD.style.bar.sizeOptions.xsmall.label) ||
+        this.config.bar_size !== CARD.style.bar.sizeOptions.small &&
+        this.config.bar_size !== CARD.style.bar.sizeOptions.xsmall) ||
       // rainbow_full's bar-row is forced up to horizontal's own 16px in
       // vertical layout too (see the matching CSS in styles.ts) for
       // xsmall/small/medium (large already reaches 16px natively there,
@@ -363,9 +404,9 @@ class ViewCore {
       // layout.
       (this.config.layout === 'vertical' &&
         this.config.bar_color_mode === 'rainbow_full' &&
-        (this.config.bar_size === CARD.style.bar.sizeOptions.xsmall.label ||
-          this.config.bar_size === CARD.style.bar.sizeOptions.small.label ||
-          this.config.bar_size === CARD.style.bar.sizeOptions.medium.label));
+        (this.config.bar_size === CARD.style.bar.sizeOptions.xsmall ||
+          this.config.bar_size === CARD.style.bar.sizeOptions.small ||
+          this.config.bar_size === CARD.style.bar.sizeOptions.medium));
     return baseRows + (needsExtraRow ? 1 : 0);
   }
 
@@ -485,6 +526,47 @@ class ViewCore {
     return this.config.bar_effect !== undefined;
   }
 
+  // Shared by ViewCore.watermark/ViewBase.watermark below - only how a raw
+  // value becomes a bar position (`toPos`) differs between them.
+  static _buildResolvedWatermark({
+    watermark,
+    jinjaLow,
+    jinjaHigh,
+    lowValue,
+    highValue,
+    toPos,
+  }: {
+    watermark: WatermarkConfig;
+    jinjaLow: number | null;
+    jinjaHigh: number | null;
+    lowValue: unknown;
+    highValue: unknown;
+    toPos: (value: unknown, mark: WatermarkMark) => number;
+  }): ResolvedWatermark {
+    // type/opacity carry no schema default (see WatermarkConfig) - applied
+    // here from SCHEMA_DEFAULTS.watermark instead.
+    const globalType = watermark.type ?? SCHEMA_DEFAULTS.watermark.type;
+    const globalOpacity = watermark.opacity ?? SCHEMA_DEFAULTS.watermark.opacity;
+    const resolveMark = (
+      mark: WatermarkMark,
+      jinjaOverride: number | null,
+      resolvedValue: unknown,
+    ): ResolvedWatermarkMark => ({
+      shown: markShown(mark),
+      value: toPos(jinjaOverride ?? resolvedValue, mark),
+      type: markType(mark, globalType) as WatermarkType,
+      opacity: markOpacity(mark, globalOpacity),
+      color: ThemeManager.adaptColor(markColor(mark, watermark.color) ?? null),
+    });
+    return {
+      low: resolveMark(watermark.low, jinjaLow, lowValue),
+      high: resolveMark(watermark.high, jinjaHigh, highValue),
+      opacity: globalOpacity,
+      type: globalType as WatermarkType,
+      line_size: watermark.line_size,
+    };
+  }
+
   get watermark(): ResolvedWatermark | null {
     const watermark = this.config.watermark as WatermarkConfig | undefined;
     if (!watermark) return null;
@@ -494,29 +576,15 @@ class ViewCore {
     // 50 + value/2 recenter percent itself gets in _managePercent, though -
     // without it a mark landed in the wrong half of the bar.
     const isCenterZero = Boolean(this.config.center_zero);
-    const toPos = (value: number) => (isCenterZero ? 50 + value / 2 : value);
-    // type/opacity carry no schema default (see WatermarkConfig) - applied
-    // here from CARD.config.defaults.watermark instead.
-    const globalType = watermark.type ?? CARD.config.defaults.watermark.type;
-    const globalOpacity = watermark.opacity ?? CARD.config.defaults.watermark.opacity;
-    const resolveMark = (
-      mark: WatermarkMark,
-      jinjaOverride: number | null,
-      resolvedValue: unknown,
-    ): ResolvedWatermarkMark => ({
-      shown: markShown(mark),
-      value: toPos((jinjaOverride ?? resolvedValue) as number),
-      type: markType(mark, globalType) as WatermarkType,
-      opacity: markOpacity(mark, globalOpacity),
-      color: ThemeManager.adaptColor(markColor(mark, watermark.color) ?? null),
+    const toPos = (value: unknown) => (isCenterZero ? 50 + (value as number) / 2 : (value as number));
+    return ViewCore._buildResolvedWatermark({
+      watermark,
+      jinjaLow: this.#jinjaWatermarkLow,
+      jinjaHigh: this.#jinjaWatermarkHigh,
+      lowValue: this._lowValue.value,
+      highValue: this._highValue.value,
+      toPos,
     });
-    return {
-      low: resolveMark(watermark.low, this.#jinjaWatermarkLow, this._lowValue.value),
-      high: resolveMark(watermark.high, this.#jinjaWatermarkHigh, this._highValue.value),
-      opacity: globalOpacity,
-      type: globalType as WatermarkType,
-      line_size: watermark.line_size,
-    };
   }
 
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
@@ -710,11 +778,10 @@ class ViewCore {
     return this.#templateTheme.buildGradient(
       this.#templateTheme.value,
       this._configHelper.config.bar_color_mode ?? 'auto',
-      null,
-      this.isVerticalBar,
-      [0, 100],
-      null,
-      this.isSegmented,
+      {
+        isVertical: this.isVerticalBar,
+        isSegmented: this.isSegmented,
+      },
     );
   }
 
@@ -726,16 +793,6 @@ class ViewCore {
   get templateThemeDivergingGradient() {
     if (!this._configHelper.config.theme || !this._configHelper.config.center_zero) return null;
     this.#refreshTemplateTheme();
-    const signedPercent = this.#templateTheme.value;
-    // Capped at 100, not just floored at 0 - a Jinja `percent` isn't bounded
-    // the way ProgressCalc's own division is (see _managePercent's own
-    // comment on the exact same issue for the plain fill) - posSize/negSize
-    // below feed --epb-stack-size-pos/-neg directly, and a value above 1
-    // there pushes the fill past .half's own overflow: hidden instead of
-    // just filling it, the same empty-gap symptom the fill's own clamp
-    // exists to prevent.
-    const posFill = Math.min(100, Math.max(0, signedPercent));
-    const negFill = Math.min(100, Math.max(0, -signedPercent));
     const mode = this._configHelper.config.bar_color_mode ?? 'auto';
     const [posWindow, negWindow]: [[number, number], [number, number]] = this.#templateTheme.isSigned
       ? [
@@ -746,26 +803,17 @@ class ViewCore {
           [50, 100],
           [50, 0],
         ];
-    const posGradient = this.#templateTheme.buildGradient(
-      posFill,
+    return buildDivergingGradient({
+      theme: this.#templateTheme,
+      signedPercent: this.#templateTheme.value,
       mode,
-      null,
-      this.isVerticalBar,
+      defaultColor: null,
+      isVertical: this.isVerticalBar,
+      isSegmented: this.isSegmented,
       posWindow,
-      null,
-      this.isSegmented,
-    );
-    const negGradient = this.#templateTheme.buildGradient(
-      negFill,
-      mode,
-      null,
-      this.isVerticalBar,
       negWindow,
-      null,
-      this.isSegmented,
-    );
-    if (!posGradient && !negGradient) return null;
-    return { posGradient, negGradient, posSize: posFill / 100, negSize: negFill / 100 };
+      valueRange: null,
+    });
   }
 
   // epb-icon-charge's clip-path is calibrated to the plain "mdi:battery"
@@ -1039,13 +1087,10 @@ class ViewBase extends ViewCore {
       const addMain = () =>
         this.#entityCollection.addEntity(
           assertDefined(this._configHelper.config.entity, 'bar_stack main entity requires config.entity'),
-          this._configHelper.config.attribute ?? null,
-          null,
-          false,
-          true,
+          { attribute: this._configHelper.config.attribute ?? null, isMain: true },
         );
       const addOne = ({ entity, attribute, color, subtract }: BarStackEntityConfig) =>
-        this.#entityCollection.addEntity(entity, attribute, color, subtract);
+        this.#entityCollection.addEntity(entity, { attribute, color, subtract });
       // One consistent order: main entity first, then entities[] in list
       // order. Exception: without center_zero, `subtract` is otherwise a
       // silent no-op (no negative arm to place it in) - move subtract-marked
@@ -1113,7 +1158,7 @@ class ViewBase extends ViewCore {
     Object.assign(
       this._lowValue,
       ViewCore._resolveValueConfig(
-        markValue(this._configHelper.config?.watermark?.low, CARD.config.defaults.watermark.low),
+        markValue(this._configHelper.config?.watermark?.low, SCHEMA_DEFAULTS.watermark.low),
         null,
       ),
     );
@@ -1121,7 +1166,7 @@ class ViewBase extends ViewCore {
     Object.assign(
       this._highValue,
       ViewCore._resolveValueConfig(
-        markValue(this._configHelper.config?.watermark?.high, CARD.config.defaults.watermark.high),
+        markValue(this._configHelper.config?.watermark?.high, SCHEMA_DEFAULTS.watermark.high),
         null,
       ),
     );
@@ -1190,11 +1235,11 @@ class ViewBase extends ViewCore {
       (!this.#minValue.isAvailable && minIsEntity) ||
       (!this._lowValue.isAvailable &&
         is.nonEmptyString(
-          entityOf(markValue(this._configHelper.config?.watermark?.low, CARD.config.defaults.watermark.low)),
+          entityOf(markValue(this._configHelper.config?.watermark?.low, SCHEMA_DEFAULTS.watermark.low)),
         )) ||
       (!this._highValue.isAvailable &&
         is.nonEmptyString(
-          entityOf(markValue(this._configHelper.config?.watermark?.high, CARD.config.defaults.watermark.high)),
+          entityOf(markValue(this._configHelper.config?.watermark?.high, SCHEMA_DEFAULTS.watermark.high)),
         )) ||
       (!this._aboveValue.isAvailable && is.nonEmptyString(entityOf(this._configHelper.config?.alert_when?.above))) ||
       (!this._belowValue.isAvailable && is.nonEmptyString(entityOf(this._configHelper.config?.alert_when?.below)))
@@ -1270,11 +1315,12 @@ class ViewBase extends ViewCore {
     return this.#theme.buildGradient(
       this.#percentHelper.percent ?? 0,
       this._configHelper.config.bar_color_mode ?? 'auto',
-      this._currentValue.defaultColor || null,
-      this.isVerticalBar,
-      [0, 100],
-      { min: this.#percentHelper.min, max: this.#percentHelper.max },
-      this.isSegmented,
+      {
+        defaultColor: this._currentValue.defaultColor || null,
+        isVertical: this.isVerticalBar,
+        valueRange: { min: this.#percentHelper.min, max: this.#percentHelper.max },
+        isSegmented: this.isSegmented,
+      },
     );
   }
 
@@ -1290,25 +1336,11 @@ class ViewBase extends ViewCore {
     const { min, max, zeroValue, percent } = this.#percentHelper;
     if (max === min) return null;
     const zeroPercent = ((zeroValue - min) / (max - min)) * 100;
-    const signedPercent = percent ?? 0;
-    // Capped at 100, not just floored at 0 - this.percent (the fill's own
-    // value) already clamps for exactly this reason (a real-value entity can
-    // exceed max_value), but #percentHelper.percent above is the raw,
-    // unclamped one. posSize/negSize below feed --epb-stack-size-pos/-neg
-    // directly, and a value above 1 there pushes the fill past .half's own
-    // overflow: hidden instead of just filling it - the same empty-gap
-    // symptom this.percent's own clamp exists to prevent.
-    const posFill = Math.min(100, Math.max(0, signedPercent));
-    const negFill = Math.min(100, Math.max(0, -signedPercent));
     const mode = this._configHelper.config.bar_color_mode ?? 'auto';
-    const defaultColor = this._currentValue.defaultColor || null;
-    const valueRange = { min, max };
-    // A signed theme (critical_when_extreme_center and friends) already
-    // spans -100..100 as one continuous scale - [0, 100]/[0, -100] read its
-    // own zone numbers directly, one continuous curve across both arms
-    // (danger at both ends, safe at the center). A regular theme still gets
-    // windowed against zeroPercent, the same zones mirrored onto each arm
-    // independently (this is what every other theme's own shape assumes).
+    // A signed theme (critical_when_extreme_center and friends) already spans
+    // -100..100 as one continuous scale - [0, 100]/[0, -100] read its zone
+    // numbers directly. A regular theme instead windows against zeroPercent,
+    // mirroring the same zones onto each arm independently.
     const [posWindow, negWindow]: [[number, number], [number, number]] = this.#theme.isSigned
       ? [
           [0, 100],
@@ -1318,26 +1350,17 @@ class ViewBase extends ViewCore {
           [zeroPercent, 100],
           [zeroPercent, 0],
         ];
-    const posGradient = this.#theme.buildGradient(
-      posFill,
+    return buildDivergingGradient({
+      theme: this.#theme,
+      signedPercent: percent ?? 0,
       mode,
-      defaultColor,
-      this.isVerticalBar,
+      defaultColor: this._currentValue.defaultColor || null,
+      isVertical: this.isVerticalBar,
+      isSegmented: this.isSegmented,
       posWindow,
-      valueRange,
-      this.isSegmented,
-    );
-    const negGradient = this.#theme.buildGradient(
-      negFill,
-      mode,
-      defaultColor,
-      this.isVerticalBar,
       negWindow,
-      valueRange,
-      this.isSegmented,
-    );
-    if (!posGradient && !negGradient) return null;
-    return { posGradient, negGradient, posSize: posFill / 100, negSize: negFill / 100 };
+      valueRange: { min, max },
+    });
   }
 
   get percent(): number {
@@ -1464,34 +1487,21 @@ class ViewBase extends ViewCore {
     // already a position), but under center_zero a position still needs the
     // same 50 + value/2 recenter calcWatermark itself applies - same bug as
     // ViewCore's own watermark getter, fixed there for the same reason.
-    const toPos = (v: number | { current: number } | null | undefined, as: string) => {
-      if (isTimer) return is.number(v) ? v : (v?.current ?? 0);
-      if (as !== 'percent') return this.#percentHelper.calcWatermark(v);
-      const raw = is.number(v) ? v : (v?.current ?? 0);
-      return this.#percentHelper.isCenterZero ? 50 + raw / 2 : raw;
+    const toPos = (v: unknown, mark: WatermarkMark) => {
+      const raw = v as number | { current: number } | null | undefined;
+      if (isTimer) return is.number(raw) ? raw : (raw?.current ?? 0);
+      if (markAs(mark) !== 'percent') return this.#percentHelper.calcWatermark(raw);
+      const value = is.number(raw) ? raw : (raw?.current ?? 0);
+      return this.#percentHelper.isCenterZero ? 50 + value / 2 : value;
     };
-    // type/opacity carry no schema default (see WatermarkConfig) - applied
-    // here from CARD.config.defaults.watermark instead.
-    const globalType = watermark.type ?? CARD.config.defaults.watermark.type;
-    const globalOpacity = watermark.opacity ?? CARD.config.defaults.watermark.opacity;
-    const resolveMark = (
-      mark: WatermarkMark,
-      jinjaOverride: number | null,
-      resolvedValue: unknown,
-    ): ResolvedWatermarkMark => ({
-      shown: markShown(mark),
-      value: toPos(jinjaOverride ?? (resolvedValue as number | { current: number } | null), markAs(mark)),
-      type: markType(mark, globalType) as WatermarkType,
-      opacity: markOpacity(mark, globalOpacity),
-      color: ThemeManager.adaptColor(markColor(mark, watermark.color) ?? null),
+    return ViewCore._buildResolvedWatermark({
+      watermark,
+      jinjaLow: this.jinjaWatermarkLow,
+      jinjaHigh: this.jinjaWatermarkHigh,
+      lowValue: this._lowValue.value,
+      highValue: this._highValue.value,
+      toPos,
     });
-    return {
-      low: resolveMark(watermark.low, this.jinjaWatermarkLow, this._lowValue.value),
-      high: resolveMark(watermark.high, this.jinjaWatermarkHigh, this._highValue.value),
-      opacity: globalOpacity,
-      type: globalType as WatermarkType,
-      line_size: watermark.line_size,
-    };
   }
 
   get hasEntityCollection(): boolean {
@@ -1625,64 +1635,32 @@ class ViewBase extends ViewCore {
   }
 
   #getCurrentDecimal(currentUnit: string): number {
-    return resolveDisplayDecimal(
-      this._configHelper.config.decimal,
-      this._configHelper.config.unit,
-      currentUnit,
-      this._currentValue.precision,
-      this._currentValue.entityType,
-      this._currentValue.unit,
-    );
+    return resolveDisplayDecimal(this._configHelper.config.decimal, {
+      configUnit: this._configHelper.config.unit,
+      resolvedUnit: currentUnit,
+      entityPrecision: this._currentValue.precision,
+      entityType: this._currentValue.entityType,
+      entityUnit: this._currentValue.unit,
+    });
   }
 }
-/**
- * A concrete ViewBase implementation for full card rendering, using
- * CardConfigHelper for card-specific configuration validation, processing,
- * and management. Inherits all entity management, theme handling, and state
- * processing from ViewBase.
- *
- * @extends ViewBase
- * @see ViewBase For inherited functionality
- * @see CardConfigHelper For configuration management details
- */
 class CardView extends ViewBase {
   _configHelper = new CardConfigHelper();
 }
 
-/**
- * ViewBase variant for the Badge type — BadgeConfigHelper.
- *
- * @extends ViewBase
- */
 class BadgeView extends ViewBase {
   _configHelper = new BadgeConfigHelper();
 }
 
-/**
- * ViewBase variant for the Tile Feature type — FeatureConfigHelper.
- *
- * @extends ViewBase
- */
 class FeatureView extends ViewBase {
   _configHelper = new FeatureConfigHelper();
 }
 
-/**
- * ViewCore variant for the Jinja-driven Template card — TemplateConfigHelper.
- *
- * @extends ViewCore
- */
 class CardTemplateView extends ViewCore {
   _configHelper = new TemplateConfigHelper();
   icon: string | null = null;
 }
 
-/**
- * ViewCore variant for the Jinja-driven Template badge —
- * BadgeTemplateConfigHelper.
- *
- * @extends ViewCore
- */
 class BadgeTemplateView extends ViewCore {
   _configHelper = new BadgeTemplateConfigHelper();
   icon: string | null = null;

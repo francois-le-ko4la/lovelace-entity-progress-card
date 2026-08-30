@@ -125,7 +125,8 @@
       "icon_animation_jinja": "",
       "name_info": "",
       "returns_number": "",
-      "status_label_jinja": ""
+      "status_label_jinja": "",
+      "feature_entity": ""
     },
     "option": {
       "alert_animation": {

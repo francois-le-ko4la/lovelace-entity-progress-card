@@ -30,11 +30,19 @@ const resolveDisplayUnit = (
 
 const resolveDisplayDecimal = (
   configDecimal: unknown,
-  configUnit: string | undefined,
-  resolvedUnit: string,
-  entityPrecision: number | null,
-  entityType: EntityTypeFlags,
-  entityUnit: string | null,
+  {
+    configUnit,
+    resolvedUnit,
+    entityPrecision,
+    entityType,
+    entityUnit,
+  }: {
+    configUnit: string | undefined;
+    resolvedUnit: string;
+    entityPrecision: number | null;
+    entityType: EntityTypeFlags;
+    entityUnit: string | null;
+  },
 ): number => {
   if (is.unsignedInteger(configDecimal)) return configDecimal;
   if (entityPrecision) return entityPrecision;
@@ -48,4 +56,3 @@ const resolveDisplayDecimal = (
 };
 
 export { resolveDisplayUnit, resolveDisplayDecimal };
-export type { EntityTypeFlags };

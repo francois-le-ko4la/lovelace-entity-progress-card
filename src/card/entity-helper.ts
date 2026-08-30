@@ -13,10 +13,6 @@ import { NumberFormatter } from './formatting.js';
 // EditorFieldsType.entityName / types.stateContent in schema.ts).
 type NameToken = { type: string; text?: string };
 
-/**
- * Helper class for managing entities. This class validates and retrieves
- * information from Home Assistant if it's an entity.
- */
 // This class's own #value stays genuinely `any` on purpose: an entity's
 // value is polymorphic per domain (number, string, timer duration...), same
 // rationale as EntityState.attributes in hass-provider.ts - not the same

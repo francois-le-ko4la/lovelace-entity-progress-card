@@ -41,15 +41,17 @@ npm run build:test   # → dist/entity-progress-card_dev.js (readable, not minif
 feature custom elements and prints the console banner — everything else in
 `src/` is reached from there, directly or transitively.
 
-To see it render against real entities rather than just type-check, there's no
-automated test suite (see [Rendering & performance](#rendering--performance)) —
-point a Lovelace resource at the dev build and import
-[`docs/demo-dashboard-dev.yaml`](demo-dashboard-dev.yaml) into a real Home
-Assistant instance. Full steps (and the PR checklist) are in the
+`npm test` covers pure logic (schema validation, math, formatting) - see
+`test/`. It proves nothing about rendering, the editor, or Jinja timing: no test
+touches a real customElement, shadow root, or `hass` object, and there's no plan
+to change that (see [Rendering & performance](#rendering--performance)). To see
+the card render against real entities, point a Lovelace resource at the dev
+build and import [`docs/demo-dashboard-dev.yaml`](demo-dashboard-dev.yaml) into
+a real Home Assistant instance. Full steps (and the PR checklist) are in the
 [Contributing Guide](contributing.md#contribution-guidelines).
 
-Before opening a PR: `npm run validate` (syntax check + lint + type-check +
-translations sync) — the same gate CI runs.
+Before opening a PR: `npm run validate` (syntax check + lint + type-check + unit
+tests + translations sync) — the same gate CI runs.
 
 ## Design principles
 
@@ -106,16 +108,17 @@ classDiagram
     EditorBase <|-- EntityProgressBadgeEditor
     EditorBase <|-- EntityProgressTemplateEditor
     EditorBase <|-- EntityProgressBadgeTemplateEditor
+    EditorBase <|-- EntityProgressFeatureEditor
 ```
 
-| Class                                        | Responsibility                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `HACore`                                     | Shadow DOM setup, `setConfig`/`set hass` contract, render pipeline, resource lifecycle, WebSocket watching, Jinja subscription management. Abstract.                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| `HABase`                                     | Entity-driven rendering: icon, badge, shape, trend, hidden components, standard text fields, base Jinja handlers. Abstract.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| `EntityProgressCardBase`                     | Full card behavior (auto-refresh for timers, CSS updates, standard fields).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| `EntityProgressCard` / `EntityProgressBadge` | Concrete card/badge: static metadata (`_cardStructure`, `_baseClass`), stub config.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| `EntityProgressTemplateBase`                 | Jinja-first variants: every visible field comes from a template subscription.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| `EntityProgressFeatures`                     | Tile feature (progress bar embedded in a native Tile card), including the row-size fix for `top`/`bottom` positions. Extends `HACore` directly (not `EntityProgressCardBase`) and has its own `_updateCSS()` — a separate implementation from Card/Badge's shared one, not a missing one. Its view (`FeatureView`) still extends `ViewBase` and its HTML still comes from the same `StructureElements.progressBar` builder as Card/Badge, so anything `ViewBase` exposes (theme, watermark, `bar_stack`, `center_zero`, …) works identically here — YAML-only, since the Tile Feature has no visual editor. |
+| Class                                        | Responsibility                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `HACore`                                     | Shadow DOM setup, `setConfig`/`set hass` contract, render pipeline, resource lifecycle, WebSocket watching, Jinja subscription management. Abstract.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `HABase`                                     | Entity-driven rendering: icon, badge, shape, trend, hidden components, standard text fields, base Jinja handlers. Abstract.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| `EntityProgressCardBase`                     | Full card behavior (auto-refresh for timers, CSS updates, standard fields).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| `EntityProgressCard` / `EntityProgressBadge` | Concrete card/badge: static metadata (`_cardStructure`, `_baseClass`), stub config.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `EntityProgressTemplateBase`                 | Jinja-first variants: every visible field comes from a template subscription.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| `EntityProgressFeatures`                     | Tile feature (progress bar embedded in a native Tile card), including the row-size fix for `top`/`bottom` positions. Extends `HACore` directly (not `EntityProgressCardBase`) and has its own `_updateCSS()` — a separate implementation from Card/Badge's shared one, not a missing one. Its view (`FeatureView`) still extends `ViewBase` and its HTML still comes from the same `StructureElements.progressBar` builder as Card/Badge, so anything `ViewBase` exposes (theme, watermark, `bar_stack`, `center_zero`, `peak_marker`, …) works identically here. `entity` is optional: `set context()` falls back to the parent Tile's own entity (`LovelaceCardFeatureContext.entity_id`) when the feature's own config omits one. Has its own visual editor (`EntityProgressFeatureEditor`, `EditorFactory.buildFeature()`) - see below. |
 
 Each concrete class carries **static** metadata consumed by the shared pipeline:
 `_cardStructure` (an `ObjStructure` instance), `_cardStyle` (CSS text),
@@ -300,7 +303,7 @@ At module load, in `src/index.ts` (the bundle entry point):
 ```js
 RegistrationHelper.registerCard(META.types.card, EntityProgressCard, EntityProgressCardEditor);
 RegistrationHelper.registerBadge(META.types.badge, EntityProgressBadge, …);
-RegistrationHelper.registerCardFeature(META.types.feature, EntityProgressFeatures);
+RegistrationHelper.registerCardFeature(META.types.feature, EntityProgressFeatures, EntityProgressFeatureEditor);
 …
 ```
 
@@ -318,6 +321,11 @@ RegistrationHelper.registerCardFeature(META.types.feature, EntityProgressFeature
    Jinja `percent:` to render anything meaningful, and Features are never picked
    through this entity-first flow at all (`customCardFeatures`, not
    `customCards`).
+3. `customCardFeatures` entries also need `configurable: true` for the edit
+   pencil to appear in HA's tile-feature list at all
+   (`hui-card-features- editor.ts`'s `_isFeatureTypeEditable`) - entirely
+   independent of whether `getConfigElement()`/`customElements.define()` for the
+   editor actually work.
 
 ### The HA ↔ card contract
 
@@ -1225,14 +1233,18 @@ reasoning survives a maintainer handoff instead of living only in chat history.
   popup) — it kills the whole module before any `try/catch` can even run, which
   is exactly what issue #108 turned out to be: a silent freeze with no console
   error, because the failure happens before the module's own error handling
-  exists. `document.currentScript.src` is populated for a classic-script load
-  and `null` for an ES-module load (`import()`, the real HACS path) — in the
-  latter case these three stay off, which is the safe shipped state anyway.
-  **Never reintroduce `import.meta` anywhere in `src/`.**
-  `CARD_CONTEXT.classicScript` (`document.currentScript !== null`) is the same
-  signal, used to show a one-time console nudge toward switching the resource to
-  "JavaScript Module" — the classic type still loads fine now, but stays
-  deprecated by HA.
+  exists. **Never reintroduce `import.meta` anywhere in `src/`.**
+  `document.currentScript.src` is populated for a classic-script load and `null`
+  for an ES-module load (`import()`, the real HACS/"JavaScript Module" path) —
+  in the latter case `MODULE_URL` falls back to the Resource Timing API
+  (`performance.getEntriesByType('resource')`), matching the entry whose URL
+  contains this exact build's own filename (`entity-progress-card(_dev)?.js`) so
+  a dev+prod pair loaded side by side never cross-match each other's query
+  string. Still anchored to the **resource's own URL** either way, never the
+  dashboard page's URL. `CARD_CONTEXT.classicScript`
+  (`document.currentScript !== null`) is a separate signal, used to show a
+  one-time console nudge toward switching the resource to "JavaScript Module" —
+  the classic type still loads fine now, but stays deprecated by HA.
 - A **console warning** is printed after the load banner whenever dev or any
   debug area is active (listing the active areas), so a non-shipped
   configuration never runs silently. Normal prod loads stay quiet.

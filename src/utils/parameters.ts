@@ -21,10 +21,16 @@ import { THEME, PERCENT_THEME_KEYS } from './card-themes.js';
 declare const __EPB_DEV_BUILD__: boolean;
 
 // document.currentScript.src, not import.meta.url - a bare import.meta is a
-// parse-time SyntaxError on a classic-script load (issue #108).
+// parse-time SyntaxError on a classic-script load (issue #108). null for an
+// ES-module load (the common HACS "JavaScript Module" type) - the Resource
+// Timing API covers that instead, matched by this exact build's own filename
+// so a dev+prod pair loaded side by side never cross-match.
 const MODULE_URL = (() => {
   try {
-    return (document.currentScript as HTMLScriptElement | null)?.src ?? '';
+    const scriptSrc = (document.currentScript as HTMLScriptElement | null)?.src;
+    if (scriptSrc) return scriptSrc;
+    const filename = `entity-progress-card${__EPB_DEV_BUILD__ ? '_dev' : ''}.js`;
+    return performance.getEntriesByType('resource').find((entry) => entry.name.includes(filename))?.name ?? '';
   } catch {
     return '';
   }
@@ -72,6 +78,12 @@ const DEBUG_AREAS = new Set(
 const debugOn = (area: keyof typeof DEBUG_DEFAULTS): boolean =>
   DEBUG_DEFAULTS[area] || DEBUG_AREAS.has('all') || DEBUG_AREAS.has(area);
 
+// Derived from DEBUG_DEFAULTS's own keys so a new debug area only needs
+// adding there, not duplicated here too.
+const resolvedDebug = Object.fromEntries(
+  (Object.keys(DEBUG_DEFAULTS) as (keyof typeof DEBUG_DEFAULTS)[]).map((area) => [area, debugOn(area)]),
+) as Record<keyof typeof DEBUG_DEFAULTS, boolean>;
+
 const CARD_CONTEXT = {
   dev: __EPB_DEV_BUILD__ || MODULE_PARAMS.get('dev') === 'true',
   classicScript: IS_CLASSIC_SCRIPT,
@@ -81,16 +93,7 @@ const CARD_CONTEXT = {
   // with the module fully inert, it's our registration; if it persists, it's
   // the mere act of loading the bundle. URL-derived only, off unless asked.
   noRegistration: MODULE_PARAMS.has('noRegistration'),
-  debug: {
-    card: debugOn('card'),
-    editor: debugOn('editor'),
-    interactionHandler: debugOn('interactionHandler'),
-    ressourceManager: debugOn('ressourceManager'),
-    hass: debugOn('hass'),
-    registration: debugOn('registration'),
-    instances: debugOn('instances'),
-    interference: debugOn('interference'),
-  },
+  debug: resolvedDebug,
 };
 
 const devName = (name: string): string => `${name}${CARD_CONTEXT.dev ? '-dev' : ''}`;

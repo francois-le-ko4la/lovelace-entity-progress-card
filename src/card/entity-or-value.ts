@@ -10,11 +10,6 @@ import type { EntityState } from '../utils/hass-provider.js';
 import { ValueHelper } from './value-primitives.js';
 import { EntityHelper, type NameToken } from './entity-helper.js';
 
-/**
- * Represents either an entity ID or a direct value. This class validates the
- * provided value and retrieves information from Home Assistant if it's an
- * entity.
- */
 class EntityOrValue {
   #activeHelper: EntityHelper | ValueHelper | null = null;
 

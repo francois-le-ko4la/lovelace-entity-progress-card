@@ -9,7 +9,8 @@
 
 type ParsedLength = { custom: false; value: number; unit: string } | { custom: true; raw: string };
 
-// Slider bounds/step per unit. `%` and `px` step by 1, em/rem by 0.1.
+// Slider bounds/step per unit. `%` and `px` step by 1 (whole positive
+// number); em/rem step by a tenth - a whole em/rem is a coarse jump.
 const LENGTH_MAX: Record<string, number> = { px: 500, em: 40, rem: 40, '%': 500 };
 const LENGTH_STEP: Record<string, number> = { px: 1, em: 0.1, rem: 0.1, '%': 1 };
 
@@ -38,7 +39,7 @@ const lengthSliderSelector = (raw: unknown): Record<string, unknown> => {
   const unit = parsed.custom ? 'px' : parsed.unit;
   const value = parsed.custom ? 0 : parsed.value;
   const max = Math.max(LENGTH_MAX[unit] ?? 500, value);
-  return { number: { min: 0, max, step: LENGTH_STEP[unit] ?? 1, mode: 'slider', unit_of_measurement: unit } };
+  return { number: { min: 0, max, step: LENGTH_STEP[unit] ?? 1, mode: 'slider' } };
 };
 
 const lengthUnitSelector = (units: string[]): Record<string, unknown> => ({
@@ -57,4 +58,3 @@ const convertLengthValue = (value: number, from: string, to: string, ref?: numbe
 };
 
 export { parseLength, serializeLength, lengthSliderSelector, lengthUnitSelector, convertLengthValue };
-export type { ParsedLength };

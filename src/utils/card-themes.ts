@@ -9,6 +9,16 @@
 
 import { HA_CONTEXT } from './ha-context.js';
 
+// Shared by battery_adaptive (its own not-charging fallback, see its own
+// comment below) and critical_when_low - identical on purpose.
+const CRITICAL_WHEN_LOW_ZONES = [
+  { min: 0, max: 10, icon: null, color: HA_CONTEXT.colors.red },
+  { min: 10, max: 20, icon: null, color: HA_CONTEXT.colors.orange },
+  { min: 20, max: 30, icon: null, color: HA_CONTEXT.colors.yellow },
+  { min: 30, max: 40, icon: null, color: HA_CONTEXT.colors.green },
+  { min: 40, max: 100, icon: null, color: HA_CONTEXT.colors.green },
+];
+
 const THEME = {
   // Virtual theme, resolved by ViewCore.resolvedTheme (src/card/view.ts) to
   // critical_when_extreme (charging) or critical_when_low (not charging)
@@ -18,25 +28,13 @@ const THEME = {
     linear: false,
     percent: true,
     signed: false,
-    style: [
-      { min: 0, max: 10, icon: null, color: HA_CONTEXT.colors.red },
-      { min: 10, max: 20, icon: null, color: HA_CONTEXT.colors.orange },
-      { min: 20, max: 30, icon: null, color: HA_CONTEXT.colors.yellow },
-      { min: 30, max: 40, icon: null, color: HA_CONTEXT.colors.green },
-      { min: 40, max: 100, icon: null, color: HA_CONTEXT.colors.green },
-    ],
+    style: CRITICAL_WHEN_LOW_ZONES,
   },
   critical_when_low: {
     linear: false,
     percent: true,
     signed: false,
-    style: [
-      { min: 0, max: 10, icon: null, color: HA_CONTEXT.colors.red },
-      { min: 10, max: 20, icon: null, color: HA_CONTEXT.colors.orange },
-      { min: 20, max: 30, icon: null, color: HA_CONTEXT.colors.yellow },
-      { min: 30, max: 40, icon: null, color: HA_CONTEXT.colors.green },
-      { min: 40, max: 100, icon: null, color: HA_CONTEXT.colors.green },
-    ],
+    style: CRITICAL_WHEN_LOW_ZONES,
   },
   optimal_when_low: {
     linear: false,

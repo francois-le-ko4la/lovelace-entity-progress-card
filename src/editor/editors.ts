@@ -8,57 +8,38 @@ import {
   BadgeConfigHelper,
   TemplateConfigHelper,
   BadgeTemplateConfigHelper,
+  FeatureConfigHelper,
 } from '../card/config-helpers.js';
 import { EditorBase } from './base.js';
 import { EditorFactory } from './factory.js';
 
-/**
- * Visual editor for the standard card type — CardConfigHelper,
- * EditorFactory.build(false, false) field set.
- *
- * @extends EditorBase
- */
 class EntityProgressCardEditor extends EditorBase {
   _configHelper = new CardConfigHelper();
-  static _fields = EditorFactory.build(false, false);
+  static _fields = EditorFactory.build({ template: false, badge: false });
 }
 
-/**
- * Visual editor for the Badge type — BadgeConfigHelper,
- * EditorFactory.build(false, true) field set.
- *
- * @extends EditorBase
- */
 class EntityProgressBadgeEditor extends EditorBase {
   _configHelper = new BadgeConfigHelper();
-  static _fields = EditorFactory.build(false, true);
+  static _fields = EditorFactory.build({ template: false, badge: true });
 }
-
-/**
- * Visual editor for the Jinja-driven Template card — TemplateConfigHelper,
- * EditorFactory.build(true, false) field set.
- *
- * @extends EditorBase
- */
 
 class EntityProgressTemplateEditor extends EditorBase {
   _configHelper = new TemplateConfigHelper();
-  static _fields = EditorFactory.build(true, false);
+  static _fields = EditorFactory.build({ template: true, badge: false });
 }
-
-/**
- * Visual editor for the Jinja-driven Template badge —
- * BadgeTemplateConfigHelper, EditorFactory.build(true, true) field set.
- *
- * @extends EditorBase
- */
 
 class EntityProgressBadgeTemplateEditor extends EditorBase {
   _configHelper = new BadgeTemplateConfigHelper();
-  static _fields = EditorFactory.build(true, true);
+  static _fields = EditorFactory.build({ template: true, badge: true });
+}
+
+class EntityProgressFeatureEditor extends EditorBase {
+  _configHelper = new FeatureConfigHelper();
+  static _fields = EditorFactory.buildFeature();
 }
 
 export { EntityProgressCardEditor };
 export { EntityProgressBadgeEditor };
 export { EntityProgressTemplateEditor };
 export { EntityProgressBadgeTemplateEditor };
+export { EntityProgressFeatureEditor };
