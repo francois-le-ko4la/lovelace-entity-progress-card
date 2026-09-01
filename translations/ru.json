@@ -33,27 +33,36 @@
   "editor": {
     "field": {
       "action": {
-        "tap": "При нажатии",
-        "hold": "При длительном нажатии",
         "double_tap": "При двойном нажатии",
-        "icon_tap": "При нажатии на иконку",
+        "hold": "При длительном нажатии",
+        "icon_double_tap": "При двойном нажатии на иконку",
         "icon_hold": "При длительном нажатии на иконку",
-        "icon_double_tap": "При двойном нажатии на иконку"
+        "icon_tap": "При нажатии на иконку",
+        "tap": "При нажатии"
       },
       "action_picker": "Добавить взаимодействие",
-      "alert_toggle": "Оповещение",
-      "alert_when_above_mode": "Источник верхнего оповещения",
-      "alert_when_below_mode": "Источник нижнего оповещения",
+      "add_entity": "Добавить сущность",
+      "add_zone": "Добавить зону",
+      "alert_when": {
+        "above": "Оповещение выше",
+        "animation": "Анимация",
+        "below": "Оповещение ниже",
+        "color": "Цвет оповещения",
+        "highlight": "Выделение",
+        "label": "Метка",
+        "above_mode": "Источник верхнего оповещения",
+        "below_mode": "Источник нижнего оповещения",
+        "toggle": "Оповещение"
+      },
       "attribute": "Атрибут",
-      "badge_color": "Цвет значка",
-      "badge_color_toggle": "Independent color",
-      "badge_icon": "Иконка значка",
-      "badge_toggle": "Значок",
+      "badge": {
+        "toggle": "Значок",
+        "color_toggle": "Независимый цвет значка"
+      },
       "bar_color": "Цвет полосы",
       "bar_color_mode": "Режим цвета",
       "bar_effect_mode": "Эффект на полосе",
       "bar_group": "Полоса",
-      "bar_max_width": "Макс. ширина полосы",
       "bar_max_width_toggle": "Макс. ширина полосы",
       "bar_orientation": "Ориентация",
       "bar_scale": "Масштаб",
@@ -61,14 +70,14 @@
       "bar_single_line": "Одна строка",
       "bar_size": "Размер",
       "bar_stack": "Дополнительные объекты",
-      "bar_stack_mode": "Stack mode",
+      "bar_stack_mode": "Режим стека",
       "card_size_toggle": "Размер карточки",
       "center_zero": "Ноль по центру",
       "center_zero_growth_percent": "Процент роста",
       "center_zero_value": "Центральное значение",
       "color": "Основной цвет",
       "custom_info": "Дополнительная информация",
-      "custom_theme": "Custom theme zones",
+      "custom_theme": "Зоны пользовательской темы",
       "decimal": "десятичные",
       "density_toggle": "Компактно",
       "entity": "Сущность",
@@ -76,43 +85,72 @@
       "force_circular_background_mode": "Круглый фон значка",
       "frameless": "Без рамки",
       "height": "Высота",
-      "height_custom_toggle": "Shrink height (embedded)",
+      "height_custom_toggle": "Автоматическая высота",
       "hide_mode": "Скрыть",
       "icon": "Иконка",
       "icon_animation": "Анимация значка",
       "interpolate": "Интерполяция цветов",
       "layout": "Расположение содержимого",
       "marginless": "Без отступа",
+      "mark_color": "Цвет",
       "max_value": "Максимальное значение",
       "max_value_mode": "Источник максимального значения",
-      "migrate_config": "Migrate config",
+      "migrate_config": "Перенести конфигурацию",
       "min_value": "Минимальное значение",
       "min_value_mode": "Источник минимального значения",
       "min_width": "Мин. ширина",
-      "multiline": "Multiline",
+      "multiline": "Многострочный",
       "name": "Название",
       "name_info": "Доп. информация (имя)",
+      "opacity": "Непрозрачность",
+      "peak_marker": {
+        "min_toggle": "Показать минимум",
+        "max_toggle": "Показать максимум",
+        "average_toggle": "Показать среднее",
+        "toggle": "Маркеры пиков"
+      },
+      "peak_marker_unsupported": "Маркерам пиков нужна сущность sensor или number без переопределения атрибута, не являющаяся timer или counter — недоступно для этой сущности.",
       "percent": "Процент",
       "position": "Позиция",
       "reverse": "Обратный таймер",
       "reverse_secondary_info_row": "Поменять местами панель и текст",
       "secondary": "Дополнительная информация",
       "state_content": "Содержимое состояния",
-      "status_label_toggle": "Метка состояния",
+      "status_label": {
+        "color_source": "Источник цвета",
+        "position": "Положение метки",
+        "toggle": "Метка состояния"
+      },
       "text_shadow": "Добавить тень к тексту",
       "theme": "Тема",
+      "trend_indicator": {
+        "window_toggle": "Использовать временное окно",
+        "basis": "Основа сравнения",
+        "threshold": "Мёртвая зона (пункты)",
+        "colored": "Окрашивать цветом значка",
+        "up_color": "Цвет роста",
+        "down_color": "Цвет падения",
+        "flat_color": "Цвет стабильности",
+        "toggle": "Индикатор тренда",
+        "mode": "Режим"
+      },
       "trigger": "Триггер",
+      "type": "Тип",
       "unit": "Единица измерения",
       "unit_spacing": "Интервал",
       "value_compact": "Компактное значение (1.2k)",
       "value_sign": "Показывать знак (+/-)",
-      "watermark_high_mode": "Источник верхнего маркера",
-      "watermark_low_mode": "Источник нижнего маркера",
-      "watermark_toggle": "Маркеры",
-      "peak_marker_toggle": "Peak markers",
-      "peak_marker_unsupported": "Peak markers need a sensor or number entity, no attribute override, and not a timer or counter — not available for this entity.",
-      "trend_indicator_toggle": "Trend indicator",
-      "trend_indicator_mode": "Mode"
+      "watermark": {
+        "high_toggle": "Показать верхний",
+        "low_toggle": "Показать нижний",
+        "high": "Верхний",
+        "line_size": "Толщина линии",
+        "low": "Нижний",
+        "low_mode": "Источник нижнего маркера",
+        "high_mode": "Источник верхнего маркера",
+        "toggle": "Маркеры"
+      },
+      "window": "Временное окно"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -135,16 +173,9 @@
         "static": "Статично"
       },
       "alert_highlight": {
-        "background": "Background",
-        "border": "Border",
+        "background": "Фон",
+        "border": "Рамка",
         "label": "Метка"
-      },
-      "alert_when": {
-        "above": "Alert above",
-        "animation": "Анимация",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight"
       },
       "bar_color_mode": {
         "auto": "Авто",
@@ -175,8 +206,8 @@
         "top": "Полоса вверху"
       },
       "bar_scale": {
-        "linear": "Linear",
-        "log": "Logarithmic"
+        "linear": "Линейная",
+        "log": "Логарифмическая"
       },
       "bar_size": {
         "large": "Большая",
@@ -186,9 +217,19 @@
         "xsmall": "Очень маленький"
       },
       "bar_stack_mode": {
-        "net": "Net",
-        "proportional": "Sum",
-        "stacked": "Stacked"
+        "net": "Нетто",
+        "proportional": "Пропорционально",
+        "stacked": "Стек"
+      },
+      "duration_unit": {
+        "s": "Секунды",
+        "min": "Минуты",
+        "h": "Часы",
+        "d": "Дни"
+      },
+      "enabled_disabled_mode": {
+        "disabled": "Отключено",
+        "enabled": "Включено"
       },
       "force_circular_background_mode": {
         "auto": "Автоматически",
@@ -198,20 +239,20 @@
         "icon": "Иконка",
         "name": "Имя",
         "progress_bar": "Полоса",
-        "secondary_info": "Инфо",
+        "secondary_info": "Доп. информация",
         "shape": "Круглый фон значка",
         "unit": "Единица",
         "value": "Значение"
       },
       "icon_animation": {
-        "battery_charging": "Battery charging",
-        "bounce": "Bounce",
+        "battery_charging": "Батарея заряжается",
+        "bounce": "Подпрыгивание",
         "ping": "Пинг",
-        "pulse": "Pulse",
-        "reveal": "Reveal",
-        "shake": "Shake",
-        "spin": "Spin",
-        "washing_machine": "Washing machine"
+        "pulse": "Пульсация",
+        "reveal": "Проявление",
+        "shake": "Встряхивание",
+        "spin": "Вращение",
+        "washing_machine": "Стиральная машина"
       },
       "icon_animation_mode": {
         "auto": "Автоматически",
@@ -222,17 +263,12 @@
         "right": "Справа"
       },
       "layout": {
-        "horizontal": "Горизонтальный (по умолчанию)",
+        "horizontal": "Горизонтальный",
         "vertical": "Вертикальный"
       },
       "simple_advanced_mode": {
         "advanced": "Расширенный",
         "simple": "Простой"
-      },
-      "status_label": {
-        "color_source": "Источник цвета",
-        "jinja": "Метка состояния",
-        "position": "Положение метки"
       },
       "status_label_color_source": {
         "bar": "Полоса прогресса",
@@ -253,8 +289,13 @@
         "voc": "ЛОС"
       },
       "theme_mode": {
-        "custom": "Custom",
-        "preset": "Preset"
+        "custom": "Пользовательская",
+        "preset": "Предустановка"
+      },
+      "trend_indicator_basis": {
+        "average": "Среднее",
+        "edge": "Крайнее значение",
+        "slope": "Наклон"
       },
       "unit_position": {
         "after": "После значения",
@@ -265,31 +306,10 @@
         "no-space": "Без пробела",
         "space": "Пробел"
       },
-      "value_shape": {
-        "attribute": "Attribute"
-      },
       "value_source_mode": {
-        "entity": "Entity",
-        "jinja": "Template",
-        "standard": "Fixed value"
-      },
-      "watermark": {
-        "high_toggle": "Show high",
-        "low_toggle": "Show low",
-        "high": "High",
-        "high_as": "High unit",
-        "high_color": "High color",
-        "line_size": "Line size",
-        "low": "Low",
-        "low_as": "Low unit",
-        "low_color": "Low color",
-        "opacity": "Opacity",
-        "type": "Type",
-        "color": "Color",
-        "low_type": "Low type",
-        "low_opacity": "Low opacity",
-        "high_type": "High type",
-        "high_opacity": "High opacity"
+        "entity": "Сущность",
+        "jinja": "Шаблон",
+        "standard": "Фиксированное значение"
       },
       "watermark_as": {
         "auto": "Автоматически",
@@ -302,49 +322,6 @@
         "round": "Круглый",
         "striped": "Полосатый",
         "triangle": "Треугольник"
-      },
-      "peak_marker": {
-        "window": "Time window",
-        "type": "Type",
-        "opacity": "Opacity",
-        "min_toggle": "Show minimum",
-        "min_type": "Minimum type",
-        "min_opacity": "Minimum opacity",
-        "min_color": "Minimum color",
-        "max_toggle": "Show maximum",
-        "max_type": "Maximum type",
-        "max_opacity": "Maximum opacity",
-        "max_color": "Maximum color",
-        "average_toggle": "Show average",
-        "average_type": "Average type",
-        "average_opacity": "Average opacity",
-        "average_color": "Average color",
-        "color": "Color"
-      },
-      "duration_unit": {
-        "s": "Seconds",
-        "min": "Minutes",
-        "h": "Hours",
-        "d": "Days"
-      },
-      "enabled_disabled_mode": {
-        "disabled": "Disabled",
-        "enabled": "Enabled"
-      },
-      "trend_indicator": {
-        "window_toggle": "Use a time window",
-        "window": "Time window",
-        "basis": "Comparison basis",
-        "threshold": "Dead zone (points)",
-        "colored": "Tint with icon color",
-        "up_color": "Up color",
-        "down_color": "Down color",
-        "flat_color": "Flat color"
-      },
-      "trend_indicator_basis": {
-        "average": "Average",
-        "edge": "Edge",
-        "slope": "Slope"
       }
     },
     "title": {

@@ -33,27 +33,36 @@
   "editor": {
     "field": {
       "action": {
-        "tap": "การกระทำเมื่อแตะ",
-        "hold": "การกระทำเมื่อกดค้าง",
         "double_tap": "การกระทำเมื่อแตะสองครั้ง",
-        "icon_tap": "การกระทำเมื่อแตะไอคอน",
+        "hold": "การกระทำเมื่อกดค้าง",
+        "icon_double_tap": "การกระทำเมื่อแตะไอคอนสองครั้ง",
         "icon_hold": "การกระทำเมื่อกดค้างที่ไอคอน",
-        "icon_double_tap": "การกระทำเมื่อแตะไอคอนสองครั้ง"
+        "icon_tap": "การกระทำเมื่อแตะไอคอน",
+        "tap": "การกระทำเมื่อแตะ"
       },
       "action_picker": "เพิ่มการโต้ตอบ",
-      "alert_toggle": "การแจ้งเตือน",
-      "alert_when_above_mode": "แหล่งการแจ้งเตือนขอบบน",
-      "alert_when_below_mode": "แหล่งการแจ้งเตือนขอบล่าง",
+      "add_entity": "เพิ่มเอนทิตี",
+      "add_zone": "เพิ่มโซน",
+      "alert_when": {
+        "above": "แจ้งเตือนเมื่อสูงกว่า",
+        "animation": "แอนิเมชัน",
+        "below": "แจ้งเตือนเมื่อต่ำกว่า",
+        "color": "สีการแจ้งเตือน",
+        "highlight": "ไฮไลต์",
+        "label": "ป้ายกำกับ",
+        "above_mode": "แหล่งการแจ้งเตือนขอบบน",
+        "below_mode": "แหล่งการแจ้งเตือนขอบล่าง",
+        "toggle": "การแจ้งเตือน"
+      },
       "attribute": "แอตทริบิวต์",
-      "badge_color": "สีของป้าย",
-      "badge_color_toggle": "Independent color",
-      "badge_icon": "ไอคอนของป้าย",
-      "badge_toggle": "ป้าย",
+      "badge": {
+        "toggle": "ป้าย",
+        "color_toggle": "สีป้ายแยกต่างหาก"
+      },
       "bar_color": "สีแถบ",
       "bar_color_mode": "โหมดสี",
       "bar_effect_mode": "เอฟเฟกต์บนแถบ",
       "bar_group": "แถบ",
-      "bar_max_width": "ความกว้างสูงสุดของแถบ",
       "bar_max_width_toggle": "ความกว้างสูงสุดของแถบ",
       "bar_orientation": "ทิศทาง",
       "bar_scale": "มาตราส่วน",
@@ -61,14 +70,14 @@
       "bar_single_line": "บรรทัดเดียว",
       "bar_size": "ขนาด",
       "bar_stack": "เอนทิตีเพิ่มเติม",
-      "bar_stack_mode": "Stack mode",
+      "bar_stack_mode": "โหมดการซ้อน",
       "card_size_toggle": "ขนาดการ์ด",
       "center_zero": "Sıfırı ortala",
       "center_zero_growth_percent": "เปอร์เซ็นต์การเติบโต",
       "center_zero_value": "ค่ากึ่งกลาง",
       "color": "สีหลัก",
       "custom_info": "ข้อมูลรองที่กำหนดเอง",
-      "custom_theme": "Custom theme zones",
+      "custom_theme": "โซนธีมกำหนดเอง",
       "decimal": "ทศนิยม",
       "density_toggle": "กะทัดรัด",
       "entity": "เอนทิตี",
@@ -76,43 +85,72 @@
       "force_circular_background_mode": "พื้นหลังวงกลมของไอคอน",
       "frameless": "ไม่มีกรอบ",
       "height": "ความสูง",
-      "height_custom_toggle": "Shrink height (embedded)",
+      "height_custom_toggle": "ความสูงอัตโนมัติ",
       "hide_mode": "ซ่อน",
       "icon": "ไอคอน",
       "icon_animation": "แอนิเมชันไอคอน",
       "interpolate": "การสอดแทรกสี",
       "layout": "รูปแบบเนื้อหา",
       "marginless": "ไม่มีระยะขอบ",
+      "mark_color": "สี",
       "max_value": "ค่าสูงสุด",
       "max_value_mode": "แหล่งค่าสูงสุด",
-      "migrate_config": "Migrate config",
+      "migrate_config": "ย้ายการตั้งค่า",
       "min_value": "ค่าต่ำสุด",
       "min_value_mode": "แหล่งค่าต่ำสุด",
       "min_width": "ความกว้างต่ำสุด",
-      "multiline": "Multiline",
+      "multiline": "หลายบรรทัด",
       "name": "ชื่อ",
       "name_info": "ข้อมูลชื่อที่กำหนดเอง",
+      "opacity": "ความทึบ",
+      "peak_marker": {
+        "min_toggle": "แสดงค่าต่ำสุด",
+        "max_toggle": "แสดงค่าสูงสุด",
+        "average_toggle": "แสดงค่าเฉลี่ย",
+        "toggle": "เครื่องหมายจุดสูงสุด"
+      },
+      "peak_marker_unsupported": "เครื่องหมายจุดสูงสุดต้องใช้เอนทิตี sensor หรือ number โดยไม่มีการเขียนทับแอตทริบิวต์ และไม่ใช่ timer หรือ counter — ไม่พร้อมใช้งานสำหรับเอนทิตีนี้",
       "percent": "เปอร์เซ็นต์",
       "position": "ตำแหน่ง",
       "reverse": "กลับเวลานับถอยหลัง",
       "reverse_secondary_info_row": "แถบและข้อความสลับกัน",
       "secondary": "ข้อมูลรอง",
       "state_content": "เนื้อหาของสถานะ",
-      "status_label_toggle": "ป้ายสถานะ",
+      "status_label": {
+        "color_source": "แหล่งสี",
+        "position": "ตำแหน่งป้ายกำกับ",
+        "toggle": "ป้ายสถานะ"
+      },
       "text_shadow": "เพิ่มเงาให้ข้อความ",
       "theme": "ธีม",
+      "trend_indicator": {
+        "window_toggle": "ใช้ช่วงเวลา",
+        "basis": "พื้นฐานการเปรียบเทียบ",
+        "threshold": "โซนตาย (คะแนน)",
+        "colored": "ระบายสีด้วยสีไอคอน",
+        "up_color": "สีเมื่อเพิ่มขึ้น",
+        "down_color": "สีเมื่อลดลง",
+        "flat_color": "สีเมื่อคงที่",
+        "toggle": "ตัวบ่งชี้แนวโน้ม",
+        "mode": "โหมด"
+      },
       "trigger": "ทริกเกอร์",
+      "type": "ประเภท",
       "unit": "หน่วย",
       "unit_spacing": "ระยะห่าง",
       "value_compact": "ค่าแบบย่อ (1.2k)",
       "value_sign": "แสดงเครื่องหมาย (+/-)",
-      "watermark_high_mode": "แหล่งเครื่องหมายสูง",
-      "watermark_low_mode": "แหล่งเครื่องหมายต่ำ",
-      "watermark_toggle": "เครื่องหมาย",
-      "peak_marker_toggle": "Peak markers",
-      "peak_marker_unsupported": "Peak markers need a sensor or number entity, no attribute override, and not a timer or counter — not available for this entity.",
-      "trend_indicator_toggle": "Trend indicator",
-      "trend_indicator_mode": "Mode"
+      "watermark": {
+        "high_toggle": "แสดงสูง",
+        "low_toggle": "แสดงต่ำ",
+        "high": "สูง",
+        "line_size": "ความหนาของเส้น",
+        "low": "ต่ำ",
+        "low_mode": "แหล่งเครื่องหมายต่ำ",
+        "high_mode": "แหล่งเครื่องหมายสูง",
+        "toggle": "เครื่องหมาย"
+      },
+      "window": "ช่วงเวลา"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -131,20 +169,13 @@
     "option": {
       "alert_animation": {
         "blink": "กะพริบ",
-        "ping": "Ping",
+        "ping": "วงแหวน",
         "static": "คงที่"
       },
       "alert_highlight": {
-        "background": "Background",
-        "border": "Border",
+        "background": "พื้นหลัง",
+        "border": "ขอบ",
         "label": "ป้ายกำกับ"
-      },
-      "alert_when": {
-        "above": "Alert above",
-        "animation": "แอนิเมชัน",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight"
       },
       "bar_color_mode": {
         "auto": "อัตโนมัติ",
@@ -175,8 +206,8 @@
         "top": "แถบด้านบน"
       },
       "bar_scale": {
-        "linear": "Linear",
-        "log": "Logarithmic"
+        "linear": "เชิงเส้น",
+        "log": "ลอการิทึม"
       },
       "bar_size": {
         "large": "ใหญ่",
@@ -186,9 +217,19 @@
         "xsmall": "เล็กพิเศษ"
       },
       "bar_stack_mode": {
-        "net": "Net",
-        "proportional": "Sum",
-        "stacked": "Stacked"
+        "net": "สุทธิ",
+        "proportional": "ตามสัดส่วน",
+        "stacked": "ซ้อนกัน"
+      },
+      "duration_unit": {
+        "s": "วินาที",
+        "min": "นาที",
+        "h": "ชั่วโมง",
+        "d": "วัน"
+      },
+      "enabled_disabled_mode": {
+        "disabled": "ปิดใช้งาน",
+        "enabled": "เปิดใช้งาน"
       },
       "force_circular_background_mode": {
         "auto": "อัตโนมัติ",
@@ -198,20 +239,20 @@
         "icon": "ไอคอน",
         "name": "ชื่อ",
         "progress_bar": "แถบ",
-        "secondary_info": "ข้อมูล",
+        "secondary_info": "ข้อมูลรอง",
         "shape": "พื้นหลังวงกลมของไอคอน",
         "unit": "หน่วย",
         "value": "ค่า"
       },
       "icon_animation": {
-        "battery_charging": "Battery charging",
-        "bounce": "Bounce",
-        "ping": "Ping",
-        "pulse": "Pulse",
-        "reveal": "Reveal",
-        "shake": "Shake",
-        "spin": "Spin",
-        "washing_machine": "Washing machine"
+        "battery_charging": "แบตเตอรี่กำลังชาร์จ",
+        "bounce": "เด้ง",
+        "ping": "วงแหวน",
+        "pulse": "เต้นเป็นจังหวะ",
+        "reveal": "เผยให้เห็น",
+        "shake": "สั่น",
+        "spin": "หมุน",
+        "washing_machine": "เครื่องซักผ้า"
       },
       "icon_animation_mode": {
         "auto": "อัตโนมัติ",
@@ -222,17 +263,12 @@
         "right": "ขวา"
       },
       "layout": {
-        "horizontal": "แนวนอน (เริ่มต้น)",
+        "horizontal": "แนวนอน",
         "vertical": "แนวตั้ง"
       },
       "simple_advanced_mode": {
         "advanced": "ขั้นสูง",
         "simple": "ธรรมดา"
-      },
-      "status_label": {
-        "color_source": "แหล่งสี",
-        "jinja": "ป้ายสถานะ",
-        "position": "ตำแหน่งป้ายกำกับ"
       },
       "status_label_color_source": {
         "bar": "แถบความคืบหน้า",
@@ -253,8 +289,13 @@
         "voc": "VOC"
       },
       "theme_mode": {
-        "custom": "Custom",
-        "preset": "Preset"
+        "custom": "กำหนดเอง",
+        "preset": "ค่าที่ตั้งไว้ล่วงหน้า"
+      },
+      "trend_indicator_basis": {
+        "average": "ค่าเฉลี่ย",
+        "edge": "ค่าขอบ",
+        "slope": "ความชัน"
       },
       "unit_position": {
         "after": "หลังค่า",
@@ -265,31 +306,10 @@
         "no-space": "ไม่เว้นวรรค",
         "space": "เว้นวรรค"
       },
-      "value_shape": {
-        "attribute": "Attribute"
-      },
       "value_source_mode": {
-        "entity": "Entity",
-        "jinja": "Template",
-        "standard": "Fixed value"
-      },
-      "watermark": {
-        "high_toggle": "Show high",
-        "low_toggle": "Show low",
-        "high": "High",
-        "high_as": "High unit",
-        "high_color": "High color",
-        "line_size": "Line size",
-        "low": "Low",
-        "low_as": "Low unit",
-        "low_color": "Low color",
-        "opacity": "Opacity",
-        "type": "Type",
-        "color": "Color",
-        "low_type": "Low type",
-        "low_opacity": "Low opacity",
-        "high_type": "High type",
-        "high_opacity": "High opacity"
+        "entity": "เอนทิตี",
+        "jinja": "เทมเพลต",
+        "standard": "ค่าคงที่"
       },
       "watermark_as": {
         "auto": "อัตโนมัติ",
@@ -302,49 +322,6 @@
         "round": "กลม",
         "striped": "ลายทาง",
         "triangle": "สามเหลี่ยม"
-      },
-      "peak_marker": {
-        "window": "Time window",
-        "type": "Type",
-        "opacity": "Opacity",
-        "min_toggle": "Show minimum",
-        "min_type": "Minimum type",
-        "min_opacity": "Minimum opacity",
-        "min_color": "Minimum color",
-        "max_toggle": "Show maximum",
-        "max_type": "Maximum type",
-        "max_opacity": "Maximum opacity",
-        "max_color": "Maximum color",
-        "average_toggle": "Show average",
-        "average_type": "Average type",
-        "average_opacity": "Average opacity",
-        "average_color": "Average color",
-        "color": "Color"
-      },
-      "duration_unit": {
-        "s": "Seconds",
-        "min": "Minutes",
-        "h": "Hours",
-        "d": "Days"
-      },
-      "enabled_disabled_mode": {
-        "disabled": "Disabled",
-        "enabled": "Enabled"
-      },
-      "trend_indicator": {
-        "window_toggle": "Use a time window",
-        "window": "Time window",
-        "basis": "Comparison basis",
-        "threshold": "Dead zone (points)",
-        "colored": "Tint with icon color",
-        "up_color": "Up color",
-        "down_color": "Down color",
-        "flat_color": "Flat color"
-      },
-      "trend_indicator_basis": {
-        "average": "Average",
-        "edge": "Edge",
-        "slope": "Slope"
       }
     },
     "title": {

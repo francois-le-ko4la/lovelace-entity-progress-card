@@ -33,27 +33,36 @@
   "editor": {
     "field": {
       "action": {
-        "tap": "Handling ved tryk",
-        "hold": "Handling ved hold",
         "double_tap": "Handling ved dobbelttryk",
-        "icon_tap": "Adfærd for tryk på ikon",
+        "hold": "Handling ved hold",
+        "icon_double_tap": "Ikonets adfærd ved dobbelttryk",
         "icon_hold": "Ikonets adfærd ved konstant tryk",
-        "icon_double_tap": "Ikonets adfærd ved dobbelttryk"
+        "icon_tap": "Adfærd for tryk på ikon",
+        "tap": "Handling ved tryk"
       },
       "action_picker": "Tilføj interaktion",
-      "alert_toggle": "Alarm",
-      "alert_when_above_mode": "Kilde til øvre alarm",
-      "alert_when_below_mode": "Kilde til nedre alarm",
+      "add_entity": "Tilføj enhed",
+      "add_zone": "Tilføj zone",
+      "alert_when": {
+        "above": "Alarm over",
+        "animation": "Animation",
+        "below": "Alarm under",
+        "color": "Alarmfarve",
+        "highlight": "Fremhævning",
+        "label": "Mærkat",
+        "above_mode": "Kilde til øvre alarm",
+        "below_mode": "Kilde til nedre alarm",
+        "toggle": "Alarm"
+      },
       "attribute": "Attribut",
-      "badge_color": "Badge-farve",
-      "badge_color_toggle": "Independent color",
-      "badge_icon": "Badge-ikon",
-      "badge_toggle": "Badge",
+      "badge": {
+        "toggle": "Badge",
+        "color_toggle": "Uafhængig badge-farve"
+      },
       "bar_color": "Farve til bar",
       "bar_color_mode": "Farvetilstand",
       "bar_effect_mode": "Effekt på bar",
       "bar_group": "Bjælke",
-      "bar_max_width": "Maks. bjælkebredde",
       "bar_max_width_toggle": "Maks. bjælkebredde",
       "bar_orientation": "Retning",
       "bar_scale": "Skala",
@@ -61,14 +70,14 @@
       "bar_single_line": "Én linje",
       "bar_size": "Størrelse",
       "bar_stack": "Ekstra entiteter",
-      "bar_stack_mode": "Stack mode",
+      "bar_stack_mode": "Stableringstilstand",
       "card_size_toggle": "Kortstørrelse",
       "center_zero": "Center nul",
       "center_zero_growth_percent": "Vækstprocent",
       "center_zero_value": "Centerværdi",
       "color": "Primær farve",
       "custom_info": "Tilpasset sekundær info",
-      "custom_theme": "Custom theme zones",
+      "custom_theme": "Tilpassede temazoner",
       "decimal": "decimal",
       "density_toggle": "Kompakt",
       "entity": "Enhed",
@@ -76,43 +85,72 @@
       "force_circular_background_mode": "Cirkulær baggrund for ikon",
       "frameless": "Uden ramme",
       "height": "Højde",
-      "height_custom_toggle": "Shrink height (embedded)",
+      "height_custom_toggle": "Automatisk højde",
       "hide_mode": "Skjul",
       "icon": "Ikon",
       "icon_animation": "Ikonanimation",
       "interpolate": "Interpoler farver",
       "layout": "Indholdslayout",
       "marginless": "Uden margen",
+      "mark_color": "Farve",
       "max_value": "Maksimal værdi",
       "max_value_mode": "Kilde til maksimumsværdi",
-      "migrate_config": "Migrate config",
+      "migrate_config": "Migrer konfiguration",
       "min_value": "Minimumsværdi",
       "min_value_mode": "Kilde til minimumsværdi",
       "min_width": "Min. bredde",
-      "multiline": "Multiline",
+      "multiline": "Flerlinjet",
       "name": "Navn",
       "name_info": "Tilpasset navneinfo",
+      "opacity": "Uigennemsigtighed",
+      "peak_marker": {
+        "min_toggle": "Vis minimum",
+        "max_toggle": "Vis maksimum",
+        "average_toggle": "Vis gennemsnit",
+        "toggle": "Topmarkeringer"
+      },
+      "peak_marker_unsupported": "Topmarkeringer kræver en sensor- eller number-enhed uden attribut-overskrivning, som ikke er en timer eller counter — ikke tilgængelig for denne enhed.",
       "percent": "Procent",
       "position": "Position",
       "reverse": "Omvendt timer",
       "reverse_secondary_info_row": "Skift bjælke og tekst",
       "secondary": "Sekundær info",
       "state_content": "Indhold af tilstand",
-      "status_label_toggle": "Statusmærkat",
+      "status_label": {
+        "color_source": "Farvekilde",
+        "position": "Mærkatplacering",
+        "toggle": "Statusmærkat"
+      },
       "text_shadow": "Tilføj tekstskygge",
       "theme": "Tema",
+      "trend_indicator": {
+        "window_toggle": "Brug et tidsvindue",
+        "basis": "Sammenligningsgrundlag",
+        "threshold": "Dødzone (point)",
+        "colored": "Farvelæg med ikonfarve",
+        "up_color": "Farve op",
+        "down_color": "Farve ned",
+        "flat_color": "Farve stabil",
+        "toggle": "Trendindikator",
+        "mode": "Tilstand"
+      },
       "trigger": "Udløser",
+      "type": "Type",
       "unit": "Enhed",
       "unit_spacing": "Afstand",
       "value_compact": "Kompakt værdi (1.2k)",
       "value_sign": "Vis fortegn (+/-)",
-      "watermark_high_mode": "Kilde til øvre markør",
-      "watermark_low_mode": "Kilde til nedre markør",
-      "watermark_toggle": "Markører",
-      "peak_marker_toggle": "Peak markers",
-      "peak_marker_unsupported": "Peak markers need a sensor or number entity, no attribute override, and not a timer or counter — not available for this entity.",
-      "trend_indicator_toggle": "Trend indicator",
-      "trend_indicator_mode": "Mode"
+      "watermark": {
+        "high_toggle": "Vis høj",
+        "low_toggle": "Vis lav",
+        "high": "Høj",
+        "line_size": "Linjetykkelse",
+        "low": "Lav",
+        "low_mode": "Kilde til nedre markør",
+        "high_mode": "Kilde til øvre markør",
+        "toggle": "Markører"
+      },
+      "window": "Tidsvindue"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -131,23 +169,16 @@
     "option": {
       "alert_animation": {
         "blink": "Blink",
-        "ping": "Ping",
+        "ping": "Ring",
         "static": "Statisk"
       },
       "alert_highlight": {
-        "background": "Background",
-        "border": "Border",
+        "background": "Baggrund",
+        "border": "Kant",
         "label": "Mærkat"
       },
-      "alert_when": {
-        "above": "Alert above",
-        "animation": "Animation",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight"
-      },
       "bar_color_mode": {
-        "auto": "Auto",
+        "auto": "Automatisk",
         "rainbow": "Regnbue",
         "rainbow_full": "Regnbue (fuld)",
         "segment": "Segmenter"
@@ -175,20 +206,30 @@
         "top": "Bar øverst"
       },
       "bar_scale": {
-        "linear": "Linear",
-        "log": "Logarithmic"
+        "linear": "Lineær",
+        "log": "Logaritmisk"
       },
       "bar_size": {
         "large": "Stor",
-        "medium": "Medium",
+        "medium": "Mellem",
         "small": "Lille",
         "xlarge": "Ekstra stor",
         "xsmall": "Ekstra lille"
       },
       "bar_stack_mode": {
-        "net": "Net",
-        "proportional": "Sum",
-        "stacked": "Stacked"
+        "net": "Netto",
+        "proportional": "Proportional",
+        "stacked": "Stablet"
+      },
+      "duration_unit": {
+        "s": "Sekunder",
+        "min": "Minutter",
+        "h": "Timer",
+        "d": "Dage"
+      },
+      "enabled_disabled_mode": {
+        "disabled": "Deaktiveret",
+        "enabled": "Aktiveret"
       },
       "force_circular_background_mode": {
         "auto": "Automatisk",
@@ -198,20 +239,20 @@
         "icon": "Ikon",
         "name": "Navn",
         "progress_bar": "Bjælke",
-        "secondary_info": "Info",
+        "secondary_info": "Sekundær info",
         "shape": "Cirkulær baggrund for ikonet",
         "unit": "Enhed",
         "value": "Værdi"
       },
       "icon_animation": {
-        "battery_charging": "Battery charging",
-        "bounce": "Bounce",
-        "ping": "Ping",
-        "pulse": "Pulse",
-        "reveal": "Reveal",
-        "shake": "Shake",
-        "spin": "Spin",
-        "washing_machine": "Washing machine"
+        "battery_charging": "Batteri oplader",
+        "bounce": "Hop",
+        "ping": "Ring",
+        "pulse": "Puls",
+        "reveal": "Afslør",
+        "shake": "Ryst",
+        "spin": "Roter",
+        "washing_machine": "Vaskemaskine"
       },
       "icon_animation_mode": {
         "auto": "Automatisk",
@@ -222,17 +263,12 @@
         "right": "Højre"
       },
       "layout": {
-        "horizontal": "Horisontal (standard)",
+        "horizontal": "Horisontal",
         "vertical": "Vertikal"
       },
       "simple_advanced_mode": {
         "advanced": "Avanceret",
         "simple": "Enkel"
-      },
-      "status_label": {
-        "color_source": "Farvekilde",
-        "jinja": "Statusmærkat",
-        "position": "Mærkatplacering"
       },
       "status_label_color_source": {
         "bar": "Statuslinje",
@@ -253,8 +289,13 @@
         "voc": "VOC"
       },
       "theme_mode": {
-        "custom": "Custom",
-        "preset": "Preset"
+        "custom": "Tilpasset",
+        "preset": "Forudindstilling"
+      },
+      "trend_indicator_basis": {
+        "average": "Gennemsnit",
+        "edge": "Yderpunkt",
+        "slope": "Hældning"
       },
       "unit_position": {
         "after": "Efter værdien",
@@ -265,31 +306,10 @@
         "no-space": "Intet mellemrum",
         "space": "Mellemrum"
       },
-      "value_shape": {
-        "attribute": "Attribute"
-      },
       "value_source_mode": {
-        "entity": "Entity",
-        "jinja": "Template",
-        "standard": "Fixed value"
-      },
-      "watermark": {
-        "high_toggle": "Show high",
-        "low_toggle": "Show low",
-        "high": "High",
-        "high_as": "High unit",
-        "high_color": "High color",
-        "line_size": "Line size",
-        "low": "Low",
-        "low_as": "Low unit",
-        "low_color": "Low color",
-        "opacity": "Opacity",
-        "type": "Type",
-        "color": "Color",
-        "low_type": "Low type",
-        "low_opacity": "Low opacity",
-        "high_type": "High type",
-        "high_opacity": "High opacity"
+        "entity": "Enhed",
+        "jinja": "Skabelon",
+        "standard": "Fast værdi"
       },
       "watermark_as": {
         "auto": "Automatisk",
@@ -302,49 +322,6 @@
         "round": "Rund",
         "striped": "Stribet",
         "triangle": "Trekant"
-      },
-      "peak_marker": {
-        "window": "Time window",
-        "type": "Type",
-        "opacity": "Opacity",
-        "min_toggle": "Show minimum",
-        "min_type": "Minimum type",
-        "min_opacity": "Minimum opacity",
-        "min_color": "Minimum color",
-        "max_toggle": "Show maximum",
-        "max_type": "Maximum type",
-        "max_opacity": "Maximum opacity",
-        "max_color": "Maximum color",
-        "average_toggle": "Show average",
-        "average_type": "Average type",
-        "average_opacity": "Average opacity",
-        "average_color": "Average color",
-        "color": "Color"
-      },
-      "duration_unit": {
-        "s": "Seconds",
-        "min": "Minutes",
-        "h": "Hours",
-        "d": "Days"
-      },
-      "enabled_disabled_mode": {
-        "disabled": "Disabled",
-        "enabled": "Enabled"
-      },
-      "trend_indicator": {
-        "window_toggle": "Use a time window",
-        "window": "Time window",
-        "basis": "Comparison basis",
-        "threshold": "Dead zone (points)",
-        "colored": "Tint with icon color",
-        "up_color": "Up color",
-        "down_color": "Down color",
-        "flat_color": "Flat color"
-      },
-      "trend_indicator_basis": {
-        "average": "Average",
-        "edge": "Edge",
-        "slope": "Slope"
       }
     },
     "title": {

@@ -33,27 +33,36 @@
   "editor": {
     "field": {
       "action": {
-        "tap": "Napautuksen käyttäytyminen",
-        "hold": "Pitkään painamisen käyttäytyminen",
         "double_tap": "Kaksoisnapautus käyttäytyminen",
-        "icon_tap": "Kuvakkeen napauttamisen käyttäytyminen",
+        "hold": "Pitkään painamisen käyttäytyminen",
+        "icon_double_tap": "Kuvakkeen kaksoisnapautus käyttäytyminen",
         "icon_hold": "Kuvakkeen pito käyttäytyminen",
-        "icon_double_tap": "Kuvakkeen kaksoisnapautus käyttäytyminen"
+        "icon_tap": "Kuvakkeen napauttamisen käyttäytyminen",
+        "tap": "Napautuksen käyttäytyminen"
       },
       "action_picker": "Lisää vuorovaikutus",
-      "alert_toggle": "Hälytys",
-      "alert_when_above_mode": "Ylähälytyksen lähde",
-      "alert_when_below_mode": "Alahälytyksen lähde",
+      "add_entity": "Lisää entiteetti",
+      "add_zone": "Lisää vyöhyke",
+      "alert_when": {
+        "above": "Hälytys yli",
+        "animation": "Animaatio",
+        "below": "Hälytys alle",
+        "color": "Hälytyksen väri",
+        "highlight": "Korostus",
+        "label": "Merkintä",
+        "above_mode": "Ylähälytyksen lähde",
+        "below_mode": "Alahälytyksen lähde",
+        "toggle": "Hälytys"
+      },
       "attribute": "Attribuutti",
-      "badge_color": "Badge-väri",
-      "badge_color_toggle": "Independent color",
-      "badge_icon": "Badge-ikoni",
-      "badge_toggle": "Merkki",
+      "badge": {
+        "toggle": "Merkki",
+        "color_toggle": "Erillinen merkin väri"
+      },
       "bar_color": "Palkin väri",
       "bar_color_mode": "Väritila",
       "bar_effect_mode": "Palkin efekti",
       "bar_group": "Palkki",
-      "bar_max_width": "Palkin enimmäisleveys",
       "bar_max_width_toggle": "Palkin enimmäisleveys",
       "bar_orientation": "Suunta",
       "bar_scale": "Asteikko",
@@ -61,14 +70,14 @@
       "bar_single_line": "Yksi rivi",
       "bar_size": "Koko",
       "bar_stack": "Lisäentiteetit",
-      "bar_stack_mode": "Stack mode",
+      "bar_stack_mode": "Pinoamistila",
       "card_size_toggle": "Kortin koko",
       "center_zero": "Nolla keskellä",
       "center_zero_growth_percent": "Kasvuprosentti",
       "center_zero_value": "Keskiarvo",
       "color": "Pääväri",
       "custom_info": "Mukautettu toissijainen tieto",
-      "custom_theme": "Custom theme zones",
+      "custom_theme": "Mukautetun teeman vyöhykkeet",
       "decimal": "desimaali",
       "density_toggle": "Kompakti",
       "entity": "Entiteetti",
@@ -76,43 +85,72 @@
       "force_circular_background_mode": "Kuvakkeen pyöreä tausta",
       "frameless": "Kehyksetön",
       "height": "Korkeus",
-      "height_custom_toggle": "Shrink height (embedded)",
+      "height_custom_toggle": "Automaattinen korkeus",
       "hide_mode": "Piilota",
       "icon": "Ikoni",
       "icon_animation": "Kuvakkeen animaatio",
       "interpolate": "Interpoloi värit",
       "layout": "Sisällön asettelu",
       "marginless": "Marginaaliton",
+      "mark_color": "Väri",
       "max_value": "Maksimiarvo",
       "max_value_mode": "Enimmäisarvon lähde",
-      "migrate_config": "Migrate config",
+      "migrate_config": "Siirrä asetukset",
       "min_value": "Minimiarvo",
       "min_value_mode": "Vähimmäisarvon lähde",
       "min_width": "Vähimmäisleveys",
-      "multiline": "Multiline",
+      "multiline": "Monirivinen",
       "name": "Nimi",
       "name_info": "Mukautettu nimitieto",
+      "opacity": "Peittävyys",
+      "peak_marker": {
+        "min_toggle": "Näytä minimi",
+        "max_toggle": "Näytä maksimi",
+        "average_toggle": "Näytä keskiarvo",
+        "toggle": "Huippumerkinnät"
+      },
+      "peak_marker_unsupported": "Huippumerkinnät vaativat sensor- tai number-entiteetin ilman attribuutin ylikirjoitusta, joka ei ole timer eikä counter — ei käytettävissä tälle entiteetille.",
       "percent": "Prosentti",
       "position": "Sijainti",
       "reverse": "Käänteinen ajastin",
       "reverse_secondary_info_row": "Vaihda palkki ja teksti",
       "secondary": "Lisätiedot",
       "state_content": "Tilan sisältö",
-      "status_label_toggle": "Tilamerkintä",
+      "status_label": {
+        "color_source": "Värin lähde",
+        "position": "Merkinnän sijainti",
+        "toggle": "Tilamerkintä"
+      },
       "text_shadow": "Lisää tekstivarjo",
       "theme": "Teema",
+      "trend_indicator": {
+        "window_toggle": "Käytä aikaikkunaa",
+        "basis": "Vertailuperuste",
+        "threshold": "Kuollut alue (pistettä)",
+        "colored": "Väritä kuvakkeen värillä",
+        "up_color": "Nousun väri",
+        "down_color": "Laskun väri",
+        "flat_color": "Vakauden väri",
+        "toggle": "Trendi-ilmaisin",
+        "mode": "Tila"
+      },
       "trigger": "Laukaisin",
+      "type": "Tyyppi",
       "unit": "Yksikkö",
       "unit_spacing": "Väli",
       "value_compact": "Tiivistetty arvo (1.2k)",
       "value_sign": "Näytä etumerkki (+/-)",
-      "watermark_high_mode": "Ylärajan merkin lähde",
-      "watermark_low_mode": "Alarajan merkin lähde",
-      "watermark_toggle": "Merkit",
-      "peak_marker_toggle": "Peak markers",
-      "peak_marker_unsupported": "Peak markers need a sensor or number entity, no attribute override, and not a timer or counter — not available for this entity.",
-      "trend_indicator_toggle": "Trend indicator",
-      "trend_indicator_mode": "Mode"
+      "watermark": {
+        "high_toggle": "Näytä ylä",
+        "low_toggle": "Näytä ala",
+        "high": "Ylä",
+        "line_size": "Viivan paksuus",
+        "low": "Ala",
+        "low_mode": "Alarajan merkin lähde",
+        "high_mode": "Ylärajan merkin lähde",
+        "toggle": "Merkit"
+      },
+      "window": "Aikaikkuna"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -131,20 +169,13 @@
     "option": {
       "alert_animation": {
         "blink": "Vilkkuva",
-        "ping": "Ping",
+        "ping": "Rengas",
         "static": "Staattinen"
       },
       "alert_highlight": {
-        "background": "Background",
-        "border": "Border",
+        "background": "Tausta",
+        "border": "Reunus",
         "label": "Merkintä"
-      },
-      "alert_when": {
-        "above": "Alert above",
-        "animation": "Animaatio",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight"
       },
       "bar_color_mode": {
         "auto": "Automaattinen",
@@ -175,8 +206,8 @@
         "top": "Palkki ylhäällä"
       },
       "bar_scale": {
-        "linear": "Linear",
-        "log": "Logarithmic"
+        "linear": "Lineaarinen",
+        "log": "Logaritminen"
       },
       "bar_size": {
         "large": "Suuri",
@@ -186,9 +217,19 @@
         "xsmall": "Erittäin pieni"
       },
       "bar_stack_mode": {
-        "net": "Net",
-        "proportional": "Sum",
-        "stacked": "Stacked"
+        "net": "Netto",
+        "proportional": "Suhteellinen",
+        "stacked": "Pinottu"
+      },
+      "duration_unit": {
+        "s": "Sekuntia",
+        "min": "Minuuttia",
+        "h": "Tuntia",
+        "d": "Päivää"
+      },
+      "enabled_disabled_mode": {
+        "disabled": "Poistettu käytöstä",
+        "enabled": "Käytössä"
       },
       "force_circular_background_mode": {
         "auto": "Automaattinen",
@@ -198,20 +239,20 @@
         "icon": "Kuvake",
         "name": "Nimi",
         "progress_bar": "Palkki",
-        "secondary_info": "Tiedot",
+        "secondary_info": "Lisätiedot",
         "shape": "Kuvakkeen pyöreä tausta",
         "unit": "Yksikkö",
         "value": "Arvo"
       },
       "icon_animation": {
-        "battery_charging": "Battery charging",
-        "bounce": "Bounce",
-        "ping": "Ping",
-        "pulse": "Pulse",
-        "reveal": "Reveal",
-        "shake": "Shake",
-        "spin": "Spin",
-        "washing_machine": "Washing machine"
+        "battery_charging": "Akku latautuu",
+        "bounce": "Pomppiminen",
+        "ping": "Rengas",
+        "pulse": "Sykkiminen",
+        "reveal": "Paljastus",
+        "shake": "Tärinä",
+        "spin": "Pyöriminen",
+        "washing_machine": "Pesukone"
       },
       "icon_animation_mode": {
         "auto": "Automaattinen",
@@ -222,17 +263,12 @@
         "right": "Oikea"
       },
       "layout": {
-        "horizontal": "Vaakasuora (oletus)",
+        "horizontal": "Vaakasuora",
         "vertical": "Pystysuora"
       },
       "simple_advanced_mode": {
         "advanced": "Lisäasetukset",
         "simple": "Yksinkertainen"
-      },
-      "status_label": {
-        "color_source": "Värin lähde",
-        "jinja": "Tilamerkintä",
-        "position": "Merkinnän sijainti"
       },
       "status_label_color_source": {
         "bar": "Edistymispalkki",
@@ -253,8 +289,13 @@
         "voc": "VOC"
       },
       "theme_mode": {
-        "custom": "Custom",
-        "preset": "Preset"
+        "custom": "Mukautettu",
+        "preset": "Esiasetus"
+      },
+      "trend_indicator_basis": {
+        "average": "Keskiarvo",
+        "edge": "Ääriarvo",
+        "slope": "Kulmakerroin"
       },
       "unit_position": {
         "after": "Arvon jälkeen",
@@ -265,31 +306,10 @@
         "no-space": "Ei väliä",
         "space": "Väli"
       },
-      "value_shape": {
-        "attribute": "Attribute"
-      },
       "value_source_mode": {
-        "entity": "Entity",
-        "jinja": "Template",
-        "standard": "Fixed value"
-      },
-      "watermark": {
-        "high_toggle": "Show high",
-        "low_toggle": "Show low",
-        "high": "High",
-        "high_as": "High unit",
-        "high_color": "High color",
-        "line_size": "Line size",
-        "low": "Low",
-        "low_as": "Low unit",
-        "low_color": "Low color",
-        "opacity": "Opacity",
-        "type": "Type",
-        "color": "Color",
-        "low_type": "Low type",
-        "low_opacity": "Low opacity",
-        "high_type": "High type",
-        "high_opacity": "High opacity"
+        "entity": "Entiteetti",
+        "jinja": "Malline",
+        "standard": "Kiinteä arvo"
       },
       "watermark_as": {
         "auto": "Automaattinen",
@@ -302,49 +322,6 @@
         "round": "Pyöreä",
         "striped": "Raidallinen",
         "triangle": "Kolmio"
-      },
-      "peak_marker": {
-        "window": "Time window",
-        "type": "Type",
-        "opacity": "Opacity",
-        "min_toggle": "Show minimum",
-        "min_type": "Minimum type",
-        "min_opacity": "Minimum opacity",
-        "min_color": "Minimum color",
-        "max_toggle": "Show maximum",
-        "max_type": "Maximum type",
-        "max_opacity": "Maximum opacity",
-        "max_color": "Maximum color",
-        "average_toggle": "Show average",
-        "average_type": "Average type",
-        "average_opacity": "Average opacity",
-        "average_color": "Average color",
-        "color": "Color"
-      },
-      "duration_unit": {
-        "s": "Seconds",
-        "min": "Minutes",
-        "h": "Hours",
-        "d": "Days"
-      },
-      "enabled_disabled_mode": {
-        "disabled": "Disabled",
-        "enabled": "Enabled"
-      },
-      "trend_indicator": {
-        "window_toggle": "Use a time window",
-        "window": "Time window",
-        "basis": "Comparison basis",
-        "threshold": "Dead zone (points)",
-        "colored": "Tint with icon color",
-        "up_color": "Up color",
-        "down_color": "Down color",
-        "flat_color": "Flat color"
-      },
-      "trend_indicator_basis": {
-        "average": "Average",
-        "edge": "Edge",
-        "slope": "Slope"
       }
     },
     "title": {

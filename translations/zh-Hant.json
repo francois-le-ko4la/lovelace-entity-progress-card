@@ -33,27 +33,36 @@
   "editor": {
     "field": {
       "action": {
-        "tap": "點擊作用",
-        "hold": "按住作用",
         "double_tap": "雙擊作用",
-        "icon_tap": "點擊圖示作用",
+        "hold": "按住作用",
+        "icon_double_tap": "雙擊圖示作用",
         "icon_hold": "按住圖示作用",
-        "icon_double_tap": "雙擊圖示作用"
+        "icon_tap": "點擊圖示作用",
+        "tap": "點擊作用"
       },
       "action_picker": "新增互動",
-      "alert_toggle": "警示",
-      "alert_when_above_mode": "上限警示來源",
-      "alert_when_below_mode": "下限警示來源",
+      "add_entity": "新增實體",
+      "add_zone": "新增區域",
+      "alert_when": {
+        "above": "高於時警示",
+        "animation": "動畫",
+        "below": "低於時警示",
+        "color": "警示顏色",
+        "highlight": "醒目提示",
+        "label": "標籤",
+        "above_mode": "上限警示來源",
+        "below_mode": "下限警示來源",
+        "toggle": "警示"
+      },
       "attribute": "屬性",
-      "badge_color": "徽章顏色",
-      "badge_color_toggle": "Independent color",
-      "badge_icon": "徽章圖示",
-      "badge_toggle": "徽章",
+      "badge": {
+        "toggle": "徽章",
+        "color_toggle": "獨立徽章顏色"
+      },
       "bar_color": "進度條顏色",
       "bar_color_mode": "顏色模式",
       "bar_effect_mode": "進度條效果",
       "bar_group": "進度條",
-      "bar_max_width": "長條最大寬度",
       "bar_max_width_toggle": "長條最大寬度",
       "bar_orientation": "方向",
       "bar_scale": "比例",
@@ -61,14 +70,14 @@
       "bar_single_line": "單行",
       "bar_size": "大小",
       "bar_stack": "附加實體",
-      "bar_stack_mode": "Stack mode",
+      "bar_stack_mode": "堆疊模式",
       "card_size_toggle": "卡片尺寸",
       "center_zero": "中心為零",
       "center_zero_growth_percent": "增長百分比",
       "center_zero_value": "中心值",
       "color": "圖示顏色",
       "custom_info": "自訂次要資訊",
-      "custom_theme": "Custom theme zones",
+      "custom_theme": "自訂主題區域",
       "decimal": "小數",
       "density_toggle": "精簡",
       "entity": "實體",
@@ -76,43 +85,72 @@
       "force_circular_background_mode": "圖示圓形背景",
       "frameless": "無邊框",
       "height": "高度",
-      "height_custom_toggle": "Shrink height (embedded)",
+      "height_custom_toggle": "自動高度",
       "hide_mode": "隱藏",
       "icon": "圖示",
       "icon_animation": "圖示動畫",
       "interpolate": "顏色插值",
       "layout": "內容佈局",
       "marginless": "無邊距",
+      "mark_color": "顏色",
       "max_value": "最大值",
       "max_value_mode": "最大值來源",
-      "migrate_config": "Migrate config",
+      "migrate_config": "遷移設定",
       "min_value": "最小值",
       "min_value_mode": "最小值來源",
       "min_width": "最小寬度",
-      "multiline": "Multiline",
+      "multiline": "多行",
       "name": "名稱",
       "name_info": "自訂名稱資訊",
+      "opacity": "不透明度",
+      "peak_marker": {
+        "min_toggle": "顯示最小值",
+        "max_toggle": "顯示最大值",
+        "average_toggle": "顯示平均值",
+        "toggle": "峰值標記"
+      },
+      "peak_marker_unsupported": "峰值標記需要一個沒有屬性覆寫的 sensor 或 number 實體，且不能是 timer 或 counter — 此實體不可用。",
       "percent": "百分比",
       "position": "位置",
       "reverse": "反轉計時器",
       "reverse_secondary_info_row": "交換進度條和文字",
       "secondary": "次要資訊",
       "state_content": "狀態內容",
-      "status_label_toggle": "狀態標籤",
+      "status_label": {
+        "color_source": "顏色來源",
+        "position": "標籤位置",
+        "toggle": "狀態標籤"
+      },
       "text_shadow": "文字陰影",
       "theme": "主題",
+      "trend_indicator": {
+        "window_toggle": "使用時間窗口",
+        "basis": "比較基準",
+        "threshold": "死區（點）",
+        "colored": "以圖示顏色著色",
+        "up_color": "上升顏色",
+        "down_color": "下降顏色",
+        "flat_color": "穩定顏色",
+        "toggle": "趨勢指示器",
+        "mode": "模式"
+      },
       "trigger": "觸發器",
+      "type": "類型",
       "unit": "單位",
       "unit_spacing": "間距",
       "value_compact": "精簡數值 (1.2k)",
       "value_sign": "顯示符號 (+/-)",
-      "watermark_high_mode": "高標記來源",
-      "watermark_low_mode": "低標記來源",
-      "watermark_toggle": "標記",
-      "peak_marker_toggle": "Peak markers",
-      "peak_marker_unsupported": "Peak markers need a sensor or number entity, no attribute override, and not a timer or counter — not available for this entity.",
-      "trend_indicator_toggle": "Trend indicator",
-      "trend_indicator_mode": "Mode"
+      "watermark": {
+        "high_toggle": "顯示上限",
+        "low_toggle": "顯示下限",
+        "high": "上限",
+        "line_size": "線條粗細",
+        "low": "下限",
+        "low_mode": "低標記來源",
+        "high_mode": "高標記來源",
+        "toggle": "標記"
+      },
+      "window": "時間窗口"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -131,20 +169,13 @@
     "option": {
       "alert_animation": {
         "blink": "閃爍",
-        "ping": "Ping",
+        "ping": "圓環",
         "static": "靜態"
       },
       "alert_highlight": {
-        "background": "Background",
-        "border": "Border",
+        "background": "背景",
+        "border": "邊框",
         "label": "標籤"
-      },
-      "alert_when": {
-        "above": "Alert above",
-        "animation": "動畫",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight"
       },
       "bar_color_mode": {
         "auto": "自動",
@@ -175,8 +206,8 @@
         "top": "上方"
       },
       "bar_scale": {
-        "linear": "Linear",
-        "log": "Logarithmic"
+        "linear": "線性",
+        "log": "對數"
       },
       "bar_size": {
         "large": "大",
@@ -186,9 +217,19 @@
         "xsmall": "超小"
       },
       "bar_stack_mode": {
-        "net": "Net",
-        "proportional": "Sum",
-        "stacked": "Stacked"
+        "net": "淨值",
+        "proportional": "按比例",
+        "stacked": "堆疊"
+      },
+      "duration_unit": {
+        "s": "秒",
+        "min": "分鐘",
+        "h": "小時",
+        "d": "天"
+      },
+      "enabled_disabled_mode": {
+        "disabled": "已停用",
+        "enabled": "已啟用"
       },
       "force_circular_background_mode": {
         "auto": "自動",
@@ -198,20 +239,20 @@
         "icon": "圖示",
         "name": "名稱",
         "progress_bar": "進度條",
-        "secondary_info": "補充資訊",
+        "secondary_info": "次要資訊",
         "shape": "圖示的圓形背景",
         "unit": "單位",
         "value": "數值"
       },
       "icon_animation": {
-        "battery_charging": "Battery charging",
-        "bounce": "Bounce",
-        "ping": "Ping",
-        "pulse": "Pulse",
-        "reveal": "Reveal",
-        "shake": "Shake",
-        "spin": "Spin",
-        "washing_machine": "Washing machine"
+        "battery_charging": "電池正在充電",
+        "bounce": "彈跳",
+        "ping": "圓環",
+        "pulse": "脈衝",
+        "reveal": "顯現",
+        "shake": "搖動",
+        "spin": "旋轉",
+        "washing_machine": "洗衣機"
       },
       "icon_animation_mode": {
         "auto": "自動",
@@ -222,17 +263,12 @@
         "right": "右"
       },
       "layout": {
-        "horizontal": "水平（預設）",
+        "horizontal": "水平",
         "vertical": "垂直"
       },
       "simple_advanced_mode": {
         "advanced": "進階",
         "simple": "簡單"
-      },
-      "status_label": {
-        "color_source": "顏色來源",
-        "jinja": "狀態標籤",
-        "position": "標籤位置"
       },
       "status_label_color_source": {
         "bar": "進度條",
@@ -253,8 +289,13 @@
         "voc": "VOC"
       },
       "theme_mode": {
-        "custom": "Custom",
-        "preset": "Preset"
+        "custom": "自訂",
+        "preset": "預設集"
+      },
+      "trend_indicator_basis": {
+        "average": "平均值",
+        "edge": "邊緣值",
+        "slope": "斜率"
       },
       "unit_position": {
         "after": "數值之後",
@@ -265,31 +306,10 @@
         "no-space": "無空格",
         "space": "空格"
       },
-      "value_shape": {
-        "attribute": "Attribute"
-      },
       "value_source_mode": {
-        "entity": "Entity",
-        "jinja": "Template",
-        "standard": "Fixed value"
-      },
-      "watermark": {
-        "high_toggle": "Show high",
-        "low_toggle": "Show low",
-        "high": "High",
-        "high_as": "High unit",
-        "high_color": "High color",
-        "line_size": "Line size",
-        "low": "Low",
-        "low_as": "Low unit",
-        "low_color": "Low color",
-        "opacity": "Opacity",
-        "type": "Type",
-        "color": "Color",
-        "low_type": "Low type",
-        "low_opacity": "Low opacity",
-        "high_type": "High type",
-        "high_opacity": "High opacity"
+        "entity": "實體",
+        "jinja": "範本",
+        "standard": "固定值"
       },
       "watermark_as": {
         "auto": "自動",
@@ -302,49 +322,6 @@
         "round": "圓形",
         "striped": "條紋",
         "triangle": "三角形"
-      },
-      "peak_marker": {
-        "window": "Time window",
-        "type": "Type",
-        "opacity": "Opacity",
-        "min_toggle": "Show minimum",
-        "min_type": "Minimum type",
-        "min_opacity": "Minimum opacity",
-        "min_color": "Minimum color",
-        "max_toggle": "Show maximum",
-        "max_type": "Maximum type",
-        "max_opacity": "Maximum opacity",
-        "max_color": "Maximum color",
-        "average_toggle": "Show average",
-        "average_type": "Average type",
-        "average_opacity": "Average opacity",
-        "average_color": "Average color",
-        "color": "Color"
-      },
-      "duration_unit": {
-        "s": "Seconds",
-        "min": "Minutes",
-        "h": "Hours",
-        "d": "Days"
-      },
-      "enabled_disabled_mode": {
-        "disabled": "Disabled",
-        "enabled": "Enabled"
-      },
-      "trend_indicator": {
-        "window_toggle": "Use a time window",
-        "window": "Time window",
-        "basis": "Comparison basis",
-        "threshold": "Dead zone (points)",
-        "colored": "Tint with icon color",
-        "up_color": "Up color",
-        "down_color": "Down color",
-        "flat_color": "Flat color"
-      },
-      "trend_indicator_basis": {
-        "average": "Average",
-        "edge": "Edge",
-        "slope": "Slope"
       }
     },
     "title": {

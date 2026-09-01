@@ -33,27 +33,36 @@
   "editor": {
     "field": {
       "action": {
-        "tap": "탭 동작",
-        "hold": "홀드 동작",
         "double_tap": "더블 탭 동작",
-        "icon_tap": "아이콘 탭 동작",
+        "hold": "홀드 동작",
+        "icon_double_tap": "아이콘 더블탭 동작",
         "icon_hold": "아이콘 홀드 동작",
-        "icon_double_tap": "아이콘 더블탭 동작"
+        "icon_tap": "아이콘 탭 동작",
+        "tap": "탭 동작"
       },
       "action_picker": "상호작용 추가",
-      "alert_toggle": "알림",
-      "alert_when_above_mode": "상한 알림 소스",
-      "alert_when_below_mode": "하한 알림 소스",
+      "add_entity": "엔티티 추가",
+      "add_zone": "구간 추가",
+      "alert_when": {
+        "above": "이상일 때 경고",
+        "animation": "애니메이션",
+        "below": "이하일 때 경고",
+        "color": "경고 색상",
+        "highlight": "강조 표시",
+        "label": "레이블",
+        "above_mode": "상한 알림 소스",
+        "below_mode": "하한 알림 소스",
+        "toggle": "알림"
+      },
       "attribute": "속성",
-      "badge_color": "배지 색상",
-      "badge_color_toggle": "Independent color",
-      "badge_icon": "배지 아이콘",
-      "badge_toggle": "배지",
+      "badge": {
+        "toggle": "배지",
+        "color_toggle": "독립 배지 색상"
+      },
       "bar_color": "바 색상",
       "bar_color_mode": "색상 모드",
       "bar_effect_mode": "바 효과",
       "bar_group": "바",
-      "bar_max_width": "바 최대 너비",
       "bar_max_width_toggle": "바 최대 너비",
       "bar_orientation": "방향",
       "bar_scale": "배율",
@@ -61,14 +70,14 @@
       "bar_single_line": "한 줄 표시",
       "bar_size": "크기",
       "bar_stack": "추가 엔티티",
-      "bar_stack_mode": "Stack mode",
+      "bar_stack_mode": "스택 모드",
       "card_size_toggle": "카드 크기",
       "center_zero": "중앙에 영점",
       "center_zero_growth_percent": "성장률",
       "center_zero_value": "중앙값",
       "color": "기본 색상",
       "custom_info": "사용자 정의 보조 정보",
-      "custom_theme": "Custom theme zones",
+      "custom_theme": "사용자 지정 테마 구간",
       "decimal": "소수점",
       "density_toggle": "컴팩트",
       "entity": "엔티티",
@@ -76,43 +85,72 @@
       "force_circular_background_mode": "아이콘 원형 배경",
       "frameless": "테두리 없음",
       "height": "높이",
-      "height_custom_toggle": "Shrink height (embedded)",
+      "height_custom_toggle": "자동 높이",
       "hide_mode": "숨기기",
       "icon": "아이콘",
       "icon_animation": "아이콘 애니메이션",
       "interpolate": "색상 보간",
       "layout": "콘텐츠 레이아웃",
       "marginless": "여백 없음",
+      "mark_color": "색상",
       "max_value": "최대값",
       "max_value_mode": "최댓값 소스",
-      "migrate_config": "Migrate config",
+      "migrate_config": "구성 마이그레이션",
       "min_value": "최소값",
       "min_value_mode": "최솟값 소스",
       "min_width": "최소 너비",
-      "multiline": "Multiline",
+      "multiline": "여러 줄",
       "name": "이름",
       "name_info": "사용자 정의 이름 정보",
+      "opacity": "불투명도",
+      "peak_marker": {
+        "min_toggle": "최솟값 표시",
+        "max_toggle": "최댓값 표시",
+        "average_toggle": "평균값 표시",
+        "toggle": "피크 마커"
+      },
+      "peak_marker_unsupported": "피크 마커는 속성 재정의가 없고 timer나 counter가 아닌 sensor 또는 number 엔티티가 필요합니다 — 이 엔티티에는 사용할 수 없습니다.",
       "percent": "퍼센트",
       "position": "위치",
       "reverse": "타이머 역방향",
       "reverse_secondary_info_row": "막대와 텍스트 교체",
       "secondary": "보조 정보",
       "state_content": "상태 콘텐츠",
-      "status_label_toggle": "상태 레이블",
+      "status_label": {
+        "color_source": "색상 소스",
+        "position": "레이블 위치",
+        "toggle": "상태 레이블"
+      },
       "text_shadow": "텍스트 그림자 추가",
       "theme": "테마",
+      "trend_indicator": {
+        "window_toggle": "시간 창 사용",
+        "basis": "비교 기준",
+        "threshold": "데드 존(포인트)",
+        "colored": "아이콘 색상으로 채색",
+        "up_color": "상승 색상",
+        "down_color": "하락 색상",
+        "flat_color": "안정 색상",
+        "toggle": "추세 표시기",
+        "mode": "모드"
+      },
       "trigger": "트리거",
+      "type": "유형",
       "unit": "단위",
       "unit_spacing": "간격",
       "value_compact": "컴팩트 값 (1.2k)",
       "value_sign": "부호 표시 (+/-)",
-      "watermark_high_mode": "상한 마커 소스",
-      "watermark_low_mode": "하한 마커 소스",
-      "watermark_toggle": "마커",
-      "peak_marker_toggle": "Peak markers",
-      "peak_marker_unsupported": "Peak markers need a sensor or number entity, no attribute override, and not a timer or counter — not available for this entity.",
-      "trend_indicator_toggle": "Trend indicator",
-      "trend_indicator_mode": "Mode"
+      "watermark": {
+        "high_toggle": "상한 표시",
+        "low_toggle": "하한 표시",
+        "high": "상한",
+        "line_size": "선 두께",
+        "low": "하한",
+        "low_mode": "하한 마커 소스",
+        "high_mode": "상한 마커 소스",
+        "toggle": "마커"
+      },
+      "window": "시간 창"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -131,20 +169,13 @@
     "option": {
       "alert_animation": {
         "blink": "깜박임",
-        "ping": "Ping",
+        "ping": "링",
         "static": "정적"
       },
       "alert_highlight": {
-        "background": "Background",
-        "border": "Border",
+        "background": "배경",
+        "border": "테두리",
         "label": "레이블"
-      },
-      "alert_when": {
-        "above": "Alert above",
-        "animation": "애니메이션",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight"
       },
       "bar_color_mode": {
         "auto": "자동",
@@ -175,8 +206,8 @@
         "top": "상단 바"
       },
       "bar_scale": {
-        "linear": "Linear",
-        "log": "Logarithmic"
+        "linear": "선형",
+        "log": "로그"
       },
       "bar_size": {
         "large": "큰",
@@ -186,9 +217,19 @@
         "xsmall": "아주 작음"
       },
       "bar_stack_mode": {
-        "net": "Net",
-        "proportional": "Sum",
-        "stacked": "Stacked"
+        "net": "순",
+        "proportional": "비례",
+        "stacked": "누적"
+      },
+      "duration_unit": {
+        "s": "초",
+        "min": "분",
+        "h": "시간",
+        "d": "일"
+      },
+      "enabled_disabled_mode": {
+        "disabled": "비활성화",
+        "enabled": "활성화"
       },
       "force_circular_background_mode": {
         "auto": "자동",
@@ -198,20 +239,20 @@
         "icon": "아이콘",
         "name": "이름",
         "progress_bar": "바",
-        "secondary_info": "부가 정보",
+        "secondary_info": "보조 정보",
         "shape": "아이콘의 원형 배경",
         "unit": "단위",
         "value": "값"
       },
       "icon_animation": {
-        "battery_charging": "Battery charging",
-        "bounce": "Bounce",
-        "ping": "Ping",
-        "pulse": "Pulse",
-        "reveal": "Reveal",
-        "shake": "Shake",
-        "spin": "Spin",
-        "washing_machine": "Washing machine"
+        "battery_charging": "배터리 충전 중",
+        "bounce": "바운스",
+        "ping": "링",
+        "pulse": "펄스",
+        "reveal": "나타내기",
+        "shake": "흔들기",
+        "spin": "회전",
+        "washing_machine": "세탁기"
       },
       "icon_animation_mode": {
         "auto": "자동",
@@ -222,17 +263,12 @@
         "right": "오른쪽"
       },
       "layout": {
-        "horizontal": "수평 (기본)",
+        "horizontal": "수평",
         "vertical": "수직"
       },
       "simple_advanced_mode": {
         "advanced": "고급",
         "simple": "간단"
-      },
-      "status_label": {
-        "color_source": "색상 소스",
-        "jinja": "상태 레이블",
-        "position": "레이블 위치"
       },
       "status_label_color_source": {
         "bar": "진행률 표시줄",
@@ -253,8 +289,13 @@
         "voc": "VOC"
       },
       "theme_mode": {
-        "custom": "Custom",
-        "preset": "Preset"
+        "custom": "사용자 지정",
+        "preset": "사전 설정"
+      },
+      "trend_indicator_basis": {
+        "average": "평균",
+        "edge": "가장자리 값",
+        "slope": "기울기"
       },
       "unit_position": {
         "after": "값 뒤",
@@ -265,31 +306,10 @@
         "no-space": "공백 없음",
         "space": "공백"
       },
-      "value_shape": {
-        "attribute": "Attribute"
-      },
       "value_source_mode": {
-        "entity": "Entity",
-        "jinja": "Template",
-        "standard": "Fixed value"
-      },
-      "watermark": {
-        "high_toggle": "Show high",
-        "low_toggle": "Show low",
-        "high": "High",
-        "high_as": "High unit",
-        "high_color": "High color",
-        "line_size": "Line size",
-        "low": "Low",
-        "low_as": "Low unit",
-        "low_color": "Low color",
-        "opacity": "Opacity",
-        "type": "Type",
-        "color": "Color",
-        "low_type": "Low type",
-        "low_opacity": "Low opacity",
-        "high_type": "High type",
-        "high_opacity": "High opacity"
+        "entity": "엔티티",
+        "jinja": "템플릿",
+        "standard": "고정값"
       },
       "watermark_as": {
         "auto": "자동",
@@ -302,49 +322,6 @@
         "round": "원형",
         "striped": "줄무늬",
         "triangle": "삼각형"
-      },
-      "peak_marker": {
-        "window": "Time window",
-        "type": "Type",
-        "opacity": "Opacity",
-        "min_toggle": "Show minimum",
-        "min_type": "Minimum type",
-        "min_opacity": "Minimum opacity",
-        "min_color": "Minimum color",
-        "max_toggle": "Show maximum",
-        "max_type": "Maximum type",
-        "max_opacity": "Maximum opacity",
-        "max_color": "Maximum color",
-        "average_toggle": "Show average",
-        "average_type": "Average type",
-        "average_opacity": "Average opacity",
-        "average_color": "Average color",
-        "color": "Color"
-      },
-      "duration_unit": {
-        "s": "Seconds",
-        "min": "Minutes",
-        "h": "Hours",
-        "d": "Days"
-      },
-      "enabled_disabled_mode": {
-        "disabled": "Disabled",
-        "enabled": "Enabled"
-      },
-      "trend_indicator": {
-        "window_toggle": "Use a time window",
-        "window": "Time window",
-        "basis": "Comparison basis",
-        "threshold": "Dead zone (points)",
-        "colored": "Tint with icon color",
-        "up_color": "Up color",
-        "down_color": "Down color",
-        "flat_color": "Flat color"
-      },
-      "trend_indicator_basis": {
-        "average": "Average",
-        "edge": "Edge",
-        "slope": "Slope"
       }
     },
     "title": {

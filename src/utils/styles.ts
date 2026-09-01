@@ -16,6 +16,10 @@ import { CARD } from './parameters.js';
 const css = (strings: TemplateStringsArray, ...values: unknown[]): string =>
   strings.reduce((acc, s, i) => acc + s + (i < values.length ? values[i] : ''), '');
 
+// glass/gradient/gradient_reverse all paint the same ::before layer - one
+// fragment instead of the same 3-class :is() list spelled out 8 times below.
+const BAR_EFFECT_GRADIENTS = `:is(.${CARD.style.dynamic.progressBar.effect.glass.class}, .${CARD.style.dynamic.progressBar.effect.gradient.class}, .${CARD.style.dynamic.progressBar.effect.gradientReverse.class})`;
+
 const CARD_CSS = css`
 /* =============================================================================
    PARAMS
@@ -1369,7 +1373,7 @@ ha-card.info-multiline {
 .${CARD.layout.orientations.horizontal.label}.${CARD.style.bar.sizeOptions.small} .${CARD.htmlStructure.elements.progressBar.container.class},
 .${CARD.layout.orientations.horizontal.label}.${CARD.style.bar.sizeOptions.medium} .${CARD.htmlStructure.elements.progressBar.container.class},
 .${CARD.layout.orientations.horizontal.label}.${CARD.style.bar.sizeOptions.large} .${CARD.htmlStructure.elements.progressBar.container.class} {
-  max-width: var(--progress-bar-max-width, unset);
+  max-width: var(${CARD.style.dynamic.progressBar.maxWidth.var}, ${CARD.style.dynamic.progressBar.maxWidth.default});
 }
 
 .horizontal {
@@ -2254,90 +2258,49 @@ ha-card.info-multiline {
   --inner-background: transparent;
 }
 
-/* --- Horizontal positive: gradient on ::before, scaleX from right --- */
-.horizontal-bar:is(
-  .${CARD.style.dynamic.progressBar.effect.glass.class},
-  .${CARD.style.dynamic.progressBar.effect.gradient.class},
-  .${CARD.style.dynamic.progressBar.effect.gradientReverse.class}
-) .${CARD.htmlStructure.elements.progressBar.inner.class}.positive::before {
+/* --- The gradient layer itself: one box, four scale directions below --- */
+.horizontal-bar${BAR_EFFECT_GRADIENTS} .${CARD.htmlStructure.elements.progressBar.inner.class}.positive::before,
+.horizontal-bar.center-zero${BAR_EFFECT_GRADIENTS} .${CARD.htmlStructure.elements.progressBar.inner.class}.negative::before,
+.vertical-bar${BAR_EFFECT_GRADIENTS} .${CARD.htmlStructure.elements.progressBar.inner.class}.positive::before,
+.vertical-bar.center-zero${BAR_EFFECT_GRADIENTS} .${CARD.htmlStructure.elements.progressBar.inner.class}.negative::before {
   content: '';
   position: absolute;
   inset: 0;
   background: var(--epb-progress-bar-color, var(--progress-effect));
-  transform-origin: right center;
-  transform: scaleX(var(--inner-size, 0));
   will-change: transform;
 }
 
-/* --- Horizontal center-zero negative: gradient on ::before, scaleX from left --- */
-.horizontal-bar.center-zero:is(
-  .${CARD.style.dynamic.progressBar.effect.glass.class},
-  .${CARD.style.dynamic.progressBar.effect.gradient.class},
-  .${CARD.style.dynamic.progressBar.effect.gradientReverse.class}
-) .${CARD.htmlStructure.elements.progressBar.inner.class}.negative::before {
-  content: '';
-  position: absolute;
-  inset: 0;
+/* --- Horizontal positive: scaleX from right --- */
+.horizontal-bar${BAR_EFFECT_GRADIENTS} .${CARD.htmlStructure.elements.progressBar.inner.class}.positive::before {
+  transform-origin: right center;
+  transform: scaleX(var(--inner-size, 0));
+}
+
+/* --- Horizontal center-zero negative: scaleX from left --- */
+.horizontal-bar.center-zero${BAR_EFFECT_GRADIENTS} .${CARD.htmlStructure.elements.progressBar.inner.class}.negative::before {
   background: var(--epb-progress-bar-color, var(--progress-effect-neg));
   transform-origin: left center;
   transform: scaleX(var(--inner-size, 0));
-  will-change: transform;
 }
 
-/* --- Vertical positive: gradient on ::before, scaleY from top --- */
-.vertical-bar:is(
-  .${CARD.style.dynamic.progressBar.effect.glass.class},
-  .${CARD.style.dynamic.progressBar.effect.gradient.class},
-  .${CARD.style.dynamic.progressBar.effect.gradientReverse.class}
-) .${CARD.htmlStructure.elements.progressBar.inner.class}.positive::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--epb-progress-bar-color, var(--progress-effect));
+/* --- Vertical positive: scaleY from top --- */
+.vertical-bar${BAR_EFFECT_GRADIENTS} .${CARD.htmlStructure.elements.progressBar.inner.class}.positive::before {
   transform-origin: center top;
   transform: scaleY(var(--inner-size, 0));
-  will-change: transform;
 }
 
-/* --- Vertical center-zero negative: gradient on ::before, scaleY from bottom --- */
-.vertical-bar.center-zero:is(
-  .${CARD.style.dynamic.progressBar.effect.glass.class},
-  .${CARD.style.dynamic.progressBar.effect.gradient.class},
-  .${CARD.style.dynamic.progressBar.effect.gradientReverse.class}
-) .${CARD.htmlStructure.elements.progressBar.inner.class}.negative::before {
-  content: '';
-  position: absolute;
-  inset: 0;
+/* --- Vertical center-zero negative: scaleY from bottom --- */
+.vertical-bar.center-zero${BAR_EFFECT_GRADIENTS} .${CARD.htmlStructure.elements.progressBar.inner.class}.negative::before {
   background: var(--epb-progress-bar-color, var(--progress-effect-neg));
   transform-origin: center bottom;
   transform: scaleY(var(--inner-size, 0));
-  will-change: transform;
 }
 
 /* --- Transition: sync ::before scale with .inner translate (transition-ready only) --- */
-.horizontal-bar.transition-ready:is(
-  .${CARD.style.dynamic.progressBar.effect.glass.class},
-  .${CARD.style.dynamic.progressBar.effect.gradient.class},
-  .${CARD.style.dynamic.progressBar.effect.gradientReverse.class}
-) .${CARD.htmlStructure.elements.progressBar.inner.class}.positive::before,
-.horizontal-bar.center-zero.transition-ready:is(
-  .${CARD.style.dynamic.progressBar.effect.glass.class},
-  .${CARD.style.dynamic.progressBar.effect.gradient.class},
-  .${CARD.style.dynamic.progressBar.effect.gradientReverse.class}
-) .${CARD.htmlStructure.elements.progressBar.inner.class}.negative::before {
-  transition: transform var(--progress-transition);
-}
-
-.vertical-bar.transition-ready:is(
-  .${CARD.style.dynamic.progressBar.effect.glass.class},
-  .${CARD.style.dynamic.progressBar.effect.gradient.class},
-  .${CARD.style.dynamic.progressBar.effect.gradientReverse.class}
-) .${CARD.htmlStructure.elements.progressBar.inner.class}.positive::before,
-.vertical-bar.center-zero.transition-ready:is(
-  .${CARD.style.dynamic.progressBar.effect.glass.class},
-  .${CARD.style.dynamic.progressBar.effect.gradient.class},
-  .${CARD.style.dynamic.progressBar.effect.gradientReverse.class}
-) .${CARD.htmlStructure.elements.progressBar.inner.class}.negative::before {
+.horizontal-bar.transition-ready${BAR_EFFECT_GRADIENTS} .${CARD.htmlStructure.elements.progressBar.inner.class}.positive::before,
+.horizontal-bar.center-zero.transition-ready${BAR_EFFECT_GRADIENTS} .${CARD.htmlStructure.elements.progressBar.inner.class}.negative::before,
+.vertical-bar.transition-ready${BAR_EFFECT_GRADIENTS} .${CARD.htmlStructure.elements.progressBar.inner.class}.positive::before,
+.vertical-bar.center-zero.transition-ready${BAR_EFFECT_GRADIENTS} .${CARD.htmlStructure.elements.progressBar.inner.class}.negative::before {
   transition: transform var(--progress-transition);
 }
 
@@ -2490,7 +2453,7 @@ ha-card.info-multiline {
 .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
   --wm-value: var(--low-watermark-value, 20%);
   --wm-value-num: var(--low-watermark-value-num, 20);
-  --wm-color: var(--epb-low-watermark-color, var(--low-watermark-color, var(--red-color)));
+  --wm-color: var(--epb-low-watermark-color, var(--low-watermark-color, ${CARD.style.dynamic.watermark.low.color.default}));
   /* --epb-watermark-opacity (documented, shared) still overrides both sides
      when set; --epb-low-watermark-opacity is the new, more specific hook. */
   opacity: var(--epb-low-watermark-opacity, var(--epb-watermark-opacity, var(--low-watermark-opacity-value, 0.8)));
@@ -2498,7 +2461,7 @@ ha-card.info-multiline {
 .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
   --wm-value: var(--high-watermark-value, 80%);
   --wm-value-num: var(--high-watermark-value-num, 80);
-  --wm-color: var(--epb-high-watermark-color, var(--high-watermark-color, var(--red-color)));
+  --wm-color: var(--epb-high-watermark-color, var(--high-watermark-color, ${CARD.style.dynamic.watermark.high.color.default}));
   opacity: var(--epb-high-watermark-opacity, var(--epb-watermark-opacity, var(--high-watermark-opacity-value, 0.8)));
 }
 :is(.lwm-area, .lwm-blended, .lwm-line, .lwm-round) .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
@@ -2632,19 +2595,19 @@ ha-card.info-multiline {
 .${CARD.htmlStructure.elements.progressBar.minMarker.class} {
   --wm-value: var(--peak-min-value, 0%);
   --wm-value-num: var(--peak-min-value-num, 0);
-  --wm-color: var(--epb-peak-min-color, var(--peak-min-color, var(--state-icon-color)));
+  --wm-color: var(--epb-peak-min-color, var(--peak-min-color, ${CARD.style.dynamic.peakMarker.min.color.default}));
   opacity: var(--epb-peak-min-opacity, var(--peak-min-opacity-value, 0.8));
 }
 .${CARD.htmlStructure.elements.progressBar.maxMarker.class} {
   --wm-value: var(--peak-max-value, 100%);
   --wm-value-num: var(--peak-max-value-num, 100);
-  --wm-color: var(--epb-peak-max-color, var(--peak-max-color, var(--state-icon-color)));
+  --wm-color: var(--epb-peak-max-color, var(--peak-max-color, ${CARD.style.dynamic.peakMarker.max.color.default}));
   opacity: var(--epb-peak-max-opacity, var(--peak-max-opacity-value, 0.8));
 }
 .${CARD.htmlStructure.elements.progressBar.averageMarker.class} {
   --wm-value: var(--peak-average-value, 50%);
   --wm-value-num: var(--peak-average-value-num, 50);
-  --wm-color: var(--epb-peak-average-color, var(--peak-average-color, var(--state-icon-color)));
+  --wm-color: var(--epb-peak-average-color, var(--peak-average-color, ${CARD.style.dynamic.peakMarker.average.color.default}));
   opacity: var(--epb-peak-average-opacity, var(--peak-average-opacity-value, 0.8));
 }
 

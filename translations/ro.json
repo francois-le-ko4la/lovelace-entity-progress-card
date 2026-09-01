@@ -33,27 +33,36 @@
   "editor": {
     "field": {
       "action": {
-        "tap": "Acțiune la atingere",
-        "hold": "Acțiune la menținere",
         "double_tap": "Comportamentul atingerii de două ori",
-        "icon_tap": "Acțiune la atingerea iconiței",
+        "hold": "Acțiune la menținere",
+        "icon_double_tap": "Comportament la dubla atingere a pictogramei",
         "icon_hold": "Comportament la menținere a pictogramei",
-        "icon_double_tap": "Comportament la dubla atingere a pictogramei"
+        "icon_tap": "Acțiune la atingerea iconiței",
+        "tap": "Acțiune la atingere"
       },
       "action_picker": "Adaugă interacțiune",
-      "alert_toggle": "Alertă",
-      "alert_when_above_mode": "Sursa alertei superioare",
-      "alert_when_below_mode": "Sursa alertei inferioare",
+      "add_entity": "Adaugă entitate",
+      "add_zone": "Adaugă zonă",
+      "alert_when": {
+        "above": "Alertă peste",
+        "animation": "Animație",
+        "below": "Alertă sub",
+        "color": "Culoare alertă",
+        "highlight": "Evidențiere",
+        "label": "Etichetă",
+        "above_mode": "Sursa alertei superioare",
+        "below_mode": "Sursa alertei inferioare",
+        "toggle": "Alertă"
+      },
       "attribute": "Atribut",
-      "badge_color": "Culoare insignă",
-      "badge_color_toggle": "Independent color",
-      "badge_icon": "Pictogramă insignă",
-      "badge_toggle": "Insignă",
+      "badge": {
+        "toggle": "Insignă",
+        "color_toggle": "Culoare insignă independentă"
+      },
       "bar_color": "Culoare bară",
       "bar_color_mode": "Mod culoare",
       "bar_effect_mode": "Efect pe bară",
       "bar_group": "Bară",
-      "bar_max_width": "Lățime max. a barei",
       "bar_max_width_toggle": "Lățime max. a barei",
       "bar_orientation": "Orientare",
       "bar_scale": "Scară",
@@ -61,14 +70,14 @@
       "bar_single_line": "Un rând",
       "bar_size": "Dimensiune",
       "bar_stack": "Entități suplimentare",
-      "bar_stack_mode": "Stack mode",
+      "bar_stack_mode": "Mod de stivuire",
       "card_size_toggle": "Dimensiunea cardului",
       "center_zero": "Zero la centru",
       "center_zero_growth_percent": "Procent de creștere",
       "center_zero_value": "Valoare centrală",
       "color": "Culoare principală",
       "custom_info": "Info secundară personalizată",
-      "custom_theme": "Custom theme zones",
+      "custom_theme": "Zone temă personalizată",
       "decimal": "zecimal",
       "density_toggle": "Compact",
       "entity": "Entitate",
@@ -76,43 +85,72 @@
       "force_circular_background_mode": "Fundal circular al pictogramei",
       "frameless": "Fără cadru",
       "height": "Înălțime",
-      "height_custom_toggle": "Shrink height (embedded)",
+      "height_custom_toggle": "Înălțime automată",
       "hide_mode": "Ascunde",
       "icon": "Pictogramă",
       "icon_animation": "Animația pictogramei",
       "interpolate": "Interpolare culori",
       "layout": "Aspect conținut",
       "marginless": "Fără margine",
+      "mark_color": "Culoare",
       "max_value": "Valoare maximă",
       "max_value_mode": "Sursa valorii maxime",
-      "migrate_config": "Migrate config",
+      "migrate_config": "Migrează configurația",
       "min_value": "Valoare minimă",
       "min_value_mode": "Sursa valorii minime",
       "min_width": "Lățime min.",
-      "multiline": "Multiline",
+      "multiline": "Multilinie",
       "name": "Nume",
       "name_info": "Info nume personalizată",
+      "opacity": "Opacitate",
+      "peak_marker": {
+        "min_toggle": "Afișează minimul",
+        "max_toggle": "Afișează maximul",
+        "average_toggle": "Afișează media",
+        "toggle": "Marcatori de vârf"
+      },
+      "peak_marker_unsupported": "Marcatorii de vârf necesită o entitate sensor sau number, fără suprascriere de atribut, și care nu este un timer sau un counter — indisponibil pentru această entitate.",
       "percent": "Procent",
       "position": "Poziție",
       "reverse": "Cronometru inverso",
       "reverse_secondary_info_row": "Schimbați bara și textul",
       "secondary": "Informație secundară",
       "state_content": "Conținutul stării",
-      "status_label_toggle": "Etichetă de stare",
+      "status_label": {
+        "color_source": "Sursa culorii",
+        "position": "Poziția etichetei",
+        "toggle": "Etichetă de stare"
+      },
       "text_shadow": "Adaugă umbră textului",
       "theme": "Temă",
+      "trend_indicator": {
+        "window_toggle": "Folosește o fereastră de timp",
+        "basis": "Bază de comparație",
+        "threshold": "Zonă moartă (puncte)",
+        "colored": "Colorează cu culoarea pictogramei",
+        "up_color": "Culoare creștere",
+        "down_color": "Culoare scădere",
+        "flat_color": "Culoare stabilă",
+        "toggle": "Indicator de tendință",
+        "mode": "Mod"
+      },
       "trigger": "Declanșator",
+      "type": "Tip",
       "unit": "Unitate",
       "unit_spacing": "Spațiere",
       "value_compact": "Valoare compactă (1.2k)",
       "value_sign": "Afișează semnul (+/-)",
-      "watermark_high_mode": "Sursa marcatorului superior",
-      "watermark_low_mode": "Sursa marcatorului inferior",
-      "watermark_toggle": "Marcatori",
-      "peak_marker_toggle": "Peak markers",
-      "peak_marker_unsupported": "Peak markers need a sensor or number entity, no attribute override, and not a timer or counter — not available for this entity.",
-      "trend_indicator_toggle": "Trend indicator",
-      "trend_indicator_mode": "Mode"
+      "watermark": {
+        "high_toggle": "Afișează ridicat",
+        "low_toggle": "Afișează scăzut",
+        "high": "Ridicat",
+        "line_size": "Grosime linie",
+        "low": "Scăzut",
+        "low_mode": "Sursa marcatorului inferior",
+        "high_mode": "Sursa marcatorului superior",
+        "toggle": "Marcatori"
+      },
+      "window": "Fereastră de timp"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -131,20 +169,13 @@
     "option": {
       "alert_animation": {
         "blink": "Clipire",
-        "ping": "Ping",
+        "ping": "Inel",
         "static": "Static"
       },
       "alert_highlight": {
-        "background": "Background",
-        "border": "Border",
+        "background": "Fundal",
+        "border": "Chenar",
         "label": "Etichetă"
-      },
-      "alert_when": {
-        "above": "Alert above",
-        "animation": "Animație",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight"
       },
       "bar_color_mode": {
         "auto": "Automat",
@@ -154,7 +185,7 @@
       },
       "bar_effect": {
         "glass": "Sticlă",
-        "gradient": "Gradient",
+        "gradient": "Degrade",
         "gradient_reverse": "Gradient inversat",
         "radius": "Colțuri rotunjite",
         "shimmer": "Luciu",
@@ -175,8 +206,8 @@
         "top": "Bară sus"
       },
       "bar_scale": {
-        "linear": "Linear",
-        "log": "Logarithmic"
+        "linear": "Liniar",
+        "log": "Logaritmic"
       },
       "bar_size": {
         "large": "Mare",
@@ -187,8 +218,18 @@
       },
       "bar_stack_mode": {
         "net": "Net",
-        "proportional": "Sum",
-        "stacked": "Stacked"
+        "proportional": "Proporțional",
+        "stacked": "Stivuit"
+      },
+      "duration_unit": {
+        "s": "Secunde",
+        "min": "Minute",
+        "h": "Ore",
+        "d": "Zile"
+      },
+      "enabled_disabled_mode": {
+        "disabled": "Dezactivat",
+        "enabled": "Activat"
       },
       "force_circular_background_mode": {
         "auto": "Automat",
@@ -198,20 +239,20 @@
         "icon": "Pictogramă",
         "name": "Nume",
         "progress_bar": "Bară",
-        "secondary_info": "Info",
+        "secondary_info": "Info secundară",
         "shape": "Fundal circular al pictogramei",
         "unit": "Unitate",
         "value": "Valoare"
       },
       "icon_animation": {
-        "battery_charging": "Battery charging",
-        "bounce": "Bounce",
-        "ping": "Ping",
-        "pulse": "Pulse",
-        "reveal": "Reveal",
-        "shake": "Shake",
-        "spin": "Spin",
-        "washing_machine": "Washing machine"
+        "battery_charging": "Baterie în încărcare",
+        "bounce": "Săltare",
+        "ping": "Inel",
+        "pulse": "Puls",
+        "reveal": "Dezvăluire",
+        "shake": "Scuturare",
+        "spin": "Rotire",
+        "washing_machine": "Mașină de spălat"
       },
       "icon_animation_mode": {
         "auto": "Automat",
@@ -222,17 +263,12 @@
         "right": "Dreapta"
       },
       "layout": {
-        "horizontal": "Orizontal (implicit)",
+        "horizontal": "Orizontal",
         "vertical": "Vertical"
       },
       "simple_advanced_mode": {
         "advanced": "Avansat",
         "simple": "Simplu"
-      },
-      "status_label": {
-        "color_source": "Sursa culorii",
-        "jinja": "Etichetă de stare",
-        "position": "Poziția etichetei"
       },
       "status_label_color_source": {
         "bar": "Bară de progres",
@@ -250,11 +286,16 @@
         "optimal_when_low": "Optim când este scăzut",
         "pm25": "PM2.5",
         "temperature": "Temperatură",
-        "voc": "VOC"
+        "voc": "COV"
       },
       "theme_mode": {
-        "custom": "Custom",
-        "preset": "Preset"
+        "custom": "Personalizat",
+        "preset": "Presetare"
+      },
+      "trend_indicator_basis": {
+        "average": "Medie",
+        "edge": "Extremă",
+        "slope": "Pantă"
       },
       "unit_position": {
         "after": "După valoare",
@@ -265,31 +306,10 @@
         "no-space": "Fără spațiu",
         "space": "Spațiu"
       },
-      "value_shape": {
-        "attribute": "Attribute"
-      },
       "value_source_mode": {
-        "entity": "Entity",
-        "jinja": "Template",
-        "standard": "Fixed value"
-      },
-      "watermark": {
-        "high_toggle": "Show high",
-        "low_toggle": "Show low",
-        "high": "High",
-        "high_as": "High unit",
-        "high_color": "High color",
-        "line_size": "Line size",
-        "low": "Low",
-        "low_as": "Low unit",
-        "low_color": "Low color",
-        "opacity": "Opacity",
-        "type": "Type",
-        "color": "Color",
-        "low_type": "Low type",
-        "low_opacity": "Low opacity",
-        "high_type": "High type",
-        "high_opacity": "High opacity"
+        "entity": "Entitate",
+        "jinja": "Șablon",
+        "standard": "Valoare fixă"
       },
       "watermark_as": {
         "auto": "Automat",
@@ -302,49 +322,6 @@
         "round": "Rotund",
         "striped": "Dungat",
         "triangle": "Triunghi"
-      },
-      "peak_marker": {
-        "window": "Time window",
-        "type": "Type",
-        "opacity": "Opacity",
-        "min_toggle": "Show minimum",
-        "min_type": "Minimum type",
-        "min_opacity": "Minimum opacity",
-        "min_color": "Minimum color",
-        "max_toggle": "Show maximum",
-        "max_type": "Maximum type",
-        "max_opacity": "Maximum opacity",
-        "max_color": "Maximum color",
-        "average_toggle": "Show average",
-        "average_type": "Average type",
-        "average_opacity": "Average opacity",
-        "average_color": "Average color",
-        "color": "Color"
-      },
-      "duration_unit": {
-        "s": "Seconds",
-        "min": "Minutes",
-        "h": "Hours",
-        "d": "Days"
-      },
-      "enabled_disabled_mode": {
-        "disabled": "Disabled",
-        "enabled": "Enabled"
-      },
-      "trend_indicator": {
-        "window_toggle": "Use a time window",
-        "window": "Time window",
-        "basis": "Comparison basis",
-        "threshold": "Dead zone (points)",
-        "colored": "Tint with icon color",
-        "up_color": "Up color",
-        "down_color": "Down color",
-        "flat_color": "Flat color"
-      },
-      "trend_indicator_basis": {
-        "average": "Average",
-        "edge": "Edge",
-        "slope": "Slope"
       }
     },
     "title": {

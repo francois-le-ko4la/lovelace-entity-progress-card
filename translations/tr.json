@@ -33,27 +33,36 @@
   "editor": {
     "field": {
       "action": {
-        "tap": "Dokunma davranışı",
-        "hold": "Tutma davranışı",
         "double_tap": "Çift dokunma davranışı",
-        "icon_tap": "Simgeye dokunma davranışı",
+        "hold": "Tutma davranışı",
+        "icon_double_tap": "Simge çift dokunma davranışı",
         "icon_hold": "Simge tutma davranışı",
-        "icon_double_tap": "Simge çift dokunma davranışı"
+        "icon_tap": "Simgeye dokunma davranışı",
+        "tap": "Dokunma davranışı"
       },
       "action_picker": "Etkileşim ekle",
-      "alert_toggle": "Uyarı",
-      "alert_when_above_mode": "Üst uyarı kaynağı",
-      "alert_when_below_mode": "Alt uyarı kaynağı",
+      "add_entity": "Varlık ekle",
+      "add_zone": "Bölge ekle",
+      "alert_when": {
+        "above": "Üzerinde uyarı",
+        "animation": "Animasyon",
+        "below": "Altında uyarı",
+        "color": "Uyarı rengi",
+        "highlight": "Vurgu",
+        "label": "Etiket",
+        "above_mode": "Üst uyarı kaynağı",
+        "below_mode": "Alt uyarı kaynağı",
+        "toggle": "Uyarı"
+      },
       "attribute": "Öznitelik",
-      "badge_color": "Rozet rengi",
-      "badge_color_toggle": "Independent color",
-      "badge_icon": "Rozet simgesi",
-      "badge_toggle": "Rozet",
+      "badge": {
+        "toggle": "Rozet",
+        "color_toggle": "Bağımsız rozet rengi"
+      },
       "bar_color": "Çubuk rengi",
       "bar_color_mode": "Renk modu",
       "bar_effect_mode": "Çubuk efekti",
       "bar_group": "Çubuk",
-      "bar_max_width": "Maks. çubuk genişliği",
       "bar_max_width_toggle": "Maks. çubuk genişliği",
       "bar_orientation": "Yön",
       "bar_scale": "Ölçek",
@@ -61,14 +70,14 @@
       "bar_single_line": "Tek satır",
       "bar_size": "Boyut",
       "bar_stack": "Ek varlıklar",
-      "bar_stack_mode": "Stack mode",
+      "bar_stack_mode": "Yığın modu",
       "card_size_toggle": "Kart boyutu",
       "center_zero": "Нуль по центру",
       "center_zero_growth_percent": "Büyüme yüzdesi",
       "center_zero_value": "Merkez değeri",
       "color": "Birincil renk",
       "custom_info": "Özel ikincil bilgi",
-      "custom_theme": "Custom theme zones",
+      "custom_theme": "Özel tema bölgeleri",
       "decimal": "ondalık",
       "density_toggle": "Kompakt",
       "entity": "Varlık",
@@ -76,43 +85,72 @@
       "force_circular_background_mode": "Simge dairesel arka planı",
       "frameless": "Çerçevesiz",
       "height": "Yükseklik",
-      "height_custom_toggle": "Shrink height (embedded)",
+      "height_custom_toggle": "Otomatik yükseklik",
       "hide_mode": "Gizle",
       "icon": "Simge",
       "icon_animation": "Simge animasyonu",
       "interpolate": "Renk interpolasyonu",
       "layout": "İçerik düzeni",
       "marginless": "Kenar boşluksuz",
+      "mark_color": "Renk",
       "max_value": "Maksimum değer",
       "max_value_mode": "Maksimum değer kaynağı",
-      "migrate_config": "Migrate config",
+      "migrate_config": "Yapılandırmayı taşı",
       "min_value": "Minimum değer",
       "min_value_mode": "Minimum değer kaynağı",
       "min_width": "Min. genişlik",
-      "multiline": "Multiline",
+      "multiline": "Çok satırlı",
       "name": "Ad",
       "name_info": "Özel ad bilgisi",
+      "opacity": "Opaklık",
+      "peak_marker": {
+        "min_toggle": "Minimumu göster",
+        "max_toggle": "Maksimumu göster",
+        "average_toggle": "Ortalamayı göster",
+        "toggle": "Tepe işaretleri"
+      },
+      "peak_marker_unsupported": "Tepe işaretleri, öznitelik geçersiz kılma olmayan ve timer veya counter olmayan bir sensor ya da number varlığı gerektirir — bu varlık için kullanılamaz.",
       "percent": "Yüzde",
       "position": "Konum",
       "reverse": "Zamanlayıcıyı tersine çevir",
       "reverse_secondary_info_row": "Çubuğu ve metni değiştir",
       "secondary": "İkincil bilgi",
       "state_content": "Durum içeriği",
-      "status_label_toggle": "Durum etiketi",
+      "status_label": {
+        "color_source": "Renk kaynağı",
+        "position": "Etiket konumu",
+        "toggle": "Durum etiketi"
+      },
       "text_shadow": "Metne gölge ekle",
       "theme": "Tema",
+      "trend_indicator": {
+        "window_toggle": "Zaman penceresi kullan",
+        "basis": "Karşılaştırma temeli",
+        "threshold": "Ölü bölge (puan)",
+        "colored": "Simge rengiyle boya",
+        "up_color": "Yükseliş rengi",
+        "down_color": "Düşüş rengi",
+        "flat_color": "Sabit renk",
+        "toggle": "Eğilim göstergesi",
+        "mode": "Mod"
+      },
       "trigger": "Tetikleyici",
+      "type": "Tür",
       "unit": "Birim",
       "unit_spacing": "Boşluk",
       "value_compact": "Kompakt değer (1.2k)",
       "value_sign": "İşareti göster (+/-)",
-      "watermark_high_mode": "Yüksek işaretçi kaynağı",
-      "watermark_low_mode": "Düşük işaretçi kaynağı",
-      "watermark_toggle": "İşaretler",
-      "peak_marker_toggle": "Peak markers",
-      "peak_marker_unsupported": "Peak markers need a sensor or number entity, no attribute override, and not a timer or counter — not available for this entity.",
-      "trend_indicator_toggle": "Trend indicator",
-      "trend_indicator_mode": "Mode"
+      "watermark": {
+        "high_toggle": "Yükseği göster",
+        "low_toggle": "Düşüğü göster",
+        "high": "Yüksek",
+        "line_size": "Çizgi kalınlığı",
+        "low": "Düşük",
+        "low_mode": "Düşük işaretçi kaynağı",
+        "high_mode": "Yüksek işaretçi kaynağı",
+        "toggle": "İşaretler"
+      },
+      "window": "Zaman penceresi"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -131,20 +169,13 @@
     "option": {
       "alert_animation": {
         "blink": "Yanıp sönme",
-        "ping": "Ping",
+        "ping": "Halka",
         "static": "Statik"
       },
       "alert_highlight": {
-        "background": "Background",
-        "border": "Border",
+        "background": "Arka plan",
+        "border": "Kenarlık",
         "label": "Etiket"
-      },
-      "alert_when": {
-        "above": "Alert above",
-        "animation": "Animasyon",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight"
       },
       "bar_color_mode": {
         "auto": "Otomatik",
@@ -175,8 +206,8 @@
         "top": "Üstte çubuk"
       },
       "bar_scale": {
-        "linear": "Linear",
-        "log": "Logarithmic"
+        "linear": "Doğrusal",
+        "log": "Logaritmik"
       },
       "bar_size": {
         "large": "Büyük",
@@ -187,8 +218,18 @@
       },
       "bar_stack_mode": {
         "net": "Net",
-        "proportional": "Sum",
-        "stacked": "Stacked"
+        "proportional": "Orantılı",
+        "stacked": "Yığılmış"
+      },
+      "duration_unit": {
+        "s": "Saniye",
+        "min": "Dakika",
+        "h": "Saat",
+        "d": "Gün"
+      },
+      "enabled_disabled_mode": {
+        "disabled": "Devre dışı",
+        "enabled": "Etkin"
       },
       "force_circular_background_mode": {
         "auto": "Otomatik",
@@ -198,20 +239,20 @@
         "icon": "Simge",
         "name": "Ad",
         "progress_bar": "Çubuk",
-        "secondary_info": "Bilgi",
+        "secondary_info": "İkincil bilgi",
         "shape": "Simgenin dairesel arka planı",
         "unit": "Birim",
         "value": "Değer"
       },
       "icon_animation": {
-        "battery_charging": "Battery charging",
-        "bounce": "Bounce",
-        "ping": "Ping",
-        "pulse": "Pulse",
-        "reveal": "Reveal",
-        "shake": "Shake",
-        "spin": "Spin",
-        "washing_machine": "Washing machine"
+        "battery_charging": "Pil şarj oluyor",
+        "bounce": "Zıplama",
+        "ping": "Halka",
+        "pulse": "Nabız",
+        "reveal": "Ortaya çıkarma",
+        "shake": "Sallanma",
+        "spin": "Dönme",
+        "washing_machine": "Çamaşır makinesi"
       },
       "icon_animation_mode": {
         "auto": "Otomatik",
@@ -222,17 +263,12 @@
         "right": "Sağ"
       },
       "layout": {
-        "horizontal": "Yatay (varsayılan)",
+        "horizontal": "Yatay",
         "vertical": "Dikey"
       },
       "simple_advanced_mode": {
         "advanced": "Gelişmiş",
         "simple": "Basit"
-      },
-      "status_label": {
-        "color_source": "Renk kaynağı",
-        "jinja": "Durum etiketi",
-        "position": "Etiket konumu"
       },
       "status_label_color_source": {
         "bar": "İlerleme çubuğu",
@@ -253,8 +289,13 @@
         "voc": "VOC"
       },
       "theme_mode": {
-        "custom": "Custom",
-        "preset": "Preset"
+        "custom": "Özel",
+        "preset": "Ön ayar"
+      },
+      "trend_indicator_basis": {
+        "average": "Ortalama",
+        "edge": "Uç değer",
+        "slope": "Eğim"
       },
       "unit_position": {
         "after": "Değerden sonra",
@@ -265,31 +306,10 @@
         "no-space": "Boşluksuz",
         "space": "Boşluk"
       },
-      "value_shape": {
-        "attribute": "Attribute"
-      },
       "value_source_mode": {
-        "entity": "Entity",
-        "jinja": "Template",
-        "standard": "Fixed value"
-      },
-      "watermark": {
-        "high_toggle": "Show high",
-        "low_toggle": "Show low",
-        "high": "High",
-        "high_as": "High unit",
-        "high_color": "High color",
-        "line_size": "Line size",
-        "low": "Low",
-        "low_as": "Low unit",
-        "low_color": "Low color",
-        "opacity": "Opacity",
-        "type": "Type",
-        "color": "Color",
-        "low_type": "Low type",
-        "low_opacity": "Low opacity",
-        "high_type": "High type",
-        "high_opacity": "High opacity"
+        "entity": "Varlık",
+        "jinja": "Şablon",
+        "standard": "Sabit değer"
       },
       "watermark_as": {
         "auto": "Otomatik",
@@ -302,49 +322,6 @@
         "round": "Yuvarlak",
         "striped": "Çizgili",
         "triangle": "Üçgen"
-      },
-      "peak_marker": {
-        "window": "Time window",
-        "type": "Type",
-        "opacity": "Opacity",
-        "min_toggle": "Show minimum",
-        "min_type": "Minimum type",
-        "min_opacity": "Minimum opacity",
-        "min_color": "Minimum color",
-        "max_toggle": "Show maximum",
-        "max_type": "Maximum type",
-        "max_opacity": "Maximum opacity",
-        "max_color": "Maximum color",
-        "average_toggle": "Show average",
-        "average_type": "Average type",
-        "average_opacity": "Average opacity",
-        "average_color": "Average color",
-        "color": "Color"
-      },
-      "duration_unit": {
-        "s": "Seconds",
-        "min": "Minutes",
-        "h": "Hours",
-        "d": "Days"
-      },
-      "enabled_disabled_mode": {
-        "disabled": "Disabled",
-        "enabled": "Enabled"
-      },
-      "trend_indicator": {
-        "window_toggle": "Use a time window",
-        "window": "Time window",
-        "basis": "Comparison basis",
-        "threshold": "Dead zone (points)",
-        "colored": "Tint with icon color",
-        "up_color": "Up color",
-        "down_color": "Down color",
-        "flat_color": "Flat color"
-      },
-      "trend_indicator_basis": {
-        "average": "Average",
-        "edge": "Edge",
-        "slope": "Slope"
       }
     },
     "title": {

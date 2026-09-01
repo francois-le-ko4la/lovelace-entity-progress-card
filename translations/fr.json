@@ -33,27 +33,36 @@
   "editor": {
     "field": {
       "action": {
-        "tap": "Action à l'appui",
-        "hold": "Action à l'appui long",
         "double_tap": "Action au double appui",
-        "icon_tap": "Action à l'appui sur l'icône",
+        "hold": "Action à l'appui long",
+        "icon_double_tap": "Action au double appui sur l'icône",
         "icon_hold": "Action à l'appui long sur l'icône",
-        "icon_double_tap": "Action au double appui sur l'icône"
+        "icon_tap": "Action à l'appui sur l'icône",
+        "tap": "Action à l'appui"
       },
       "action_picker": "Ajouter une interaction",
-      "alert_toggle": "Alerte",
-      "alert_when_above_mode": "Source de l'alerte haute",
-      "alert_when_below_mode": "Source de l'alerte basse",
+      "add_entity": "Ajouter une entité",
+      "add_zone": "Ajouter une zone",
+      "alert_when": {
+        "above": "Alerte au-dessus de",
+        "animation": "Animation",
+        "below": "Alerte en dessous de",
+        "color": "Couleur d'alerte",
+        "highlight": "Mise en évidence",
+        "label": "Étiquette",
+        "above_mode": "Source de l'alerte haute",
+        "below_mode": "Source de l'alerte basse",
+        "toggle": "Alerte"
+      },
       "attribute": "Attribut",
-      "badge_color": "Couleur du badge",
-      "badge_color_toggle": "Independent color",
-      "badge_icon": "Icône du badge",
-      "badge_toggle": "Badge",
+      "badge": {
+        "toggle": "Badge",
+        "color_toggle": "Couleur du badge indépendante"
+      },
       "bar_color": "Couleur barre",
       "bar_color_mode": "Mode de couleur de la barre",
       "bar_effect_mode": "Effet sur la barre",
       "bar_group": "Barre",
-      "bar_max_width": "Largeur max de la barre",
       "bar_max_width_toggle": "Largeur max de la barre",
       "bar_orientation": "Orientation",
       "bar_scale": "Échelle",
@@ -76,13 +85,14 @@
       "force_circular_background_mode": "Fond circulaire de l'icône",
       "frameless": "Sans cadre",
       "height": "Hauteur",
-      "height_custom_toggle": "Shrink height (embedded)",
+      "height_custom_toggle": "Hauteur automatique",
       "hide_mode": "Masquer",
       "icon": "Icône",
       "icon_animation": "Animation de l'icône",
-      "interpolate": "Interpoler les couleurs",
+      "interpolate": "Interpoler",
       "layout": "Disposition du contenu",
       "marginless": "Sans marge",
+      "mark_color": "Couleur",
       "max_value": "Valeur maximum",
       "max_value_mode": "Source de la valeur max",
       "migrate_config": "Migrer la config",
@@ -92,59 +102,80 @@
       "multiline": "Multiligne",
       "name": "Nom",
       "name_info": "Info nom personnalisée",
+      "opacity": "Opacité",
+      "peak_marker": {
+        "min_toggle": "Afficher le minimum",
+        "max_toggle": "Afficher le maximum",
+        "average_toggle": "Afficher la moyenne",
+        "toggle": "Marqueurs de pic"
+      },
+      "peak_marker_unsupported": "Les marqueurs de pic nécessitent une entité sensor ou number, sans attribut, hors timer et counter — indisponible pour cette entité.",
       "percent": "Pourcentage",
       "position": "Position",
       "reverse": "Inverser le minuteur",
       "reverse_secondary_info_row": "Intervertir barre et texte",
       "secondary": "Information secondaire",
       "state_content": "Contenu de l’état",
-      "status_label_toggle": "Étiquette de statut",
+      "status_label": {
+        "color_source": "Source de la couleur",
+        "position": "Position de l'étiquette",
+        "toggle": "Étiquette de statut"
+      },
       "text_shadow": "Ajouter une ombre au texte",
       "theme": "Thème",
+      "trend_indicator": {
+        "window_toggle": "Utiliser une fenêtre temporelle",
+        "basis": "Base de comparaison",
+        "threshold": "Zone morte (points)",
+        "colored": "Teinter avec la couleur de l'icône",
+        "up_color": "Couleur (hausse)",
+        "down_color": "Couleur (baisse)",
+        "flat_color": "Couleur (stable)",
+        "toggle": "Indicateur de tendance",
+        "mode": "Mode"
+      },
       "trigger": "Déclencheur",
+      "type": "Type",
       "unit": "Unité",
       "unit_spacing": "Espacement",
       "value_compact": "Valeur compacte (1.2k)",
       "value_sign": "Afficher le signe (+/-)",
-      "watermark_high_mode": "Source du marqueur haut",
-      "watermark_low_mode": "Source du marqueur bas",
-      "watermark_toggle": "Marqueurs",
-      "peak_marker_toggle": "Marqueurs de pic",
-      "peak_marker_unsupported": "Les marqueurs de pic nécessitent une entité sensor ou number, sans attribut, hors timer et counter — indisponible pour cette entité.",
-      "trend_indicator_toggle": "Indicateur de tendance",
-      "trend_indicator_mode": "Mode"
+      "watermark": {
+        "high_toggle": "Afficher le seuil haut",
+        "low_toggle": "Afficher le seuil bas",
+        "high": "Seuil haut",
+        "line_size": "Épaisseur de ligne",
+        "low": "Seuil bas",
+        "low_mode": "Source du marqueur bas",
+        "high_mode": "Source du marqueur haut",
+        "toggle": "Marqueurs"
+      },
+      "window": "Fenêtre temporelle"
     },
     "field_helper": {
-      "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
-      "badge_icon": "Returns String (mdi:fan) or Object ({icon, color})",
-      "bar_effect": "Returns String (shimmer) or List ([shimmer, gradient])",
-      "color": "Returns String (#ff0000)",
-      "custom_info": "Returns String (Charging)",
-      "hide": "Returns String (icon, name) or List ([icon, name])",
-      "icon": "Returns String (mdi:fan)",
-      "icon_animation_jinja": "Returns Boolean (true)",
-      "name_info": "Returns String (Living Room)",
-      "returns_number": "Returns Number (42)",
-      "status_label_jinja": "Returns String (hot) or Object ({label, color})",
-      "feature_entity": "Defaults to this tile's own entity when left empty"
+      "alert_when_jinja": "Renvoie un booléen (true) ou un objet ({color, animation, highlight, label})",
+      "badge_icon": "Renvoie une chaîne (mdi:fan) ou un objet ({icon, color})",
+      "bar_effect": "Renvoie une chaîne (shimmer) ou une liste ([shimmer, gradient])",
+      "color": "Renvoie une chaîne (#ff0000)",
+      "custom_info": "Renvoie une chaîne (En charge)",
+      "hide": "Renvoie une chaîne (icon, name) ou une liste ([icon, name])",
+      "icon": "Renvoie une chaîne (mdi:fan)",
+      "icon_animation_jinja": "Renvoie un booléen (true)",
+      "name_info": "Renvoie une chaîne (Salon)",
+      "returns_number": "Renvoie un nombre (42)",
+      "status_label_jinja": "Renvoie une chaîne (hot) ou un objet ({label, color})",
+      "feature_entity": "Par défaut, l'entité de la tuile parente si laissé vide"
     },
     "option": {
       "alert_animation": {
         "blink": "Clignotement",
-        "ping": "Ping",
+        "ping": "Anneau",
         "static": "Statique"
       },
       "alert_highlight": {
         "background": "Fond",
         "border": "Bordure",
         "label": "Étiquette"
-      },
-      "alert_when": {
-        "above": "Alerte au-dessus de",
-        "animation": "Animation",
-        "below": "Alerte en dessous de",
-        "color": "Couleur d'alerte",
-        "highlight": "Mise en évidence"
       },
       "bar_color_mode": {
         "auto": "Auto",
@@ -171,7 +202,7 @@
         "bottom": "Barre en bas",
         "compact_below": "Barre compacte en dessous (nom/valeur sur une ligne)",
         "default": "Défaut",
-        "overlay": "Barre superposée au contenu (overlay)",
+        "overlay": "Barre superposée au contenu",
         "top": "Barre en haut"
       },
       "bar_scale": {
@@ -183,12 +214,22 @@
         "medium": "Moyenne",
         "small": "Petite",
         "xlarge": "Très grande",
-        "xsmall": "Très petit"
+        "xsmall": "Très petite"
       },
       "bar_stack_mode": {
         "net": "Net",
         "proportional": "Proportionnel",
         "stacked": "Empilé"
+      },
+      "duration_unit": {
+        "s": "Secondes",
+        "min": "Minutes",
+        "h": "Heures",
+        "d": "Jours"
+      },
+      "enabled_disabled_mode": {
+        "disabled": "Désactivé",
+        "enabled": "Activé"
       },
       "force_circular_background_mode": {
         "auto": "Auto",
@@ -198,7 +239,7 @@
         "icon": "Icône",
         "name": "Nom",
         "progress_bar": "Barre",
-        "secondary_info": "Info",
+        "secondary_info": "Info secondaire",
         "shape": "Fond circulaire de l'icône",
         "unit": "Unité",
         "value": "Valeur"
@@ -206,7 +247,7 @@
       "icon_animation": {
         "battery_charging": "Batterie en charge",
         "bounce": "Rebond",
-        "ping": "Ping",
+        "ping": "Anneau",
         "pulse": "Pulsation",
         "reveal": "Apparition",
         "shake": "Secousse",
@@ -222,17 +263,12 @@
         "right": "Droite"
       },
       "layout": {
-        "horizontal": "Horizontal (par défaut)",
+        "horizontal": "Horizontal",
         "vertical": "Vertical"
       },
       "simple_advanced_mode": {
         "advanced": "Avancé",
         "simple": "Simple"
-      },
-      "status_label": {
-        "color_source": "Source de la couleur",
-        "jinja": "Étiquette de statut",
-        "position": "Position de l'étiquette"
       },
       "status_label_color_source": {
         "bar": "Barre de progression",
@@ -250,11 +286,16 @@
         "optimal_when_low": "Optimal quand c'est bas",
         "pm25": "PM2.5",
         "temperature": "Température",
-        "voc": "VOC"
+        "voc": "COV"
       },
       "theme_mode": {
         "custom": "Personnalisé",
         "preset": "Prédéfini"
+      },
+      "trend_indicator_basis": {
+        "average": "Moyenne",
+        "edge": "Bord",
+        "slope": "Pente"
       },
       "unit_position": {
         "after": "Après la valeur",
@@ -265,31 +306,10 @@
         "no-space": "Sans espace",
         "space": "Espace"
       },
-      "value_shape": {
-        "attribute": "Attribut"
-      },
       "value_source_mode": {
         "entity": "Entité",
         "jinja": "Modèle",
         "standard": "Valeur fixe"
-      },
-      "watermark": {
-        "high_toggle": "Afficher le seuil haut",
-        "low_toggle": "Afficher le seuil bas",
-        "high": "Seuil haut",
-        "high_as": "Unité (seuil haut)",
-        "high_color": "Couleur du seuil haut",
-        "line_size": "Épaisseur de ligne",
-        "low": "Seuil bas",
-        "low_as": "Unité (seuil bas)",
-        "low_color": "Couleur du seuil bas",
-        "opacity": "Opacité",
-        "type": "Type",
-        "color": "Couleur",
-        "low_type": "Type (seuil bas)",
-        "low_opacity": "Opacité (seuil bas)",
-        "high_type": "Type (seuil haut)",
-        "high_opacity": "Opacité (seuil haut)"
       },
       "watermark_as": {
         "auto": "Auto",
@@ -302,49 +322,6 @@
         "round": "Rond",
         "striped": "Rayé",
         "triangle": "Triangle"
-      },
-      "peak_marker": {
-        "window": "Fenêtre temporelle",
-        "type": "Type",
-        "opacity": "Opacité",
-        "min_toggle": "Afficher le minimum",
-        "min_type": "Type (minimum)",
-        "min_opacity": "Opacité (minimum)",
-        "min_color": "Couleur (minimum)",
-        "max_toggle": "Afficher le maximum",
-        "max_type": "Type (maximum)",
-        "max_opacity": "Opacité (maximum)",
-        "max_color": "Couleur (maximum)",
-        "average_toggle": "Afficher la moyenne",
-        "average_type": "Type (moyenne)",
-        "average_opacity": "Opacité (moyenne)",
-        "average_color": "Couleur (moyenne)",
-        "color": "Couleur"
-      },
-      "duration_unit": {
-        "s": "Secondes",
-        "min": "Minutes",
-        "h": "Heures",
-        "d": "Jours"
-      },
-      "enabled_disabled_mode": {
-        "disabled": "Désactivé",
-        "enabled": "Activé"
-      },
-      "trend_indicator": {
-        "window_toggle": "Utiliser une fenêtre temporelle",
-        "window": "Fenêtre temporelle",
-        "basis": "Base de comparaison",
-        "threshold": "Zone morte (points)",
-        "colored": "Teinter avec la couleur de l'icône",
-        "up_color": "Couleur (hausse)",
-        "down_color": "Couleur (baisse)",
-        "flat_color": "Couleur (stable)"
-      },
-      "trend_indicator_basis": {
-        "average": "Moyenne",
-        "edge": "Bord",
-        "slope": "Pente"
       }
     },
     "title": {

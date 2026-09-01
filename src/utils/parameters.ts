@@ -14,7 +14,7 @@
 import { VERSION, META } from './meta.js';
 import { HA_CONTEXT } from './ha-context.js';
 import { CARD } from './card-config.js';
-import { THEME, PERCENT_THEME_KEYS } from './card-themes.js';
+import { THEME, THEME_KEYS, PERCENT_THEME_KEYS } from './card-themes.js';
 
 // Injected by scripts/build.js - see development.md's Logging & debugging
 // section for why baked in rather than URL-derived like `debug` below.
@@ -134,6 +134,7 @@ export { devName };
 export { HA_CONTEXT };
 export { CARD };
 export { THEME };
+export { THEME_KEYS };
 export { PERCENT_THEME_KEYS };
 export { SEV };
 export { CONTENT_SLOT };

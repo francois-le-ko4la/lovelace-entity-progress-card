@@ -316,10 +316,17 @@ class EntityProgressMultiBase extends HACore {
   // mechanism (#126).
   _applySizing() {
     const container = this._container;
-    const count = this._children.length;
-    if (!container || count === 0) return;
+    if (!container || this._children.length === 0) return;
     const total = this.#featureRowPx();
     container.style.height = `${total}px`;
+    this._distributeHeight(total);
+  }
+
+  // Equal slice of `total` px per child (each centers its bar in its own
+  // --feature-height) - shared with MultiCard's measured-container sizing.
+  _distributeHeight(total: number) {
+    const count = this._children.length;
+    if (!total || count === 0) return;
     const per = total / count;
     for (const child of this._children) child.style.setProperty(FEATURE_HEIGHT_VAR, `${per}px`);
   }
@@ -389,15 +396,8 @@ class EntityProgressMultiCard extends EntityProgressMultiBase {
 
   _applySizing() {
     const container = this._container;
-    const children = this._children;
-    if (!container || children.length === 0) return;
-    const apply = () => {
-      const total = container.clientHeight;
-      const count = children.length;
-      if (!total || count === 0) return;
-      const per = total / count;
-      for (const child of children) child.style.setProperty(FEATURE_HEIGHT_VAR, `${per}px`);
-    };
+    if (!container || this._children.length === 0) return;
+    const apply = () => this._distributeHeight(container.clientHeight);
     requestAnimationFrame(apply);
     const observer = new ResizeObserver(apply);
     observer.observe(container);

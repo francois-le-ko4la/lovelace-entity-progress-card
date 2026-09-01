@@ -33,27 +33,36 @@
   "editor": {
     "field": {
       "action": {
-        "tap": "Tik gedrag",
-        "hold": "Gedrag vasthouden",
         "double_tap": "Gedrag bij dubbeltikken",
-        "icon_tap": "Icoon tikgedrag",
+        "hold": "Gedrag vasthouden",
+        "icon_double_tap": "Dubbeltikgedrag icoon",
         "icon_hold": "Icoon-vasthoudgedrag",
-        "icon_double_tap": "Dubbeltikgedrag icoon"
+        "icon_tap": "Icoon tikgedrag",
+        "tap": "Tik gedrag"
       },
       "action_picker": "Interactie toevoegen",
-      "alert_toggle": "Alarm",
-      "alert_when_above_mode": "Bron van bovengrens-alarm",
-      "alert_when_below_mode": "Bron van ondergrens-alarm",
+      "add_entity": "Entiteit toevoegen",
+      "add_zone": "Zone toevoegen",
+      "alert_when": {
+        "above": "Alarm boven",
+        "animation": "Animatie",
+        "below": "Alarm onder",
+        "color": "Alarmkleur",
+        "highlight": "Markering",
+        "label": "Label",
+        "above_mode": "Bron van bovengrens-alarm",
+        "below_mode": "Bron van ondergrens-alarm",
+        "toggle": "Alarm"
+      },
       "attribute": "Attribuut",
-      "badge_color": "Kleur van badge",
-      "badge_color_toggle": "Independent color",
-      "badge_icon": "Pictogram van badge",
-      "badge_toggle": "Badge",
+      "badge": {
+        "toggle": "Badge",
+        "color_toggle": "Onafhankelijke badgekleur"
+      },
       "bar_color": "Kleur balk",
       "bar_color_mode": "Balkkleurmodus",
       "bar_effect_mode": "Effect op de balk",
       "bar_group": "Balk",
-      "bar_max_width": "Max. balkbreedte",
       "bar_max_width_toggle": "Max. balkbreedte",
       "bar_orientation": "Oriëntatie",
       "bar_scale": "Schaal",
@@ -76,13 +85,14 @@
       "force_circular_background_mode": "Cirkelvormige pictogramachtergrond",
       "frameless": "Zonder kader",
       "height": "Hoogte",
-      "height_custom_toggle": "Shrink height (embedded)",
+      "height_custom_toggle": "Automatische hoogte",
       "hide_mode": "Verbergen",
       "icon": "Pictogram",
       "icon_animation": "Pictogramanimatie",
       "interpolate": "Kleuren interpoleren",
       "layout": "Inhoudsindeling",
       "marginless": "Zonder marge",
+      "mark_color": "Kleur",
       "max_value": "Maximale waarde",
       "max_value_mode": "Bron van maximumwaarde",
       "migrate_config": "Configuratie migreren",
@@ -92,27 +102,55 @@
       "multiline": "Meerdere regels",
       "name": "Naam",
       "name_info": "Aangepaste naaminfo",
+      "opacity": "Dekking",
+      "peak_marker": {
+        "min_toggle": "Minimum tonen",
+        "max_toggle": "Maximum tonen",
+        "average_toggle": "Gemiddelde tonen",
+        "toggle": "Piekmarkeringen"
+      },
+      "peak_marker_unsupported": "Piekmarkeringen vereisen een sensor- of number-entiteit zonder attribuut-override, en geen timer of counter — niet beschikbaar voor deze entiteit.",
       "percent": "Percentage",
       "position": "Positie",
       "reverse": "Timer omdraaien",
       "reverse_secondary_info_row": "Balk en tekst omwisselen",
       "secondary": "Secundaire informatie",
       "state_content": "Inhoud van de status",
-      "status_label_toggle": "Statuslabel",
+      "status_label": {
+        "color_source": "Bron van kleur",
+        "position": "Positie van label",
+        "toggle": "Statuslabel"
+      },
       "text_shadow": "Tekstschaduw toevoegen",
       "theme": "Thema",
+      "trend_indicator": {
+        "window_toggle": "Tijdvenster gebruiken",
+        "basis": "Vergelijkingsbasis",
+        "threshold": "Dode zone (punten)",
+        "colored": "Inkleuren met pictogramkleur",
+        "up_color": "Kleur omhoog",
+        "down_color": "Kleur omlaag",
+        "flat_color": "Kleur stabiel",
+        "toggle": "Trendindicator",
+        "mode": "Modus"
+      },
       "trigger": "Trigger",
+      "type": "Type",
       "unit": "Eenheid",
       "unit_spacing": "Afstand",
       "value_compact": "Compacte waarde (1.2k)",
       "value_sign": "Teken tonen (+/-)",
-      "watermark_high_mode": "Bron van hoge markering",
-      "watermark_low_mode": "Bron van lage markering",
-      "watermark_toggle": "Markeringen",
-      "peak_marker_toggle": "Peak markers",
-      "peak_marker_unsupported": "Peak markers need a sensor or number entity, no attribute override, and not a timer or counter — not available for this entity.",
-      "trend_indicator_toggle": "Trend indicator",
-      "trend_indicator_mode": "Mode"
+      "watermark": {
+        "high_toggle": "Hoog tonen",
+        "low_toggle": "Laag tonen",
+        "high": "Hoge waarde",
+        "line_size": "Lijndikte",
+        "low": "Lage waarde",
+        "low_mode": "Bron van lage markering",
+        "high_mode": "Bron van hoge markering",
+        "toggle": "Markeringen"
+      },
+      "window": "Tijdvenster"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -131,20 +169,13 @@
     "option": {
       "alert_animation": {
         "blink": "Knipperen",
-        "ping": "Ping",
+        "ping": "Ring",
         "static": "Statisch"
       },
       "alert_highlight": {
         "background": "Achtergrond",
         "border": "Rand",
         "label": "Label"
-      },
-      "alert_when": {
-        "above": "Alarm boven",
-        "animation": "Animatie",
-        "below": "Alarm onder",
-        "color": "Alarmkleur",
-        "highlight": "Markering"
       },
       "bar_color_mode": {
         "auto": "Automatisch",
@@ -190,6 +221,16 @@
         "proportional": "Proportioneel",
         "stacked": "Gestapeld"
       },
+      "duration_unit": {
+        "s": "Seconden",
+        "min": "Minuten",
+        "h": "Uren",
+        "d": "Dagen"
+      },
+      "enabled_disabled_mode": {
+        "disabled": "Uitgeschakeld",
+        "enabled": "Ingeschakeld"
+      },
       "force_circular_background_mode": {
         "auto": "Automatisch",
         "forced": "Geforceerd"
@@ -198,7 +239,7 @@
         "icon": "Pictogram",
         "name": "Naam",
         "progress_bar": "Balk",
-        "secondary_info": "Info",
+        "secondary_info": "Secundaire info",
         "shape": "Cirkelvormige achtergrond van het pictogram",
         "unit": "Eenheid",
         "value": "Waarde"
@@ -206,7 +247,7 @@
       "icon_animation": {
         "battery_charging": "Batterij wordt opgeladen",
         "bounce": "Stuiteren",
-        "ping": "Ping",
+        "ping": "Ring",
         "pulse": "Pulseren",
         "reveal": "Onthullen",
         "shake": "Trillen",
@@ -222,17 +263,12 @@
         "right": "Rechts"
       },
       "layout": {
-        "horizontal": "Horizontaal (standaard)",
+        "horizontal": "Horizontaal",
         "vertical": "Verticaal"
       },
       "simple_advanced_mode": {
         "advanced": "Geavanceerd",
         "simple": "Eenvoudig"
-      },
-      "status_label": {
-        "color_source": "Bron van kleur",
-        "jinja": "Statuslabel",
-        "position": "Positie van label"
       },
       "status_label_color_source": {
         "bar": "Voortgangsbalk",
@@ -256,6 +292,11 @@
         "custom": "Aangepast",
         "preset": "Voorinstelling"
       },
+      "trend_indicator_basis": {
+        "average": "Gemiddelde",
+        "edge": "Uiterste",
+        "slope": "Helling"
+      },
       "unit_position": {
         "after": "Na de waarde",
         "before": "Voor de waarde"
@@ -265,31 +306,10 @@
         "no-space": "Geen spatie",
         "space": "Spatie"
       },
-      "value_shape": {
-        "attribute": "Attribuut"
-      },
       "value_source_mode": {
         "entity": "Entiteit",
         "jinja": "Sjabloon",
         "standard": "Vaste waarde"
-      },
-      "watermark": {
-        "high_toggle": "Show high",
-        "low_toggle": "Show low",
-        "high": "Hoge waarde",
-        "high_as": "Eenheid (hoge waarde)",
-        "high_color": "Hoge kleur",
-        "line_size": "Lijndikte",
-        "low": "Lage waarde",
-        "low_as": "Eenheid (lage waarde)",
-        "low_color": "Lage kleur",
-        "opacity": "Dekking",
-        "type": "Type",
-        "color": "Color",
-        "low_type": "Low type",
-        "low_opacity": "Low opacity",
-        "high_type": "High type",
-        "high_opacity": "High opacity"
       },
       "watermark_as": {
         "auto": "Automatisch",
@@ -302,49 +322,6 @@
         "round": "Rond",
         "striped": "Gestreept",
         "triangle": "Driehoek"
-      },
-      "peak_marker": {
-        "window": "Time window",
-        "type": "Type",
-        "opacity": "Opacity",
-        "min_toggle": "Show minimum",
-        "min_type": "Minimum type",
-        "min_opacity": "Minimum opacity",
-        "min_color": "Minimum color",
-        "max_toggle": "Show maximum",
-        "max_type": "Maximum type",
-        "max_opacity": "Maximum opacity",
-        "max_color": "Maximum color",
-        "average_toggle": "Show average",
-        "average_type": "Average type",
-        "average_opacity": "Average opacity",
-        "average_color": "Average color",
-        "color": "Color"
-      },
-      "duration_unit": {
-        "s": "Seconds",
-        "min": "Minutes",
-        "h": "Hours",
-        "d": "Days"
-      },
-      "enabled_disabled_mode": {
-        "disabled": "Disabled",
-        "enabled": "Enabled"
-      },
-      "trend_indicator": {
-        "window_toggle": "Use a time window",
-        "window": "Time window",
-        "basis": "Comparison basis",
-        "threshold": "Dead zone (points)",
-        "colored": "Tint with icon color",
-        "up_color": "Up color",
-        "down_color": "Down color",
-        "flat_color": "Flat color"
-      },
-      "trend_indicator_basis": {
-        "average": "Average",
-        "edge": "Edge",
-        "slope": "Slope"
       }
     },
     "title": {

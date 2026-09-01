@@ -41,19 +41,28 @@
         "tap": ""
       },
       "action_picker": "",
-      "alert_toggle": "",
-      "alert_when_above_mode": "",
-      "alert_when_below_mode": "",
+      "add_entity": "",
+      "add_zone": "",
+      "alert_when": {
+        "above": "",
+        "animation": "",
+        "below": "",
+        "color": "",
+        "highlight": "",
+        "label": "",
+        "above_mode": "",
+        "below_mode": "",
+        "toggle": ""
+      },
       "attribute": "",
-      "badge_color": "",
-      "badge_color_toggle": "",
-      "badge_icon": "",
-      "badge_toggle": "",
+      "badge": {
+        "toggle": "",
+        "color_toggle": ""
+      },
       "bar_color": "",
       "bar_color_mode": "",
       "bar_effect_mode": "",
       "bar_group": "",
-      "bar_max_width": "",
       "bar_max_width_toggle": "",
       "bar_orientation": "",
       "bar_scale": "",
@@ -83,6 +92,7 @@
       "interpolate": "",
       "layout": "",
       "marginless": "",
+      "mark_color": "",
       "max_value": "",
       "max_value_mode": "",
       "migrate_config": "",
@@ -92,27 +102,55 @@
       "multiline": "",
       "name": "",
       "name_info": "",
+      "opacity": "",
+      "peak_marker": {
+        "min_toggle": "",
+        "max_toggle": "",
+        "average_toggle": "",
+        "toggle": ""
+      },
+      "peak_marker_unsupported": "",
       "percent": "",
       "position": "",
       "reverse": "",
       "reverse_secondary_info_row": "",
       "secondary": "",
       "state_content": "",
-      "status_label_toggle": "",
+      "status_label": {
+        "color_source": "",
+        "position": "",
+        "toggle": ""
+      },
       "text_shadow": "",
       "theme": "",
+      "trend_indicator": {
+        "window_toggle": "",
+        "basis": "",
+        "threshold": "",
+        "colored": "",
+        "up_color": "",
+        "down_color": "",
+        "flat_color": "",
+        "toggle": "",
+        "mode": ""
+      },
       "trigger": "",
+      "type": "",
       "unit": "",
       "unit_spacing": "",
       "value_compact": "",
       "value_sign": "",
-      "watermark_high_mode": "",
-      "watermark_low_mode": "",
-      "watermark_toggle": "",
-      "peak_marker_toggle": "",
-      "peak_marker_unsupported": "",
-      "trend_indicator_toggle": "",
-      "trend_indicator_mode": ""
+      "watermark": {
+        "high_toggle": "",
+        "low_toggle": "",
+        "high": "",
+        "line_size": "",
+        "low": "",
+        "low_mode": "",
+        "high_mode": "",
+        "toggle": ""
+      },
+      "window": ""
     },
     "field_helper": {
       "alert_when_jinja": "",
@@ -138,13 +176,6 @@
         "background": "",
         "border": "",
         "label": ""
-      },
-      "alert_when": {
-        "above": "",
-        "animation": "",
-        "below": "",
-        "color": "",
-        "highlight": ""
       },
       "bar_color_mode": {
         "auto": "",
@@ -190,6 +221,16 @@
         "proportional": "",
         "stacked": ""
       },
+      "duration_unit": {
+        "s": "",
+        "min": "",
+        "h": "",
+        "d": ""
+      },
+      "enabled_disabled_mode": {
+        "disabled": "",
+        "enabled": ""
+      },
       "force_circular_background_mode": {
         "auto": "",
         "forced": ""
@@ -229,11 +270,6 @@
         "advanced": "",
         "simple": ""
       },
-      "status_label": {
-        "color_source": "",
-        "jinja": "",
-        "position": ""
-      },
       "status_label_color_source": {
         "bar": "",
         "icon": ""
@@ -256,6 +292,11 @@
         "custom": "",
         "preset": ""
       },
+      "trend_indicator_basis": {
+        "average": "",
+        "edge": "",
+        "slope": ""
+      },
       "unit_position": {
         "after": "",
         "before": ""
@@ -265,31 +306,10 @@
         "no-space": "",
         "space": ""
       },
-      "value_shape": {
-        "attribute": ""
-      },
       "value_source_mode": {
         "entity": "",
         "jinja": "",
         "standard": ""
-      },
-      "watermark": {
-        "high_toggle": "",
-        "low_toggle": "",
-        "high": "",
-        "high_as": "",
-        "high_color": "",
-        "line_size": "",
-        "low": "",
-        "low_as": "",
-        "low_color": "",
-        "opacity": "",
-        "type": "",
-        "color": "",
-        "low_type": "",
-        "low_opacity": "",
-        "high_type": "",
-        "high_opacity": ""
       },
       "watermark_as": {
         "auto": "",
@@ -302,49 +322,6 @@
         "round": "",
         "striped": "",
         "triangle": ""
-      },
-      "peak_marker": {
-        "window": "",
-        "type": "",
-        "opacity": "",
-        "min_toggle": "",
-        "min_type": "",
-        "min_opacity": "",
-        "min_color": "",
-        "max_toggle": "",
-        "max_type": "",
-        "max_opacity": "",
-        "max_color": "",
-        "average_toggle": "",
-        "average_type": "",
-        "average_opacity": "",
-        "average_color": "",
-        "color": ""
-      },
-      "duration_unit": {
-        "s": "",
-        "min": "",
-        "h": "",
-        "d": ""
-      },
-      "enabled_disabled_mode": {
-        "disabled": "",
-        "enabled": ""
-      },
-      "trend_indicator": {
-        "window_toggle": "",
-        "window": "",
-        "basis": "",
-        "threshold": "",
-        "colored": "",
-        "up_color": "",
-        "down_color": "",
-        "flat_color": ""
-      },
-      "trend_indicator_basis": {
-        "average": "",
-        "edge": "",
-        "slope": ""
       }
     },
     "title": {

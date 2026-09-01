@@ -33,27 +33,36 @@
   "editor": {
     "field": {
       "action": {
-        "tap": "Однесување на допир",
-        "hold": "Држете го однесувањето",
         "double_tap": "Однесување со двоен допир",
-        "icon_tap": "Однесување при допир на иконата",
+        "hold": "Држете го однесувањето",
+        "icon_double_tap": "Однесување на иконата со двоен допир",
         "icon_hold": "Однесување за задржување на иконата",
-        "icon_double_tap": "Однесување на иконата со двоен допир"
+        "icon_tap": "Однесување при допир на иконата",
+        "tap": "Однесување на допир"
       },
       "action_picker": "Додај интеракција",
-      "alert_toggle": "Предупредување",
-      "alert_when_above_mode": "Извор на горно предупредување",
-      "alert_when_below_mode": "Извор на долно предупредување",
+      "add_entity": "Додај ентитет",
+      "add_zone": "Додај зона",
+      "alert_when": {
+        "above": "Аларм над",
+        "animation": "Анимација",
+        "below": "Аларм под",
+        "color": "Боја на аларм",
+        "highlight": "Истакнување",
+        "label": "Ознака",
+        "above_mode": "Извор на горно предупредување",
+        "below_mode": "Извор на долно предупредување",
+        "toggle": "Предупредување"
+      },
       "attribute": "Атрибут",
-      "badge_color": "Боја на значка",
-      "badge_color_toggle": "Independent color",
-      "badge_icon": "Икона на значка",
-      "badge_toggle": "Ознака",
+      "badge": {
+        "toggle": "Ознака",
+        "color_toggle": "Независна боја на значка"
+      },
       "bar_color": "Боја за лентата",
       "bar_color_mode": "Режим на боја",
       "bar_effect_mode": "Ефект на лентата",
       "bar_group": "Лента",
-      "bar_max_width": "Макс. ширина на лентата",
       "bar_max_width_toggle": "Макс. ширина на лентата",
       "bar_orientation": "Ориентација",
       "bar_scale": "Скала",
@@ -61,14 +70,14 @@
       "bar_single_line": "Еден ред",
       "bar_size": "Големина",
       "bar_stack": "Дополнителни ентитети",
-      "bar_stack_mode": "Stack mode",
+      "bar_stack_mode": "Режим на редење",
       "card_size_toggle": "Големина на картичката",
       "center_zero": "Нула во центарот",
       "center_zero_growth_percent": "Процент на растеж",
       "center_zero_value": "Централна вредност",
       "color": "Примарна боја",
       "custom_info": "Прилагодена секундарна информација",
-      "custom_theme": "Custom theme zones",
+      "custom_theme": "Зони на прилагодена тема",
       "decimal": "децемален",
       "density_toggle": "Компактно",
       "entity": "Ентитет",
@@ -76,43 +85,72 @@
       "force_circular_background_mode": "Кружна позадина на иконата",
       "frameless": "Без рамка",
       "height": "Висина",
-      "height_custom_toggle": "Shrink height (embedded)",
+      "height_custom_toggle": "Автоматска висина",
       "hide_mode": "Сокриј",
       "icon": "Икона",
       "icon_animation": "Анимација на иконата",
       "interpolate": "Интерполација на бои",
       "layout": "Распоред на содржината",
       "marginless": "Без маргина",
+      "mark_color": "Боја",
       "max_value": "Максимална вредност",
       "max_value_mode": "Извор на максимална вредност",
-      "migrate_config": "Migrate config",
+      "migrate_config": "Мигрирај конфигурација",
       "min_value": "Минимална вредност",
       "min_value_mode": "Извор на минимална вредност",
       "min_width": "Мин. ширина",
-      "multiline": "Multiline",
+      "multiline": "Повеќередно",
       "name": "Име",
       "name_info": "Прилагодена информација за имиња",
+      "opacity": "Непроѕирност",
+      "peak_marker": {
+        "min_toggle": "Прикажи минимум",
+        "max_toggle": "Прикажи максимум",
+        "average_toggle": "Прикажи просек",
+        "toggle": "Ознаки на врвови"
+      },
+      "peak_marker_unsupported": "Ознаките на врвови бараат sensor или number ентитет без преклопување на атрибут, кој не е timer ниту counter — не е достапно за овој ентитет.",
       "percent": "Процент",
       "position": "Позиција",
       "reverse": "Обратен тајмер",
       "reverse_secondary_info_row": "Сменете ги лентата и текстот",
       "secondary": "Секундарни информации",
       "state_content": "Содржина на состојба",
-      "status_label_toggle": "Ознака на статус",
+      "status_label": {
+        "color_source": "Извор на бојата",
+        "position": "Позиција на ознаката",
+        "toggle": "Ознака на статус"
+      },
       "text_shadow": "Додај сенка на текст",
       "theme": "Тема",
+      "trend_indicator": {
+        "window_toggle": "Користи временски прозорец",
+        "basis": "Основа за споредба",
+        "threshold": "Мртва зона (поени)",
+        "colored": "Обои со бојата на иконата",
+        "up_color": "Боја на пораст",
+        "down_color": "Боја на пад",
+        "flat_color": "Боја на стабилност",
+        "toggle": "Индикатор на тренд",
+        "mode": "Режим"
+      },
       "trigger": "Активирање",
+      "type": "Тип",
       "unit": "Јединство",
       "unit_spacing": "Растојание",
       "value_compact": "Компактна вредност (1.2k)",
       "value_sign": "Прикажи знак (+/-)",
-      "watermark_high_mode": "Извор на горен маркер",
-      "watermark_low_mode": "Извор на долен маркер",
-      "watermark_toggle": "Маркери",
-      "peak_marker_toggle": "Peak markers",
-      "peak_marker_unsupported": "Peak markers need a sensor or number entity, no attribute override, and not a timer or counter — not available for this entity.",
-      "trend_indicator_toggle": "Trend indicator",
-      "trend_indicator_mode": "Mode"
+      "watermark": {
+        "high_toggle": "Прикажи горен",
+        "low_toggle": "Прикажи долен",
+        "high": "Горен",
+        "line_size": "Дебелина на линија",
+        "low": "Долен",
+        "low_mode": "Извор на долен маркер",
+        "high_mode": "Извор на горен маркер",
+        "toggle": "Маркери"
+      },
+      "window": "Временски прозорец"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -131,20 +169,13 @@
     "option": {
       "alert_animation": {
         "blink": "Трепка",
-        "ping": "Ping",
+        "ping": "Прстен",
         "static": "Статично"
       },
       "alert_highlight": {
-        "background": "Background",
-        "border": "Border",
+        "background": "Позадина",
+        "border": "Рамка",
         "label": "Ознака"
-      },
-      "alert_when": {
-        "above": "Alert above",
-        "animation": "Анимација",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight"
       },
       "bar_color_mode": {
         "auto": "Автоматски",
@@ -175,8 +206,8 @@
         "top": "Лента на врвот"
       },
       "bar_scale": {
-        "linear": "Linear",
-        "log": "Logarithmic"
+        "linear": "Линеарна",
+        "log": "Логаритамска"
       },
       "bar_size": {
         "large": "Голема",
@@ -186,9 +217,19 @@
         "xsmall": "Многу мало"
       },
       "bar_stack_mode": {
-        "net": "Net",
-        "proportional": "Sum",
-        "stacked": "Stacked"
+        "net": "Нето",
+        "proportional": "Пропорционално",
+        "stacked": "Наредено"
+      },
+      "duration_unit": {
+        "s": "Секунди",
+        "min": "Минути",
+        "h": "Часови",
+        "d": "Денови"
+      },
+      "enabled_disabled_mode": {
+        "disabled": "Оневозможено",
+        "enabled": "Овозможено"
       },
       "force_circular_background_mode": {
         "auto": "Автоматски",
@@ -198,20 +239,20 @@
         "icon": "Икона",
         "name": "Име",
         "progress_bar": "Лента",
-        "secondary_info": "Инфо",
+        "secondary_info": "Секундарно инфо",
         "shape": "Кружна позадина на иконата",
         "unit": "Единица",
         "value": "Вредност"
       },
       "icon_animation": {
-        "battery_charging": "Battery charging",
-        "bounce": "Bounce",
-        "ping": "Ping",
-        "pulse": "Pulse",
-        "reveal": "Reveal",
-        "shake": "Shake",
-        "spin": "Spin",
-        "washing_machine": "Washing machine"
+        "battery_charging": "Батеријата се полни",
+        "bounce": "Отскокнување",
+        "ping": "Прстен",
+        "pulse": "Пулсирање",
+        "reveal": "Откривање",
+        "shake": "Тресење",
+        "spin": "Вртење",
+        "washing_machine": "Машина за перење"
       },
       "icon_animation_mode": {
         "auto": "Автоматски",
@@ -222,17 +263,12 @@
         "right": "Десно"
       },
       "layout": {
-        "horizontal": "Хоризонтално (стандардно)",
+        "horizontal": "Хоризонтално",
         "vertical": "Вертикално"
       },
       "simple_advanced_mode": {
         "advanced": "Напредно",
         "simple": "Едноставно"
-      },
-      "status_label": {
-        "color_source": "Извор на бојата",
-        "jinja": "Ознака на статус",
-        "position": "Позиција на ознаката"
       },
       "status_label_color_source": {
         "bar": "Лента за напредок",
@@ -253,8 +289,13 @@
         "voc": "VOC"
       },
       "theme_mode": {
-        "custom": "Custom",
-        "preset": "Preset"
+        "custom": "Прилагодено",
+        "preset": "Претходно поставено"
+      },
+      "trend_indicator_basis": {
+        "average": "Просек",
+        "edge": "Краен",
+        "slope": "Наклон"
       },
       "unit_position": {
         "after": "По вредноста",
@@ -265,31 +306,10 @@
         "no-space": "Без празно место",
         "space": "Празно место"
       },
-      "value_shape": {
-        "attribute": "Attribute"
-      },
       "value_source_mode": {
-        "entity": "Entity",
-        "jinja": "Template",
-        "standard": "Fixed value"
-      },
-      "watermark": {
-        "high_toggle": "Show high",
-        "low_toggle": "Show low",
-        "high": "High",
-        "high_as": "High unit",
-        "high_color": "High color",
-        "line_size": "Line size",
-        "low": "Low",
-        "low_as": "Low unit",
-        "low_color": "Low color",
-        "opacity": "Opacity",
-        "type": "Type",
-        "color": "Color",
-        "low_type": "Low type",
-        "low_opacity": "Low opacity",
-        "high_type": "High type",
-        "high_opacity": "High opacity"
+        "entity": "Ентитет",
+        "jinja": "Шаблон",
+        "standard": "Фиксна вредност"
       },
       "watermark_as": {
         "auto": "Автоматски",
@@ -302,49 +322,6 @@
         "round": "Кружно",
         "striped": "Пругасто",
         "triangle": "Триаголник"
-      },
-      "peak_marker": {
-        "window": "Time window",
-        "type": "Type",
-        "opacity": "Opacity",
-        "min_toggle": "Show minimum",
-        "min_type": "Minimum type",
-        "min_opacity": "Minimum opacity",
-        "min_color": "Minimum color",
-        "max_toggle": "Show maximum",
-        "max_type": "Maximum type",
-        "max_opacity": "Maximum opacity",
-        "max_color": "Maximum color",
-        "average_toggle": "Show average",
-        "average_type": "Average type",
-        "average_opacity": "Average opacity",
-        "average_color": "Average color",
-        "color": "Color"
-      },
-      "duration_unit": {
-        "s": "Seconds",
-        "min": "Minutes",
-        "h": "Hours",
-        "d": "Days"
-      },
-      "enabled_disabled_mode": {
-        "disabled": "Disabled",
-        "enabled": "Enabled"
-      },
-      "trend_indicator": {
-        "window_toggle": "Use a time window",
-        "window": "Time window",
-        "basis": "Comparison basis",
-        "threshold": "Dead zone (points)",
-        "colored": "Tint with icon color",
-        "up_color": "Up color",
-        "down_color": "Down color",
-        "flat_color": "Flat color"
-      },
-      "trend_indicator_basis": {
-        "average": "Average",
-        "edge": "Edge",
-        "slope": "Slope"
       }
     },
     "title": {

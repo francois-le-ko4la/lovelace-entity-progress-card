@@ -25,6 +25,7 @@ import {
   markValue,
   isMarkOverride,
   SCHEMA_DEFAULTS,
+  THEME_ALIASES,
   entityOf,
   attributeOf,
   type ValueConfig,
@@ -61,6 +62,36 @@ type ParsedConfig = {
   errors: { path: (string | number)[]; errorCode: string | null; severity: string }[];
 };
 
+const WATERMARK_SIDES = ['low', 'high'] as const;
+
+// The pre-1.6 bare-entity-string trap, and the low_as/low_color/disable_low
+// siblings now folded into watermark.low/.high's own shape.
+const hasLegacyWatermarkValue = (config: LovelaceConfig, side: 'low' | 'high'): boolean =>
+  is.nonEmptyString(config?.watermark?.[side]);
+const hasLegacyWatermarkMarkKeys = (config: LovelaceConfig, side: 'low' | 'high'): boolean =>
+  config?.watermark?.[`${side}_as`] !== undefined ||
+  config?.watermark?.[`${side}_color`] !== undefined ||
+  config?.watermark?.[`disable_${side}`] !== undefined;
+
+// Single source for "this config still uses a deprecated shape" - read by the
+// console warnings and migrations below, and by the editor's Migrate button.
+const DEPRECATED_OPTIONS: Record<string, (config: LovelaceConfig) => boolean> = {
+  watermark: (config) =>
+    WATERMARK_SIDES.some((side) => hasLegacyWatermarkValue(config, side) || hasLegacyWatermarkMarkKeys(config, side)),
+  max_value: (config) => is.nonEmptyString(config?.max_value),
+  disable_unit: (config) => config?.disable_unit !== undefined,
+  additions: (config) => is.array(config?.additions),
+  icon_animation: (config) => config?.icon_animation === 'none',
+  navigate_to: (config) => config?.navigate_to !== undefined,
+  show_more_info: (config) => config?.show_more_info !== undefined,
+  theme: (config) => Boolean(THEME_ALIASES[config?.theme]),
+};
+
+// Also drives the editor's "Migrate config" button - see
+// docs/troubleshooting.md#deprecated-options.
+const hasDeprecatedOptions = (config: LovelaceConfig): boolean =>
+  Object.values(DEPRECATED_OPTIONS).some((isPresent) => isPresent(config));
+
 class BaseConfigHelper {
   #hassProvider = HassProviderSingleton.getInstance();
   #HAError: HAError = null;
@@ -84,6 +115,9 @@ class BaseConfigHelper {
   // The real shape comes from YamlSchemaFactory (see schema.ts) - subclasses
   // assign a concrete schema here (see CardConfigHelper etc. below).
   _yamlSchema: Schema | null = null;
+  // Reused across #resolveDisplayDefaults calls (one per hass update in the
+  // editor) instead of a fresh one each time.
+  #entity: EntityHelper | null = null;
 
   constructor() {
     this.#log = initLogger(this, false);
@@ -127,7 +161,8 @@ class BaseConfigHelper {
     const config = this._configResolved;
     if (!is.nonEmptyString(config.entity)) return;
 
-    const entity = new EntityHelper();
+    this.#entity ??= new EntityHelper();
+    const entity = this.#entity;
     entity.entityId = config.entity;
     entity.attribute = is.nonEmptyString(config.attribute) ? config.attribute : null;
 
@@ -180,7 +215,14 @@ class BaseConfigHelper {
   // with Card (see #140). CardConfigHelper's override calls this too, then
   // layers its own extra migrations on top.
   static _migrateLegacyOptions(config: LovelaceConfig): LovelaceConfig {
-    return BaseConfigHelper._migrateWatermarkOptions(config);
+    return BaseConfigHelper._migrateIconAnimationNone(BaseConfigHelper._migrateWatermarkOptions(config));
+  }
+
+  // icon_animation: none was the literal default until 1.6.1; nothing produces
+  // or reads it now, so it is dropped rather than kept as a dead enum member.
+  static _migrateIconAnimationNone(config: LovelaceConfig): LovelaceConfig {
+    if (config?.icon_animation !== 'none') return config;
+    return { ...config, icon_animation: undefined };
   }
 
   // watermark.low/high: two legacy layers, folded per side in one pass -
@@ -190,17 +232,7 @@ class BaseConfigHelper {
   // own shape (`false`, or { value, as, color }).
   static _migrateWatermarkOptions(config: LovelaceConfig): LovelaceConfig {
     const wm = config?.watermark;
-    if (!wm) return config;
-    const hasLegacyKeys =
-      is.nonEmptyString(wm.low) ||
-      is.nonEmptyString(wm.high) ||
-      wm.low_as !== undefined ||
-      wm.high_as !== undefined ||
-      wm.low_color !== undefined ||
-      wm.high_color !== undefined ||
-      wm.disable_low !== undefined ||
-      wm.disable_high !== undefined;
-    if (!hasLegacyKeys) return config;
+    if (!wm || !DEPRECATED_OPTIONS.watermark(config)) return config;
     const migrateSide = (side: 'low' | 'high') => {
       const raw = wm[side];
       // Checked before any legacy color/as merge: `low: false` (already the
@@ -237,11 +269,11 @@ class BaseConfigHelper {
   }
 
   static #logDeprecatedOption(config: LovelaceConfig) {
-    if (config.navigate_to !== undefined)
+    if (DEPRECATED_OPTIONS.navigate_to(config))
       BaseConfigHelper.#warnDeprecated('navigate_to option is deprecated and has been removed.');
-    if (config.show_more_info !== undefined)
+    if (DEPRECATED_OPTIONS.show_more_info(config))
       BaseConfigHelper.#warnDeprecated('show_more_info option is deprecated and has been removed.');
-    if (['battery', 'cpu', 'memory'].includes(config.theme))
+    if (DEPRECATED_OPTIONS.theme(config))
       BaseConfigHelper.#warnDeprecated(
         `theme: ${config.theme} is deprecated and will be removed in a future release. Please migrate to the recommended alternative...`,
       );
@@ -250,41 +282,36 @@ class BaseConfigHelper {
     // freeze bug). The entity form is now an explicit map; the bare string form
     // is auto-migrated for this session (see CardConfigHelper._customizeConfig)
     // but should be updated in the YAML.
-    if (is.nonEmptyString(config.max_value))
+    if (DEPRECATED_OPTIONS.max_value(config))
       BaseConfigHelper.#warnDeprecated(
         'max_value: <entity id> is deprecated and will be removed in a future release. ' +
           'Please migrate to max_value: { entity: <entity id>, attribute: <optional> }. Your configuration was automatically migrated for this session.',
       );
-    // watermark.low/high used to accept the same bare entity-id-string form
-    // as pre-1.6 max_value, with attribute as a separate low_attribute/
-    // high_attribute sibling key - same trap, same fix (see
-    // BaseConfigHelper._migrateWatermarkOptions).
-    if (is.nonEmptyString(config.watermark?.low))
-      BaseConfigHelper.#warnDeprecated(
-        'watermark.low: <entity id> is deprecated and will be removed in a future release. ' +
-          'Please migrate to watermark.low: { entity: <entity id>, attribute: <optional> }. Your configuration was automatically migrated for this session.',
-      );
-    if (is.nonEmptyString(config.watermark?.high))
-      BaseConfigHelper.#warnDeprecated(
-        'watermark.high: <entity id> is deprecated and will be removed in a future release. ' +
-          'Please migrate to watermark.high: { entity: <entity id>, attribute: <optional> }. Your configuration was automatically migrated for this session.',
-      );
-    // low_as/high_as/low_color/high_color/disable_low/disable_high are now
-    // part of watermark.low/.high's own shape ({ value, as, color } | false)
-    // instead of sibling keys - one combined warning per side is enough,
-    // no need to enumerate which specific sibling triggered it.
-    (['low', 'high'] as const).forEach((side) => {
-      if (
-        config.watermark?.[`${side}_as`] !== undefined ||
-        config.watermark?.[`${side}_color`] !== undefined ||
-        config.watermark?.[`disable_${side}`] !== undefined
-      )
+    // watermark.low/high used to accept the same bare entity-id-string trap as
+    // pre-1.6 max_value (see BaseConfigHelper._migrateWatermarkOptions).
+    WATERMARK_SIDES.forEach((side) => {
+      if (hasLegacyWatermarkValue(config, side))
+        BaseConfigHelper.#warnDeprecated(
+          `watermark.${side}: <entity id> is deprecated and will be removed in a future release. ` +
+            `Please migrate to watermark.${side}: { entity: <entity id>, attribute: <optional> }. Your configuration was automatically migrated for this session.`,
+        );
+    });
+    // Now part of watermark.low/.high's own shape instead of sibling keys -
+    // one combined warning per side is enough.
+    WATERMARK_SIDES.forEach((side) => {
+      if (hasLegacyWatermarkMarkKeys(config, side))
         BaseConfigHelper.#warnDeprecated(
           `watermark.${side}_as/${side}_color/disable_${side} are deprecated and will be removed in a future release. ` +
             `Please migrate to watermark.${side}: { value: ..., as, color } or watermark.${side}: false. Your configuration was automatically migrated for this session.`,
         );
     });
-    if (config.disable_unit !== undefined)
+    if (DEPRECATED_OPTIONS.icon_animation(config))
+      BaseConfigHelper.#warnDeprecated(
+        'icon_animation: none is deprecated and will be removed in a future release. ' +
+          'Simply omit the option — an unset icon_animation already means no animation. ' +
+          'Your configuration was automatically migrated for this session.',
+      );
+    if (DEPRECATED_OPTIONS.disable_unit(config))
       BaseConfigHelper.#warnDeprecated(
         "disable_unit is deprecated and will be removed in a future release. Please migrate to hide: ['unit', ...]. Your configuration was automatically migrated for this session.",
       );
@@ -292,7 +319,7 @@ class BaseConfigHelper {
     // entities list of bar_stack, alongside a mode ('stacked' by default,
     // 'proportional' preserves the legacy renormalized-total behavior exactly -
     // see CardConfigHelper._customizeConfig.
-    if (is.array(config.additions))
+    if (DEPRECATED_OPTIONS.additions(config))
       BaseConfigHelper.#warnDeprecated(
         "additions is deprecated and will be removed in a future release. Please migrate to bar_stack: { mode: 'proportional', entities: [...] }. Your configuration was automatically migrated for this session.",
       );
@@ -485,7 +512,7 @@ class CardConfigHelper extends BaseConfigHelper {
         max_value_attribute: undefined,
       };
     }
-    normalized = BaseConfigHelper._migrateWatermarkOptions(normalized);
+    normalized = BaseConfigHelper._migrateLegacyOptions(normalized);
     // disable_unit used to be a dedicated boolean; 'unit' is now just another
     // hide target, consistent with icon/name/value/progress_bar. Skip the fold
     // when hide is a Jinja template (a string): merging into user-authored
@@ -581,6 +608,7 @@ class BadgeTemplateConfigHelper extends BaseConfigHelper {
   _yamlSchema = YamlSchemaFactory.badgeTemplate;
 }
 
+export { hasDeprecatedOptions };
 export { BaseConfigHelper };
 export { CardConfigHelper };
 export { BadgeConfigHelper };

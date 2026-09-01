@@ -90,12 +90,7 @@ class ResourceManager {
   }
 
   throttle(fn: () => void, delay: number, id: string) {
-    if (!this.#throttles.has(id)) {
-      this.#throttles.set(id, { lastCall: 0 });
-      this.add(() => this.resetThrottle(id), id);
-    }
-
-    const context = assertDefined(this.#throttles.get(id), `ResourceManager.throttle: no throttle state for '${id}'`);
+    const context = this.#ensureThrottleState(id, 'throttle');
     const now = Date.now();
 
     if (now - context.lastCall >= delay) {
@@ -113,15 +108,7 @@ class ResourceManager {
     };
 
     // Throttle — exec if time is over
-    if (!this.#throttles.has(keys.throttle)) {
-      this.#throttles.set(keys.throttle, { lastCall: 0 });
-      this.add(() => this.resetThrottle(keys.throttle), keys.throttle);
-    }
-
-    const context = assertDefined(
-      this.#throttles.get(keys.throttle),
-      `ResourceManager.throttleDebounce: no throttle state for '${keys.throttle}'`,
-    );
+    const context = this.#ensureThrottleState(keys.throttle, 'throttleDebounce');
 
     // CF5 - issue (medium) resolved - the trailing timer was scheduled
     // unconditionally, so a single isolated call always ran fn() twice (leading
@@ -152,6 +139,16 @@ class ResourceManager {
 
   resetThrottle(id: string) {
     this.#throttles.delete(id);
+  }
+
+  // Shared by throttle/throttleDebounce - lazily creates and registers the
+  // throttle-state entry for `id`, then returns it.
+  #ensureThrottleState(id: string, caller: string): { lastCall: number } {
+    if (!this.#throttles.has(id)) {
+      this.#throttles.set(id, { lastCall: 0 });
+      this.add(() => this.resetThrottle(id), id);
+    }
+    return assertDefined(this.#throttles.get(id), `ResourceManager.${caller}: no throttle state for '${id}'`);
   }
 
   remove(id: string) {

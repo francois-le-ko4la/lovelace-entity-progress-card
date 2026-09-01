@@ -33,27 +33,36 @@
   "editor": {
     "field": {
       "action": {
-        "tap": "Obnašanje ob dotiku",
-        "hold": "Obnašanje ob pridržanju",
         "double_tap": "Obnašanje ob dvojnem dotiku",
-        "icon_tap": "Obnašanje ob dotiku ikone",
+        "hold": "Obnašanje ob pridržanju",
+        "icon_double_tap": "Obnašanje ob dvojnemu dotiku ikone",
         "icon_hold": "Obnašanje pri držanju ikone",
-        "icon_double_tap": "Obnašanje ob dvojnemu dotiku ikone"
+        "icon_tap": "Obnašanje ob dotiku ikone",
+        "tap": "Obnašanje ob dotiku"
       },
       "action_picker": "Dodaj interakcijo",
-      "alert_toggle": "Opozorilo",
-      "alert_when_above_mode": "Vir zgornjega opozorila",
-      "alert_when_below_mode": "Vir spodnjega opozorila",
+      "add_entity": "Dodaj entiteto",
+      "add_zone": "Dodaj cono",
+      "alert_when": {
+        "above": "Opozorilo nad",
+        "animation": "Animacija",
+        "below": "Opozorilo pod",
+        "color": "Barva opozorila",
+        "highlight": "Poudarek",
+        "label": "Oznaka",
+        "above_mode": "Vir zgornjega opozorila",
+        "below_mode": "Vir spodnjega opozorila",
+        "toggle": "Opozorilo"
+      },
       "attribute": "Atribut",
-      "badge_color": "Barva značke",
-      "badge_color_toggle": "Independent color",
-      "badge_icon": "Ikona značke",
-      "badge_toggle": "Značka",
+      "badge": {
+        "toggle": "Značka",
+        "color_toggle": "Neodvisna barva značke"
+      },
       "bar_color": "Barva vrstice",
       "bar_color_mode": "Barvni način",
       "bar_effect_mode": "Učinek vrstice",
       "bar_group": "Trak",
-      "bar_max_width": "Najv. širina vrstice",
       "bar_max_width_toggle": "Najv. širina vrstice",
       "bar_orientation": "Usmerjenost",
       "bar_scale": "Merilo",
@@ -61,14 +70,14 @@
       "bar_single_line": "Ena vrstica",
       "bar_size": "Velikost",
       "bar_stack": "Dodatni entiteti",
-      "bar_stack_mode": "Stack mode",
+      "bar_stack_mode": "Način zlaganja",
       "card_size_toggle": "Velikost kartice",
       "center_zero": "Ni ničle na sredini",
       "center_zero_growth_percent": "Odstotek rasti",
       "center_zero_value": "Srednja vrednost",
       "color": "Barva ikone",
       "custom_info": "Prilagojena sekundarna informacija",
-      "custom_theme": "Custom theme zones",
+      "custom_theme": "Cone motiva po meri",
       "decimal": "Decimalno",
       "density_toggle": "Kompaktno",
       "entity": "Entiteta",
@@ -76,43 +85,72 @@
       "force_circular_background_mode": "Okroglo ozadje ikone",
       "frameless": "Brez okvirja",
       "height": "Višina",
-      "height_custom_toggle": "Shrink height (embedded)",
+      "height_custom_toggle": "Samodejna višina",
       "hide_mode": "Skrij",
       "icon": "Ikona",
       "icon_animation": "Animacija ikone",
       "interpolate": "Interpolacija barv",
       "layout": "Postavitev vsebine",
       "marginless": "Brez roba",
+      "mark_color": "Barva",
       "max_value": "Največja vrednost",
       "max_value_mode": "Vir največje vrednosti",
-      "migrate_config": "Migrate config",
+      "migrate_config": "Preseli konfiguracijo",
       "min_value": "Najmanjša vrednost",
       "min_value_mode": "Vir najmanjše vrednosti",
       "min_width": "Najm. širina",
-      "multiline": "Multiline",
+      "multiline": "Večvrstično",
       "name": "Ime",
       "name_info": "Prilagojena informacija o imenu",
+      "opacity": "Prekrivnost",
+      "peak_marker": {
+        "min_toggle": "Prikaži minimum",
+        "max_toggle": "Prikaži maksimum",
+        "average_toggle": "Prikaži povprečje",
+        "toggle": "Oznake vrhov"
+      },
+      "peak_marker_unsupported": "Oznake vrhov potrebujejo entiteto sensor ali number brez prepisa atributa, ki ni timer ali counter — za to entiteto ni na voljo.",
       "percent": "Odstotek",
       "position": "Položaj",
       "reverse": "Obrnjen časovnik",
       "reverse_secondary_info_row": "Zamenjaj vrstico in besedilo",
       "secondary": "Sekundarne informacije",
       "state_content": "Vsebina stanja",
-      "status_label_toggle": "Oznaka stanja",
+      "status_label": {
+        "color_source": "Vir barve",
+        "position": "Položaj oznake",
+        "toggle": "Oznaka stanja"
+      },
       "text_shadow": "Dodaj senco besedila",
       "theme": "Tema",
+      "trend_indicator": {
+        "window_toggle": "Uporabi časovno okno",
+        "basis": "Osnova primerjave",
+        "threshold": "Mrtva cona (točke)",
+        "colored": "Obarvaj z barvo ikone",
+        "up_color": "Barva porasta",
+        "down_color": "Barva padca",
+        "flat_color": "Barva stabilnosti",
+        "toggle": "Kazalnik trenda",
+        "mode": "Način"
+      },
       "trigger": "Sprožilec",
+      "type": "Vrsta",
       "unit": "Enota",
       "unit_spacing": "Razmik",
       "value_compact": "Kompaktna vrednost (1.2k)",
       "value_sign": "Prikaži predznak (+/-)",
-      "watermark_high_mode": "Vir zgornje oznake",
-      "watermark_low_mode": "Vir spodnje oznake",
-      "watermark_toggle": "Označbe",
-      "peak_marker_toggle": "Peak markers",
-      "peak_marker_unsupported": "Peak markers need a sensor or number entity, no attribute override, and not a timer or counter — not available for this entity.",
-      "trend_indicator_toggle": "Trend indicator",
-      "trend_indicator_mode": "Mode"
+      "watermark": {
+        "high_toggle": "Prikaži zgornjo",
+        "low_toggle": "Prikaži spodnjo",
+        "high": "Zgornja",
+        "line_size": "Debelina črte",
+        "low": "Spodnja",
+        "low_mode": "Vir spodnje oznake",
+        "high_mode": "Vir zgornje oznake",
+        "toggle": "Označbe"
+      },
+      "window": "Časovno okno"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -131,20 +169,13 @@
     "option": {
       "alert_animation": {
         "blink": "Utripanje",
-        "ping": "Ping",
+        "ping": "Obroč",
         "static": "Statično"
       },
       "alert_highlight": {
-        "background": "Background",
-        "border": "Border",
+        "background": "Ozadje",
+        "border": "Rob",
         "label": "Oznaka"
-      },
-      "alert_when": {
-        "above": "Alert above",
-        "animation": "Animacija",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight"
       },
       "bar_color_mode": {
         "auto": "Samodejno",
@@ -175,8 +206,8 @@
         "top": "Vrstica zgoraj"
       },
       "bar_scale": {
-        "linear": "Linear",
-        "log": "Logarithmic"
+        "linear": "Linearna",
+        "log": "Logaritemska"
       },
       "bar_size": {
         "large": "Velika",
@@ -186,9 +217,19 @@
         "xsmall": "Zelo majhno"
       },
       "bar_stack_mode": {
-        "net": "Net",
-        "proportional": "Sum",
-        "stacked": "Stacked"
+        "net": "Neto",
+        "proportional": "Sorazmerno",
+        "stacked": "Zloženo"
+      },
+      "duration_unit": {
+        "s": "Sekunde",
+        "min": "Minute",
+        "h": "Ure",
+        "d": "Dnevi"
+      },
+      "enabled_disabled_mode": {
+        "disabled": "Onemogočeno",
+        "enabled": "Omogočeno"
       },
       "force_circular_background_mode": {
         "auto": "Samodejno",
@@ -198,20 +239,20 @@
         "icon": "Ikona",
         "name": "Ime",
         "progress_bar": "Vrstica",
-        "secondary_info": "Info",
+        "secondary_info": "Sekundarni info",
         "shape": "Krožno ozadje ikone",
         "unit": "Enota",
         "value": "Vrednost"
       },
       "icon_animation": {
-        "battery_charging": "Battery charging",
-        "bounce": "Bounce",
-        "ping": "Ping",
-        "pulse": "Pulse",
-        "reveal": "Reveal",
-        "shake": "Shake",
-        "spin": "Spin",
-        "washing_machine": "Washing machine"
+        "battery_charging": "Baterija se polni",
+        "bounce": "Odbijanje",
+        "ping": "Obroč",
+        "pulse": "Utrip",
+        "reveal": "Razkrij",
+        "shake": "Tresenje",
+        "spin": "Vrtenje",
+        "washing_machine": "Pralni stroj"
       },
       "icon_animation_mode": {
         "auto": "Samodejno",
@@ -222,17 +263,12 @@
         "right": "Desno"
       },
       "layout": {
-        "horizontal": "Horizontalno (privzeto)",
+        "horizontal": "Horizontalno",
         "vertical": "Vertikalno"
       },
       "simple_advanced_mode": {
         "advanced": "Napredno",
         "simple": "Preprosto"
-      },
-      "status_label": {
-        "color_source": "Vir barve",
-        "jinja": "Oznaka stanja",
-        "position": "Položaj oznake"
       },
       "status_label_color_source": {
         "bar": "Vrstica napredka",
@@ -253,8 +289,13 @@
         "voc": "VOC"
       },
       "theme_mode": {
-        "custom": "Custom",
-        "preset": "Preset"
+        "custom": "Po meri",
+        "preset": "Prednastavitev"
+      },
+      "trend_indicator_basis": {
+        "average": "Povprečje",
+        "edge": "Skrajna vrednost",
+        "slope": "Naklon"
       },
       "unit_position": {
         "after": "Za vrednostjo",
@@ -265,31 +306,10 @@
         "no-space": "Brez presledka",
         "space": "Presledek"
       },
-      "value_shape": {
-        "attribute": "Attribute"
-      },
       "value_source_mode": {
-        "entity": "Entity",
-        "jinja": "Template",
-        "standard": "Fixed value"
-      },
-      "watermark": {
-        "high_toggle": "Show high",
-        "low_toggle": "Show low",
-        "high": "High",
-        "high_as": "High unit",
-        "high_color": "High color",
-        "line_size": "Line size",
-        "low": "Low",
-        "low_as": "Low unit",
-        "low_color": "Low color",
-        "opacity": "Opacity",
-        "type": "Type",
-        "color": "Color",
-        "low_type": "Low type",
-        "low_opacity": "Low opacity",
-        "high_type": "High type",
-        "high_opacity": "High opacity"
+        "entity": "Entiteta",
+        "jinja": "Predloga",
+        "standard": "Fiksna vrednost"
       },
       "watermark_as": {
         "auto": "Samodejno",
@@ -302,49 +322,6 @@
         "round": "Okroglo",
         "striped": "Progasto",
         "triangle": "Trikotnik"
-      },
-      "peak_marker": {
-        "window": "Time window",
-        "type": "Type",
-        "opacity": "Opacity",
-        "min_toggle": "Show minimum",
-        "min_type": "Minimum type",
-        "min_opacity": "Minimum opacity",
-        "min_color": "Minimum color",
-        "max_toggle": "Show maximum",
-        "max_type": "Maximum type",
-        "max_opacity": "Maximum opacity",
-        "max_color": "Maximum color",
-        "average_toggle": "Show average",
-        "average_type": "Average type",
-        "average_opacity": "Average opacity",
-        "average_color": "Average color",
-        "color": "Color"
-      },
-      "duration_unit": {
-        "s": "Seconds",
-        "min": "Minutes",
-        "h": "Hours",
-        "d": "Days"
-      },
-      "enabled_disabled_mode": {
-        "disabled": "Disabled",
-        "enabled": "Enabled"
-      },
-      "trend_indicator": {
-        "window_toggle": "Use a time window",
-        "window": "Time window",
-        "basis": "Comparison basis",
-        "threshold": "Dead zone (points)",
-        "colored": "Tint with icon color",
-        "up_color": "Up color",
-        "down_color": "Down color",
-        "flat_color": "Flat color"
-      },
-      "trend_indicator_basis": {
-        "average": "Average",
-        "edge": "Edge",
-        "slope": "Slope"
       }
     },
     "title": {

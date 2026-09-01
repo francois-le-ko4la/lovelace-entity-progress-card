@@ -41,19 +41,28 @@
         "tap": "Tap behavior"
       },
       "action_picker": "Add interaction",
-      "alert_toggle": "Alert",
-      "alert_when_above_mode": "Above alert source",
-      "alert_when_below_mode": "Below alert source",
+      "add_entity": "Add entity",
+      "add_zone": "Add zone",
+      "alert_when": {
+        "above": "Alert above",
+        "animation": "Animation",
+        "below": "Alert below",
+        "color": "Alert color",
+        "highlight": "Highlight",
+        "label": "Label",
+        "above_mode": "Above alert source",
+        "below_mode": "Below alert source",
+        "toggle": "Alert"
+      },
       "attribute": "Attribute",
-      "badge_color": "Badge color",
-      "badge_color_toggle": "Independent badge color",
-      "badge_icon": "Badge icon",
-      "badge_toggle": "Badge",
+      "badge": {
+        "toggle": "Badge",
+        "color_toggle": "Independent badge color"
+      },
       "bar_color": "Bar color",
       "bar_color_mode": "Bar color mode",
       "bar_effect_mode": "Bar effect",
       "bar_group": "Bar",
-      "bar_max_width": "Bar max width",
       "bar_max_width_toggle": "Bar max width",
       "bar_orientation": "Orientation",
       "bar_scale": "Scale",
@@ -83,6 +92,7 @@
       "interpolate": "Interpolate colors",
       "layout": "Content layout",
       "marginless": "Marginless",
+      "mark_color": "Color",
       "max_value": "Maximum value",
       "max_value_mode": "Max value source",
       "migrate_config": "Migrate config",
@@ -92,27 +102,55 @@
       "multiline": "Multiline",
       "name": "Name",
       "name_info": "Custom name info",
+      "opacity": "Opacity",
+      "peak_marker": {
+        "min_toggle": "Show minimum",
+        "max_toggle": "Show maximum",
+        "average_toggle": "Show average",
+        "toggle": "Peak markers"
+      },
+      "peak_marker_unsupported": "Peak markers need a sensor or number entity, no attribute override, and not a timer or counter — not available for this entity.",
       "percent": "Percentage",
       "position": "Position",
       "reverse": "Reverse timer",
       "reverse_secondary_info_row": "Swap bar and text",
       "secondary": "Secondary info",
       "state_content": "State content",
-      "status_label_toggle": "Status label",
+      "status_label": {
+        "color_source": "Color source",
+        "position": "Label position",
+        "toggle": "Status label"
+      },
       "text_shadow": "Add text shadow",
       "theme": "Theme",
+      "trend_indicator": {
+        "window_toggle": "Use a time window",
+        "basis": "Comparison basis",
+        "threshold": "Dead zone (points)",
+        "colored": "Tint with icon color",
+        "up_color": "Up color",
+        "down_color": "Down color",
+        "flat_color": "Flat color",
+        "toggle": "Trend indicator",
+        "mode": "Mode"
+      },
       "trigger": "Trigger",
+      "type": "Type",
       "unit": "Unit",
       "unit_spacing": "Spacing",
       "value_compact": "Compact value (1.2k)",
       "value_sign": "Show sign (+/-)",
-      "watermark_high_mode": "High marker source",
-      "watermark_low_mode": "Low marker source",
-      "watermark_toggle": "Markers",
-      "peak_marker_toggle": "Peak markers",
-      "peak_marker_unsupported": "Peak markers need a sensor or number entity, no attribute override, and not a timer or counter — not available for this entity.",
-      "trend_indicator_toggle": "Trend indicator",
-      "trend_indicator_mode": "Mode"
+      "watermark": {
+        "high_toggle": "Show high",
+        "low_toggle": "Show low",
+        "high": "High",
+        "line_size": "Line size",
+        "low": "Low",
+        "low_mode": "Low marker source",
+        "high_mode": "High marker source",
+        "toggle": "Markers"
+      },
+      "window": "Time window"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -138,13 +176,6 @@
         "background": "Background",
         "border": "Border",
         "label": "Label"
-      },
-      "alert_when": {
-        "above": "Alert above",
-        "animation": "Animation",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight"
       },
       "bar_color_mode": {
         "auto": "Auto",
@@ -190,6 +221,16 @@
         "proportional": "Proportional",
         "stacked": "Stacked"
       },
+      "duration_unit": {
+        "s": "Seconds",
+        "min": "Minutes",
+        "h": "Hours",
+        "d": "Days"
+      },
+      "enabled_disabled_mode": {
+        "disabled": "Disabled",
+        "enabled": "Enabled"
+      },
       "force_circular_background_mode": {
         "auto": "Auto",
         "forced": "Forced"
@@ -222,17 +263,12 @@
         "right": "Right"
       },
       "layout": {
-        "horizontal": "Horizontal (default)",
+        "horizontal": "Horizontal",
         "vertical": "Vertical"
       },
       "simple_advanced_mode": {
         "advanced": "Advanced",
         "simple": "Simple"
-      },
-      "status_label": {
-        "color_source": "Color source",
-        "jinja": "Status label",
-        "position": "Label position"
       },
       "status_label_color_source": {
         "bar": "Progress bar",
@@ -256,6 +292,11 @@
         "custom": "Custom",
         "preset": "Preset"
       },
+      "trend_indicator_basis": {
+        "average": "Average",
+        "edge": "Edge",
+        "slope": "Slope"
+      },
       "unit_position": {
         "after": "After value",
         "before": "Before value"
@@ -265,31 +306,10 @@
         "no-space": "No space",
         "space": "Space"
       },
-      "value_shape": {
-        "attribute": "Attribute"
-      },
       "value_source_mode": {
         "entity": "Entity",
         "jinja": "Template",
         "standard": "Fixed value"
-      },
-      "watermark": {
-        "high_toggle": "Show high",
-        "low_toggle": "Show low",
-        "high": "High",
-        "high_as": "High unit",
-        "high_color": "High color",
-        "line_size": "Line size",
-        "low": "Low",
-        "low_as": "Low unit",
-        "low_color": "Low color",
-        "opacity": "Opacity",
-        "type": "Type",
-        "color": "Color",
-        "low_type": "Low type",
-        "low_opacity": "Low opacity",
-        "high_type": "High type",
-        "high_opacity": "High opacity"
       },
       "watermark_as": {
         "auto": "Auto",
@@ -302,49 +322,6 @@
         "round": "Round",
         "striped": "Striped",
         "triangle": "Triangle"
-      },
-      "peak_marker": {
-        "window": "Time window",
-        "type": "Type",
-        "opacity": "Opacity",
-        "min_toggle": "Show minimum",
-        "min_type": "Minimum type",
-        "min_opacity": "Minimum opacity",
-        "min_color": "Minimum color",
-        "max_toggle": "Show maximum",
-        "max_type": "Maximum type",
-        "max_opacity": "Maximum opacity",
-        "max_color": "Maximum color",
-        "average_toggle": "Show average",
-        "average_type": "Average type",
-        "average_opacity": "Average opacity",
-        "average_color": "Average color",
-        "color": "Color"
-      },
-      "duration_unit": {
-        "s": "Seconds",
-        "min": "Minutes",
-        "h": "Hours",
-        "d": "Days"
-      },
-      "enabled_disabled_mode": {
-        "disabled": "Disabled",
-        "enabled": "Enabled"
-      },
-      "trend_indicator": {
-        "window_toggle": "Use a time window",
-        "window": "Time window",
-        "basis": "Comparison basis",
-        "threshold": "Dead zone (points)",
-        "colored": "Tint with icon color",
-        "up_color": "Up color",
-        "down_color": "Down color",
-        "flat_color": "Flat color"
-      },
-      "trend_indicator_basis": {
-        "average": "Average",
-        "edge": "Edge",
-        "slope": "Slope"
       }
     },
     "title": {

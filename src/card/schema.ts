@@ -5,7 +5,7 @@
  * them.
  */
 
-import { HA_CONTEXT, CARD, THEME, PERCENT_THEME_KEYS, SEV } from '../utils/parameters.js';
+import { HA_CONTEXT, CARD, THEME, THEME_KEYS, PERCENT_THEME_KEYS, SEV } from '../utils/parameters.js';
 import { is } from '../utils/common-checks.js';
 import { HassProviderSingleton } from '../utils/hass-provider.js';
 import { NumberFormatter } from './formatting.js';
@@ -132,6 +132,33 @@ class ValidationError extends Error {
 }
 
 const SKIP_PROPERTY = Symbol('SKIP_PROPERTY');
+
+// Deprecated theme names, remapped for this session by types.theme below and
+// rewritten for good by the editor's "Migrate config" button (see EditorBase).
+const THEME_ALIASES: Record<string, string> = {
+  battery: 'optimal_when_high',
+  memory: 'optimal_when_low',
+  cpu: 'optimal_when_low',
+};
+
+// Every enum below is both what the schema accepts and the order the editor's
+// dropdown lists it in. None is `as const`: they must keep inferring string[].
+const BAR_SIZES = Object.values(CARD.style.bar.sizeOptions);
+// No 'xlarge': it would demand a 42px bar inside a badge capped at ~36px.
+const BADGE_BAR_SIZES = ['xsmall', 'small', 'medium', 'large'];
+const BAR_ORIENTATIONS = ['ltr', 'rtl', 'up'];
+// 'up' needs .vertical.overlay, which Badge/Badge Template/Feature never get.
+const BAR_ORIENTATIONS_NO_UP = ['ltr', 'rtl'];
+const BAR_POSITIONS = ['default', 'below', 'compact_below', 'top', 'bottom', 'overlay', 'background'];
+const FEATURE_BAR_POSITIONS = ['default', 'top', 'bottom'];
+const BAR_COLOR_MODES = ['auto', 'segment', 'rainbow', 'rainbow_full'];
+const BAR_SCALES = ['linear', 'log'];
+const UNIT_SPACINGS = Object.values(CARD.config.unit.unitSpacing);
+const WATERMARK_TYPES = ['blended', 'area', 'striped', 'triangle', 'round', 'line'];
+const PEAK_MARK_TYPES = ['line', 'round', 'triangle'];
+const ALERT_HIGHLIGHTS = ['border', 'background', 'label'];
+const ALERT_ANIMATIONS = ['static', 'blink', 'ping'];
+const ICON_ANIMATIONS = ['spin', 'pulse', 'bounce', 'shake', 'ping', 'reveal', 'washing_machine', 'battery_charging'];
 
 const ERROR_CODES = {
   missingRequiredProperty: { code: 'missingRequiredProperty', severity: SEV.error },
@@ -335,12 +362,7 @@ const types = {
       if (is.nullish(value) || is.emptyString(value)) return SKIP_PROPERTY as unknown as T[number];
       if (!is.string(value))
         throw new ValidationError(path, ERROR_CODES.invalidTheme.code, ERROR_CODES.invalidTheme.severity);
-      const themeMap: Record<string, string> = {
-        battery: 'optimal_when_high',
-        memory: 'optimal_when_low',
-        cpu: 'optimal_when_low',
-      };
-      const resolved = (themeMap[value] || value) as T[number];
+      const resolved = (THEME_ALIASES[value] || value) as T[number];
       if (!allowedValues.includes(resolved))
         throw new ValidationError(path, ERROR_CODES.invalidTheme.code, ERROR_CODES.invalidTheme.severity);
       return resolved;
@@ -527,7 +549,7 @@ const types = {
           types.object({
             value: types.optional(types.numericEntityOrJinja()),
             as: types.enumsWithDefault(['auto', 'percent'], 'auto'),
-            type: types.optional(types.enums(['blended', 'area', 'striped', 'triangle', 'round', 'line'])),
+            type: types.optional(types.enums(WATERMARK_TYPES)),
             opacity: types.optionalNumber(),
             color: types.optionalString(),
           }),
@@ -543,7 +565,7 @@ const types = {
       types.boolean,
       types.string,
       types.object({
-        type: types.optional(types.enums(['line', 'round', 'triangle'])),
+        type: types.optional(types.enums(PEAK_MARK_TYPES)),
         opacity: types.optionalNumber(),
         color: types.optionalString(),
       }),
@@ -574,7 +596,7 @@ const types = {
   peakMarker: () => {
     const shape = types.object({
       window: types.duration,
-      type: types.enumsWithDefault(['line', 'round', 'triangle'], 'line'),
+      type: types.enumsWithDefault(PEAK_MARK_TYPES, 'line'),
       opacity: types.optionalNumberWithDefault(0.8),
       color: types.optionalString(),
       min: types.optional(types.peakMark()),
@@ -997,7 +1019,6 @@ function struct<T>(
   // not worth re-typing individually for the same reason) read/write freely.
   const postProcess = (data: T): T => {
     const result = { ...data } as Record<string, unknown>;
-    if (!result.layout) result.layout = CARD.layout.orientations.horizontal.label;
 
     applyDensityRule(result);
     applyBelowBarPositionRule(result);
@@ -1128,6 +1149,26 @@ function struct<T>(
       return struct(types.object(newSchema));
     },
 
+    // No behavioral effect (nothing outside schema.ts reads .fields()) - lets
+    // a .delete()/.extend()'d schema (which can only append at the end) match
+    // a hand-written one's own field order. `order` must be an exact
+    // permutation of the current keys - a typo must not silently drop a field.
+    reorder: (order: string[]) => {
+      if (!validator._schema) {
+        throw new Error('Can only reorder object schemas created with types.object');
+      }
+      const currentKeys = Object.keys(validator._schema);
+      const sameSet = order.length === currentKeys.length && currentKeys.every((key) => order.includes(key));
+      if (!sameSet) {
+        throw new Error("reorder: given keys must be exactly the schema's own field set, no more, no less");
+      }
+
+      const schema = validator._schema;
+      const newSchema = Object.fromEntries(order.map((key) => [key, schema[key]]));
+
+      return struct(types.object(newSchema));
+    },
+
     fields: () => {
       if (!validator._schema) {
         throw new Error('Can only get fields from object schemas created with types.object');
@@ -1178,9 +1219,45 @@ const watermarkSchema = {
   // lives in SCHEMA_DEFAULTS.watermark (below) instead.
   opacity: types.optionalNumber(),
   color: types.optionalString(),
-  type: types.optional(types.enums(['blended', 'area', 'striped', 'triangle', 'round', 'line'])),
+  type: types.optional(types.enums(WATERMARK_TYPES)),
   line_size: types.optionalStringWithDefault('1px'),
 };
+
+// Dropped from Badge and Badge Template alike - deleting a key the source
+// schema doesn't have is a no-op, so one list serves both.
+const BADGE_DELETED_FIELDS = [
+  // A badge has no bar_position/layout/height/icon action/inner badge of its
+  // own, and every key after them only ever acts through one of those.
+  'bar_position',
+  'badge_icon',
+  'badge_color',
+  'force_circular_background',
+  'layout',
+  'density',
+  'height',
+  'icon_tap_action',
+  'icon_hold_action',
+  'icon_double_tap_action',
+  'multiline',
+  'icon_animation',
+  'bar_max_width',
+  'bar_single_line',
+  'text_shadow',
+  // Design choice, not dead CSS: an arrow icon or a status pill doesn't read at
+  // --ha-badge-size (~36px), and peak_marker's history seeding is Card-only.
+  'trend_indicator',
+  'peak_marker',
+  'status_label',
+];
+
+// Narrowed for both badge variants: 'up' needs .vertical.overlay, 'xlarge' a
+// 42px progress-container (past --ha-badge-size), 'shape' a circular bg.
+const badgeOverrides = <T extends readonly string[]>(hideTargets: T) => ({
+  bar_orientation: types.enumsWithDefault(BAR_ORIENTATIONS_NO_UP, 'ltr'),
+  bar_size: types.enumsWithDefault(BADGE_BAR_SIZES, 'small'),
+  hide: types.jinjaOrArrayWithValidatedElem(hideTargets),
+  layout: types.enumsWithDefault(['horizontal'], 'horizontal'),
+});
 
 /**
  * Builds the per-card-type YAML schemas (`card`, `badge`, `feature`,
@@ -1215,28 +1292,28 @@ const YamlSchemaFactory = {
         // (--feature-height, see the .entity-progress-feature CSS rule) and
         // doesn't scale with bar_size - so 'small' (8px) looks lost inside a
         // 42px row. 'xlarge' matches --feature-height by construction.
-        bar_size: types.enumsWithDefault(Object.values(CARD.style.bar.sizeOptions), 'xlarge'), //[('small', 'medium', 'large', 'xlarge')]
-        // 'up' is excluded here (Card/Template only): every CSS rule for
-        // up-orientation is scoped .vertical.up-orientation, and a Feature
-        // never gets the .vertical class (no 'layout' option in this
-        // schema) - it would validate but have zero visual effect.
-        bar_orientation: types.enumsWithDefault(['ltr', 'rtl'], 'ltr'),
-        bar_color_mode: types.enumsWithDefault(['auto', 'segment', 'rainbow', 'rainbow_full'], 'auto'),
+        bar_size: types.enumsWithDefault(BAR_SIZES, 'xlarge'),
+        // 'up' is excluded (Card/Template only): scoped to .vertical.up-
+        // orientation CSS, and `layout` below is locked to 'horizontal'.
+        bar_orientation: types.enumsWithDefault(BAR_ORIENTATIONS_NO_UP, 'ltr'),
+        // Locked to its only real value - see YamlSchemaFactory.badge.
+        layout: types.enumsWithDefault(['horizontal'], 'horizontal'),
+        bar_color_mode: types.enumsWithDefault(BAR_COLOR_MODES, 'auto'),
         // Only engages outside center_zero with a well-formed positive range
         // (min > 0, max > min) — ProgressCalc.isLogScale falls back to linear
         // otherwise, so an invalid combination degrades quietly instead of
         // producing NaN.
-        bar_scale: types.enumsWithDefault(['linear', 'log'], 'linear'),
+        bar_scale: types.enumsWithDefault(BAR_SCALES, 'linear'),
         // [('radius', 'glass', 'gradient', 'shimmer')]
         bar_effect: types.jinjaOrArrayWithValidatedElem(
           Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label),
         ),
-        bar_position: types.enumsWithDefault(['default', 'top', 'bottom'], 'default'),
+        bar_position: types.enumsWithDefault(FEATURE_BAR_POSITIONS, 'default'),
         bar_segments: types.optionalNumber(),
         center_zero: types.centerZero(),
 
         // ─── Theme & Watermark ──────────────────────────────────────────────
-        theme: types.theme(Object.keys(THEME)),
+        theme: types.theme(THEME_KEYS),
         custom_theme: types.fallbackTo(types.customTheme, SKIP_PROPERTY),
         interpolate: types.optionalBooleanWithDefault(false),
         watermark: types.watermarkObject(watermarkSchema),
@@ -1265,7 +1342,7 @@ const YamlSchemaFactory = {
         decimal: types.decimal,
         unit: types.optionalString(),
         disable_unit: types.optionalBooleanWithDefault(false),
-        unit_spacing: types.enumsWithDefault(Object.values(CARD.config.unit.unitSpacing), 'auto'), //['auto', 'space', 'no-space']
+        unit_spacing: types.enumsWithDefault(UNIT_SPACINGS, 'auto'),
         unit_position: types.enumsWithDefault(['after', 'before'], 'after'),
         value_compact: types.optionalBooleanWithDefault(false),
         value_sign: types.optionalBooleanWithDefault(false),
@@ -1284,45 +1361,25 @@ const YamlSchemaFactory = {
         icon: types.optionalString(),
         color: types.optionalString(),
         bar_color: types.optionalString(),
-        bar_size: types.enumsWithDefault(Object.values(CARD.style.bar.sizeOptions), 'small'), //[('small', 'medium', 'large', 'xlarge')]
-        bar_orientation: types.enumsWithDefault(Object.keys(CARD.style.dynamic.progressBar.orientation), 'ltr'), // ['ltr', 'rtl']
-        bar_color_mode: types.enumsWithDefault(['auto', 'segment', 'rainbow', 'rainbow_full'], 'auto'),
+        bar_size: types.enumsWithDefault(BAR_SIZES, 'small'),
+        bar_orientation: types.enumsWithDefault(BAR_ORIENTATIONS, 'ltr'),
+        bar_color_mode: types.enumsWithDefault(BAR_COLOR_MODES, 'auto'),
         // Only engages outside center_zero with a well-formed positive range
         // (min > 0, max > min) — ProgressCalc.isLogScale falls back to linear
         // otherwise, so an invalid combination degrades quietly instead of
         // producing NaN.
-        bar_scale: types.enumsWithDefault(['linear', 'log'], 'linear'),
+        bar_scale: types.enumsWithDefault(BAR_SCALES, 'linear'),
         // [('radius', 'glass', 'gradient', 'shimmer')]
         bar_effect: types.jinjaOrArrayWithValidatedElem(
           Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label),
         ),
-        bar_position: types.enumsWithDefault(
-          ['default', 'below', 'compact_below', 'top', 'bottom', 'overlay', 'background'],
-          'default',
-        ),
+        bar_position: types.enumsWithDefault(BAR_POSITIONS, 'default'),
         bar_single_line: types.optionalBooleanWithDefault(false),
         bar_max_width: types.optionalString(),
         bar_segments: types.optionalNumber(),
-        // No forced default (unlike most enums here): like `theme`, an unset
-        // value stays absent (SKIP_PROPERTY) instead of being normalized to
-        // the literal 'none' - the editor's dropdown no longer offers 'none'
-        // (removed from translations), so a stored 'none' would show as
-        // unstyled fallback text. 'none' stays valid for existing YAML that
-        // already wrote it; every consumer compares only real animation
-        // names, so absent behaves identically to explicit 'none'.
-        icon_animation: types.optional(
-          types.enumOrJinjaTrigger([
-            'none',
-            'spin',
-            'pulse',
-            'bounce',
-            'shake',
-            'ping',
-            'reveal',
-            'washing_machine',
-            'battery_charging',
-          ]),
-        ),
+        // No forced default (like `theme`): unset stays absent. The legacy
+        // 'none' value is stripped before validation (see config-helpers.ts).
+        icon_animation: types.optional(types.enumOrJinjaTrigger(ICON_ANIMATIONS)),
         layout: types.enumsWithDefault(
           Object.values(CARD.layout.orientations).map((e) => e.label),
           'horizontal',
@@ -1370,7 +1427,7 @@ const YamlSchemaFactory = {
         badge_color: types.optionalString(),
 
         // ─── Theme & Watermark ──────────────────────────────────────────────
-        theme: types.theme(Object.keys(THEME)),
+        theme: types.theme(THEME_KEYS),
         custom_theme: types.fallbackTo(types.customTheme, SKIP_PROPERTY),
         interpolate: types.optionalBooleanWithDefault(false),
         watermark: types.watermarkObject(watermarkSchema),
@@ -1392,13 +1449,13 @@ const YamlSchemaFactory = {
             // plain `status_label:` Jinja if both are set (see
             // HACore._renderLabel's early-out). No visual effect on a Badge,
             // same as `status_label` itself (too small a scale).
-            highlight: types.enumsWithDefault(['border', 'background', 'label'], 'border'),
+            highlight: types.enumsWithDefault(ALERT_HIGHLIGHTS, 'border'),
             // Left genuinely optional (no forced default): the effective
             // default depends on `highlight` (border/label -> blink,
             // background -> static, both unchanged from pre-1.6 behavior)
             // and is resolved in CSS/ViewCore, not here - see .alert-active
             // in the stylesheet.
-            animation: types.optional(types.enums(['static', 'blink', 'ping'])),
+            animation: types.optional(types.enums(ALERT_ANIMATIONS)),
             // Plain string, not Jinja (unlike the card-level `status_label`):
             // the point here is a short, fixed word chosen once alongside
             // the threshold itself (e.g. "HIGH"), not a per-tick condition.
@@ -1427,64 +1484,40 @@ const YamlSchemaFactory = {
 
   get badge() {
     return YamlSchemaFactory.card
-      .delete([
-        'bar_position',
-        'badge_icon',
-        'badge_color',
-        'force_circular_background',
-        'layout',
-        // Meaningless without 'layout' (deleted above) - density's whole
-        // point is forcing a specific layout/bar_position combination a
-        // badge has neither of.
-        'density',
-        'height',
-        'icon_tap_action',
-        'icon_hold_action',
-        'icon_double_tap_action',
-        'multiline',
-        'icon_animation',
-        // Requires the 'horizontal' layout class (see the CSS rule on
-        // .progress-container), which badges never get since they have no
-        // 'layout' key (deleted above) - keeping it would accept a config that
-        // silently has no visual effect.
-        'bar_max_width',
-        // Both only ever apply via bar_position values (bar_single_line:
-        // 'overlay' only; text_shadow: 'overlay' or 'background') that are
-        // deleted above (badges have no bar_position at all), so badges never
-        // get either. Same dead-option reasoning as bar_max_width.
-        'bar_single_line',
-        'text_shadow',
-        // Not CSS-dead like the two above - a design choice: a trend arrow
-        // icon doesn't read well at badge scale (--ha-badge-size, ~36px).
-        // status_label shares that same reasoning (its status pill is the
-        // same corner element at the same scale) - alert_when.highlight:
-        // 'label' stays a valid enum value there regardless (see its own
-        // comment), just as inert as the plain option would be.
-        'trend_indicator',
-        // Same history-eligibility scope as trend_indicator - Card only.
-        'peak_marker',
-        'status_label',
-      ])
-      .extend({
-        // 'up' needs .vertical.overlay (see bar_orientation's CSS) - a badge
-        // has neither `layout` nor `bar_position` (both deleted above), so it
-        // would validate but have zero visual effect, same reasoning as
-        // YamlSchemaFactory.feature.
-        bar_orientation: types.enumsWithDefault(['ltr', 'rtl'], 'ltr'),
-        // 'xlarge' unconditionally sets --progress-container-height to 42px
-        // (see the .xlarge CSS rule) - a badge's total height is capped at
-        // --ha-badge-size (36px default), so xlarge would demand a taller
-        // progress-container than the badge itself, overflowing it.
-        bar_size: types.enumsWithDefault(['xsmall', 'small', 'medium', 'large'], 'small'),
-        // Re-declared without 'shape' - no force_circular_background here.
-        hide: types.jinjaOrArrayWithValidatedElem(['icon', 'name', 'value', 'unit', 'secondary_info', 'progress_bar']),
-      });
+      .delete(BADGE_DELETED_FIELDS)
+      .extend(badgeOverrides(['icon', 'name', 'value', 'unit', 'secondary_info', 'progress_bar'] as const));
   },
 
+  // Derived from .card: 39 of its 42 fields are identical validator calls -
+  // only entity/name/theme/hide/alert_when differ, and fast_refresh/
+  // secondary/percent are genuinely Template-only. .reorder() below just
+  // matches this getter's field order to what it always was.
   get template() {
-    return struct(
-      types.object({
-        // ─── Entity & Data ──────────────────────────────────────────────────
+    return YamlSchemaFactory.card
+      .delete([
+        'attribute',
+        'decimal',
+        'unit',
+        'disable_unit',
+        'unit_spacing',
+        'unit_position',
+        'value_compact',
+        'value_sign',
+        'min_value',
+        'max_value',
+        'bar_scale',
+        'reverse',
+        'peak_marker',
+        'name_info',
+        'custom_info',
+        'state_content',
+        'custom_theme',
+        'interpolate',
+        'bar_stack',
+      ])
+      .extend({
+        // Optional, unlike Card - Template has no natural single "entity is
+        // the source of truth" mode, every display field is its own Jinja.
         entity: types.optional(types.entityId),
         // Off by default: a now()/utcnow() countdown already gets a free
         // once-a-minute refresh from HA's render_template push (#127) - this
@@ -1493,146 +1526,76 @@ const YamlSchemaFactory = {
         // now()-based Jinja field benefits the same way, explicit opt-in
         // since the display is arbitrary Jinja text with no unit to key off.
         fast_refresh: types.optionalBooleanWithDefault(false),
+        // Plain Jinja string, unlike Card's `name` (a [{type,...}] token
+        // array - meaningless once every display field is its own template).
         name: types.optionalString(),
         secondary: types.optionalString(),
-        // badgeTemplate opts out (see its own .delete(['multiline'])): the row
-        // is too small for a second line there.
-        multiline: types.optionalBooleanWithDefault(false),
         percent: types.optionalString(),
-
-        // ─── Appearance ─────────────────────────────────────────────────────
-        icon: types.optionalString(),
-        color: types.optionalString(),
-        bar_color: types.optionalString(),
         // percent: true themes only - Template has no min_value/max_value to
         // project a real-value theme's zones onto (see ViewCore's own
         // #templateTheme/setTemplateThemeValue), it only ever has the
-        // already-computed percent Jinja field above. Wins over color/
-        // bar_color when both apply, same precedence as Card's own
-        // ViewBase.iconColor (theme.iconColor || config.color).
+        // already-computed percent Jinja field. Wins over color/bar_color
+        // when both apply, same precedence as Card's own ViewBase.iconColor
+        // (theme.iconColor || config.color).
         theme: types.theme(PERCENT_THEME_KEYS),
-        // Same restriction as theme above (percent-only), and only has an
-        // effect once theme is actually set - applyBarColorModeRule
-        // (postProcess, shared across every type) already resets this back
-        // to 'auto' otherwise, same safety net as Card. See ViewCore's own
-        // templateThemeGradient/-DivergingGradient.
-        bar_color_mode: types.enumsWithDefault(['auto', 'segment', 'rainbow', 'rainbow_full'], 'auto'),
-        bar_size: types.enumsWithDefault(Object.values(CARD.style.bar.sizeOptions), 'small'), //[('small', 'medium', 'large', 'xlarge')]
-        bar_orientation: types.enumsWithDefault(Object.keys(CARD.style.dynamic.progressBar.orientation), 'ltr'), // ['ltr', 'rtl']
-        // [('radius', 'glass', 'gradient', 'shimmer')]
-        bar_effect: types.jinjaOrArrayWithValidatedElem(
-          Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label),
-        ),
-        bar_position: types.enumsWithDefault(
-          ['default', 'below', 'compact_below', 'top', 'bottom', 'overlay', 'background'],
-          'default',
-        ),
-        bar_single_line: types.optionalBooleanWithDefault(false),
-        bar_max_width: types.optionalString(),
-        bar_segments: types.optionalNumber(),
-        // No forced default (unlike most enums here): like `theme`, an unset
-        // value stays absent (SKIP_PROPERTY) instead of being normalized to
-        // the literal 'none' - the editor's dropdown no longer offers 'none'
-        // (removed from translations), so a stored 'none' would show as
-        // unstyled fallback text. 'none' stays valid for existing YAML that
-        // already wrote it; every consumer compares only real animation
-        // names, so absent behaves identically to explicit 'none'.
-        icon_animation: types.optional(
-          types.enumOrJinjaTrigger([
-            'none',
-            'spin',
-            'pulse',
-            'bounce',
-            'shake',
-            'ping',
-            'reveal',
-            'washing_machine',
-            'battery_charging',
-          ]),
-        ),
-        layout: types.enumsWithDefault(
-          Object.values(CARD.layout.orientations).map((e) => e.label),
-          'horizontal',
-        ), // [('horizontal', 'vertical')]
-        // 'compact' forces layout: horizontal and bar_position into
-        // {top, bottom, background} - see applyDensityRule for the full
-        // rewrite/clear list this triggers.
-        density: types.enumsWithDefault(['default', 'compact'], 'default'),
-        min_width: types.optionalString(),
-        height: types.optionalString(),
-        frameless: types.optionalBooleanWithDefault(false),
-        marginless: types.optionalBooleanWithDefault(false),
-        reverse_secondary_info_row: types.optionalBooleanWithDefault(false),
-        force_circular_background: types.optionalBooleanWithDefault(false),
-        center_zero: types.centerZero(),
-        trend_indicator: types.trendIndicator(),
-        // jinja: Jinja-only, like name_info/custom_info - no separate enable
-        // flag, a non-empty resolved value is the signal to show it.
-        // Mutually exclusive with trend_indicator (see applyLabelRule): both
-        // occupy the same top corner - position picks which side.
-        status_label: types.statusLabel(),
-        text_shadow: types.optionalBooleanWithDefault(false),
-
+        // Re-declared without 'unit' - Template has no `unit`/`disable_unit`
+        // (deleted above) to hide in the first place.
         hide: types.jinjaOrArrayWithValidatedElem(['icon', 'name', 'value', 'secondary_info', 'progress_bar', 'shape']),
-        badge_icon: types.optionalString(),
-        badge_color: types.optionalString(),
-        watermark: types.watermarkObject(watermarkSchema),
         // Jinja-only - see configuration.md#alert_when.
         alert_when: types.optional(types.object({ jinja: types.optionalString() })),
-
-        // ─── Actions ────────────────────────────────────────────────────────
-        tap_action: types.tapActionWithDefault(HA_CONTEXT.actions.moreInfo),
-        hold_action: types.tapActionWithDefault(HA_CONTEXT.actions.none),
-        double_tap_action: types.tapActionWithDefault(HA_CONTEXT.actions.none),
-        icon_tap_action: types.tapActionWithDefault(HA_CONTEXT.actions.none),
-        icon_hold_action: types.tapActionWithDefault(HA_CONTEXT.actions.none),
-        icon_double_tap_action: types.tapActionWithDefault(HA_CONTEXT.actions.none),
-      }),
-    );
-  },
-
-  get badgeTemplate() {
-    return YamlSchemaFactory.template
-      .delete([
+      })
+      .reorder([
+        'entity',
+        'fast_refresh',
+        'name',
+        'secondary',
+        'multiline',
+        'percent',
+        'icon',
+        'color',
+        'bar_color',
+        'theme',
+        'bar_color_mode',
+        'bar_size',
+        'bar_orientation',
+        'bar_effect',
         'bar_position',
+        'bar_single_line',
+        'bar_max_width',
+        'bar_segments',
+        'icon_animation',
+        'layout',
+        'density',
+        'min_width',
+        'height',
+        'frameless',
+        'marginless',
+        'reverse_secondary_info_row',
+        'force_circular_background',
+        'center_zero',
+        'trend_indicator',
+        'status_label',
+        'text_shadow',
+        'hide',
         'badge_icon',
         'badge_color',
-        'force_circular_background',
-        'layout',
-        // Same reason as YamlSchemaFactory.badge: meaningless without
-        // 'layout' (deleted above).
-        'density',
-        'height',
+        'watermark',
+        'alert_when',
+        'tap_action',
+        'hold_action',
+        'double_tap_action',
         'icon_tap_action',
         'icon_hold_action',
         'icon_double_tap_action',
-        'multiline',
-        'icon_animation',
-        // Same reason as YamlSchemaFactory.badge: no 'layout' key means no
-        // 'horizontal' class, so the CSS rule never engages.
-        'bar_max_width',
-        // Same reason as YamlSchemaFactory.badge: both only apply via
-        // bar_position values that are deleted above (no bar_position at all).
-        'bar_single_line',
-        'text_shadow',
-        // Same design choice as YamlSchemaFactory.badge: too small a scale for
-        // a trend arrow icon to read well - status_label shares that
-        // reasoning too (see YamlSchemaFactory.badge's own comment on
-        // 'status_label').
-        'trend_indicator',
-        'status_label',
-      ])
-      .extend({
-        // Same reason as YamlSchemaFactory.badge: 'up' needs .vertical.overlay,
-        // neither of which a badge template ever gets.
-        bar_orientation: types.enumsWithDefault(['ltr', 'rtl'], 'ltr'),
-        // Same reason as YamlSchemaFactory.badge: 'xlarge' would demand a
-        // 42px-tall progress-container inside a badge capped at
-        // --ha-badge-size (36px), overflowing it.
-        bar_size: types.enumsWithDefault(['xsmall', 'small', 'medium', 'large'], 'small'),
-        // Re-declared without 'shape' - no force_circular_background here.
-        hide: types.jinjaOrArrayWithValidatedElem(['icon', 'name', 'value', 'secondary_info', 'progress_bar']),
-      });
+      ]);
+  },
+
+  // Same badge shape as .badge above, applied to .template instead of .card -
+  // `hide` drops 'unit' too, which Template has no key for.
+  get badgeTemplate() {
+    return YamlSchemaFactory.template
+      .delete(BADGE_DELETED_FIELDS)
+      .extend(badgeOverrides(['icon', 'name', 'value', 'secondary_info', 'progress_bar'] as const));
   },
 };
 
@@ -1641,6 +1604,23 @@ export type { ValueConfig };
 export { entityOf, attributeOf, jinjaOf };
 export { markShown, markValue, markAs, markType, markOpacity, markColor, isMarkOverride };
 export { statusLabelObj, rewrapStatusLabel };
+export { THEME_ALIASES };
+export {
+  BAR_SIZES,
+  BADGE_BAR_SIZES,
+  BAR_ORIENTATIONS,
+  BAR_ORIENTATIONS_NO_UP,
+  BAR_POSITIONS,
+  FEATURE_BAR_POSITIONS,
+  BAR_COLOR_MODES,
+  BAR_SCALES,
+  UNIT_SPACINGS,
+  WATERMARK_TYPES,
+  PEAK_MARK_TYPES,
+  ALERT_HIGHLIGHTS,
+  ALERT_ANIMATIONS,
+  ICON_ANIMATIONS,
+};
 export type { WatermarkMark };
 export { YamlSchemaFactory };
 

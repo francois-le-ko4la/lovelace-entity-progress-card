@@ -150,7 +150,8 @@ class ViewCore {
   _hassProvider = HassProviderSingleton.getInstance();
   _trendTracker: TrendTracker | null = null;
   _trendEntityId: string | null = null;
-  _configHelper: BaseConfigHelper = new BaseConfigHelper(); // Base config
+  // `declare`: ViewCore is never instantiated, every subclass assigns its own.
+  declare _configHelper: BaseConfigHelper;
   _currentValue = new EntityOrValue();
   _lowValue = new EntityOrValue();
   _highValue = new EntityOrValue();
@@ -219,25 +220,9 @@ class ViewCore {
       value: this._configHelper.config.entity,
       stateContent: this._configHelper.stateContent,
     });
-    // markValue unwraps watermark.low/.high's own shape (types.watermarkMark)
-    // to the plain triad; jinja mode is fed by the template subscription
-    // elsewhere, not EntityOrValue, so it resolves to null here.
-    Object.assign(
-      this._lowValue,
-      ViewCore._resolveValueConfig(
-        markValue(this._configHelper.config?.watermark?.low, SCHEMA_DEFAULTS.watermark.low),
-        null,
-      ),
-    );
-    Object.assign(
-      this._highValue,
-      ViewCore._resolveValueConfig(
-        markValue(this._configHelper.config?.watermark?.high, SCHEMA_DEFAULTS.watermark.high),
-        null,
-      ),
-    );
-    this.#jinjaWatermarkLow = null;
-    this.#jinjaWatermarkHigh = null;
+    // jinja mode is fed by the template subscription, not EntityOrValue - see
+    // _applyWatermarkValues.
+    ViewCore._applyWatermarkValues(this, this._configHelper.config?.watermark as WatermarkConfig | undefined);
     this.#jinjaIconAnimationActive = null;
     this.#resolvedHide = null;
     this.#templateColorValue = null;
@@ -283,6 +268,21 @@ class ViewCore {
       value: isObj ? (obj.jinja ? null : (obj.entity ?? fallback)) : ((cfg as number | null) ?? fallback),
       attribute: isObj ? obj.attribute : undefined,
     };
+  }
+
+  // Shared by ViewCore/ViewBase's own `set config` - watermark.low/.high
+  // resolved into _lowValue/_highValue, jinja overrides reset to null.
+  static _applyWatermarkValues(view: ViewCore, watermark: WatermarkConfig | undefined) {
+    Object.assign(
+      view._lowValue,
+      ViewCore._resolveValueConfig(markValue(watermark?.low, SCHEMA_DEFAULTS.watermark.low), null),
+    );
+    view.jinjaWatermarkLow = null;
+    Object.assign(
+      view._highValue,
+      ViewCore._resolveValueConfig(markValue(watermark?.high, SCHEMA_DEFAULTS.watermark.high), null),
+    );
+    view.jinjaWatermarkHigh = null;
   }
 
   refresh(hass: HomeAssistant) {
@@ -1149,28 +1149,8 @@ class ViewBase extends ViewCore {
       Object.assign(this.#minValue, ViewBase.#resolveMinValue(this._configHelper.config.min_value));
       this.#jinjaMinValue = null;
     }
-    // Watermark low/high are wired for timers too (unlike attribute/min/max,
-    // which a timer overrides): the schema defaults watermark: {} to
-    // low: 20/high: 80, so leaving these unset made isAvailable() permanently
-    // false - a timer card with any watermark froze instead of rendering.
-    // Reuses ViewCore._resolveValueConfig directly since set config isn't
-    // chained via super here.
-    Object.assign(
-      this._lowValue,
-      ViewCore._resolveValueConfig(
-        markValue(this._configHelper.config?.watermark?.low, SCHEMA_DEFAULTS.watermark.low),
-        null,
-      ),
-    );
-    this.jinjaWatermarkLow = null;
-    Object.assign(
-      this._highValue,
-      ViewCore._resolveValueConfig(
-        markValue(this._configHelper.config?.watermark?.high, SCHEMA_DEFAULTS.watermark.high),
-        null,
-      ),
-    );
-    this.jinjaWatermarkHigh = null;
+    // Wired for timers too, unlike attribute/min/max (which a timer overrides).
+    ViewCore._applyWatermarkValues(this, this._configHelper.config?.watermark as WatermarkConfig | undefined);
     // alert_when.above/.below: same shape and reasoning as watermark low/high
     // above - alert_when isn't overridden by the timer path either.
     // #jinjaAlertAbove/#jinjaAlertBelow live on ViewCore since isAlertActive

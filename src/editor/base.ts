@@ -12,12 +12,13 @@ import {
   EDITOR_FIELD_NS,
   EDITOR_FIELD_HELPER_NS,
   PERCENT_THEME_KEYS,
+  THEME_KEYS,
 } from '../utils/parameters.js';
 import { EDITOR_BASE_STYLE } from '../utils/styles.js';
 import { is } from '../utils/common-checks.js';
 import { initLogger, type LoggerInstance } from '../utils/log.js';
 import { HassProviderSingleton, buildTranslationTree, type HomeAssistant } from '../utils/hass-provider.js';
-import { BaseConfigHelper } from '../card/config-helpers.js';
+import { BaseConfigHelper, hasDeprecatedOptions } from '../card/config-helpers.js';
 import { EditorDOMHelper, type FieldUpdateContext } from './dom-helper.js';
 import type { LovelaceConfig, Config, FieldDef } from '../utils/types.js';
 import { EntityProgressEffectChips, EntityProgressHideChips, EntityProgressModeChips } from './chips.js';
@@ -28,7 +29,25 @@ import {
 } from './list-editors.js';
 import { lengthSliderSelector, lengthUnitSelector } from '../utils/length.js';
 import { durationSliderSelector } from '../utils/duration.js';
-import { isMarkOverride, type WatermarkMark } from '../card/schema.js';
+import {
+  isMarkOverride,
+  THEME_ALIASES,
+  BAR_SIZES,
+  BADGE_BAR_SIZES,
+  BAR_ORIENTATIONS,
+  BAR_ORIENTATIONS_NO_UP,
+  BAR_POSITIONS,
+  FEATURE_BAR_POSITIONS,
+  BAR_COLOR_MODES,
+  BAR_SCALES,
+  UNIT_SPACINGS,
+  WATERMARK_TYPES,
+  PEAK_MARK_TYPES,
+  ALERT_HIGHLIGHTS,
+  ALERT_ANIMATIONS,
+  ICON_ANIMATIONS,
+  type WatermarkMark,
+} from '../card/schema.js';
 
 // Every dynamic editor field element built below (ha-selector, the chip
 // custom elements from chips.ts, the list editors from list-editors.ts)
@@ -49,6 +68,7 @@ type EditorFieldElement = HTMLElement & {
   items?: unknown;
   modes?: string[];
   setLabels?: (labels: unknown) => void;
+  setAddLabel?: (label: string) => void;
   buttonLabel?: string;
   actionLabels?: Record<string, string>;
   _fieldDef?: FieldDef;
@@ -76,6 +96,41 @@ const CIRCULAR_BACKGROUND_MODES = ['auto', 'forced'];
 // markers()'s 5 master on/off toggles (watermark/peak_marker/badge/
 // status_label/alert_when) - a pill instead of a switch.
 const ENABLED_DISABLED_MODES = ['disabled', 'enabled'];
+
+// Plain dropdowns: field type -> its translated option group. A [group, keys]
+// pair keeps only the options the matching schema actually accepts.
+const SELECT_TYPES: Record<string, string | [group: string, keys: readonly string[]]> = {
+  // Each list is the schema's own enum, so the dropdown lists exactly what
+  // validates, in that enum's own order - never the JSON's alphabetical one.
+  bar_size: ['bar_size', BAR_SIZES],
+  bar_size_no_xlarge: ['bar_size', BADGE_BAR_SIZES],
+  bar_orientation: ['bar_orientation', BAR_ORIENTATIONS],
+  bar_orientation_no_up: ['bar_orientation', BAR_ORIENTATIONS_NO_UP],
+  bar_position: ['bar_position', BAR_POSITIONS],
+  // Editor-only restrictions, mirroring schema.ts's own postProcess rules -
+  // no enum of their own to share (see applyCompactBelowRule/applyDensityRule).
+  bar_position_no_compact_below: ['bar_position', ['default', 'below', 'top', 'bottom', 'overlay', 'background']],
+  bar_position_density_compact: ['bar_position', ['top', 'bottom', 'background']],
+  bar_position_feature: ['bar_position', FEATURE_BAR_POSITIONS],
+  bar_color_mode: ['bar_color_mode', BAR_COLOR_MODES],
+  bar_scale: ['bar_scale', BAR_SCALES],
+  icon_animation: ['icon_animation', ICON_ANIMATIONS],
+  alert_highlight: ['alert_highlight', ALERT_HIGHLIGHTS],
+  alert_animation: ['alert_animation', ALERT_ANIMATIONS],
+  label_position: 'label_position',
+  status_label_color_source: 'status_label_color_source',
+  theme: ['theme', THEME_KEYS],
+  // Template has no min_value/max_value to project a real-value theme onto.
+  theme_percent_only: ['theme', PERCENT_THEME_KEYS],
+  unit_spacing: ['unit_spacing', UNIT_SPACINGS],
+  unit_position: 'unit_position',
+  watermark_type: ['watermark_type', WATERMARK_TYPES],
+  watermark_as: 'watermark_as',
+  // peak_marker's own enum, reusing watermark_type's labels.
+  peak_marker_type: ['watermark_type', PEAK_MARK_TYPES],
+  duration_unit: 'duration_unit',
+  trend_indicator_basis: 'trend_indicator_basis',
+};
 
 /**
  * Shared base for every per-card-type visual editor. Builds the
@@ -198,7 +253,8 @@ class EditorBase extends HTMLElement {
   #sendConfigScheduled = false;
   #debug = CARD_CONTEXT.debug.editor;
   #log: LoggerInstance | null = null;
-  _configHelper: BaseConfigHelper = new BaseConfigHelper();
+  // `declare`: EditorBase is never instantiated, every subclass has its own.
+  declare _configHelper: BaseConfigHelper;
 
   // The `editor.option` node of the translations tree: one level deeper than
   // localizeGroup models (option group -> value -> label), so typed loosely as
@@ -300,37 +356,6 @@ class EditorBase extends HTMLElement {
     this.#shadow.append(style, container);
   }
 
-  // Deprecated options this card can rewrite in one click, top-right of the
-  // editor — see docs/troubleshooting.md#deprecated-options for the user-facing
-  // explanation. Aliases mirror types.theme's own internal remap exactly (kept
-  // in sync manually: both are small, frozen/historical lists that are very
-  // unlikely to grow further).
-  static #THEME_ALIASES: Record<string, string> = {
-    battery: 'optimal_when_high',
-    memory: 'optimal_when_low',
-    cpu: 'optimal_when_low',
-  };
-
-  static #hasDeprecatedOptions(config: LovelaceConfig): boolean {
-    const wm = config?.watermark;
-    return Boolean(
-      is.nonEmptyString(config?.max_value) ||
-      is.nonEmptyString(wm?.low) ||
-      is.nonEmptyString(wm?.high) ||
-      wm?.low_as !== undefined ||
-      wm?.high_as !== undefined ||
-      wm?.low_color !== undefined ||
-      wm?.high_color !== undefined ||
-      wm?.disable_low !== undefined ||
-      wm?.disable_high !== undefined ||
-      config?.disable_unit !== undefined ||
-      is.array(config?.additions) ||
-      config?.navigate_to !== undefined ||
-      config?.show_more_info !== undefined ||
-      EditorBase.#THEME_ALIASES[config?.theme],
-    );
-  }
-
   // watermark.low/.high can be a bare {entity,...} or wrap it one level
   // deeper ({value: {entity,...}, as, type, opacity, color}) - unwrap before
   // reading .entity, same shape as types.watermarkMark elsewhere.
@@ -348,7 +373,7 @@ class EditorBase extends HTMLElement {
   // active config helper's own _migrateLegacyOptions.
   static #migrateDeprecatedConfig(config: LovelaceConfig, configHelper: BaseConfigHelper): LovelaceConfig {
     let migrated = (configHelper.constructor as typeof BaseConfigHelper)._migrateLegacyOptions(config);
-    const themeAlias = EditorBase.#THEME_ALIASES[migrated.theme];
+    const themeAlias = THEME_ALIASES[migrated.theme];
     if (themeAlias) migrated = { ...migrated, theme: themeAlias };
     if (migrated.navigate_to !== undefined) migrated = { ...migrated, navigate_to: undefined };
     if (migrated.show_more_info !== undefined) migrated = { ...migrated, show_more_info: undefined };
@@ -372,7 +397,7 @@ class EditorBase extends HTMLElement {
     const field = {
       name: fieldName,
       virtual: true,
-      showIf: (config: LovelaceConfig) => EditorBase.#hasDeprecatedOptions(config),
+      showIf: (config: LovelaceConfig) => hasDeprecatedOptions(config),
       onVirtualChange: (_value: unknown, config: LovelaceConfig) =>
         EditorBase.#migrateDeprecatedConfig(config, this._configHelper),
     } as unknown as FieldDef;
@@ -422,7 +447,6 @@ class EditorBase extends HTMLElement {
     return panel;
   }
 
-  // eslint-disable-next-line sonarjs/max-lines-per-function -- flat dispatch.
   #getSelectorForType(type: string): Record<string, unknown> {
     const buildSelect = (opts: Record<string, string>) => ({
       select: { options: Object.entries(opts).map(([value, label]) => ({ value, label })), mode: 'dropdown' },
@@ -446,7 +470,7 @@ class EditorBase extends HTMLElement {
     const options = this.#localizedOptions;
     // Shared by every "narrower select" below (a schema variant rejecting
     // some enum members) - keeps just the given keys, same translated labels.
-    const pickOptions = (source: Record<string, string>, keys: string[]): Record<string, string> =>
+    const pickOptions = (source: Record<string, string>, keys: readonly string[]): Record<string, string> =>
       Object.fromEntries(keys.map((key) => [key, source[key]]));
     const tileImage = (value: string) => ({
       // see
@@ -477,59 +501,8 @@ class EditorBase extends HTMLElement {
       icon: () => ({ icon: { icon_set: ['mdi'] } }),
       color: () => ({ 'ui-color': {} }),
       default: () => ({ text: { mode: 'box' } }),
-      bar_size: () => buildSelect(options.bar_size),
-      // Badge/BadgeTemplate schemas reject 'xlarge' (see
-      // YamlSchemaFactory.badge) - reuses the same translated labels.
-      bar_size_no_xlarge: () => buildSelect(pickOptions(options.bar_size, ['xsmall', 'small', 'medium', 'large'])),
-      bar_orientation: () => buildSelect(options.bar_orientation),
-      // Badge/BadgeTemplate schemas reject 'up' (see YamlSchemaFactory.badge)
-      // - reuses the same translated ltr/rtl labels, just without the option
-      // that would silently fall back to 'ltr' on save.
-      bar_orientation_no_up: () => buildSelect(pickOptions(options.bar_orientation, ['ltr', 'rtl'])),
-      bar_position: () => buildSelect(options.bar_position),
-      // layout: vertical rejects compact_below (see schema.ts's
-      // applyCompactBelowRule, the matching save-time safety net, and
-      // EditorFactory.resetCompactBelowIfInvalid for the layout-change
-      // reset) - mirrors bar_orientation_no_up just above: offering it only
-      // to silently revert it on save is a worse experience than not
-      // offering it at all.
-      bar_position_no_compact_below: () =>
-        buildSelect(pickOptions(options.bar_position, ['default', 'below', 'top', 'bottom', 'overlay', 'background'])),
-      // density: compact restricts bar_position further still, to exactly
-      // the three positions that don't share a row with name/secondary_info
-      // (see schema.ts's applyDensityRule, the matching save-time safety
-      // net) - same reasoning as bar_position_no_compact_below just above,
-      // a shorter list this time.
-      bar_position_density_compact: () =>
-        buildSelect(pickOptions(options.bar_position, ['top', 'bottom', 'background'])),
-      // Feature's own schema (YamlSchemaFactory.feature) allows only these
-      // three - no layout/bar_position combinations to guard against.
-      bar_position_feature: () => buildSelect(pickOptions(options.bar_position, ['default', 'top', 'bottom'])),
-      bar_color_mode: () => buildSelect(options.bar_color_mode),
-      bar_scale: () => buildSelect(options.bar_scale),
-      icon_animation: () => buildSelect(options.icon_animation),
-      alert_highlight: () => buildSelect(options.alert_highlight),
-      alert_animation: () => buildSelect(options.alert_animation),
-      label_position: () => buildSelect(options.label_position),
-      status_label_color_source: () => buildSelect(options.status_label_color_source),
-      theme: () => buildSelect(options.theme),
-      // Template's own restricted list (schema.ts's own theme field: percent:
-      // true only, no min_value/max_value to project a real-value theme's
-      // zones onto) - same "narrower select type" pattern as
-      // bar_orientation_no_up/bar_position_no_compact_below above, just
-      // derived from PERCENT_THEME_KEYS instead of hand-picked keys (too many
-      // to list).
-      theme_percent_only: () => buildSelect(pickOptions(options.theme, PERCENT_THEME_KEYS)),
+      // The one select whose options carry an image, hence not in SELECT_TYPES.
       layout: () => buildBoxSelect(options.layout, tileImage),
-      unit_spacing: () => buildSelect(options.unit_spacing),
-      unit_position: () => buildSelect(options.unit_position),
-      watermark_type: () => buildSelect(options.watermark_type),
-      watermark_as: () => buildSelect(options.watermark_as),
-      // Narrower than watermark_type (peak_marker's own enum) - same pattern
-      // as theme_percent_only, reusing watermark_type's labels (DRY).
-      peak_marker_type: () => buildSelect(pickOptions(options.watermark_type, ['line', 'round', 'triangle'])),
-      duration_unit: () => buildSelect(options.duration_unit),
-      trend_indicator_basis: () => buildSelect(options.trend_indicator_basis),
       // watermark.low/.high can be a bare {entity,...} or wrap it one level
       // deeper ({value: {entity,...}, as, type, opacity, color}) - unwrap
       // before reading .entity, same shape as types.watermarkMark elsewhere.
@@ -550,34 +523,32 @@ class EditorBase extends HTMLElement {
     // factory's own type() function (config-derived, unlike length: above).
     if (type.startsWith('duration:')) return durationSliderSelector(type.slice('duration:'.length));
 
+    const selectSpec = SELECT_TYPES[type];
+    if (selectSpec) {
+      const [group, keys]: [string, readonly string[] | null] = is.string(selectSpec) ? [selectSpec, null] : selectSpec;
+      return buildSelect(keys ? pickOptions(options[group], keys) : options[group]);
+    }
+
     return (selectors[type] ?? (() => ({ text: {} })))();
   }
 
-  // Dot-path field names ('watermark.low') address a nested config key;
-  // shared by #resolveFieldMeta (label lookup) and #resolveValue (value
-  // lookup) so the parsing convention lives in exactly one place.
-  static #splitFieldName(name: string): { isNested: boolean; parentKey: string; childKey: string | null } {
-    const isNested = name.includes('.');
-    const [parentKey, childKey] = isNested ? name.split('.') : [name, null];
-    return { isNested, parentKey, childKey };
+  // A dot-path field name ('watermark.low') addresses a nested config key -
+  // the convention lives here rather than at each call site.
+  static #splitFieldName(name: string): { parentKey: string; childKey: string | null } {
+    const [parentKey, childKey] = name.includes('.') ? name.split('.') : [name, null];
+    return { parentKey, childKey };
   }
 
-  // labelKey opts a field out of its own name-derived label: a dot-path
-  // string walks EDITOR_FIELD_NS, a [group, key] pair reads EDITOR_OPTION_NS.
-  #resolveExplicitLabel(field: FieldDef, parentKey: string, childKey: string | null): string | undefined {
-    if (is.string(field.labelKey)) {
-      const root = this.#hassProvider.localizeGroup(EDITOR_FIELD_NS);
-      const walk = (node: unknown, seg: string) => (node as Record<string, unknown> | undefined)?.[seg];
-      return field.labelKey.split('.').reduce(walk, root) as string | undefined;
-    }
-    const [lkGroup, lkKey]: [string, string | null] = field.labelKey ?? [parentKey, childKey];
-    return lkKey !== null
-      ? this.#localizedOptions?.[lkGroup]?.[lkKey]
-      : this.#hassProvider.localizeGroup(EDITOR_FIELD_NS)[field.name];
+  // Every field label lives under EDITOR_FIELD_NS ('editor.option' holds only
+  // what a select offers): a dot-path name or labelKey walks its nested group.
+  #resolveExplicitLabel(field: FieldDef): string | undefined {
+    const path: string = is.string(field.labelKey) ? field.labelKey : field.name;
+    const root = this.#hassProvider.localizeGroup(EDITOR_FIELD_NS);
+    const walk = (node: unknown, segment: string) => (node as Record<string, unknown> | undefined)?.[segment];
+    return path.split('.').reduce<unknown>(walk, root) as string | undefined;
   }
 
   #resolveFieldMeta(field: FieldDef): { label: string | undefined; value: unknown; isInverted: boolean } {
-    const { isNested, parentKey, childKey } = EditorBase.#splitFieldName(field.name);
     // CF5 - issue (medium) resolved - this used to pass only the negotiated
     // config (as #resolveValue's `rawConfig` param, with `negotiated` left
     // null), so a virtual field's build-time initial value was computed off
@@ -595,13 +566,11 @@ class EditorBase extends HTMLElement {
       label: field.noLabel
         ? ''
         : (() => {
-            const explicit = this.#resolveExplicitLabel(field, parentKey, childKey);
+            const explicit = this.#resolveExplicitLabel(field);
             if (explicit !== undefined) return explicit;
-            // Guard rail: keep the "<Noun> color" pattern already established
-            // by badge_color/bar_color/color/alert_when.color for any future
-            // "..._color" field that ships without its own translation yet,
-            // instead of silently falling back to the raw key name.
-            const colorMatch = !isNested && field.name.match(/^(.+)_color$/);
+            // Guard rail for any future "..._color" field shipping without its
+            // own translation - beats falling back to the raw key name.
+            const colorMatch = !field.name.includes('.') && field.name.match(/^(.+)_color$/);
             if (colorMatch) {
               const noun = colorMatch[1].replace(/_/g, ' ');
               return `${noun.charAt(0).toUpperCase()}${noun.slice(1)} color`;
@@ -660,15 +629,23 @@ class EditorBase extends HTMLElement {
     return el;
   }
 
-  // Shared by every ListEditorBase-backed field. labelKey is passed separately
-  // from field.name because a dot-path field ('bar_stack.entities') labels
-  // itself under its parent's translation key ('bar_stack'); rows is the config
-  // array the editor round-trips.
-  #buildListEditorField(field: FieldDef, tagName: string, labelKey: string, rows: unknown): EditorFieldElement {
+  // labelKey != field.name: a dot-path field ('bar_stack.entities') labels
+  // under its parent's key ('bar_stack'); rows is the round-tripped array.
+  #buildListEditorField(opts: {
+    field: FieldDef;
+    tagName: string;
+    labelKey: string;
+    rows: unknown;
+    addLabelKey: string;
+    addLabelDefault: string;
+  }): EditorFieldElement {
+    const { field, tagName, labelKey, rows, addLabelKey, addLabelDefault } = opts;
     const el = document.createElement(tagName) as EditorFieldElement;
     el.id = field.name;
     el.style.width = '100%';
-    el.label = this.#hassProvider.localizeGroup(EDITOR_FIELD_NS)?.[labelKey] ?? labelKey;
+    const fieldLabels = this.#hassProvider.localizeGroup(EDITOR_FIELD_NS);
+    el.label = fieldLabels?.[labelKey] ?? labelKey;
+    el.setAddLabel?.(fieldLabels?.[addLabelKey] ?? addLabelDefault);
     el.hass = this.hass;
     el.value = is.array(rows) ? rows : [];
     this.#dom.registerField(field.name, el, field);
@@ -706,33 +683,37 @@ class EditorBase extends HTMLElement {
       hide_chips: () => this.#buildChipsField(field, EntityProgressHideChips.ELEMENT_NAME, 'hide'),
       min_value_mode: modeChipsField(VALUE_SOURCE_MODES, 'value_source_mode'),
       max_value_mode: modeChipsField(VALUE_SOURCE_MODES, 'value_source_mode'),
-      watermark_low_mode: modeChipsField(VALUE_SOURCE_MODES, 'value_source_mode'),
-      watermark_high_mode: modeChipsField(VALUE_SOURCE_MODES, 'value_source_mode'),
-      alert_when_above_mode: modeChipsField(VALUE_SOURCE_MODES, 'value_source_mode'),
-      alert_when_below_mode: modeChipsField(VALUE_SOURCE_MODES, 'value_source_mode'),
+      'watermark.low_mode': modeChipsField(VALUE_SOURCE_MODES, 'value_source_mode'),
+      'watermark.high_mode': modeChipsField(VALUE_SOURCE_MODES, 'value_source_mode'),
+      'alert_when.above_mode': modeChipsField(VALUE_SOURCE_MODES, 'value_source_mode'),
+      'alert_when.below_mode': modeChipsField(VALUE_SOURCE_MODES, 'value_source_mode'),
       theme_mode: modeChipsField(THEME_MODE_MODES),
       bar_stack_mode: modeChipsField(BAR_STACK_MODES),
       trigger: modeChipsField(SIMPLE_ADVANCED_MODES, 'simple_advanced_mode'),
       bar_effect_mode: modeChipsField(SIMPLE_ADVANCED_MODES, 'simple_advanced_mode'),
       hide_mode: modeChipsField(SIMPLE_ADVANCED_MODES, 'simple_advanced_mode'),
-      trend_indicator_mode: modeChipsField(SIMPLE_ADVANCED_MODES, 'simple_advanced_mode'),
+      'trend_indicator.mode': modeChipsField(SIMPLE_ADVANCED_MODES, 'simple_advanced_mode'),
       icon_animation_mode: modeChipsField(ICON_ANIMATION_MODES),
       force_circular_background_mode: modeChipsField(CIRCULAR_BACKGROUND_MODES),
       enabled_toggle: modeChipsField(ENABLED_DISABLED_MODES, 'enabled_disabled_mode'),
       bar_stack_editor: () =>
-        this.#buildListEditorField(
+        this.#buildListEditorField({
           field,
-          EntityProgressBarStackEditor.ELEMENT_NAME,
-          'bar_stack',
-          this.#config?.bar_stack?.entities,
-        ),
+          tagName: EntityProgressBarStackEditor.ELEMENT_NAME,
+          labelKey: 'bar_stack',
+          rows: this.#config?.bar_stack?.entities,
+          addLabelKey: 'add_entity',
+          addLabelDefault: 'Add entity',
+        }),
       custom_theme_editor: () =>
-        this.#buildListEditorField(
+        this.#buildListEditorField({
           field,
-          EntityProgressCustomThemeEditor.ELEMENT_NAME,
-          field.name,
-          this.#config?.[field.name],
-        ),
+          tagName: EntityProgressCustomThemeEditor.ELEMENT_NAME,
+          labelKey: field.name,
+          rows: this.#config?.[field.name],
+          addLabelKey: 'add_zone',
+          addLabelDefault: 'Add zone',
+        }),
       action_picker: () => this.#buildActionPickerField(field),
     };
     return builders[field.type]?.();

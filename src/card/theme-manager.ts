@@ -228,23 +228,24 @@ class ThemeManager {
     return HA_CONTEXT.haColors.get(curColor as string) ?? curColor;
   }
 
-  // label's pill ports GitHub Primer's IssueLabelToken dark-theme recipe
-  // rather than a plain luminance-switched black/white pick: background
-  // stays a translucent tint of the base color, border/text are the *same
-  // hue*, lightened just enough to read on a dark background - dark/
-  // saturated colors get lightened more, light ones barely move. The CSS
-  // side does the actual calc() math (.status-label in styles.ts, same
-  // formula as Primer's); this only splits the resolved color into the
-  // r/g/b/h/s/l components that formula needs. The caller passes the
-  // browser's computed rgb(...) readback, so this only ever parses one
-  // format regardless of the original source (HA color name, hex, theme
-  // zone, card_mod override).
+  // Splits a resolved color into the r/g/b/h/s/l components styles.ts's
+  // label calc() math needs. Canvas, not a regex: interpolate: true's
+  // color-mix() stays unresolved in a computed-style readback, so
+  // getImageData is what actually evaluates it to concrete bytes.
+  static #probeCtx: CanvasRenderingContext2D | null = null;
+  static #UNRESOLVED_SENTINEL = '#010203'; // a color this project never produces
+
   static labelColorComponents(
-    computedRgb: string,
+    computedColor: string,
   ): { r: number; g: number; b: number; h: number; s: number; l: number } | null {
-    const match = /rgba?\((\d+),\s*(\d+),\s*(\d+)/.exec(computedRgb);
-    if (!match) return null;
-    const [r, g, b] = match.slice(1, 4).map(Number);
+    ThemeManager.#probeCtx ??= document.createElement('canvas').getContext('2d');
+    const ctx = ThemeManager.#probeCtx;
+    if (!ctx) return null;
+    ctx.fillStyle = ThemeManager.#UNRESOLVED_SENTINEL;
+    ctx.fillStyle = computedColor;
+    if (ctx.fillStyle === ThemeManager.#UNRESOLVED_SENTINEL) return null;
+    ctx.fillRect(0, 0, 1, 1);
+    const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
     return { r, g, b, ...ThemeManager.#rgbToHsl(r, g, b) };
   }
 

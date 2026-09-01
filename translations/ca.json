@@ -33,27 +33,36 @@
   "editor": {
     "field": {
       "action": {
-        "tap": "Comportament en clicar",
-        "hold": "Comportament en mantenir",
         "double_tap": "Comportament del doble clic",
-        "icon_tap": "Comportament en tocar la icona",
+        "hold": "Comportament en mantenir",
+        "icon_double_tap": "Comportament del doble clic d'icona",
         "icon_hold": "Comportament en mantenir la icona premuda",
-        "icon_double_tap": "Comportament del doble clic d'icona"
+        "icon_tap": "Comportament en tocar la icona",
+        "tap": "Comportament en clicar"
       },
       "action_picker": "Afegeix interacció",
-      "alert_toggle": "Alerta",
-      "alert_when_above_mode": "Font de l'alerta superior",
-      "alert_when_below_mode": "Font de l'alerta inferior",
+      "add_entity": "Afegeix entitat",
+      "add_zone": "Afegeix zona",
+      "alert_when": {
+        "above": "Alerta per sobre",
+        "animation": "Animació",
+        "below": "Alerta per sota",
+        "color": "Color d'alerta",
+        "highlight": "Ressaltat",
+        "label": "Etiqueta",
+        "above_mode": "Font de l'alerta superior",
+        "below_mode": "Font de l'alerta inferior",
+        "toggle": "Alerta"
+      },
       "attribute": "Atribut",
-      "badge_color": "Color de la insígnia",
-      "badge_color_toggle": "Independent color",
-      "badge_icon": "Icona de la insígnia",
-      "badge_toggle": "Insígnia",
+      "badge": {
+        "toggle": "Insígnia",
+        "color_toggle": "Color d'insígnia independent"
+      },
       "bar_color": "Color barra",
       "bar_color_mode": "Mode de color",
       "bar_effect_mode": "Efecte de la barra",
       "bar_group": "Barra",
-      "bar_max_width": "Amplada màxima de la barra",
       "bar_max_width_toggle": "Amplada màxima de la barra",
       "bar_orientation": "Orientació",
       "bar_scale": "Escala",
@@ -61,14 +70,14 @@
       "bar_single_line": "Una línia",
       "bar_size": "Mida",
       "bar_stack": "Entitats addicionals",
-      "bar_stack_mode": "Stack mode",
+      "bar_stack_mode": "Mode d'apilament",
       "card_size_toggle": "Mida de la targeta",
       "center_zero": "Zero al centre",
       "center_zero_growth_percent": "Percentatge de creixement",
       "center_zero_value": "Valor de centratge",
       "color": "Color principal",
       "custom_info": "Informació addicional (secundària)",
-      "custom_theme": "Custom theme zones",
+      "custom_theme": "Zones de tema personalitzat",
       "decimal": "Decimal",
       "density_toggle": "Compacte",
       "entity": "Entitat",
@@ -76,43 +85,72 @@
       "force_circular_background_mode": "Fons circular de la icona",
       "frameless": "Sense marc",
       "height": "Alçada",
-      "height_custom_toggle": "Shrink height (embedded)",
+      "height_custom_toggle": "Alçada automàtica",
       "hide_mode": "Amaga",
       "icon": "Icona",
       "icon_animation": "Animació de la icona",
       "interpolate": "Interpolar colors",
       "layout": "Disposició del contingut",
       "marginless": "Sense marge",
+      "mark_color": "Color",
       "max_value": "Valor màxim",
       "max_value_mode": "Font del valor màxim",
-      "migrate_config": "Migrate config",
+      "migrate_config": "Migra la configuració",
       "min_value": "Valor mínim",
       "min_value_mode": "Font del valor mínim",
       "min_width": "Amplada mínima",
-      "multiline": "Multiline",
+      "multiline": "Multilínia",
       "name": "Nom",
       "name_info": "Informació addicional (nom)",
+      "opacity": "Opacitat",
+      "peak_marker": {
+        "min_toggle": "Mostra mínim",
+        "max_toggle": "Mostra màxim",
+        "average_toggle": "Mostra mitjana",
+        "toggle": "Marcadors de pic"
+      },
+      "peak_marker_unsupported": "Els marcadors de pic necessiten una entitat sensor o number, sense sobreescriptura d'atribut, i que no sigui un timer ni un counter — no disponible per a aquesta entitat.",
       "percent": "Percentatge",
       "position": "Posició",
       "reverse": "Temporitzador invers",
       "reverse_secondary_info_row": "Intercanvia barra i text",
       "secondary": "Informació secundària",
       "state_content": "Contingut de l'estat",
-      "status_label_toggle": "Etiqueta d'estat",
+      "status_label": {
+        "color_source": "Font del color",
+        "position": "Posició de l'etiqueta",
+        "toggle": "Etiqueta d'estat"
+      },
       "text_shadow": "Afegir ombra al text",
       "theme": "Tema",
+      "trend_indicator": {
+        "window_toggle": "Utilitza una finestra de temps",
+        "basis": "Base de comparació",
+        "threshold": "Zona morta (punts)",
+        "colored": "Tenyeix amb el color de la icona",
+        "up_color": "Color de pujada",
+        "down_color": "Color de baixada",
+        "flat_color": "Color estable",
+        "toggle": "Indicador de tendència",
+        "mode": "Mode"
+      },
       "trigger": "Disparador",
+      "type": "Tipus",
       "unit": "Unitat",
       "unit_spacing": "Espaiat",
       "value_compact": "Valor compacte (1.2k)",
       "value_sign": "Mostra el signe (+/-)",
-      "watermark_high_mode": "Font del marcador alt",
-      "watermark_low_mode": "Font del marcador baix",
-      "watermark_toggle": "Marcadors",
-      "peak_marker_toggle": "Peak markers",
-      "peak_marker_unsupported": "Peak markers need a sensor or number entity, no attribute override, and not a timer or counter — not available for this entity.",
-      "trend_indicator_toggle": "Trend indicator",
-      "trend_indicator_mode": "Mode"
+      "watermark": {
+        "high_toggle": "Mostra alt",
+        "low_toggle": "Mostra baix",
+        "high": "Alt",
+        "line_size": "Gruix de línia",
+        "low": "Baix",
+        "low_mode": "Font del marcador baix",
+        "high_mode": "Font del marcador alt",
+        "toggle": "Marcadors"
+      },
+      "window": "Finestra de temps"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -131,20 +169,13 @@
     "option": {
       "alert_animation": {
         "blink": "Parpelleig",
-        "ping": "Ping",
+        "ping": "Anell",
         "static": "Estàtic"
       },
       "alert_highlight": {
-        "background": "Background",
-        "border": "Border",
+        "background": "Fons",
+        "border": "Vora",
         "label": "Etiqueta"
-      },
-      "alert_when": {
-        "above": "Alert above",
-        "animation": "Animació",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight"
       },
       "bar_color_mode": {
         "auto": "Automàtic",
@@ -175,8 +206,8 @@
         "top": "Barra a sobre"
       },
       "bar_scale": {
-        "linear": "Linear",
-        "log": "Logarithmic"
+        "linear": "Lineal",
+        "log": "Logarítmica"
       },
       "bar_size": {
         "large": "Gran",
@@ -187,8 +218,18 @@
       },
       "bar_stack_mode": {
         "net": "Net",
-        "proportional": "Sum",
-        "stacked": "Stacked"
+        "proportional": "Proporcional",
+        "stacked": "Apilat"
+      },
+      "duration_unit": {
+        "s": "Segons",
+        "min": "Minuts",
+        "h": "Hores",
+        "d": "Dies"
+      },
+      "enabled_disabled_mode": {
+        "disabled": "Desactivat",
+        "enabled": "Activat"
       },
       "force_circular_background_mode": {
         "auto": "Automàtic",
@@ -198,20 +239,20 @@
         "icon": "Icona",
         "name": "Nom",
         "progress_bar": "Barra",
-        "secondary_info": "Info",
+        "secondary_info": "Info secundària",
         "shape": "Fons circular de la icona",
         "unit": "Unitat",
         "value": "Valor"
       },
       "icon_animation": {
-        "battery_charging": "Battery charging",
-        "bounce": "Bounce",
-        "ping": "Ping",
-        "pulse": "Pulse",
-        "reveal": "Reveal",
-        "shake": "Shake",
-        "spin": "Spin",
-        "washing_machine": "Washing machine"
+        "battery_charging": "Bateria carregant",
+        "bounce": "Rebot",
+        "ping": "Anell",
+        "pulse": "Pols",
+        "reveal": "Revela",
+        "shake": "Sacseja",
+        "spin": "Gira",
+        "washing_machine": "Rentadora"
       },
       "icon_animation_mode": {
         "auto": "Automàtic",
@@ -222,17 +263,12 @@
         "right": "Dreta"
       },
       "layout": {
-        "horizontal": "Horitzontal (predeterminada)",
+        "horizontal": "Horitzontal",
         "vertical": "Vertical"
       },
       "simple_advanced_mode": {
         "advanced": "Avançat",
         "simple": "Simple"
-      },
-      "status_label": {
-        "color_source": "Font del color",
-        "jinja": "Etiqueta d'estat",
-        "position": "Posició de l'etiqueta"
       },
       "status_label_color_source": {
         "bar": "Barra de progrés",
@@ -250,11 +286,16 @@
         "optimal_when_low": "Òptim quan és baix",
         "pm25": "PM2.5",
         "temperature": "Temperatura",
-        "voc": "VOC"
+        "voc": "COV"
       },
       "theme_mode": {
-        "custom": "Custom",
-        "preset": "Preset"
+        "custom": "Personalitzat",
+        "preset": "Predefinit"
+      },
+      "trend_indicator_basis": {
+        "average": "Mitjana",
+        "edge": "Extrem",
+        "slope": "Pendent"
       },
       "unit_position": {
         "after": "Després del valor",
@@ -265,31 +306,10 @@
         "no-space": "Sense espai",
         "space": "Espai"
       },
-      "value_shape": {
-        "attribute": "Attribute"
-      },
       "value_source_mode": {
-        "entity": "Entity",
-        "jinja": "Template",
-        "standard": "Fixed value"
-      },
-      "watermark": {
-        "high_toggle": "Show high",
-        "low_toggle": "Show low",
-        "high": "High",
-        "high_as": "High unit",
-        "high_color": "High color",
-        "line_size": "Line size",
-        "low": "Low",
-        "low_as": "Low unit",
-        "low_color": "Low color",
-        "opacity": "Opacity",
-        "type": "Type",
-        "color": "Color",
-        "low_type": "Low type",
-        "low_opacity": "Low opacity",
-        "high_type": "High type",
-        "high_opacity": "High opacity"
+        "entity": "Entitat",
+        "jinja": "Plantilla",
+        "standard": "Valor fix"
       },
       "watermark_as": {
         "auto": "Automàtic",
@@ -302,49 +322,6 @@
         "round": "Rodó",
         "striped": "Ratllat",
         "triangle": "Triangle"
-      },
-      "peak_marker": {
-        "window": "Time window",
-        "type": "Type",
-        "opacity": "Opacity",
-        "min_toggle": "Show minimum",
-        "min_type": "Minimum type",
-        "min_opacity": "Minimum opacity",
-        "min_color": "Minimum color",
-        "max_toggle": "Show maximum",
-        "max_type": "Maximum type",
-        "max_opacity": "Maximum opacity",
-        "max_color": "Maximum color",
-        "average_toggle": "Show average",
-        "average_type": "Average type",
-        "average_opacity": "Average opacity",
-        "average_color": "Average color",
-        "color": "Color"
-      },
-      "duration_unit": {
-        "s": "Seconds",
-        "min": "Minutes",
-        "h": "Hours",
-        "d": "Days"
-      },
-      "enabled_disabled_mode": {
-        "disabled": "Disabled",
-        "enabled": "Enabled"
-      },
-      "trend_indicator": {
-        "window_toggle": "Use a time window",
-        "window": "Time window",
-        "basis": "Comparison basis",
-        "threshold": "Dead zone (points)",
-        "colored": "Tint with icon color",
-        "up_color": "Up color",
-        "down_color": "Down color",
-        "flat_color": "Flat color"
-      },
-      "trend_indicator_basis": {
-        "average": "Average",
-        "edge": "Edge",
-        "slope": "Slope"
       }
     },
     "title": {

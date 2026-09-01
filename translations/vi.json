@@ -33,27 +33,36 @@
   "editor": {
     "field": {
       "action": {
-        "tap": "Hành vi nhấn",
-        "hold": "Hành vi nhấn giữ",
         "double_tap": "Hành vi nhấn đúp",
-        "icon_tap": "Hành vi nhấn vào biểu tượng",
+        "hold": "Hành vi nhấn giữ",
+        "icon_double_tap": "Hành vi nhấn đúp biểu tượng",
         "icon_hold": "Hành vi giữ biểu tượng",
-        "icon_double_tap": "Hành vi nhấn đúp biểu tượng"
+        "icon_tap": "Hành vi nhấn vào biểu tượng",
+        "tap": "Hành vi nhấn"
       },
       "action_picker": "Thêm tương tác",
-      "alert_toggle": "Cảnh báo",
-      "alert_when_above_mode": "Nguồn cảnh báo giới hạn trên",
-      "alert_when_below_mode": "Nguồn cảnh báo giới hạn dưới",
+      "add_entity": "Thêm thực thể",
+      "add_zone": "Thêm vùng",
+      "alert_when": {
+        "above": "Cảnh báo khi trên",
+        "animation": "Hoạt ảnh",
+        "below": "Cảnh báo khi dưới",
+        "color": "Màu cảnh báo",
+        "highlight": "Làm nổi bật",
+        "label": "Nhãn",
+        "above_mode": "Nguồn cảnh báo giới hạn trên",
+        "below_mode": "Nguồn cảnh báo giới hạn dưới",
+        "toggle": "Cảnh báo"
+      },
       "attribute": "Thuộc tính",
-      "badge_color": "Màu huy hiệu",
-      "badge_color_toggle": "Independent color",
-      "badge_icon": "Biểu tượng huy hiệu",
-      "badge_toggle": "Huy hiệu",
+      "badge": {
+        "toggle": "Huy hiệu",
+        "color_toggle": "Màu huy hiệu riêng"
+      },
       "bar_color": "Màu thanh",
       "bar_color_mode": "Chế độ màu",
       "bar_effect_mode": "Hiệu ứng thanh",
       "bar_group": "Thanh",
-      "bar_max_width": "Chiều rộng tối đa của thanh",
       "bar_max_width_toggle": "Chiều rộng tối đa của thanh",
       "bar_orientation": "Hướng",
       "bar_scale": "Tỷ lệ",
@@ -61,14 +70,14 @@
       "bar_single_line": "Một dòng",
       "bar_size": "Kích thước",
       "bar_stack": "Thực thể bổ sung",
-      "bar_stack_mode": "Stack mode",
+      "bar_stack_mode": "Chế độ xếp chồng",
       "card_size_toggle": "Kích thước thẻ",
       "center_zero": "零点居中",
       "center_zero_growth_percent": "Tỷ lệ tăng trưởng",
       "center_zero_value": "Giá trị tâm",
       "color": "Màu chính",
       "custom_info": "Thông tin phụ tùy chỉnh",
-      "custom_theme": "Custom theme zones",
+      "custom_theme": "Vùng chủ đề tùy chỉnh",
       "decimal": "thập phân",
       "density_toggle": "Gọn",
       "entity": "Thực thể",
@@ -76,43 +85,72 @@
       "force_circular_background_mode": "Nền hình tròn của biểu tượng",
       "frameless": "Không viền",
       "height": "Chiều cao",
-      "height_custom_toggle": "Shrink height (embedded)",
+      "height_custom_toggle": "Chiều cao tự động",
       "hide_mode": "Ẩn",
       "icon": "Biểu tượng",
       "icon_animation": "Hoạt ảnh biểu tượng",
       "interpolate": "Nội suy màu sắc",
       "layout": "Bố cục nội dung",
       "marginless": "Không lề",
+      "mark_color": "Màu",
       "max_value": "Giá trị tối đa",
       "max_value_mode": "Nguồn giá trị tối đa",
-      "migrate_config": "Migrate config",
+      "migrate_config": "Di chuyển cấu hình",
       "min_value": "Giá trị tối thiểu",
       "min_value_mode": "Nguồn giá trị tối thiểu",
       "min_width": "Chiều rộng tối thiểu",
-      "multiline": "Multiline",
+      "multiline": "Nhiều dòng",
       "name": "Tên",
       "name_info": "Thông tin tên tùy chỉnh",
+      "opacity": "Độ mờ đục",
+      "peak_marker": {
+        "min_toggle": "Hiện giá trị nhỏ nhất",
+        "max_toggle": "Hiện giá trị lớn nhất",
+        "average_toggle": "Hiện giá trị trung bình",
+        "toggle": "Dấu đỉnh"
+      },
+      "peak_marker_unsupported": "Dấu đỉnh cần thực thể sensor hoặc number không ghi đè thuộc tính, không phải timer hay counter — không khả dụng cho thực thể này.",
       "percent": "Phần trăm",
       "position": "Vị trí",
       "reverse": "Đảo ngược bộ đếm thời gian",
       "reverse_secondary_info_row": "Hoán đổi thanh và văn bản",
       "secondary": "Thông tin phụ",
       "state_content": "Nội dung trạng thái",
-      "status_label_toggle": "Nhãn trạng thái",
+      "status_label": {
+        "color_source": "Nguồn màu",
+        "position": "Vị trí nhãn",
+        "toggle": "Nhãn trạng thái"
+      },
       "text_shadow": "Thêm bóng cho văn bản",
       "theme": "Chủ đề",
+      "trend_indicator": {
+        "window_toggle": "Dùng cửa sổ thời gian",
+        "basis": "Cơ sở so sánh",
+        "threshold": "Vùng chết (điểm)",
+        "colored": "Tô màu theo màu biểu tượng",
+        "up_color": "Màu khi tăng",
+        "down_color": "Màu khi giảm",
+        "flat_color": "Màu khi ổn định",
+        "toggle": "Chỉ báo xu hướng",
+        "mode": "Chế độ"
+      },
       "trigger": "Kích hoạt",
+      "type": "Loại",
       "unit": "Đơn vị",
       "unit_spacing": "Khoảng cách",
       "value_compact": "Giá trị rút gọn (1.2k)",
       "value_sign": "Hiển thị dấu (+/-)",
-      "watermark_high_mode": "Nguồn điểm đánh dấu cao",
-      "watermark_low_mode": "Nguồn điểm đánh dấu thấp",
-      "watermark_toggle": "Điểm đánh dấu",
-      "peak_marker_toggle": "Peak markers",
-      "peak_marker_unsupported": "Peak markers need a sensor or number entity, no attribute override, and not a timer or counter — not available for this entity.",
-      "trend_indicator_toggle": "Trend indicator",
-      "trend_indicator_mode": "Mode"
+      "watermark": {
+        "high_toggle": "Hiện cao",
+        "low_toggle": "Hiện thấp",
+        "high": "Cao",
+        "line_size": "Độ dày đường",
+        "low": "Thấp",
+        "low_mode": "Nguồn điểm đánh dấu thấp",
+        "high_mode": "Nguồn điểm đánh dấu cao",
+        "toggle": "Điểm đánh dấu"
+      },
+      "window": "Cửa sổ thời gian"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -131,20 +169,13 @@
     "option": {
       "alert_animation": {
         "blink": "Nhấp nháy",
-        "ping": "Ping",
+        "ping": "Vòng",
         "static": "Tĩnh"
       },
       "alert_highlight": {
-        "background": "Background",
-        "border": "Border",
+        "background": "Nền",
+        "border": "Viền",
         "label": "Nhãn"
-      },
-      "alert_when": {
-        "above": "Alert above",
-        "animation": "Hoạt ảnh",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight"
       },
       "bar_color_mode": {
         "auto": "Tự động",
@@ -175,8 +206,8 @@
         "top": "Thanh ở trên cùng"
       },
       "bar_scale": {
-        "linear": "Linear",
-        "log": "Logarithmic"
+        "linear": "Tuyến tính",
+        "log": "Logarit"
       },
       "bar_size": {
         "large": "Lớn",
@@ -186,9 +217,19 @@
         "xsmall": "Cực nhỏ"
       },
       "bar_stack_mode": {
-        "net": "Net",
-        "proportional": "Sum",
-        "stacked": "Stacked"
+        "net": "Ròng",
+        "proportional": "Theo tỷ lệ",
+        "stacked": "Xếp chồng"
+      },
+      "duration_unit": {
+        "s": "Giây",
+        "min": "Phút",
+        "h": "Giờ",
+        "d": "Ngày"
+      },
+      "enabled_disabled_mode": {
+        "disabled": "Đã tắt",
+        "enabled": "Đã bật"
       },
       "force_circular_background_mode": {
         "auto": "Tự động",
@@ -198,20 +239,20 @@
         "icon": "Biểu tượng",
         "name": "Tên",
         "progress_bar": "Thanh",
-        "secondary_info": "Thông tin",
+        "secondary_info": "Thông tin phụ",
         "shape": "Nền tròn của biểu tượng",
         "unit": "Đơn vị",
         "value": "Giá trị"
       },
       "icon_animation": {
-        "battery_charging": "Battery charging",
-        "bounce": "Bounce",
-        "ping": "Ping",
-        "pulse": "Pulse",
-        "reveal": "Reveal",
-        "shake": "Shake",
-        "spin": "Spin",
-        "washing_machine": "Washing machine"
+        "battery_charging": "Pin đang sạc",
+        "bounce": "Nảy",
+        "ping": "Vòng",
+        "pulse": "Nhấp nháy nhịp",
+        "reveal": "Hiện ra",
+        "shake": "Rung lắc",
+        "spin": "Xoay",
+        "washing_machine": "Máy giặt"
       },
       "icon_animation_mode": {
         "auto": "Tự động",
@@ -222,17 +263,12 @@
         "right": "Phải"
       },
       "layout": {
-        "horizontal": "Ngang (mặc định)",
+        "horizontal": "Ngang",
         "vertical": "Dọc"
       },
       "simple_advanced_mode": {
         "advanced": "Nâng cao",
         "simple": "Đơn giản"
-      },
-      "status_label": {
-        "color_source": "Nguồn màu",
-        "jinja": "Nhãn trạng thái",
-        "position": "Vị trí nhãn"
       },
       "status_label_color_source": {
         "bar": "Thanh tiến trình",
@@ -253,8 +289,13 @@
         "voc": "VOC"
       },
       "theme_mode": {
-        "custom": "Custom",
-        "preset": "Preset"
+        "custom": "Tùy chỉnh",
+        "preset": "Cài đặt sẵn"
+      },
+      "trend_indicator_basis": {
+        "average": "Trung bình",
+        "edge": "Giá trị biên",
+        "slope": "Độ dốc"
       },
       "unit_position": {
         "after": "Sau giá trị",
@@ -265,31 +306,10 @@
         "no-space": "Không khoảng trắng",
         "space": "Khoảng trắng"
       },
-      "value_shape": {
-        "attribute": "Attribute"
-      },
       "value_source_mode": {
-        "entity": "Entity",
-        "jinja": "Template",
-        "standard": "Fixed value"
-      },
-      "watermark": {
-        "high_toggle": "Show high",
-        "low_toggle": "Show low",
-        "high": "High",
-        "high_as": "High unit",
-        "high_color": "High color",
-        "line_size": "Line size",
-        "low": "Low",
-        "low_as": "Low unit",
-        "low_color": "Low color",
-        "opacity": "Opacity",
-        "type": "Type",
-        "color": "Color",
-        "low_type": "Low type",
-        "low_opacity": "Low opacity",
-        "high_type": "High type",
-        "high_opacity": "High opacity"
+        "entity": "Thực thể",
+        "jinja": "Mẫu",
+        "standard": "Giá trị cố định"
       },
       "watermark_as": {
         "auto": "Tự động",
@@ -302,49 +322,6 @@
         "round": "Tròn",
         "striped": "Sọc",
         "triangle": "Tam giác"
-      },
-      "peak_marker": {
-        "window": "Time window",
-        "type": "Type",
-        "opacity": "Opacity",
-        "min_toggle": "Show minimum",
-        "min_type": "Minimum type",
-        "min_opacity": "Minimum opacity",
-        "min_color": "Minimum color",
-        "max_toggle": "Show maximum",
-        "max_type": "Maximum type",
-        "max_opacity": "Maximum opacity",
-        "max_color": "Maximum color",
-        "average_toggle": "Show average",
-        "average_type": "Average type",
-        "average_opacity": "Average opacity",
-        "average_color": "Average color",
-        "color": "Color"
-      },
-      "duration_unit": {
-        "s": "Seconds",
-        "min": "Minutes",
-        "h": "Hours",
-        "d": "Days"
-      },
-      "enabled_disabled_mode": {
-        "disabled": "Disabled",
-        "enabled": "Enabled"
-      },
-      "trend_indicator": {
-        "window_toggle": "Use a time window",
-        "window": "Time window",
-        "basis": "Comparison basis",
-        "threshold": "Dead zone (points)",
-        "colored": "Tint with icon color",
-        "up_color": "Up color",
-        "down_color": "Down color",
-        "flat_color": "Flat color"
-      },
-      "trend_indicator_basis": {
-        "average": "Average",
-        "edge": "Edge",
-        "slope": "Slope"
       }
     },
     "title": {

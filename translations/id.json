@@ -33,27 +33,36 @@
   "editor": {
     "field": {
       "action": {
-        "tap": "Perilaku ketuk",
-        "hold": "Perilaku tahan",
         "double_tap": "Perilaku ketuk ganda",
-        "icon_tap": "Perilaku ketuk ikon",
+        "hold": "Perilaku tahan",
+        "icon_double_tap": "Perilaku ketuk ganda ikon",
         "icon_hold": "Perilaku ketuk-tahan ikon",
-        "icon_double_tap": "Perilaku ketuk ganda ikon"
+        "icon_tap": "Perilaku ketuk ikon",
+        "tap": "Perilaku ketuk"
       },
       "action_picker": "Tambahkan interaksi",
-      "alert_toggle": "Peringatan",
-      "alert_when_above_mode": "Sumber peringatan atas",
-      "alert_when_below_mode": "Sumber peringatan bawah",
+      "add_entity": "Tambahkan entitas",
+      "add_zone": "Tambahkan zona",
+      "alert_when": {
+        "above": "Peringatan di atas",
+        "animation": "Animasi",
+        "below": "Peringatan di bawah",
+        "color": "Warna peringatan",
+        "highlight": "Sorotan",
+        "label": "Label",
+        "above_mode": "Sumber peringatan atas",
+        "below_mode": "Sumber peringatan bawah",
+        "toggle": "Peringatan"
+      },
       "attribute": "Atribut",
-      "badge_color": "Warna lencana",
-      "badge_color_toggle": "Independent color",
-      "badge_icon": "Ikon lencana",
-      "badge_toggle": "Lencana",
+      "badge": {
+        "toggle": "Lencana",
+        "color_toggle": "Warna lencana independen"
+      },
       "bar_color": "Warna bar",
       "bar_color_mode": "Mode warna",
       "bar_effect_mode": "Efek pada bar",
       "bar_group": "Bilah",
-      "bar_max_width": "Lebar maks. batang",
       "bar_max_width_toggle": "Lebar maks. batang",
       "bar_orientation": "Orientasi",
       "bar_scale": "Skala",
@@ -61,14 +70,14 @@
       "bar_single_line": "Satu baris",
       "bar_size": "Ukuran",
       "bar_stack": "Entitas tambahan",
-      "bar_stack_mode": "Stack mode",
+      "bar_stack_mode": "Mode tumpukan",
       "card_size_toggle": "Ukuran kartu",
       "center_zero": "Nol di tengah",
       "center_zero_growth_percent": "Persentase pertumbuhan",
       "center_zero_value": "Nilai tengah",
       "color": "Warna utama",
       "custom_info": "Info sekunder kustom",
-      "custom_theme": "Custom theme zones",
+      "custom_theme": "Zona tema khusus",
       "decimal": "desimal",
       "density_toggle": "Ringkas",
       "entity": "Entitas",
@@ -76,43 +85,72 @@
       "force_circular_background_mode": "Latar belakang bulat ikon",
       "frameless": "Tanpa bingkai",
       "height": "Tinggi",
-      "height_custom_toggle": "Shrink height (embedded)",
+      "height_custom_toggle": "Tinggi otomatis",
       "hide_mode": "Sembunyikan",
       "icon": "Ikon",
       "icon_animation": "Animasi ikon",
       "interpolate": "Interpolasi warna",
       "layout": "Tata letak konten",
       "marginless": "Tanpa margin",
+      "mark_color": "Warna",
       "max_value": "Nilai maksimum",
       "max_value_mode": "Sumber nilai maksimum",
-      "migrate_config": "Migrate config",
+      "migrate_config": "Migrasikan konfigurasi",
       "min_value": "Nilai minimum",
       "min_value_mode": "Sumber nilai minimum",
       "min_width": "Lebar min.",
-      "multiline": "Multiline",
+      "multiline": "Multibaris",
       "name": "Nama",
       "name_info": "Info nama kustom",
+      "opacity": "Opasitas",
+      "peak_marker": {
+        "min_toggle": "Tampilkan minimum",
+        "max_toggle": "Tampilkan maksimum",
+        "average_toggle": "Tampilkan rata-rata",
+        "toggle": "Penanda puncak"
+      },
+      "peak_marker_unsupported": "Penanda puncak memerlukan entitas sensor atau number tanpa override atribut, yang bukan timer atau counter — tidak tersedia untuk entitas ini.",
       "percent": "Persentase",
       "position": "Posisi",
       "reverse": "Timer terbalik",
       "reverse_secondary_info_row": "Tukar bilah dan teks",
       "secondary": "Informasi sekunder",
       "state_content": "Konten status",
-      "status_label_toggle": "Label status",
+      "status_label": {
+        "color_source": "Sumber warna",
+        "position": "Posisi label",
+        "toggle": "Label status"
+      },
       "text_shadow": "Tambahkan bayangan teks",
       "theme": "Tema",
+      "trend_indicator": {
+        "window_toggle": "Gunakan jendela waktu",
+        "basis": "Dasar perbandingan",
+        "threshold": "Zona mati (poin)",
+        "colored": "Warnai dengan warna ikon",
+        "up_color": "Warna naik",
+        "down_color": "Warna turun",
+        "flat_color": "Warna stabil",
+        "toggle": "Indikator tren",
+        "mode": "Mode"
+      },
       "trigger": "Pemicu",
-      "unit": "Unit",
+      "type": "Tipe",
+      "unit": "Satuan",
       "unit_spacing": "Jarak",
       "value_compact": "Nilai ringkas (1.2k)",
       "value_sign": "Tampilkan tanda (+/-)",
-      "watermark_high_mode": "Sumber penanda tinggi",
-      "watermark_low_mode": "Sumber penanda rendah",
-      "watermark_toggle": "Penanda",
-      "peak_marker_toggle": "Peak markers",
-      "peak_marker_unsupported": "Peak markers need a sensor or number entity, no attribute override, and not a timer or counter — not available for this entity.",
-      "trend_indicator_toggle": "Trend indicator",
-      "trend_indicator_mode": "Mode"
+      "watermark": {
+        "high_toggle": "Tampilkan tinggi",
+        "low_toggle": "Tampilkan rendah",
+        "high": "Tinggi",
+        "line_size": "Ketebalan garis",
+        "low": "Rendah",
+        "low_mode": "Sumber penanda rendah",
+        "high_mode": "Sumber penanda tinggi",
+        "toggle": "Penanda"
+      },
+      "window": "Jendela waktu"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -131,20 +169,13 @@
     "option": {
       "alert_animation": {
         "blink": "Berkedip",
-        "ping": "Ping",
+        "ping": "Cincin",
         "static": "Statis"
       },
       "alert_highlight": {
-        "background": "Background",
-        "border": "Border",
+        "background": "Latar belakang",
+        "border": "Batas",
         "label": "Label"
-      },
-      "alert_when": {
-        "above": "Alert above",
-        "animation": "Animasi",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight"
       },
       "bar_color_mode": {
         "auto": "Otomatis",
@@ -170,13 +201,13 @@
         "below": "Bar di bawah konten",
         "bottom": "Bar di bawah",
         "compact_below": "Batang ringkas di bawah (nama/nilai dalam satu baris)",
-        "default": "Default",
+        "default": "Bawaan",
         "overlay": "Bar ditumpangkan pada konten (overlay)",
         "top": "Bar di atas"
       },
       "bar_scale": {
         "linear": "Linear",
-        "log": "Logarithmic"
+        "log": "Logaritmik"
       },
       "bar_size": {
         "large": "Besar",
@@ -186,9 +217,19 @@
         "xsmall": "Ekstra kecil"
       },
       "bar_stack_mode": {
-        "net": "Net",
-        "proportional": "Sum",
-        "stacked": "Stacked"
+        "net": "Bersih",
+        "proportional": "Proporsional",
+        "stacked": "Ditumpuk"
+      },
+      "duration_unit": {
+        "s": "Detik",
+        "min": "Menit",
+        "h": "Jam",
+        "d": "Hari"
+      },
+      "enabled_disabled_mode": {
+        "disabled": "Nonaktif",
+        "enabled": "Aktif"
       },
       "force_circular_background_mode": {
         "auto": "Otomatis",
@@ -198,20 +239,20 @@
         "icon": "Ikon",
         "name": "Nama",
         "progress_bar": "Bilah",
-        "secondary_info": "Info",
+        "secondary_info": "Info sekunder",
         "shape": "Latar belakang bulat ikon",
-        "unit": "Unit",
+        "unit": "Satuan",
         "value": "Nilai"
       },
       "icon_animation": {
-        "battery_charging": "Battery charging",
-        "bounce": "Bounce",
-        "ping": "Ping",
-        "pulse": "Pulse",
-        "reveal": "Reveal",
-        "shake": "Shake",
-        "spin": "Spin",
-        "washing_machine": "Washing machine"
+        "battery_charging": "Baterai mengisi daya",
+        "bounce": "Memantul",
+        "ping": "Cincin",
+        "pulse": "Berdenyut",
+        "reveal": "Menampilkan",
+        "shake": "Bergetar",
+        "spin": "Berputar",
+        "washing_machine": "Mesin cuci"
       },
       "icon_animation_mode": {
         "auto": "Otomatis",
@@ -222,17 +263,12 @@
         "right": "Kanan"
       },
       "layout": {
-        "horizontal": "Horizontal (default)",
+        "horizontal": "Horizontal",
         "vertical": "Vertikal"
       },
       "simple_advanced_mode": {
         "advanced": "Lanjutan",
         "simple": "Sederhana"
-      },
-      "status_label": {
-        "color_source": "Sumber warna",
-        "jinja": "Label status",
-        "position": "Posisi label"
       },
       "status_label_color_source": {
         "bar": "Bilah kemajuan",
@@ -253,8 +289,13 @@
         "voc": "VOC"
       },
       "theme_mode": {
-        "custom": "Custom",
-        "preset": "Preset"
+        "custom": "Khusus",
+        "preset": "Prasetel"
+      },
+      "trend_indicator_basis": {
+        "average": "Rata-rata",
+        "edge": "Nilai tepi",
+        "slope": "Kemiringan"
       },
       "unit_position": {
         "after": "Setelah nilai",
@@ -265,31 +306,10 @@
         "no-space": "Tanpa spasi",
         "space": "Spasi"
       },
-      "value_shape": {
-        "attribute": "Attribute"
-      },
       "value_source_mode": {
-        "entity": "Entity",
-        "jinja": "Template",
-        "standard": "Fixed value"
-      },
-      "watermark": {
-        "high_toggle": "Show high",
-        "low_toggle": "Show low",
-        "high": "High",
-        "high_as": "High unit",
-        "high_color": "High color",
-        "line_size": "Line size",
-        "low": "Low",
-        "low_as": "Low unit",
-        "low_color": "Low color",
-        "opacity": "Opacity",
-        "type": "Type",
-        "color": "Color",
-        "low_type": "Low type",
-        "low_opacity": "Low opacity",
-        "high_type": "High type",
-        "high_opacity": "High opacity"
+        "entity": "Entitas",
+        "jinja": "Templat",
+        "standard": "Nilai tetap"
       },
       "watermark_as": {
         "auto": "Otomatis",
@@ -302,49 +322,6 @@
         "round": "Bulat",
         "striped": "Bergaris",
         "triangle": "Segitiga"
-      },
-      "peak_marker": {
-        "window": "Time window",
-        "type": "Type",
-        "opacity": "Opacity",
-        "min_toggle": "Show minimum",
-        "min_type": "Minimum type",
-        "min_opacity": "Minimum opacity",
-        "min_color": "Minimum color",
-        "max_toggle": "Show maximum",
-        "max_type": "Maximum type",
-        "max_opacity": "Maximum opacity",
-        "max_color": "Maximum color",
-        "average_toggle": "Show average",
-        "average_type": "Average type",
-        "average_opacity": "Average opacity",
-        "average_color": "Average color",
-        "color": "Color"
-      },
-      "duration_unit": {
-        "s": "Seconds",
-        "min": "Minutes",
-        "h": "Hours",
-        "d": "Days"
-      },
-      "enabled_disabled_mode": {
-        "disabled": "Disabled",
-        "enabled": "Enabled"
-      },
-      "trend_indicator": {
-        "window_toggle": "Use a time window",
-        "window": "Time window",
-        "basis": "Comparison basis",
-        "threshold": "Dead zone (points)",
-        "colored": "Tint with icon color",
-        "up_color": "Up color",
-        "down_color": "Down color",
-        "flat_color": "Flat color"
-      },
-      "trend_indicator_basis": {
-        "average": "Average",
-        "edge": "Edge",
-        "slope": "Slope"
       }
     },
     "title": {

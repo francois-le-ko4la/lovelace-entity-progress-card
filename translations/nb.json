@@ -33,27 +33,36 @@
   "editor": {
     "field": {
       "action": {
-        "tap": "Atferd ved trykk",
-        "hold": "Atferd ved hold",
         "double_tap": "Atferd ved dobbelttrykk",
-        "icon_tap": "Atferd ved trykk på ikonet",
+        "hold": "Atferd ved hold",
+        "icon_double_tap": "Dobbelttrykkatferd for ikon",
         "icon_hold": "Holdeatferd for ikon",
-        "icon_double_tap": "Dobbelttrykkatferd for ikon"
+        "icon_tap": "Atferd ved trykk på ikonet",
+        "tap": "Atferd ved trykk"
       },
       "action_picker": "Legg til interaksjon",
-      "alert_toggle": "Varsel",
-      "alert_when_above_mode": "Kilde til øvre varsel",
-      "alert_when_below_mode": "Kilde til nedre varsel",
+      "add_entity": "Legg til enhet",
+      "add_zone": "Legg til sone",
+      "alert_when": {
+        "above": "Varsel over",
+        "animation": "Animasjon",
+        "below": "Varsel under",
+        "color": "Varselfarge",
+        "highlight": "Fremheving",
+        "label": "Merkelapp",
+        "above_mode": "Kilde til øvre varsel",
+        "below_mode": "Kilde til nedre varsel",
+        "toggle": "Varsel"
+      },
       "attribute": "Attributt",
-      "badge_color": "Farge på merke",
-      "badge_color_toggle": "Independent color",
-      "badge_icon": "Ikon for merke",
-      "badge_toggle": "Merke",
+      "badge": {
+        "toggle": "Merke",
+        "color_toggle": "Uavhengig merkefarge"
+      },
       "bar_color": "Farge for baren",
       "bar_color_mode": "Fargemodus",
       "bar_effect_mode": "Effekt på baren",
       "bar_group": "Linje",
-      "bar_max_width": "Maks. stolpebredde",
       "bar_max_width_toggle": "Maks. stolpebredde",
       "bar_orientation": "Retning",
       "bar_scale": "Skala",
@@ -61,14 +70,14 @@
       "bar_single_line": "Én linje",
       "bar_size": "Størrelse",
       "bar_stack": "Ekstra enheter",
-      "bar_stack_mode": "Stack mode",
+      "bar_stack_mode": "Stableringsmodus",
       "card_size_toggle": "Kortstørrelse",
       "center_zero": "Null i midten",
       "center_zero_growth_percent": "Vekstprosent",
       "center_zero_value": "Senterverdi",
       "color": "Primærfarge",
       "custom_info": "Egendefinert sekundær info",
-      "custom_theme": "Custom theme zones",
+      "custom_theme": "Tilpassede temasoner",
       "decimal": "desimal",
       "density_toggle": "Kompakt",
       "entity": "Enhet",
@@ -76,43 +85,72 @@
       "force_circular_background_mode": "Sirkulær ikonbakgrunn",
       "frameless": "Uten ramme",
       "height": "Høyde",
-      "height_custom_toggle": "Shrink height (embedded)",
+      "height_custom_toggle": "Automatisk høyde",
       "hide_mode": "Skjul",
       "icon": "Ikon",
       "icon_animation": "Ikonanimasjon",
       "interpolate": "Interpoler farger",
       "layout": "Innholdslayout",
       "marginless": "Uten marg",
+      "mark_color": "Farge",
       "max_value": "Maksimal verdi",
       "max_value_mode": "Kilde til maksimumsverdi",
-      "migrate_config": "Migrate config",
+      "migrate_config": "Migrer konfigurasjon",
       "min_value": "Minste verdi",
       "min_value_mode": "Kilde til minimumsverdi",
       "min_width": "Min. bredde",
-      "multiline": "Multiline",
+      "multiline": "Flerlinjet",
       "name": "Navn",
       "name_info": "Egendefinert navneinfo",
+      "opacity": "Ugjennomsiktighet",
+      "peak_marker": {
+        "min_toggle": "Vis minimum",
+        "max_toggle": "Vis maksimum",
+        "average_toggle": "Vis gjennomsnitt",
+        "toggle": "Toppmarkeringer"
+      },
+      "peak_marker_unsupported": "Toppmarkeringer krever en sensor- eller number-enhet uten attributt-overstyring, som ikke er en timer eller counter — ikke tilgjengelig for denne enheten.",
       "percent": "Prosent",
       "position": "Posisjon",
       "reverse": "Omvendt tidtaker",
       "reverse_secondary_info_row": "Bytt linje og tekst",
       "secondary": "Sekundær informasjon",
       "state_content": "Innhold i tilstand",
-      "status_label_toggle": "Statusmerkelapp",
+      "status_label": {
+        "color_source": "Fargekilde",
+        "position": "Plassering av merkelapp",
+        "toggle": "Statusmerkelapp"
+      },
       "text_shadow": "Legg til tekstskygge",
       "theme": "Tema",
+      "trend_indicator": {
+        "window_toggle": "Bruk et tidsvindu",
+        "basis": "Sammenligningsgrunnlag",
+        "threshold": "Dødsone (poeng)",
+        "colored": "Fargelegg med ikonfarge",
+        "up_color": "Farge opp",
+        "down_color": "Farge ned",
+        "flat_color": "Farge stabil",
+        "toggle": "Trendindikator",
+        "mode": "Modus"
+      },
       "trigger": "Utløser",
+      "type": "Type",
       "unit": "Enhet",
       "unit_spacing": "Avstand",
       "value_compact": "Kompakt verdi (1.2k)",
       "value_sign": "Vis fortegn (+/-)",
-      "watermark_high_mode": "Kilde til øvre markør",
-      "watermark_low_mode": "Kilde til nedre markør",
-      "watermark_toggle": "Markører",
-      "peak_marker_toggle": "Peak markers",
-      "peak_marker_unsupported": "Peak markers need a sensor or number entity, no attribute override, and not a timer or counter — not available for this entity.",
-      "trend_indicator_toggle": "Trend indicator",
-      "trend_indicator_mode": "Mode"
+      "watermark": {
+        "high_toggle": "Vis høy",
+        "low_toggle": "Vis lav",
+        "high": "Høy",
+        "line_size": "Linjetykkelse",
+        "low": "Lav",
+        "low_mode": "Kilde til nedre markør",
+        "high_mode": "Kilde til øvre markør",
+        "toggle": "Markører"
+      },
+      "window": "Tidsvindu"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -131,23 +169,16 @@
     "option": {
       "alert_animation": {
         "blink": "Blink",
-        "ping": "Ping",
+        "ping": "Ring",
         "static": "Statisk"
       },
       "alert_highlight": {
-        "background": "Background",
-        "border": "Border",
+        "background": "Bakgrunn",
+        "border": "Kant",
         "label": "Merkelapp"
       },
-      "alert_when": {
-        "above": "Alert above",
-        "animation": "Animasjon",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight"
-      },
       "bar_color_mode": {
-        "auto": "Auto",
+        "auto": "Automatisk",
         "rainbow": "Regnbue",
         "rainbow_full": "Regnbue (full)",
         "segment": "Segmenter"
@@ -175,20 +206,30 @@
         "top": "Bar øverst"
       },
       "bar_scale": {
-        "linear": "Linear",
-        "log": "Logarithmic"
+        "linear": "Lineær",
+        "log": "Logaritmisk"
       },
       "bar_size": {
         "large": "Stor",
-        "medium": "Medium",
+        "medium": "Middels",
         "small": "Liten",
         "xlarge": "Ekstra stor",
         "xsmall": "Ekstra liten"
       },
       "bar_stack_mode": {
-        "net": "Net",
-        "proportional": "Sum",
-        "stacked": "Stacked"
+        "net": "Netto",
+        "proportional": "Proporsjonal",
+        "stacked": "Stablet"
+      },
+      "duration_unit": {
+        "s": "Sekunder",
+        "min": "Minutter",
+        "h": "Timer",
+        "d": "Dager"
+      },
+      "enabled_disabled_mode": {
+        "disabled": "Deaktivert",
+        "enabled": "Aktivert"
       },
       "force_circular_background_mode": {
         "auto": "Automatisk",
@@ -198,20 +239,20 @@
         "icon": "Ikon",
         "name": "Navn",
         "progress_bar": "Stolpe",
-        "secondary_info": "Info",
+        "secondary_info": "Sekundær info",
         "shape": "Sirkulær bakgrunn for ikonet",
         "unit": "Enhet",
         "value": "Verdi"
       },
       "icon_animation": {
-        "battery_charging": "Battery charging",
-        "bounce": "Bounce",
-        "ping": "Ping",
-        "pulse": "Pulse",
-        "reveal": "Reveal",
-        "shake": "Shake",
-        "spin": "Spin",
-        "washing_machine": "Washing machine"
+        "battery_charging": "Batteri lader",
+        "bounce": "Sprett",
+        "ping": "Ring",
+        "pulse": "Puls",
+        "reveal": "Avslør",
+        "shake": "Rist",
+        "spin": "Roter",
+        "washing_machine": "Vaskemaskin"
       },
       "icon_animation_mode": {
         "auto": "Automatisk",
@@ -222,17 +263,12 @@
         "right": "Høyre"
       },
       "layout": {
-        "horizontal": "Horisontal (standard)",
+        "horizontal": "Horisontal",
         "vertical": "Vertikal"
       },
       "simple_advanced_mode": {
         "advanced": "Avansert",
         "simple": "Enkel"
-      },
-      "status_label": {
-        "color_source": "Fargekilde",
-        "jinja": "Statusmerkelapp",
-        "position": "Plassering av merkelapp"
       },
       "status_label_color_source": {
         "bar": "Fremdriftslinje",
@@ -253,8 +289,13 @@
         "voc": "VOC"
       },
       "theme_mode": {
-        "custom": "Custom",
-        "preset": "Preset"
+        "custom": "Tilpasset",
+        "preset": "Forhåndsinnstilling"
+      },
+      "trend_indicator_basis": {
+        "average": "Gjennomsnitt",
+        "edge": "Ytterpunkt",
+        "slope": "Helning"
       },
       "unit_position": {
         "after": "Etter verdien",
@@ -265,31 +306,10 @@
         "no-space": "Uten mellomrom",
         "space": "Mellomrom"
       },
-      "value_shape": {
-        "attribute": "Attribute"
-      },
       "value_source_mode": {
-        "entity": "Entity",
-        "jinja": "Template",
-        "standard": "Fixed value"
-      },
-      "watermark": {
-        "high_toggle": "Show high",
-        "low_toggle": "Show low",
-        "high": "High",
-        "high_as": "High unit",
-        "high_color": "High color",
-        "line_size": "Line size",
-        "low": "Low",
-        "low_as": "Low unit",
-        "low_color": "Low color",
-        "opacity": "Opacity",
-        "type": "Type",
-        "color": "Color",
-        "low_type": "Low type",
-        "low_opacity": "Low opacity",
-        "high_type": "High type",
-        "high_opacity": "High opacity"
+        "entity": "Enhet",
+        "jinja": "Mal",
+        "standard": "Fast verdi"
       },
       "watermark_as": {
         "auto": "Automatisk",
@@ -302,49 +322,6 @@
         "round": "Rund",
         "striped": "Stripet",
         "triangle": "Trekant"
-      },
-      "peak_marker": {
-        "window": "Time window",
-        "type": "Type",
-        "opacity": "Opacity",
-        "min_toggle": "Show minimum",
-        "min_type": "Minimum type",
-        "min_opacity": "Minimum opacity",
-        "min_color": "Minimum color",
-        "max_toggle": "Show maximum",
-        "max_type": "Maximum type",
-        "max_opacity": "Maximum opacity",
-        "max_color": "Maximum color",
-        "average_toggle": "Show average",
-        "average_type": "Average type",
-        "average_opacity": "Average opacity",
-        "average_color": "Average color",
-        "color": "Color"
-      },
-      "duration_unit": {
-        "s": "Seconds",
-        "min": "Minutes",
-        "h": "Hours",
-        "d": "Days"
-      },
-      "enabled_disabled_mode": {
-        "disabled": "Disabled",
-        "enabled": "Enabled"
-      },
-      "trend_indicator": {
-        "window_toggle": "Use a time window",
-        "window": "Time window",
-        "basis": "Comparison basis",
-        "threshold": "Dead zone (points)",
-        "colored": "Tint with icon color",
-        "up_color": "Up color",
-        "down_color": "Down color",
-        "flat_color": "Flat color"
-      },
-      "trend_indicator_basis": {
-        "average": "Average",
-        "edge": "Edge",
-        "slope": "Slope"
       }
     },
     "title": {

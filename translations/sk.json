@@ -33,27 +33,36 @@
   "editor": {
     "field": {
       "action": {
-        "tap": "Správanie pri klepnutí",
-        "hold": "Správanie pri podržaní",
         "double_tap": "Správanie pri dvojitom ťuknutí",
-        "icon_tap": "Správanie klepnutia na ikonu",
+        "hold": "Správanie pri podržaní",
+        "icon_double_tap": "Správanie dvojitého klepnutia na ikonu",
         "icon_hold": "Správanie pri podržaní ikony",
-        "icon_double_tap": "Správanie dvojitého klepnutia na ikonu"
+        "icon_tap": "Správanie klepnutia na ikonu",
+        "tap": "Správanie pri klepnutí"
       },
       "action_picker": "Pridať interakciu",
-      "alert_toggle": "Upozornenie",
-      "alert_when_above_mode": "Zdroj horného upozornenia",
-      "alert_when_below_mode": "Zdroj dolného upozornenia",
+      "add_entity": "Pridať entitu",
+      "add_zone": "Pridať zónu",
+      "alert_when": {
+        "above": "Upozornenie nad",
+        "animation": "Animácia",
+        "below": "Upozornenie pod",
+        "color": "Farba upozornenia",
+        "highlight": "Zvýraznenie",
+        "label": "Popisok",
+        "above_mode": "Zdroj horného upozornenia",
+        "below_mode": "Zdroj dolného upozornenia",
+        "toggle": "Upozornenie"
+      },
       "attribute": "Atribút",
-      "badge_color": "Farba odznaku",
-      "badge_color_toggle": "Independent color",
-      "badge_icon": "Ikona odznaku",
-      "badge_toggle": "Odznak",
+      "badge": {
+        "toggle": "Odznak",
+        "color_toggle": "Nezávislá farba odznaku"
+      },
       "bar_color": "Farba lišty",
       "bar_color_mode": "Farebný režim",
       "bar_effect_mode": "Efekt lišty",
       "bar_group": "Pruh",
-      "bar_max_width": "Max. šírka pruhu",
       "bar_max_width_toggle": "Max. šírka pruhu",
       "bar_orientation": "Orientácia",
       "bar_scale": "Mierka",
@@ -61,14 +70,14 @@
       "bar_single_line": "Jeden riadok",
       "bar_size": "Veľkosť",
       "bar_stack": "Ďalšie entity",
-      "bar_stack_mode": "Stack mode",
+      "bar_stack_mode": "Režim skladania",
       "card_size_toggle": "Veľkosť karty",
       "center_zero": "Nula v strede",
       "center_zero_growth_percent": "Percento rastu",
       "center_zero_value": "Hodnota stredu",
       "color": "Farba ikony",
       "custom_info": "Vlastné sekundárne info",
-      "custom_theme": "Custom theme zones",
+      "custom_theme": "Zóny vlastnej témy",
       "decimal": "Desatinné",
       "density_toggle": "Kompaktné",
       "entity": "Entita",
@@ -76,43 +85,72 @@
       "force_circular_background_mode": "Kruhové pozadie ikony",
       "frameless": "Bez rámu",
       "height": "Výška",
-      "height_custom_toggle": "Shrink height (embedded)",
+      "height_custom_toggle": "Automatická výška",
       "hide_mode": "Skryť",
       "icon": "Ikona",
       "icon_animation": "Animácia ikony",
       "interpolate": "Interpolácia farieb",
       "layout": "Rozloženie obsahu",
       "marginless": "Bez okraja",
+      "mark_color": "Farba",
       "max_value": "Maximálna hodnota",
       "max_value_mode": "Zdroj maximálnej hodnoty",
-      "migrate_config": "Migrate config",
+      "migrate_config": "Migrovať konfiguráciu",
       "min_value": "Minimálna hodnota",
       "min_value_mode": "Zdroj minimálnej hodnoty",
       "min_width": "Min. šírka",
-      "multiline": "Multiline",
+      "multiline": "Viacriadkové",
       "name": "Názov",
       "name_info": "Vlastné info názvu",
+      "opacity": "Krytie",
+      "peak_marker": {
+        "min_toggle": "Zobraziť minimum",
+        "max_toggle": "Zobraziť maximum",
+        "average_toggle": "Zobraziť priemer",
+        "toggle": "Značky vrcholov"
+      },
+      "peak_marker_unsupported": "Značky vrcholov vyžadujú entitu sensor alebo number bez prepísania atribútu, ktorá nie je timer ani counter — pre túto entitu nie je k dispozícii.",
       "percent": "Percento",
       "position": "Pozícia",
       "reverse": "Obrátený časovač",
       "reverse_secondary_info_row": "Vymeňte lištu a text",
       "secondary": "Sekundárna informácia",
       "state_content": "Obsah stavu",
-      "status_label_toggle": "Popisok stavu",
+      "status_label": {
+        "color_source": "Zdroj farby",
+        "position": "Pozícia popisku",
+        "toggle": "Popisok stavu"
+      },
       "text_shadow": "Pridať tieň textu",
       "theme": "Téma",
+      "trend_indicator": {
+        "window_toggle": "Použiť časové okno",
+        "basis": "Základ porovnania",
+        "threshold": "Necitlivá zóna (body)",
+        "colored": "Zafarbiť farbou ikony",
+        "up_color": "Farba nárastu",
+        "down_color": "Farba poklesu",
+        "flat_color": "Farba stability",
+        "toggle": "Ukazovateľ trendu",
+        "mode": "Režim"
+      },
       "trigger": "Spúšťač",
+      "type": "Typ",
       "unit": "Jednotka",
       "unit_spacing": "Medzery",
       "value_compact": "Kompaktná hodnota (1.2k)",
       "value_sign": "Zobraziť znamienko (+/-)",
-      "watermark_high_mode": "Zdroj hornej značky",
-      "watermark_low_mode": "Zdroj dolnej značky",
-      "watermark_toggle": "Značky",
-      "peak_marker_toggle": "Peak markers",
-      "peak_marker_unsupported": "Peak markers need a sensor or number entity, no attribute override, and not a timer or counter — not available for this entity.",
-      "trend_indicator_toggle": "Trend indicator",
-      "trend_indicator_mode": "Mode"
+      "watermark": {
+        "high_toggle": "Zobraziť horný",
+        "low_toggle": "Zobraziť dolný",
+        "high": "Horný",
+        "line_size": "Hrúbka čiary",
+        "low": "Dolný",
+        "low_mode": "Zdroj dolnej značky",
+        "high_mode": "Zdroj hornej značky",
+        "toggle": "Značky"
+      },
+      "window": "Časové okno"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -131,20 +169,13 @@
     "option": {
       "alert_animation": {
         "blink": "Blikanie",
-        "ping": "Ping",
+        "ping": "Prstenec",
         "static": "Statické"
       },
       "alert_highlight": {
-        "background": "Background",
-        "border": "Border",
+        "background": "Pozadie",
+        "border": "Okraj",
         "label": "Popisok"
-      },
-      "alert_when": {
-        "above": "Alert above",
-        "animation": "Animácia",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight"
       },
       "bar_color_mode": {
         "auto": "Automaticky",
@@ -175,8 +206,8 @@
         "top": "Pruh hore"
       },
       "bar_scale": {
-        "linear": "Linear",
-        "log": "Logarithmic"
+        "linear": "Lineárna",
+        "log": "Logaritmická"
       },
       "bar_size": {
         "large": "Veľká",
@@ -186,9 +217,19 @@
         "xsmall": "Veľmi malé"
       },
       "bar_stack_mode": {
-        "net": "Net",
-        "proportional": "Sum",
-        "stacked": "Stacked"
+        "net": "Čistý",
+        "proportional": "Proporcionálny",
+        "stacked": "Skladaný"
+      },
+      "duration_unit": {
+        "s": "Sekundy",
+        "min": "Minúty",
+        "h": "Hodiny",
+        "d": "Dni"
+      },
+      "enabled_disabled_mode": {
+        "disabled": "Vypnuté",
+        "enabled": "Zapnuté"
       },
       "force_circular_background_mode": {
         "auto": "Automaticky",
@@ -198,20 +239,20 @@
         "icon": "Ikona",
         "name": "Názov",
         "progress_bar": "Lišta",
-        "secondary_info": "Info",
+        "secondary_info": "Sekundárne info",
         "shape": "Kruhové pozadie ikony",
         "unit": "Jednotka",
         "value": "Hodnota"
       },
       "icon_animation": {
-        "battery_charging": "Battery charging",
-        "bounce": "Bounce",
-        "ping": "Ping",
-        "pulse": "Pulse",
-        "reveal": "Reveal",
-        "shake": "Shake",
-        "spin": "Spin",
-        "washing_machine": "Washing machine"
+        "battery_charging": "Batéria sa nabíja",
+        "bounce": "Poskakovanie",
+        "ping": "Prstenec",
+        "pulse": "Pulzovanie",
+        "reveal": "Odhalenie",
+        "shake": "Trasenie",
+        "spin": "Otáčanie",
+        "washing_machine": "Práčka"
       },
       "icon_animation_mode": {
         "auto": "Automaticky",
@@ -222,17 +263,12 @@
         "right": "Vpravo"
       },
       "layout": {
-        "horizontal": "Horizontálne (predvolené)",
+        "horizontal": "Horizontálne",
         "vertical": "Vertikálne"
       },
       "simple_advanced_mode": {
         "advanced": "Pokročilé",
         "simple": "Jednoduché"
-      },
-      "status_label": {
-        "color_source": "Zdroj farby",
-        "jinja": "Popisok stavu",
-        "position": "Pozícia popisku"
       },
       "status_label_color_source": {
         "bar": "Ukazovateľ priebehu",
@@ -253,8 +289,13 @@
         "voc": "VOC"
       },
       "theme_mode": {
-        "custom": "Custom",
-        "preset": "Preset"
+        "custom": "Vlastné",
+        "preset": "Predvoľba"
+      },
+      "trend_indicator_basis": {
+        "average": "Priemer",
+        "edge": "Okraj",
+        "slope": "Sklon"
       },
       "unit_position": {
         "after": "Za hodnotou",
@@ -265,31 +306,10 @@
         "no-space": "Bez medzery",
         "space": "Medzera"
       },
-      "value_shape": {
-        "attribute": "Attribute"
-      },
       "value_source_mode": {
-        "entity": "Entity",
-        "jinja": "Template",
-        "standard": "Fixed value"
-      },
-      "watermark": {
-        "high_toggle": "Show high",
-        "low_toggle": "Show low",
-        "high": "High",
-        "high_as": "High unit",
-        "high_color": "High color",
-        "line_size": "Line size",
-        "low": "Low",
-        "low_as": "Low unit",
-        "low_color": "Low color",
-        "opacity": "Opacity",
-        "type": "Type",
-        "color": "Color",
-        "low_type": "Low type",
-        "low_opacity": "Low opacity",
-        "high_type": "High type",
-        "high_opacity": "High opacity"
+        "entity": "Entita",
+        "jinja": "Šablóna",
+        "standard": "Pevná hodnota"
       },
       "watermark_as": {
         "auto": "Automaticky",
@@ -302,49 +322,6 @@
         "round": "Okrúhle",
         "striped": "Pruhované",
         "triangle": "Trojuholník"
-      },
-      "peak_marker": {
-        "window": "Time window",
-        "type": "Type",
-        "opacity": "Opacity",
-        "min_toggle": "Show minimum",
-        "min_type": "Minimum type",
-        "min_opacity": "Minimum opacity",
-        "min_color": "Minimum color",
-        "max_toggle": "Show maximum",
-        "max_type": "Maximum type",
-        "max_opacity": "Maximum opacity",
-        "max_color": "Maximum color",
-        "average_toggle": "Show average",
-        "average_type": "Average type",
-        "average_opacity": "Average opacity",
-        "average_color": "Average color",
-        "color": "Color"
-      },
-      "duration_unit": {
-        "s": "Seconds",
-        "min": "Minutes",
-        "h": "Hours",
-        "d": "Days"
-      },
-      "enabled_disabled_mode": {
-        "disabled": "Disabled",
-        "enabled": "Enabled"
-      },
-      "trend_indicator": {
-        "window_toggle": "Use a time window",
-        "window": "Time window",
-        "basis": "Comparison basis",
-        "threshold": "Dead zone (points)",
-        "colored": "Tint with icon color",
-        "up_color": "Up color",
-        "down_color": "Down color",
-        "flat_color": "Flat color"
-      },
-      "trend_indicator_basis": {
-        "average": "Average",
-        "edge": "Edge",
-        "slope": "Slope"
       }
     },
     "title": {

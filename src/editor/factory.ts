@@ -165,7 +165,7 @@ const valueField = (
     [`${key}.attribute`]: EditorFieldsType.select(`${key}.attribute`, {
       type: attrType,
       selectorOf: entityPath,
-      labelKey: ['value_shape', 'attribute'],
+      labelKey: 'attribute',
       showIf: (c: LovelaceConfig) => is.plainObject(c[key]) && is.nonEmptyString(c[key].entity),
     }),
     [`${key}.jinja`]: EditorFieldsType.tpl(`${key}.jinja`, {
@@ -189,7 +189,9 @@ const nestedValueField = (
   nestedUnder?: string,
   // eslint-disable-next-line max-params -- 4 required + 2 defaulted trailing.
 ) => {
-  const modeType = `${parentKey}_${key}_mode`;
+  // Dot form: slots this virtual field's own translation next to its sibling
+  // low_toggle/above, same parentKey.key group - not an untied flat key.
+  const modeType = `${parentKey}.${key}_mode`;
   const attrType = `${toCamel(parentKey)}${key.charAt(0).toUpperCase() + key.slice(1)}Attribute`;
   const entityFieldName = `${parentKey}.${key}_entity`;
   // readValue/writeValue: with nestedUnder (watermark.low/.high - the value
@@ -251,7 +253,7 @@ const nestedValueField = (
       type: attrType,
       virtual: true,
       selectorOf: entityPath,
-      labelKey: ['value_shape', 'attribute'],
+      labelKey: 'attribute',
       showIf: (c: LovelaceConfig) =>
         isEnabled(c) && ent(c) && is.nonEmptyString((readValue(c) as { entity?: string })?.entity),
       resolveVirtual: (c: LovelaceConfig) => (readValue(c) as { attribute?: string } | undefined)?.attribute ?? '',
@@ -290,14 +292,18 @@ const watermarkEffective = (config: LovelaceConfig, side: 'low' | 'high', field:
 
 type CascadeField = 'type' | 'opacity' | 'color';
 
-// How to read a key's own override for a field, and how to write one back -
-// the only real difference between watermark's low/high sides and
-// peak_marker's min/max/average marks below.
+// Everything that differs between watermark's low/high sides and peak_marker's
+// min/max/average marks - the field machinery below is shared verbatim.
 type OverrideCascadeAdapter<K extends string> = {
   parentKey: string;
   keys: readonly K[];
   extractOwn: (rawMark: unknown, field: CascadeField) => unknown;
   rewrap: (key: K, rawMark: unknown, patch: Record<string, unknown>) => unknown;
+  // A key's value for `field` once its own override and the parent's global
+  // value have been resolved in that order.
+  effective: (config: LovelaceConfig, key: K, field: CascadeField) => unknown;
+  defaults: { type: string; opacity: number };
+  selectType: string;
 };
 
 // Once every key explicitly overrides `field` away from the shared global
@@ -335,6 +341,121 @@ const factorizeGlobalOverride = <K extends string>(
   return { ...config, [parentKey]: { ...config[parentKey], ...patched, [field]: shared } };
 };
 
+// The type/opacity/color trio every mark can override, cascading to the
+// parent's own global value - identical for watermark and peak_marker.
+const overrideCascadeFields = <K extends string>(
+  adapter: OverrideCascadeAdapter<K>,
+  key: K,
+  isEnabled: (c: LovelaceConfig) => boolean,
+) => {
+  const build = (
+    field: CascadeField,
+    fieldDef: (name: string, opts: Record<string, unknown>) => Record<string, unknown>,
+    fieldOpts: Record<string, unknown>,
+  ) =>
+    fieldDef(`${adapter.parentKey}.${key}_${field}`, {
+      ...fieldOpts,
+      virtual: true,
+      showIf: isEnabled,
+      width: availableSpace(),
+      // The same generic word for every mark (Type/Opacity/Color), like the
+      // parent-level trio: which mark it is shows in the group, not the label.
+      labelKey: field === 'color' ? 'mark_color' : field,
+      // Only shows once this mark's own override AND the parent's own global
+      // type/opacity are both unset - the same fallback the runtime applies.
+      ...(field !== 'color' && { placeholder: () => String(adapter.defaults[field]) }),
+      resolveVirtual: (c: LovelaceConfig) => adapter.effective(c, key, field),
+      onVirtualChange: (value: unknown, config: LovelaceConfig) => {
+        const patched = {
+          ...config,
+          [adapter.parentKey]: {
+            ...config[adapter.parentKey],
+            [key]: adapter.rewrap(key, config[adapter.parentKey]?.[key], { [field]: value }),
+          },
+        };
+        return pruneGlobalOverride(adapter, factorizeGlobalOverride(adapter, patched, field), field);
+      },
+    });
+  return {
+    [`${adapter.parentKey}.${key}_type`]: build('type', EditorFieldsType.select, { type: adapter.selectType }),
+    [`${adapter.parentKey}.${key}_opacity`]: build('opacity', EditorFieldsType.decimal, { type: 'opacity' }),
+    [`${adapter.parentKey}.${key}_color`]: build(
+      'color',
+      (name, opts) => EditorFieldsType.templateOrType(name, false, 'color', opts),
+      {},
+    ),
+  };
+};
+
+// Per-mark show/hide toggle: the hidden value is parked in an ephemeral draft
+// and restored on the way back, same as every other draft in this file.
+const markToggleField = <K extends string>(
+  adapter: OverrideCascadeAdapter<K>,
+  key: K,
+  gate: (c: LovelaceConfig) => boolean,
+  isShown: (c: LovelaceConfig) => boolean,
+  shownValue: unknown,
+) => {
+  const { parentKey } = adapter;
+  const toggleKey = `${parentKey}.${key}_toggle`;
+  const draftKey = `_${parentKey}_${key}_hidden_draft`;
+  return {
+    [toggleKey]: EditorFieldsType.toggle(toggleKey, {
+      virtual: true,
+      showIf: gate,
+      resolveVirtual: isShown,
+      onVirtualChange: (value: boolean, config: LovelaceConfig) => ({
+        ...config,
+        [parentKey]: { ...config[parentKey], [key]: value ? (config[draftKey] ?? shownValue) : false },
+        [draftKey]: value ? undefined : config[parentKey]?.[key],
+      }),
+    }),
+  };
+};
+
+// The parent-level type/opacity/color each marker family exposes above its own
+// marks - the value every mark's own override cascades from.
+const globalMarkFields = <K extends string>(
+  adapter: OverrideCascadeAdapter<K>,
+  showIf: (c: LovelaceConfig) => boolean,
+) => {
+  const { parentKey, defaults, selectType } = adapter;
+  return {
+    [`${parentKey}.type`]: EditorFieldsType.select(`${parentKey}.type`, {
+      type: selectType,
+      labelKey: 'type',
+      showIf,
+      width: availableSpace(),
+      placeholder: () => defaults.type,
+    }),
+    [`${parentKey}.opacity`]: EditorFieldsType.decimal(`${parentKey}.opacity`, {
+      type: 'opacity',
+      labelKey: 'opacity',
+      showIf,
+      width: availableSpace(),
+      placeholder: () => String(defaults.opacity),
+    }),
+    [`${parentKey}.color`]: EditorFieldsType.templateOrType(`${parentKey}.color`, false, 'color', {
+      labelKey: 'mark_color',
+      showIf,
+      width: availableSpace(),
+    }),
+  };
+};
+
+// Master on/off for an option parked in an ephemeral `_<key>_draft` while off.
+// `initial` is a factory: each card gets its own object, never a shared one.
+const draftToggle =
+  (key: string, initial: () => unknown) =>
+  (value: boolean, config: LovelaceConfig): LovelaceConfig => {
+    const draftKey = `_${key}_draft`;
+    return {
+      ...config,
+      [key]: value ? config[draftKey] || initial() : undefined,
+      [draftKey]: value ? undefined : (config[key] ?? config[draftKey]),
+    };
+  };
+
 // Drops a patched key when undefined (rewrapPeakMark's precedent), and wraps
 // a bare `true` mark as `{ value: defaultVal, ...patch }` - `true` itself
 // isn't a valid ValueConfig once nested under `value`.
@@ -358,6 +479,9 @@ const WATERMARK_CASCADE: OverrideCascadeAdapter<(typeof WM_SIDES)[number]> = {
     return isMarkOverride(mark) ? mark[field] : undefined;
   },
   rewrap: (side, rawMark, patch) => rewrapMark(rawMark, patch, WM_DEFAULTS[side]),
+  effective: watermarkEffective,
+  defaults: SCHEMA_DEFAULTS.watermark,
+  selectType: 'watermark_type',
 };
 
 // watermark.low/high are now types.watermarkMark: false (hidden) | value |
@@ -368,52 +492,16 @@ const wmSide = (side: 'low' | 'high', defaultVal: number) => {
   const entityPath = side === 'low' ? WATERMARK_LOW_ENTITY_PATH : WATERMARK_HIGH_ENTITY_PATH;
   const isShown = (c: LovelaceConfig) => c.watermark?.[side] !== false;
   const isEnabled = (c: LovelaceConfig) => Boolean(c.watermark) && isShown(c);
-  const toggleKey = `watermark.${side}_toggle`;
-  const hiddenDraftKey = `_watermark_${side}_hidden_draft`;
   const asOf = (mark: unknown) =>
     isMarkOverride(mark as WatermarkMark) ? ((mark as { as?: string }).as ?? 'auto') : 'auto';
-  const overrideField = (
-    field: 'type' | 'opacity' | 'color',
-    fieldDef: (name: string, opts: Record<string, unknown>) => Record<string, unknown>,
-    fieldOpts: Record<string, unknown>,
-  ) =>
-    fieldDef(`watermark.${side}_${field}`, {
-      ...fieldOpts,
-      virtual: true,
-      showIf: isEnabled,
-      width: availableSpace(),
-      // Only shows once both this side's own override AND the global
-      // watermark.type/.opacity are unset - same ultimate fallback the
-      // global field itself already hints at.
-      ...(field !== 'color' && { placeholder: () => String(SCHEMA_DEFAULTS.watermark[field]) }),
-      resolveVirtual: (c: LovelaceConfig) => watermarkEffective(c, side, field),
-      onVirtualChange: (value: unknown, config: LovelaceConfig) => {
-        const patched = {
-          ...config,
-          watermark: {
-            ...config.watermark,
-            [side]: rewrapMark(config.watermark?.[side], { [field]: value }, defaultVal),
-          },
-        };
-        const factorized = factorizeGlobalOverride(WATERMARK_CASCADE, patched, field);
-        return pruneGlobalOverride(WATERMARK_CASCADE, factorized, field);
-      },
-    });
   return {
-    [toggleKey]: EditorFieldsType.toggle(toggleKey, {
-      virtual: true,
-      showIf: (c: LovelaceConfig) => Boolean(c.watermark),
-      resolveVirtual: isShown,
-      onVirtualChange: (value: boolean, config: LovelaceConfig) => ({
-        ...config,
-        watermark: { ...config.watermark, [side]: value ? (config[hiddenDraftKey] ?? defaultVal) : false },
-        [hiddenDraftKey]: value ? undefined : config.watermark?.[side],
-      }),
-    }),
+    ...markToggleField(WATERMARK_CASCADE, side, (c: LovelaceConfig) => Boolean(c.watermark), isShown, defaultVal),
     ...nestedValueField('watermark', side, entityPath, isEnabled, defaultVal, 'value'),
+    // No peak_marker equivalent: `as` is watermark's own (old low_as/high_as).
     [`watermark.${side}_as`]: EditorFieldsType.select(`watermark.${side}_as`, {
       type: 'watermark_as',
       virtual: true,
+      labelKey: 'unit',
       showIf: isEnabled,
       width: availableSpace(),
       resolveVirtual: (c: LovelaceConfig) => asOf(c.watermark?.[side]),
@@ -422,13 +510,7 @@ const wmSide = (side: 'low' | 'high', defaultVal: number) => {
         watermark: { ...config.watermark, [side]: rewrapMark(config.watermark?.[side], { as: value }, defaultVal) },
       }),
     }),
-    [`watermark.${side}_type`]: overrideField('type', EditorFieldsType.select, { type: 'watermark_type' }),
-    [`watermark.${side}_opacity`]: overrideField('opacity', EditorFieldsType.decimal, { type: 'opacity' }),
-    [`watermark.${side}_color`]: overrideField(
-      'color',
-      (name, opts) => EditorFieldsType.templateOrType(name, false, 'color', opts),
-      {},
-    ),
+    ...overrideCascadeFields(WATERMARK_CASCADE, side, isEnabled),
   };
 };
 
@@ -471,6 +553,9 @@ const PEAK_MARKER_CASCADE: OverrideCascadeAdapter<(typeof PEAK_MARKS)[number]> =
   keys: PEAK_MARKS,
   extractOwn: (rawMark, field) => peakMarkObj(rawMark)[field],
   rewrap: (_mark, rawMark, patch) => rewrapPeakMark(rawMark, patch),
+  effective: peakMarkEffective,
+  defaults: SCHEMA_DEFAULTS.peakMarker,
+  selectType: 'peak_marker_type',
 };
 
 const peakMark = (mark: 'min' | 'max' | 'average') => {
@@ -479,52 +564,10 @@ const peakMark = (mark: 'min' | 'max' | 'average') => {
     return raw !== undefined && raw !== false;
   };
   const isEnabled = (c: LovelaceConfig) => peakMarkerEligible(c) && Boolean(c.peak_marker) && isShown(c);
-  const toggleKey = `peak_marker.${mark}_toggle`;
-  const hiddenDraftKey = `_peak_marker_${mark}_hidden_draft`;
-  const overrideField = (
-    field: 'type' | 'opacity' | 'color',
-    fieldDef: (name: string, opts: Record<string, unknown>) => Record<string, unknown>,
-    fieldOpts: Record<string, unknown>,
-  ) =>
-    fieldDef(`peak_marker.${mark}_${field}`, {
-      ...fieldOpts,
-      virtual: true,
-      showIf: isEnabled,
-      width: availableSpace(),
-      // Same reasoning as wmSide's own overrideField: only shows once this
-      // mark's own override AND peak_marker.type/.opacity are both unset.
-      ...(field !== 'color' && { placeholder: () => String(SCHEMA_DEFAULTS.peakMarker[field]) }),
-      resolveVirtual: (c: LovelaceConfig) => peakMarkEffective(c, mark, field),
-      onVirtualChange: (value: unknown, config: LovelaceConfig) => {
-        const patched = {
-          ...config,
-          peak_marker: {
-            ...config.peak_marker,
-            [mark]: rewrapPeakMark(config.peak_marker?.[mark], { [field]: value }),
-          },
-        };
-        const factorized = factorizeGlobalOverride(PEAK_MARKER_CASCADE, patched, field);
-        return pruneGlobalOverride(PEAK_MARKER_CASCADE, factorized, field);
-      },
-    });
+  const gate = (c: LovelaceConfig) => peakMarkerEligible(c) && Boolean(c.peak_marker);
   return {
-    [toggleKey]: EditorFieldsType.toggle(toggleKey, {
-      virtual: true,
-      showIf: (c: LovelaceConfig) => peakMarkerEligible(c) && Boolean(c.peak_marker),
-      resolveVirtual: isShown,
-      onVirtualChange: (value: boolean, config: LovelaceConfig) => ({
-        ...config,
-        peak_marker: { ...config.peak_marker, [mark]: value ? (config[hiddenDraftKey] ?? true) : false },
-        [hiddenDraftKey]: value ? undefined : config.peak_marker?.[mark],
-      }),
-    }),
-    [`peak_marker.${mark}_type`]: overrideField('type', EditorFieldsType.select, { type: 'peak_marker_type' }),
-    [`peak_marker.${mark}_opacity`]: overrideField('opacity', EditorFieldsType.decimal, { type: 'opacity' }),
-    [`peak_marker.${mark}_color`]: overrideField(
-      'color',
-      (name, opts) => EditorFieldsType.templateOrType(name, false, 'color', opts),
-      {},
-    ),
+    ...markToggleField(PEAK_MARKER_CASCADE, mark, gate, isShown, true),
+    ...overrideCascadeFields(PEAK_MARKER_CASCADE, mark, isEnabled),
   };
 };
 
@@ -541,6 +584,7 @@ const durationFields = (parentKey: string, key: string, showIf: (c: LovelaceConf
       name: fullKey,
       type: (c: LovelaceConfig) => `duration:${parsed(c).unit}`,
       virtual: true,
+      labelKey: 'window',
       width: 'calc(100% - 106px)',
       showIf,
       resolveVirtual: (c: LovelaceConfig) => parsed(c).value,
@@ -584,13 +628,9 @@ const alertField = (side: 'above' | 'below') => {
 // Shared master on/off toggle - same draft precedent as status_label_toggle.
 const alertToggleField = () => ({
   ...enabledToggleField(
-    'alert_toggle',
+    'alert_when.toggle',
     (c) => Boolean(c.alert_when),
-    (value, config) => ({
-      ...config,
-      alert_when: value ? config._alert_when_draft || {} : undefined,
-      _alert_when_draft: value ? undefined : (config.alert_when ?? config._alert_when_draft),
-    }),
+    draftToggle('alert_when', () => ({})),
   ),
 });
 
@@ -1021,6 +1061,9 @@ const EditorFactory = {
       type: 'text',
       virtual: true,
       noLabel,
+      // Reuses the slider's own label: a `<key>_custom` translation never
+      // existed, so this rendered unlabelled.
+      labelKey: key,
       showIf: (c: LovelaceConfig) => parsed(c).custom && !isAutoToggled(c) && gate(c),
       resolveVirtual: (c: LovelaceConfig) => (typeof c[key] === 'string' ? c[key] : ''),
       onVirtualChange: (value: string, config: LovelaceConfig) => ({ ...config, [key]: value || undefined }),
@@ -1230,11 +1273,7 @@ const EditorFactory = {
         virtual: true,
         showIf: barMaxWidthAllowed,
         resolveVirtual: (c: LovelaceConfig) => Boolean(c.bar_max_width),
-        onVirtualChange: (value: boolean, config: LovelaceConfig) => ({
-          ...config,
-          bar_max_width: value ? config._bar_max_width_draft || '300px' : undefined,
-          _bar_max_width_draft: value ? undefined : (config.bar_max_width ?? config._bar_max_width_draft),
-        }),
+        onVirtualChange: draftToggle('bar_max_width', () => '300px'),
       }),
       // The toggle above carries the "Bar max width" label, so the slider is
       // noLabel. Same length component as min_width/height, locked to px (a
@@ -1256,34 +1295,13 @@ const EditorFactory = {
       Boolean(c.watermark) && (extra ? extra(c) : true);
     return {
       ...enabledToggleField(
-        'watermark_toggle',
+        'watermark.toggle',
         (c) => Boolean(c.watermark),
-        (value, config) => ({
-          ...config,
-          watermark: value ? config._watermark_draft || {} : undefined,
-          _watermark_draft: value ? undefined : (config.watermark ?? config._watermark_draft),
-        }),
+        draftToggle('watermark', () => ({})),
       ),
-      // type/opacity have no schema default (see schema.ts's watermarkSchema)
-      // - genuinely absent, so the field shows SCHEMA_DEFAULTS.watermark as a
-      // greyed placeholder (same mechanism as unit/decimal) instead of a
-      // live value nothing reads.
-      'watermark.type': EditorFieldsType.select('watermark.type', {
-        type: 'watermark_type',
-        showIf: wm(),
-        width: availableSpace(),
-        placeholder: () => SCHEMA_DEFAULTS.watermark.type,
-      }),
-      'watermark.opacity': EditorFieldsType.decimal('watermark.opacity', {
-        type: 'opacity',
-        showIf: wm(),
-        width: availableSpace(),
-        placeholder: () => String(SCHEMA_DEFAULTS.watermark.opacity),
-      }),
-      'watermark.color': EditorFieldsType.templateOrType('watermark.color', false, 'color', {
-        showIf: wm(),
-        width: availableSpace(),
-      }),
+      // type/opacity have no schema default (see schema.ts's watermarkSchema) -
+      // genuinely absent, so they show SCHEMA_DEFAULTS as a greyed placeholder.
+      ...globalMarkFields(WATERMARK_CASCADE, wm()),
       // ── LOW / HIGH groups (generated by wmSide) ────────────────────
       ...wmSide('low', 20),
       ...wmSide('high', 80),
@@ -1313,32 +1331,13 @@ const EditorFactory = {
         showIf: (c: LovelaceConfig) => is.nonEmptyString(c.entity) && !peakMarkerEligible(c),
       }),
       ...enabledToggleField(
-        'peak_marker_toggle',
+        'peak_marker.toggle',
         (c) => Boolean(c.peak_marker),
-        (value, config) => ({
-          ...config,
-          peak_marker: value ? (config._peak_marker_draft ?? { window: SCHEMA_DEFAULTS.peakMarker.window }) : undefined,
-          _peak_marker_draft: value ? undefined : (config.peak_marker ?? config._peak_marker_draft),
-        }),
+        draftToggle('peak_marker', () => ({ window: SCHEMA_DEFAULTS.peakMarker.window })),
         { showIf: peakMarkerEligible },
       ),
       ...durationFields('peak_marker', 'window', showIf),
-      'peak_marker.type': EditorFieldsType.select('peak_marker.type', {
-        type: 'peak_marker_type',
-        showIf,
-        width: availableSpace(),
-        placeholder: () => SCHEMA_DEFAULTS.peakMarker.type,
-      }),
-      'peak_marker.opacity': EditorFieldsType.decimal('peak_marker.opacity', {
-        type: 'opacity',
-        showIf,
-        width: availableSpace(),
-        placeholder: () => String(SCHEMA_DEFAULTS.peakMarker.opacity),
-      }),
-      'peak_marker.color': EditorFieldsType.templateOrType('peak_marker.color', false, 'color', {
-        showIf,
-        width: availableSpace(),
-      }),
+      ...globalMarkFields(PEAK_MARKER_CASCADE, showIf),
       ...peakMark('min'),
       ...peakMark('max'),
       ...peakMark('average'),
@@ -1354,14 +1353,14 @@ const EditorFactory = {
     const on = (c: LovelaceConfig) => Boolean(c.trend_indicator);
     const advanced = (c: LovelaceConfig) => is.plainObject(c.trend_indicator);
     return {
-      ...enabledToggleField('trend_indicator_toggle', on, (value, config) => ({
-        ...config,
-        trend_indicator: value ? (config._trend_indicator_draft ?? true) : undefined,
-        _trend_indicator_draft: value ? undefined : (config.trend_indicator ?? config._trend_indicator_draft),
-      })),
-      trend_indicator_mode: {
-        name: 'trend_indicator_mode',
-        type: 'trend_indicator_mode',
+      ...enabledToggleField(
+        'trend_indicator.toggle',
+        on,
+        draftToggle('trend_indicator', () => true),
+      ),
+      'trend_indicator.mode': {
+        name: 'trend_indicator.mode',
+        type: 'trend_indicator.mode',
         virtual: true,
         showIf: on,
         resolveVirtual: (c: LovelaceConfig) => (advanced(c) ? 'advanced' : 'simple'),
@@ -1436,31 +1435,27 @@ const EditorFactory = {
           // Ephemeral drafts - see valueField's own _<key>_jinja_draft
           // precedent. badge_color_toggle below shares _badge_color_draft:
           // whichever path last cleared badge_color, the same slot restores it.
+          // The one master toggle owning two keys - badge_color has no default
+          // of its own, so it only ever comes back from its draft.
           ...enabledToggleField(
-            'badge_toggle',
+            'badge.toggle',
             (c) => Boolean(c.badge_icon) || Boolean(c.badge_color),
-            (value, config) => ({
-              ...config,
-              badge_icon: value ? config._badge_icon_draft || '{{ }}' : undefined,
-              badge_color: value ? config._badge_color_draft : undefined,
-              _badge_icon_draft: value ? undefined : (config.badge_icon ?? config._badge_icon_draft),
-              _badge_color_draft: value ? undefined : (config.badge_color ?? config._badge_color_draft),
-            }),
+            (value, config) =>
+              draftToggle('badge_color', () => undefined)(
+                value,
+                draftToggle('badge_icon', () => '{{ }}')(value, config),
+              ),
           ),
           badge_icon: EditorFieldsType.tpl('badge_icon', {
             noLabel: true,
             helper: true,
             showIf: (c: LovelaceConfig) => Boolean(c.badge_icon) || Boolean(c.badge_color),
           }),
-          badge_color_toggle: EditorFieldsType.toggle('badge_color_toggle', {
+          'badge.color_toggle': EditorFieldsType.toggle('badge.color_toggle', {
             virtual: true,
             showIf: (c: LovelaceConfig) => Boolean(c.badge_icon) || Boolean(c.badge_color),
             resolveVirtual: (c: LovelaceConfig) => Boolean(c.badge_color),
-            onVirtualChange: (value: boolean, config: LovelaceConfig) => ({
-              ...config,
-              badge_color: value ? config._badge_color_draft || '{{ }}' : undefined,
-              _badge_color_draft: value ? undefined : (config.badge_color ?? config._badge_color_draft),
-            }),
+            onVirtualChange: draftToggle('badge_color', () => '{{ }}'),
           }),
           badge_color: EditorFieldsType.tpl('badge_color', {
             noLabel: true,
@@ -1877,13 +1872,9 @@ const EditorFactory = {
             // Ephemeral - the whole object (jinja/position/color_source), not
             // just jinja, so re-enabling restores all three.
             ...enabledToggleField(
-              'status_label_toggle',
+              'status_label.toggle',
               (c) => Boolean(c.status_label),
-              (value, config) => ({
-                ...config,
-                status_label: value ? config._status_label_draft || {} : undefined,
-                _status_label_draft: value ? undefined : (config.status_label ?? config._status_label_draft),
-              }),
+              draftToggle('status_label', () => ({})),
             ),
             // Virtual: status_label can be the bare-string shorthand (see
             // statusLabelObj/rewrapStatusLabel, schema.ts) - the generic

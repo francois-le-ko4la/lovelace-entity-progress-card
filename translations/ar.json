@@ -33,27 +33,36 @@
   "editor": {
     "field": {
       "action": {
-        "tap": "سلوك النقر",
-        "hold": "سلوك النقر المطول",
         "double_tap": "سلوك النقر المزدوج",
-        "icon_tap": "سلوك النقر على الأيقونة",
+        "hold": "سلوك النقر المطول",
+        "icon_double_tap": "سلوك النقر المزدوج للأيقونة",
         "icon_hold": "سلوك النقر المطول للأيقونة",
-        "icon_double_tap": "سلوك النقر المزدوج للأيقونة"
+        "icon_tap": "سلوك النقر على الأيقونة",
+        "tap": "سلوك النقر"
       },
       "action_picker": "إضافة تفاعل",
-      "alert_toggle": "تنبيه",
-      "alert_when_above_mode": "مصدر تنبيه الحد الأعلى",
-      "alert_when_below_mode": "مصدر تنبيه الحد الأدنى",
+      "add_entity": "إضافة كيان",
+      "add_zone": "إضافة منطقة",
+      "alert_when": {
+        "above": "تنبيه أعلى من",
+        "animation": "حركة",
+        "below": "تنبيه أقل من",
+        "color": "لون التنبيه",
+        "highlight": "التمييز",
+        "label": "تسمية",
+        "above_mode": "مصدر تنبيه الحد الأعلى",
+        "below_mode": "مصدر تنبيه الحد الأدنى",
+        "toggle": "تنبيه"
+      },
       "attribute": "السمة",
-      "badge_color": "لون الشارة",
-      "badge_color_toggle": "Independent color",
-      "badge_icon": "أيقونة الشارة",
-      "badge_toggle": "شارة",
+      "badge": {
+        "toggle": "شارة",
+        "color_toggle": "لون شارة مستقل"
+      },
       "bar_color": "لون الشريط",
       "bar_color_mode": "وضع اللون",
       "bar_effect_mode": "تأثير الشريط",
       "bar_group": "الشريط",
-      "bar_max_width": "أقصى عرض للشريط",
       "bar_max_width_toggle": "أقصى عرض للشريط",
       "bar_orientation": "اتجاه",
       "bar_scale": "المقياس",
@@ -61,14 +70,14 @@
       "bar_single_line": "سطر واحد",
       "bar_size": "الحجم",
       "bar_stack": "كيانات إضافية",
-      "bar_stack_mode": "Stack mode",
+      "bar_stack_mode": "وضع التكديس",
       "card_size_toggle": "حجم البطاقة",
       "center_zero": "صفر في الوسط",
       "center_zero_growth_percent": "نسبة النمو",
       "center_zero_value": "قيمة المركز",
       "color": "اللون الأساسي",
       "custom_info": "معلومات إضافية (ثانوية)",
-      "custom_theme": "Custom theme zones",
+      "custom_theme": "مناطق السمة المخصصة",
       "decimal": "عشري",
       "density_toggle": "مضغوط",
       "entity": "الكيان",
@@ -76,43 +85,72 @@
       "force_circular_background_mode": "خلفية الأيقونة الدائرية",
       "frameless": "بدون إطار",
       "height": "الارتفاع",
-      "height_custom_toggle": "Shrink height (embedded)",
+      "height_custom_toggle": "ارتفاع تلقائي",
       "hide_mode": "إخفاء",
       "icon": "أيقونة",
       "icon_animation": "حركة الأيقونة",
       "interpolate": "تدرج الألوان",
       "layout": "تخطيط المحتوى",
       "marginless": "بدون هامش",
+      "mark_color": "اللون",
       "max_value": "القيمة القصوى",
       "max_value_mode": "مصدر القيمة القصوى",
-      "migrate_config": "Migrate config",
+      "migrate_config": "ترحيل الإعداد",
       "min_value": "القيمة الدنيا",
       "min_value_mode": "مصدر القيمة الدنيا",
       "min_width": "أدنى عرض",
-      "multiline": "Multiline",
+      "multiline": "متعدد الأسطر",
       "name": "الاسم",
       "name_info": "معلومات إضافية (الاسم)",
+      "opacity": "العتامة",
+      "peak_marker": {
+        "min_toggle": "إظهار الحد الأدنى",
+        "max_toggle": "إظهار الحد الأقصى",
+        "average_toggle": "إظهار المتوسط",
+        "toggle": "علامات الذروة"
+      },
+      "peak_marker_unsupported": "تتطلب علامات الذروة كيان sensor أو number بدون تجاوز للسمة، وليس timer أو counter — غير متاح لهذا الكيان.",
       "percent": "النسبة المئوية",
       "position": "الموضع",
       "reverse": "عكس المؤقت",
       "reverse_secondary_info_row": "تبديل الشريط والنص",
       "secondary": "معلومات ثانوية",
       "state_content": "محتوى الحالة",
-      "status_label_toggle": "تسمية الحالة",
+      "status_label": {
+        "color_source": "مصدر اللون",
+        "position": "موضع التسمية",
+        "toggle": "تسمية الحالة"
+      },
       "text_shadow": "إضافة ظل للنص",
       "theme": "السمة",
+      "trend_indicator": {
+        "window_toggle": "استخدام نافذة زمنية",
+        "basis": "أساس المقارنة",
+        "threshold": "المنطقة الميتة (نقاط)",
+        "colored": "التلوين بلون الأيقونة",
+        "up_color": "لون الارتفاع",
+        "down_color": "لون الانخفاض",
+        "flat_color": "لون الاستقرار",
+        "toggle": "مؤشر الاتجاه",
+        "mode": "الوضع"
+      },
       "trigger": "المشغل",
+      "type": "النوع",
       "unit": "الوحدة",
       "unit_spacing": "التباعد",
       "value_compact": "قيمة مختصرة (1.2k)",
       "value_sign": "إظهار الإشارة (+/-)",
-      "watermark_high_mode": "مصدر العلامة المرتفعة",
-      "watermark_low_mode": "مصدر العلامة المنخفضة",
-      "watermark_toggle": "العلامات",
-      "peak_marker_toggle": "Peak markers",
-      "peak_marker_unsupported": "Peak markers need a sensor or number entity, no attribute override, and not a timer or counter — not available for this entity.",
-      "trend_indicator_toggle": "Trend indicator",
-      "trend_indicator_mode": "Mode"
+      "watermark": {
+        "high_toggle": "إظهار العلوي",
+        "low_toggle": "إظهار السفلي",
+        "high": "العلوي",
+        "line_size": "سُمك الخط",
+        "low": "السفلي",
+        "low_mode": "مصدر العلامة المنخفضة",
+        "high_mode": "مصدر العلامة المرتفعة",
+        "toggle": "العلامات"
+      },
+      "window": "النافذة الزمنية"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -135,16 +173,9 @@
         "static": "ثابت"
       },
       "alert_highlight": {
-        "background": "Background",
-        "border": "Border",
+        "background": "الخلفية",
+        "border": "الحدود",
         "label": "تسمية"
-      },
-      "alert_when": {
-        "above": "Alert above",
-        "animation": "حركة",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight"
       },
       "bar_color_mode": {
         "auto": "تلقائي",
@@ -175,8 +206,8 @@
         "top": "الشريط أعلى المحتوى"
       },
       "bar_scale": {
-        "linear": "Linear",
-        "log": "Logarithmic"
+        "linear": "خطي",
+        "log": "لوغاريتمي"
       },
       "bar_size": {
         "large": "كبيرة",
@@ -186,9 +217,19 @@
         "xsmall": "صغير جدًا"
       },
       "bar_stack_mode": {
-        "net": "Net",
-        "proportional": "Sum",
-        "stacked": "Stacked"
+        "net": "صافي",
+        "proportional": "تناسبي",
+        "stacked": "مكدس"
+      },
+      "duration_unit": {
+        "s": "ثوانٍ",
+        "min": "دقائق",
+        "h": "ساعات",
+        "d": "أيام"
+      },
+      "enabled_disabled_mode": {
+        "disabled": "معطل",
+        "enabled": "مفعّل"
       },
       "force_circular_background_mode": {
         "auto": "تلقائي",
@@ -198,20 +239,20 @@
         "icon": "أيقونة",
         "name": "الاسم",
         "progress_bar": "الشريط",
-        "secondary_info": "المعلومات",
+        "secondary_info": "معلومات ثانوية",
         "shape": "الخلفية الدائرية للأيقونة",
         "unit": "الوحدة",
         "value": "القيمة"
       },
       "icon_animation": {
-        "battery_charging": "Battery charging",
-        "bounce": "Bounce",
+        "battery_charging": "البطارية تشحن",
+        "bounce": "ارتداد",
         "ping": "نبض",
-        "pulse": "Pulse",
-        "reveal": "Reveal",
-        "shake": "Shake",
-        "spin": "Spin",
-        "washing_machine": "Washing machine"
+        "pulse": "نبض",
+        "reveal": "كشف",
+        "shake": "اهتزاز",
+        "spin": "دوران",
+        "washing_machine": "غسالة"
       },
       "icon_animation_mode": {
         "auto": "تلقائي",
@@ -222,17 +263,12 @@
         "right": "يمين"
       },
       "layout": {
-        "horizontal": "أفقي (افتراضي)",
+        "horizontal": "أفقي",
         "vertical": "رأسي"
       },
       "simple_advanced_mode": {
         "advanced": "متقدم",
         "simple": "بسيط"
-      },
-      "status_label": {
-        "color_source": "مصدر اللون",
-        "jinja": "تسمية الحالة",
-        "position": "موضع التسمية"
       },
       "status_label_color_source": {
         "bar": "شريط التقدم",
@@ -250,11 +286,16 @@
         "optimal_when_low": "مثالي عند الانخفاض",
         "pm25": "PM2.5",
         "temperature": "درجة الحرارة",
-        "voc": "VOC"
+        "voc": "المركبات العضوية المتطايرة"
       },
       "theme_mode": {
-        "custom": "Custom",
-        "preset": "Preset"
+        "custom": "مخصص",
+        "preset": "إعداد مسبق"
+      },
+      "trend_indicator_basis": {
+        "average": "المتوسط",
+        "edge": "الطرف",
+        "slope": "الميل"
       },
       "unit_position": {
         "after": "بعد القيمة",
@@ -265,31 +306,10 @@
         "no-space": "بدون مسافة",
         "space": "مسافة"
       },
-      "value_shape": {
-        "attribute": "Attribute"
-      },
       "value_source_mode": {
-        "entity": "Entity",
-        "jinja": "Template",
-        "standard": "Fixed value"
-      },
-      "watermark": {
-        "high_toggle": "Show high",
-        "low_toggle": "Show low",
-        "high": "High",
-        "high_as": "High unit",
-        "high_color": "High color",
-        "line_size": "Line size",
-        "low": "Low",
-        "low_as": "Low unit",
-        "low_color": "Low color",
-        "opacity": "Opacity",
-        "type": "Type",
-        "color": "Color",
-        "low_type": "Low type",
-        "low_opacity": "Low opacity",
-        "high_type": "High type",
-        "high_opacity": "High opacity"
+        "entity": "كيان",
+        "jinja": "قالب",
+        "standard": "قيمة ثابتة"
       },
       "watermark_as": {
         "auto": "تلقائي",
@@ -302,49 +322,6 @@
         "round": "دائري",
         "striped": "مخطط",
         "triangle": "مثلث"
-      },
-      "peak_marker": {
-        "window": "Time window",
-        "type": "Type",
-        "opacity": "Opacity",
-        "min_toggle": "Show minimum",
-        "min_type": "Minimum type",
-        "min_opacity": "Minimum opacity",
-        "min_color": "Minimum color",
-        "max_toggle": "Show maximum",
-        "max_type": "Maximum type",
-        "max_opacity": "Maximum opacity",
-        "max_color": "Maximum color",
-        "average_toggle": "Show average",
-        "average_type": "Average type",
-        "average_opacity": "Average opacity",
-        "average_color": "Average color",
-        "color": "Color"
-      },
-      "duration_unit": {
-        "s": "Seconds",
-        "min": "Minutes",
-        "h": "Hours",
-        "d": "Days"
-      },
-      "enabled_disabled_mode": {
-        "disabled": "Disabled",
-        "enabled": "Enabled"
-      },
-      "trend_indicator": {
-        "window_toggle": "Use a time window",
-        "window": "Time window",
-        "basis": "Comparison basis",
-        "threshold": "Dead zone (points)",
-        "colored": "Tint with icon color",
-        "up_color": "Up color",
-        "down_color": "Down color",
-        "flat_color": "Flat color"
-      },
-      "trend_indicator_basis": {
-        "average": "Average",
-        "edge": "Edge",
-        "slope": "Slope"
       }
     },
     "title": {

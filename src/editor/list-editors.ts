@@ -63,6 +63,7 @@ abstract class ListEditorBase extends HTMLElement {
   _list: HTMLElement | null = null;
   _labelEl: HTMLElement | null = null;
   _addBtn: HTMLElement | null = null;
+  _addLabel = '';
   _hass: HomeAssistant | null = null;
   // Always assigned first thing in connectedCallback, before _buildDOM()
   // (the only place that reads it) can run.
@@ -103,6 +104,11 @@ abstract class ListEditorBase extends HTMLElement {
   set label(val: string) {
     this._labelText = val ?? '';
     if (this._labelEl) this._labelEl.textContent = this._labelText;
+  }
+
+  setAddLabel(val: string) {
+    this._addLabel = val ?? this._addLabel;
+    if (this._addBtn?.lastChild) this._addBtn.lastChild.textContent = this._addLabel;
   }
 
   get value(): Record<string, unknown>[] {
@@ -158,9 +164,46 @@ abstract class ListEditorBase extends HTMLElement {
     return el;
   }
 
-  // Style + label + list + "+ Add ..." button + add row - every concrete
-  // _buildDOM() only differs in its own stylesheet and the button's initial
-  // label, so this is the whole thing rather than each subclass repeating it.
+  // Shared by both concrete editors - only which rows count as filled differs.
+  _dispatchRows(isFilled: (item: Record<string, unknown>) => boolean) {
+    const clean = this._value.filter(isFilled);
+    this.dispatchEvent(
+      new CustomEvent(VALUE_CHANGED_EVENT, {
+        detail: { value: clean.length ? clean : undefined },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  }
+
+  // One `ui-color` row writing `key` back - both editors build several.
+  _colorField(index: number, key: string, label: string, current: unknown): HaSelectorElement {
+    return this._buildSelectorField({
+      selector: { 'ui-color': {} },
+      label,
+      fullWidth: true,
+      value: current ?? '',
+      onChange: (value) => this._updateItem(index, { [key]: (value as string) || undefined }),
+    });
+  }
+
+  // Row title + delete button - same header on a bar-stack row and a theme
+  // zone, only the class names and the title differ.
+  _buildRowHeader(headerClass: string, titleClass: string, title: string, index: number): HTMLElement {
+    const header = document.createElement('div');
+    header.className = headerClass;
+    const titleEl = document.createElement('span');
+    titleEl.className = titleClass;
+    titleEl.textContent = title;
+    header.append(
+      titleEl,
+      buildDeleteButton(() => this._deleteRow(index)),
+    );
+    return header;
+  }
+
+  // Style + label + list + "+ Add ..." row: every concrete _buildDOM() only
+  // differs in its own stylesheet and the button's initial label.
   _buildListScaffold(styleText: string, addLabel: string) {
     const style = document.createElement('style');
     style.textContent = styleText;
@@ -168,17 +211,7 @@ abstract class ListEditorBase extends HTMLElement {
     this._labelEl.className = 'lbl';
     this._labelEl.textContent = this._labelText;
     this._list = document.createElement('div');
-    this._addBtn = document.createElement('ha-button');
-    // Native default is variant="brand" (solid accent fill) - matches
-    // ha-form-optional_actions.ts's own "+ Add interaction" button instead.
-    this._addBtn.setAttribute('appearance', 'filled');
-    this._addBtn.setAttribute('size', 's');
-    const addIcon = document.createElement(HA_SVG_ICON_TAG) as HaSvgIconElement;
-    addIcon.setAttribute('slot', 'start');
-    addIcon.path = ADD_ICON_PATH;
-    this._addBtn.appendChild(addIcon);
-    this._addBtn.append(addLabel);
-    this._addBtn.addEventListener('click', () => {
+    this._addBtn = buildAddButton(addLabel, () => {
       this._value = [...this._value, {}];
       this._render();
     });
@@ -202,6 +235,21 @@ const buildDeleteButton = (onDelete: () => void): HTMLElement => {
   return delBtn;
 };
 
+// Same "+ Add ..." button everywhere it's built - only label/callback differ.
+// appearance="filled" matches ha-form-optional_actions.ts's own add button.
+const buildAddButton = (label: string, onClick: (e: MouseEvent) => void): HTMLElement => {
+  const btn = document.createElement('ha-button');
+  btn.setAttribute('appearance', 'filled');
+  btn.setAttribute('size', 's');
+  const addIcon = document.createElement(HA_SVG_ICON_TAG) as HaSvgIconElement;
+  addIcon.setAttribute('slot', 'start');
+  addIcon.path = ADD_ICON_PATH;
+  btn.appendChild(addIcon);
+  btn.append(label);
+  btn.addEventListener('click', onClick);
+  return btn;
+};
+
 /**
  * ListEditorBase for `bar_stack.entities`: each row is an additional
  * entity (with `attribute`/`color`/`subtract`) aggregated into the bar
@@ -211,20 +259,14 @@ const buildDeleteButton = (onDelete: () => void): HTMLElement => {
  */
 class EntityProgressBarStackEditor extends ListEditorBase {
   static ELEMENT_NAME = devName('entity-progress-bar-stack-editor');
+  _addLabel = 'Add entity';
 
   _buildDOM() {
-    this._buildListScaffold(BAR_STACK_EDITOR_STYLE, 'Add entity');
+    this._buildListScaffold(BAR_STACK_EDITOR_STYLE, this._addLabel);
   }
 
   _dispatch() {
-    const clean = this._value.filter((item) => item.entity);
-    this.dispatchEvent(
-      new CustomEvent(VALUE_CHANGED_EVENT, {
-        detail: { value: clean.length ? clean : undefined },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    this._dispatchRows((item) => Boolean(item.entity));
   }
 
   #entityField(item: BarStackRow, index: number): HaSelectorElement {
@@ -244,16 +286,6 @@ class EntityProgressBarStackEditor extends ListEditorBase {
       required: false,
       fullWidth: true,
       onChange: (value) => this._updateItem(index, { attribute: (value as string) || undefined }),
-    });
-  }
-
-  #colorField(item: BarStackRow, index: number): HaSelectorElement {
-    return this._buildSelectorField({
-      selector: { 'ui-color': {} },
-      label: 'Color',
-      fullWidth: true,
-      value: item.color ?? '',
-      onChange: (value) => this._updateItem(index, { color: (value as string) || undefined }),
     });
   }
 
@@ -277,22 +309,11 @@ class EntityProgressBarStackEditor extends ListEditorBase {
     for (let i = 0; i < this._value.length; i++) {
       const item = this._value[i];
 
-      const title = document.createElement('span');
-      title.className = 'row-title';
-      title.textContent = `#${i + 1}`;
-
-      const header = document.createElement('div');
-      header.className = 'row-header';
-      header.append(
-        title,
-        buildDeleteButton(() => this._deleteRow(i)),
-      );
-
       const card = document.createElement('div');
       card.className = 'row-card';
-      card.append(header, this.#entityField(item, i));
+      card.append(this._buildRowHeader('row-header', 'row-title', `#${i + 1}`, i), this.#entityField(item, i));
       if (item.entity) card.append(this.#attributeField(item, i));
-      card.append(this.#colorField(item, i), this.#subtractField(item, i));
+      card.append(this._colorField(i, 'color', 'Color', item.color), this.#subtractField(item, i));
 
       this._listEl.appendChild(card);
     }
@@ -312,27 +333,18 @@ defineElement(EntityProgressBarStackEditor.ELEMENT_NAME, EntityProgressBarStackE
 
 class EntityProgressCustomThemeEditor extends ListEditorBase {
   static ELEMENT_NAME = devName('entity-progress-custom-theme-editor');
-  #addLabel = 'Add zone';
-
-  setAddLabel(val: string) {
-    this.#addLabel = val ?? this.#addLabel;
-    if (this._addBtn?.lastChild) this._addBtn.lastChild.textContent = this.#addLabel;
-  }
+  _addLabel = 'Add zone';
 
   _buildDOM() {
-    this._buildListScaffold(CUSTOM_THEME_EDITOR_STYLE, this.#addLabel);
+    this._buildListScaffold(CUSTOM_THEME_EDITOR_STYLE, this._addLabel);
   }
 
   _dispatch() {
-    const isEmpty = (item: CustomThemeZone) =>
-      !is.number(item.min) && !is.number(item.max) && !item.color && !item.icon_color && !item.bar_color && !item.icon;
-    const clean = this._value.filter((item) => !isEmpty(item));
-    this.dispatchEvent(
-      new CustomEvent(VALUE_CHANGED_EVENT, {
-        detail: { value: clean.length ? clean : undefined },
-        bubbles: true,
-        composed: true,
-      }),
+    this._dispatchRows(
+      (item) =>
+        is.number(item.min) ||
+        is.number(item.max) ||
+        Boolean(item.color || item.icon_color || item.bar_color || item.icon),
     );
   }
 
@@ -342,21 +354,6 @@ class EntityProgressCustomThemeEditor extends ListEditorBase {
       label: key === 'min' ? 'Min' : 'Max',
       value: is.number(item[key]) ? item[key] : undefined,
       onChange: (value) => this._updateItem(index, { [key]: is.number(value) ? value : undefined }),
-    });
-  }
-
-  #colorField(
-    item: CustomThemeZone,
-    index: number,
-    key: 'color' | 'icon_color' | 'bar_color',
-    label: string,
-  ): HaSelectorElement {
-    return this._buildSelectorField({
-      selector: { 'ui-color': {} },
-      label,
-      fullWidth: true,
-      value: item[key] ?? '',
-      onChange: (value) => this._updateItem(index, { [key]: (value as string) || undefined }),
     });
   }
 
@@ -375,16 +372,6 @@ class EntityProgressCustomThemeEditor extends ListEditorBase {
     for (let i = 0; i < this._value.length; i++) {
       const item = this._value[i];
 
-      const header = document.createElement('div');
-      header.className = 'zone-header';
-      const title = document.createElement('span');
-      title.className = 'zone-title';
-      title.textContent = `Zone ${i + 1}`;
-      header.append(
-        title,
-        buildDeleteButton(() => this._deleteRow(i)),
-      );
-
       const numbers = document.createElement('div');
       numbers.className = 'numbers-row';
       numbers.append(this.#numberField(item, i, 'min'), this.#numberField(item, i, 'max'));
@@ -392,12 +379,12 @@ class EntityProgressCustomThemeEditor extends ListEditorBase {
       const zone = document.createElement('div');
       zone.className = 'zone';
       zone.append(
-        header,
+        this._buildRowHeader('zone-header', 'zone-title', `Zone ${i + 1}`, i),
         numbers,
         this.#iconField(item, i),
-        this.#colorField(item, i, 'color', 'Icon & bar color'),
-        this.#colorField(item, i, 'icon_color', 'Icon color'),
-        this.#colorField(item, i, 'bar_color', 'Bar color'),
+        this._colorField(i, 'color', 'Icon & bar color', item.color),
+        this._colorField(i, 'icon_color', 'Icon color', item.icon_color),
+        this._colorField(i, 'bar_color', 'Bar color', item.bar_color),
       );
       this._listEl.appendChild(zone);
     }
@@ -462,15 +449,7 @@ class EntityProgressActionPicker extends HTMLElement {
   #buildDOM() {
     const style = document.createElement('style');
     style.textContent = ACTION_PICKER_STYLE;
-    this.#btn = document.createElement('ha-button');
-    this.#btn.setAttribute('appearance', 'filled');
-    this.#btn.setAttribute('size', 's');
-    const addIcon = document.createElement(HA_SVG_ICON_TAG) as HaSvgIconElement;
-    addIcon.setAttribute('slot', 'start');
-    addIcon.path = ADD_ICON_PATH;
-    this.#btn.appendChild(addIcon);
-    this.#btn.append(this.#buttonLabel);
-    this.#btn.addEventListener('click', (e) => {
+    this.#btn = buildAddButton(this.#buttonLabel, (e) => {
       e.stopPropagation();
       this.#menu?.classList.toggle('open');
     });

@@ -157,7 +157,10 @@ const writeJsTranslations = (translations) => {
   for (const lang of Object.keys(translations)) {
     flat[lang] = keys.map((k, i) => {
       const v = getPath(translations[lang], k);
-      return lang !== 'en' && v === enValues[i] ? 0 : v;
+      // null marks a key not yet translated (see cmdAddKey) - same 0 sentinel
+      // as a real value that happens to match English, so it falls back the
+      // same way at runtime.
+      return lang !== 'en' && (v === null || v === enValues[i]) ? 0 : v;
     });
   }
   const content = [
@@ -227,7 +230,11 @@ const cmdValidate = ({ quiet = false, structureOnly = false } = {}) => {
         const contentDiff = diffFlat(json, js);
         for (const k of contentDiff.missing) problems.push(`  in JSON only (JS outdated): ${k}`);
         for (const k of contentDiff.extra) problems.push(`  in JS only (JSON is the source!): ${k}`);
-        for (const k of contentDiff.changed) problems.push(`  value differs (JSON ≠ JS): ${k}`);
+        for (const k of contentDiff.changed) {
+          // null (untranslated) always decompresses to the English text - expected, not a drift.
+          if (json[k] === null) continue;
+          problems.push(`  value differs (JSON ≠ JS): ${k}`);
+        }
       }
     }
 
@@ -363,14 +370,19 @@ const cmdStats = () => {
   const template = flatten(readJSON(path.join(DIR, TEMPLATE)));
   const total = Object.keys(template).length;
   const rows = allLangs().map((lang) => {
-    const templateDiff = diffFlat(template, flatten(readJSON(langPath(lang))));
-    const pct = Math.round(((total - templateDiff.missing.length) / total) * 100);
-    return { lang, pct, missing: templateDiff.missing.length, extra: templateDiff.extra.length };
+    const flat = flatten(readJSON(langPath(lang)));
+    const templateDiff = diffFlat(template, flat);
+    const untranslated = Object.values(flat).filter((v) => v === null).length;
+    const pct = Math.round(((total - templateDiff.missing.length - untranslated) / total) * 100);
+    return { lang, pct, missing: templateDiff.missing.length, extra: templateDiff.extra.length, untranslated };
   }).sort((a, b) => a.pct - b.pct || a.lang.localeCompare(b.lang));
   console.log(`Reference: ${TEMPLATE} — ${total} keys\n`);
   for (const r of rows) {
-    const flag = r.pct === 100 && r.extra === 0 ? '✅' : '⚠️ ';
-    console.log(`${flag} ${r.lang.padEnd(8)} ${String(r.pct).padStart(3)}%  missing:${String(r.missing).padStart(3)}  extra:${r.extra}`);
+    const flag = r.pct === 100 && r.extra === 0 && r.untranslated === 0 ? '✅' : '⚠️ ';
+    console.log(
+      `${flag} ${r.lang.padEnd(8)} ${String(r.pct).padStart(3)}%  missing:${String(r.missing).padStart(3)}  ` +
+        `untranslated:${String(r.untranslated).padStart(3)}  extra:${r.extra}`,
+    );
   }
 };
 
@@ -397,9 +409,16 @@ const cmdAddKey = (args) => {
   const key = parts.pop();
   const parentPath = parts.join('.');
 
+  // Any language without an explicit translation gets null, not values.en:
+  // null mechanically falls back to English at runtime (same 0 sentinel as a
+  // real coincidental match, see writeJsTranslations) while staying visibly
+  // untranslated to stats/validate - a literal English string would look
+  // like a real translation forever.
+  const translatedCount = Object.keys(values).filter((lang) => lang !== 'en').length;
   for (const lang of allLangs()) {
     const data = readJSON(langPath(lang));
-    if (!insertKey(data, parentPath, key, values[lang] ?? values.en, after)) die(`parent "${parentPath}" not found in ${lang}.json`);
+    const value = lang === 'en' ? values.en : (values[lang] ?? null);
+    if (!insertKey(data, parentPath, key, value, after)) die(`parent "${parentPath}" not found in ${lang}.json`);
     writeJSON(langPath(lang), data);
   }
   // template.json is the structural key reference, never shipped - stays
@@ -407,7 +426,10 @@ const cmdAddKey = (args) => {
   const tpl = readJSON(path.join(DIR, TEMPLATE));
   insertKey(tpl, parentPath, key, '', after);
   writeJSON(path.join(DIR, TEMPLATE), tpl);
-  console.log(`✅ ${keyPath} added to ${allLangs().length} languages + template (${Object.keys(values).length} translated, rest fell back to en).`);
+  console.log(
+    `✅ ${keyPath} added to ${allLangs().length} languages + template ` +
+      `(${translatedCount} translated, rest set to null → falls back to en until translated).`,
+  );
   console.log('Now run: node scripts/translations.js synchronize --to-js');
 };
 
@@ -431,7 +453,10 @@ const cmdRenameKey = (args) => {
       Object.assign(parent, rebuilt);
     } else {
       deleteKey(data, oldPath);
-      insertKey(data, newParts.slice(0, -1).join('.'), newParts.at(-1), value);
+      // setPath (not insertKey): a cross-parent rename's new parent may not
+      // exist yet (e.g. grouping a flat key under a fresh nested group) -
+      // insertKey silently no-ops without it, dropping the value.
+      setPath(data, newPath, value);
     }
     writeJSON(file, data);
     return true;

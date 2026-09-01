@@ -6,15 +6,18 @@ candidate safely before it becomes stable.
 
 ## 1.6.2
 
-Quieter than 1.6.1, but not a small release: `alert_when` gains a Jinja-driven
-trigger, `trend_indicator` and the new `peak_marker` finally get a real
-history-backed memory instead of comparing against whatever was on screen a
-moment ago, and `bar_segments` gets rebuilt from the ground up — real cells,
-real gaps, and working correctly with `center_zero` for the first time.
-Documentation gets a full overhaul too — a new Cookbook of copy-paste recipes,
-every `--epb-*` CSS hook finally documented and tested, and all 12 built-in
-themes get a real screenshot. One config shape changed along the way
-(`watermark.low`/`.high`), fully backward-compatible — see
+**This release finally gives your bars a memory — and your alerts a brain.**
+
+Another big one: `alert_when` gains a Jinja-driven trigger, `trend_indicator`
+and the new `peak_marker` finally get a real history-backed memory instead of
+comparing against whatever was on screen a moment ago, `bar_segments` gets
+rebuilt from the ground up — real cells, real gaps, and working correctly with
+`center_zero` for the first time — and the Tile Feature finally gets a full
+visual editor of its own, no more YAML-only. Documentation gets a full overhaul
+too — a new Cookbook of copy-paste recipes, every `--epb-*` CSS hook finally
+documented and tested, and all 12 built-in themes get a real screenshot. A
+couple of config shapes changed along the way (`watermark.low`/`.high`,
+`icon_animation: none`), fully backward-compatible — see
 [Breaking Changes](#️-breaking-changes) below.
 
 ### ⚠️ Breaking Changes
@@ -28,8 +31,15 @@ plain value shows it with the default look, and
 `{ value, as, type, opacity, color }` overrides just that one side. Old configs
 keep working exactly as before — auto-migrated for the session (console-warned)
 — use the editor's **Migrate config** button to update your YAML permanently
-whenever you're ready, no rush. See
-[`watermark`](docs/configuration.md#watermark).
+whenever you're ready, no rush. See [`watermark`][watermark].
+
+#### 🧹 `icon_animation: none` retired
+
+**Nothing to do — already migrated for you.** An unset `icon_animation` has
+meant "no animation" since 1.6.1; the explicit `none` value has done nothing
+since then except linger as a documented no-op. It's no longer accepted —
+auto-migrated for the session (console-warned), use the editor's **Migrate
+config** button to update your YAML permanently whenever you're ready, no rush.
 
 ### ✨ New
 
@@ -41,7 +51,7 @@ them entirely — polymorphic like `status_label`/`badge_icon`: return a plain
 `true`/`false` to trigger the alert with its existing
 `color`/`highlight`/`animation`/`label`, or an object with any of those four
 keys to override just that push, falling back to the static value for whatever's
-left out. See [`alert_when`](docs/configuration.md#alert_when).
+left out. See [`alert_when`][alert_when].
 
 `alert_when` also reaches Template and Badge Template for the first time —
 Jinja-only there (no `above`/`below`, no static fields to fall back to), so the
@@ -49,55 +59,39 @@ object return is the only form worth using.
 
 #### 🎨 The full CSS styling API, finally documented and tested
 
-Most `--epb-*` custom properties date back to 1.6.1's browser-compat CSS rework,
-but were never written down — there wasn't yet a way to be confident every
-single one actually did what it claimed. [`docs/theme.md`](docs/theme.md#css)
-now documents all 58 of them: 13 were pre-existing gaps in undocumented code,
-the rest are new hooks introduced by this release's own features (detailed
-below), backed by a new CSS hooks view in
-[`docs/demo-dashboard.yaml`](docs/demo-dashboard.yaml) that gives each one its
-own card, isolating a single override so the effect is obvious at a glance — the
-test bench that made trusting this documentation possible.
+All 58 `--epb-*` CSS custom properties are documented now, each with its own
+demo-dashboard card isolating exactly what it does. See
+[CSS hooks](docs/theme.md#css).
 
-On top of that, two ways to remove the circular shape behind the icon: the new
-`--epb-icon-shape-opacity` CSS hook, and — Card and Template — `hide: [shape]`
-for anyone who'd rather not reach for `card_mod` at all. Neither reaches Badge/
-BadgeTemplate, which have no shape by default. Either replaces the `card_mod`
-override that stopped working once 1.6.1 moved that background onto its own
-layer. Two more hooks join them: `--epb-icon-color`/`--epb-icon-shape-color`
-recolor the icon and its background independently, on top of the existing
-`--epb-icon-and-shape-color` for recoloring both at once, and
-`--epb-icon-shape-hover-color` restores a hover color for a clickable icon
-straight from a theme, no `card_mod` needed.  
+New this release: `--epb-icon-shape-opacity` and — Card and Template —
+`hide: [shape]` remove the circular shape behind the icon, replacing the
+`card_mod` override that broke in 1.6.1. `--epb-icon-color`/
+`--epb-icon-shape-color` recolor the icon and its background independently;
+`--epb-icon-shape-hover-color` sets a clickable icon's hover color straight from
+a theme.  
 ➡️ [Feature]: Configuration possibility for the icon background visibility #136
 (@RkcCorian)
 
 #### 🔢 Three new ways to format the displayed value
 
-All opt-in, Card and Badge:
-[`value_compact`](docs/configuration.md#value_compact) abbreviates large numbers
-(`1250000` → `1.3M`, locale-aware, `decimal` caps the digits without forcing
-trailing zeros); [`unit_position`](docs/configuration.md#unit_position) moves
-the unit before the value for currency-style display (`$100`);
-[`value_sign`](docs/configuration.md#value_sign) forces an explicit `+`/`-`,
-handy on `center_zero`/`bar_stack: { mode: net }` deltas.
+All opt-in, Card and Badge: [`value_compact`][value_compact] abbreviates large
+numbers (`1250000` → `1.3M`, locale-aware, `decimal` caps the digits without
+forcing trailing zeros); [`unit_position`][unit_position] moves the unit before
+the value for currency-style display (`$100`); [`value_sign`][value_sign] forces
+an explicit `+`/`-`, handy on `center_zero`/`bar_stack: { mode: net }` deltas.
 
 #### 📈 `trend_indicator` finally has a real memory
 
-Until now, it compared whatever was on screen against whatever showed up next —
-a single tick of sensor noise flipped the arrow, and every dashboard reload
-started over from a meaningless "flat". It's now backed by a real sample buffer:
-`window` (`'5min'`, `'2h'`, `'1d'`…) sets how far back to look, `basis` picks
-how (`average` smooths noise, `edge` compares to the oldest sample in the
-window, `slope` fits a trend line so one wobble at the end doesn't flip the
-read), and `threshold` sets a dead zone in percentage points. For sensor/number
-entities without an `attribute` override, the window seeds itself from Home
-Assistant's own history on load, so a long window doesn't start out empty.
-`colored: true` tints the arrow with the icon's current color instead of a fixed
-neutral; `up_color`/`down_color`/ `flat_color` override per direction
-explicitly. The plain `trend_indicator: true` boolean keeps working exactly as
-before, just with a small built-in dead zone so it stops flickering on pure
-noise. See [`trend_indicator`](docs/configuration.md#trend_indicator).
+Backed by a real sample buffer now, instead of just comparing the last two
+readings — no more flipping on a single tick of sensor noise, or resetting to a
+meaningless "flat" on every reload. `window` (`'5min'`, `'2h'`, `'1d'`…) sets
+how far back to look, `basis` picks `average`/`edge`/`slope`, and `threshold`
+sets a dead zone in percentage points; eligible entities (sensor/number, no
+`attribute` override) seed the window from Home Assistant's own history on load.
+`colored: true` tints the arrow with the icon's current color;
+`up_color`/`down_color`/`flat_color` override per direction. The plain
+`trend_indicator: true` boolean still works exactly as before, now with a small
+built-in dead zone. See [`trend_indicator`][trend_indicator].
 
 #### 🎯 `peak_marker`: min, max, and average, right on the bar
 
@@ -109,8 +103,7 @@ separate helper or template needed. `min`/`max`/`average` are each opt-in:
 `{ type, opacity, color }` to override just that one mark, falling back to
 `peak_marker`'s own top-level `type`/`opacity` for the rest. Same eligibility as
 `trend_indicator`'s history seeding (sensor/number, no `attribute`, not
-timer/counter), Card only. See
-[`peak_marker`](docs/configuration.md#peak_marker).
+timer/counter), Card and Tile Feature only. See [`peak_marker`][peak_marker].
 
 #### 🧹 `watermark` cleaned up, inspired by `peak_marker`
 
@@ -120,36 +113,18 @@ side doesn't set its own falls back to them, and once **both** sides have their
 own value for one of these three, the shared default quietly drops out of the
 config (nothing reads it anymore). The editor's "Show low"/"Show high" toggles
 replace the old disable switches, with per-side Type/Opacity/Color fields
-alongside the existing per-side value/unit ones. See
-[`watermark`](docs/configuration.md#watermark).
+alongside the existing per-side value/unit ones. See [`watermark`][watermark].
 
 #### 🎛️ The editor never looked this close to native Home Assistant
 
-Every 2-mode toggle — `theme_mode` (Preset/Custom), `alert_when_mode`/
-`bar_effect_mode`/`hide_mode` (Simple/Advanced), and two new ones,
-`icon_animation_mode` (Auto/Template) and `force_circular_background_mode`
-(Auto/Forced), both replacing their old plain boolean switch — now renders as
-one fused segmented pill instead of separate chips, styled straight from Home
-Assistant's own design tokens (`--wa-color-brand-fill-loud`/`-normal`, falling
-back to the legacy `--primary-color` family on older HA) instead of one-off
-colors. Found along the way: `icon_animation`'s own toggle had never been
-translated correctly — every language showed the literal placeholder "Trigger
-via template" instead of its own text.
-
-The interactions panel's `hold_action`/`double_tap_action`/`icon_hold_action`/
-`icon_double_tap_action` also drop the old "show all" toggle for a "+ Add
-interaction" button that reveals them one at a time — the same picker
-`ha-form`'s native `optional_actions` field offers, hand-built here since this
-editor predates and isn't based on `ha-form`.
-
-- **Editor: master toggles read as a pill now**: the Markers & Alerts panel's 5
-  whole-feature switches (`watermark`, `peak_marker`, badge, status label,
-  alert) render as a Disabled/Enabled segmented pill instead of a plain switch,
-  distinct at a glance from the plain toggles nested under each once turned on.
-- **`status_label` accepts a plain string** — shorthand for `{ jinja: '...' }`,
-  covering most cases, same pattern `badge_icon`/`badge_color` already use. The
-  Map form works exactly as before whenever `position`/`color_source` are also
-  needed. See [`status_label`](docs/configuration.md#status_label).
+- **Editor: the main mode toggles are now segmented pills** instead of separate
+  chips or a plain switch, styled straight from Home Assistant's own design
+  tokens instead of one-off colors. Found along the way: `icon_animation`'s own
+  toggle had never been translated correctly — every language showed the literal
+  placeholder "Trigger via template".
+- **Editor: interactions get a "+ Add interaction" picker** — HA's optional
+  actions are now revealed one at a time instead of a "show all" toggle, the
+  same picker `ha-form`'s own `optional_actions` field offers.
 
 #### 🧩 The Tile Feature gets its own visual editor
 
@@ -162,35 +137,29 @@ whichever entity the parent Tile card is already using.
 
 - **Editor**: placement and width of several appearance fields are more
   consistent now (Card, Badge).
-
-#### `bar_segments` now works properly with `center_zero`
-
-Rebuilt around real fill cells with genuine gaps between them (see Fixes below
-for why) — and along with it, each
-[`center_zero`](docs/configuration.md#center_zero) arm now segments
-independently, instead of sharing one set of divisions across the whole bar: set
-`bar_segments: 10` and both the positive and negative arm get their own 10-cell
-breakdown, meeting cleanly at the zero point. Not available together with
-`bar_color_mode: rainbow_full` or `bar_stack` — neither has a single fill
-fraction for cells to represent, so both automatically clear `bar_segments`
-instead of producing a meaningless combination.
-
-#### `density: compact` now works with `layout: vertical` too
-
-Vertical has no matching narrow shape, so instead of horizontal's narrow-column
-treatment, it hides `name`/`secondary_info` and drops to a single grid row
-(icon + thin bar only). The editor's "Compact" toggle offers it either way,
-greying `name`/`secondary_info` out under Hide (they stay hidden regardless of
-the toggle there — even a Jinja `hide` template can't override it);
-`value`/`unit` only ever affect text inside that same now-gone row, so their
-chips drop out entirely instead of sitting there with no effect.  
-➡️ [Bug]: Misaligned icon #139 (@RkcCorian)
+- **`status_label` accepts a plain string** — shorthand for `{ jinja: '...' }`,
+  covering most cases, same pattern `badge_icon`/`badge_color` already use. The
+  Map form works exactly as before whenever `position`/`color_source` are also
+  needed. See [`status_label`][status_label].
+- **`bar_segments` now works properly with `center_zero`**: each arm segments
+  independently (`bar_segments: 10` gives both the positive and negative side
+  their own 10-cell breakdown, meeting cleanly at zero) instead of sharing one
+  set of dividers across the whole bar. Not available together with
+  `bar_color_mode: rainbow_full` or `bar_stack` — both now clear `bar_segments`
+  automatically instead of a meaningless combination.
+- **`density: compact` now works with `layout: vertical` too**: previously it
+  only narrowed the column in horizontal — vertical has no equivalent narrow
+  shape, so compact instead hides `name`/`secondary_info` and shrinks the card
+  to a single row (icon and a thin bar only). The editor reflects this:
+  `name`/`secondary_info` show as forced-hidden under Hide once compact is on,
+  and `value`/`unit` drop out of the Hide picker entirely.  
+  ➡️ [Bug]: Misaligned icon #139 (@RkcCorian)
 
 ### 🐛 Fixes
 
-- **Tile Feature**: `bar_color_mode: rainbow_full`'s marker size could ignore
-  your chosen `bar_size` when the bar was positioned at the top or bottom —
-  always looked like the largest size instead.
+- **`bar_color_mode: rainbow_full`'s marker size could ignore your chosen
+  `bar_size`** when the bar was positioned at the top or bottom (also
+  `overlay`/`background` on Card) — always looked like the largest size instead.
 - Changing the bar's position could leave an invisible, unused size setting
   behind in your saved configuration — cleaned up automatically.
 - **Template/Badge Template never migrated `watermark.low`/`.high`'s legacy
@@ -212,13 +181,10 @@ chips drop out entirely instead of sitting there with no effect.
   hiding it — now preserves a draft too. `bar_max_width`'s toggle had the milder
   version of the same issue (lost a custom value, fell back to the 300px
   default) — fixed the same way.
-- **Editor translations are now complete across all 39 supported languages** —
-  several labels had silently stayed in English since the day they shipped,
-  invisible to the usual checks.
-- Translations are organized more consistently under the hood, with a welcome
-  side effect: a noticeably lighter download.
-- A few editor labels were simplified or clarified where two different fields
-  ended up showing the exact same text.
+- **Editor field labels are now translated in all 39 supported languages** —
+  several had silently stayed in English since the day they shipped, invisible
+  to the usual checks. The short Jinja field hints ("Returns String…") are still
+  English-only for now.
 - **`theme: critical_when_low`'s editor label listed "disk" as an example
   alongside battery** — misleading: the disk sensor most people actually have
   (`disk_use_percent`, % used) belongs to `critical_when_high` instead, already
@@ -232,9 +198,15 @@ chips drop out entirely instead of sitting there with no effect.
   on a segment boundary is no longer hidden.**  
   ➡️ Discord @RKT62
 - **`watermark`/`peak_marker` with `low_as`/`high_as: 'percent'` could land on
-  the wrong side of [`center_zero`](docs/configuration.md#center_zero)'s
-  midpoint** (Template/Badge Template: always, values are shaped that way there)
-  — now lands on the same side as the value it represents.
+  the wrong side of [`center_zero`][center_zero]'s midpoint** (Template/Badge
+  Template: always, values are shaped that way there) — now lands on the same
+  side as the value it represents.
+- **Several editor fields showed with no label at all** (the free-text fallback
+  under `min_width`/`height`/`watermark`'s line thickness, and the status-pill
+  text input under `alert_when`) — labelled now, across every language.
+- **A handful of editor labels stayed on outdated English wording in every
+  language but English**, left behind after the English text itself was later
+  reworded — corrected across all 38 non-English languages.
 
 ### 📚 Documentation
 
@@ -257,8 +229,7 @@ chips drop out entirely instead of sitting there with no effect.
   `unit_position`, and `value_sign`.
 - `hide: [shape]`'s editor label translated across all 39 languages + template —
   a descriptive phrase ("Icon's circular background") rather than the bare
-  English word, matching how the option is described in
-  [`configuration.md`](docs/configuration.md#hide).
+  English word, matching how the option is described in [`hide`][hide].
 - **All 12 built-in themes now have a real screenshot** in
   [`docs/theme.md`](docs/theme.md#predefined-theme) — 7 were text-only before.
   Every theme (plus `custom_theme`/`bar_color_mode` right after) follows the
@@ -273,17 +244,21 @@ chips drop out entirely instead of sitting there with no effect.
   above; the `ViewCore.minGridRows` description updated for the new single-row
   case (`layout: vertical` + `bar_position: top`/`bottom`/ `background` +
   `name`/`secondary_info` both hidden).
+- **`docs/troubleshooting.md`** updated: a version that still looks old right
+  after updating usually means HACS is lagging behind — use **⋮ →
+  Redownload**.  
+  ➡️ Configuration Error on mobile devices #137
 
 ### 🧹 Under the hood
 
 - Badge's own schema silently accepted `hide: [shape]` even though Badge has no
   shape to hide in the first place (Badge Template already excluded it) — now
   consistently blocked for both.
-- **The full card is about 109 KB lighter than 1.6.1 (-16%)**, despite
-  everything new above. Translations no longer repeat each key's full name in
-  every language (it did, 39 times over), and a long tail of
-  internally-duplicated text now shares one entry instead of a copy each. Purely
-  internal; the translated text you see hasn't changed.
+- More duplicated code across the card and editor internals was consolidated
+  (CSS repaint, Jinja-pushed-number handling, Badge/Badge Template's shared
+  schema, stylesheet selectors, several editor toggle/mode-picker fields).
+- Editor translation keys are organized more consistently, and a handful nothing
+  in the editor ever actually read were removed.
 - A handful of editor fields that happened to carry the exact same label as a
   neighboring one (`bar_position`/`unit_position` both said "Position",
   `alert_when_mode`/`icon_animation_mode` both said "Trigger mode") now share a
@@ -300,12 +275,74 @@ chips drop out entirely instead of sitting there with no effect.
 - The visual editor's internal code was simplified and de-duplicated in several
   places (mode-toggle fields, field-update logic) — no visible change, just less
   code to maintain.
+- Various internal code cleanup and performance optimizations — no visible
+  change.
 
 > We care about getting the details right — but even so, something here might
 > have slipped through. You don't need to be a developer to notice it. If
 > something feels off, that's reason enough. Open a [GitHub issue]. Or say hi on
 > [Discord]. We'd rather know than have you go looking for a workaround on your
 > own.
+
+---
+
+## What's new (1.6.2-rc5)
+
+### ⚠️ Breaking Changes
+
+#### 🧹 `icon_animation: none` retired
+
+**Nothing to do — already migrated for you.** An unset `icon_animation` has
+meant "no animation" since 1.6.1; the explicit `none` value has done nothing
+since then except linger as a documented no-op. It's no longer accepted —
+auto-migrated for the session (console-warned), use the editor's **Migrate
+config** button to update your YAML permanently whenever you're ready, no rush.
+
+### 🐛 Fixes
+
+- **The `status_label` pill showed with no color at all when `interpolate: true`
+  was active** — a 1.6.2-rc4 regression. The interpolated `color-mix()` value
+  now resolves to a real color instead of silently failing.  
+  ➡️ Discord @RKT62
+- **Several editor fields showed with no label at all**: `min_width`'s and
+  `height`'s "custom value" text fallback, `watermark.line_size`, and
+  `alert_when.label`'s status-pill text input never had a translation key to
+  resolve — all four are labelled now, across every language.
+- **A handful of editor labels stayed on old English wording in every language
+  but English**, left behind after the English text itself was later reworded:
+  `badge_color_toggle`, `height_custom_toggle`, `bar_stack`'s `proportional`
+  mode, and `hide`'s `secondary_info` — corrected across all 38 non-English
+  languages.
+- The `min_value`/`max_value`/`watermark`/`alert_when` attribute picker showed
+  the untranslated English word "Attribute" in Bengali and Greek only, instead
+  of the properly translated word already used everywhere else in the editor.
+
+### 🧹 Under the hood
+
+- Duplicated code across the card and editor internals was consolidated in
+  several places: the card/badge/feature CSS-repaint step, Jinja-pushed-number
+  handling (`min_value`/`max_value`/`watermark`/`alert_when`), Badge/Badge
+  Template's shared schema shape, the bar-effect stylesheet's repeated
+  selectors, roughly a dozen near-identical editor toggle/mode-picker fields,
+  and a few smaller patterns (timer throttling, watermark value resolution,
+  repeated color-handling helpers).
+- Editor translation keys are organized more consistently — every field's own
+  label now resolves from one place instead of two overlapping conventions — and
+  a handful of keys nothing in the editor ever actually read were removed.
+- A handful of base classes (`HACore`, `ViewCore`, `EditorBase`, and others)
+  used to build a full view/config-helper instance of their own even though
+  they're never instantiated directly — only their concrete subclasses are — so
+  every card and editor load did that construction once too often.
+- The visual editor rebuilt an internal per-entity helper object on every
+  keystroke and `hass` update while open, instead of reusing one.
+- Watermark/peak-marker default colors and the progress bar's max-width variable
+  now read from the same internal table the rest of the styling already uses,
+  instead of a separate hardcoded copy that could silently drift out of sync —
+  no visual change.
+- `layout`'s fixed value on Badge/Badge Template/Tile Feature (all three only
+  ever render horizontally) is now enforced by the validation schema itself
+  instead of a separate forced rewrite after the fact — same result, one less
+  special case.
 
 ---
 
@@ -6046,6 +6083,16 @@ experience:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#text_shadow
 [interpolate]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#interpolate
+[value_compact]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#value_compact
+[unit_position]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#unit_position
+[value_sign]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#value_sign
+[trend_indicator]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#trend_indicator
+[peak_marker]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#peak_marker
 [card_mod]: https://github.com/thomasloven/lovelace-card-mod
 [README.md]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card#-prerequisites

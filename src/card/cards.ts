@@ -5,7 +5,7 @@
  */
 
 import { META, devName, HA_CONTEXT, CARD } from '../utils/parameters.js';
-import { is } from '../utils/common-checks.js';
+import { is, toNumberOrNull } from '../utils/common-checks.js';
 import { ThemeManager } from './value-helpers.js';
 import {
   CardView,
@@ -34,8 +34,9 @@ class EntityProgressCardBase extends HABase {
   // Narrows HABase's own ViewCore back to ViewBase: every concrete subclass
   // of this class (EntityProgressCard/EntityProgressBadge) always assigns a
   // CardView/BadgeView, never one of the template-only views - unlike HABase
-  // itself, which EntityProgressTemplateBase also extends.
-  _cardView: ViewBase = new CardView();
+  // itself, which EntityProgressTemplateBase also extends. `declare`: both
+  // subclasses assign their own real view.
+  declare _cardView: ViewBase;
   static _hiddenComponents: { label: string; class?: string }[] = [
     ...super._hiddenComponents,
     CARD.style.dynamic.hiddenComponent.value,
@@ -113,26 +114,6 @@ class EntityProgressCardBase extends HABase {
     ]);
   }
 
-  _updateCSS() {
-    const bar = this._cardView;
-    const progressValue = bar.percent / 100;
-    this._applyProgressCSS(progressValue, {
-      barColor: bar.barColor,
-      iconColor: bar.iconColor,
-      gradient: bar.colorGradient,
-      // bar_stack's own entity-driven diverging gradient wins if configured;
-      // themeDivergingGradient is center_zero's fallback for a plain themed
-      // gradient (see ViewBase.themeDivergingGradient) when there's no
-      // bar_stack to drive the two arms instead.
-      diverging: bar.divergingBarStack ?? bar.themeDivergingGradient,
-    });
-    this._applyWatermarkCSS(bar.hasWatermark ? bar.watermark : null);
-    this._applyPeakMarkerCSS(bar.peakMarker);
-    // History-seeded (async, resolves after the initial _buildStyle() pass) -
-    // show-peak-* needs recomputing here too, not just at render() time.
-    this._handlePeakMarkerClasses();
-  }
-
   // ─── STD FIELDS PROCESSING - CUSTOMIZATION ────────────────────────────────
   static _getStandardFields(cardView: ViewBase): { className: string; value: string | null }[] {
     return [
@@ -166,39 +147,26 @@ class EntityProgressCardBase extends HABase {
     };
   }
 
+  // Repaints only what this field affects: a full refresh() re-ran the whole
+  // Jinja scan on every push - one per keystroke - and froze the editor.
   _renderJinjaNumber(
     content: unknown,
     getJinja: (c: Config) => string | undefined,
     viewProp: 'jinjaMinValue' | 'jinjaMaxValue' | 'jinjaAlertAbove' | 'jinjaAlertBelow',
   ) {
-    // Defensive: only apply while the option is still in { jinja: "..." } mode
-    // — guards against a push arriving right as the user switches the mode
-    // chips away from Jinja.
-    if (!is.nonEmptyString(getJinja(this._cardView.config))) return;
-    const value = is.number(content) ? content : is.strictNumericString(content) ? Number(content) : null;
-    if (value === this._cardView[viewProp]) return; // unchanged — skip the recompute below
-    this._cardView[viewProp] = value;
-    // Lightweight, like _managePercent on template cards: recompute + repaint
-    // only what this specific field can actually affect, not the full
-    // pipeline. A full this.refresh() re-ran icon/badge/shape/trend AND
-    // _processJinjaFields() (which re-scans every Jinja field on the card) on
-    // every single push — while typing the template in the editor, each
-    // keystroke produces a push, so the full pipeline ran on every keystroke
-    // and made the editor feel like it had frozen.
-    if (viewProp === 'jinjaMinValue' || viewProp === 'jinjaMaxValue') {
-      // min_value/max_value feed #percentHelper (via refresh) - both the
-      // bar's own CSS (_updateCSS) and secondaryInfoMain (_processStandard
-      // Fields, the "45%" label) are derived from it.
-      this._cardView.refresh(this.hass as HomeAssistant);
-      this._updateCSS();
-      this._processStandardFields();
-    } else {
-      // jinjaAlertAbove/jinjaAlertBelow: isAlertActive only feeds _alertStyle
-      // (alert-active/alert-background/alert-anim-*) - no #percentHelper, bar
-      // CSS, or label involvement, and no need to re-walk _staticStyle/
-      // _iconAnimationStyle either.
-      this._applyAlertClasses();
-    }
+    this._applyJinjaNumber(content, getJinja, viewProp, () => {
+      if (viewProp === 'jinjaMinValue' || viewProp === 'jinjaMaxValue') {
+        // min/max feed #percentHelper (via refresh) - both the bar's own CSS
+        // and secondaryInfoMain (the "45%" label) derive from it.
+        this._cardView.refresh(this.hass as HomeAssistant);
+        this._updateCSS();
+        this._processStandardFields();
+      } else {
+        // isAlertActive only feeds _alertStyle - no #percentHelper, bar CSS or
+        // label involvement, and no need to re-walk the other class layers.
+        this._applyAlertClasses();
+      }
+    });
   }
 
   _renderCustomInfo(content: unknown) {
@@ -408,29 +376,6 @@ class EntityProgressFeatures extends HACore {
     this._seedPeakMarkerHistoryOnce();
   }
 
-  // ─── CSS MANAGEMENT ───────────────────────────────────────────────────────
-
-  _updateCSS() {
-    const bar = this._cardView;
-    const progressValue = bar.percent / 100;
-    this._applyProgressCSS(progressValue, {
-      barColor: bar.barColor,
-      gradient: bar.colorGradient,
-      // bar_stack's own entity-driven diverging gradient wins if configured;
-      // themeDivergingGradient is center_zero's fallback for a plain themed
-      // gradient (see ViewBase.themeDivergingGradient) when there's no
-      // bar_stack to drive the two arms instead.
-      diverging: bar.divergingBarStack ?? bar.themeDivergingGradient,
-      // rainbow_full's value-mark pill reads --icon-and-shape-color for its
-      // fill (styles.ts); Feature has no icon of its own, so this var went
-      // unset and the pill fell back to a flat white.
-      iconColor: bar.iconColor,
-    });
-    this._applyWatermarkCSS(bar.hasWatermark ? bar.watermark : null);
-    this._applyPeakMarkerCSS(bar.peakMarker);
-    this._handlePeakMarkerClasses();
-  }
-
   // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION ─────────────────────────────
 
   _getJinjaHandlers(content: unknown): Record<string, () => void> {
@@ -564,21 +509,20 @@ class EntityProgressTemplateBase extends HABase {
       icon: () => this._showIcon(content),
       percent: () => this._managePercent(content),
       ...this._watermarkJinjaHandlers(content),
-      color: () => {
-        const adapted = ThemeManager.adaptColor(content as string | null);
-        // Cached (not just written to CSS) so status_label.color_source:
-        // 'icon' has something to read - see ViewCore.iconColor/
-        // setTemplateColorValue's own comment.
-        this._cardView.setTemplateColorValue(adapted);
-        this._dom.setStyle(CARD.htmlStructure.card.element, CARD.style.dynamic.iconAndShape.color.var, adapted);
-        this._repaintStatusLabel();
-      },
-      bar_color: () => {
-        const adapted = ThemeManager.adaptColor(content as string | null);
-        this._cardView.setTemplateBarColorValue(adapted);
-        this._dom.setStyle(CARD.htmlStructure.card.element, CARD.style.dynamic.progressBar.color.var, adapted);
-        this._repaintStatusLabel();
-      },
+      // Cached (not just written to CSS) so status_label.color_source: 'icon'
+      // has something to read - see ViewCore.iconColor/setTemplateColorValue.
+      color: () =>
+        this._renderTemplateColor(
+          content,
+          (v) => this._cardView.setTemplateColorValue(v),
+          CARD.style.dynamic.iconAndShape.color.var,
+        ),
+      bar_color: () =>
+        this._renderTemplateColor(
+          content,
+          (v) => this._cardView.setTemplateBarColorValue(v),
+          CARD.style.dynamic.progressBar.color.var,
+        ),
     };
     // theme (percent: true only) wins outright when configured, same
     // precedence as ViewBase.iconColor's `theme.iconColor || config.color` -
@@ -590,6 +534,15 @@ class EntityProgressTemplateBase extends HABase {
       delete handlers.bar_color;
     }
     return handlers;
+  }
+
+  // Shared by the color/bar_color handlers above - adapt, cache on
+  // _cardView, write the CSS var, repaint the status label pill.
+  _renderTemplateColor(content: unknown, cache: (v: string | null) => void, cssVar: string) {
+    const adapted = ThemeManager.adaptColor(content as string | null);
+    cache(adapted);
+    this._dom.setStyle(CARD.htmlStructure.card.element, cssVar, adapted);
+    this._repaintStatusLabel();
   }
 
   _renderName(content: unknown) {
@@ -621,7 +574,7 @@ class EntityProgressTemplateBase extends HABase {
     // string was compared lexicographically in getTrend ('9' < '45' is false →
     // wrong trend); non-numeric results now show an explicit error icon instead
     // of corrupting the trend and the bar CSS
-    const parsed = is.number(percent) ? percent : is.strictNumericString(percent) ? Number(percent) : null;
+    const parsed = toNumberOrNull(percent);
     // An invalid/empty result (e.g. percent: '' while the entity it depends
     // on is momentarily unknown) still gets the trend's own error icon, but
     // no longer bails out of the rest of the render entirely - falls back to

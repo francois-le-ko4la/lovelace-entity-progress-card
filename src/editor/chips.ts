@@ -65,6 +65,12 @@ abstract class ChipsBase extends HTMLElement {
     for (const [value, chip] of this._chips) chip.textContent = this._chipLabel(value);
   }
 
+  // Every chip set reports the same way, only the payload shape differs (an
+  // array for the multi-selects, one mode name for EntityProgressModeChips).
+  _emit(value: unknown) {
+    this.dispatchEvent(new CustomEvent(VALUE_CHANGED_EVENT, { detail: { value }, bubbles: true, composed: true }));
+  }
+
   _createChip(value: string, onToggle: (value: string) => void): HTMLButtonElement {
     const chip = document.createElement('button');
     chip.type = 'button';
@@ -99,14 +105,35 @@ abstract class ChipsBase extends HTMLElement {
   }
 }
 
+// Array-valued chip sets (bar_effect, hide): same selection/config round trip,
+// only which chips a selection blocks or forces differs. @abstract
+abstract class MultiSelectChipsBase extends ChipsBase {
+  _selected: string[] = [];
+  _config: LovelaceConfig = {} as LovelaceConfig;
+
+  get value(): string[] {
+    return this._selected;
+  }
+
+  set value(val: string[]) {
+    this._selected = is.array(val) ? val : [];
+    this._render();
+  }
+
+  updateConfig(config: LovelaceConfig) {
+    this._config = config ?? ({} as LovelaceConfig);
+    this._render();
+  }
+}
+
 /**
  * Multi-select chips for `icon_animation`: toggles a set of visual bar
  * effects, hiding/blocking chips that are mutually incompatible with the
  * current selection (`effectIncompatibilities`).
  *
- * @extends ChipsBase
+ * @extends MultiSelectChipsBase
  */
-class EntityProgressEffectChips extends ChipsBase {
+class EntityProgressEffectChips extends MultiSelectChipsBase {
   static ELEMENT_NAME = devName('entity-progress-effect-chips');
   static #EFFECTS: { value: string; showIf?: (c: LovelaceConfig) => boolean }[] = [
     { value: 'radius' },
@@ -123,9 +150,6 @@ class EntityProgressEffectChips extends ChipsBase {
     return CARD.style.dynamic.progressBar.effectIncompatibilities;
   }
 
-  #selected: string[] = [];
-  #config: LovelaceConfig = {} as LovelaceConfig;
-
   _buildDOM() {
     this._buildChipSet(
       EntityProgressEffectChips.#EFFECTS.map((effect) => effect.value),
@@ -134,28 +158,13 @@ class EntityProgressEffectChips extends ChipsBase {
   }
 
   #toggle(value: string) {
-    const isSelected = this.#selected.includes(value);
+    const isSelected = this._selected.includes(value);
     const blocked = isSelected ? [] : (EntityProgressEffectChips.#INCOMPATIBLE[value] ?? []);
-    const updated = isSelected
-      ? this.#selected.filter((v) => v !== value)
-      : [...this.#selected.filter((v) => !blocked.includes(v)), value];
-    this.dispatchEvent(
-      new CustomEvent(VALUE_CHANGED_EVENT, { detail: { value: updated }, bubbles: true, composed: true }),
+    this._emit(
+      isSelected
+        ? this._selected.filter((v) => v !== value)
+        : [...this._selected.filter((v) => !blocked.includes(v)), value],
     );
-  }
-
-  get value(): string[] {
-    return this.#selected;
-  }
-
-  set value(val: string[]) {
-    this.#selected = is.array(val) ? val : [];
-    this._render();
-  }
-
-  updateConfig(config: LovelaceConfig) {
-    this.#config = config ?? {};
-    this._render();
   }
 
   _render() {
@@ -168,20 +177,18 @@ class EntityProgressEffectChips extends ChipsBase {
     for (const effect of EntityProgressEffectChips.#EFFECTS) {
       const chip = this._chips.get(effect.value);
       if (!chip) continue;
-      const visible = !effect.showIf || effect.showIf(this.#config);
+      const visible = !effect.showIf || effect.showIf(this._config);
       const blocked = (EntityProgressEffectChips.#INCOMPATIBLE[effect.value] ?? []).some((v) =>
-        this.#selected.includes(v),
+        this._selected.includes(v),
       );
       const isVisible = visible && !blocked;
       chip.style.display = isVisible ? '' : 'none';
-      chip.classList.toggle('selected', this.#selected.includes(effect.value));
-      if (!isVisible && this.#selected.includes(effect.value)) stillHidden.push(effect.value);
+      chip.classList.toggle('selected', this._selected.includes(effect.value));
+      if (!isVisible && this._selected.includes(effect.value)) stillHidden.push(effect.value);
     }
     if (stillHidden.length) {
-      this.#selected = this.#selected.filter((v) => !stillHidden.includes(v));
-      this.dispatchEvent(
-        new CustomEvent(VALUE_CHANGED_EVENT, { detail: { value: this.#selected }, bubbles: true, composed: true }),
-      );
+      this._selected = this._selected.filter((v) => !stillHidden.includes(v));
+      this._emit(this._selected);
     }
   }
 }
@@ -194,14 +201,12 @@ defineElement(EntityProgressEffectChips.ELEMENT_NAME, EntityProgressEffectChips)
  * offered item list is restricted per field via the `items` setter (e.g.
  * Template/Badge Template never offer `unit`).
  *
- * @extends ChipsBase
+ * @extends MultiSelectChipsBase
  */
-class EntityProgressHideChips extends ChipsBase {
+class EntityProgressHideChips extends MultiSelectChipsBase {
   static ELEMENT_NAME = devName('entity-progress-hide-chips');
   static #ITEMS = ['icon', 'name', 'value', 'unit', 'secondary_info', 'progress_bar'];
-  #selected: string[] = [];
   #items: string[] = EntityProgressHideChips.#ITEMS;
-  #config: LovelaceConfig = {} as LovelaceConfig;
 
   get items(): string[] {
     return this.#items;
@@ -223,7 +228,7 @@ class EntityProgressHideChips extends ChipsBase {
   // regardless of this field (ViewCore.hasComponentHiddenFlag) - shown here
   // as forced-on/locked so the chips don't silently disagree with the render.
   #forcedItems(): string[] {
-    return this.#config.density === 'compact' && this.#config.layout === 'vertical' ? ['name', 'secondary_info'] : [];
+    return this._config.density === 'compact' && this._config.layout === 'vertical' ? ['name', 'secondary_info'] : [];
   }
 
   // value/unit only ever affect text rendered *inside* secondary_info's own
@@ -236,26 +241,7 @@ class EntityProgressHideChips extends ChipsBase {
 
   #toggle(value: string) {
     if (this.#forcedItems().includes(value)) return;
-    const updated = this.#selected.includes(value)
-      ? this.#selected.filter((v) => v !== value)
-      : [...this.#selected, value];
-    this.dispatchEvent(
-      new CustomEvent(VALUE_CHANGED_EVENT, { detail: { value: updated }, bubbles: true, composed: true }),
-    );
-  }
-
-  get value(): string[] {
-    return this.#selected;
-  }
-
-  set value(val: string[]) {
-    this.#selected = is.array(val) ? val : [];
-    this._render();
-  }
-
-  updateConfig(config: LovelaceConfig) {
-    this.#config = config ?? ({} as LovelaceConfig);
-    this._render();
+    this._emit(this._selected.includes(value) ? this._selected.filter((v) => v !== value) : [...this._selected, value]);
   }
 
   _render() {
@@ -263,7 +249,7 @@ class EntityProgressHideChips extends ChipsBase {
     const moot = this.#mootItems();
     for (const [item, chip] of this._chips) {
       const isForced = forced.includes(item);
-      chip.classList.toggle('selected', isForced || this.#selected.includes(item));
+      chip.classList.toggle('selected', isForced || this._selected.includes(item));
       chip.classList.toggle('forced', isForced);
       chip.style.display = moot.includes(item) ? 'none' : '';
     }
@@ -303,7 +289,7 @@ class EntityProgressModeChips extends ChipsBase {
     if (value === this.#selected) return;
     this.#selected = value;
     this._render();
-    this.dispatchEvent(new CustomEvent(VALUE_CHANGED_EVENT, { detail: { value }, bubbles: true, composed: true }));
+    this._emit(value);
   }
 
   get value(): string {

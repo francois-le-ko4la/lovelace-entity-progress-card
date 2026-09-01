@@ -33,27 +33,36 @@
   "editor": {
     "field": {
       "action": {
-        "tap": "Comportamento del tocco",
-        "hold": "Mantieni comportamento",
         "double_tap": "Comportamento al doppio tocco",
-        "icon_tap": "Comportamento al tocco dell'icona",
+        "hold": "Mantieni comportamento",
+        "icon_double_tap": "Comportamento del doppio tocco sull'icona",
         "icon_hold": "Comportamento di mantenimento dell'icona",
-        "icon_double_tap": "Comportamento del doppio tocco sull'icona"
+        "icon_tap": "Comportamento al tocco dell'icona",
+        "tap": "Comportamento del tocco"
       },
       "action_picker": "Aggiungi interazione",
-      "alert_toggle": "Avviso",
-      "alert_when_above_mode": "Origine dell'avviso superiore",
-      "alert_when_below_mode": "Origine dell'avviso inferiore",
+      "add_entity": "Aggiungi entità",
+      "add_zone": "Aggiungi zona",
+      "alert_when": {
+        "above": "Allerta sopra",
+        "animation": "Animazione",
+        "below": "Allerta sotto",
+        "color": "Colore allerta",
+        "highlight": "Evidenziazione",
+        "label": "Etichetta",
+        "above_mode": "Origine dell'avviso superiore",
+        "below_mode": "Origine dell'avviso inferiore",
+        "toggle": "Avviso"
+      },
       "attribute": "Attributo",
-      "badge_color": "Colore del badge",
-      "badge_color_toggle": "Independent color",
-      "badge_icon": "Icona del badge",
-      "badge_toggle": "Distintivo",
+      "badge": {
+        "toggle": "Distintivo",
+        "color_toggle": "Colore distintivo indipendente"
+      },
       "bar_color": "Colore barra",
       "bar_color_mode": "Modalità colore barra",
       "bar_effect_mode": "Effetto sulla barra",
       "bar_group": "Barra",
-      "bar_max_width": "Larghezza max della barra",
       "bar_max_width_toggle": "Larghezza max della barra",
       "bar_orientation": "Orientamento",
       "bar_scale": "Scala",
@@ -76,13 +85,14 @@
       "force_circular_background_mode": "Sfondo circolare dell'icona",
       "frameless": "Senza cornice",
       "height": "Altezza",
-      "height_custom_toggle": "Shrink height (embedded)",
+      "height_custom_toggle": "Altezza automatica",
       "hide_mode": "Nascondi",
       "icon": "Icona",
       "icon_animation": "Animazione dell'icona",
       "interpolate": "Interpolazione colori",
       "layout": "Layout del contenuto",
       "marginless": "Senza margine",
+      "mark_color": "Colore",
       "max_value": "Valore massimo",
       "max_value_mode": "Origine del valore massimo",
       "migrate_config": "Migra configurazione",
@@ -92,27 +102,55 @@
       "multiline": "Multilinea",
       "name": "Nome",
       "name_info": "Info nome personalizzata",
+      "opacity": "Opacità",
+      "peak_marker": {
+        "min_toggle": "Mostra minimo",
+        "max_toggle": "Mostra massimo",
+        "average_toggle": "Mostra media",
+        "toggle": "Marcatori di picco"
+      },
+      "peak_marker_unsupported": "I marcatori di picco richiedono un'entità sensor o number, senza sovrascrittura dell'attributo, e che non sia un timer né un counter — non disponibile per questa entità.",
       "percent": "Percentuale",
       "position": "Posizione",
       "reverse": "Timer inverso",
       "reverse_secondary_info_row": "Scambia barra e testo",
       "secondary": "Informazione secondaria",
       "state_content": "Contenuto dello stato",
-      "status_label_toggle": "Etichetta di stato",
+      "status_label": {
+        "color_source": "Origine del colore",
+        "position": "Posizione dell'etichetta",
+        "toggle": "Etichetta di stato"
+      },
       "text_shadow": "Aggiungi ombra al testo",
       "theme": "Tema",
+      "trend_indicator": {
+        "window_toggle": "Usa una finestra temporale",
+        "basis": "Base di confronto",
+        "threshold": "Zona morta (punti)",
+        "colored": "Colora con il colore dell'icona",
+        "up_color": "Colore salita",
+        "down_color": "Colore discesa",
+        "flat_color": "Colore stabile",
+        "toggle": "Indicatore di tendenza",
+        "mode": "Modalità"
+      },
       "trigger": "Attivazione",
+      "type": "Tipo",
       "unit": "Unità",
       "unit_spacing": "Spaziatura",
       "value_compact": "Valore compatto (1.2k)",
       "value_sign": "Mostra segno (+/-)",
-      "watermark_high_mode": "Origine dell'indicatore alto",
-      "watermark_low_mode": "Origine dell'indicatore basso",
-      "watermark_toggle": "Indicatori",
-      "peak_marker_toggle": "Peak markers",
-      "peak_marker_unsupported": "Peak markers need a sensor or number entity, no attribute override, and not a timer or counter — not available for this entity.",
-      "trend_indicator_toggle": "Trend indicator",
-      "trend_indicator_mode": "Mode"
+      "watermark": {
+        "high_toggle": "Mostra alto",
+        "low_toggle": "Mostra basso",
+        "high": "Soglia alta",
+        "line_size": "Spessore linea",
+        "low": "Soglia bassa",
+        "low_mode": "Origine dell'indicatore basso",
+        "high_mode": "Origine dell'indicatore alto",
+        "toggle": "Indicatori"
+      },
+      "window": "Finestra temporale"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -131,20 +169,13 @@
     "option": {
       "alert_animation": {
         "blink": "Lampeggio",
-        "ping": "Ping",
+        "ping": "Anello",
         "static": "Statico"
       },
       "alert_highlight": {
         "background": "Sfondo",
         "border": "Bordo",
         "label": "Etichetta"
-      },
-      "alert_when": {
-        "above": "Allerta sopra",
-        "animation": "Animazione",
-        "below": "Allerta sotto",
-        "color": "Colore allerta",
-        "highlight": "Evidenziazione"
       },
       "bar_color_mode": {
         "auto": "Automatico",
@@ -190,6 +221,16 @@
         "proportional": "Proporzionale",
         "stacked": "Impilato"
       },
+      "duration_unit": {
+        "s": "Secondi",
+        "min": "Minuti",
+        "h": "Ore",
+        "d": "Giorni"
+      },
+      "enabled_disabled_mode": {
+        "disabled": "Disattivato",
+        "enabled": "Attivato"
+      },
       "force_circular_background_mode": {
         "auto": "Automatico",
         "forced": "Forzato"
@@ -198,7 +239,7 @@
         "icon": "Icona",
         "name": "Nome",
         "progress_bar": "Barra",
-        "secondary_info": "Info",
+        "secondary_info": "Info secondaria",
         "shape": "Sfondo circolare dell'icona",
         "unit": "Unità",
         "value": "Valore"
@@ -206,7 +247,7 @@
       "icon_animation": {
         "battery_charging": "Batteria in carica",
         "bounce": "Rimbalzo",
-        "ping": "Ping",
+        "ping": "Anello",
         "pulse": "Pulsazione",
         "reveal": "Comparsa",
         "shake": "Vibrazione",
@@ -222,17 +263,12 @@
         "right": "Destra"
       },
       "layout": {
-        "horizontal": "Orizzontale (predefinito)",
+        "horizontal": "Orizzontale",
         "vertical": "Verticale"
       },
       "simple_advanced_mode": {
         "advanced": "Avanzato",
         "simple": "Semplice"
-      },
-      "status_label": {
-        "color_source": "Origine del colore",
-        "jinja": "Etichetta di stato",
-        "position": "Posizione dell'etichetta"
       },
       "status_label_color_source": {
         "bar": "Barra di avanzamento",
@@ -250,11 +286,16 @@
         "optimal_when_low": "Ottimale quando è basso",
         "pm25": "PM2.5",
         "temperature": "Temperatura",
-        "voc": "VOC"
+        "voc": "COV"
       },
       "theme_mode": {
         "custom": "Personalizzato",
         "preset": "Predefinito"
+      },
+      "trend_indicator_basis": {
+        "average": "Media",
+        "edge": "Estremo",
+        "slope": "Pendenza"
       },
       "unit_position": {
         "after": "Dopo il valore",
@@ -265,31 +306,10 @@
         "no-space": "Senza spazio",
         "space": "Spazio"
       },
-      "value_shape": {
-        "attribute": "Attributo"
-      },
       "value_source_mode": {
         "entity": "Entità",
         "jinja": "Modello",
         "standard": "Valore fisso"
-      },
-      "watermark": {
-        "high_toggle": "Show high",
-        "low_toggle": "Show low",
-        "high": "Soglia alta",
-        "high_as": "Unità (soglia alta)",
-        "high_color": "Colore soglia alta",
-        "line_size": "Spessore linea",
-        "low": "Soglia bassa",
-        "low_as": "Unità (soglia bassa)",
-        "low_color": "Colore soglia bassa",
-        "opacity": "Opacità",
-        "type": "Tipo",
-        "color": "Color",
-        "low_type": "Low type",
-        "low_opacity": "Low opacity",
-        "high_type": "High type",
-        "high_opacity": "High opacity"
       },
       "watermark_as": {
         "auto": "Automatico",
@@ -302,49 +322,6 @@
         "round": "Rotondo",
         "striped": "A righe",
         "triangle": "Triangolo"
-      },
-      "peak_marker": {
-        "window": "Time window",
-        "type": "Type",
-        "opacity": "Opacity",
-        "min_toggle": "Show minimum",
-        "min_type": "Minimum type",
-        "min_opacity": "Minimum opacity",
-        "min_color": "Minimum color",
-        "max_toggle": "Show maximum",
-        "max_type": "Maximum type",
-        "max_opacity": "Maximum opacity",
-        "max_color": "Maximum color",
-        "average_toggle": "Show average",
-        "average_type": "Average type",
-        "average_opacity": "Average opacity",
-        "average_color": "Average color",
-        "color": "Color"
-      },
-      "duration_unit": {
-        "s": "Seconds",
-        "min": "Minutes",
-        "h": "Hours",
-        "d": "Days"
-      },
-      "enabled_disabled_mode": {
-        "disabled": "Disabled",
-        "enabled": "Enabled"
-      },
-      "trend_indicator": {
-        "window_toggle": "Use a time window",
-        "window": "Time window",
-        "basis": "Comparison basis",
-        "threshold": "Dead zone (points)",
-        "colored": "Tint with icon color",
-        "up_color": "Up color",
-        "down_color": "Down color",
-        "flat_color": "Flat color"
-      },
-      "trend_indicator_basis": {
-        "average": "Average",
-        "edge": "Edge",
-        "slope": "Slope"
       }
     },
     "title": {

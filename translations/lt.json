@@ -33,27 +33,36 @@
   "editor": {
     "field": {
       "action": {
-        "tap": "Bakstelėjimo elgesys",
-        "hold": "Sulaikymo elgesys",
         "double_tap": "Dukart bakstelėjimas",
-        "icon_tap": "Piktogramos paspaudimo elgsena",
+        "hold": "Sulaikymo elgesys",
+        "icon_double_tap": "Ikonos dvigubo bakstelėjimo elgsena",
         "icon_hold": "Ikonos laikymo elgsena",
-        "icon_double_tap": "Ikonos dvigubo bakstelėjimo elgsena"
+        "icon_tap": "Piktogramos paspaudimo elgsena",
+        "tap": "Bakstelėjimo elgesys"
       },
       "action_picker": "Pridėti sąveiką",
-      "alert_toggle": "Įspėjimas",
-      "alert_when_above_mode": "Viršutinio įspėjimo šaltinis",
-      "alert_when_below_mode": "Apatinio įspėjimo šaltinis",
+      "add_entity": "Pridėti esybę",
+      "add_zone": "Pridėti zoną",
+      "alert_when": {
+        "above": "Įspėjimas virš",
+        "animation": "Animacija",
+        "below": "Įspėjimas žemiau",
+        "color": "Įspėjimo spalva",
+        "highlight": "Paryškinimas",
+        "label": "Etiketė",
+        "above_mode": "Viršutinio įspėjimo šaltinis",
+        "below_mode": "Apatinio įspėjimo šaltinis",
+        "toggle": "Įspėjimas"
+      },
       "attribute": "Atributas",
-      "badge_color": "Ženklelio spalva",
-      "badge_color_toggle": "Independent color",
-      "badge_icon": "Ženklelio ikona",
-      "badge_toggle": "Ženkliukas",
+      "badge": {
+        "toggle": "Ženkliukas",
+        "color_toggle": "Nepriklausoma ženkliuko spalva"
+      },
       "bar_color": "Juostos spalva",
       "bar_color_mode": "Spalvos režimas",
       "bar_effect_mode": "Juostos efektas",
       "bar_group": "Juosta",
-      "bar_max_width": "Maks. juostos plotis",
       "bar_max_width_toggle": "Maks. juostos plotis",
       "bar_orientation": "Orientacija",
       "bar_scale": "Skalė",
@@ -61,58 +70,87 @@
       "bar_single_line": "Viena eilutė",
       "bar_size": "Dydis",
       "bar_stack": "Papildomos esybės",
-      "bar_stack_mode": "Stack mode",
+      "bar_stack_mode": "Rietuvės režimas",
       "card_size_toggle": "Kortelės dydis",
       "center_zero": "Nulis centre",
       "center_zero_growth_percent": "Augimo procentas",
       "center_zero_value": "Centro reikšmė",
       "color": "Ikonos spalva",
       "custom_info": "Pasirinktinė papildoma informacija",
-      "custom_theme": "Custom theme zones",
+      "custom_theme": "Pasirinktinės temos zonos",
       "decimal": "Dešimtainė",
       "density_toggle": "Kompaktiškas",
-      "entity": "Entity",
+      "entity": "Esybė",
       "fast_refresh": "Greitas atnaujinimas (kas sekundę)",
       "force_circular_background_mode": "Apvalus piktogramos fonas",
       "frameless": "Be rėmelio",
       "height": "Aukštis",
-      "height_custom_toggle": "Shrink height (embedded)",
+      "height_custom_toggle": "Automatinis aukštis",
       "hide_mode": "Slėpti",
       "icon": "Ikona",
       "icon_animation": "Piktogramos animacija",
       "interpolate": "Spalvų interpoliavimas",
       "layout": "Turinio išdėstymas",
       "marginless": "Be paraščių",
+      "mark_color": "Spalva",
       "max_value": "Maksimali reikšmė",
       "max_value_mode": "Maksimalios reikšmės šaltinis",
-      "migrate_config": "Migrate config",
+      "migrate_config": "Perkelti konfigūraciją",
       "min_value": "Minimali reikšmė",
       "min_value_mode": "Minimalios reikšmės šaltinis",
       "min_width": "Min. plotis",
-      "multiline": "Multiline",
+      "multiline": "Kelių eilučių",
       "name": "Pavadinimas",
       "name_info": "Pasirinktinė pavadinimo informacija",
+      "opacity": "Nepermatomumas",
+      "peak_marker": {
+        "min_toggle": "Rodyti minimumą",
+        "max_toggle": "Rodyti maksimumą",
+        "average_toggle": "Rodyti vidurkį",
+        "toggle": "Piko žymos"
+      },
+      "peak_marker_unsupported": "Piko žymoms reikia sensor arba number esybės be atributo perrašymo, kuri nėra timer ar counter — neprieinama šiai esybei.",
       "percent": "Procentai",
       "position": "Padėtis",
       "reverse": "Atvirkštinis laikmatis",
       "reverse_secondary_info_row": "Sukeisti juostą ir tekstą",
       "secondary": "Papildoma informacija",
       "state_content": "Būsenos turinys",
-      "status_label_toggle": "Būsenos etiketė",
+      "status_label": {
+        "color_source": "Spalvos šaltinis",
+        "position": "Etiketės padėtis",
+        "toggle": "Būsenos etiketė"
+      },
       "text_shadow": "Pridėti teksto šešėlį",
       "theme": "Tema",
+      "trend_indicator": {
+        "window_toggle": "Naudoti laiko langą",
+        "basis": "Palyginimo pagrindas",
+        "threshold": "Negyva zona (taškai)",
+        "colored": "Nuspalvinti piktogramos spalva",
+        "up_color": "Kilimo spalva",
+        "down_color": "Kritimo spalva",
+        "flat_color": "Stabilumo spalva",
+        "toggle": "Tendencijos indikatorius",
+        "mode": "Režimas"
+      },
       "trigger": "Suveikiklis",
+      "type": "Tipas",
       "unit": "Vienetas",
       "unit_spacing": "Tarpas",
       "value_compact": "Kompaktiška reikšmė (1.2k)",
       "value_sign": "Rodyti ženklą (+/-)",
-      "watermark_high_mode": "Aukšto žymeklio šaltinis",
-      "watermark_low_mode": "Žemo žymeklio šaltinis",
-      "watermark_toggle": "Žymekliai",
-      "peak_marker_toggle": "Peak markers",
-      "peak_marker_unsupported": "Peak markers need a sensor or number entity, no attribute override, and not a timer or counter — not available for this entity.",
-      "trend_indicator_toggle": "Trend indicator",
-      "trend_indicator_mode": "Mode"
+      "watermark": {
+        "high_toggle": "Rodyti viršutinę",
+        "low_toggle": "Rodyti apatinę",
+        "high": "Viršutinė",
+        "line_size": "Linijos storis",
+        "low": "Apatinė",
+        "low_mode": "Žemo žymeklio šaltinis",
+        "high_mode": "Aukšto žymeklio šaltinis",
+        "toggle": "Žymekliai"
+      },
+      "window": "Laiko langas"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -131,20 +169,13 @@
     "option": {
       "alert_animation": {
         "blink": "Mirksėjimas",
-        "ping": "Ping",
+        "ping": "Žiedas",
         "static": "Statiškas"
       },
       "alert_highlight": {
-        "background": "Background",
-        "border": "Border",
+        "background": "Fonas",
+        "border": "Rėmelis",
         "label": "Etiketė"
-      },
-      "alert_when": {
-        "above": "Alert above",
-        "animation": "Animacija",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight"
       },
       "bar_color_mode": {
         "auto": "Automatinis",
@@ -175,8 +206,8 @@
         "top": "Juosta viršuje"
       },
       "bar_scale": {
-        "linear": "Linear",
-        "log": "Logarithmic"
+        "linear": "Tiesinė",
+        "log": "Logaritminė"
       },
       "bar_size": {
         "large": "Didelė",
@@ -186,9 +217,19 @@
         "xsmall": "Ypač mažas"
       },
       "bar_stack_mode": {
-        "net": "Net",
-        "proportional": "Sum",
-        "stacked": "Stacked"
+        "net": "Grynasis",
+        "proportional": "Proporcingas",
+        "stacked": "Sukrautas"
+      },
+      "duration_unit": {
+        "s": "Sekundės",
+        "min": "Minutės",
+        "h": "Valandos",
+        "d": "Dienos"
+      },
+      "enabled_disabled_mode": {
+        "disabled": "Išjungta",
+        "enabled": "Įjungta"
       },
       "force_circular_background_mode": {
         "auto": "Automatinis",
@@ -198,20 +239,20 @@
         "icon": "Piktograma",
         "name": "Pavadinimas",
         "progress_bar": "Juosta",
-        "secondary_info": "Info",
+        "secondary_info": "Papildoma info",
         "shape": "Apskritas piktogramos fonas",
         "unit": "Vienetas",
         "value": "Reikšmė"
       },
       "icon_animation": {
-        "battery_charging": "Battery charging",
-        "bounce": "Bounce",
-        "ping": "Ping",
-        "pulse": "Pulse",
-        "reveal": "Reveal",
-        "shake": "Shake",
-        "spin": "Spin",
-        "washing_machine": "Washing machine"
+        "battery_charging": "Baterija kraunasi",
+        "bounce": "Šokinėjimas",
+        "ping": "Žiedas",
+        "pulse": "Pulsavimas",
+        "reveal": "Atskleidimas",
+        "shake": "Drebėjimas",
+        "spin": "Sukimasis",
+        "washing_machine": "Skalbimo mašina"
       },
       "icon_animation_mode": {
         "auto": "Automatinis",
@@ -222,17 +263,12 @@
         "right": "Dešinė"
       },
       "layout": {
-        "horizontal": "Horizontalus (numatyta)",
+        "horizontal": "Horizontalus",
         "vertical": "Vertikalus"
       },
       "simple_advanced_mode": {
         "advanced": "Išplėstinis",
         "simple": "Paprastas"
-      },
-      "status_label": {
-        "color_source": "Spalvos šaltinis",
-        "jinja": "Būsenos etiketė",
-        "position": "Etiketės padėtis"
       },
       "status_label_color_source": {
         "bar": "Eigos juosta",
@@ -250,11 +286,16 @@
         "optimal_when_low": "Optimalu esant žemoms reikšmėms",
         "pm25": "PM2.5",
         "temperature": "Temperatūra",
-        "voc": "VOC"
+        "voc": "LOJ"
       },
       "theme_mode": {
-        "custom": "Custom",
-        "preset": "Preset"
+        "custom": "Pasirinktinis",
+        "preset": "Išankstinis nustatymas"
+      },
+      "trend_indicator_basis": {
+        "average": "Vidurkis",
+        "edge": "Kraštinė reikšmė",
+        "slope": "Nuolydis"
       },
       "unit_position": {
         "after": "Po reikšmės",
@@ -265,31 +306,10 @@
         "no-space": "Be tarpo",
         "space": "Tarpas"
       },
-      "value_shape": {
-        "attribute": "Attribute"
-      },
       "value_source_mode": {
-        "entity": "Entity",
-        "jinja": "Template",
-        "standard": "Fixed value"
-      },
-      "watermark": {
-        "high_toggle": "Show high",
-        "low_toggle": "Show low",
-        "high": "High",
-        "high_as": "High unit",
-        "high_color": "High color",
-        "line_size": "Line size",
-        "low": "Low",
-        "low_as": "Low unit",
-        "low_color": "Low color",
-        "opacity": "Opacity",
-        "type": "Type",
-        "color": "Color",
-        "low_type": "Low type",
-        "low_opacity": "Low opacity",
-        "high_type": "High type",
-        "high_opacity": "High opacity"
+        "entity": "Esybė",
+        "jinja": "Šablonas",
+        "standard": "Fiksuota reikšmė"
       },
       "watermark_as": {
         "auto": "Automatinis",
@@ -302,49 +322,6 @@
         "round": "Apvalus",
         "striped": "Dryžuotas",
         "triangle": "Trikampis"
-      },
-      "peak_marker": {
-        "window": "Time window",
-        "type": "Type",
-        "opacity": "Opacity",
-        "min_toggle": "Show minimum",
-        "min_type": "Minimum type",
-        "min_opacity": "Minimum opacity",
-        "min_color": "Minimum color",
-        "max_toggle": "Show maximum",
-        "max_type": "Maximum type",
-        "max_opacity": "Maximum opacity",
-        "max_color": "Maximum color",
-        "average_toggle": "Show average",
-        "average_type": "Average type",
-        "average_opacity": "Average opacity",
-        "average_color": "Average color",
-        "color": "Color"
-      },
-      "duration_unit": {
-        "s": "Seconds",
-        "min": "Minutes",
-        "h": "Hours",
-        "d": "Days"
-      },
-      "enabled_disabled_mode": {
-        "disabled": "Disabled",
-        "enabled": "Enabled"
-      },
-      "trend_indicator": {
-        "window_toggle": "Use a time window",
-        "window": "Time window",
-        "basis": "Comparison basis",
-        "threshold": "Dead zone (points)",
-        "colored": "Tint with icon color",
-        "up_color": "Up color",
-        "down_color": "Down color",
-        "flat_color": "Flat color"
-      },
-      "trend_indicator_basis": {
-        "average": "Average",
-        "edge": "Edge",
-        "slope": "Slope"
       }
     },
     "title": {

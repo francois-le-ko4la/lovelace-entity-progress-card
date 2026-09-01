@@ -33,27 +33,36 @@
   "editor": {
     "field": {
       "action": {
-        "tap": "タップ動作",
-        "hold": "ホールド動作",
         "double_tap": "ダブルタップの動作",
-        "icon_tap": "アイコンタップの動作",
+        "hold": "ホールド動作",
+        "icon_double_tap": "アイコンのダブルタップ動作",
         "icon_hold": "アイコンホールド動作",
-        "icon_double_tap": "アイコンのダブルタップ動作"
+        "icon_tap": "アイコンタップの動作",
+        "tap": "タップ動作"
       },
       "action_picker": "インタラクションを追加",
-      "alert_toggle": "アラート",
-      "alert_when_above_mode": "上限アラートのソース",
-      "alert_when_below_mode": "下限アラートのソース",
+      "add_entity": "エンティティを追加",
+      "add_zone": "ゾーンを追加",
+      "alert_when": {
+        "above": "上回ったら警告",
+        "animation": "アニメーション",
+        "below": "下回ったら警告",
+        "color": "警告の色",
+        "highlight": "強調表示",
+        "label": "ラベル",
+        "above_mode": "上限アラートのソース",
+        "below_mode": "下限アラートのソース",
+        "toggle": "アラート"
+      },
       "attribute": "属性",
-      "badge_color": "バッジの色",
-      "badge_color_toggle": "Independent color",
-      "badge_icon": "バッジのアイコン",
-      "badge_toggle": "バッジ",
+      "badge": {
+        "toggle": "バッジ",
+        "color_toggle": "バッジの色を個別指定"
+      },
       "bar_color": "バーの色",
       "bar_color_mode": "カラーモード",
       "bar_effect_mode": "バーのエフェクト",
       "bar_group": "バー",
-      "bar_max_width": "バーの最大幅",
       "bar_max_width_toggle": "バーの最大幅",
       "bar_orientation": "向き",
       "bar_scale": "スケール",
@@ -61,14 +70,14 @@
       "bar_single_line": "1行表示",
       "bar_size": "サイズ",
       "bar_stack": "追加エンティティ",
-      "bar_stack_mode": "Stack mode",
+      "bar_stack_mode": "積み上げモード",
       "card_size_toggle": "カードサイズ",
       "center_zero": "ゼロを中央に",
       "center_zero_growth_percent": "成長率",
       "center_zero_value": "中心値",
       "color": "メインカラー",
       "custom_info": "カスタム補助情報",
-      "custom_theme": "Custom theme zones",
+      "custom_theme": "カスタムテーマゾーン",
       "decimal": "小数点",
       "density_toggle": "コンパクト",
       "entity": "エンティティ",
@@ -76,43 +85,72 @@
       "force_circular_background_mode": "アイコンの円形背景",
       "frameless": "枠なし",
       "height": "高さ",
-      "height_custom_toggle": "Shrink height (embedded)",
+      "height_custom_toggle": "高さ自動",
       "hide_mode": "非表示",
       "icon": "アイコン",
       "icon_animation": "アイコンアニメーション",
       "interpolate": "色の補間",
       "layout": "コンテンツのレイアウト",
       "marginless": "余白なし",
+      "mark_color": "色",
       "max_value": "最大値",
       "max_value_mode": "最大値のソース",
-      "migrate_config": "Migrate config",
+      "migrate_config": "設定を移行",
       "min_value": "最小値",
       "min_value_mode": "最小値のソース",
       "min_width": "最小幅",
-      "multiline": "Multiline",
+      "multiline": "複数行",
       "name": "名前",
       "name_info": "カスタム名前情報",
+      "opacity": "不透明度",
+      "peak_marker": {
+        "min_toggle": "最小値を表示",
+        "max_toggle": "最大値を表示",
+        "average_toggle": "平均値を表示",
+        "toggle": "ピークマーカー"
+      },
+      "peak_marker_unsupported": "ピークマーカーには、属性の上書きがなく、timerやcounterではないsensorまたはnumberエンティティが必要です — このエンティティでは利用できません。",
       "percent": "パーセント",
       "position": "位置",
       "reverse": "タイマーを逆にする",
       "reverse_secondary_info_row": "バーとテキストを入れ替える",
       "secondary": "補足情報",
       "state_content": "状態の内容",
-      "status_label_toggle": "ステータスラベル",
+      "status_label": {
+        "color_source": "色のソース",
+        "position": "ラベルの位置",
+        "toggle": "ステータスラベル"
+      },
       "text_shadow": "テキストに影を追加",
       "theme": "テーマ",
+      "trend_indicator": {
+        "window_toggle": "時間ウィンドウを使用",
+        "basis": "比較基準",
+        "threshold": "不感帯（ポイント）",
+        "colored": "アイコンの色で着色",
+        "up_color": "上昇時の色",
+        "down_color": "下降時の色",
+        "flat_color": "安定時の色",
+        "toggle": "トレンドインジケーター",
+        "mode": "モード"
+      },
       "trigger": "トリガー",
+      "type": "タイプ",
       "unit": "単位",
       "unit_spacing": "間隔",
       "value_compact": "コンパクトな値 (1.2k)",
       "value_sign": "符号を表示 (+/-)",
-      "watermark_high_mode": "上限マーカーのソース",
-      "watermark_low_mode": "下限マーカーのソース",
-      "watermark_toggle": "マーカー",
-      "peak_marker_toggle": "Peak markers",
-      "peak_marker_unsupported": "Peak markers need a sensor or number entity, no attribute override, and not a timer or counter — not available for this entity.",
-      "trend_indicator_toggle": "Trend indicator",
-      "trend_indicator_mode": "Mode"
+      "watermark": {
+        "high_toggle": "上限を表示",
+        "low_toggle": "下限を表示",
+        "high": "上限",
+        "line_size": "線の太さ",
+        "low": "下限",
+        "low_mode": "下限マーカーのソース",
+        "high_mode": "上限マーカーのソース",
+        "toggle": "マーカー"
+      },
+      "window": "時間ウィンドウ"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -131,20 +169,13 @@
     "option": {
       "alert_animation": {
         "blink": "点滅",
-        "ping": "Ping",
+        "ping": "リング",
         "static": "静止"
       },
       "alert_highlight": {
-        "background": "Background",
-        "border": "Border",
+        "background": "背景",
+        "border": "枠線",
         "label": "ラベル"
-      },
-      "alert_when": {
-        "above": "Alert above",
-        "animation": "アニメーション",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight"
       },
       "bar_color_mode": {
         "auto": "自動",
@@ -175,8 +206,8 @@
         "top": "上部にバー"
       },
       "bar_scale": {
-        "linear": "Linear",
-        "log": "Logarithmic"
+        "linear": "線形",
+        "log": "対数"
       },
       "bar_size": {
         "large": "大",
@@ -186,9 +217,19 @@
         "xsmall": "極小"
       },
       "bar_stack_mode": {
-        "net": "Net",
-        "proportional": "Sum",
-        "stacked": "Stacked"
+        "net": "正味",
+        "proportional": "比例",
+        "stacked": "積み上げ"
+      },
+      "duration_unit": {
+        "s": "秒",
+        "min": "分",
+        "h": "時間",
+        "d": "日"
+      },
+      "enabled_disabled_mode": {
+        "disabled": "無効",
+        "enabled": "有効"
       },
       "force_circular_background_mode": {
         "auto": "自動",
@@ -204,14 +245,14 @@
         "value": "値"
       },
       "icon_animation": {
-        "battery_charging": "Battery charging",
-        "bounce": "Bounce",
-        "ping": "Ping",
-        "pulse": "Pulse",
-        "reveal": "Reveal",
-        "shake": "Shake",
-        "spin": "Spin",
-        "washing_machine": "Washing machine"
+        "battery_charging": "バッテリー充電中",
+        "bounce": "バウンス",
+        "ping": "リング",
+        "pulse": "パルス",
+        "reveal": "リビール",
+        "shake": "シェイク",
+        "spin": "スピン",
+        "washing_machine": "洗濯機"
       },
       "icon_animation_mode": {
         "auto": "自動",
@@ -222,17 +263,12 @@
         "right": "右"
       },
       "layout": {
-        "horizontal": "水平（デフォルト）",
+        "horizontal": "水平",
         "vertical": "垂直"
       },
       "simple_advanced_mode": {
         "advanced": "詳細設定",
         "simple": "シンプル"
-      },
-      "status_label": {
-        "color_source": "色のソース",
-        "jinja": "ステータスラベル",
-        "position": "ラベルの位置"
       },
       "status_label_color_source": {
         "bar": "プログレスバー",
@@ -253,8 +289,13 @@
         "voc": "VOC"
       },
       "theme_mode": {
-        "custom": "Custom",
-        "preset": "Preset"
+        "custom": "カスタム",
+        "preset": "プリセット"
+      },
+      "trend_indicator_basis": {
+        "average": "平均",
+        "edge": "端点",
+        "slope": "傾き"
       },
       "unit_position": {
         "after": "値の後",
@@ -265,31 +306,10 @@
         "no-space": "スペースなし",
         "space": "スペース"
       },
-      "value_shape": {
-        "attribute": "Attribute"
-      },
       "value_source_mode": {
-        "entity": "Entity",
-        "jinja": "Template",
-        "standard": "Fixed value"
-      },
-      "watermark": {
-        "high_toggle": "Show high",
-        "low_toggle": "Show low",
-        "high": "High",
-        "high_as": "High unit",
-        "high_color": "High color",
-        "line_size": "Line size",
-        "low": "Low",
-        "low_as": "Low unit",
-        "low_color": "Low color",
-        "opacity": "Opacity",
-        "type": "Type",
-        "color": "Color",
-        "low_type": "Low type",
-        "low_opacity": "Low opacity",
-        "high_type": "High type",
-        "high_opacity": "High opacity"
+        "entity": "エンティティ",
+        "jinja": "テンプレート",
+        "standard": "固定値"
       },
       "watermark_as": {
         "auto": "自動",
@@ -302,49 +322,6 @@
         "round": "丸",
         "striped": "ストライプ",
         "triangle": "三角形"
-      },
-      "peak_marker": {
-        "window": "Time window",
-        "type": "Type",
-        "opacity": "Opacity",
-        "min_toggle": "Show minimum",
-        "min_type": "Minimum type",
-        "min_opacity": "Minimum opacity",
-        "min_color": "Minimum color",
-        "max_toggle": "Show maximum",
-        "max_type": "Maximum type",
-        "max_opacity": "Maximum opacity",
-        "max_color": "Maximum color",
-        "average_toggle": "Show average",
-        "average_type": "Average type",
-        "average_opacity": "Average opacity",
-        "average_color": "Average color",
-        "color": "Color"
-      },
-      "duration_unit": {
-        "s": "Seconds",
-        "min": "Minutes",
-        "h": "Hours",
-        "d": "Days"
-      },
-      "enabled_disabled_mode": {
-        "disabled": "Disabled",
-        "enabled": "Enabled"
-      },
-      "trend_indicator": {
-        "window_toggle": "Use a time window",
-        "window": "Time window",
-        "basis": "Comparison basis",
-        "threshold": "Dead zone (points)",
-        "colored": "Tint with icon color",
-        "up_color": "Up color",
-        "down_color": "Down color",
-        "flat_color": "Flat color"
-      },
-      "trend_indicator_basis": {
-        "average": "Average",
-        "edge": "Edge",
-        "slope": "Slope"
       }
     },
     "title": {

@@ -33,27 +33,36 @@
   "editor": {
     "field": {
       "action": {
-        "tap": "ট্যাপে অ্যাকশন",
-        "hold": "দীর্ঘ চাপে অ্যাকশন",
         "double_tap": "ডাবল ট্যাপে অ্যাকশন",
-        "icon_tap": "আইকনে ট্যাপ করার অ্যাকশন",
+        "hold": "দীর্ঘ চাপে অ্যাকশন",
+        "icon_double_tap": "আইকনে ডাবল ট্যাপের অ্যাকশন",
         "icon_hold": "আইকনে দীর্ঘ চাপের অ্যাকশন",
-        "icon_double_tap": "আইকনে ডাবল ট্যাপের অ্যাকশন"
+        "icon_tap": "আইকনে ট্যাপ করার অ্যাকশন",
+        "tap": "ট্যাপে অ্যাকশন"
       },
       "action_picker": "ইন্টারঅ্যাকশন যোগ করুন",
-      "alert_toggle": "অ্যালার্ট",
-      "alert_when_above_mode": "ঊর্ধ্ব অ্যালার্টের উৎস",
-      "alert_when_below_mode": "নিম্ন অ্যালার্টের উৎস",
+      "add_entity": "সত্তা যোগ করুন",
+      "add_zone": "জোন যোগ করুন",
+      "alert_when": {
+        "above": "এর উপরে সতর্কতা",
+        "animation": "অ্যানিমেশন",
+        "below": "এর নিচে সতর্কতা",
+        "color": "সতর্কতার রং",
+        "highlight": "হাইলাইট",
+        "label": "লেবেল",
+        "above_mode": "ঊর্ধ্ব অ্যালার্টের উৎস",
+        "below_mode": "নিম্ন অ্যালার্টের উৎস",
+        "toggle": "অ্যালার্ট"
+      },
       "attribute": "বৈশিষ্ট্য",
-      "badge_color": "ব্যাজের রঙ",
-      "badge_color_toggle": "Independent color",
-      "badge_icon": "ব্যাজ আইকন",
-      "badge_toggle": "ব্যাজ",
+      "badge": {
+        "toggle": "ব্যাজ",
+        "color_toggle": "স্বতন্ত্র ব্যাজের রঙ"
+      },
       "bar_color": "বারের রঙ",
       "bar_color_mode": "রঙের মোড",
       "bar_effect_mode": "বারের প্রভাব",
       "bar_group": "বার",
-      "bar_max_width": "বারের সর্বোচ্চ প্রস্থ",
       "bar_max_width_toggle": "বারের সর্বোচ্চ প্রস্থ",
       "bar_orientation": "দিক",
       "bar_scale": "স্কেল",
@@ -61,14 +70,14 @@
       "bar_single_line": "এক লাইনে",
       "bar_size": "আকার",
       "bar_stack": "অতিরিক্ত সত্তা",
-      "bar_stack_mode": "Stack mode",
+      "bar_stack_mode": "স্ট্যাক মোড",
       "card_size_toggle": "কার্ডের আকার",
       "center_zero": "মাঝে শূন্য",
       "center_zero_growth_percent": "প্রবৃদ্ধির শতাংশ",
       "center_zero_value": "কেন্দ্রীয় মান",
       "color": "প্রাথমিক রঙ",
       "custom_info": "কাস্টম সেকেন্ডারি তথ্য",
-      "custom_theme": "Custom theme zones",
+      "custom_theme": "কাস্টম থিম জোন",
       "decimal": "দশমিক",
       "density_toggle": "কমপ্যাক্ট",
       "entity": "সত্তা",
@@ -76,43 +85,72 @@
       "force_circular_background_mode": "আইকনের বৃত্তাকার পটভূমি",
       "frameless": "ফ্রেমহীন",
       "height": "উচ্চতা",
-      "height_custom_toggle": "Shrink height (embedded)",
+      "height_custom_toggle": "স্বয়ংক্রিয় উচ্চতা",
       "hide_mode": "লুকান",
       "icon": "আইকন",
       "icon_animation": "আইকন অ্যানিমেশন",
       "interpolate": "রঙ ইন্টারপোলেশন",
       "layout": "বিষয়বস্তুর বিন্যাস",
       "marginless": "মার্জিনহীন",
+      "mark_color": "রং",
       "max_value": "সর্বোচ্চ মান",
       "max_value_mode": "সর্বোচ্চ মানের উৎস",
-      "migrate_config": "Migrate config",
+      "migrate_config": "কনফিগারেশন মাইগ্রেট করুন",
       "min_value": "ন্যূনতম মান",
       "min_value_mode": "সর্বনিম্ন মানের উৎস",
       "min_width": "সর্বনিম্ন প্রস্থ",
-      "multiline": "Multiline",
+      "multiline": "মাল্টিলাইন",
       "name": "নাম",
       "name_info": "কাস্টম নাম তথ্য",
+      "opacity": "অস্বচ্ছতা",
+      "peak_marker": {
+        "min_toggle": "সর্বনিম্ন দেখান",
+        "max_toggle": "সর্বোচ্চ দেখান",
+        "average_toggle": "গড় দেখান",
+        "toggle": "পিক মার্কার"
+      },
+      "peak_marker_unsupported": "পিক মার্কারের জন্য sensor বা number সত্তা প্রয়োজন, attribute ওভাররাইড ছাড়া, যা timer বা counter নয় — এই সত্তার জন্য উপলব্ধ নয়।",
       "percent": "শতাংশ",
       "position": "অবস্থান",
       "reverse": "টাইমার উল্টানো",
       "reverse_secondary_info_row": "বার এবং টেক্সট অদলবদল করুন",
       "secondary": "দ্বিতীয় তথ্য",
       "state_content": "স্টেটের বিষয়বস্তু",
-      "status_label_toggle": "স্ট্যাটাস লেবেল",
+      "status_label": {
+        "color_source": "রঙের উৎস",
+        "position": "লেবেলের অবস্থান",
+        "toggle": "স্ট্যাটাস লেবেল"
+      },
       "text_shadow": "টেক্সটে ছায়া যোগ করুন",
       "theme": "থিম",
+      "trend_indicator": {
+        "window_toggle": "সময় উইন্ডো ব্যবহার করুন",
+        "basis": "তুলনার ভিত্তি",
+        "threshold": "মৃত অঞ্চল (পয়েন্ট)",
+        "colored": "আইকনের রঙে রাঙান",
+        "up_color": "ঊর্ধ্বগামী রং",
+        "down_color": "নিম্নগামী রং",
+        "flat_color": "স্থিতিশীল রং",
+        "toggle": "ট্রেন্ড ইন্ডিকেটর",
+        "mode": "মোড"
+      },
       "trigger": "ট্রিগার",
+      "type": "ধরন",
       "unit": "একক",
       "unit_spacing": "ব্যবধান",
       "value_compact": "সংক্ষিপ্ত মান (1.2k)",
       "value_sign": "চিহ্ন দেখান (+/-)",
-      "watermark_high_mode": "উচ্চ মার্কারের উৎস",
-      "watermark_low_mode": "নিম্ন মার্কারের উৎস",
-      "watermark_toggle": "মার্কার",
-      "peak_marker_toggle": "Peak markers",
-      "peak_marker_unsupported": "Peak markers need a sensor or number entity, no attribute override, and not a timer or counter — not available for this entity.",
-      "trend_indicator_toggle": "Trend indicator",
-      "trend_indicator_mode": "Mode"
+      "watermark": {
+        "high_toggle": "উচ্চ দেখান",
+        "low_toggle": "নিম্ন দেখান",
+        "high": "উচ্চ",
+        "line_size": "লাইনের পুরুত্ব",
+        "low": "নিম্ন",
+        "low_mode": "নিম্ন মার্কারের উৎস",
+        "high_mode": "উচ্চ মার্কারের উৎস",
+        "toggle": "মার্কার"
+      },
+      "window": "সময় উইন্ডো"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -135,16 +173,9 @@
         "static": "স্ট্যাটিক"
       },
       "alert_highlight": {
-        "background": "Background",
-        "border": "Border",
+        "background": "পটভূমি",
+        "border": "বর্ডার",
         "label": "লেবেল"
-      },
-      "alert_when": {
-        "above": "Alert above",
-        "animation": "অ্যানিমেশন",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight"
       },
       "bar_color_mode": {
         "auto": "স্বয়ংক্রিয়",
@@ -175,8 +206,8 @@
         "top": "উপরের দিকে বার"
       },
       "bar_scale": {
-        "linear": "Linear",
-        "log": "Logarithmic"
+        "linear": "রৈখিক",
+        "log": "লগারিদমিক"
       },
       "bar_size": {
         "large": "বড়",
@@ -186,9 +217,19 @@
         "xsmall": "অতি ছোট"
       },
       "bar_stack_mode": {
-        "net": "Net",
-        "proportional": "Sum",
-        "stacked": "Stacked"
+        "net": "নিট",
+        "proportional": "আনুপাতিক",
+        "stacked": "স্ট্যাকড"
+      },
+      "duration_unit": {
+        "s": "সেকেন্ড",
+        "min": "মিনিট",
+        "h": "ঘণ্টা",
+        "d": "দিন"
+      },
+      "enabled_disabled_mode": {
+        "disabled": "নিষ্ক্রিয়",
+        "enabled": "সক্রিয়"
       },
       "force_circular_background_mode": {
         "auto": "স্বয়ংক্রিয়",
@@ -198,20 +239,20 @@
         "icon": "আইকন",
         "name": "নাম",
         "progress_bar": "বার",
-        "secondary_info": "তথ্য",
+        "secondary_info": "দ্বিতীয় তথ্য",
         "shape": "আইকনের বৃত্তাকার পটভূমি",
         "unit": "একক",
         "value": "মান"
       },
       "icon_animation": {
-        "battery_charging": "Battery charging",
-        "bounce": "Bounce",
+        "battery_charging": "ব্যাটারি চার্জ হচ্ছে",
+        "bounce": "বাউন্স",
         "ping": "পিং",
-        "pulse": "Pulse",
-        "reveal": "Reveal",
-        "shake": "Shake",
-        "spin": "Spin",
-        "washing_machine": "Washing machine"
+        "pulse": "পালস",
+        "reveal": "প্রকাশ",
+        "shake": "শেক",
+        "spin": "স্পিন",
+        "washing_machine": "ওয়াশিং মেশিন"
       },
       "icon_animation_mode": {
         "auto": "স্বয়ংক্রিয়",
@@ -222,17 +263,12 @@
         "right": "ডানে"
       },
       "layout": {
-        "horizontal": "অনুভূমিক (ডিফল্ট)",
+        "horizontal": "অনুভূমিক",
         "vertical": "উল্লম্ব"
       },
       "simple_advanced_mode": {
         "advanced": "উন্নত",
         "simple": "সাধারণ"
-      },
-      "status_label": {
-        "color_source": "রঙের উৎস",
-        "jinja": "স্ট্যাটাস লেবেল",
-        "position": "লেবেলের অবস্থান"
       },
       "status_label_color_source": {
         "bar": "প্রগ্রেস বার",
@@ -250,11 +286,16 @@
         "optimal_when_low": "কম হলে সর্বোত্তম",
         "pm25": "PM2.5",
         "temperature": "তাপমাত্রা",
-        "voc": "VOC"
+        "voc": "উদ্বায়ী জৈব যৌগ"
       },
       "theme_mode": {
-        "custom": "Custom",
-        "preset": "Preset"
+        "custom": "কাস্টম",
+        "preset": "প্রিসেট"
+      },
+      "trend_indicator_basis": {
+        "average": "গড়",
+        "edge": "প্রান্ত",
+        "slope": "ঢাল"
       },
       "unit_position": {
         "after": "মানের পরে",
@@ -265,31 +306,10 @@
         "no-space": "স্পেস ছাড়া",
         "space": "স্পেস"
       },
-      "value_shape": {
-        "attribute": "Attribute"
-      },
       "value_source_mode": {
-        "entity": "Entity",
-        "jinja": "Template",
-        "standard": "Fixed value"
-      },
-      "watermark": {
-        "high_toggle": "Show high",
-        "low_toggle": "Show low",
-        "high": "High",
-        "high_as": "High unit",
-        "high_color": "High color",
-        "line_size": "Line size",
-        "low": "Low",
-        "low_as": "Low unit",
-        "low_color": "Low color",
-        "opacity": "Opacity",
-        "type": "Type",
-        "color": "Color",
-        "low_type": "Low type",
-        "low_opacity": "Low opacity",
-        "high_type": "High type",
-        "high_opacity": "High opacity"
+        "entity": "সত্তা",
+        "jinja": "টেমপ্লেট",
+        "standard": "নির্দিষ্ট মান"
       },
       "watermark_as": {
         "auto": "স্বয়ংক্রিয়",
@@ -302,49 +322,6 @@
         "round": "গোলাকার",
         "striped": "ডোরাকাটা",
         "triangle": "ত্রিভুজ"
-      },
-      "peak_marker": {
-        "window": "Time window",
-        "type": "Type",
-        "opacity": "Opacity",
-        "min_toggle": "Show minimum",
-        "min_type": "Minimum type",
-        "min_opacity": "Minimum opacity",
-        "min_color": "Minimum color",
-        "max_toggle": "Show maximum",
-        "max_type": "Maximum type",
-        "max_opacity": "Maximum opacity",
-        "max_color": "Maximum color",
-        "average_toggle": "Show average",
-        "average_type": "Average type",
-        "average_opacity": "Average opacity",
-        "average_color": "Average color",
-        "color": "Color"
-      },
-      "duration_unit": {
-        "s": "Seconds",
-        "min": "Minutes",
-        "h": "Hours",
-        "d": "Days"
-      },
-      "enabled_disabled_mode": {
-        "disabled": "Disabled",
-        "enabled": "Enabled"
-      },
-      "trend_indicator": {
-        "window_toggle": "Use a time window",
-        "window": "Time window",
-        "basis": "Comparison basis",
-        "threshold": "Dead zone (points)",
-        "colored": "Tint with icon color",
-        "up_color": "Up color",
-        "down_color": "Down color",
-        "flat_color": "Flat color"
-      },
-      "trend_indicator_basis": {
-        "average": "Average",
-        "edge": "Edge",
-        "slope": "Slope"
       }
     },
     "title": {

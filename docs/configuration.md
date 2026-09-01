@@ -1384,8 +1384,8 @@ color: rgb(110, 65, 171)
 [![Template OK][Template-OK]](#compatibility)
 
 > **`icon_animation`** [String]|[Map] ➡️
-> {`none`|`spin`|`pulse`|`bounce`|`shake`|`ping`|`reveal`|`washing_machine`|`battery_charging`}
-> _(optional, default: `none`)_
+> {`spin`|`pulse`|`bounce`|`shake`|`ping`|`reveal`|`washing_machine`|`battery_charging`}
+> _(optional — omit for no animation)_
 
 Animates the icon while the entity is in an active state — a spinning fan, a
 pulsing media player icon...
@@ -1473,7 +1473,6 @@ _Options_:
 
 | option             | description                                                                                 |
 | :----------------- | :------------------------------------------------------------------------------------------ |
-| `none`             | No animation (default)                                                                      |
 | `spin`             | Continuous rotation                                                                         |
 | `pulse`            | Gentle scale/opacity pulse                                                                  |
 | `bounce`           | Squash-and-stretch bounce                                                                   |
@@ -3593,7 +3592,7 @@ available for Templates as well:
 | `bar_max_width`              | string (optional)  | -            | Limits the max width of the bar    | [Config Ref.](#bar_max_width)              |
 | `bar_orientation`            | string (optional)  | `ltr`        | Bar direction                      | [Config Ref.](#bar_orientation)            |
 | `bar_scale`                  | string (optional)  | `linear`     | Value-to-width mapping             | [Config Ref.](#bar_scale)                  |
-| `icon_animation`             | string (optional)  | `none`       | Animate icon on active state       | [Config Ref.](#icon_animation)             |
+| `icon_animation`             | string (optional)  | —            | Animate icon on active state       | [Config Ref.](#icon_animation)             |
 | `force_circular_background`  | boolean (optional) | `false`      | Force icon circle background       | [Config Ref.](#force_circular_background)  |
 | `trend_indicator`            | string (optional)  | `false`      | Displays trend icons.              | [Config Ref.](#trend_indicator)            |
 | `peak_marker`                | Map (optional)     | —            | Min/max/average marks from history | [Config Ref.](#peak_marker)                |

@@ -6,12 +6,21 @@
 
 import { VERSION, META, CARD_CONTEXT, devName, HA_CONTEXT, CARD } from '../utils/parameters.js';
 import { CARD_CSS, getSharedStyleSheet } from '../utils/styles.js';
-import { is, assertDefined } from '../utils/common-checks.js';
+import { is, assertDefined, toNumberOrNull } from '../utils/common-checks.js';
 import { initLogger, type LoggerInstance } from '../utils/log.js';
 import { ObjStructure, ThemeManager, ChangeTracker } from './value-helpers.js';
 import { HassProviderSingleton, type HomeAssistant, type EntityState } from '../utils/hass-provider.js';
-import { CardView, FeatureView, type ViewCore, type ViewBase, type ResolvedWatermark } from './view.js';
-import { isMarkOverride, type WatermarkMark, statusLabelObj, jinjaOf, markValue, SCHEMA_DEFAULTS } from './schema.js';
+import { type ViewCore, type ViewBase, type ResolvedWatermark } from './view.js';
+import {
+  isMarkOverride,
+  type WatermarkMark,
+  statusLabelObj,
+  jinjaOf,
+  markValue,
+  SCHEMA_DEFAULTS,
+  BAR_POSITIONS,
+  BAR_SIZES,
+} from './schema.js';
 import { ResourceManager, DOMHelper, ActionHelper } from './dom-helpers.js';
 import type { CacheValue } from './dom-helpers.js';
 import type { LovelaceConfig, Config } from '../utils/types.js';
@@ -30,6 +39,16 @@ export type DivergingGradients = {
 // The icon element _showIcon()/_handleImgIcon()/_handleStateIcon() manage:
 // either a plain <img> (entity_picture) or a <ha-state-icon> (hass/stateObj).
 type IconElement = HTMLImageElement | (HTMLElement & { hass: HomeAssistant | null; stateObj: unknown });
+
+// Every Jinja-pushed numeric option, as named on the view - see
+// HABase._applyJinjaNumber.
+type JinjaNumberProp =
+  | 'jinjaMinValue'
+  | 'jinjaMaxValue'
+  | 'jinjaWatermarkLow'
+  | 'jinjaWatermarkHigh'
+  | 'jinjaAlertAbove'
+  | 'jinjaAlertBelow';
 
 // HABase#_applyTrendVisuals's own icon-per-direction map - shared by every
 // instance (never overridden, never mutated), not rebuilt per card.
@@ -64,13 +83,14 @@ const TREND_ICONS: Record<string, string> = {
  *
  * Subclasses MUST implement:
  * - _handleHassUpdate()     → react to hass state changes
- * - _updateCSS()            → apply dynamic CSS custom properties
  * - _getJinjaHandlers()     → handle Jinja2 template results
  *
- * Subclasses MAY override: - _structureOptions (getter) → structure options
- * passed to ObjStructure.clone() (barType, barPosition…) - _buildStyle() → CSS
- * class application pipeline (watermark, bar effect, base classes) -
- * _updateDynamicElements() → DOM update orchestration (CSS, Jinja processing)
+ * Subclasses MAY override: - _updateCSS() → the entity-driven bar repaint
+ * implemented here (Template swaps in its own Jinja-driven one) -
+ * _structureOptions (getter) → structure options passed to ObjStructure.clone()
+ * (barType, barPosition…) - _buildStyle() → CSS class application pipeline
+ * (watermark, bar effect, base classes) - _updateDynamicElements() → DOM update
+ * orchestration (CSS, Jinja processing)
  *
  * @abstract
  * @extends HTMLElement
@@ -96,9 +116,9 @@ class HACore extends HTMLElement {
   _actionHelper: ActionHelper | null = null;
   // Concrete subclasses swap this in for CardView/BadgeView/FeatureView/
   // CardTemplateView/BadgeTemplateView - ViewCore (not a union, not `any`)
-  // is the widest type accurate for all of them. Call sites reading a
-  // ViewBase-only member (msg, badgeInfo, …) cast to ViewBase explicitly.
-  _cardView: ViewCore = new FeatureView();
+  // is the widest type accurate for all of them. `declare`: HACore itself
+  // is never instantiated, only its subclasses.
+  declare _cardView: ViewCore;
   _dom = new DOMHelper();
   _hassProvider = HassProviderSingleton.getInstance();
   _changeTracker = new ChangeTracker();
@@ -214,12 +234,11 @@ class HACore extends HTMLElement {
     this._log?.debug('📎 HACore.setConfig()', config);
 
     if (!config) throw new Error('setConfig: invalid config');
-    if (this.isRendered) this.reset(); // Card/Badge editor
 
     this._cardView.config = { ...config };
     this._registerWatchedEntities(config);
+    if (this.isRendered) this.reset(); // Card/Badge editor
     this.render(); // re-build the card
-
     if (this.hass) this._handleHassUpdate(); // Card/Badge editor
   }
 
@@ -637,22 +656,22 @@ class HACore extends HTMLElement {
   _buildSegmentCells() {
     const count = this._cardView.config.bar_segments;
     const active = is.number(count) && count >= 2;
+    const isCenterZero = Boolean(this._cardView.config.center_zero);
+    const rounded = active ? Math.round(count) : 0;
     // .bar-segmented itself only still matters for .bar's own border-radius
     // reset and hiding .inner below (styles.ts) - everything else keys off
     // the cell elements' own presence now, not this class.
     this._dom.toggleClass(CARD.htmlStructure.card.element, 'bar-segmented', active);
     if (!active) return;
-    const rounded = Math.round(count);
+    const containerSpec = CARD.htmlStructure.elements.progressBar.segments;
     // center_zero: one independent N-cell row per arm (.bar-half), off that
     // arm's own --arm-fill (styles.ts). --bar-segments always goes on .bar
     // itself though, never a .bar-half - it's the only ancestor a mark and
     // every cell both share (a mark is .bar's own child, not arm-nested).
-    const isCenterZero = Boolean(this._cardView.config.center_zero);
     const halfSpec = CARD.htmlStructure.elements.progressBar.half;
     const bars = this._shadow.querySelectorAll<HTMLElement>(
       `.${CSS.escape(CARD.htmlStructure.elements.progressBar.bar.class)}`,
     );
-    const containerSpec = CARD.htmlStructure.elements.progressBar.segments;
     const cellSpec = CARD.htmlStructure.elements.progressBar.segmentCell;
     bars.forEach((bar) => {
       bar.style.setProperty('--bar-segments', String(rounded));
@@ -679,24 +698,39 @@ class HACore extends HTMLElement {
     });
   }
 
+  // Shared by every _baseClassStyle-style getter below (HABase's own
+  // extends it via `...super._baseClassStyle`, same pattern as _staticStyle)
+  // - toggling per the map, unlike a plain addClass, correctly drops a class
+  // that no longer applies instead of only ever adding new ones.
+  _toggleClasses(style: Map<string, boolean>) {
+    style.forEach((condition, className) => {
+      this._dom.toggleClass(CARD.htmlStructure.card.element, className, condition);
+    });
+  }
+
+  get _baseClassStyle(): Map<string, boolean> {
+    const config = this._cardView.config;
+    const orientationClasses = CARD.style.dynamic.progressBar.orientation as Record<string, string>;
+    const isVerticalBar =
+      (config.layout === 'vertical' && config.bar_orientation === 'up' && config.bar_position === 'overlay') ||
+      (config.bar_orientation === 'up' && config.bar_position === 'background');
+    return new Map([
+      [this.baseClass, true],
+      ...Object.values(CARD.layout.orientations).map((o): [string, boolean] => [o.label, config.layout === o.label]),
+      ...BAR_SIZES.map((size): [string, boolean] => [size, config.bar_size === size]),
+      ...Object.values(orientationClasses).map((cls): [string, boolean] => [
+        cls,
+        orientationClasses[config.bar_orientation as string] === cls,
+      ]),
+      [CARD.style.dynamic.progressBar.centerZero, Boolean(config.center_zero)],
+      ['rainbow-full-bar', config.bar_color_mode === 'rainbow_full'],
+      ['vertical-bar', isVerticalBar],
+      ['horizontal-bar', !isVerticalBar],
+    ]);
+  }
+
   _addBaseClasses() {
-    this._dom.addClass(
-      CARD.htmlStructure.card.element,
-      this.baseClass,
-      this._cardView.config.layout,
-      this._cardView.config.bar_size,
-      this._cardView.config.bar_orientation
-        ? (CARD.style.dynamic.progressBar.orientation as Record<string, string>)[this._cardView.config.bar_orientation]
-        : null,
-      this._cardView.config.center_zero ? CARD.style.dynamic.progressBar.centerZero : null,
-      this._cardView.config.bar_color_mode === 'rainbow_full' ? 'rainbow-full-bar' : null,
-      (this._cardView.config.layout === 'vertical' &&
-        this._cardView.config.bar_orientation === 'up' &&
-        this._cardView.config.bar_position === 'overlay') ||
-        (this._cardView.config.bar_orientation === 'up' && this._cardView.config.bar_position === 'background')
-        ? 'vertical-bar'
-        : 'horizontal-bar',
-    );
+    this._toggleClasses(this._baseClassStyle);
   }
 
   _handleWatermarkClasses() {
@@ -762,8 +796,25 @@ class HACore extends HTMLElement {
 
   // ─── CSS MANAGEMENT ───────────────────────────────────────────────────────
 
+  // Entity-driven bar repaint, shared by Card/Badge and Feature.
+  // EntityProgressTemplateBase overrides it (percent comes from a Jinja push).
   _updateCSS() {
-    throw new Error(`${this.constructor.name} must implement _updateCSS()`);
+    const bar = this._cardView as ViewBase;
+    this._applyProgressCSS(bar.percent / 100, {
+      barColor: bar.barColor,
+      // Feature has no icon, but rainbow_full's value-mark pill still reads
+      // --icon-and-shape-color for its fill (styles.ts).
+      iconColor: bar.iconColor,
+      gradient: bar.colorGradient,
+      // bar_stack's entity-driven gradient wins; themeDivergingGradient is
+      // center_zero's fallback when no bar_stack drives the two arms.
+      diverging: bar.divergingBarStack ?? bar.themeDivergingGradient,
+    });
+    this._applyWatermarkCSS(bar.hasWatermark ? bar.watermark : null);
+    this._applyPeakMarkerCSS(bar.peakMarker);
+    // History-seeded (async, after the initial _buildStyle() pass): show-peak-*
+    // needs recomputing here too, not just at render() time.
+    this._handlePeakMarkerClasses();
   }
 
   _applyProgressCSS(
@@ -804,19 +855,19 @@ class HACore extends HTMLElement {
   // own once written.
   _applyDivergingBarStackCSS(cardKey: string, diverging: DivergingGradients | null) {
     const pb = CARD.style.dynamic.progressBar;
-    if (!diverging) {
-      this._dom.removeStyle(cardKey, pb.stackGradientPos.var);
-      this._dom.removeStyle(cardKey, pb.stackGradientNeg.var);
-      this._dom.removeStyle(cardKey, pb.stackSizePos.var);
-      this._dom.removeStyle(cardKey, pb.stackSizeNeg.var);
-      return;
-    }
-    if (diverging.posGradient) this._dom.setStyle(cardKey, pb.stackGradientPos.var, diverging.posGradient);
-    else this._dom.removeStyle(cardKey, pb.stackGradientPos.var);
-    if (diverging.negGradient) this._dom.setStyle(cardKey, pb.stackGradientNeg.var, diverging.negGradient);
-    else this._dom.removeStyle(cardKey, pb.stackGradientNeg.var);
-    this._dom.setStyle(cardKey, pb.stackSizePos.var, diverging.posSize);
-    this._dom.setStyle(cardKey, pb.stackSizeNeg.var, diverging.negSize);
+    // Nullish (no bar_stack, or one arm with no gradient) removes; a size of 0
+    // is a real value and must still be written.
+    (
+      [
+        [pb.stackGradientPos.var, diverging?.posGradient],
+        [pb.stackGradientNeg.var, diverging?.negGradient],
+        [pb.stackSizePos.var, diverging?.posSize],
+        [pb.stackSizeNeg.var, diverging?.negSize],
+      ] as [string, CacheValue][]
+    ).forEach(([varName, value]) => {
+      if (is.nullish(value)) this._dom.removeStyle(cardKey, varName);
+      else this._dom.setStyle(cardKey, varName, value);
+    });
   }
 
   // Shared by _applyWatermarkCSS/_applyPeakMarkerCSS below - one mark's own
@@ -1109,15 +1160,13 @@ class HACore extends HTMLElement {
  * Extends HACore with entity rendering: icon, badge, shape, trend, hidden
  * components, standard fields, and Jinja badge handlers.
  *
- * Subclasses MUST implement: - _updateCSS() → apply dynamic CSS (percent,
- * colors, watermark)
- *
- * Subclasses MAY override: - _buildStyle() → CSS class pipeline (calls super
- * then adds entity-specific classes) - _updateDynamicElements() → DOM update
- * orchestration (icon, badge, shape, trend, CSS, Jinja) - _getStandardFields()
- * → static — returns [{className, value}] for text fields to render -
- * _hiddenComponents → static — extend the array to add card-type-specific hide
- * targets
+ * Subclasses MAY override: - _updateCSS() → HACore's entity-driven bar
+ * repaint (Template swaps in its own Jinja-driven one) - _buildStyle() → CSS
+ * class pipeline (calls super, then adds entity-specific classes) -
+ * _updateDynamicElements() → DOM update orchestration (icon, badge, shape,
+ * trend, CSS, Jinja) - _getStandardFields() → static — returns
+ * [{className, value}] for text fields to render - _hiddenComponents → static
+ * — extend the array to add card-type-specific hide targets
  *
  * @abstract
  * @extends HACore
@@ -1133,7 +1182,9 @@ class HABase extends HACore {
     CARD.style.dynamic.hiddenComponent.progress_bar,
   ];
   _icon: IconElement | null = null;
-  _cardView: ViewCore = new CardView();
+  // `declare`: every HABase subclass assigns its own real view (Card/Badge
+  // for card types, CardTemplateView/BadgeTemplateView for template ones).
+  declare _cardView: ViewCore;
   // _actionHelper itself inherited from HACore (nullable there) - always
   // assigned unconditionally in the constructor below, for every HABase
   // instance.
@@ -1155,6 +1206,9 @@ class HABase extends HACore {
   // pill could get stuck on whichever color won that one race.
   _lastStatusLabelText: string | null = null;
   _lastStatusLabelColor: string | null = null;
+  // Last (text, color) actually painted - skips _paintLabel's forced reflow
+  // when neither changed, so an unrelated setConfig doesn't repaint the pill.
+  #lastPaintedLabel: { text: string; color: string } | null = null;
 
   // ─── LIFECYCLE METHODS ────────────────────────────────────────────────────
 
@@ -1196,9 +1250,6 @@ class HABase extends HACore {
 
   // Badge/status_label caches reset here since they live on HABase (shared
   // by Card/Badge/Feature/Template), not ViewCore's own `set config`.
-  // Without this, a config that removed badge_icon/status_label left the
-  // old resolved state around after render() (a phantom badge/pill), with
-  // no future push left to correct it since the subscription is gone too.
   setConfig(config: LovelaceConfig) {
     super.setConfig(config);
     this.#jinjaStateBadge = { icon: false, color: false };
@@ -1225,9 +1276,15 @@ class HABase extends HACore {
   // as with getStubConfig, turns any future throw into a rejected promise
   // instead of a synchronous exception during HA's own layout pass over
   // every card on a dashboard).
+  // Badge/Feature are sized by HA itself (--ha-badge-size, --feature-height) -
+  // the three sizing hooks below only apply to the two full-card types.
+  get #isSizeableCard(): boolean {
+    return [META.types.card.typeName, META.types.template.typeName].includes(this.baseClass);
+  }
+
   // skipcq: JS-0116 -- async is intentional, no await by design.
   async getCardSize(): Promise<number | undefined> {
-    if (![META.types.card.typeName, META.types.template.typeName].includes(this.baseClass)) return undefined;
+    if (!this.#isSizeableCard) return undefined;
     const cardSize = this._cardView.cardSize;
     this._log?.debug('getCardSize: ', cardSize);
     return cardSize;
@@ -1237,7 +1294,7 @@ class HABase extends HACore {
   // migrateLayoutToGridOptions, when getGridOptions isn't implemented -
   // mirrors how lovelace-mushroom's MushroomBaseCard keeps both).
   getLayoutOptions() {
-    if (![META.types.card.typeName, META.types.template.typeName].includes(this.baseClass)) return undefined;
+    if (!this.#isSizeableCard) return undefined;
     const cardLayoutOptions = this._cardView.cardLayoutOptions;
     this._log?.debug('getLayoutOptions: ', cardLayoutOptions);
     return cardLayoutOptions;
@@ -1247,7 +1304,7 @@ class HABase extends HACore {
   // the 12-column grid instead of the older 4-column one - see
   // CARD.layout.gridColumnMultiplier.
   getGridOptions() {
-    if (![META.types.card.typeName, META.types.template.typeName].includes(this.baseClass)) return undefined;
+    if (!this.#isSizeableCard) return undefined;
     const { grid_rows, grid_min_rows, grid_max_rows, grid_columns, grid_min_columns, grid_max_columns } =
       this._cardView.cardLayoutOptions;
     const multiplier = CARD.layout.gridColumnMultiplier;
@@ -1277,6 +1334,7 @@ class HABase extends HACore {
   reset() {
     super.reset(); // #isRendered, _dom.destroy(), shadowRoot.innerHTML
     this._icon = null;
+    this.#lastPaintedLabel = null;
   }
 
   // ─── ERROR MESSAGE MANAGEMENT ─────────────────────────────────────────────
@@ -1336,16 +1394,21 @@ class HABase extends HACore {
     this._handleHiddenComponents();
   }
 
+  get _baseClassStyle(): Map<string, boolean> {
+    const config = this._cardView.config;
+    return new Map([
+      ...super._baseClassStyle,
+      ['progress-badge', this.baseClass.includes('badge')],
+      // Badge/Badge Template have no such field, so they match none of them.
+      ...BAR_POSITIONS.map((position): [string, boolean] => [position, config.bar_position === position]),
+      ['row-reverse', this._cardView.hasReversedSecondaryInfoRow],
+      ['text-shadow', Boolean(config.text_shadow)],
+      ['label-left', statusLabelObj(config.status_label).position === 'left'],
+    ]);
+  }
+
   _addBaseClasses() {
-    super._addBaseClasses();
-    this._dom.addClass(
-      CARD.htmlStructure.card.element,
-      this.baseClass.includes('badge') ? 'progress-badge' : null,
-      this._cardView.config.bar_position,
-      this._cardView.hasReversedSecondaryInfoRow ? 'row-reverse' : null,
-      this._cardView.config.text_shadow ? 'text-shadow' : null,
-      statusLabelObj(this._cardView.config.status_label).position === 'left' ? 'label-left' : null,
-    );
+    this._toggleClasses(this._baseClassStyle);
   }
 
   _addBaseParameter() {
@@ -1453,22 +1516,16 @@ class HABase extends HACore {
     ]);
   }
 
-  #toggleClasses(style: Map<string, boolean>) {
-    style.forEach((condition, className) => {
-      this._dom.toggleClass(CARD.htmlStructure.card.element, className, condition);
-    });
-  }
-
   _applyStaticClasses() {
-    this.#toggleClasses(this._staticStyle);
+    this._toggleClasses(this._staticStyle);
   }
 
   _applyIconAnimationClasses() {
-    this.#toggleClasses(this._iconAnimationStyle);
+    this._toggleClasses(this._iconAnimationStyle);
   }
 
   _applyAlertClasses() {
-    this.#toggleClasses(this._alertStyle);
+    this._toggleClasses(this._alertStyle);
     this._applyAlertLabel();
     // Re-applied here too (not just _addBaseParameter's one-time build pass)
     // so Advanced mode's color override reaches border/background on push.
@@ -1566,12 +1623,6 @@ class HABase extends HACore {
         : null;
     if (resolved) this._dom.setStyle(cardKey, varName, resolved);
     else this._dom.removeStyle(cardKey, varName);
-  }
-
-  // ─── CSS MANAGEMENT ───────────────────────────────────────────────────────
-
-  _updateCSS() {
-    throw new Error(`${this.constructor.name} must implement _updateCSS()`);
   }
 
   // ─── ICON MANAGEMENT ──────────────────────────────────────────────────────
@@ -1920,39 +1971,44 @@ class HABase extends HACore {
   // Shared by EntityProgressCardBase/EntityProgressTemplateBase's own
   // _getJinjaHandlers below.
   _watermarkJinjaHandlers(content: unknown): Record<string, () => void> {
+    // Watermark position is resolved directly in _updateCSS
+    // (_applyWatermarkCSS) from the view's own watermark getter.
+    const repaint = () => this._updateCSS();
     return {
       'watermark.low': () =>
-        this._renderWatermarkJinja(
+        this._applyJinjaNumber(
           content,
           (c: Config) => jinjaOf(markValue(c.watermark?.low, SCHEMA_DEFAULTS.watermark.low)),
           'jinjaWatermarkLow',
+          repaint,
         ),
       'watermark.high': () =>
-        this._renderWatermarkJinja(
+        this._applyJinjaNumber(
           content,
           (c: Config) => jinjaOf(markValue(c.watermark?.high, SCHEMA_DEFAULTS.watermark.high)),
           'jinjaWatermarkHigh',
+          repaint,
         ),
     };
   }
 
-  // watermark.low/.high jinja mode - shared by Card and Template, unlike
-  // min_value/max_value (Card-only).
-  _renderWatermarkJinja(
+  // Every Jinja-pushed number shares this guard/parse/skip-if-unchanged -
+  // only `repaint` differs per option.
+  _applyJinjaNumber(
     content: unknown,
     getJinja: (c: Config) => string | undefined,
-    viewProp: 'jinjaWatermarkLow' | 'jinjaWatermarkHigh',
+    viewProp: JinjaNumberProp,
+    repaint: () => void,
   ) {
-    // Defensive: only apply while the option is still in { jinja: "..." }
-    // mode - guards against a push arriving right as the user switches the
-    // mode chips away from Jinja (mirrors _renderJinjaNumber's own guard).
+    // Defensive: only apply while the option is still in { jinja: "..." } mode:
+    // guards against a push landing as the user switches the mode chips away.
     if (!is.nonEmptyString(getJinja(this._cardView.config))) return;
-    const value = is.number(content) ? content : is.strictNumericString(content) ? Number(content) : null;
-    if (value === this._cardView[viewProp]) return; // unchanged - skip the recompute below
-    this._cardView[viewProp] = value;
-    // Watermark position is resolved directly in _updateCSS
-    // (_applyWatermarkCSS) from the view's own watermark getter.
-    this._updateCSS();
+    // jinjaMinValue/jinjaMaxValue live on ViewBase, the other four on ViewCore.
+    const view = this._cardView as ViewBase;
+    const value = toNumberOrNull(content);
+    if (value === view[viewProp]) return;
+    view[viewProp] = value;
+    repaint();
   }
 
   // GitHub-label-style status pill, shared by `status_label` Jinja
@@ -1962,6 +2018,8 @@ class HABase extends HACore {
   // property, not a real style choice: assigning the raw color to it lets
   // the browser normalize it into rgb(...) for parsing, then it's removed.
   _paintLabel(text: string, color: string) {
+    if (this.#lastPaintedLabel?.text === text && this.#lastPaintedLabel?.color === color) return;
+    this.#lastPaintedLabel = { text, color };
     const key = CARD.htmlStructure.elements.label.class;
     this._dom.setText(key, text);
     const el = this._dom.get(key);

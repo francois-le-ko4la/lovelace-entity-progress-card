@@ -33,27 +33,36 @@
   "editor": {
     "field": {
       "action": {
-        "tap": "Koppintási viselkedés",
-        "hold": "Tartási viselkedés",
         "double_tap": "Dupla koppintási viselkedés",
-        "icon_tap": "Ikonérintési viselkedés",
+        "hold": "Tartási viselkedés",
+        "icon_double_tap": "Ikon dupla koppintásának viselkedése",
         "icon_hold": "Ikon hosszan nyomásának viselkedése",
-        "icon_double_tap": "Ikon dupla koppintásának viselkedése"
+        "icon_tap": "Ikonérintési viselkedés",
+        "tap": "Koppintási viselkedés"
       },
       "action_picker": "Interakció hozzáadása",
-      "alert_toggle": "Riasztás",
-      "alert_when_above_mode": "Felső riasztás forrása",
-      "alert_when_below_mode": "Alsó riasztás forrása",
+      "add_entity": "Entitás hozzáadása",
+      "add_zone": "Zóna hozzáadása",
+      "alert_when": {
+        "above": "Riasztás felett",
+        "animation": "Animáció",
+        "below": "Riasztás alatt",
+        "color": "Riasztás színe",
+        "highlight": "Kiemelés",
+        "label": "Címke",
+        "above_mode": "Felső riasztás forrása",
+        "below_mode": "Alsó riasztás forrása",
+        "toggle": "Riasztás"
+      },
       "attribute": "Attribútum",
-      "badge_color": "Jelvény színe",
-      "badge_color_toggle": "Independent color",
-      "badge_icon": "Jelvény ikon",
-      "badge_toggle": "Jelvény",
+      "badge": {
+        "toggle": "Jelvény",
+        "color_toggle": "Független jelvényszín"
+      },
       "bar_color": "Sáv színe",
       "bar_color_mode": "Szín mód",
       "bar_effect_mode": "Sáv effektus",
       "bar_group": "Sáv",
-      "bar_max_width": "Sáv max. szélessége",
       "bar_max_width_toggle": "Sáv max. szélessége",
       "bar_orientation": "Tájolás",
       "bar_scale": "Skála",
@@ -61,14 +70,14 @@
       "bar_single_line": "Egy sor",
       "bar_size": "Méret",
       "bar_stack": "További entitások",
-      "bar_stack_mode": "Stack mode",
+      "bar_stack_mode": "Halmozási mód",
       "card_size_toggle": "Kártya mérete",
       "center_zero": "Nulla középen",
       "center_zero_growth_percent": "Növekedési százalék",
       "center_zero_value": "Középérték",
       "color": "Ikon színe",
       "custom_info": "Egyéni másodlagos info",
-      "custom_theme": "Custom theme zones",
+      "custom_theme": "Egyéni téma zónák",
       "decimal": "Tizedes",
       "density_toggle": "Kompakt",
       "entity": "Entitás",
@@ -76,43 +85,72 @@
       "force_circular_background_mode": "Ikon kör alakú háttere",
       "frameless": "Keret nélküli",
       "height": "Magasság",
-      "height_custom_toggle": "Shrink height (embedded)",
+      "height_custom_toggle": "Automatikus magasság",
       "hide_mode": "Elrejtés",
       "icon": "Ikon",
       "icon_animation": "Ikon animáció",
       "interpolate": "Színinterpoláció",
       "layout": "Tartalom elrendezése",
       "marginless": "Margó nélküli",
+      "mark_color": "Szín",
       "max_value": "Maximális érték",
       "max_value_mode": "Maximumérték forrása",
-      "migrate_config": "Migrate config",
+      "migrate_config": "Konfiguráció migrálása",
       "min_value": "Minimális érték",
       "min_value_mode": "Minimumérték forrása",
       "min_width": "Min. szélesség",
-      "multiline": "Multiline",
+      "multiline": "Többsoros",
       "name": "Név",
       "name_info": "Egyéni névinfo",
+      "opacity": "Átlátszatlanság",
+      "peak_marker": {
+        "min_toggle": "Minimum megjelenítése",
+        "max_toggle": "Maximum megjelenítése",
+        "average_toggle": "Átlag megjelenítése",
+        "toggle": "Csúcsjelölők"
+      },
+      "peak_marker_unsupported": "A csúcsjelölőkhöz sensor vagy number entitás szükséges attribútum-felülírás nélkül, amely nem timer és nem counter — ehhez az entitáshoz nem elérhető.",
       "percent": "Százalék",
       "position": "Pozíció",
       "reverse": "Fordított időzítő",
       "reverse_secondary_info_row": "Cserélje fel a sávot és a szöveget",
       "secondary": "Másodlagos információ",
       "state_content": "Állapot tartalma",
-      "status_label_toggle": "Állapotcímke",
+      "status_label": {
+        "color_source": "Szín forrása",
+        "position": "Címke pozíciója",
+        "toggle": "Állapotcímke"
+      },
       "text_shadow": "Szöveg árnyék hozzáadása",
       "theme": "Téma",
+      "trend_indicator": {
+        "window_toggle": "Időablak használata",
+        "basis": "Összehasonlítási alap",
+        "threshold": "Holtzóna (pont)",
+        "colored": "Színezés az ikon színével",
+        "up_color": "Növekedés színe",
+        "down_color": "Csökkenés színe",
+        "flat_color": "Stabilitás színe",
+        "toggle": "Trendjelző",
+        "mode": "Mód"
+      },
       "trigger": "Kiváltó",
+      "type": "Típus",
       "unit": "Mértékegység",
       "unit_spacing": "Térköz",
       "value_compact": "Kompakt érték (1.2k)",
       "value_sign": "Előjel megjelenítése (+/-)",
-      "watermark_high_mode": "Felső jelölő forrása",
-      "watermark_low_mode": "Alsó jelölő forrása",
-      "watermark_toggle": "Jelölők",
-      "peak_marker_toggle": "Peak markers",
-      "peak_marker_unsupported": "Peak markers need a sensor or number entity, no attribute override, and not a timer or counter — not available for this entity.",
-      "trend_indicator_toggle": "Trend indicator",
-      "trend_indicator_mode": "Mode"
+      "watermark": {
+        "high_toggle": "Felső megjelenítése",
+        "low_toggle": "Alsó megjelenítése",
+        "high": "Felső",
+        "line_size": "Vonalvastagság",
+        "low": "Alsó",
+        "low_mode": "Alsó jelölő forrása",
+        "high_mode": "Felső jelölő forrása",
+        "toggle": "Jelölők"
+      },
+      "window": "Időablak"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -131,20 +169,13 @@
     "option": {
       "alert_animation": {
         "blink": "Villogás",
-        "ping": "Ping",
+        "ping": "Gyűrű",
         "static": "Statikus"
       },
       "alert_highlight": {
-        "background": "Background",
-        "border": "Border",
+        "background": "Háttér",
+        "border": "Keret",
         "label": "Címke"
-      },
-      "alert_when": {
-        "above": "Alert above",
-        "animation": "Animáció",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight"
       },
       "bar_color_mode": {
         "auto": "Automatikus",
@@ -175,8 +206,8 @@
         "top": "Sáv fent"
       },
       "bar_scale": {
-        "linear": "Linear",
-        "log": "Logarithmic"
+        "linear": "Lineáris",
+        "log": "Logaritmikus"
       },
       "bar_size": {
         "large": "Nagy",
@@ -186,9 +217,19 @@
         "xsmall": "Extra kicsi"
       },
       "bar_stack_mode": {
-        "net": "Net",
-        "proportional": "Sum",
-        "stacked": "Stacked"
+        "net": "Nettó",
+        "proportional": "Arányos",
+        "stacked": "Halmozott"
+      },
+      "duration_unit": {
+        "s": "Másodperc",
+        "min": "Perc",
+        "h": "Óra",
+        "d": "Nap"
+      },
+      "enabled_disabled_mode": {
+        "disabled": "Letiltva",
+        "enabled": "Engedélyezve"
       },
       "force_circular_background_mode": {
         "auto": "Automatikus",
@@ -198,20 +239,20 @@
         "icon": "Ikon",
         "name": "Név",
         "progress_bar": "Sáv",
-        "secondary_info": "Info",
+        "secondary_info": "Másodlagos info",
         "shape": "Ikon körkörös háttere",
         "unit": "Egység",
         "value": "Érték"
       },
       "icon_animation": {
-        "battery_charging": "Battery charging",
-        "bounce": "Bounce",
-        "ping": "Ping",
-        "pulse": "Pulse",
-        "reveal": "Reveal",
-        "shake": "Shake",
-        "spin": "Spin",
-        "washing_machine": "Washing machine"
+        "battery_charging": "Akkumulátor töltése",
+        "bounce": "Pattogás",
+        "ping": "Gyűrű",
+        "pulse": "Lüktetés",
+        "reveal": "Felfedés",
+        "shake": "Rázkódás",
+        "spin": "Forgás",
+        "washing_machine": "Mosógép"
       },
       "icon_animation_mode": {
         "auto": "Automatikus",
@@ -222,17 +263,12 @@
         "right": "Jobb"
       },
       "layout": {
-        "horizontal": "Vízszintes (alapértelmezett)",
+        "horizontal": "Vízszintes",
         "vertical": "Függőleges"
       },
       "simple_advanced_mode": {
         "advanced": "Speciális",
         "simple": "Egyszerű"
-      },
-      "status_label": {
-        "color_source": "Szín forrása",
-        "jinja": "Állapotcímke",
-        "position": "Címke pozíciója"
       },
       "status_label_color_source": {
         "bar": "Folyamatsáv",
@@ -253,8 +289,13 @@
         "voc": "VOC"
       },
       "theme_mode": {
-        "custom": "Custom",
-        "preset": "Preset"
+        "custom": "Egyéni",
+        "preset": "Előbeállítás"
+      },
+      "trend_indicator_basis": {
+        "average": "Átlag",
+        "edge": "Szélső érték",
+        "slope": "Meredekség"
       },
       "unit_position": {
         "after": "Érték után",
@@ -265,31 +306,10 @@
         "no-space": "Szóköz nélkül",
         "space": "Szóköz"
       },
-      "value_shape": {
-        "attribute": "Attribute"
-      },
       "value_source_mode": {
-        "entity": "Entity",
-        "jinja": "Template",
-        "standard": "Fixed value"
-      },
-      "watermark": {
-        "high_toggle": "Show high",
-        "low_toggle": "Show low",
-        "high": "High",
-        "high_as": "High unit",
-        "high_color": "High color",
-        "line_size": "Line size",
-        "low": "Low",
-        "low_as": "Low unit",
-        "low_color": "Low color",
-        "opacity": "Opacity",
-        "type": "Type",
-        "color": "Color",
-        "low_type": "Low type",
-        "low_opacity": "Low opacity",
-        "high_type": "High type",
-        "high_opacity": "High opacity"
+        "entity": "Entitás",
+        "jinja": "Sablon",
+        "standard": "Rögzített érték"
       },
       "watermark_as": {
         "auto": "Automatikus",
@@ -302,49 +322,6 @@
         "round": "Kerek",
         "striped": "Csíkos",
         "triangle": "Háromszög"
-      },
-      "peak_marker": {
-        "window": "Time window",
-        "type": "Type",
-        "opacity": "Opacity",
-        "min_toggle": "Show minimum",
-        "min_type": "Minimum type",
-        "min_opacity": "Minimum opacity",
-        "min_color": "Minimum color",
-        "max_toggle": "Show maximum",
-        "max_type": "Maximum type",
-        "max_opacity": "Maximum opacity",
-        "max_color": "Maximum color",
-        "average_toggle": "Show average",
-        "average_type": "Average type",
-        "average_opacity": "Average opacity",
-        "average_color": "Average color",
-        "color": "Color"
-      },
-      "duration_unit": {
-        "s": "Seconds",
-        "min": "Minutes",
-        "h": "Hours",
-        "d": "Days"
-      },
-      "enabled_disabled_mode": {
-        "disabled": "Disabled",
-        "enabled": "Enabled"
-      },
-      "trend_indicator": {
-        "window_toggle": "Use a time window",
-        "window": "Time window",
-        "basis": "Comparison basis",
-        "threshold": "Dead zone (points)",
-        "colored": "Tint with icon color",
-        "up_color": "Up color",
-        "down_color": "Down color",
-        "flat_color": "Flat color"
-      },
-      "trend_indicator_basis": {
-        "average": "Average",
-        "edge": "Edge",
-        "slope": "Slope"
       }
     },
     "title": {

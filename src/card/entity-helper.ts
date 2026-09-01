@@ -13,6 +13,15 @@ import { NumberFormatter } from './formatting.js';
 // EditorFieldsType.entityName / types.stateContent in schema.ts).
 type NameToken = { type: string; text?: string };
 
+// Shared with EntityOrValue's fallback - one source for this 5-key shape.
+const emptyEntityTypeFlags = (): Record<string, boolean> => ({
+  isTimer: false,
+  isDuration: false,
+  isNumber: false,
+  isCounter: false,
+  isSynced: false,
+});
+
 // This class's own #value stays genuinely `any` on purpose: an entity's
 // value is polymorphic per domain (number, string, timer duration...), same
 // rationale as EntityState.attributes in hass-provider.ts - not the same
@@ -31,13 +40,7 @@ class EntityHelper {
   #state: string | null = null;
   #domain: string | null = null;
   #entityType: string | null = null;
-  #entityTypeFlags: Record<string, boolean> = {
-    isTimer: false,
-    isDuration: false,
-    isNumber: false,
-    isCounter: false,
-    isSynced: false,
-  };
+  #entityTypeFlags: Record<string, boolean> = emptyEntityTypeFlags();
   #stateContent: string[] = [];
   #nameTokens: NameToken[] | null = null;
   static #handleRefreshType = new Map<string, (self: EntityHelper) => void>([
@@ -226,7 +229,7 @@ class EntityHelper {
     if (!this.#entityTypeFlags.isSynced) {
       const type = this.getEntityType();
       const key = `is${type.charAt(0).toUpperCase() + type.slice(1)}`;
-      this.#entityTypeFlags = { isTimer: false, isDuration: false, isNumber: false, isCounter: false, isSynced: true };
+      this.#entityTypeFlags = { ...emptyEntityTypeFlags(), isSynced: true };
       this.#entityTypeFlags[key] = true;
     }
     return this.#entityTypeFlags;
@@ -423,5 +426,5 @@ class EntityHelper {
   }
 }
 
-export { EntityHelper };
+export { EntityHelper, emptyEntityTypeFlags };
 export type { NameToken };

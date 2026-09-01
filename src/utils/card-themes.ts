@@ -193,4 +193,7 @@ const THEME = {
 // so both stay in sync automatically as themes are added/changed.
 const PERCENT_THEME_KEYS = Object.keys(THEME).filter((key) => THEME[key as keyof typeof THEME].percent);
 
-export { THEME, PERCENT_THEME_KEYS };
+// Every theme, in this table's own order - the editor lists them in it too.
+const THEME_KEYS = Object.keys(THEME);
+
+export { THEME, THEME_KEYS, PERCENT_THEME_KEYS };

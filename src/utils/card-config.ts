@@ -269,7 +269,7 @@ const style = {
     progressBar: {
       color: { var: '--progress-bar-color', default: HA_CONTEXT.colors.stateIcon },
       value: { var: '--progress-bar-value', default: '0' },
-      maxWidth: { var: '--progress-bar-max-width', default: null },
+      maxWidth: { var: '--progress-bar-max-width', default: 'unset' },
       background: { var: '--epb-progress-bar-background-color' },
       // bar_stack 'stacked'/'proportional' + center_zero only: independent
       // per-arm fill size/gradient, layered above the normal single-value
@@ -305,12 +305,12 @@ const style = {
     watermark: {
       low: {
         value: { var: '--low-watermark-value', default: 20 },
-        color: { var: '--low-watermark-color', default: 'red' },
+        color: { var: '--low-watermark-color', default: HA_CONTEXT.colors.red },
         opacity: { var: '--low-watermark-opacity-value' },
       },
       high: {
         value: { var: '--high-watermark-value', default: 80 },
-        color: { var: '--high-watermark-color', default: 'red' },
+        color: { var: '--high-watermark-color', default: HA_CONTEXT.colors.red },
         opacity: { var: '--high-watermark-opacity-value' },
       },
       lineSize: { var: '--watermark-line-size' },

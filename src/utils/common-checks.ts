@@ -50,6 +50,11 @@ const has = {
   validKey: (obj: object, key: unknown): key is string => typeof key === 'string' && key !== '' && has.own(obj, key),
 };
 
+// A Jinja push returns a native number or a numeric string; anything else has
+// no numeric meaning here - null, never NaN, so callers can skip instead.
+const toNumberOrNull = (value: unknown): number | null =>
+  is.number(value) ? value : is.strictNumericString(value) ? Number(value) : null;
+
 // Runtime guard for a value that's non-null by construction/lifecycle (a ref
 // set once at connect/init time, a lookup keyed by something the caller just
 // registered) but not provable to the type checker. Throws instead of masking
@@ -62,4 +67,5 @@ function assertDefined<T>(value: T | null | undefined, message: string): T {
 
 export { is };
 export { has };
+export { toNumberOrNull };
 export { assertDefined };

@@ -8,7 +8,7 @@ import { is } from '../utils/common-checks.js';
 import { traceInstance } from '../utils/log.js';
 import type { EntityState } from '../utils/hass-provider.js';
 import { ValueHelper } from './value-primitives.js';
-import { EntityHelper, type NameToken } from './entity-helper.js';
+import { EntityHelper, emptyEntityTypeFlags, type NameToken } from './entity-helper.js';
 
 class EntityOrValue {
   #activeHelper: EntityHelper | ValueHelper | null = null;
@@ -93,15 +93,7 @@ class EntityOrValue {
   }
 
   get entityType(): Record<string, boolean> {
-    return (
-      this.#entity()?.entityType ?? {
-        isTimer: false,
-        isDuration: false,
-        isNumber: false,
-        isCounter: false,
-        isSynced: false,
-      }
-    );
+    return this.#entity()?.entityType ?? emptyEntityTypeFlags();
   }
 
   get hasShapeByDefault(): boolean {

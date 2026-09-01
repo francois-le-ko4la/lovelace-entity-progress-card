@@ -33,27 +33,36 @@
   "editor": {
     "field": {
       "action": {
-        "tap": "Συμπεριφορά πατήματος",
-        "hold": "Συμπεριφορά παρατεταμένου πατήματος",
         "double_tap": "Συμπεριφορά διπλού πατήματος",
-        "icon_tap": "Συμπεριφορά πατήματος εικονιδίου",
+        "hold": "Συμπεριφορά παρατεταμένου πατήματος",
+        "icon_double_tap": "Συμπεριφορά διπλού πατήματος εικονιδίου",
         "icon_hold": "Συμπεριφορά πατήματος και κρατήματος εικονιδίου",
-        "icon_double_tap": "Συμπεριφορά διπλού πατήματος εικονιδίου"
+        "icon_tap": "Συμπεριφορά πατήματος εικονιδίου",
+        "tap": "Συμπεριφορά πατήματος"
       },
       "action_picker": "Προσθήκη αλληλεπίδρασης",
-      "alert_toggle": "Ειδοποίηση",
-      "alert_when_above_mode": "Πηγή ειδοποίησης άνω ορίου",
-      "alert_when_below_mode": "Πηγή ειδοποίησης κάτω ορίου",
+      "add_entity": "Προσθήκη οντότητας",
+      "add_zone": "Προσθήκη ζώνης",
+      "alert_when": {
+        "above": "Ειδοποίηση πάνω από",
+        "animation": "Κίνηση",
+        "below": "Ειδοποίηση κάτω από",
+        "color": "Χρώμα ειδοποίησης",
+        "highlight": "Επισήμανση",
+        "label": "Ετικέτα",
+        "above_mode": "Πηγή ειδοποίησης άνω ορίου",
+        "below_mode": "Πηγή ειδοποίησης κάτω ορίου",
+        "toggle": "Ειδοποίηση"
+      },
       "attribute": "Χαρακτηριστικό",
-      "badge_color": "Χρώμα εμβλήματος",
-      "badge_color_toggle": "Independent color",
-      "badge_icon": "Εικονίδιο εμβλήματος",
-      "badge_toggle": "Σήμα",
+      "badge": {
+        "toggle": "Σήμα",
+        "color_toggle": "Ανεξάρτητο χρώμα σήματος"
+      },
       "bar_color": "Χρώμα γραμμής",
       "bar_color_mode": "Λειτουργία χρώματος",
       "bar_effect_mode": "Εφέ γραμμής",
       "bar_group": "Γραμμή",
-      "bar_max_width": "Μέγιστο πλάτος ράβδου",
       "bar_max_width_toggle": "Μέγιστο πλάτος ράβδου",
       "bar_orientation": "Προσανατολισμός",
       "bar_scale": "Κλίμακα",
@@ -61,14 +70,14 @@
       "bar_single_line": "Μία γραμμή",
       "bar_size": "Μέγεθος",
       "bar_stack": "Πρόσθετες οντότητες",
-      "bar_stack_mode": "Stack mode",
+      "bar_stack_mode": "Λειτουργία στοίβαξης",
       "card_size_toggle": "Μέγεθος κάρτας",
       "center_zero": "Μηδέν στο κέντρο",
       "center_zero_growth_percent": "Ποσοστό μεταβολής",
       "center_zero_value": "Τιμή κέντρου",
       "color": "Κύριο χρώμα",
       "custom_info": "Προσαρμοσμένη δευτερεύουσα πληροφορία",
-      "custom_theme": "Custom theme zones",
+      "custom_theme": "Ζώνες προσαρμοσμένου θέματος",
       "decimal": "δεκαδικά",
       "density_toggle": "Συμπαγές",
       "entity": "Οντότητα",
@@ -76,43 +85,72 @@
       "force_circular_background_mode": "Κυκλικό φόντο εικονιδίου",
       "frameless": "Χωρίς πλαίσιο",
       "height": "Ύψος",
-      "height_custom_toggle": "Shrink height (embedded)",
+      "height_custom_toggle": "Αυτόματο ύψος",
       "hide_mode": "Απόκρυψη",
       "icon": "Εικονίδιο",
       "icon_animation": "Κίνηση εικονιδίου",
       "interpolate": "Παρεμβολή χρωμάτων",
       "layout": "Διάταξη περιεχομένου",
       "marginless": "Χωρίς περιθώριο",
+      "mark_color": "Χρώμα",
       "max_value": "Μέγιστη τιμή",
       "max_value_mode": "Πηγή μέγιστης τιμής",
-      "migrate_config": "Migrate config",
+      "migrate_config": "Μετάβαση διαμόρφωσης",
       "min_value": "Ελάχιστη τιμή",
       "min_value_mode": "Πηγή ελάχιστης τιμής",
       "min_width": "Ελάχιστο πλάτος",
-      "multiline": "Multiline",
+      "multiline": "Πολλαπλών γραμμών",
       "name": "Όνομα",
       "name_info": "Προσαρμοσμένη πληροφορία ονόματος",
+      "opacity": "Αδιαφάνεια",
+      "peak_marker": {
+        "min_toggle": "Εμφάνιση ελαχίστου",
+        "max_toggle": "Εμφάνιση μεγίστου",
+        "average_toggle": "Εμφάνιση μέσου όρου",
+        "toggle": "Δείκτες κορυφής"
+      },
+      "peak_marker_unsupported": "Οι δείκτες κορυφής απαιτούν οντότητα sensor ή number χωρίς παράκαμψη ιδιότητας, που δεν είναι timer ούτε counter — μη διαθέσιμο για αυτήν την οντότητα.",
       "percent": "Ποσοστό",
       "position": "Θέση",
       "reverse": "Αντίστροφο χρονόμετρο",
       "reverse_secondary_info_row": "Εναλλαγή γραμμής και κειμένου",
       "secondary": "Πρόσθετες πληροφορίες",
       "state_content": "Περιεχόμενο κατάστασης",
-      "status_label_toggle": "Ετικέτα κατάστασης",
+      "status_label": {
+        "color_source": "Πηγή χρώματος",
+        "position": "Θέση ετικέτας",
+        "toggle": "Ετικέτα κατάστασης"
+      },
       "text_shadow": "Προσθήκη σκιάς στο κείμενο",
       "theme": "Θέμα",
+      "trend_indicator": {
+        "window_toggle": "Χρήση χρονικού παραθύρου",
+        "basis": "Βάση σύγκρισης",
+        "threshold": "Νεκρή ζώνη (μονάδες)",
+        "colored": "Χρωματισμός με το χρώμα του εικονιδίου",
+        "up_color": "Χρώμα ανόδου",
+        "down_color": "Χρώμα καθόδου",
+        "flat_color": "Χρώμα σταθερότητας",
+        "toggle": "Δείκτης τάσης",
+        "mode": "Λειτουργία"
+      },
       "trigger": "Ενεργοποίηση",
+      "type": "Τύπος",
       "unit": "Μονάδα",
       "unit_spacing": "Απόσταση",
       "value_compact": "Συμπαγής τιμή (1.2k)",
       "value_sign": "Εμφάνιση προσήμου (+/-)",
-      "watermark_high_mode": "Πηγή υψηλού δείκτη",
-      "watermark_low_mode": "Πηγή χαμηλού δείκτη",
-      "watermark_toggle": "Δείκτες",
-      "peak_marker_toggle": "Peak markers",
-      "peak_marker_unsupported": "Peak markers need a sensor or number entity, no attribute override, and not a timer or counter — not available for this entity.",
-      "trend_indicator_toggle": "Trend indicator",
-      "trend_indicator_mode": "Mode"
+      "watermark": {
+        "high_toggle": "Εμφάνιση υψηλού",
+        "low_toggle": "Εμφάνιση χαμηλού",
+        "high": "Υψηλό",
+        "line_size": "Πάχος γραμμής",
+        "low": "Χαμηλό",
+        "low_mode": "Πηγή χαμηλού δείκτη",
+        "high_mode": "Πηγή υψηλού δείκτη",
+        "toggle": "Δείκτες"
+      },
+      "window": "Χρονικό παράθυρο"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -131,20 +169,13 @@
     "option": {
       "alert_animation": {
         "blink": "Αναβοσβήνει",
-        "ping": "Ping",
+        "ping": "Δαχτυλίδι",
         "static": "Στατικό"
       },
       "alert_highlight": {
-        "background": "Background",
-        "border": "Border",
+        "background": "Φόντο",
+        "border": "Περίγραμμα",
         "label": "Ετικέτα"
-      },
-      "alert_when": {
-        "above": "Alert above",
-        "animation": "Κίνηση",
-        "below": "Alert below",
-        "color": "Alert color",
-        "highlight": "Highlight"
       },
       "bar_color_mode": {
         "auto": "Αυτόματο",
@@ -175,8 +206,8 @@
         "top": "Γραμμή πάνω"
       },
       "bar_scale": {
-        "linear": "Linear",
-        "log": "Logarithmic"
+        "linear": "Γραμμική",
+        "log": "Λογαριθμική"
       },
       "bar_size": {
         "large": "Μεγάλη",
@@ -186,9 +217,19 @@
         "xsmall": "Πολύ μικρό"
       },
       "bar_stack_mode": {
-        "net": "Net",
-        "proportional": "Sum",
-        "stacked": "Stacked"
+        "net": "Καθαρό",
+        "proportional": "Αναλογικό",
+        "stacked": "Στοιβαγμένο"
+      },
+      "duration_unit": {
+        "s": "Δευτερόλεπτα",
+        "min": "Λεπτά",
+        "h": "Ώρες",
+        "d": "Ημέρες"
+      },
+      "enabled_disabled_mode": {
+        "disabled": "Απενεργοποιημένο",
+        "enabled": "Ενεργοποιημένο"
       },
       "force_circular_background_mode": {
         "auto": "Αυτόματο",
@@ -198,20 +239,20 @@
         "icon": "Εικονίδιο",
         "name": "Όνομα",
         "progress_bar": "Μπάρα",
-        "secondary_info": "Πληροφορίες",
+        "secondary_info": "Δευτ. πληροφορίες",
         "shape": "Κυκλικό φόντο του εικονιδίου",
         "unit": "Μονάδα",
         "value": "Τιμή"
       },
       "icon_animation": {
-        "battery_charging": "Battery charging",
-        "bounce": "Bounce",
-        "ping": "Ping",
-        "pulse": "Pulse",
-        "reveal": "Reveal",
-        "shake": "Shake",
-        "spin": "Spin",
-        "washing_machine": "Washing machine"
+        "battery_charging": "Η μπαταρία φορτίζει",
+        "bounce": "Αναπήδηση",
+        "ping": "Δαχτυλίδι",
+        "pulse": "Παλμός",
+        "reveal": "Αποκάλυψη",
+        "shake": "Δόνηση",
+        "spin": "Περιστροφή",
+        "washing_machine": "Πλυντήριο ρούχων"
       },
       "icon_animation_mode": {
         "auto": "Αυτόματο",
@@ -222,17 +263,12 @@
         "right": "Δεξιά"
       },
       "layout": {
-        "horizontal": "Οριζόντια (προεπιλογή)",
+        "horizontal": "Οριζόντια",
         "vertical": "Κατακόρυφη"
       },
       "simple_advanced_mode": {
         "advanced": "Προχωρημένο",
         "simple": "Απλό"
-      },
-      "status_label": {
-        "color_source": "Πηγή χρώματος",
-        "jinja": "Ετικέτα κατάστασης",
-        "position": "Θέση ετικέτας"
       },
       "status_label_color_source": {
         "bar": "Γραμμή προόδου",
@@ -253,8 +289,13 @@
         "voc": "VOC"
       },
       "theme_mode": {
-        "custom": "Custom",
-        "preset": "Preset"
+        "custom": "Προσαρμοσμένο",
+        "preset": "Προεπιλογή"
+      },
+      "trend_indicator_basis": {
+        "average": "Μέσος όρος",
+        "edge": "Ακραία τιμή",
+        "slope": "Κλίση"
       },
       "unit_position": {
         "after": "Μετά την τιμή",
@@ -265,31 +306,10 @@
         "no-space": "Χωρίς κενό",
         "space": "Κενό"
       },
-      "value_shape": {
-        "attribute": "Attribute"
-      },
       "value_source_mode": {
-        "entity": "Entity",
-        "jinja": "Template",
-        "standard": "Fixed value"
-      },
-      "watermark": {
-        "high_toggle": "Show high",
-        "low_toggle": "Show low",
-        "high": "High",
-        "high_as": "High unit",
-        "high_color": "High color",
-        "line_size": "Line size",
-        "low": "Low",
-        "low_as": "Low unit",
-        "low_color": "Low color",
-        "opacity": "Opacity",
-        "type": "Type",
-        "color": "Color",
-        "low_type": "Low type",
-        "low_opacity": "Low opacity",
-        "high_type": "High type",
-        "high_opacity": "High opacity"
+        "entity": "Οντότητα",
+        "jinja": "Πρότυπο",
+        "standard": "Σταθερή τιμή"
       },
       "watermark_as": {
         "auto": "Αυτόματο",
@@ -302,49 +322,6 @@
         "round": "Στρογγυλό",
         "striped": "Ριγέ",
         "triangle": "Τρίγωνο"
-      },
-      "peak_marker": {
-        "window": "Time window",
-        "type": "Type",
-        "opacity": "Opacity",
-        "min_toggle": "Show minimum",
-        "min_type": "Minimum type",
-        "min_opacity": "Minimum opacity",
-        "min_color": "Minimum color",
-        "max_toggle": "Show maximum",
-        "max_type": "Maximum type",
-        "max_opacity": "Maximum opacity",
-        "max_color": "Maximum color",
-        "average_toggle": "Show average",
-        "average_type": "Average type",
-        "average_opacity": "Average opacity",
-        "average_color": "Average color",
-        "color": "Color"
-      },
-      "duration_unit": {
-        "s": "Seconds",
-        "min": "Minutes",
-        "h": "Hours",
-        "d": "Days"
-      },
-      "enabled_disabled_mode": {
-        "disabled": "Disabled",
-        "enabled": "Enabled"
-      },
-      "trend_indicator": {
-        "window_toggle": "Use a time window",
-        "window": "Time window",
-        "basis": "Comparison basis",
-        "threshold": "Dead zone (points)",
-        "colored": "Tint with icon color",
-        "up_color": "Up color",
-        "down_color": "Down color",
-        "flat_color": "Flat color"
-      },
-      "trend_indicator_basis": {
-        "average": "Average",
-        "edge": "Edge",
-        "slope": "Slope"
       }
     },
     "title": {
