@@ -96,7 +96,7 @@ const buildDivergingGradient = (params: {
     params;
   // Capped at 100, not just floored at 0 - a raw/Jinja percent isn't bounded
   // the way ProgressCalc's own division is; posSize/negSize feed
-  // --epb-stack-size-pos/-neg directly, and a value above 1 there pushes the
+  // --stack-size-pos/-neg directly, and a value above 1 there pushes the
   // fill past .half's own overflow: hidden instead of just filling it.
   const posFill = Math.min(100, Math.max(0, signedPercent));
   const negFill = Math.min(100, Math.max(0, -signedPercent));

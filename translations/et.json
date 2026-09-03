@@ -78,7 +78,7 @@
       "color": "Ikooni värv",
       "custom_info": "Kohandatud sekundaarne teave",
       "custom_theme": "Kohandatud teema tsoonid",
-      "decimal": "Kümnendkoht",
+      "decimal": "Kuvamise täpsus",
       "density_toggle": "Kompaktne",
       "entity": "Objekt",
       "fast_refresh": "Kiire värskendus (iga sekund)",

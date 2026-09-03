@@ -78,7 +78,7 @@
       "color": "기본 색상",
       "custom_info": "사용자 정의 보조 정보",
       "custom_theme": "사용자 지정 테마 구간",
-      "decimal": "소수점",
+      "decimal": "표시 정밀도",
       "density_toggle": "컴팩트",
       "entity": "엔티티",
       "fast_refresh": "빠른 새로고침 (매초)",

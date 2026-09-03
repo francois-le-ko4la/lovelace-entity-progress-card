@@ -78,7 +78,7 @@
       "color": "主色",
       "custom_info": "自定义次要信息",
       "custom_theme": "自定义主题区域",
-      "decimal": "小数",
+      "decimal": "显示精度",
       "density_toggle": "紧凑",
       "entity": "实体",
       "fast_refresh": "快速刷新（每秒）",

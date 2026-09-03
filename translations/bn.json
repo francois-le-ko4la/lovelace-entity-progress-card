@@ -78,7 +78,7 @@
       "color": "প্রাথমিক রঙ",
       "custom_info": "কাস্টম সেকেন্ডারি তথ্য",
       "custom_theme": "কাস্টম থিম জোন",
-      "decimal": "দশমিক",
+      "decimal": "Display precision",
       "density_toggle": "কমপ্যাক্ট",
       "entity": "সত্তা",
       "fast_refresh": "দ্রুত রিফ্রেশ (প্রতি সেকেন্ডে)",

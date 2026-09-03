@@ -78,7 +78,7 @@
       "color": "สีหลัก",
       "custom_info": "ข้อมูลรองที่กำหนดเอง",
       "custom_theme": "โซนธีมกำหนดเอง",
-      "decimal": "ทศนิยม",
+      "decimal": "Display precision",
       "density_toggle": "กะทัดรัด",
       "entity": "เอนทิตี",
       "fast_refresh": "รีเฟรชเร็ว (ทุกวินาที)",

@@ -59,7 +59,7 @@ object return is the only form worth using.
 
 #### 🎨 The full CSS styling API, finally documented and tested
 
-All 58 `--epb-*` CSS custom properties are documented now, each with its own
+All 60 `--epb-*` CSS custom properties are documented now, each with its own
 demo-dashboard card isolating exactly what it does. See
 [CSS hooks](docs/theme.md#css).
 
@@ -68,7 +68,9 @@ New this release: `--epb-icon-shape-opacity` and — Card and Template —
 `card_mod` override that broke in 1.6.1. `--epb-icon-color`/
 `--epb-icon-shape-color` recolor the icon and its background independently;
 `--epb-icon-shape-hover-color` sets a clickable icon's hover color straight from
-a theme.  
+a theme. `--epb-ping-color`/`--epb-ping-spread` set the color and the reach of
+the `ping` ring burst, shared by `alert_when`'s border and label modes and by
+`icon_animation: ping`.  
 ➡️ [Feature]: Configuration possibility for the icon background visibility #136
 (@RkcCorian)
 
@@ -207,6 +209,10 @@ whichever entity the parent Tile card is already using.
 - **A handful of editor labels stayed on outdated English wording in every
   language but English**, left behind after the English text itself was later
   reworded — corrected across all 38 non-English languages.
+- **`decimal`'s editor label** now uses Home Assistant's own wording, "Display
+  precision", translated in 36 languages.
+- **`layout: horizontal`** no longer carries a "(default)" suffix in the editor,
+  across all 39 languages.
 
 ### 📚 Documentation
 
@@ -277,6 +283,9 @@ whichever entity the parent Tile card is already using.
   code to maintain.
 - Various internal code cleanup and performance optimizations — no visible
   change.
+- The `ping` ring animation collapsed from six keyframe variants to one shared
+  keyframe, and `bar_stack`'s four internal render variables moved off the
+  public `--epb-*` prefix.
 
 > We care about getting the details right — but even so, something here might
 > have slipped through. You don't need to be a developer to notice it. If
@@ -298,6 +307,14 @@ since then except linger as a documented no-op. It's no longer accepted —
 auto-migrated for the session (console-warned), use the editor's **Migrate
 config** button to update your YAML permanently whenever you're ready, no rush.
 
+### ✨ New
+
+#### 🎨 Two new CSS hooks for the `ping` ring
+
+`--epb-ping-color` and `--epb-ping-spread` set the color and the reach of the
+ring burst, shared by `alert_when`'s border and label modes and by
+`icon_animation: ping`. See [CSS hooks](docs/theme.md#css).
+
 ### 🐛 Fixes
 
 - **The `status_label` pill showed with no color at all when `interpolate: true`
@@ -316,6 +333,10 @@ config** button to update your YAML permanently whenever you're ready, no rush.
 - The `min_value`/`max_value`/`watermark`/`alert_when` attribute picker showed
   the untranslated English word "Attribute" in Bengali and Greek only, instead
   of the properly translated word already used everywhere else in the editor.
+- **`decimal`'s editor label** now uses Home Assistant's own wording, "Display
+  precision", translated in 36 languages.
+- **`layout: horizontal`** no longer carries a "(default)" suffix in the editor,
+  across all 39 languages.
 
 ### 🧹 Under the hood
 
@@ -343,6 +364,10 @@ config** button to update your YAML permanently whenever you're ready, no rush.
   ever render horizontally) is now enforced by the validation schema itself
   instead of a separate forced rewrite after the fact — same result, one less
   special case.
+- The `ping` ring's six keyframe variants are one shared keyframe now,
+  parameterized by `--epb-ping-color`/`--epb-ping-spread`.
+- `bar_stack`'s four internal render variables moved off the public `--epb-*`
+  prefix to `--stack-gradient-pos`/`-neg` and `--stack-size-pos`/`-neg`.
 
 ---
 

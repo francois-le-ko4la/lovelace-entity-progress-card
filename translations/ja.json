@@ -78,7 +78,7 @@
       "color": "メインカラー",
       "custom_info": "カスタム補助情報",
       "custom_theme": "カスタムテーマゾーン",
-      "decimal": "小数点",
+      "decimal": "表示精度",
       "density_toggle": "コンパクト",
       "entity": "エンティティ",
       "fast_refresh": "高速更新（毎秒）",

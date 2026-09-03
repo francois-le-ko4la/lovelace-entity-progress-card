@@ -70,14 +70,10 @@ const CARD_CSS = css`
 
   /* === BORDER RADIUS === */
   --ha-standard-border-radius: var(--ha-card-border-radius, var(--ha-border-radius-lg));
-  /* CF5 - issue (medium) resolved - --feature-border-radius was referenced
-     (RADIUS EFFECT rule below) but never defined anywhere, so a Feature's own
-     bar/inner radius resolved to guaranteed-invalid -> border-radius fell back
-     to its initial value (0), always square regardless of theme. Unnoticed
-     inside a tile (features commonly look flat there anyway), but visible once
-     a Feature renders standalone. Same theme-matching chain as the standard
-     card's own bar (--ha-standard-border-radius); still a public override hook
-     for card_mod/theme, like --epb-progress-bar-radius. */
+  /* CF5 - issue (medium) resolved - --feature-border-radius was referenced by
+     the RADIUS EFFECT rule below but never defined, so a Feature's bar radius
+     resolved invalid and fell back to 0 (always square, whatever the theme).
+     Same theme chain as the card's own bar, still overridable by card_mod. */
   --feature-border-radius: var(--ha-standard-border-radius);
 }
 
@@ -112,18 +108,10 @@ ha-card.overlay {
   --progress-container-height: var(--progress-size-xs);
 }
 
-/* A Feature's row height must not shrink to the bar's own thickness
-   (bar_size only sets --progress-size above) - HA reserves a fixed row
-   regardless, and .progress-container already centers the bar inside it
-   (align-items/justify-content: center). --feature-height is HA's own
-   variable for a card-feature row (see hui-card-features.ts); reading it
-   live keeps us in sync with HA/theme overrides instead of a static copy.
-   Placed after the bar_size/xlarge rules above so it always wins for the
-   'default' bar_position. .top-container/.bottom-container ('top'/'bottom'
-   bar_position - the only other values the Feature schema allows) are
-   separate child elements that re-declare --progress-container-height
-   themselves, so this doesn't reach them - #fixCardStyles already handles
-   sizing for those overlay-style positions. */
+/* A Feature's row height must not shrink to the bar's thickness: HA reserves a
+   fixed row and .progress-container already centers the bar inside it.
+   --feature-height is HA's own card-feature variable (hui-card-features.ts),
+   read live so theme overrides follow. top/bottom re-declare it themselves. */
 .entity-progress-feature {
   --progress-container-height: var(--feature-height, 42px);
 }
@@ -146,26 +134,11 @@ ${CARD.htmlStructure.card.element} {
      stays here - those rules only ever set the -embed- input, never
      -card-height/-card-min-width directly anymore). */
   --current-card-min-width: var(${CARD.style.dynamic.card.minWidth.var}, var(--current-embed-min-width, 100%));
-  /* --min-grid-rows: the row count itself, injected as a plain number by JS
-     (HACore._addBaseParameter, from ViewCore.minGridRows, already
-     orientation-aware) - the actual row-height math lives here instead, in
-     CSS, the same HA Sections grid formula hui-grid-section.ts's own
-     .card.fit-rows rule uses: N rows spanning N*(rowHeight+gap) - gap.
-     --row-size (read first) is HA's own variable - set as an *inline*
-     style on the .card wrapper whenever grid_options.rows resolves to an
-     actual number, so it always wins and keeps our own floor in lock-step
-     with whatever HA actually decided; only unset when rows resolves to
-     "auto", where --min-grid-rows is what's left to fall back on. Reads
-     HA's own row-height/gap vars (custom properties cross shadow
-     boundaries) instead of a static copy, so a theme override of
-     --ha-section-grid-row-height is followed instead of silently
-     drifting; 56px/8px are HA's own defaults, kept as the fallback for
-     Masonry/other views where those vars aren't set at all.
-     --min-grid-rows-fallback: only used on the rare frame where JS hasn't
-     run yet (--min-grid-rows itself unset) - .vertical sets it to 2 below,
-     everything else (incl. .horizontal) leaves it at the default 1. Single
-     declaration point for the whole formula: .horizontal/.vertical only
-     ever feed this one small input now, never redeclare the formula. */
+  /* --min-grid-rows arrives from JS as a plain number; the row math stays here,
+     on HA's own Sections formula (hui-grid-section.ts .card.fit-rows):
+     N*(row+gap) - gap. --row-size is HA's inline value and wins whenever
+     grid_options.rows is a number; 56px/8px are HA's defaults for views that
+     set neither. --min-grid-rows-fallback covers the frame before JS runs. */
   --current-card-height: var(
     ${CARD.style.dynamic.card.height.var},
     var(
@@ -188,43 +161,16 @@ ${CARD.htmlStructure.card.element} {
   padding: var(--current-card-padding);
   min-width: var(--epb-card-width, var(--current-card-min-width));
   width: var(--epb-card-width, auto);
-  /* min-height, not height (issue #131): a fixed height caps the card at
-     exactly that size, and with overflow: hidden below, content that needs
-     more room - the OS/browser "larger text" accessibility setting scales
-     font-size without scaling anything in px - gets clipped mid-glyph
-     instead of the card growing to fit it. min-height keeps the same
-     number in the normal case (identical chain, so nothing looks
-     different) but never traps content that legitimately needs more space.
-     This is the *unconfigured* default's protection - see height: right
-     below for what happens once the user sets their own value on purpose. */
+  /* min-height, not height (issue #131): a fixed height plus overflow: hidden
+     clips content that legitimately grew - the OS "larger text" setting scales
+     font-size but nothing in px. Protects the *unconfigured* default only. */
   min-height: var(--epb-card-height, var(--current-card-height));
-  /* height: an explicit height: config is the user taking full, deliberate
-     control of the card's size - once set, it wins outright everywhere
-     (Sections, Masonry, embedded in any other card, detectable or not),
-     not just a floor the content/embed-context chain above can still grow
-     past. The user owns that choice entirely: if their number is too small
-     for the actual content (a bigger OS/browser font-size setting
-     included), it clips instead of growing, and that is on them - the
-     opposite of min-height above, which protects the *unconfigured*
-     default automatically without asking anything of the user.
-     --card-height only ever gets set (inline, by JS) when config.height is
-     truthy (see HACore._addBaseParameter) - the fallback here is a true
-     no-op otherwise: height's own initial value is already auto, so
-     nothing changes when height isn't configured, min-height above keeps
-     driving everything exactly as it already did.
-     Deliberately NOT scoped to any particular container: an earlier version
-     of this only applied inside containers this card could detect via a
-     card_mod class-injection convention (type-entities and friends) - that
-     turned out to depend on which container card_mod happens to have a
-     patch for (confirmed live: entities/picture-elements/
-     vertical-stack-in-card/custom:button-card get it, type: grid and
-     custom:combined-card don't, for unrelated reasons each), an
-     unpredictable, undocumented dependency to build a feature on. Reading
-     the same config-driven value unconditionally here sidesteps all of
-     that - works the same everywhere, with or without card_mod.
-     --current-height-fallback lets a specific context override what
-     "unconfigured" resolves to (see .overlay below) without touching this
-     rule again - still a single declaration point for height. */
+  /* An explicit height: config wins outright everywhere (Sections, Masonry,
+     embedded), unlike min-height above - too small for the content means it
+     clips, and that is the user's call. Deliberately not scoped to a
+     detectable container: that depended on which one card_mod happens to patch
+     (verified live: entities yes, type: grid no). --card-height is only ever
+     set inline when config.height is truthy. */
   height: var(--card-height, var(--current-height-fallback, auto));
   border-radius: var(--epb-card-border-radius, var(--current-card-border-radius));
   border-width: var(--epb-card-border-width, var(--ha-card-border-width, 1px));
@@ -246,11 +192,9 @@ ${CARD.htmlStructure.card.element} {
   --current-card-padding: var(--spacing);
 }
 
-/* --current-card-height's formula lives solely on the base
-   ${CARD.htmlStructure.card.element} rule above (a type selector,
-   specificity 0-0-1) - .marginless is a class selector (0-1-0), so it
-   always wins on specificity alone, regardless of source order or which
-   other class rules are declared where. */
+/* The formula lives solely on the base ${CARD.htmlStructure.card.element} type
+   selector (0-0-1); .marginless is a class (0-1-0), so it wins on specificity
+   alone regardless of source order. */
 .marginless {
   --current-card-height: unset;
   --current-card-padding: 0;
@@ -282,16 +226,10 @@ ${CARD.htmlStructure.card.element} {
   --ha-card-box-shadow: none;
 }
 
-/* Embedded-context input only (see --current-embed-height in the base
-   ha-card rule above, the only place the terminal height var is set) -
-   this class marks "embedded inside a hui-entities-card row", same
-   convention as .type-picture-elements / .type-custom-vertical-stack-in-card
-   above/below. --current-embed-height: auto, not a fixed px guess - a
-   native HA entity row's own height isn't a constant either (it varies
-   with whether secondary_info is shown, among other things), so there's no
-   single "right" number to hardcode here. Content-driven sizing is the
-   correct default; an explicit height: config (see the height: override
-   rule below) is how a user pins an exact value if they want one. */
+/* Embedded-context input only - the base ha-card rule is the single place the
+   terminal height var is set. auto, not a px guess: a native entity row's own
+   height varies (with secondary_info, among others), so there is no right
+   constant; an explicit height: config is how a user pins one. */
 .type-entities {
   --current-card-padding: 0;
   --current-card-margin: 0;
@@ -302,26 +240,17 @@ ${CARD.htmlStructure.card.element} {
   transition: none !important;
 }
 
-/* Same value as --text-height (see .type-entities's secondary-info rule) -
-   without this, .bar-container stays at the generic 16px
-   (--progress-container-height) instead of matching the row's own text
-   line-height, so it doesn't end up vertically centered against a native
-   entities row's actual content. :not(.xlarge) - xlarge already forces its
-   own, taller --progress-container-height (--progress-size-xl, 42px) via
-   the normal chain; --current-specific-progress-container-height sits ahead
-   of that chain and would otherwise squeeze it down to this row's 22.4px
-   regardless of bar_size. :not(.background) - same reasoning: bar_position:
-   background forces --progress-container-height: 100% (see ha-card.background)
-   through that same chain, to cover the whole card as a background fill -
-   squeezed to 22.4px here, it stopped covering the card's actual bottom. */
+/* Same value as --text-height, so .bar-container matches the row's own text
+   line-height instead of the generic 16px and centers against a native
+   entities row. :not(.xlarge)/:not(.background): both force a taller
+   container height of their own, which this would squeeze back to 22.4px. */
 .type-entities:not(.xlarge):not(.background) {
   --current-specific-progress-container-height: var(--entities-height);
 }
 
 /* =============================================================================
-   RIPPLE ZONE (card-level <ha-ripple>'s own control - see
-   CARD.htmlStructure.sections.rippleZone's own comment for why it's a
-   sibling of .container instead of a bare child)
+   RIPPLE ZONE (card-level <ha-ripple> - see CARD.htmlStructure.sections
+   .rippleZone for why it is a sibling of .container, not a child)
    ============================================================================= */
 
 .${CARD.htmlStructure.sections.rippleZone.class} {
@@ -343,23 +272,11 @@ ${CARD.htmlStructure.card.element}:not(.${CARD.style.dynamic.clickable.card}) .$
   pointer-events: none;
 }
 
-/* This card's own click target is .ripple-zone, not ha-card (see its own
-   comment in card-config.ts for why) - so this is where its focus ring
-   lives too. A real border, not box-shadow/outline: both of those get
-   clipped by this element's own overflow: hidden (verified - it's not just
-   an outline quirk, the spec clips box-shadow the same way), but a border
-   is part of the box itself, never subject to its own overflow. Since
-   .ripple-zone's edges are pinned by inset: 0 rather than an explicit
-   width/height, adding a border eats inward from that fixed edge instead
-   of growing the box.
-   Stays fully inside .ripple-zone's own inset: 0 box on purpose - a
-   negative margin to reach past it, all the way to ha-card's own outer
-   edge (matching ha-tile-container's .background technique) sounds nicer,
-   but ha-card has its own overflow: hidden (needed elsewhere - bars/images
-   clipped to its rounded corners), which clips any child bleeding past its
-   padding edge the same way .ripple-zone's own overflow: hidden clips its
-   own box-shadow/outline - confirmed live, corners got cut. Sits just
-   inside the card's existing border instead of visually replacing it. */
+/* This card's click target is .ripple-zone, not ha-card (see card-config.ts),
+   so its focus ring lives here. A real border, not box-shadow/outline: both get
+   clipped by this element's own overflow: hidden, a border is part of the box.
+   Kept inside the inset: 0 box too - bleeding out to ha-card's own edge gets
+   clipped by ha-card's overflow: hidden (confirmed live, corners cut). */
 .${CARD.htmlStructure.sections.rippleZone.class}:focus-visible {
   outline: none;
   border: 2px solid var(--epb-icon-and-shape-color, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}));
@@ -379,21 +296,14 @@ ${CARD.htmlStructure.card.element}:not(.${CARD.style.dynamic.clickable.card}) .$
   height: 100%;
   overflow: var(--current-container-overflow, visible);
   /* --current-specific-padding-top: a dedicated override slot (see
-     .rainbow-full-bar's own rule below) - a brand new custom property
-     name that nothing else declares, so it can't be shadowed by an
-     intermediate element redeclaring the *same* variable the way
-     --current-container-padding-top's own value used to be at risk of
-     (see --current-specific-progress-container-height's comment below for
-     that exact failure mode). */
+     .rainbow-full-bar below) - a name nothing else declares can't be shadowed
+     by an intermediate element redeclaring the same variable. */
   padding-top: var(--current-specific-padding-top, var(--current-container-padding-top, 0));
   box-sizing: var(--current-container-box-sizing, content-box);
   flex-wrap: var(--current-container-flex-wrap, nowrap);
-  /* Transparent to clicks by default (ha-tile-container's own .content does
-     the same) - a click anywhere that isn't over an explicitly re-enabled
-     interactive descendant (.shape, only while .clickable-icon - see below)
-     falls straight through to .ripple-zone underneath instead of this
-     element (or a non-interactive .shape) capturing it first. Inherited by
-     every descendant unless one opts back in. */
+  /* Transparent to clicks by default (ha-tile-container's .content does the
+     same): anything not explicitly re-enabled falls through to .ripple-zone
+     underneath instead of being captured here. Inherited by descendants. */
   pointer-events: none;
 }
 
@@ -469,11 +379,9 @@ ha-card.vertical.xlarge.below .${CARD.htmlStructure.elements.progressBar.contain
   width: 100%;
   display: flex;
   overflow: hidden;
-  /* --current-specific-progress-container-height: see the rainbow_full +
-     vertical + below rule in the RAINBOW FULL BAR section further down -
-     this box hard-codes the bar's row height independently of
-     --current-progress-container-height/.bar-container's own height, so
-     that override needs its own fallback slot here too. */
+  /* This box hard-codes the bar's row height independently of
+     --current-progress-container-height, so the rainbow_full + vertical +
+     below override further down needs its own fallback slot here too. */
   height: var(--current-specific-progress-container-height, var(--progress-size));
   flex-shrink: 0;
 }
@@ -554,19 +462,11 @@ ha-card.background {
    STATUS LABEL
    ============================================================================= */
 
-/* GitHub-label-style pill (label option) - same corner as .trend-indicator,
-   mutually exclusive with it (see schema.ts's applyLabelRule). Same recipe
-   GitHub's own Primer design system uses for issue labels in dark mode (see
-   @primer/react's IssueLabelToken.module.css @define-mixin
-   darkThemeIssueLabel, and ThemeManager.labelColorComponents for where the
-   --label-r/g/b/h/s/l inputs below come from): background stays a
-   translucent tint of the resolved color, border/text are the same hue
-   lightened just enough to stay legible against the card's dark background
-   - already-light colors barely move, dark/saturated ones get lightened
-   more. --epb-label-color/-background-color/-border-color let card_mod
-   override any of the three independently, without touching how the other
-   two get auto-derived. :empty covers a Jinja template that currently
-   resolves to nothing (e.g. only shows a label past some threshold). */
+/* GitHub-label-style pill, mutually exclusive with .trend-indicator
+   (schema.ts's applyLabelRule). Same recipe as Primer's own dark-theme issue
+   labels (@primer/react IssueLabelToken.module.css): a translucent tint for the
+   background, border/text the same hue lightened just enough to stay legible.
+   --epb-label-color/-background-color/-border-color override each separately. */
 .status-label {
   --label-perceived-lightness: calc(
     ((var(${CARD.style.dynamic.label.r.var}, ${CARD.style.dynamic.label.r.default}) * 0.2126) +
@@ -678,61 +578,36 @@ ha-card.label-left .status-label {
   transition: transform 180ms ease-in-out;
 }
 
-/* box-shadow, not border - .shape has an explicit width/height (no
-   box-sizing: border-box), so a border would grow it on focus; box-shadow
-   never participates in layout. Same technique/color source ha-tile-icon
-   uses (verified against its own source: .container:focus-visible {
-   box-shadow: 0 0 0 2px var(--tile-icon-color); }). No overflow: hidden on
-   .shape, so nothing to clip here. */
+/* box-shadow, not border: .shape has an explicit width/height (no border-box),
+   so a border would grow it on focus. Same technique and color source as
+   ha-tile-icon (verified against its own source). */
 .${CARD.htmlStructure.elements.shape.class}:focus-visible {
   outline: none;
   box-shadow: 0 0 0 2px var(--epb-icon-and-shape-color, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}));
 }
 
-/* Own layer for the tinted circle instead of background-color directly on
-   .shape: opacity only ever fades the element carrying it *and its own
-   descendants together, still composited as one flattened unit first* - it
-   can never create contrast between a parent and a child of its own (the
-   icon glyph, sharing this same color, would fade at the exact same rate
-   and stay just as invisible against it). A childless ::before sidesteps
-   that entirely: the icon (a real child of .shape, rendered after this in
-   the same stacking context) stays fully opaque regardless, same technique
-   ha-tile-icon uses (verified against its actual source) - opacity is all
-   it needs too, no color-mix() anywhere. Plain opacity on a solid color is
-   mathematically identical to color-mix(in srgb, color X%, transparent)
-   for this exact "toward transparent" case (real difference only shows up
-   mixing two actual colors in a perceptual space like oklch) - so there's
-   nothing color-mix() would add here, and opacity is the cheaper of the
-   two for the :hover/:active transitions below (compositor-only, no
-   repaint, unlike animating a color-mix()-computed value would be). Works
-   identically on every browser this card supports - no @supports/fallback
-   tier needed at all. */
+/* Own layer for the tinted circle rather than background-color on .shape:
+   opacity fades an element and its descendants as one flattened unit, so the
+   icon glyph would fade with it. A childless ::before leaves the icon opaque -
+   ha-tile-icon's own technique. Plain opacity is identical to a color-mix()
+   toward transparent here, and cheaper for the :hover/:active transitions. */
 .${CARD.htmlStructure.elements.shape.class}::before {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  /* --shape-background-color: a dedicated override slot (same "own,
-     specifically-named variable" pattern as --current-progress-container-
-     height elsewhere) rather than a context redefining background-color
-     directly - a bare property name is a much easier accidental collision
-     target (any other rule, including a user's own card_mod, could target
-     it for an unrelated reason) than a project-namespaced variable nothing
-     else declares. */
+  /* --shape-background-color: a project-namespaced override slot rather than a
+     context redefining background-color directly - a bare property name is a
+     far easier accidental collision target (a user's card_mod included). */
   background-color: var(--shape-hover-color, var(--shape-background-color, var(--epb-icon-shape-color, var(--epb-icon-and-shape-color, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default})))));
   opacity: var(--epb-icon-shape-opacity, var(--shape-opacity));
 }
 
-/* CSS-only click feedback (ha-tile-icon's own technique) instead of a second
-   <ha-ripple> - only while the icon actually has an action of its own
-   (.clickable-icon, same negotiated-action detection - domain defaults
-   included - that already gates the ripple-zone fallthrough below and, on
-   ha-card itself, the card's own ripple). pointer-events: auto opts back in
-   from .container's own blanket none (see MAIN CONTAINER above) - without
-   this the icon would be transparent to clicks too, falling through to the
-   ripple-zone/card action underneath exactly like a non-interactive icon
-   does on purpose. The opacity bump on hover (20% -> 35%, ha-tile-icon's own
-   numbers) reaches ::before through plain custom-property inheritance. */
+/* CSS-only click feedback (ha-tile-icon's technique) instead of a second
+   <ha-ripple>, and only while the icon has an action of its own.
+   pointer-events: auto opts back in from .container's blanket none - without
+   it the icon would fall through to the card action like a non-interactive
+   one. 20% -> 35% on hover are ha-tile-icon's numbers, inherited by ::before. */
 .${CARD.style.dynamic.clickable.icon} .${CARD.htmlStructure.elements.shape.class} {
   pointer-events: auto;
 }
@@ -805,21 +680,11 @@ ha-card.label-left .status-label {
   flex-grow: var(--current-content-flex-grow);
   flex-shrink: 1;
   width: var(--current-content-width);
-  /* min-height, not height (issue #131): --current-content-height is
-     calibrated for the default font scale - at that scale this computes to
-     the exact same box as before. If the OS/browser font-size setting is
-     scaled up (Android's own "Font size" accessibility option, which grows
-     rem-based text without growing anything sized in px), the name/detail
-     rows below need more room than that fixed sum to avoid clipping text
-     mid-glyph; min-height lets this box (and ha-card, already min-height
-     itself) grow to fit them instead of clipping at a boundary sized for
-     the default scale only. Excluded for .vertical.up-orientation.overlay
-     (see its own override below, which also explicitly clears this back to
-     min-height: auto - redeclaring height there isn't enough on its own,
-     min-height stays a *separate* property that keeps applying alongside
-     it, and coexisting with a non-shrinking icon sibling (flex-shrink: 0)
-     that combination measurably changed this flex item's computed size in
-     testing, not just in theory). */
+  /* min-height, not height (issue #131): calibrated for the default font scale,
+     so the look is unchanged; a scaled-up OS font size grows the box instead of
+     clipping text mid-glyph. Excluded for .vertical.up-orientation.overlay,
+     which clears it back to auto - a re-declared height isn't enough, min-height
+     keeps applying alongside it and measurably changed this item's size. */
   min-height: var(--current-content-height);
   gap: var(--current-content-gap, 0);
   min-width: 0;
@@ -846,26 +711,18 @@ ha-card.horizontal.${CARD.style.dynamic.hiddenComponent.icon.class} .${CARD.html
   --current-content-width: 100%;
 }
 
-/* --current-content-height (above) sums --name-height + --detail-height
-   unconditionally - with hide: name (or secondary_info), the row's DOM
-   disappears but its share of that fixed height didn't, leaving the
-   remaining row centered with empty space above/below it (issue #129).
-   Vertical also folds --progress-size into that sum for its overlay/
-   background bar positioning, which still needs the full box regardless of
-   hidden rows, so this is horizontal-only. */
+/* --current-content-height sums --name-height + --detail-height
+   unconditionally - with hide: name the row's DOM goes but its share of that
+   height didn't, leaving the survivor centered in empty space (issue #129).
+   Horizontal-only: vertical still needs the full box for overlay/background. */
 ha-card.horizontal.${CARD.style.dynamic.hiddenComponent.name.class} .${CARD.htmlStructure.sections.content.class} {
   --name-height: 0px;
 }
 
-/* Only zero --detail-height when the secondary-info row actually goes empty.
-   With bar_position: default (the .default class), the progress bar itself
-   renders *inside* that same row, next to the text (see
-   StructureElements.createSecondaryInfo) - hiding just the text there still
-   leaves the bar needing its usual share of height. Zeroing it anyway starved
-   the row, and .content's flex-shrink pulled height from --name-height too,
-   shrinking the name (regression from the #129 fix). Only zero it when the
-   bar isn't sharing the row: bar_position elsewhere (:not(.default), it
-   renders in its own container) or progress_bar is hidden too. */
+/* Only zero --detail-height when the row actually goes empty: with
+   bar_position: default the bar renders inside that same row, so zeroing it
+   starved the row and .content's flex-shrink then ate --name-height too (a
+   regression from the #129 fix). Hence :not(.default), or the bar hidden too. */
 ha-card.horizontal.${CARD.style.dynamic.hiddenComponent.secondary_info.class}:is(:not(.default), .${CARD.style.dynamic.hiddenComponent.progress_bar.class}) .${CARD.htmlStructure.sections.content.class} {
   --detail-height: 0px;
 }
@@ -877,15 +734,9 @@ ha-card.vertical .${CARD.htmlStructure.sections.content.class} {
 }
 
 ha-card.vertical.default .${CARD.htmlStructure.sections.content.class} {
-  /* name-content, secondary-info and the bar-container are 3 flex children
-     of .content stacked with a 1px gap between each (--current-content-gap:
-     var(--vertical-gap), set just above) - 2 gaps this sum never accounted
-     for, so .content's real natural height always ran 2px (2 * 1px) taller
-     than this min-height floor claimed. Harmless on its own (min-height
-     just gets exceeded, nothing clips) but it means a card sized via
-     grid_options: rows: auto never lands on a clean row multiple - fixed
-     verified against real getBoundingClientRect() measurements (44px
-     predicted vs 46px actual before this fix). */
+  /* Includes .content's 2 x 1px flex gaps: without them this floor ran 2px
+     short (44px predicted vs 46px measured), so grid_options: rows: auto
+     never landed on a clean row multiple. */
   --current-content-height: calc(
     var(--name-height) + var(--detail-height) + var(--progress-size) + (2 * var(--vertical-gap))
   );
@@ -919,22 +770,14 @@ ha-card.vertical:not(.default):not(.overlay):not(.compact_below).${CARD.style.dy
   --current-card-padding: 9px;
 }
 
-/* --progress-size zeroed here (not just --current-content-height's own
-   term) cascades down to .bar-container's own height too (.vertical
-   { --current-progress-container-height: var(--progress-size); }) - one
-   override collapses both the content-height formula's share AND the
-   container that would otherwise sit there empty, fill already hidden by
-   .hide-progress-bar's display:none elsewhere. */
+/* Zeroing --progress-size collapses both the content-height formula's share
+   and .bar-container's own height, which would otherwise sit there empty. */
 ha-card.vertical.default.${CARD.style.dynamic.hiddenComponent.progress_bar.class} {
   --progress-size: 0px;
 }
 
-/* .vertical.default's own padding-top reserves room proportional to the bar
-   (see its declaration above) so the icon+text block stays visually
-   centered against just the text once the bar renders below it - once the
-   bar itself is gone, nothing needs that room back. hide: icon deliberately
-   does NOT get an equivalent override: this padding isn't about the icon at
-   all, it stays regardless of icon visibility. */
+/* That padding-top reserves room for the bar below the icon+text block, so it
+   goes with the bar. hide: icon gets no equivalent - unrelated to the icon. */
 ha-card.vertical.default.${CARD.style.dynamic.hiddenComponent.progress_bar.class} .${CARD.htmlStructure.sections.container.class} {
   --current-container-padding-top: 0;
 }
@@ -955,14 +798,11 @@ ha-card.type-entities .${CARD.htmlStructure.sections.content.class} {
   --current-content-flex-grow: 1;
   --current-content-width: var(--epb-progress-bar-size, 50%);
   --current-content-height: 100%;
-  /* Exclusion from the base rule's min-height (issue #131, see its own
-     comment): the overlay bar here is position: absolute; height: 100% -
-     that only resolves against a containing block with a *definite*
-     height. min-height: auto (its initial value), not just a re-declared
-     height, actually removes the min-height constraint for this scope -
-     leaving it in place alongside height (even at the same numeric value)
-     measurably changed how this item's size interacted with its
-     non-shrinking icon sibling (flex-shrink: 0) in testing. */
+  /* Exclusion from the base rule's min-height (issue #131): the overlay bar
+     here is position: absolute; height: 100%, which only resolves against a
+     definite height. min-height: auto actually removes the constraint - leaving
+     it alongside height measurably changed this item's size next to its
+     non-shrinking icon sibling. */
   min-height: auto;
   height: var(--current-content-height);
 }
@@ -980,15 +820,10 @@ ha-card.type-entities .${CARD.htmlStructure.sections.content.class} {
   width: var(--group-width, auto);
   min-width: var(--group-min-width, 0);
   max-width: var(--group-max-width, none);
-  /* min-height + a real line-height, not one forced equal to it (issue
-     #131, see .content's own comment for the full reasoning): unchanged
-     look at the default font scale, only grows if a larger OS/browser
-     font-size setting needs more room than --group-height to avoid
-     clipping. Not excluded for .vertical.up-orientation.overlay, unlike
-     .content itself: this wrapper isn't a flex item competing with the
-     icon section for space the way .content is (its own parent, .content,
-     stays fixed-size there - see its exclusion), so it can safely grow on
-     its own without the same flex/icon-sharing conflict. */
+  /* min-height + a real line-height, not one pinned to it (issue #131, see
+     .content): unchanged at the default font scale, grows only if a larger OS
+     font size needs it. Not excluded for .vertical.up-orientation.overlay
+     unlike .content: this wrapper isn't a flex item competing with the icon. */
   min-height: var(--group-height);
   line-height: max(var(--group-height), 1.2em);
   overflow: var(--group-overflow, hidden);
@@ -1004,15 +839,9 @@ ha-card.type-entities .${CARD.htmlStructure.sections.content.class} {
 
 .${CARD.htmlStructure.elements.secondaryInfoWrapper.class} {
   --group-height: var(--detail-height);
-  /* min(45px, 25%): the 45px floor holds as long as the row (shared with
-     the bar) is wide enough to spare it - once the row itself is narrower
-     than 180px, it caps at a quarter instead. Deliberately lower than the
-     bar's own cap (33%, see .progress-container): on a tight row the text
-     can still fall back on its own ellipsis, but a bar squeezed thinner
-     than its floor loses all its meaning as a progress indicator, so it
-     gets the bigger guaranteed share once both floors can't fit alongside
-     each other and the row's gap (--current-secondary-info-gap, 10px by
-     default, not itself deducted from these percentages). */
+  /* The 45px floor holds while the row can spare it, else a quarter. Lower
+     than the bar's own 33% cap: text can still ellipsis, a squeezed bar
+     stops meaning anything. */
   --group-min-width: min(45px, 25%);
   --group-max-width: 60%;
 }
@@ -1028,13 +857,8 @@ ha-card.type-entities .${CARD.htmlStructure.sections.content.class} {
 }
 
 /* Same set as StructureElements.createSecondaryInfo's excludedPositions
-   (structure.ts): the bar shares .secondary-info's row with the text only
-   for bar_position: default - for below/top/bottom/overlay/background it
-   renders elsewhere, so the text is the row's only occupant and can use its
-   full width. Missing .below/.overlay/.background here left those three
-   stuck at the same 45px-60% budget default (default) needs to leave room
-   for a bar sharing the row - even though no bar was actually competing for
-   space in their case. */
+   (structure.ts): only bar_position: default puts the bar in .secondary-info's
+   row, so every other position gets the row's full width. */
 ha-card:is(.vertical, .xlarge, .below, .bottom, .top, .overlay, .background) .${CARD.htmlStructure.elements.secondaryInfoWrapper.class} {
   --group-min-width: 100%;
   --group-max-width: 100%;
@@ -1044,15 +868,11 @@ ha-card:is(.vertical, .xlarge, .below, .bottom, .top, .overlay, .background) .${
   --group-min-width: unset;
 }
 
-/* bar_position: compact_below (#123) - a real, separate DOM shape (like
-   below/top/bottom/overlay), not a CSS rearrangement of the default one: see
-   StructureElements.createContentBody. .name and .secondary-info share a new
-   wrapper row (.name-secondary-row, name left, secondary right); the bar is
-   a sibling row below it, both stacked by .content-section's own existing
-   flex-column (same mechanism bar_position: default already uses to stack
-   .name above .secondary-info).
-   Horizontal-only (see schema.ts's applyCompactBelowRule): vertical already
-   stacks name/secondary/bar narrowly, with no "shared row" to switch to. */
+/* bar_position: compact_below (#123) is a real, separate DOM shape, not a CSS
+   rearrangement (StructureElements.createContentBody): .name and
+   .secondary-info share a wrapper row, the bar is a sibling row below.
+   Horizontal-only (schema.ts's applyCompactBelowRule) - vertical already
+   stacks the three narrowly, with no shared row to switch to. */
 ha-card.horizontal.compact_below .${CARD.htmlStructure.sections.content.class} {
   --current-content-height: calc(
     max(var(--name-height), var(--detail-height)) + var(--current-progress-container-height)
@@ -1122,13 +942,10 @@ ha-card.horizontal.compact_below .${CARD.htmlStructure.elements.progressBar.cont
   color: var(--text-color);
   font-size: var(--text-font-size);
   font-weight: var(--text-font-weight);
-  /* min-height, not height (issue #131, see .content's own comment for the
-     full reasoning): --text-height stays the floor for the default font
-     scale (unchanged look), but a larger OS/browser font-size setting can
-     grow this box instead of clipping the text mid-glyph against it. Not
-     excluded for .vertical.up-orientation.overlay, unlike .content itself -
-     see .name-content/.secondary-info-wrapper's own comment on why this
-     level doesn't share .content's flex/icon-sharing conflict. */
+  /* min-height, not height (issue #131, see .content): --text-height stays the
+     floor at the default font scale, a larger OS font size grows this box
+     instead of clipping text mid-glyph. Not excluded for vertical+up+overlay -
+     see .name-content's comment on why this level has no flex conflict. */
   min-height: var(--text-height);
   line-height: var(--text-line-height);
   letter-spacing: var(--text-letter-spacing);
@@ -1141,14 +958,10 @@ ha-card.horizontal.compact_below .${CARD.htmlStructure.elements.progressBar.cont
   --text-font-size: var(--epb-name-font-size, var(--ha-font-size-m));
   --text-font-weight: var(--epb-name-font-weight, var(--ha-font-weight-medium));
   --text-height: var(--name-height);
-  /* max(), not a straight swap to a different token (issue #131): forcing
-     line-height to the same fixed px value as the box's own floor clips
-     the text mid-glyph as soon as a larger font-size (OS/browser
-     accessibility scaling) needs a taller line than that floor allows.
-     max() keeps --name-height as an unconditional floor (identical look
-     while nothing is scaled) and only grows past it via the em term
-     (relative to this element's own actual font-size, so it tracks real
-     scaling) once that's genuinely taller. */
+  /* max(), not a straight swap to another token (issue #131): pinning
+     line-height to the box's own px floor clips the text as soon as OS font
+     scaling needs a taller line. max() keeps --name-height as the floor and
+     only grows past it via the em term, which tracks the real font-size. */
   --text-line-height: max(var(--name-height), 1.2em);
   --text-letter-spacing: var(--epb-name-letter-spacing, var(--name-letter-spacing));
   --text-margin-right: 0;
@@ -1213,23 +1026,18 @@ ha-card.horizontal.compact_below .${CARD.htmlStructure.elements.progressBar.cont
   display: flex;
   flex-direction: var(--current-secondary-info-flex-direction);
   align-items: var(--current-secondary-info-align-items);
-  /* min(X, 6%): same shrink-under-pressure idea as the text/bar min-width
-     coupling above - the gap between them (10px by default) holds at its
-     full size while the row can spare it, and gives up a few px of its own
-     once the row gets tight, instead of staying a fixed cost oblivious to
-     how little room the text/bar floors already have to share. */
+  /* Same shrink-under-pressure idea as the text/bar min-width coupling above:
+     the gap gives up a few px once the row gets tight. */
   gap: min(var(--current-secondary-info-gap, var(--spacing)), 6%);
   width: var(--current-secondary-info-width, auto);
   min-width: var(--current-secondary-info-min-width, auto);
   justify-content: space-between;
 }
 
-/* .secondary-info-blank: pushed by HABase#_updateSecondaryInfoWrapperVisibility
-   (core.ts) whenever custom_info/secondary's line(s) and the main value line
-   are all empty - single/multiline both covered there, so this one rule
-   replaces what used to be two separate :has()-based rules here (one per
-   mode). Kept class-based, not :has(), on purpose: :has() needs Firefox
-   121+, past this card's documented 94+ floor. */
+/* .secondary-info-blank is pushed by
+   HABase#_updateSecondaryInfoWrapperVisibility (core.ts) whenever every info
+   line is empty, single or multiline - one rule instead of two. Class-based on
+   purpose: :has() needs Firefox 121+, past this card's documented 94+ floor. */
 .secondary-info-blank .secondary-info-wrapper {
   display: none;
 }
@@ -1255,15 +1063,9 @@ ha-card.horizontal.compact_below .${CARD.htmlStructure.elements.progressBar.cont
 }
 
 /* === MULTILINE SECONDARY INFO ===
-   Two independent single-line boxes stacked in the wrapper (see
-   StructureElements.secondaryInfoLine) instead of one box trying to hold two
-   roles at once - each line keeps its own ellipsis truncation via the shared
-   .ellipsis-wrapper rules, and neither touches the progress bar's own sizing.
-   10px/line (20px total). Rather than growing the card by those extra 4px,
-   --name-height gives up the same 4px it doesn't need (name stays single-line,
-   never short on room) to --detail-height, so .content-section's own height
-   formula (name + detail) is untouched - the card's total height doesn't
-   change at all. */
+   Two stacked single-line boxes (StructureElements.secondaryInfoLine), each
+   with its own ellipsis. --name-height gives its spare 4px to --detail-height
+   so the card's total height doesn't change. */
 ha-card.info-multiline {
   --name-height: 16px;
   --detail-height: 20px;
@@ -1271,11 +1073,8 @@ ha-card.info-multiline {
 
 .info-multiline .secondary-info-wrapper {
   flex-direction: column;
-  /* --group-justify-content/--group-align-items, not the properties directly: this is
-     the same --group-* indirection .secondary-info-wrapper's own base rule already reads
-     (see "flex layout, dimensions, overflow, alignment" above) - overriding the variable
-     keeps this a one-line diff against that rule instead of a second, competing source of
-     truth for the same properties. */
+  /* The --group-* indirection .secondary-info-wrapper's base rule already
+     reads - keeps this a one-line diff instead of a competing source. */
   --group-justify-content: center;
   --group-align-items: stretch;
   gap: 0;
@@ -1320,33 +1119,17 @@ ha-card.info-multiline {
      here rather than inside .bar precisely so it isn't clipped by .bar's own
      overflow: hidden (see StructureElements.progressBar). */
   position: relative;
-  /* Without this, the bar had no floor at all while its row sibling
-     (.secondary-info-wrapper) already has one - compressing the card
-     horizontally pushed 100% of the squeeze onto the bar (down to a
-     near-invisible sliver) before the text ever gave up any of its own
-     space. min(X, 33%) couples this floor with the text's own (see
-     .secondary-info-wrapper, capped lower at 25% - a squeezed bar loses
-     its whole purpose, a squeezed label still has ellipsis to fall back
-     on): each holds its preferred minimum only while the row can spare it,
-     and caps at its share once it can't. 33%+25% leaves room for the row's
-     own gap (--current-secondary-info-gap, 10px by default) between this
-     and the text, which percentages here don't account for on their own -
-     two floors summing to exactly 100% would leave nothing for it, pushing
-     the bar out past the card's own overflow: hidden by the gap's width.
-     --epb-progress-bar-min-width stays card_mod-overridable for
-     anyone who wants a different balance. */
+  /* Without a floor the bar absorbed 100% of the horizontal squeeze while its
+     row sibling already had one, shrinking to a sliver before the text gave up
+     anything. min(X, 33%) couples the two floors (text caps lower at 25%: a
+     squeezed bar loses its purpose, a label still has its ellipsis); 33%+25%
+     leaves room for the row's own gap, which percentages don't account for. */
   min-width: min(var(--epb-progress-bar-min-width, 30px), 33%);
-  /* --current-specific-progress-container-height: a dedicated override
-     slot, same idea as .container's own --current-specific-padding-top
-     above - a fresh custom property nothing else declares. Needed because
-     --current-progress-container-height is an *inherited* value, and
-     .container (an ancestor of this element) carries the exact same
-     'vertical' class its own generic rule keys off - a plain override on
-     ha-card, however specific, never reached .bar-container: .container's
-     own direct declaration of --current-progress-container-height always
-     won over the inherited one from further up. Still behind
-     --type-entities-combined-line-height, which stays the user's own
-     override and wins over both. */
+  /* A dedicated override slot, same idea as --current-specific-padding-top:
+     --current-progress-container-height is *inherited*, and .container (an
+     ancestor) carries the same 'vertical' class its generic rule keys off, so
+     .container's own declaration always beat anything set further up. Still
+     behind --type-entities-combined-line-height, the user's own override. */
   height: var(
     --type-entities-combined-line-height,
     var(--current-specific-progress-container-height, var(--current-progress-container-height))
@@ -1359,12 +1142,10 @@ ha-card.info-multiline {
   height: 100%;
 }
 
-/* .bar-container above is absolutely positioned, so it never contributes to
-   ha-card's own auto-height (height: var(--card-height, auto) on the base
-   rule) - fine for ltr/rtl, where the bar just lies flat over content that
-   already sizes the card. .vertical.up-orientation needs actual vertical
-   room for the bar to be visible at all, so falls back to 100% (matching
-   what an embedding container reserves) instead of shrinking to content. */
+/* .bar-container is absolutely positioned, so it never contributes to
+   ha-card's own auto-height - fine for ltr/rtl, where the bar lies over content
+   that already sizes the card. .vertical.up-orientation needs real vertical
+   room, so it falls back to 100% instead of shrinking to content. */
 .vertical.up-orientation.overlay {
   --current-height-fallback: 100%;
 }
@@ -1510,22 +1291,18 @@ ha-card.info-multiline {
 }
 
 /* === ORIENTATION === */
-/* On .bar-container (not .bar itself): .value-mark (rainbow_full's marker)
-   sits in the container as .bar's sibling, specifically to escape .bar's own
-   overflow: hidden (see .value-mark's own comment further down) - flipping
-   only .bar left it out of the mirror, so the marker landed on the wrong
-   side of the (correctly mirrored) fill. .bar is centered in the container
-   via flex, so this produces the exact same pixels for .bar's own content as
-   flipping .bar directly did, while now also carrying .value-mark along. */
+/* On .bar-container, not .bar: .value-mark (rainbow_full's marker) sits in the
+   container as .bar's sibling to escape .bar's own overflow: hidden, so
+   flipping only .bar left the marker on the wrong side of the mirrored fill.
+   .bar is flex-centered in the container, so its own pixels are unchanged. */
 .${CARD.style.dynamic.progressBar.orientation.rtl} .${CARD.htmlStructure.elements.progressBar.container.class} {
   transform: scaleX(-1);
 }
 
 /* === SEGMENTED BAR (bar_segments: N, HABase#_buildSegmentCells) ===
-   N real cells with a genuine flex gap between them, not a divider painted
-   over the fill (rebuilt twice already for that: a divider landing on a
-   marker hid it, see CHANGELOG.md). border-radius forced to 0 on .bar: its
-   rounded corner would round the first/last cell unevenly otherwise. */
+   N real cells with a real flex gap, not a divider painted over the fill (a
+   divider landing on a marker hid it). border-radius forced to 0 on .bar:
+   its rounded corner would round the first/last cell unevenly. */
 .bar-segmented .${CARD.htmlStructure.elements.progressBar.bar.class} {
   border-radius: 0;
 }
@@ -1597,10 +1374,8 @@ ha-card.info-multiline {
 }
 
 /* --- Cell layout & windowing ---
-   Default row already places --segment-index: 0 at the anchor - only
-   vertical (bottom-up) and the negative arm need an explicit direction
-   below. Fill lives on ::before, not the cell - the cell's own background
-   is the empty-track color underneath it, .bar's own role for a plain bar. */
+   Only vertical (bottom-up) and the negative arm need an explicit direction.
+   Fill lives on ::before: the cell's own background is the empty track. */
 .${CARD.htmlStructure.elements.progressBar.segmentCell.class} {
   position: relative;
   flex: 1 1 0%;
@@ -1644,10 +1419,9 @@ ha-card.info-multiline {
 }
 
 /* --- Fill amount & reveal ---
-   Plain bar: one fill fraction for the whole row, off the same
-   --progress-bar-value .inner itself reads. Set on the cell (::before
-   inherits it) - .bar > .segments (direct child) excludes center_zero's
-   arms just below, nested one level deeper via .bar-half instead. */
+   One fill fraction for the whole row, off the same --progress-bar-value
+   .inner reads. .bar > .segments excludes center_zero's arms, nested one
+   level deeper via .bar-half. */
 .${CARD.htmlStructure.elements.progressBar.bar.class}
   > .${CARD.htmlStructure.elements.progressBar.segments.class}
   .${CARD.htmlStructure.elements.progressBar.segmentCell.class} {
@@ -1675,11 +1449,9 @@ ha-card.info-multiline {
   );
 }
 
-/* Plain bar and the positive arm share the same anchor (left/bottom), but
-   need separate selectors: .bar > .segments (direct child) is what excludes
-   center_zero's arms from the plain --segment-fill rule above, so the
-   positive arm needs its own explicit match here too, not just the
-   negative one below - grouped since the formula itself is identical. */
+/* Plain bar and the positive arm share an anchor but need separate selectors:
+   .bar > .segments excludes center_zero's arms from the rule above, so the
+   positive arm needs its own match. Grouped - identical formula. */
 .horizontal-bar
   .${CARD.htmlStructure.elements.progressBar.bar.class}
   > .${CARD.htmlStructure.elements.progressBar.segments.class}
@@ -1701,11 +1473,9 @@ ha-card.info-multiline {
   clip-path: inset(0 0 calc(100% - var(--segment-fill)) 0);
 }
 
-/* Cell boundaries aren't at i/N of the box - gaps make cellWidth narrower
-   than 100%/N, shifting every internal boundary left of the naive value%
-   (only 0%/100% still line up). Same slot/index/frac split as --segment-fill
-   above, applied to position instead of fill fraction: continuous within a
-   cell (real sub-cell precision), only crosses cells at the true boundary. */
+/* Gaps make cellWidth narrower than 100%/N, so every internal boundary sits
+   left of the naive value% (only 0%/100% line up). Same slot/index/frac split
+   as --segment-fill, applied to position: continuous within a cell. */
 @supports (top: round(down, 1px, 1px)) {
   .bar-segmented.${CARD.style.dynamic.progressBar.centerZero} .${CARD.htmlStructure.elements.progressBar.bar.class} {
     --bar-segment-gap-cz-floor: round(down, calc(50% / var(--bar-segments, 10) * 0.4), 1px);
@@ -1794,28 +1564,13 @@ ha-card.info-multiline {
   80% { transform: translate(-0.4px, -0.4px) rotate(4deg); }
 }
 
-/**
- * ring bursts from the shape's own border, using the same icon/shape color as
- * everywhere else. Two full keyframes rather than a duplicated declaration
- * inside the frame: an engine that doesn't support color-mix() (Chrome/Edge <
- * 111, Firefox < 113, Safari < 16.2 - see issue #128) can drop the whole 60%
- * frame instead of just the invalid declaration, which silently kills the
- * animation entirely (confirmed live on Chrome 92) rather than just losing
- * the alpha blending. -modern is only picked up where @supports below can
- * confirm color-mix() actually resolves.
- */
-@keyframes epb-icon-ping {
+/* Shared sonar ring (icon + alert ping). Color via a custom property: a
+   color-mix() inside the frame kills the animation on Chrome 92 (issue #128). */
+@keyframes epb-ping {
   60% {
-    box-shadow: 0 0 0 0 var(--epb-icon-and-shape-color, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}));
+    box-shadow: 0 0 0 0 var(--epb-ping-color);
   }
-  100% { box-shadow: 0 0 5px 15px transparent; }
-}
-
-@keyframes epb-icon-ping-modern {
-  60% {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--epb-icon-and-shape-color, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default})) 70%, transparent);
-  }
-  100% { box-shadow: 0 0 5px 15px transparent; }
+  100% { box-shadow: 0 0 5px var(--epb-ping-spread, 15px) transparent; }
 }
 
 @keyframes epb-icon-reveal {
@@ -1834,15 +1589,9 @@ ha-card.info-multiline {
   }
 }
 
-/* battery-bolt fill wipe: a clip-path window sliding down the icon, repeating
-   - the 80%-100% hold is the pause between charge sweeps
-   - the bolt's x-edges are CSS vars (--epb-charge-x1/x2, default 34%/67%) and
-     its fixed top edge is --epb-charge-y1 (default 29%, the rest of each
-     frame's vertical span is expressed as an offset from it via calc()) so
-     .icon-anim-battery-charging-shifted can compensate for icon variants
-     (battery-charging-*, battery-bluetooth-*) whose glyph isn't centered/
-     positioned the same way the plain battery outline is - see
-     ViewCore.isBatteryIconShifted */
+/* battery-bolt fill wipe, 80%-100% holds between sweeps. The bolt's edges are
+   vars (--epb-charge-x1/x2/y1) so .icon-anim-battery-charging-shifted can
+   compensate off-center glyph variants - see ViewCore.isBatteryIconShifted. */
 @keyframes epb-icon-charge {
   0%, 80% { clip-path: inset(0 0 0 0); }
   10% {
@@ -1915,18 +1664,12 @@ ha-card.info-multiline {
 }
 
 .icon-anim-ping .${CARD.htmlStructure.elements.shape.class} {
-  animation: epb-icon-ping 2s infinite;
-  /* box-shadow isn't a compositor-only property like transform/opacity - the
-     browser repaints on every frame of the (infinite) animation regardless.
-     will-change lets it isolate that cost to this element up front instead of
-     discovering it at the first animated frame. */
-  will-change: box-shadow;
-}
+  --epb-ping-color: var(--epb-icon-and-shape-color, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}));
 
-@supports (background: color-mix(in srgb, red, blue)) {
-  .icon-anim-ping .${CARD.htmlStructure.elements.shape.class} {
-    animation-name: epb-icon-ping-modern;
-  }
+  animation: epb-ping 2s infinite;
+  /* box-shadow isn't compositor-only: the browser repaints every frame of the
+     infinite animation - will-change isolates that cost to this element. */
+  will-change: box-shadow;
 }
 
 .icon-anim-washing-machine .${CARD.htmlStructure.elements.icon.class} {
@@ -1951,30 +1694,19 @@ ha-card.info-multiline {
 }
 
 /* === ALERT (alert_when: {above/below, color, highlight, animation}) ===
-   highlight: border (default) colors the border; background tints the card
-   background instead and leaves the border neutral.
-   animation: static (no motion) / blink (pulse) / ping (border ring burst,
-   border target only - see ViewCore.alertAnimation for the background
-   fallback). Omitting it keeps the pre-1.6 defaults: blink for border,
-   static for background.
-   The global prefers-reduced-motion block (animation-iteration-count: 1)
-   stops blink/ping after a single, near-instant pass; the border/background
-   base color from .alert-active(.alert-background) remains, so the alert
-   stays visible without the motion. */
+   highlight: border colors the border, background tints the card instead.
+   ping is border-only (ViewCore.alertAnimation falls back for background).
+   Under prefers-reduced-motion the base color stays, so the alert still reads. */
 @keyframes epb-alert-border {
   0%, 100% { border-color: var(--alert-color-final); }
   50% { border-color: var(--epb-card-border-color, var(--ha-card-border-color, var(--divider-color, #e0e0e0))); }
 }
 
-/* Base tier: an opacity-animated overlay (::before, solid alert color)
-   instead of animating background-color directly on ha-card each frame -
-   background-color isn't compositor-only, so that repaints every frame
-   (same reasoning as epb-icon-ping's own sonar-disc rewrite above). ha-card's
-   own background-color goes neutral for the duration (see .alert-anim-blink
-   below) so the overlay fading in/out over it reads the same as before.
-   Modern tier (epb-alert-background-modern) is untouched - still the
-   original background-color + color-mix() animation, which already worked
-   well - the overlay is switched off there instead of running both. */
+/* Base tier: an opacity-animated ::before overlay instead of animating
+   background-color on ha-card each frame, which isn't compositor-only (same
+   reasoning as epb-ping's own rewrite above). ha-card goes neutral for the
+   duration so the overlay reads the same. The modern tier keeps its original
+   color-mix() animation and switches the overlay off instead. */
 @keyframes epb-alert-background {
   0%, 100% { opacity: 0.15; }
   50% { opacity: 0; }
@@ -1985,45 +1717,11 @@ ha-card.info-multiline {
   50% { background-color: var(--ha-card-background, var(--card-background-color)); }
 }
 
-/* ring bursts from the card's own border, reusing the epb-icon-ping technique.
-   Fallback declared first (plain var(), no alpha) for engines that don't
-   support color-mix() (Chrome/Edge < 111, Firefox < 113, Safari < 16.2 - see
-   issue #128): they keep this ring solid instead of getting no ring at all,
-   since ping mode has no other persistent visual once the animation itself
-   can't run. color-mix() overrides it wherever it's understood. */
-@keyframes epb-alert-ping {
-  60% {
-    box-shadow: 0 0 0 0 var(--alert-color-final);
-  }
-  100% { box-shadow: 0 0 5px 15px transparent; }
-}
-
-@keyframes epb-alert-ping-modern {
-  60% {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--alert-color-final) 70%, transparent);
-  }
-  100% { box-shadow: 0 0 5px 15px transparent; }
-}
-
-/* highlight: label's own pill-scoped variants - same idea as the two above,
-   sized down for a small pill instead of the whole card border. */
+/* highlight: label's own pill-scoped variant - the card-border modes above
+   blink the border, this one blinks the pill instead. */
 @keyframes epb-alert-label-blink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.3; }
-}
-
-@keyframes epb-alert-label-ping {
-  60% {
-    box-shadow: 0 0 0 0 var(--alert-color-final);
-  }
-  100% { box-shadow: 0 0 5px 8px transparent; }
-}
-
-@keyframes epb-alert-label-ping-modern {
-  60% {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--alert-color-final) 70%, transparent);
-  }
-  100% { box-shadow: 0 0 5px 8px transparent; }
 }
 
 .alert-active {
@@ -2040,16 +1738,12 @@ ha-card.info-multiline {
 }
 
 .alert-active.alert-anim-ping:not(.alert-label) {
-  animation: epb-alert-ping 1.5s ease-out infinite;
+  --epb-ping-color: var(--alert-color-final);
+
+  animation: epb-ping 1.5s ease-out infinite;
   /* Same box-shadow repaint cost as icon-anim-ping above, but on the whole
      card rather than a small icon - more noticeable, so worth the same hint. */
   will-change: box-shadow;
-}
-
-@supports (background: color-mix(in srgb, red, blue)) {
-  .alert-active.alert-anim-ping:not(.alert-label) {
-    animation-name: epb-alert-ping-modern;
-  }
 }
 
 /* Same overlay-vs-background-color reasoning as epb-alert-background's own
@@ -2094,13 +1788,10 @@ ha-card.info-multiline {
 }
 
 /* highlight: label - the status pill (HACore._applyAlertLabel) carries the
-   alert instead of the card's own border/background, which stays neutral
-   here (same reset .alert-background already uses). Blink/ping target
-   .status-label itself rather than ha-card - :not(.alert-label) on the
-   border/ping rules above keeps this mode from *also* pulsing a border
-   nobody asked for. --alert-color-final is inherited from .alert-active
-   above (a plain CSS custom property, crosses the .status-label descendant
-   boundary same as anywhere else). */
+   alert, so the card's own border/background stays neutral here and blink/ping
+   target .status-label. :not(.alert-label) on the rules above keeps this mode
+   from also pulsing a border. --alert-color-final is inherited from
+   .alert-active, custom properties crossing the descendant boundary. */
 .alert-active.alert-label {
   border-color: var(--epb-card-border-color, var(--ha-card-border-color, var(--divider-color, #e0e0e0)));
 }
@@ -2110,13 +1801,23 @@ ha-card.info-multiline {
 }
 
 .alert-active.alert-label.alert-anim-ping .status-label {
-  animation: epb-alert-label-ping 1.5s ease-out infinite;
+  --epb-ping-color: var(--alert-color-final);
+  --epb-ping-spread: 8px;
+
+  animation: epb-ping 1.5s ease-out infinite;
   will-change: box-shadow;
 }
 
+/* Modern tier for every epb-ping consumer at once: the ring takes a 70% alpha
+   wherever color-mix() resolves, staying solid everywhere else (issue #128). */
 @supports (background: color-mix(in srgb, red, blue)) {
+  .icon-anim-ping .${CARD.htmlStructure.elements.shape.class} {
+    --epb-ping-color: color-mix(in srgb, var(--epb-icon-and-shape-color, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default})) 70%, transparent);
+  }
+
+  .alert-active.alert-anim-ping:not(.alert-label),
   .alert-active.alert-label.alert-anim-ping .status-label {
-    animation-name: epb-alert-label-ping-modern;
+    --epb-ping-color: color-mix(in srgb, var(--alert-color-final) 70%, transparent);
   }
 }
 
@@ -2156,16 +1857,9 @@ ha-card.info-multiline {
 }
 
 /* ----- gradient / gradient-reverse ----- */
-/* Fallback: a translucent white overlay (rgba, no color-mix()) instead of
-   the bar's own plain color - same technique .glass already uses above:
-   this gradient is painted on .inner's own ::before, layered over its real
-   solid color underneath (see "gradient/glass: ::before compositor-only
-   scale" further down), so a partly-transparent white stop lightens it by
-   simple compositing instead of needing color-mix() to compute a lightened
-   color from scratch. Works on every browser this card supports - no gap
-   left to fall back from. Modern tier (the real 2-stop color-mix()
-   gradient) untouched, gated behind @supports below - it already looked
-   right, no reason to touch it. */
+/* Fallback: a translucent white overlay (rgba, no color-mix()), same technique
+   as .glass - painted on .inner's ::before over its real color, so compositing
+   lightens it without color-mix(). Modern tier gated behind @supports below. */
 .${CARD.style.dynamic.progressBar.effect.gradient.class},
 .${CARD.style.dynamic.progressBar.effect.gradientReverse.class} {
   --progress-effect-gradient: var(--progress-effect-gradient-modern, linear-gradient(90deg, rgba(255, 255, 255, 0.4), transparent));
@@ -2414,37 +2108,26 @@ ha-card.info-multiline {
   --wm-tri-size: var(--watermark-triangle-size, 8px);
   --wm-half-line: calc(var(--wm-line-size) /2);
   --wm-half-tri-base: calc(var(--wm-tri-size) / 2);
-  /* Resolves to the modern (whole-pixel) tier wherever it exists, the plain
-     fallback everywhere else - --wm-half-tri-base-modern is only ever
-     declared inside the @supports block below, so on an engine that doesn't
-     match it the property stays genuinely unset (not just "invalid"), and
-     var()'s own fallback here does the rest. Every consumer below keeps
-     reading this single variable, untouched either way. */
+  /* --wm-half-tri-base-modern only exists inside the @supports block below, so
+     elsewhere it stays genuinely unset and var()'s fallback takes over. Every
+     consumer keeps reading this one variable either way. */
   --wm-half-tri: var(--wm-half-tri-base-modern, var(--wm-half-tri-base));
 }
 
-/* Modern tier, feature-gated via @supports rather than this file's usual
-   "declare the consuming property twice" pattern (bar_segments' own gap) -
-   a single custom property, resolved once above, reads cleaner here than
-   duplicating every border/left/bottom declaration that touches
-   --wm-half-tri. round() is CSS Values 4 (Chrome/Edge 114+, Firefox 118+,
-   Safari 16.4+), past the documented 94+ floor. */
+/* Feature-gated via @supports rather than the usual "declare the consuming
+   property twice": one custom property resolved once reads cleaner than
+   duplicating every declaration touching --wm-half-tri. round() is CSS Values 4
+   (Chrome/Edge 114+, Firefox 118+, Safari 16.4+), past the documented 94+
+   floor. */
 @supports (top: round(down, 1px, 1px)) {
   .watermark {
     --wm-half-tri-base-modern: round(down, calc(var(--wm-tri-size) / 2), 1px);
   }
 }
 
-/* top/bottom force the bar down to 6px (see .bottom-container/.top-container
-   above) regardless of bar_size - the default 8px triangle is taller than
-   that, so .bar's overflow: hidden was clipping its bottom tip, reading as a
-   blunt/misplaced marker rather than a sharp one. Scoped to this context
-   only (not bar_size: small, which stays the normal 8px bar): still resolves
-   through --watermark-triangle-size first, so a user override wins here too.
-   4px (even), not 5px: base = wm-tri-size + 1 always, so an odd base -
-   without round() support needed to floor it there - only ever comes out of
-   an even wm-tri-size (odd/2 stays fractional, flipping base's own parity
-   the wrong way on an engine that can't round() it back down). */
+/* top/bottom force a 6px bar, shorter than the default 8px triangle, whose tip
+   .bar's overflow: hidden then clipped. 4px (even), not 5px: base is always
+   wm-tri-size + 1, and only an even size keeps that base odd without round(). */
 .top-container .watermark,
 .bottom-container .watermark {
   --wm-tri-size: var(--watermark-triangle-size, 4px);
@@ -2524,16 +2207,9 @@ ha-card.info-multiline {
 }
 
 /* ---------- Round ---------- */
-/* Whole-pixel centering, same reasoning as bar_segments' dividers: this is a
-   real box (--mark-width/height: wm-circle-size), not a border-triangle
-   trick, so a plain /2 half or transform: translate(-50%) is fractional for
-   an odd size (5px default) - either rounds independently on each edge and
-   can blur/drift off-center by half a device pixel. (wm-circle-size - 1px) /
-   2 lands on a whole pixel instead, both for the value-axis offset and for
-   centering across the bar's own thickness (replaces the old top/left: 50% +
-   transform: translate(-50%) pair below). Assumes an odd --watermark-circle-
-   size, like the shipped default - same assumption bar_segments' own fixed
-   gap tiers make. */
+/* Whole-pixel centering (same reasoning as bar_segments' dividers): this is a
+   real box, so /2 or translate(-50%) is fractional at the odd 5px default and
+   can blur or drift half a device pixel. Assumes an odd circle size. */
 .lwm-round .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
 .hwm-round .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
   --mark-top: calc(50% - (var(--wm-circle-size) - 1px) / 2);
@@ -2558,14 +2234,9 @@ ha-card.info-multiline {
 }
 
 /* ---------- Triangle ---------- */
-/* Base widened by 1px on the side that isn't part of the position formula
-   (border-right here, border-top in the vertical rule below) - an odd total
-   base by construction, no visual effect on the apex: with width:0 forcing
-   the browser to expand the border-box to fit the borders anyway, the apex
-   sits exactly at left + border-left (where border-left ends and
-   border-right begins), never at the base's own midpoint - --wm-half-tri
-   cancels out of "left: calc(value - half-tri)" + "border-left: half-tri"
-   symbolically regardless of what border-right is set to. */
+/* Widening the base by 1px on the side outside the position formula looks like
+   it should move the apex, but doesn't: with width: 0 the apex sits where
+   border-left ends, and --wm-half-tri cancels out of left + border-left. */
 .lwm-triangle .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
 .hwm-triangle .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
   --mark-left: calc(var(--wm-value) - var(--wm-half-tri));
@@ -2682,24 +2353,12 @@ ha-card.info-multiline {
 
 /* =============================================================================
    RAINBOW FULL BAR (bar_color_mode: rainbow_full)
-   The track always shows the theme's complete gradient (not just the filled
-   portion) - .inner's normal reveal-by-translate sweep is hidden entirely,
-   and a small marker (built on the same .mark mechanism as the watermarks
-   above) tracks the current value's position instead. --progress-bar-value
-   (0-1) is already set every render (see HACore._applyProgressCSS), so the
-   marker needs no dedicated JS wiring of its own - purely CSS.
-
-   center_zero is a different wiring: its two gradients (one per arm) never
-   reach --progress-bar-color/.bar at all - HABase._updateCSS only ever
-   passes bar.colorGradient (always null for center_zero, see
-   ViewBase.colorGradient) as the plain single-arm gradient, and routes
-   bar.themeDivergingGradient's own posGradient/negGradient through
-   --epb-stack-gradient-pos/-neg instead (see
-   HACore._applyDivergingBarStackCSS), which only .inner.positive/.inner.
-   negative's own --inner-background ever reads. So for center_zero, .inner
-   can't be hidden - it's kept, its normal value-scaled reveal (--inner-size)
-   is forced to fully open instead, so both halves show their whole gradient
-   plain and only the marker (below) still moves.
+   The track shows the whole gradient and a .mark-based marker tracks the value
+   off --progress-bar-value - no dedicated JS wiring, purely CSS.
+   center_zero is wired differently: its per-arm gradients never reach .bar
+   (they go through --stack-gradient-pos/-neg, read only by .inner.positive/
+   .negative), so .inner can't be hidden here - its reveal is forced fully open
+   instead and only the marker moves.
    ============================================================================= */
 
 .rainbow-full-bar:not(.${CARD.style.dynamic.progressBar.centerZero})
@@ -2709,7 +2368,7 @@ ha-card.info-multiline {
 
 .rainbow-full-bar:not(.${CARD.style.dynamic.progressBar.centerZero})
   .${CARD.htmlStructure.elements.progressBar.bar.class} {
-  --epb-progress-bar-background-color: transparent;
+  ${CARD.style.dynamic.progressBar.background.var}: transparent;
   background-image: var(--epb-progress-bar-color, var(${CARD.style.dynamic.progressBar.color.var}, none));
 }
 
@@ -2718,50 +2377,28 @@ ha-card.info-multiline {
   --inner-size: 1;
 }
 
-/* Narrow pill on the bar's own fill axis (like a fatter, moving version of
-   the center-zero mark below) rather than a disc - full-height/width on the
-   cross axis, narrow on the axis the value moves along. Centered via top:50%
-   + transform rather than top:0/height:100%: this now lives in
-   .bar-container (see StructureElements.progressBar), which for the
-   smallest bar_size is barely taller than the bar itself.
-
-   Self-relative (100% minus 2x the ring width, the ring being a
-   box-shadow drawn *outside* the box - see below), not a fixed px number:
-   .bar-container's actual height varies by more than bar_size alone (the
-   generic 16px cushion horizontal gets for small vs vertical's own bare
-   --progress-size, and --type-entities-combined-line-height - see .bar-
-   container's own height rule above - lets a user pin it to yet another
-   value entirely, taking priority over anything this file assumes). A
-   fixed height that happened to match one specific case clipped or
-   shifted the moment any of those differed - this always fits exactly
-   whatever height actually applies, no matter the source, same formula
-   medium/large/xlarge below already rely on. */
+/* A narrow pill on the fill axis rather than a disc, centered via top: 50% +
+   transform (not top: 0/height: 100%): it lives in .bar-container, which for
+   the smallest bar_size is barely taller than the bar itself.
+   Self-relative (100% minus 2x the ring, a box-shadow drawn outside the box),
+   not a fixed px: .bar-container's height varies by more than bar_size alone,
+   and --type-entities-combined-line-height lets a user pin it elsewhere again.
+   Any fixed height clipped or shifted the moment one of those differed. */
 .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
   --mark-top: 50%;
   --mark-height: calc(100% - 2px);
-  /* --rainbow-marker-width/-border-width: internal, bar_size-scaled
-     defaults (see the size rules below) - never set by JS, only ever the
-     inner fallback of the public --epb-rainbow-marker-* var so a card_mod
-     override always wins regardless of bar_size. xsmall/small don't set
-     either (5px/1px, same numbers as before this got size-aware) - they
-     already read clearly at that scale and were asked to stay untouched. */
+  /* Internal, bar_size-scaled defaults - never set by JS, only the inner
+     fallback of the public --epb-rainbow-marker-* var so a card_mod override
+     wins regardless of bar_size. xsmall/small deliberately stay at 5px/1px. */
   --mark-width: var(--epb-rainbow-marker-size, var(--rainbow-marker-width, 5px));
-  /* The "glass pin" ring below is a box-shadow, not a real border - it
-     doesn't affect box-sizing/layout, so it isn't part of --mark-width at
-     all. Extracted here (rather than inlined only in the box-shadow
-     declaration below) so --mark-left's own clamp bounds can account for it
-     too - the ring pushes the marker's actual visible footprint past
-     --mark-width alone. */
+  /* The ring is a box-shadow, outside box-sizing, so it isn't part of
+     --mark-width - extracted here so --mark-left's clamp can account for the
+     footprint it adds. */
   --mark-border-width: var(--epb-rainbow-marker-border-width, var(--rainbow-marker-border-width, 1px));
-  /* Clamped, not the bare raw position - centered on this position
-     (transform: translate(-50%, -50%) below), a bare 0%/100% pushed half
-     its own visible footprint (--mark-width plus the ring, see
-     --mark-border-width above) past the container's own edge at the
-     extremes, clipped by .content-section's overflow: hidden (most visible
-     with bar_position: compact_below's tighter row, but not specific to
-     it). The raw position already sits within these bounds for the vast
-     majority of the range, so this is a no-op there - only the very ends
-     freeze at the boundary instead of pushing further out. */
+  /* Clamped, not the raw position: centered via translate(-50%, -50%), a bare
+     0%/100% pushed half the marker's footprint (--mark-width plus the ring)
+     past the container's edge, clipped by .content-section's overflow: hidden.
+     A no-op over most of the range - only the very ends freeze at the bound. */
   --mark-left: clamp(
     calc(var(--mark-width) / 2 + var(--mark-border-width)),
     calc(var(${CARD.style.dynamic.progressBar.value.var}, 0) * 100%),
@@ -2775,18 +2412,10 @@ ha-card.info-multiline {
   transform: translate(-50%, -50%);
   border-radius: 999px;
   border: none;
-  /* "Glass pin": a thin ring (drawn as a spread box-shadow, not a real
-     border - doesn't affect box-sizing/layout) instead of a solid outline,
-     plus a soft shadow for a bit of lift/depth. The ring reads clearly
-     against any of the gradient's own colors, light or dark - a solid black
-     border read as a flat, cut-out sticker by comparison. Symmetric (no
-     offset) with blur tied to --mark-border-width, not a fixed 2px offset
-     + 3px blur - --mark-height/-top above only ever reserve
-     --mark-border-width of margin around the box (exactly enough for the
-     ring), so a fixed, offset shadow bigger than that reserved margin
-     overflowed past it - downward-biased offset meant only the bottom ever
-     clipped. Tying the blur to the same variable the margin is already
-     sized from guarantees they always match, at every bar_size. */
+  /* "Glass pin": a spread box-shadow ring (no layout impact) plus a soft
+     shadow. Blur is tied to --mark-border-width, not a fixed offset: the
+     margin reserved above is sized from that same variable, so a bigger or
+     offset shadow overflowed and clipped at the bottom. */
   box-shadow:
     0 0 0 var(--mark-border-width) var(--epb-rainbow-marker-border-color, rgba(255, 255, 255, 0.9)),
     0 0 var(--mark-border-width) rgba(0, 0, 0, 0.35);
@@ -2801,23 +2430,13 @@ ha-card.info-multiline {
   --mark-display: flex;
 }
 
-/* layout: vertical reserves only the bar's own thin thickness for its row
-   by default (--current-progress-container-height: var(--progress-size),
-   6/8/12px for xsmall/small/medium - no generic 16px cushion the way
-   horizontal gets there), and .container's own padding-top scales with
-   that same raw size. Both forced up to that same 16px here (via the
-   dedicated --current-specific-* overrides declared on .container/
-   .bar-container above - immune to being shadowed by an intermediate
-   element the way directly overriding --current-progress-container-height/
-   --current-container-padding-top themselves would be, since nothing else
-   declares these two names) so the marker (self-relative, see above) gets
-   the same room to be a proper pill in both layouts instead of shrinking
-   into a near-circle, and the row doesn't sit off from where large's
-   already-16px row naturally lands. large already reaches 16px natively
-   in vertical (--progress-size-l is 16px) - no forcing needed; xlarge is
-   well past it already. ViewCore.minGridRows reserves one extra grid row
-   for this same combination, so the card has the budget for the growth
-   instead of squeezing it out of the rest of the layout. */
+/* vertical reserves only the bar's own thickness for its row (no 16px cushion
+   like horizontal gets), and .container's padding-top scales with that same raw
+   size. Both are forced up to 16px here, through the dedicated
+   --current-specific-* slots (immune to being shadowed by an intermediate
+   element), so the marker gets room to stay a pill instead of shrinking to a
+   circle. large already reaches 16px natively; ViewCore.minGridRows reserves
+   the extra grid row this needs. */
 ha-card.vertical.default.rainbow-full-bar.${CARD.style.bar.sizeOptions.xsmall},
 ha-card.vertical.default.rainbow-full-bar.${CARD.style.bar.sizeOptions.small},
 ha-card.vertical.default.rainbow-full-bar.${CARD.style.bar.sizeOptions.medium} {
@@ -2830,50 +2449,28 @@ ha-card.vertical.default.rainbow-full-bar.${CARD.style.bar.sizeOptions.medium} .
   --current-content-height: calc(var(--name-height) + var(--detail-height) + 16px);
 }
 
-/* bar_position: below puts the bar in its own sibling (.below-container),
-   not inside .content - no padding-top/content-height sum to correct
-   there (.content's own base formula never accounted for the bar to
-   begin with), just the same container-height forcing, on both boxes
-   that separately hard-code the bar's row height for this position (see
-   ha-card.below .bar-container and .below-container's own height rule -
-   neither goes through --current-progress-container-height/
-   --progress-size via inheritance the way .default's .container does, so
-   --current-specific-progress-container-height needs a fallback slot on
-   .below-container too, added at its own rule below). */
+/* bar_position: below puts the bar in its own sibling (.below-container), so
+   there's no padding-top/content-height sum to correct - just the same
+   container-height forcing on both boxes that hard-code the bar's row height
+   here. Neither inherits --current-progress-container-height the way .default's
+   .container does, so .below-container needs its own fallback slot too. */
 ha-card.vertical.below.rainbow-full-bar.${CARD.style.bar.sizeOptions.xsmall},
 ha-card.vertical.below.rainbow-full-bar.${CARD.style.bar.sizeOptions.small},
 ha-card.vertical.below.rainbow-full-bar.${CARD.style.bar.sizeOptions.medium} {
   --current-specific-progress-container-height: 16px;
 }
 
-/* bar_position: top/bottom forces the bar down to 6px regardless of
-   bar_size (see the .top-container/.bottom-container rule declaring
-   --progress-size/--progress-container-height directly, further up) -
-   the same xsmall scale (6px container, 1px ring). Purely self-relative
-   (calc(100% - 2px), same as everywhere else) fit inside that 6px flush
-   with the bar, but read poorly there: at 4px the marker's own fill
-   (current color) often lands on a same-hued patch of the gradient right
-   behind it, and the thin ring alone isn't enough contrast to save it. A
-   small fixed floor lets it overshoot the 6px bar a little - not the full
-   "always xlarge-sized" treatment vertical + up + overlay gets above,
-   just enough to read clearly. .top-container/.bottom-container don't
-   clip (position: absolute, no overflow: hidden), so the overshoot shows. */
+/* top/bottom force a 6px bar (xsmall scale). A self-relative fit reads poorly
+   there - the 4px marker's fill often lands on a same-hued patch of gradient -
+   so a small fixed floor lets it overshoot the bar; the containers don't clip. */
 .rainbow-full-bar .top-container .${CARD.htmlStructure.elements.progressBar.valueMarker.class},
 .rainbow-full-bar .bottom-container .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
   --mark-height: max(calc(100% - 2px), 10px);
 }
 
-/* From medium up, the bar itself gets visibly chunkier while the marker
-   stayed fixed at xsmall/small's own scale - a bit more width and a
-   thicker border keep it from getting lost against the wider track.
-   --mark-height also gets pulled in here by exactly 2x the ring width
-   (the ring is a box-shadow, drawn *outside* the box, not counted in its
-   own height): xsmall/small's height (max(100%, 14px)) has slack to spare
-   from that floor alone (the bar itself is shorter than 14px, and the row
-   around it taller still), but from medium up 100% already reaches or
-   exceeds 14px, so the box has zero slack of its own and the ring
-   overshoots past .bar-container's own bounds into whatever's flush
-   against it - clipped instead of a clean rounded cap. */
+/* From medium up the bar gets chunkier while the marker stayed at xsmall's
+   scale. --mark-height gains 2x the ring width: below medium the 14px floor has
+   slack for it, above it 100% has none and the ring clipped instead of capping. */
 .rainbow-full-bar.${CARD.style.bar.sizeOptions.medium} .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
   --rainbow-marker-width: 7px;
   --rainbow-marker-border-width: 1.5px;
@@ -2890,11 +2487,9 @@ ha-card.vertical.below.rainbow-full-bar.${CARD.style.bar.sizeOptions.medium} {
   --mark-height: calc(100% - 6px);
 }
 
-/* A Feature's row height is fixed regardless of bar_size (--feature-height,
-   see .entity-progress-feature above), so the "100%"-relative rules above
-   left the mark the same height at every bar_size. Re-anchored to the same
-   container height Card itself uses per size (--progress-size-l for every
-   size but xlarge - see the root/.xlarge rules above) for the same look. */
+/* A Feature's row height is fixed regardless of bar_size (--feature-height), so
+   the "100%"-relative rules above left the mark one height at every size.
+   Re-anchored to the same per-size container height Card itself uses. */
 .entity-progress-feature.rainbow-full-bar .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
   --mark-height: calc(var(--progress-size-l) - 2px);
 }
@@ -2917,16 +2512,9 @@ ha-card.vertical.below.rainbow-full-bar.${CARD.style.bar.sizeOptions.medium} {
   --mark-height: max(calc(100% - 2px), 10px);
 }
 
-/* Always styled like xlarge here (12px wide, 3px ring), not scaled by
-   bar_size the way the horizontal per-size rules further up are: a
-   vertical + up + overlay bar is a full-height strip regardless of
-   bar_size (see .vertical.up-orientation.overlay .content's own
-   height: 100%), so it reads as "big" no matter what bar_size says -
-   graduating the marker by bar_size the same way horizontal does would
-   make it look undersized against that strip at anything below xlarge.
-   --mark-width's -6px matches 2x the 3px ring, same ring-overshoot
-   correction the horizontal per-size rules use, just fixed instead of
-   graduated. */
+/* Fixed at xlarge (12px, 3px ring) rather than graduated by bar_size: a
+   vertical + up + overlay bar is a full-height strip at every size, so a
+   smaller marker would look undersized against it. -6px matches 2x the ring. */
 .vertical.up-orientation.overlay.rainbow-full-bar .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
   --mark-top: auto;
   --mark-left: 50%;
@@ -2937,11 +2525,9 @@ ha-card.vertical.below.rainbow-full-bar.${CARD.style.bar.sizeOptions.medium} {
   transform: translate(-50%, 50%);
 }
 
-/* center_zero: the two arms are a fixed 50/50 split of the bar (see
-   .half's own width: 50% CSS, not proportional to the actual zero value's
-   position) - --progress-bar-value is signed here (-1..1, see
-   HABase._updateCSS/ViewBase.percent), so 0 always lands the marker at the
-   visual center regardless of min_value/max_value/center_zero_value. */
+/* center_zero's arms are a fixed 50/50 split of the bar, and
+   --progress-bar-value is signed here (-1..1), so 0 always lands the marker at
+   the visual center whatever min_value/max_value/center_zero_value say. */
 .${CARD.style.dynamic.progressBar.centerZero}.rainbow-full-bar .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
   /* Same clamp reasoning as the base rule's own --mark-left above (ring
      width included), just centered on 50% (signed -1..1 value) instead of
@@ -2953,15 +2539,9 @@ ha-card.vertical.below.rainbow-full-bar.${CARD.style.bar.sizeOptions.medium} {
   );
 }
 .vertical.up-orientation.overlay.${CARD.style.dynamic.progressBar.centerZero}.rainbow-full-bar .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
-  /* --mark-left stays the base rule's fixed 50% (it's the cross axis here -
-     centers the pill across the bar's *width* - unrelated to center_zero,
-     which only ever affects position along the *fill* axis: --mark-bottom
-     for a vertical bar, --mark-left for a horizontal one, see the generic
-     .center-zero rule above). Only --mark-bottom needs the center-zero
-     formula. This rule used to also reset --mark-left to 0, which combined
-     with the base rule's translateX(-50%) on a ~full-width box shoved the
-     whole pill half the bar's width to the left - left edge off past the
-     bar's own edge, right edge landing mid-bar instead of on the value. */
+  /* --mark-left stays 50%: it's the cross axis here, unrelated to center_zero,
+     which only moves the fill axis (--mark-bottom when vertical). Resetting it
+     to 0 shoved the pill half a bar-width left, off past the bar's edge. */
   --mark-bottom: calc(50% + (var(${CARD.style.dynamic.progressBar.value.var}, 0) * 50%));
 }
 
@@ -3010,16 +2590,12 @@ ha-card.vertical.below.rainbow-full-bar.${CARD.style.bar.sizeOptions.medium} {
   --shape-background-color: transparent;
 }
 
-/* hide: progress_bar above only hides the fill (.bar) - .bar-container itself
-   (the flex item actually reserving height/min-width in the row, e.g.
-   sharing bar_position: default's row with secondary_info in horizontal)
-   never collapsed on its own. --current-specific-progress-container-height
-   is the dedicated top-priority slot .bar-container's own height already
-   checks first (see its declaration above), so this wins regardless of
-   which bar_position/bar_size rule would otherwise feed
-   --current-progress-container-height on the same element. min-width/
-   flex-grow reset alongside it so a shared row (horizontal.default) doesn't
-   keep reserving width for a container with nothing left to show. */
+/* hide: progress_bar only hides the fill: .bar-container, the flex item
+   actually reserving height/min-width in the row, never collapsed on its own.
+   --current-specific-progress-container-height is the top-priority slot
+   .bar-container's height checks first, so this wins over any
+   bar_position/bar_size rule. min-width/flex-grow reset alongside it so a
+   shared row doesn't keep reserving width for an empty container. */
 .${CARD.style.dynamic.hiddenComponent.progress_bar.class} .${CARD.htmlStructure.elements.progressBar.container.class} {
   --current-specific-progress-container-height: 0px;
   min-width: 0;
@@ -3237,11 +2813,8 @@ const CUSTOM_THEME_EDITOR_STYLE = css`
 `;
 
 const EDITOR_BASE_STYLE = css`
-  /* padding-bottom matches the same 16px used as the gap between every
-     top-level item (panels, the migrate-config header) - without it the last
-     panel's content sits flush against the editor's own bottom edge, unlike
-     every other item which always has that much breathing room on at least
-     one side. */
+  /* padding-bottom matches the 16px gap between top-level items - without it the
+     last panel sits flush against the editor's bottom edge. */
   .editor { display: flex; flex-direction: column; gap: 16px; padding-bottom: 16px; }
   .panel-body { display: flex; flex-direction: row; gap: 16px; flex-wrap: wrap; align-content: flex-start; padding: 8px 0; }
   /* min-width: auto (flex default) lets a narrow field wrap its label to
@@ -3262,25 +2835,17 @@ const EDITOR_BASE_STYLE = css`
 /**
  * Shared constructed stylesheets (Constructable Stylesheets API).
  *
- * CF5 - issue (perf) resolved - each card instance used to create its own
- * <style> element holding the full ~47 KB CARD_CSS: N cards on a dashboard
- * meant N parses and N CSSOM copies, re-done on every editor keystroke
- * (setConfig → reset → render). A constructed CSSStyleSheet is parsed once
- * per unique CSS text and shared BY REFERENCE by every shadowRoot that
- * adopts it.
+ * CF5 - issue (perf) resolved - each instance used to hold its own <style>
+ * element with the full ~55 KB CARD_CSS, so N cards meant N parses and N CSSOM
+ * copies, redone on every editor keystroke. A constructed sheet is parsed once
+ * per unique CSS text and shared by reference by every shadowRoot adopting it.
  *
- * Intent & constraints:
- * - Progressive enhancement ONLY. The README promises Firefox 94+ and
- *   Safari 15.4+, but `new CSSStyleSheet()` + `replaceSync` need
- *   Firefox 101 / Safari 16.4. Older engines (e.g. wall-mounted iPads
- *   stuck on iPadOS 15) must keep working: getSharedStyleSheet() returns
- *   null there and the caller falls back to the legacy per-instance
- *   <style> element — the exact pre-existing behavior, no better no worse.
- * - The cache is keyed by CSS text (not by class) so a future subclass
- *   overriding _cardStyle transparently gets its own shared sheet.
- * - adoptedStyleSheets survive `shadowRoot.innerHTML = ''` (reset()):
- *   adopting is done once per shadowRoot and needs no re-application on
- *   re-render.
+ * Progressive enhancement only: `new CSSStyleSheet()` needs Firefox 101 /
+ * Safari 16.4, past the README's own 94+/15.4+ promise, so older engines (a
+ * wall-mounted iPad on iPadOS 15) get null here and fall back to the legacy
+ * per-instance <style>. The cache is keyed by CSS text, not by class, so a
+ * subclass overriding _cardStyle gets its own sheet; adoptedStyleSheets survive
+ * reset()'s `innerHTML = ''`, so adopting happens once per shadowRoot.
  */
 const CONSTRUCTED_SHEETS = new Map<string, CSSStyleSheet | null>();
 const getSharedStyleSheet = (cssText: string): CSSStyleSheet | null => {

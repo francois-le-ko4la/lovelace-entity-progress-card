@@ -78,7 +78,7 @@
       "color": "Icon color",
       "custom_info": "Custom secondary info",
       "custom_theme": "Custom theme zones",
-      "decimal": "decimal",
+      "decimal": "Display precision",
       "density_toggle": "Compact",
       "entity": "Entity",
       "fast_refresh": "Fast refresh (per-second)",

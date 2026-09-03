@@ -78,7 +78,7 @@
       "color": "Cor do ícone",
       "custom_info": "Informação secundária personalizada",
       "custom_theme": "Zonas de tema personalizado",
-      "decimal": "decimal",
+      "decimal": "Mostrar precisão",
       "density_toggle": "Compacto",
       "entity": "Entidade",
       "fast_refresh": "Atualização rápida (por segundo)",

@@ -78,7 +78,7 @@
       "color": "اللون الأساسي",
       "custom_info": "معلومات إضافية (ثانوية)",
       "custom_theme": "مناطق السمة المخصصة",
-      "decimal": "عشري",
+      "decimal": "دقة العرض",
       "density_toggle": "مضغوط",
       "entity": "الكيان",
       "fast_refresh": "تحديث سريع (كل ثانية)",

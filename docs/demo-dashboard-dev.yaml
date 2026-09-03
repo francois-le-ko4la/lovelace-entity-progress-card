@@ -4804,6 +4804,28 @@ views:
             card_mod:
               style: |
                 :host { --epb-alert-background-opacity: 0.9; }
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_temperature
+            name: '--epb-ping-color: blue'
+            alert_when:
+              color: red
+              highlight: border
+              below: 25
+              animation: ping
+            card_mod:
+              style: |
+                :host { --epb-ping-color: blue; }
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_temperature
+            name: '--epb-ping-spread: 30px'
+            alert_when:
+              color: red
+              highlight: border
+              below: 25
+              animation: ping
+            card_mod:
+              style: |
+                :host { --epb-ping-spread: 30px; }
       - type: grid
         cards:
           - type: heading

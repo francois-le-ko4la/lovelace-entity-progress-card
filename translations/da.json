@@ -78,7 +78,7 @@
       "color": "Primær farve",
       "custom_info": "Tilpasset sekundær info",
       "custom_theme": "Tilpassede temazoner",
-      "decimal": "decimal",
+      "decimal": "Visningspræcision",
       "density_toggle": "Kompakt",
       "entity": "Enhed",
       "fast_refresh": "Hurtig opdatering (hvert sekund)",

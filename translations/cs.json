@@ -78,7 +78,7 @@
       "color": "Hlavní barva",
       "custom_info": "Vlastní sekundární info",
       "custom_theme": "Zóny vlastního motivu",
-      "decimal": "desetinný",
+      "decimal": "Přesnost zobrazení",
       "density_toggle": "Kompaktní",
       "entity": "Entita",
       "fast_refresh": "Rychlé obnovení (každou sekundu)",

@@ -275,10 +275,10 @@ const style = {
       // per-arm fill size/gradient, layered above the normal single-value
       // derivation (see #9999-10006-ish CSS) but below
       // --epb-progress-bar-color and bar_effect's --progress-effect(-neg).
-      stackGradientPos: { var: '--epb-stack-gradient-pos' },
-      stackGradientNeg: { var: '--epb-stack-gradient-neg' },
-      stackSizePos: { var: '--epb-stack-size-pos' },
-      stackSizeNeg: { var: '--epb-stack-size-neg' },
+      stackGradientPos: { var: '--stack-gradient-pos' },
+      stackGradientNeg: { var: '--stack-gradient-neg' },
+      stackSizePos: { var: '--stack-size-pos' },
+      stackSizeNeg: { var: '--stack-size-neg' },
       orientation: { rtl: 'rtl-orientation', ltr: 'ltr-orientation', up: 'up-orientation' },
       effect: {
         radius: { label: 'radius', class: 'progress-bar-effect-radius' },

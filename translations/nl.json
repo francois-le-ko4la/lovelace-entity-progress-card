@@ -78,7 +78,7 @@
       "color": "Kleur pictogram",
       "custom_info": "Aangepaste secundaire info",
       "custom_theme": "Aangepaste themazones",
-      "decimal": "decimaal",
+      "decimal": "Precisie weergeven",
       "density_toggle": "Compact",
       "entity": "Entiteit",
       "fast_refresh": "Snel vernieuwen (elke seconde)",

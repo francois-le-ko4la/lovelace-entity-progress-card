@@ -78,7 +78,7 @@
       "color": "मुख्य रंग",
       "custom_info": "कस्टम द्वितीयक जानकारी",
       "custom_theme": "कस्टम थीम ज़ोन",
-      "decimal": "दशमलव",
+      "decimal": "Display precision",
       "density_toggle": "कॉम्पैक्ट",
       "entity": "एंटिटी",
       "fast_refresh": "तेज़ रिफ्रेश (प्रति सेकंड)",

@@ -78,7 +78,7 @@
       "color": "圖示顏色",
       "custom_info": "自訂次要資訊",
       "custom_theme": "自訂主題區域",
-      "decimal": "小數",
+      "decimal": "顯示準確度",
       "density_toggle": "精簡",
       "entity": "實體",
       "fast_refresh": "快速重新整理（每秒）",

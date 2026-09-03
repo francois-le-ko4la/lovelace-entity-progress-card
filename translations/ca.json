@@ -78,7 +78,7 @@
       "color": "Color principal",
       "custom_info": "Informació addicional (secundària)",
       "custom_theme": "Zones de tema personalitzat",
-      "decimal": "Decimal",
+      "decimal": "Precisió de visualització",
       "density_toggle": "Compacte",
       "entity": "Entitat",
       "fast_refresh": "Actualització ràpida (per segon)",

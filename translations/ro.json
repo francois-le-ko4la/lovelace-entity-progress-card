@@ -78,7 +78,7 @@
       "color": "Culoare principală",
       "custom_info": "Info secundară personalizată",
       "custom_theme": "Zone temă personalizată",
-      "decimal": "zecimal",
+      "decimal": "Precizie",
       "density_toggle": "Compact",
       "entity": "Entitate",
       "fast_refresh": "Reîmprospătare rapidă (la fiecare secundă)",

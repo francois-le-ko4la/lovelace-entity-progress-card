@@ -213,17 +213,22 @@
   }
   .anim-battery-charging { animation: demo-icon-charge 3s linear infinite; }
 
-  /* ---- 8. ping (real difference: solid ring vs translucent ring) ---- */
-  @keyframes demo-ping-fallback {
-    60% { box-shadow: 0 0 0 0 var(--icon-demo); }
-    100% { box-shadow: 0 0 8px 20px transparent; }
+  /* ---- 8. ping (real difference: solid ring vs translucent ring) ----
+     One shared keyframe reading --demo-ping-color, mirroring the shipped
+     epb-ping. Production picks the tier with @supports; this page needs both
+     at once, so each cell sets the property itself. ---- */
+  @keyframes demo-ping {
+    60% { box-shadow: 0 0 0 0 var(--demo-ping-color); }
+    100% { box-shadow: 0 0 8px var(--demo-ping-spread, 20px) transparent; }
   }
-  @keyframes demo-ping-modern {
-    60% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--icon-demo) 70%, transparent); }
-    100% { box-shadow: 0 0 8px 20px transparent; }
-  }
-  .anim-ping-fallback { animation: demo-ping-fallback 2s ease-out infinite; }
-  .anim-ping-modern { animation: demo-ping-modern 2s ease-out infinite; }
+  .anim-ping-fallback,
+  .anim-ping-modern,
+  .anim-alert-ping-fallback,
+  .anim-alert-ping-modern { animation: demo-ping 2s ease-out infinite; }
+  .anim-alert-ping-fallback,
+  .anim-alert-ping-modern { animation-duration: 1.5s; }
+  .anim-ping-fallback { --demo-ping-color: var(--icon-demo); }
+  .anim-ping-modern { --demo-ping-color: color-mix(in srgb, var(--icon-demo) 70%, transparent); }
 
   /* ---- 9. shape/icon background - now iso, plain opacity everywhere ---- */
   .shape-tint::before {
@@ -262,17 +267,9 @@
   }
   .anim-alert-border { animation: demo-alert-border-blink 1.2s ease-in-out infinite; }
 
-  /* ---- 11. alert ping (border ring, same fix as icon ping) ---- */
-  @keyframes demo-alert-ping-fallback {
-    60% { box-shadow: 0 0 0 0 var(--accent); }
-    100% { box-shadow: 0 0 8px 20px transparent; }
-  }
-  @keyframes demo-alert-ping-modern {
-    60% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 70%, transparent); }
-    100% { box-shadow: 0 0 8px 20px transparent; }
-  }
-  .anim-alert-ping-fallback { animation: demo-alert-ping-fallback 1.5s ease-out infinite; }
-  .anim-alert-ping-modern { animation: demo-alert-ping-modern 1.5s ease-out infinite; }
+  /* ---- 11. alert ping (border ring, same shared keyframe as icon ping) ---- */
+  .anim-alert-ping-fallback { --demo-ping-color: var(--accent); }
+  .anim-alert-ping-modern { --demo-ping-color: color-mix(in srgb, var(--accent) 70%, transparent); }
 
   /* ---- 12. alert background blink (opacity overlay vs animated color-mix()) ---- */
   .bg-stage {
@@ -317,16 +314,14 @@
   }
   .anim-label-blink { animation: demo-label-blink 1.2s ease-in-out infinite; }
 
-  @keyframes demo-label-ping-fallback {
-    60% { box-shadow: 0 0 0 0 var(--accent); }
-    100% { box-shadow: 0 0 4px 10px transparent; }
+  .anim-label-ping-fallback,
+  .anim-label-ping-modern {
+    --demo-ping-spread: 10px;
+
+    animation: demo-ping 1.5s ease-out infinite;
   }
-  @keyframes demo-label-ping-modern {
-    60% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 70%, transparent); }
-    100% { box-shadow: 0 0 4px 10px transparent; }
-  }
-  .anim-label-ping-fallback { animation: demo-label-ping-fallback 1.5s ease-out infinite; }
-  .anim-label-ping-modern { animation: demo-label-ping-modern 1.5s ease-out infinite; }
+  .anim-label-ping-fallback { --demo-ping-color: var(--accent); }
+  .anim-label-ping-modern { --demo-ping-color: color-mix(in srgb, var(--accent) 70%, transparent); }
 
   /* ---- progress bar effects ---- */
   .bar-stage {
@@ -654,10 +649,10 @@
         </tr>
 
         <tr>
-          <td class="effect-name">ping<span class="effect-loc">epb-icon-ping / -modern</span></td>
+          <td class="effect-name">ping<span class="effect-loc">epb-ping</span></td>
           <td class="demo-cell"><div class="icon-stage anim-ping-fallback"><span class="icon-glyph">➤</span></div></td>
           <td class="demo-cell"><div class="icon-stage anim-ping-modern"><span class="icon-glyph">➤</span></div></td>
-          <td class="remark"><span class="fixed">Adapted.</span> Used to duplicate the <code>box-shadow</code> declaration inside one <code>60%</code> frame - could drop the whole frame on Chrome 92 and never start at all. The styles were adapted for older browsers: two full separate <code>@keyframes</code>, picked via <code>@supports</code> - always runs, solid ring on the fallback tier, translucent on the modern one.</td>
+          <td class="remark"><span class="fixed">Adapted.</span> A <code>color-mix()</code> inside the <code>60%</code> frame could drop the whole frame on Chrome 92, and with it the animation. The ring color goes through <code>--epb-ping-color</code> instead, so the frame stays valid everywhere and <code>@supports</code> only swaps that property - solid ring on the fallback tier, translucent on the modern one.</td>
         </tr>
 
         <tr>
@@ -677,10 +672,10 @@
         </tr>
 
         <tr>
-          <td class="effect-name">ping · border<span class="effect-loc">epb-alert-ping / -modern</span></td>
+          <td class="effect-name">ping · border<span class="effect-loc">epb-ping</span></td>
           <td class="demo-cell"><div class="card-stage anim-alert-ping-fallback"></div></td>
           <td class="demo-cell"><div class="card-stage anim-alert-ping-modern"></div></td>
-          <td class="remark"><span class="fixed">Adapted.</span> Same fix as icon <code>ping</code> above - two full <code>@keyframes</code> instead of a duplicated declaration, so it always starts.</td>
+          <td class="remark"><span class="fixed">Adapted.</span> Same fix as icon <code>ping</code> above, and literally the same <code>epb-ping</code> keyframe - only <code>--epb-ping-color</code> differs.</td>
         </tr>
 
         <tr>
@@ -698,7 +693,7 @@
         </tr>
 
         <tr>
-          <td class="effect-name">ping · label<span class="effect-loc">epb-alert-label-ping / -modern</span></td>
+          <td class="effect-name">ping · label<span class="effect-loc">epb-ping</span></td>
           <td class="demo-cell"><div class="pill-stage anim-label-ping-fallback"></div></td>
           <td class="demo-cell"><div class="pill-stage anim-label-ping-modern"></div></td>
           <td class="remark"><span class="fixed">Adapted.</span> Same fix as the two <code>ping</code> rows above, sized down for the pill.</td>

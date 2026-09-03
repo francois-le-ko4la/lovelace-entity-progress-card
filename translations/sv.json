@@ -78,7 +78,7 @@
       "color": "Primärfärg",
       "custom_info": "Anpassad sekundär info",
       "custom_theme": "Anpassade temazoner",
-      "decimal": "decimal",
+      "decimal": "Visningsprecision",
       "density_toggle": "Kompakt",
       "entity": "Enhet",
       "fast_refresh": "Snabb uppdatering (varje sekund)",

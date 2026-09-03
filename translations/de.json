@@ -78,7 +78,7 @@
       "color": "Symbolfarbe",
       "custom_info": "Zusatzinfo (sekundär)",
       "custom_theme": "Benutzerdefinierte Themenzonen",
-      "decimal": "dezimal",
+      "decimal": "Anzeigegenauigkeit",
       "density_toggle": "Kompakt",
       "entity": "Entität",
       "fast_refresh": "Schnelle Aktualisierung (jede Sekunde)",
