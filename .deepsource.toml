@@ -7,6 +7,13 @@ exclude_patterns = [
   "scripts/**",
 ]
 
+# Assertion helpers legitimately do things flagged as issues in application
+# code (an explicit `undefined` expectation, re-assigning to observe the
+# setter). Declaring them lets DeepSource skip those checks here.
+test_patterns = [
+  "test/**",
+]
+
 [[analyzers]]
 name = "javascript"
 
