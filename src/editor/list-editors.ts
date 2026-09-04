@@ -28,6 +28,34 @@ const ADD_ICON_PATH = 'M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z';
 const DELETE_ICON_PATH =
   'M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2C6.47,2 2,6.47 2,12C2,18.53 6.47,22 12,22C17.53,22 22,17.53 22,12C22,6.47 17.53,2 12,2M14.59,8L12,10.59L9.41,8L8,9.41L10.59,12L8,14.59L9.41,16L12,13.41L14.59,16L16,14.59L13.41,12L16,9.41L14.59,8Z';
 
+// Same "Delete" button in every row (bar-stack entities, custom-theme zones)
+// - only the delete callback differs per call site.
+const buildDeleteButton = (onDelete: () => void): HTMLElement => {
+  const delBtn = document.createElement('button');
+  delBtn.className = 'del-btn';
+  delBtn.title = 'Delete';
+  const delIcon = document.createElement(HA_SVG_ICON_TAG) as HaSvgIconElement;
+  delIcon.path = DELETE_ICON_PATH;
+  delBtn.appendChild(delIcon);
+  delBtn.addEventListener('click', onDelete);
+  return delBtn;
+};
+
+// Same "+ Add ..." button everywhere it's built - only label/callback differ.
+// appearance="filled" matches ha-form-optional_actions.ts's own add button.
+const buildAddButton = (label: string, onClick: (e: MouseEvent) => void): HTMLElement => {
+  const btn = document.createElement('ha-button');
+  btn.setAttribute('appearance', 'filled');
+  btn.setAttribute('size', 's');
+  const addIcon = document.createElement(HA_SVG_ICON_TAG) as HaSvgIconElement;
+  addIcon.setAttribute('slot', 'start');
+  addIcon.path = ADD_ICON_PATH;
+  btn.appendChild(addIcon);
+  btn.append(label);
+  btn.addEventListener('click', onClick);
+  return btn;
+};
+
 // One row of bar_stack.entities, as built up field-by-field by the editor -
 // unlike the fully-validated shape the schema produces, a row here can be
 // partially empty ({}) while the user is still filling it in.
@@ -221,34 +249,6 @@ abstract class ListEditorBase extends HTMLElement {
     this._shadow.append(style, this._labelEl, this._list, addRow);
   }
 }
-
-// Same "Delete" button in every row (bar-stack entities, custom-theme zones)
-// - only the delete callback differs per call site.
-const buildDeleteButton = (onDelete: () => void): HTMLElement => {
-  const delBtn = document.createElement('button');
-  delBtn.className = 'del-btn';
-  delBtn.title = 'Delete';
-  const delIcon = document.createElement(HA_SVG_ICON_TAG) as HaSvgIconElement;
-  delIcon.path = DELETE_ICON_PATH;
-  delBtn.appendChild(delIcon);
-  delBtn.addEventListener('click', onDelete);
-  return delBtn;
-};
-
-// Same "+ Add ..." button everywhere it's built - only label/callback differ.
-// appearance="filled" matches ha-form-optional_actions.ts's own add button.
-const buildAddButton = (label: string, onClick: (e: MouseEvent) => void): HTMLElement => {
-  const btn = document.createElement('ha-button');
-  btn.setAttribute('appearance', 'filled');
-  btn.setAttribute('size', 's');
-  const addIcon = document.createElement(HA_SVG_ICON_TAG) as HaSvgIconElement;
-  addIcon.setAttribute('slot', 'start');
-  addIcon.path = ADD_ICON_PATH;
-  btn.appendChild(addIcon);
-  btn.append(label);
-  btn.addEventListener('click', onClick);
-  return btn;
-};
 
 /**
  * ListEditorBase for `bar_stack.entities`: each row is an additional

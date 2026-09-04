@@ -1,5 +1,6 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
+import { assertUndefined } from '../helpers.js';
 import { CardConfigHelper, BaseConfigHelper } from '../../src/card/config-helpers.js';
 import type { LovelaceConfig } from '../../src/utils/types.js';
 
@@ -16,7 +17,7 @@ describe('CardConfigHelper._migrateLegacyOptions - deprecated YAML shapes', () =
     ) as { max_value?: unknown; max_value_attribute?: unknown };
 
     assert.deepEqual(migrated.max_value, { entity: CAPACITY_ENTITY, attribute: 'level' });
-    assert.equal(migrated.max_value_attribute, undefined);
+    assertUndefined(migrated.max_value_attribute);
   });
 
   test('a numeric max_value is left untouched (only the legacy string form migrates)', () => {
@@ -32,7 +33,7 @@ describe('CardConfigHelper._migrateLegacyOptions - deprecated YAML shapes', () =
     ) as { hide?: unknown; disable_unit?: unknown };
 
     assert.deepEqual(migrated.hide, ['icon', 'unit']);
-    assert.equal(migrated.disable_unit, undefined);
+    assertUndefined(migrated.disable_unit);
   });
 
   test('disable_unit is left untouched when hide is a Jinja template string', () => {
@@ -50,7 +51,7 @@ describe('CardConfigHelper._migrateLegacyOptions - deprecated YAML shapes', () =
     ) as { bar_stack?: unknown; additions?: unknown };
 
     assert.deepEqual(migrated.bar_stack, { mode: 'proportional', entities: [{ entity: EXTRA_ENTITY }] });
-    assert.equal(migrated.additions, undefined);
+    assertUndefined(migrated.additions);
   });
 });
 
@@ -158,7 +159,7 @@ describe('CardConfigHelper._customizeConfig - end to end, a fully deprecated con
     assert.deepEqual(customized.max_value, { entity: CAPACITY_ENTITY, attribute: 'level' });
     assert.deepEqual(customized.bar_stack, { mode: 'proportional', entities: [{ entity: EXTRA_ENTITY }] });
     assert.deepEqual(customized.hide, ['unit']);
-    assert.equal(customized.disable_unit, undefined);
+    assertUndefined(customized.disable_unit);
   });
 
   test('a fully legacy watermark (both sides, old low_as/high_color keys) migrates end to end', () => {

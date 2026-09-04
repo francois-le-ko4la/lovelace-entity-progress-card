@@ -1,5 +1,6 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
+import { assertUndefined } from '../helpers.js';
 import { entityOf, attributeOf, jinjaOf, YamlSchemaFactory } from '../../src/card/schema.js';
 
 describe('entityOf/attributeOf/jinjaOf', () => {
@@ -7,20 +8,20 @@ describe('entityOf/attributeOf/jinjaOf', () => {
     const cfg = { entity: 'sensor.battery', attribute: 'level' };
     assert.equal(entityOf(cfg), 'sensor.battery');
     assert.equal(attributeOf(cfg), 'level');
-    assert.equal(jinjaOf(cfg), undefined);
+    assertUndefined(jinjaOf(cfg));
   });
 
   test('read their own sub-field off a {jinja} object', () => {
     const cfg = { jinja: '{{ 42 }}' };
-    assert.equal(entityOf(cfg), undefined);
-    assert.equal(attributeOf(cfg), undefined);
+    assertUndefined(entityOf(cfg));
+    assertUndefined(attributeOf(cfg));
     assert.equal(jinjaOf(cfg), '{{ 42 }}');
   });
 
   test('return undefined for a plain number (fixed value, not entity/jinja)', () => {
-    assert.equal(entityOf(42), undefined);
-    assert.equal(attributeOf(42), undefined);
-    assert.equal(jinjaOf(42), undefined);
+    assertUndefined(entityOf(42));
+    assertUndefined(attributeOf(42));
+    assertUndefined(jinjaOf(42));
   });
 });
 
@@ -86,8 +87,8 @@ describe('YamlSchemaFactory.<type>.fieldOptions - allowed values read off the li
   });
 
   test('a field with no enumerable values has none', () => {
-    assert.equal(YamlSchemaFactory.card.fieldOptions('entity'), undefined);
-    assert.equal(YamlSchemaFactory.card.fieldOptions('decimal'), undefined);
+    assertUndefined(YamlSchemaFactory.card.fieldOptions('entity'));
+    assertUndefined(YamlSchemaFactory.card.fieldOptions('decimal'));
   });
 });
 

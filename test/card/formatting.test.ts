@@ -4,8 +4,9 @@ import { NumberFormatter } from '../../src/card/formatting.js';
 
 describe('formatValueAndUnit - value/decimal formatting', () => {
   test('null/undefined value formats to an empty string', () => {
+    const missing = undefined;
     assert.equal(NumberFormatter.formatValueAndUnit(null), '');
-    assert.equal(NumberFormatter.formatValueAndUnit(undefined), '');
+    assert.equal(NumberFormatter.formatValueAndUnit(missing), '');
   });
 
   test('respects the requested decimal precision', () => {
@@ -102,7 +103,8 @@ describe('durationToSeconds - unit conversion, or null for an unknown unit', () 
 
 describe('convertDuration - HA timer duration/remaining attribute strings', () => {
   test('a non-string value (e.g. during HA startup) is treated as 0, not a crash', () => {
-    assert.equal(NumberFormatter.convertDuration(undefined), 0);
+    const missing = undefined;
+    assert.equal(NumberFormatter.convertDuration(missing), 0);
     assert.equal(NumberFormatter.convertDuration(null), 0);
   });
 
