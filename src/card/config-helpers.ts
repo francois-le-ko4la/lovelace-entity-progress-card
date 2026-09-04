@@ -5,7 +5,6 @@
  */
 
 import {
-  META,
   HA_CONTEXT,
   CARD,
   THEME,

@@ -83,17 +83,17 @@ function scanTag(value: string, from: number, closer: string): { next: number; b
   let i = from;
   let quote: string | null = null;
   while (i < value.length) {
-    const c = value[i];
+    const char = value[i];
     if (quote) {
-      if (c === '\\') i += 2;
+      if (char === '\\') i += 2;
       else {
-        if (c === quote) quote = null;
+        if (char === quote) quote = null;
         i++;
       }
-    } else if (c === '"' || c === "'") {
-      quote = c;
+    } else if (char === '"' || char === "'") {
+      quote = char;
       i++;
-    } else if (c === closer[0] && value[i + 1] === closer[1]) {
+    } else if (char === closer[0] && value[i + 1] === closer[1]) {
       // [-+]: both whitespace-control markers, so {%+ raw %} stays raw.
       return {
         next: i + 2,

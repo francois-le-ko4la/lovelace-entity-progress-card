@@ -1179,7 +1179,7 @@ class HACore extends HTMLElement {
       this.#failedSignatures.set(subscriptionKey, signature);
       this.#reportTemplateFailure(
         `${key}: the Jinja template has an unclosed delimiter and was not sent to Home Assistant. ` +
-          `Please close it ({{ ... }}, {% ... %} or {# ... #}). This field stays empty until the template changes.`,
+          'Please close it ({{ ... }}, {% ... %} or {# ... #}). This field stays empty until the template changes.',
         template,
       );
       return;
@@ -1226,7 +1226,7 @@ class HACore extends HTMLElement {
       if (HACore.#isTemplateError(error)) this.#failedSignatures.set(subscriptionKey, signature);
       this.#reportTemplateFailure(
         `${key}: Home Assistant rejected the Jinja template (${(error as { message?: string })?.message ?? error}). ` +
-          `Please check its syntax. This field stays empty until the template changes.`,
+          'Please check its syntax. This field stays empty until the template changes.',
         error,
       );
     }
