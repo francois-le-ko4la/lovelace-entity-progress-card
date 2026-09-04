@@ -195,6 +195,27 @@ const validateType =
 // Was `Record<string, any>` (skipcq: JS-0323) - now that Validator<T> and
 // each combinator below carry a real type, the registry infers its own
 // shape; every types.xxx() call site gets the real return type for free.
+type OptionCarrier = {
+  allowedValues?: readonly unknown[];
+  _schema?: Record<string, unknown>;
+  _optionsSchema?: Record<string, unknown>;
+};
+
+// Carries a wrapped validator's allowed values onto its wrapper, the same
+// reason _schema/defaultValue get re-attached: getSchemaOptions must reach
+// them through optional()/fallbackTo()/union().
+const withOptions = <F>(wrapper: F, source: unknown): F => {
+  const src = source as OptionCarrier;
+  const patch: OptionCarrier = {};
+  if (src.allowedValues) patch.allowedValues = src.allowedValues;
+  // An options-only view of the children. _schema itself is deliberately NOT
+  // forwarded: getSchemaDefault reads it, and widening its reach turns absent
+  // defaults into real ones (measured: alert_when, bar_stack).
+  const children = src._optionsSchema ?? src._schema;
+  if (children) patch._optionsSchema = children;
+  return Object.keys(patch).length > 0 ? (Object.assign(wrapper as object, patch) as F) : wrapper;
+};
+
 const types = {
   string: validateType(is.string, ERROR_CODES.invalidTypeString),
   number: validateType(is.number, ERROR_CODES.invalidTypeNumber),
@@ -273,9 +294,8 @@ const types = {
   // SKIP_PROPERTY here IS the field's own declared T | typeof SKIP_PROPERTY
   // - object()'s mapped type above reads through it via the `unknown` cast on
   // the sentinel check, not through this return type, so it stays simple.
-  optional:
-    <T>(validator: Validator<T>): Validator<T | undefined> =>
-    (value: unknown, path: Path = []) => {
+  optional: <T>(validator: Validator<T>): Validator<T | undefined> => {
+    const fn = (value: unknown, path: Path = []) => {
       if (is.nullish(value)) return SKIP_PROPERTY as unknown as undefined;
       try {
         return validator(value, path);
@@ -292,7 +312,9 @@ const types = {
         if (error instanceof ValidationError) downgrade(error);
         throw error;
       }
-    },
+    };
+    return withOptions(fn, validator);
+  },
 
   // defaultValue is attached so a field's real default stays introspectable
   // (see getSchemaDefault below) instead of a hand-maintained table.
@@ -314,7 +336,7 @@ const types = {
         throw error;
       }
     };
-    return Object.assign(fn, { defaultValue: defaultVal });
+    return withOptions(Object.assign(fn, { defaultValue: defaultVal }), validator);
   },
 
   optionalString: () => types.optional(types.string),
@@ -334,9 +356,8 @@ const types = {
   optionalNumberWithDefault: (defaultVal: number) => types.optionalWithDefault(types.number, defaultVal),
   optionalBooleanWithDefault: (defaultVal: boolean) => types.optionalWithDefault(types.boolean, defaultVal),
 
-  enums:
-    <T extends readonly unknown[]>(allowedValues: T): Validator<T[number]> =>
-    (value: unknown, path: Path = []) => {
+  enums: <T extends readonly unknown[]>(allowedValues: T): Validator<T[number]> => {
+    const fn = (value: unknown, path: Path = []) => {
       if (is.nullish(value)) {
         throw new ValidationError(
           path,
@@ -348,7 +369,9 @@ const types = {
         throw new ValidationError(path, ERROR_CODES.invalidEnumValue.code, ERROR_CODES.invalidEnumValue.severity);
       }
       return value as T[number];
-    },
+    };
+    return Object.assign(fn, { allowedValues });
+  },
 
   enumsWithDefault: <T extends readonly unknown[], D>(allowedValues: T, defaultVal: D) =>
     types.fallbackTo(types.enums(allowedValues), defaultVal),
@@ -356,9 +379,8 @@ const types = {
   // resolved is always a member of allowedValues by the time it's returned
   // (the alias map only ever redirects to another allowed value, and the
   // includes() check below throws otherwise) - T[number], not string.
-  theme:
-    <T extends readonly string[]>(allowedValues: T): Validator<T[number]> =>
-    (value: unknown, path: Path = []) => {
+  theme: <T extends readonly string[]>(allowedValues: T): Validator<T[number]> => {
+    const fn = (value: unknown, path: Path = []) => {
       if (is.nullish(value) || is.emptyString(value)) return SKIP_PROPERTY as unknown as T[number];
       if (!is.string(value))
         throw new ValidationError(path, ERROR_CODES.invalidTheme.code, ERROR_CODES.invalidTheme.severity);
@@ -366,7 +388,9 @@ const types = {
       if (!allowedValues.includes(resolved))
         throw new ValidationError(path, ERROR_CODES.invalidTheme.code, ERROR_CODES.invalidTheme.severity);
       return resolved;
-    },
+    };
+    return Object.assign(fn, { allowedValues });
+  },
 
   // Variadic, not limited to two - tries each validator in order, returns
   // whichever succeeds first. T[number] extracts each validator's own type
@@ -374,8 +398,8 @@ const types = {
   // union of every possible shape, not a merge of all of them at once.
   union: <T extends Validator<unknown>[]>(
     ...validators: T
-  ): Validator<T[number] extends Validator<infer U> ? U : never> =>
-    ((value: unknown, path: Path = []) => {
+  ): Validator<T[number] extends Validator<infer U> ? U : never> => {
+    const fn = (value: unknown, path: Path = []) => {
       // Dead accumulator: collected for readability but not attached to the
       // thrown error below - kept as the string codes/messages it holds.
       const errors: (string | null)[] = [];
@@ -390,7 +414,12 @@ const types = {
       }
 
       throw new ValidationError(path, ERROR_CODES.invalidUnionType.code, ERROR_CODES.invalidUnionType.severity);
-    }) as Validator<T[number] extends Validator<infer U> ? U : never>,
+    };
+    // First branch that carries a list wins: an enum|jinja union's options are
+    // the enum branch's, the jinja branch has none of its own.
+    const source = validators.find((v) => (v as { allowedValues?: readonly unknown[] }).allowedValues);
+    return withOptions(fn as Validator<T[number] extends Validator<infer U> ? U : never>, source ?? {});
+  },
 
   arrayWithValidatedElem:
     <T extends readonly unknown[]>(allowedValues: T): Validator<T[number][]> =>
@@ -405,12 +434,13 @@ const types = {
       return validItems;
     },
 
-  jinjaOrArrayWithValidatedElem:
-    <T extends readonly unknown[]>(allowedValues: T): Validator<string | T[number][]> =>
-    (value: unknown, path: Path = []) => {
+  jinjaOrArrayWithValidatedElem: <T extends readonly unknown[]>(allowedValues: T): Validator<string | T[number][]> => {
+    const fn = (value: unknown, path: Path = []) => {
       if (is.jinja(value)) return value;
       return types.arrayWithValidatedElem(allowedValues)(value, path);
-    },
+    };
+    return Object.assign(fn, { allowedValues });
+  },
 
   // Same mapped-type shape as object() above (and the same SKIP_PROPERTY
   // caveat) - kept as its own combinator rather than delegating to object()
@@ -784,6 +814,13 @@ function getSchemaDefault(
     return Object.keys(result).length > 0 ? result : undefined;
   }
   return validator.defaultValue;
+}
+
+// Twin of getSchemaDefault for a field's allowed values: read off the live
+// validator (types.enums/theme/jinjaOrArrayWithValidatedElem attach them,
+// optional/fallbackTo/union forward them) instead of a parallel list.
+function getSchemaOptions(validator: Validator<unknown>): readonly unknown[] | undefined {
+  return (validator as { allowedValues?: readonly unknown[] }).allowedValues;
 }
 
 // eslint-disable-next-line sonarjs/max-lines-per-function -- fixed call chain.
@@ -1181,6 +1218,26 @@ function struct<T>(
         throw new Error('Can only get a field default from object schemas created with types.object');
       }
       return getSchemaDefault(validator._schema[name]);
+    },
+
+    // Dot path ('watermark.type') walks the nested object's own _schema, the
+    // same convention the editor's own field names use.
+    fieldOptions: (name: string) => {
+      if (!validator._schema) {
+        throw new Error('Can only get field options from object schemas created with types.object');
+      }
+      type NestedValidator = Validator<unknown> & {
+        _schema?: Record<string, NestedValidator>;
+        _optionsSchema?: Record<string, NestedValidator>;
+      };
+      const [head, ...rest] = name.split('.');
+      let current: NestedValidator | undefined = validator._schema[head] as NestedValidator | undefined;
+      for (const segment of rest) {
+        const nested = current?._optionsSchema ?? current?._schema;
+        if (!nested) return undefined;
+        current = nested[segment];
+      }
+      return current ? getSchemaOptions(current) : undefined;
     },
   };
 }
@@ -1605,22 +1662,25 @@ export { entityOf, attributeOf, jinjaOf };
 export { markShown, markValue, markAs, markType, markOpacity, markColor, isMarkOverride };
 export { statusLabelObj, rewrapStatusLabel };
 export { THEME_ALIASES };
-export {
-  BAR_SIZES,
-  BADGE_BAR_SIZES,
-  BAR_ORIENTATIONS,
-  BAR_ORIENTATIONS_NO_UP,
-  BAR_POSITIONS,
-  FEATURE_BAR_POSITIONS,
-  BAR_COLOR_MODES,
-  BAR_SCALES,
-  UNIT_SPACINGS,
-  WATERMARK_TYPES,
-  PEAK_MARK_TYPES,
-  ALERT_HIGHLIGHTS,
-  ALERT_ANIMATIONS,
-  ICON_ANIMATIONS,
+// Each YamlSchemaFactory getter rebuilds its whole schema on access - cached
+// here so a caller can ask per field without paying for it every time.
+type SchemaVariant = 'card' | 'template' | 'badge' | 'badgeTemplate' | 'feature';
+const SCHEMA_CACHE = new Map<SchemaVariant, { fieldOptions: (name: string) => readonly unknown[] | undefined }>();
+const schemaOptions = (variant: SchemaVariant, field: string): readonly string[] => {
+  let schema = SCHEMA_CACHE.get(variant);
+  if (!schema) {
+    schema = YamlSchemaFactory[variant];
+    SCHEMA_CACHE.set(variant, schema);
+  }
+  return (schema.fieldOptions(field) as readonly string[] | undefined) ?? [];
 };
+
+export { schemaOptions, type SchemaVariant };
+
+// Only what the card runtime enumerates for its own CSS classes/shape lists
+// (core.ts). The editor reads its dropdown lists off the schema itself, via
+// struct().fieldOptions - see SELECT_TYPES.
+export { BAR_SIZES, BAR_POSITIONS, WATERMARK_TYPES, PEAK_MARK_TYPES };
 export type { WatermarkMark };
 export { YamlSchemaFactory };
 

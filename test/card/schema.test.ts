@@ -56,6 +56,41 @@ describe('YamlSchemaFactory.<type>.fieldDefault - real schema defaults, not a ha
   });
 });
 
+describe('YamlSchemaFactory.<type>.fieldOptions - allowed values read off the live validator', () => {
+  test('the per-variant restriction is the schema itself, not a parallel list', () => {
+    assert.deepEqual(YamlSchemaFactory.badge.fieldOptions('bar_orientation'), ['ltr', 'rtl']);
+    assert.deepEqual(YamlSchemaFactory.card.fieldOptions('bar_orientation'), ['ltr', 'rtl', 'up']);
+    assert.deepEqual(YamlSchemaFactory.feature.fieldOptions('bar_position'), ['default', 'top', 'bottom']);
+    assert.equal(YamlSchemaFactory.badge.fieldOptions('bar_size')?.includes('xlarge'), false);
+    assert.equal(YamlSchemaFactory.card.fieldOptions('bar_size')?.includes('xlarge'), true);
+  });
+
+  test('reaches through optional() and fallbackTo() to the enum underneath', () => {
+    // unit_spacing is enumsWithDefault (fallbackTo), watermark.type is
+    // optional(enums).
+    assert.deepEqual(YamlSchemaFactory.card.fieldOptions('unit_spacing'), ['auto', 'space', 'no-space']);
+    assert.deepEqual(YamlSchemaFactory.badge.fieldOptions('layout'), ['horizontal']);
+  });
+
+  test('hide carries its own per-variant target list', () => {
+    assert.deepEqual(YamlSchemaFactory.card.fieldOptions('hide'), [
+      'icon',
+      'name',
+      'value',
+      'unit',
+      'secondary_info',
+      'progress_bar',
+      'shape',
+    ]);
+    assert.equal(YamlSchemaFactory.badgeTemplate.fieldOptions('hide')?.includes('unit'), false);
+  });
+
+  test('a field with no enumerable values has none', () => {
+    assert.equal(YamlSchemaFactory.card.fieldOptions('entity'), undefined);
+    assert.equal(YamlSchemaFactory.card.fieldOptions('decimal'), undefined);
+  });
+});
+
 describe('YamlSchemaFactory.card.validate - end-to-end shape', () => {
   test('accepts a minimal config with just an entity', () => {
     const result = YamlSchemaFactory.card.validate({ entity: 'sensor.test' });

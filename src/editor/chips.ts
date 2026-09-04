@@ -205,19 +205,17 @@ defineElement(EntityProgressEffectChips.ELEMENT_NAME, EntityProgressEffectChips)
  */
 class EntityProgressHideChips extends MultiSelectChipsBase {
   static ELEMENT_NAME = devName('entity-progress-hide-chips');
-  static #ITEMS = ['icon', 'name', 'value', 'unit', 'secondary_info', 'progress_bar'];
-  #items: string[] = EntityProgressHideChips.#ITEMS;
+  #items: string[] = [];
 
   get items(): string[] {
     return this.#items;
   }
 
-  // Template/BadgeTemplate have no 'unit' key in their `hide` schema (see
-  // YamlSchemaFactory.template) - EditorFactory.content passes a restricted
-  // list there so the chip never appears, instead of getting silently
-  // stripped by jinjaOrArrayWithValidatedElem on save.
+  // Always set by EditorFactory.hideChipsItems, which derives the list from
+  // the variant's own schema - so a chip can never be offered for a target
+  // that jinjaOrArrayWithValidatedElem would strip on save.
   set items(list: string[]) {
-    this.#items = is.array(list) ? list : EntityProgressHideChips.#ITEMS;
+    this.#items = is.array(list) ? list : [];
   }
 
   _buildDOM() {

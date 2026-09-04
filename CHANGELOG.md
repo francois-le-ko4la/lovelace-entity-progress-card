@@ -288,6 +288,8 @@ whichever entity the parent Tile card is already using.
 - The `ping` ring animation collapsed from six keyframe variants to one shared
   keyframe, and `bar_stack`'s four internal render variables moved off the
   public `--epb-*` prefix.
+- Editor dropdowns and `hide`'s chip list read their allowed values off the
+  schema that validates them, instead of a parallel list per variant.
 
 > We care about getting the details right — but even so, something here might
 > have slipped through. You don't need to be a developer to notice it. If
@@ -372,6 +374,8 @@ ring burst, shared by `alert_when`'s border and label modes and by
   parameterized by `--epb-ping-color`/`--epb-ping-spread`.
 - `bar_stack`'s four internal render variables moved off the public `--epb-*`
   prefix to `--stack-gradient-pos`/`-neg` and `--stack-size-pos`/`-neg`.
+- Editor dropdowns and `hide`'s chip list read their allowed values off the
+  schema that validates them, instead of a parallel list per variant.
 
 ---
 

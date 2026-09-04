@@ -621,6 +621,27 @@ on every member. When adding or changing a property, edit the relevant
 `YamlSchemaFactory` schema — `Config` picks it up automatically, nothing to
 update by hand.
 
+### Defaults and allowed values are read off the live validators
+
+Two more things come from the schema rather than a parallel table, through
+`struct()`'s own introspection methods:
+
+- `fieldDefault(name)` — a field's real default, walking `_schema` and reading
+  the `defaultValue` that `types.fallbackTo` attaches. Feeds `SCHEMA_DEFAULTS`.
+- `fieldOptions(name)` — a field's allowed values, reading the `allowedValues`
+  that `types.enums`/`theme`/`jinjaOrArrayWithValidatedElem` attach, forwarded
+  through `optional`/`fallbackTo`/`union` by `withOptions`. Accepts a dot path
+  (`'watermark.type'`). Feeds the editor's dropdowns (`SELECT_TYPES`) and
+  `hide`'s chip list, per variant.
+
+> [!WARNING]
+>
+> `withOptions` deliberately forwards a separate `_optionsSchema` view instead
+> of `_schema` itself. `_schema` carries default semantics too, and widening its
+> reach through `optional` turns absent defaults into real ones — measured:
+> `alert_when` gains `{ highlight: 'border' }` and `bar_stack`
+> `{ mode: 'stacked' }`, injected into cards that never configured either.
+
 ## Security
 
 Jinja results rendered as HTML (`name`, `secondary`, `custom_info`, `name_info`)
@@ -1001,9 +1022,14 @@ Checklist for a new YAML option, in the order that avoids back-tracking:
    applies.
 5. **Editor** — add the field to the relevant `static _fields` maps
    (`EditorFactory`), with `showIf` for conditional visibility and
-   `onChange`/`onClear` if the YAML shape differs from the UI shape. New select
-   types need an entry in `#getSelectorForType` and an option map in the
-   translations.
+   `onChange`/`onClear` if the YAML shape differs from the UI shape. A new
+   select type needs an entry in `SELECT_TYPES` (editor/base.ts) and an option
+   map in the translations. **Never restate the allowed values there**: point
+   the entry at the schema with `from(variant, field)` — dot paths work
+   (`from('card', 'watermark.type')`) — so the dropdown lists exactly what that
+   variant validates, in the enum's own order. Only a genuine editor-side
+   restriction (offering less than the schema accepts, like
+   `bar_position_density_compact`) is written out by hand.
 6. **Translations** — `editor.field.<name>` label (+ `editor.option.<name>` map
    for selects/chips) via `node scripts/translations.js add-key …`, then
    `synchronize --to-js` (see [Internationalization](#internationalization) —

@@ -25,8 +25,14 @@ import {
   rewrapStatusLabel,
   isMarkOverride,
   SCHEMA_DEFAULTS,
+  schemaOptions,
+  type SchemaVariant,
   type WatermarkMark,
 } from '../card/schema.js';
+
+// hide's chips in the order the editor shows them; the set itself comes from
+// the schema (see hideChipsItems).
+const HIDE_DISPLAY_ORDER = ['icon', 'shape', 'name', 'value', 'unit', 'secondary_info', 'progress_bar'];
 
 // Field definitions are heterogeneous option bags (showIf/resolveVirtual/
 // onVirtualChange/width/target/... vary per field) - kept as `Record<string,
@@ -1630,10 +1636,15 @@ const EditorFactory = {
     !EditorFactory.barSizeAllowed(config) && !is.nullish(config.bar_size) ? { ...config, bar_size: undefined } : config,
 
   // Template rejects 'unit'; Badge/BadgeTemplate lack 'shape' (see schema.ts).
-  hideChipsItems: (template: boolean, badge: boolean): string[] | undefined => {
-    if (badge) return template ? ['icon', 'name', 'value', 'secondary_info', 'progress_bar'] : undefined;
-    if (template) return ['icon', 'shape', 'name', 'value', 'secondary_info', 'progress_bar'];
-    return ['icon', 'shape', 'name', 'value', 'unit', 'secondary_info', 'progress_bar'];
+  // The set is the schema's own hide list for that variant - only the order is
+  // the editor's: shape sits next to the icon it draws behind, not last where
+  // it happened to be appended.
+  hideChipsItems: (template: boolean, badge: boolean): string[] => {
+    const variant: SchemaVariant = badge
+      ? (template && 'badgeTemplate') || 'badge'
+      : (template && 'template') || 'card';
+    const allowed = new Set(schemaOptions(variant, 'hide'));
+    return HIDE_DISPLAY_ORDER.filter((item) => allowed.has(item));
   },
 
   // compact_below (#123) mirrors 'up' above: only has a distinct effect with

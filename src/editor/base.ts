@@ -11,8 +11,6 @@ import {
   HA_SELECTOR_TAG,
   EDITOR_FIELD_NS,
   EDITOR_FIELD_HELPER_NS,
-  PERCENT_THEME_KEYS,
-  THEME_KEYS,
 } from '../utils/parameters.js';
 import { EDITOR_BASE_STYLE } from '../utils/styles.js';
 import { is } from '../utils/common-checks.js';
@@ -32,20 +30,8 @@ import { durationSliderSelector } from '../utils/duration.js';
 import {
   isMarkOverride,
   THEME_ALIASES,
-  BAR_SIZES,
-  BADGE_BAR_SIZES,
-  BAR_ORIENTATIONS,
-  BAR_ORIENTATIONS_NO_UP,
-  BAR_POSITIONS,
-  FEATURE_BAR_POSITIONS,
-  BAR_COLOR_MODES,
-  BAR_SCALES,
-  UNIT_SPACINGS,
-  WATERMARK_TYPES,
-  PEAK_MARK_TYPES,
-  ALERT_HIGHLIGHTS,
-  ALERT_ANIMATIONS,
-  ICON_ANIMATIONS,
+  schemaOptions,
+  type SchemaVariant,
   type WatermarkMark,
 } from '../card/schema.js';
 
@@ -97,37 +83,40 @@ const CIRCULAR_BACKGROUND_MODES = ['auto', 'forced'];
 // status_label/alert_when) - a pill instead of a switch.
 const ENABLED_DISABLED_MODES = ['disabled', 'enabled'];
 
-// Plain dropdowns: field type -> its translated option group. A [group, keys]
-// pair keeps only the options the matching schema actually accepts.
-const SELECT_TYPES: Record<string, string | [group: string, keys: readonly string[]]> = {
-  // Each list is the schema's own enum, so the dropdown lists exactly what
-  // validates, in that enum's own order - never the JSON's alphabetical one.
-  bar_size: ['bar_size', BAR_SIZES],
-  bar_size_no_xlarge: ['bar_size', BADGE_BAR_SIZES],
-  bar_orientation: ['bar_orientation', BAR_ORIENTATIONS],
-  bar_orientation_no_up: ['bar_orientation', BAR_ORIENTATIONS_NO_UP],
-  bar_position: ['bar_position', BAR_POSITIONS],
-  // Editor-only restrictions, mirroring schema.ts's own postProcess rules -
-  // no enum of their own to share (see applyCompactBelowRule/applyDensityRule).
+// A dropdown's list comes from the schema variant that actually validates the
+// field, so it can never drift from what a config may hold. The two explicit
+// arrays are editor-only restrictions, mirroring schema.ts's own postProcess
+// rules (applyCompactBelowRule/applyDensityRule) - no enum of their own.
+type SchemaLookup = { variant: SchemaVariant; field: string };
+const from = (variant: SchemaVariant, field: string): SchemaLookup => ({ variant, field });
+
+// Plain dropdowns: field type -> its translated option group, optionally
+// narrowed to the values one schema variant accepts.
+const SELECT_TYPES: Record<string, string | [group: string, keys: readonly string[] | SchemaLookup]> = {
+  bar_size: ['bar_size', from('card', 'bar_size')],
+  bar_size_no_xlarge: ['bar_size', from('badge', 'bar_size')],
+  bar_orientation: ['bar_orientation', from('card', 'bar_orientation')],
+  bar_orientation_no_up: ['bar_orientation', from('badge', 'bar_orientation')],
+  bar_position: ['bar_position', from('card', 'bar_position')],
   bar_position_no_compact_below: ['bar_position', ['default', 'below', 'top', 'bottom', 'overlay', 'background']],
   bar_position_density_compact: ['bar_position', ['top', 'bottom', 'background']],
-  bar_position_feature: ['bar_position', FEATURE_BAR_POSITIONS],
-  bar_color_mode: ['bar_color_mode', BAR_COLOR_MODES],
-  bar_scale: ['bar_scale', BAR_SCALES],
-  icon_animation: ['icon_animation', ICON_ANIMATIONS],
-  alert_highlight: ['alert_highlight', ALERT_HIGHLIGHTS],
-  alert_animation: ['alert_animation', ALERT_ANIMATIONS],
+  bar_position_feature: ['bar_position', from('feature', 'bar_position')],
+  bar_color_mode: ['bar_color_mode', from('card', 'bar_color_mode')],
+  bar_scale: ['bar_scale', from('card', 'bar_scale')],
+  icon_animation: ['icon_animation', from('card', 'icon_animation')],
+  alert_highlight: ['alert_highlight', from('card', 'alert_when.highlight')],
+  alert_animation: ['alert_animation', from('card', 'alert_when.animation')],
   label_position: 'label_position',
   status_label_color_source: 'status_label_color_source',
-  theme: ['theme', THEME_KEYS],
+  theme: ['theme', from('card', 'theme')],
   // Template has no min_value/max_value to project a real-value theme onto.
-  theme_percent_only: ['theme', PERCENT_THEME_KEYS],
-  unit_spacing: ['unit_spacing', UNIT_SPACINGS],
+  theme_percent_only: ['theme', from('template', 'theme')],
+  unit_spacing: ['unit_spacing', from('card', 'unit_spacing')],
   unit_position: 'unit_position',
-  watermark_type: ['watermark_type', WATERMARK_TYPES],
+  watermark_type: ['watermark_type', from('card', 'watermark.type')],
   watermark_as: 'watermark_as',
   // peak_marker's own enum, reusing watermark_type's labels.
-  peak_marker_type: ['watermark_type', PEAK_MARK_TYPES],
+  peak_marker_type: ['watermark_type', from('card', 'peak_marker.type')],
   duration_unit: 'duration_unit',
   trend_indicator_basis: 'trend_indicator_basis',
 };
@@ -525,7 +514,9 @@ class EditorBase extends HTMLElement {
 
     const selectSpec = SELECT_TYPES[type];
     if (selectSpec) {
-      const [group, keys]: [string, readonly string[] | null] = is.string(selectSpec) ? [selectSpec, null] : selectSpec;
+      const [group, source] = is.string(selectSpec) ? [selectSpec, null] : selectSpec;
+      const lookup = source && !is.array(source) ? (source as SchemaLookup) : null;
+      const keys = lookup ? schemaOptions(lookup.variant, lookup.field) : (source as readonly string[] | null);
       return buildSelect(keys ? pickOptions(options[group], keys) : options[group]);
     }
 
