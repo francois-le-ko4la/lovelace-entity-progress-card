@@ -169,24 +169,12 @@ class EntityProgressCardBase extends HABase {
     });
   }
 
+  // Line 1 only gets the &nbsp; spacer in single-line mode, where it precedes
+  // the main span on the same line; line 2 always carries main here (card/badge
+  // has that slot), unlike Template's own _renderSecondary.
   _renderCustomInfo(content: unknown) {
-    // Line 1 never carries a main (see StructureElements.secondaryInfoLine), so
-    // it only gets the &nbsp; spacer in single-line mode, where it precedes the
-    // main span on the same line. Line 2 always carries main here (card/badge
-    // has that slot) — see _renderSecondary for the template equivalent, which
-    // has no main slot at all.
     const multiline = Boolean(this._cardView.config.multiline);
-    const [line1, line2] = this._splitAtFirstBreak(content);
-    this._dom.setHTML(CARD.htmlStructure.elements.secondaryInfoExtra.class, multiline ? line1 : `${line1}&nbsp;`);
-    if (multiline) this._dom.setHTML(CARD.htmlStructure.elements.secondaryInfoExtra2.class, `${line2 ?? ''}&nbsp;`);
-
-    // Emptiness judged on the raw lines, not the HTML actually written above:
-    // single-line mode's `&nbsp;` spacer means extra-1's own DOM content is
-    // never truly empty once this handler has run at all, regardless of
-    // line1 - see _updateSecondaryInfoWrapperVisibility (core.ts).
-    this._secondaryInfoEmpty.extra1 = line1.trim() === '';
-    this._secondaryInfoEmpty.extra2 = (line2 ?? '').trim() === '';
-    this._updateSecondaryInfoWrapperVisibility();
+    this._renderSecondaryLines(content, (line, isSecond) => (isSecond || !multiline ? `${line}&nbsp;` : line));
   }
 
   _renderNameInfo(content: unknown) {
@@ -549,24 +537,11 @@ class EntityProgressTemplateBase extends HABase {
     this._dom.setHTML(CARD.htmlStructure.elements.nameMain.class, `${content}`.trim());
   }
 
+  // Template has no secondary-info-main slot at all (see
+  // StructureElements.secondaryInfoWrapperMinimal), so neither line needs the
+  // &nbsp; spacer card/badge adds before main.
   _renderSecondary(content: unknown) {
-    // Template has no secondary-info-main slot at all (see
-    // StructureElements.secondaryInfoWrapperMinimal), so neither line ever
-    // needs the &nbsp; spacer that card/badge's _renderCustomInfo adds before
-    // main. `info-multiline` itself is applied via _staticStyle/
-    // _applyStaticClasses (config-driven), not here.
-    const multiline = Boolean(this._cardView.config.multiline);
-    const [line1, line2] = this._splitAtFirstBreak(content);
-    this._dom.setHTML(CARD.htmlStructure.elements.secondaryInfoExtra.class, line1.trim());
-    if (multiline) this._dom.setHTML(CARD.htmlStructure.elements.secondaryInfoExtra2.class, (line2 ?? '').trim());
-
-    // main stays permanently false here (see _secondaryInfoEmpty's own
-    // comment) - Template has no main slot, so extra1/extra2 tracked below
-    // can never collapse the wrapper on their own, matching the old
-    // :has(main:empty) rule's exact behavior for this shape.
-    this._secondaryInfoEmpty.extra1 = line1.trim() === '';
-    this._secondaryInfoEmpty.extra2 = (line2 ?? '').trim() === '';
-    this._updateSecondaryInfoWrapperVisibility();
+    this._renderSecondaryLines(content, (line) => line.trim());
   }
 
   _managePercent(percent: unknown) {

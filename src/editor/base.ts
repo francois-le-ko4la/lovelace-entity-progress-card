@@ -31,6 +31,8 @@ import {
   isMarkOverride,
   THEME_ALIASES,
   schemaOptions,
+  DENSITY_COMPACT_BAR_POSITIONS,
+  ACTION_FIELDS,
   type SchemaVariant,
   type WatermarkMark,
 } from '../card/schema.js';
@@ -73,7 +75,6 @@ type HaExpansionPanel = HTMLElement & { header: string; outlined: boolean; expan
 // instead of a dedicated chip subclass per field.
 const VALUE_SOURCE_MODES = ['standard', 'entity', 'jinja'];
 const THEME_MODE_MODES = ['preset', 'custom'];
-const BAR_STACK_MODES = ['stacked', 'proportional', 'net'];
 const SIMPLE_ADVANCED_MODES = ['simple', 'advanced'];
 // icon_animation_mode: automatic entity-based detection vs a Jinja condition.
 const ICON_ANIMATION_MODES = ['auto', 'template'];
@@ -99,7 +100,7 @@ const SELECT_TYPES: Record<string, string | [group: string, keys: readonly strin
   bar_orientation_no_up: ['bar_orientation', from('badge', 'bar_orientation')],
   bar_position: ['bar_position', from('card', 'bar_position')],
   bar_position_no_compact_below: ['bar_position', ['default', 'below', 'top', 'bottom', 'overlay', 'background']],
-  bar_position_density_compact: ['bar_position', ['top', 'bottom', 'background']],
+  bar_position_density_compact: ['bar_position', DENSITY_COMPACT_BAR_POSITIONS],
   bar_position_feature: ['bar_position', from('feature', 'bar_position')],
   bar_color_mode: ['bar_color_mode', from('card', 'bar_color_mode')],
   bar_scale: ['bar_scale', from('card', 'bar_scale')],
@@ -169,12 +170,7 @@ class EditorBase extends HTMLElement {
     'min_width',
     'badge_icon',
     'badge_color',
-    'tap_action',
-    'hold_action',
-    'double_tap_action',
-    'icon_tap_action',
-    'icon_hold_action',
-    'icon_double_tap_action',
+    ...ACTION_FIELDS,
   ]);
 
   // Top-level keys whose value differs between two configs, ignoring the
@@ -679,7 +675,7 @@ class EditorBase extends HTMLElement {
       'alert_when.above_mode': modeChipsField(VALUE_SOURCE_MODES, 'value_source_mode'),
       'alert_when.below_mode': modeChipsField(VALUE_SOURCE_MODES, 'value_source_mode'),
       theme_mode: modeChipsField(THEME_MODE_MODES),
-      bar_stack_mode: modeChipsField(BAR_STACK_MODES),
+      bar_stack_mode: modeChipsField([...schemaOptions('card', 'bar_stack.mode')]),
       trigger: modeChipsField(SIMPLE_ADVANCED_MODES, 'simple_advanced_mode'),
       bar_effect_mode: modeChipsField(SIMPLE_ADVANCED_MODES, 'simple_advanced_mode'),
       hide_mode: modeChipsField(SIMPLE_ADVANCED_MODES, 'simple_advanced_mode'),

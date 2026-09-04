@@ -12,13 +12,12 @@ import {
   SEV,
   MIN_VALUE_ENTITY_PATH,
   MAX_VALUE_ENTITY_PATH,
-  WATERMARK_LOW_ENTITY_PATH,
-  WATERMARK_HIGH_ENTITY_PATH,
+  WATERMARK_ENTITY_PATHS,
   ALERT_ABOVE_ENTITY_PATH,
   ALERT_BELOW_ENTITY_PATH,
 } from '../utils/parameters.js';
 import { is, has, assertDefined } from '../utils/common-checks.js';
-import { initLogger, type LoggerInstance } from '../utils/log.js';
+import { initLogger, cardNotice, type LoggerInstance } from '../utils/log.js';
 import { HassProviderSingleton } from '../utils/hass-provider.js';
 import {
   YamlSchemaFactory,
@@ -264,19 +263,32 @@ class BaseConfigHelper {
     };
   }
 
-  static #warnDeprecated(msg: string) {
-    console.warn(`${META.types.card.typeName.toUpperCase()} - ${msg}`);
+  // Every deprecation says the same two things around its own advice - kept
+  // here so a reword can't drift across the call sites below.
+  static #warnDeprecated(what: string, advice: string, { migrated = true, plural = false } = {}) {
+    const migratedNote = migrated ? ' Your configuration was automatically migrated for this session.' : '';
+    const verb = plural ? 'are' : 'is';
+    BaseConfigHelper.#warn(
+      `${what} ${verb} deprecated and will be removed in a future release. ${advice}${migratedNote}`,
+    );
+  }
+
+  // navigate_to/show_more_info: gone for good, nothing to migrate to.
+  static #warnRemoved(what: string) {
+    BaseConfigHelper.#warn(`${what} is deprecated and has been removed.`);
+  }
+
+  static #warn(msg: string) {
+    cardNotice(msg);
   }
 
   static #logDeprecatedOption(config: LovelaceConfig) {
-    if (DEPRECATED_OPTIONS.navigate_to(config))
-      BaseConfigHelper.#warnDeprecated('navigate_to option is deprecated and has been removed.');
-    if (DEPRECATED_OPTIONS.show_more_info(config))
-      BaseConfigHelper.#warnDeprecated('show_more_info option is deprecated and has been removed.');
+    if (DEPRECATED_OPTIONS.navigate_to(config)) BaseConfigHelper.#warnRemoved('navigate_to option');
+    if (DEPRECATED_OPTIONS.show_more_info(config)) BaseConfigHelper.#warnRemoved('show_more_info option');
     if (DEPRECATED_OPTIONS.theme(config))
-      BaseConfigHelper.#warnDeprecated(
-        `theme: ${config.theme} is deprecated and will be removed in a future release. Please migrate to the recommended alternative...`,
-      );
+      BaseConfigHelper.#warnDeprecated(`theme: ${config.theme}`, 'Please migrate to the recommended alternative...', {
+        migrated: false,
+      });
     // max_value used to be number|entity-id-string, disambiguated by sniffing
     // the value's shape at runtime (the same pattern that caused min_value's
     // freeze bug). The entity form is now an explicit map; the bare string form
@@ -284,16 +296,16 @@ class BaseConfigHelper {
     // but should be updated in the YAML.
     if (DEPRECATED_OPTIONS.max_value(config))
       BaseConfigHelper.#warnDeprecated(
-        'max_value: <entity id> is deprecated and will be removed in a future release. ' +
-          'Please migrate to max_value: { entity: <entity id>, attribute: <optional> }. Your configuration was automatically migrated for this session.',
+        'max_value: <entity id>',
+        'Please migrate to max_value: { entity: <entity id>, attribute: <optional> }.',
       );
     // watermark.low/high used to accept the same bare entity-id-string trap as
     // pre-1.6 max_value (see BaseConfigHelper._migrateWatermarkOptions).
     WATERMARK_SIDES.forEach((side) => {
       if (hasLegacyWatermarkValue(config, side))
         BaseConfigHelper.#warnDeprecated(
-          `watermark.${side}: <entity id> is deprecated and will be removed in a future release. ` +
-            `Please migrate to watermark.${side}: { entity: <entity id>, attribute: <optional> }. Your configuration was automatically migrated for this session.`,
+          `watermark.${side}: <entity id>`,
+          `Please migrate to watermark.${side}: { entity: <entity id>, attribute: <optional> }.`,
         );
     });
     // Now part of watermark.low/.high's own shape instead of sibling keys -
@@ -301,27 +313,26 @@ class BaseConfigHelper {
     WATERMARK_SIDES.forEach((side) => {
       if (hasLegacyWatermarkMarkKeys(config, side))
         BaseConfigHelper.#warnDeprecated(
-          `watermark.${side}_as/${side}_color/disable_${side} are deprecated and will be removed in a future release. ` +
-            `Please migrate to watermark.${side}: { value: ..., as, color } or watermark.${side}: false. Your configuration was automatically migrated for this session.`,
+          `watermark.${side}_as/${side}_color/disable_${side}`,
+          `Please migrate to watermark.${side}: { value: ..., as, color } or watermark.${side}: false.`,
+          { plural: true },
         );
     });
     if (DEPRECATED_OPTIONS.icon_animation(config))
       BaseConfigHelper.#warnDeprecated(
-        'icon_animation: none is deprecated and will be removed in a future release. ' +
-          'Simply omit the option — an unset icon_animation already means no animation. ' +
-          'Your configuration was automatically migrated for this session.',
+        'icon_animation: none',
+        'Simply omit the option — an unset icon_animation already means no animation.',
       );
     if (DEPRECATED_OPTIONS.disable_unit(config))
-      BaseConfigHelper.#warnDeprecated(
-        "disable_unit is deprecated and will be removed in a future release. Please migrate to hide: ['unit', ...]. Your configuration was automatically migrated for this session.",
-      );
+      BaseConfigHelper.#warnDeprecated('disable_unit', "Please migrate to hide: ['unit', ...].");
     // additions used to be a bare array of {entity, attribute}; it is now the
     // entities list of bar_stack, alongside a mode ('stacked' by default,
     // 'proportional' preserves the legacy renormalized-total behavior exactly -
     // see CardConfigHelper._customizeConfig.
     if (DEPRECATED_OPTIONS.additions(config))
       BaseConfigHelper.#warnDeprecated(
-        "additions is deprecated and will be removed in a future release. Please migrate to bar_stack: { mode: 'proportional', entities: [...] }. Your configuration was automatically migrated for this session.",
+        'additions',
+        "Please migrate to bar_stack: { mode: 'proportional', entities: [...] }.",
       );
   }
 
@@ -419,16 +430,15 @@ class BaseConfigHelper {
       // watermark.low/.high are unwrapped first (types.watermarkMark: false |
       // value | { value, as, opacity, color }) - the error path picks the
       // short or the .value-nested form depending on which one is present.
-      ...checkValueConfig(
-        markValue(this.config.watermark?.low, SCHEMA_DEFAULTS.watermark.low),
-        isMarkOverride(this.config.watermark?.low) ? WATERMARK_LOW_ENTITY_PATH : 'watermark.low.entity',
-        isMarkOverride(this.config.watermark?.low) ? 'watermark.low.value.attribute' : 'watermark.low.attribute',
-      ),
-      ...checkValueConfig(
-        markValue(this.config.watermark?.high, SCHEMA_DEFAULTS.watermark.high),
-        isMarkOverride(this.config.watermark?.high) ? WATERMARK_HIGH_ENTITY_PATH : 'watermark.high.entity',
-        isMarkOverride(this.config.watermark?.high) ? 'watermark.high.value.attribute' : 'watermark.high.attribute',
-      ),
+      ...WATERMARK_SIDES.flatMap((side) => {
+        const mark = this.config.watermark?.[side];
+        const nested = isMarkOverride(mark);
+        return checkValueConfig(
+          markValue(mark, SCHEMA_DEFAULTS.watermark[side]),
+          nested ? WATERMARK_ENTITY_PATHS[side] : `watermark.${side}.entity`,
+          nested ? `watermark.${side}.value.attribute` : `watermark.${side}.attribute`,
+        );
+      }),
       ...checkValueConfig(this.config.alert_when?.above, ALERT_ABOVE_ENTITY_PATH, 'alert_when.above.attribute'),
       ...checkValueConfig(this.config.alert_when?.below, ALERT_BELOW_ENTITY_PATH, 'alert_when.below.attribute'),
     ];
@@ -608,6 +618,7 @@ class BadgeTemplateConfigHelper extends BaseConfigHelper {
   _yamlSchema = YamlSchemaFactory.badgeTemplate;
 }
 
+export type { ActionBag };
 export { hasDeprecatedOptions };
 export { BaseConfigHelper };
 export { CardConfigHelper };

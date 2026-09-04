@@ -74,6 +74,14 @@ the `ping` ring burst, shared by `alert_when`'s border and label modes and by
 ➡️ [Feature]: Configuration possibility for the icon background visibility #136
 (@RkcCorian)
 
+#### 🛡️ Better Jinja protection
+
+A half-typed template is no longer reported as an error while you edit a card,
+and an unfinished one (`{{ x` with no closing `}}`) never reaches Home Assistant
+at all. A template HA rejects isn't re-sent until it changes, and the console
+now names the field and the reason, in the same shape as the deprecation
+notices.
+
 #### 🔢 Three new ways to format the displayed value
 
 All opt-in, Card and Badge: [`value_compact`][value_compact] abbreviates large
@@ -290,6 +298,8 @@ whichever entity the parent Tile card is already using.
   public `--epb-*` prefix.
 - Editor dropdowns and `hide`'s chip list read their allowed values off the
   schema that validates them, instead of a parallel list per variant.
+- Duplicated logic consolidated across the card, schema and editor — no visible
+  change.
 
 > We care about getting the details right — but even so, something here might
 > have slipped through. You don't need to be a developer to notice it. If
@@ -318,6 +328,14 @@ config** button to update your YAML permanently whenever you're ready, no rush.
 `--epb-ping-color` and `--epb-ping-spread` set the color and the reach of the
 ring burst, shared by `alert_when`'s border and label modes and by
 `icon_animation: ping`. See [CSS hooks](docs/theme.md#css).
+
+#### 🛡️ Better Jinja protection
+
+A half-typed template is no longer reported as an error while you edit a card,
+and an unfinished one (`{{ x` with no closing `}}`) never reaches Home Assistant
+at all. A template HA rejects isn't re-sent until it changes, and the console
+now names the field and the reason, in the same shape as the deprecation
+notices.
 
 ### 🐛 Fixes
 
@@ -376,6 +394,10 @@ ring burst, shared by `alert_when`'s border and label modes and by
   prefix to `--stack-gradient-pos`/`-neg` and `--stack-size-pos`/`-neg`.
 - Editor dropdowns and `hide`'s chip list read their allowed values off the
   schema that validates them, instead of a parallel list per variant.
+- Duplicated logic consolidated across the card, schema and editor: the
+  secondary-info line renderer, deprecation messages, watermark side checks,
+  `density: compact`'s position list, `bar_stack`'s modes, the interaction field
+  list and the watermark entity paths.
 
 ---
 

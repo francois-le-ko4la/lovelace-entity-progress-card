@@ -17,6 +17,7 @@ import {
   markOpacity,
   markColor,
   SCHEMA_DEFAULTS,
+  DENSITY_COMPACT_BAR_POSITIONS,
   type WatermarkMark,
 } from './schema.js';
 import { cloneValue } from '../utils/browser-support.js';
@@ -31,6 +32,7 @@ import {
   FeatureConfigHelper,
   TemplateConfigHelper,
   BadgeTemplateConfigHelper,
+  type ActionBag,
 } from './config-helpers.js';
 
 // Mirrors schema.ts's watermarkSchema (see card/schema.ts) - the validated
@@ -382,7 +384,7 @@ class ViewCore {
     // leaves a single icon row to show, same as hide: icon itself.
     const contentCollapsed =
       this.config.layout === CARD.layout.orientations.vertical.label &&
-      ['top', 'bottom', 'background'].includes(this.config.bar_position ?? '') &&
+      DENSITY_COMPACT_BAR_POSITIONS.includes(this.config.bar_position ?? '') &&
       this.hasComponentHiddenFlag(CARD.style.dynamic.hiddenComponent.name.label) &&
       this.hasComponentHiddenFlag(CARD.style.dynamic.hiddenComponent.secondary_info.label);
     const baseRows =
@@ -476,19 +478,11 @@ class ViewCore {
   }
 
   get hasClickableIcon(): boolean {
-    return ViewCore.#hasAction([
-      this._configHelper.action.icon.tap,
-      this._configHelper.action.icon.hold,
-      this._configHelper.action.icon.doubleTap,
-    ]);
+    return ViewCore.#hasAction(this._configHelper.action.icon);
   }
 
   get hasClickableCard(): boolean {
-    return ViewCore.#hasAction([
-      this._configHelper.action.card.tap,
-      this._configHelper.action.card.hold,
-      this._configHelper.action.card.doubleTap,
-    ]);
+    return ViewCore.#hasAction(this._configHelper.action.card);
   }
 
   get hasReversedSecondaryInfoRow(): boolean {
@@ -505,13 +499,11 @@ class ViewCore {
     );
   }
 
+  // The shape signals a clickable icon, nothing else: which domains get an
+  // icon action by default is decided once, in schema.ts's own
+  // applyIconTapActionDefaultRule (toggleDomain), not re-derived here.
   get hasVisibleShape(): boolean {
-    // this.config.force_circular_background === true
-    return this.config.force_circular_background || this._hasDefaultShape || this._hasInteractiveShape;
-  }
-
-  get _hasDefaultShape(): boolean {
-    return this._currentValue.hasShapeByDefault && ViewCore.#hasAction([this._configHelper.action.icon.tap]);
+    return this.config.force_circular_background || this._hasInteractiveShape;
   }
 
   get _hasInteractiveShape(): boolean {
@@ -982,8 +974,10 @@ class ViewCore {
     this.#resolvedHide = new Set(items);
   }
 
-  static #hasAction(actions: (string | null)[]): boolean {
-    return actions.some((action) => action !== HA_CONTEXT.actions.none.action);
+  // Takes the whole bag: tap/hold/doubleTap is the shape _configHelper.action
+  // already hands out, so neither caller re-enumerates the three keys.
+  static #hasAction(actions: ActionBag): boolean {
+    return Object.values(actions).some((action) => action !== HA_CONTEXT.actions.none.action);
   }
 }
 /**

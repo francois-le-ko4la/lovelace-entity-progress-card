@@ -151,8 +151,24 @@ const BAR_ORIENTATIONS = ['ltr', 'rtl', 'up'];
 const BAR_ORIENTATIONS_NO_UP = ['ltr', 'rtl'];
 const BAR_POSITIONS = ['default', 'below', 'compact_below', 'top', 'bottom', 'overlay', 'background'];
 const FEATURE_BAR_POSITIONS = ['default', 'top', 'bottom'];
+// The positions density: compact leaves standing - not schema truth (the
+// schema accepts all of BAR_POSITIONS and rewrites to 'top' instead, see
+// applyDensityRule), so the editor and the view share this list rather than
+// deriving one.
+const DENSITY_COMPACT_BAR_POSITIONS = ['top', 'bottom', 'background'];
 const BAR_COLOR_MODES = ['auto', 'segment', 'rainbow', 'rainbow_full'];
 const BAR_SCALES = ['linear', 'log'];
+const BAR_STACK_MODES = ['stacked', 'proportional', 'net'];
+// The six interaction fields, shared by the badge schema's own delete list,
+// SCHEMA_DEFAULTS below and the editor's isolated-keys set.
+const ACTION_FIELDS = [
+  'tap_action',
+  'hold_action',
+  'double_tap_action',
+  'icon_tap_action',
+  'icon_hold_action',
+  'icon_double_tap_action',
+] as const;
 const UNIT_SPACINGS = Object.values(CARD.config.unit.unitSpacing);
 const WATERMARK_TYPES = ['blended', 'area', 'striped', 'triangle', 'round', 'line'];
 const PEAK_MARK_TYPES = ['line', 'round', 'triangle'];
@@ -1041,7 +1057,7 @@ function struct<T>(
   // which share a row with name/secondary_info and need the room back.
   const applyDensityRule = (result: Record<string, unknown>) => {
     if (result.density !== 'compact') return;
-    if (!['top', 'bottom', 'background'].includes(result.bar_position as string)) {
+    if (!DENSITY_COMPACT_BAR_POSITIONS.includes(result.bar_position as string)) {
       result.bar_position = 'top';
     }
     result.multiline = false;
@@ -1379,7 +1395,7 @@ const YamlSchemaFactory = {
         // ─── Bar Stack ──────────────────────────────────────────────────────
         bar_stack: types.optional(
           types.object({
-            mode: types.enumsWithDefault(['stacked', 'proportional', 'net'], 'stacked'),
+            mode: types.enumsWithDefault(BAR_STACK_MODES, 'stacked'),
             entities: types.optional(types.array(barStackEntity)),
           }),
         ),
@@ -1523,7 +1539,7 @@ const YamlSchemaFactory = {
         // ─── Bar Stack ──────────────────────────────────────────────────────
         bar_stack: types.optional(
           types.object({
-            mode: types.enumsWithDefault(['stacked', 'proportional', 'net'], 'stacked'),
+            mode: types.enumsWithDefault(BAR_STACK_MODES, 'stacked'),
             entities: types.optional(types.array(barStackEntity)),
           }),
         ),
@@ -1638,12 +1654,7 @@ const YamlSchemaFactory = {
         'badge_color',
         'watermark',
         'alert_when',
-        'tap_action',
-        'hold_action',
-        'double_tap_action',
-        'icon_tap_action',
-        'icon_hold_action',
-        'icon_double_tap_action',
+        ...ACTION_FIELDS,
       ]);
   },
 
@@ -1680,18 +1691,10 @@ export { schemaOptions, type SchemaVariant };
 // Only what the card runtime enumerates for its own CSS classes/shape lists
 // (core.ts). The editor reads its dropdown lists off the schema itself, via
 // struct().fieldOptions - see SELECT_TYPES.
-export { BAR_SIZES, BAR_POSITIONS, WATERMARK_TYPES, PEAK_MARK_TYPES };
+export { BAR_SIZES, BAR_POSITIONS, WATERMARK_TYPES, PEAK_MARK_TYPES, DENSITY_COMPACT_BAR_POSITIONS };
+export { ACTION_FIELDS };
 export type { WatermarkMark };
 export { YamlSchemaFactory };
-
-const ACTION_FIELDS = [
-  'tap_action',
-  'hold_action',
-  'double_tap_action',
-  'icon_tap_action',
-  'icon_hold_action',
-  'icon_double_tap_action',
-] as const;
 
 // Computed once at module load, straight off the live schema. opacity/type/
 // window have no schema-level default by design (see watermarkSchema/

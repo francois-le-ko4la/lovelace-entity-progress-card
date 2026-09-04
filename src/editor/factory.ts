@@ -9,8 +9,7 @@ import {
   HA_CONTEXT,
   MIN_VALUE_ENTITY_PATH,
   MAX_VALUE_ENTITY_PATH,
-  WATERMARK_LOW_ENTITY_PATH,
-  WATERMARK_HIGH_ENTITY_PATH,
+  WATERMARK_ENTITY_PATHS,
   ALERT_ABOVE_ENTITY_PATH,
   ALERT_BELOW_ENTITY_PATH,
 } from '../utils/parameters.js';
@@ -26,6 +25,7 @@ import {
   isMarkOverride,
   SCHEMA_DEFAULTS,
   schemaOptions,
+  DENSITY_COMPACT_BAR_POSITIONS,
   type SchemaVariant,
   type WatermarkMark,
 } from '../card/schema.js';
@@ -495,7 +495,7 @@ const WATERMARK_CASCADE: OverrideCascadeAdapter<(typeof WM_SIDES)[number]> = {
 // type/opacity/color each cascade from the matching global watermark.*
 // field (see themeWatermarkFields) until a side explicitly overrides it.
 const wmSide = (side: 'low' | 'high', defaultVal: number) => {
-  const entityPath = side === 'low' ? WATERMARK_LOW_ENTITY_PATH : WATERMARK_HIGH_ENTITY_PATH;
+  const entityPath = WATERMARK_ENTITY_PATHS[side];
   const isShown = (c: LovelaceConfig) => c.watermark?.[side] !== false;
   const isEnabled = (c: LovelaceConfig) => Boolean(c.watermark) && isShown(c);
   const asOf = (mark: unknown) =>
@@ -1664,7 +1664,7 @@ const EditorFactory = {
   applyDensityConstraints: (config: LovelaceConfig): LovelaceConfig => {
     if (config.density !== 'compact') return config;
     const next: LovelaceConfig = { ...config };
-    if (!['top', 'bottom', 'background'].includes(next.bar_position as string)) {
+    if (!DENSITY_COMPACT_BAR_POSITIONS.includes(next.bar_position as string)) {
       next.bar_position = 'top';
     }
     return next;

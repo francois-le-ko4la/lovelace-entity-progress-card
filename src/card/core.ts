@@ -6,8 +6,8 @@
 
 import { VERSION, META, CARD_CONTEXT, devName, HA_CONTEXT, CARD } from '../utils/parameters.js';
 import { CARD_CSS, getSharedStyleSheet } from '../utils/styles.js';
-import { is, assertDefined, toNumberOrNull } from '../utils/common-checks.js';
-import { initLogger, type LoggerInstance } from '../utils/log.js';
+import { is, assertDefined, toNumberOrNull, jinjaKind } from '../utils/common-checks.js';
+import { initLogger, cardNotice, type LoggerInstance } from '../utils/log.js';
 import { ObjStructure, ThemeManager, ChangeTracker } from './value-helpers.js';
 import { HassProviderSingleton, type HomeAssistant, type EntityState } from '../utils/hass-provider.js';
 import { type ViewCore, type ViewBase, type ResolvedWatermark } from './view.js';
@@ -130,6 +130,10 @@ class HACore extends HTMLElement {
   // subscription lets us skip the systematic unsubscribe/resubscribe cycle on
   // every refresh
   #templateSignatures = new Map<string, string>();
+  // Signatures HA has rejected as un-renderable. Keyed by field like the map
+  // above, so it holds one entry per Jinja field, not one per edit: any change
+  // to the template produces a new signature and retries by construction.
+  #failedSignatures = new Map<string, string>();
 
   // ─── LIFECYCLE METHODS ────────────────────────────────────────────────────
   static get _loggedMethods() {
@@ -192,6 +196,7 @@ class HACore extends HTMLElement {
     this._resourceManager?.cleanup();
     this._resourceManager = null;
     this.#templateSignatures.clear(); // subscriptions died with cleanup() — allow resubscription on reconnect
+    this.#failedSignatures.clear();
     this.#interferenceObserver?.disconnect();
     this.#interferenceObserver = null;
   }
@@ -1035,6 +1040,8 @@ class HACore extends HTMLElement {
           this._resourceManager?.remove(`template-${key}`);
         }
         this.#templateSignatures.clear(); // connection lost — all subscriptions are dead server-side
+        // A template that failed while HA was going down deserves another try.
+        this.#failedSignatures.clear();
       },
       { passive: true },
       CARD.network.disconnected,
@@ -1103,6 +1110,34 @@ class HACore extends HTMLElement {
     return entity ? { entity } : {};
   }
 
+  // HA sends code 'template_error' for two different things (core's
+  // websocket_api/commands.py): a real TemplateError, and a render that blew
+  // its time budget. Only the first is deterministic - a timeout can pass on a
+  // less busy instance, so it stays retryable. Any other code (disconnection,
+  // timeout, unknown command) is transient by nature.
+  // HA sets both on the element itself when it renders a card in an editor
+  // preview or the card picker (frontend's hui-card.ts / hui-badge.ts), so a
+  // half-typed template is expected there and must not shout on every
+  // keystroke. Neither is declared by our own class: they arrive as plain own
+  // properties, hence the cast.
+  get #isPreview(): boolean {
+    const self = this as unknown as { preview?: boolean; editMode?: boolean };
+    return Boolean(self.preview ?? self.editMode);
+  }
+
+  // A half-typed template fails on every keystroke: expected in a preview,
+  // worth telling the user about only on a real dashboard - where it reads
+  // like the deprecation notices, same prefix and same shape.
+  #reportTemplateFailure(message: string, detail?: unknown) {
+    if (this.#isPreview) this._log?.debug(message, detail);
+    else cardNotice(message);
+  }
+
+  static #isTemplateError(error: unknown): boolean {
+    const { code, message } = (error ?? {}) as { code?: string; message?: string };
+    return code === 'template_error' && !String(message ?? '').includes('Exceeded maximum execution time');
+  }
+
   async _subscribeToTemplate(key: string, template: string, force = false) {
     this._log?.debug('📎 HACore._subscribeToTemplate:', { key, template });
     const subscriptionKey = `template-${key}`;
@@ -1129,6 +1164,24 @@ class HACore extends HTMLElement {
     const signature = `${template}\u0000${this._getTemplateContext().entity ?? ''}`;
     if (!force && this.#templateSignatures.get(subscriptionKey) === signature) {
       this._log?.debug(`[Template ${key}] Identical subscription live or in-flight, skipping.`);
+      return;
+    }
+    // HA already refused this exact template: re-sending it on every hass
+    // update would fail identically, once per update. Editing the template
+    // changes the signature, which lifts the block on its own.
+    if (this.#failedSignatures.get(subscriptionKey) === signature) {
+      this._log?.debug(`[Template ${key}] Rejected by HA and unchanged since, skipping.`);
+      return;
+    }
+    // An unclosed delimiter can only be refused: recorded like an HA rejection
+    // so it is reported once and never re-sent until the template changes.
+    if (jinjaKind(template) === 'malformed') {
+      this.#failedSignatures.set(subscriptionKey, signature);
+      this.#reportTemplateFailure(
+        `${key}: the Jinja template has an unclosed delimiter and was not sent to Home Assistant. ` +
+          `Please close it ({{ ... }}, {% ... %} or {# ... #}). This field stays empty until the template changes.`,
+        template,
+      );
       return;
     }
     this.#templateSignatures.set(subscriptionKey, signature);
@@ -1167,7 +1220,15 @@ class HACore extends HTMLElement {
     } catch (error) {
       // Allow a retry on the next processing cycle.
       if (this.#templateSignatures.get(subscriptionKey) === signature) this.#templateSignatures.delete(subscriptionKey);
-      this._log?.error(`Failed to subscribe to template ${key}:`, error);
+      // Only a template-level rejection is deterministic: the same string will
+      // fail the same way forever. A transport failure (HA restarting, socket
+      // dropped) must stay retryable, or a valid template dies for the session.
+      if (HACore.#isTemplateError(error)) this.#failedSignatures.set(subscriptionKey, signature);
+      this.#reportTemplateFailure(
+        `${key}: Home Assistant rejected the Jinja template (${(error as { message?: string })?.message ?? error}). ` +
+          `Please check its syntax. This field stays empty until the template changes.`,
+        error,
+      );
     }
   }
 }
@@ -2124,6 +2185,21 @@ class HABase extends HACore {
     // _applyIconAnimationClasses. Template has no incidental refresh to
     // piggyback on, so the animation never started there (issue #125).
     this._applyIconAnimationClasses();
+  }
+
+  // Shared by _renderCustomInfo/_renderSecondary: same split, same emptiness
+  // bookkeeping, only the per-line formatting differs (Card/Badge precedes a
+  // main slot, Template has none). Emptiness is judged on the raw lines, never
+  // on the formatted HTML - a spacer would make extra-1 look non-empty forever.
+  _renderSecondaryLines(content: unknown, format: (line: string, isSecond: boolean) => string) {
+    const multiline = Boolean(this._cardView.config.multiline);
+    const [line1, line2] = this._splitAtFirstBreak(content);
+    const elements = CARD.htmlStructure.elements;
+    this._dom.setHTML(elements.secondaryInfoExtra.class, format(line1, false));
+    if (multiline) this._dom.setHTML(elements.secondaryInfoExtra2.class, format(line2 ?? '', true));
+    this._secondaryInfoEmpty.extra1 = line1.trim() === '';
+    this._secondaryInfoEmpty.extra2 = (line2 ?? '').trim() === '';
+    this._updateSecondaryInfoWrapperVisibility();
   }
 
   static #BREAK_RE = /<br\s*\/?>/gi;

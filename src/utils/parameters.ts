@@ -121,6 +121,9 @@ const MAX_VALUE_ENTITY_PATH = 'max_value.entity';
 // short (unwrapped) config resolves its own path inline in checkValueConfig.
 const WATERMARK_LOW_ENTITY_PATH = 'watermark.low.value.entity';
 const WATERMARK_HIGH_ENTITY_PATH = 'watermark.high.value.entity';
+// Keyed by side so a caller looping over ['low', 'high'] doesn't re-derive the
+// pairing (config-helpers.ts's own checks, factory.ts's wmSide).
+const WATERMARK_ENTITY_PATHS = { low: WATERMARK_LOW_ENTITY_PATH, high: WATERMARK_HIGH_ENTITY_PATH } as const;
 // Same reasoning as WATERMARK_LOW_ENTITY_PATH/WATERMARK_HIGH_ENTITY_PATH:
 // alert_when.above/.below stay virtual editor fields (nested one level under
 // alert_when, same depth as watermark.low).
@@ -146,7 +149,6 @@ export { EDITOR_FIELD_NS };
 export { EDITOR_FIELD_HELPER_NS };
 export { MIN_VALUE_ENTITY_PATH };
 export { MAX_VALUE_ENTITY_PATH };
-export { WATERMARK_LOW_ENTITY_PATH };
-export { WATERMARK_HIGH_ENTITY_PATH };
+export { WATERMARK_ENTITY_PATHS };
 export { ALERT_ABOVE_ENTITY_PATH };
 export { ALERT_BELOW_ENTITY_PATH };

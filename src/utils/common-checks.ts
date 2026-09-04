@@ -65,7 +65,95 @@ function assertDefined<T>(value: T | null | undefined, message: string): T {
   return value;
 }
 
+// Jinja's own delimiters are a three-state language, so a regex can't judge
+// them: it cannot tell a closing pair from one sitting inside a string literal
+// ("{{ '}}' " is unclosed), nor spot a dangling second opener after a valid
+// first expression ("{{ a }} {{ b"). This walks the string once instead.
+//
+// Deliberately about delimiters only: `{{ states('x' }}` is 'valid' here and
+// HA rejects it. HA stays the authority on Jinja syntax - this exists purely to
+// skip a round trip that is certain to fail (see HACore._subscribeToTemplate).
+const END_RAW = /\{%[-+]?\s*endraw\s*[-+]?%\}/;
+const NOT_FOUND = -1;
+
+// Scans one {{ }} or {% %} tag from just after its opener. String literals hide
+// delimiters from the scan, so "{{ '}}' " reads as unclosed, which it is.
+// Returns the index just past the closer, plus the tag body, or null.
+function scanTag(value: string, from: number, closer: string): { next: number; body: string } | null {
+  let i = from;
+  let quote: string | null = null;
+  while (i < value.length) {
+    const c = value[i];
+    if (quote) {
+      if (c === '\\') i += 2;
+      else {
+        if (c === quote) quote = null;
+        i++;
+      }
+    } else if (c === '"' || c === "'") {
+      quote = c;
+      i++;
+    } else if (c === closer[0] && value[i + 1] === closer[1]) {
+      // [-+]: both whitespace-control markers, so {%+ raw %} stays raw.
+      return {
+        next: i + 2,
+        body: value
+          .slice(from, i)
+          .replace(/^[-+]|[-+]$/g, '')
+          .trim(),
+      };
+    } else i++;
+  }
+  return null;
+}
+
+// {% raw %} makes everything up to {% endraw %} literal, delimiters included.
+function skipRaw(value: string, from: number): number {
+  const rest = value.slice(from);
+  const at = rest.search(END_RAW);
+  if (at === NOT_FOUND) return NOT_FOUND;
+  return from + at + (rest.slice(at).match(END_RAW) as RegExpMatchArray)[0].length;
+}
+
+// Jinja's delimiters are a three-state language, so a regex can't judge them:
+// it cannot tell a closing pair from one sitting inside a string literal
+// ("{{ '}}' " is unclosed), nor spot a dangling second opener after a valid
+// first expression ("{{ a }} {{ b"). This walks the string once instead.
+//
+// Deliberately about delimiters only: `{{ states('x' }}` is 'valid' here and
+// HA rejects it. HA stays the authority on Jinja syntax - this exists purely to
+// skip a round trip that is certain to fail (HACore._subscribeToTemplate).
+// Advances past one construct ({{ }}, {% %} or {# #}) opened at `from`.
+// NOT_FOUND when it is never closed.
+function skipConstruct(value: string, from: number, kind: string): number {
+  if (kind === '#') {
+    const end = value.indexOf('#}', from + 2);
+    return end === NOT_FOUND ? NOT_FOUND : end + 2;
+  }
+  const tag = scanTag(value, from + 2, kind === '{' ? '}}' : '%}');
+  if (!tag) return NOT_FOUND;
+  return kind === '%' && tag.body === 'raw' ? skipRaw(value, tag.next) : tag.next;
+}
+
+function jinjaKind(value: unknown): 'none' | 'valid' | 'malformed' {
+  if (typeof value !== 'string') return 'none';
+  let i = 0;
+  let sawOpener = false;
+  while (i < value.length) {
+    const kind = value[i] === '{' ? value[i + 1] : undefined;
+    if (kind !== '{' && kind !== '%' && kind !== '#') {
+      i++;
+      continue;
+    }
+    sawOpener = true;
+    i = skipConstruct(value, i, kind);
+    if (i === NOT_FOUND) return 'malformed';
+  }
+  return sawOpener ? 'valid' : 'none';
+}
+
 export { is };
 export { has };
 export { toNumberOrNull };
 export { assertDefined };
+export { jinjaKind };

@@ -13,13 +13,12 @@ import { NumberFormatter } from './formatting.js';
 // EditorFieldsType.entityName / types.stateContent in schema.ts).
 type NameToken = { type: string; text?: string };
 
-// Shared with EntityOrValue's fallback - one source for this 5-key shape.
+// Shared with EntityOrValue's fallback - one source for this 4-key shape.
 const emptyEntityTypeFlags = (): Record<string, boolean> => ({
   isTimer: false,
   isDuration: false,
   isNumber: false,
   isCounter: false,
-  isSynced: false,
 });
 
 // This class's own #value stays genuinely `any` on purpose: an entity's
@@ -41,6 +40,9 @@ class EntityHelper {
   #domain: string | null = null;
   #entityType: string | null = null;
   #entityTypeFlags: Record<string, boolean> = emptyEntityTypeFlags();
+  // Memoization only - deliberately not inside #entityTypeFlags, which every
+  // entityType consumer receives as-is.
+  #entityTypeSynced = false;
   #stateContent: string[] = [];
   #nameTokens: NameToken[] | null = null;
   static #handleRefreshType = new Map<string, (self: EntityHelper) => void>([
@@ -61,7 +63,7 @@ class EntityHelper {
     this.#entityId = newValue;
     this.#nameTokens = null;
     this.#entityType = null;
-    this.#entityTypeFlags.isSynced = false;
+    this.#entityTypeSynced = false;
     this.#value = 0;
     this.#domain = HassProviderSingleton.getEntityDomain(newValue);
     this.#isValid = this.#hassProvider.hasEntity(this.#entity);
@@ -226,17 +228,13 @@ class EntityHelper {
   }
 
   get entityType(): Record<string, boolean> {
-    if (!this.#entityTypeFlags.isSynced) {
+    if (!this.#entityTypeSynced) {
       const type = this.getEntityType();
       const key = `is${type.charAt(0).toUpperCase() + type.slice(1)}`;
-      this.#entityTypeFlags = { ...emptyEntityTypeFlags(), isSynced: true };
-      this.#entityTypeFlags[key] = true;
+      this.#entityTypeFlags = { ...emptyEntityTypeFlags(), [key]: true };
+      this.#entityTypeSynced = true;
     }
     return this.#entityTypeFlags;
-  }
-
-  get hasShapeByDefault(): boolean {
-    return [HA_CONTEXT.entity.type.light, HA_CONTEXT.entity.type.fan].includes(this.#domain as string);
   }
 
   get defaultColor(): string | null {

@@ -96,10 +96,6 @@ class EntityOrValue {
     return this.#entity()?.entityType ?? emptyEntityTypeFlags();
   }
 
-  get hasShapeByDefault(): boolean {
-    return this.#entity()?.hasShapeByDefault ?? false;
-  }
-
   get defaultColor(): string | null | false {
     return this.#entity()?.defaultColor ?? false;
   }

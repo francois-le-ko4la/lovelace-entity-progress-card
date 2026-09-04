@@ -4,8 +4,13 @@
  * noise to every user.
  */
 
-import { SEV } from './parameters.js';
+import { SEV, META } from './parameters.js';
 import { has } from './common-checks.js';
+
+// A notice addressed to the user about their own config - not a runtime error,
+// and not gated by the debug flags: the deprecation warnings and the Jinja
+// ones share this shape so both read alike in the console.
+const cardNotice = (msg: string) => console.warn(`${META.types.card.typeName.toUpperCase()} - ${msg}`);
 
 type Level = 'info' | 'warning' | 'error' | 'debug';
 
@@ -122,5 +127,6 @@ function traceInstance(instance: object, enabled: boolean): void {
 
 export { Logger };
 export { initLogger };
+export { cardNotice };
 export { traceInstance };
 export type { LoggerInstance };

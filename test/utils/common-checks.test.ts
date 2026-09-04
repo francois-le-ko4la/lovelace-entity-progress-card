@@ -1,6 +1,6 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
-import { is, has, assertDefined } from '../../src/utils/common-checks.js';
+import { is, has, assertDefined, jinjaKind } from '../../src/utils/common-checks.js';
 
 describe('is.nullish / emptyString / nonEmptyString / nullishOrEmptyString - drawing the line consistently', () => {
   test('nullish is true only for null/undefined, never for an empty string or 0', () => {
@@ -103,6 +103,60 @@ describe('is.jinja - detects {{ }}/{% %}/{# #} anywhere in a string', () => {
 
   test('matches even when the template is only part of a longer string', () => {
     assert.equal(is.jinja('prefix {{ value }} suffix'), true);
+  });
+});
+
+describe('jinjaKind - none / valid / malformed, delimiter-aware', () => {
+  test('a string with no delimiter at all is not a template', () => {
+    assert.equal(jinjaKind('just text'), 'none');
+    assert.equal(jinjaKind('{ not jinja }'), 'none');
+    assert.equal(jinjaKind('closing }} with no opener'), 'none');
+    assert.equal(jinjaKind(''), 'none');
+    assert.equal(jinjaKind(42), 'none');
+  });
+
+  test('each delimiter pair, closed, is valid - whitespace control included', () => {
+    assert.equal(jinjaKind('{{ states("sensor.x") }}'), 'valid');
+    assert.equal(jinjaKind('{% if true %}yes{% endif %}'), 'valid');
+    assert.equal(jinjaKind('{# a comment #}'), 'valid');
+    assert.equal(jinjaKind('{{- trimmed -}}'), 'valid');
+  });
+
+  test('an opener with no closer is malformed', () => {
+    assert.equal(jinjaKind("{{ states('light.x')"), 'malformed');
+    assert.equal(jinjaKind('{% if x'), 'malformed');
+    assert.equal(jinjaKind('{# never closed'), 'malformed');
+  });
+
+  // The two cases a regex gets wrong, and the reason this is a scanner.
+  test('a delimiter inside a string literal does not close the tag', () => {
+    assert.equal(jinjaKind("{{ '}}' }}"), 'valid');
+    assert.equal(jinjaKind("{{ '}}' "), 'malformed');
+    assert.equal(jinjaKind('{{ [1, 2] | join("}}") }}'), 'valid');
+  });
+
+  test('one dangling opener poisons an otherwise valid string', () => {
+    assert.equal(jinjaKind('{{ a }} {{ b'), 'malformed');
+    assert.equal(jinjaKind('{{ a }} text {{ b }}'), 'valid');
+  });
+
+  test('plain text around a template is just text', () => {
+    assert.equal(jinjaKind('Price: {{ states("sensor.x") }} EUR'), 'valid');
+    assert.equal(jinjaKind('Price: {{ x'), 'malformed');
+    assert.equal(jinjaKind('100 % {sic} {{ x }}'), 'valid');
+  });
+
+  test('{% raw %} keeps its content literal, delimiters included', () => {
+    assert.equal(jinjaKind('{% raw %}{{ unclosed{% endraw %}'), 'valid');
+    assert.equal(jinjaKind('{%+ raw %}{{ x{%+ endraw %}'), 'valid');
+    assert.equal(jinjaKind('{% raw %}{{ a{% endraw %} then {{ b }}'), 'valid');
+    assert.equal(jinjaKind('{% raw %}{{ a{% endraw %} then {{ b'), 'malformed');
+    assert.equal(jinjaKind('{% raw %}never closed'), 'malformed');
+  });
+
+  test('escapes inside a string literal are honored', () => {
+    assert.equal(jinjaKind('{{ "a\\\\" }}'), 'valid');
+    assert.equal(jinjaKind('{{ "a\\" }}'), 'malformed');
   });
 });
 
