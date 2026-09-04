@@ -337,6 +337,8 @@ const style = {
     },
     secondaryInfoError: 'secondary-info-error',
     show: 'show',
+    // On the mark itself (like its wm-* shape class), not a card-level relay.
+    markShown: 'shown',
     clickable: { card: 'clickable-card', icon: 'clickable-icon' },
     hiddenComponent: {
       icon: { label: 'icon', class: 'hide-icon' },

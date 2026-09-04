@@ -49,10 +49,13 @@ const NumberFormatter = {
 
     if (!unit) return formattedValue;
 
+    // Keyed off the table, not literals: its values are what the schema
+    // validates (UNIT_SPACINGS), so a rename can't leave one unmapped here.
+    const spacing = CARD.config.unit.unitSpacing;
     const spaceMap: Record<string, string | (() => string)> = {
-      space: CARD.config.unit.space,
-      'no-space': '',
-      auto: () => NumberFormatter.getSpaceCharacter(locale, unit),
+      [spacing.space]: CARD.config.unit.space,
+      [spacing.noSpace]: '',
+      [spacing.auto]: () => NumberFormatter.getSpaceCharacter(locale, unit),
     };
     const space = has.method(spaceMap, unitSpacing)
       ? (spaceMap[unitSpacing] as () => string)()

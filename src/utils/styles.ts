@@ -2147,44 +2147,42 @@ ha-card.info-multiline {
   --wm-color: var(--epb-high-watermark-color, var(--high-watermark-color, ${CARD.style.dynamic.watermark.high.color.default}));
   opacity: var(--epb-high-watermark-opacity, var(--epb-watermark-opacity, var(--high-watermark-opacity-value, 0.8)));
 }
-:is(.lwm-area, .lwm-blended, .lwm-line, .lwm-round) .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-:is(.hwm-area, .hwm-blended, .hwm-line, .hwm-round) .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+.mark:is(.wm-area, .wm-blended, .wm-line, .wm-round) {
   --mark-background: var(--wm-color);
 }
 
-/* ---------- show ---------- */
-.show-lwm .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-.show-hwm .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+/* ---------- show ----------
+   On the mark, like its shape class: one rule covers watermark, peak_marker
+   and any future family. */
+.mark.${CARD.style.dynamic.markShown} {
   --mark-display: flex;
 }
 
 /* ---------- Area, Blended, Striped positioning ---------- */
-:is(.lwm-area, .lwm-blended, .lwm-striped) .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
+.${CARD.htmlStructure.elements.progressBar.lowWatermark.class}:is(.wm-area, .wm-blended, .wm-striped) {
   --mark-left: 0;
   --mark-width: var(--wm-value);
 }
-:is(.hwm-area, .hwm-blended, .hwm-striped) .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+.${CARD.htmlStructure.elements.progressBar.highWatermark.class}:is(.wm-area, .wm-blended, .wm-striped) {
   --mark-right: 0;
   --mark-width: calc(100% - var(--wm-value));
 }
 
-.vertical.up-orientation.overlay:is(.lwm-area, .lwm-blended, .lwm-striped) .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
+.vertical.up-orientation.overlay .${CARD.htmlStructure.elements.progressBar.lowWatermark.class}:is(.wm-area, .wm-blended, .wm-striped) {
   --mark-height: var(--wm-value);
 }
-.vertical.up-orientation.overlay:is(.hwm-area, .hwm-blended, .hwm-striped) .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+.vertical.up-orientation.overlay .${CARD.htmlStructure.elements.progressBar.highWatermark.class}:is(.wm-area, .wm-blended, .wm-striped) {
   --mark-bottom: var(--wm-value);
   --mark-height: calc(100% - var(--wm-value));
 }
 
 /* ---------- Blended ---------- */
-.lwm-blended .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-.hwm-blended .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+.mark.wm-blended {
   mix-blend-mode: hard-light;
 }
 
 /* ---------- Striped ---------- */
-.lwm-striped .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-.hwm-striped .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+.mark.wm-striped {
   --mark-background: repeating-linear-gradient(-45deg,
     var(--wm-color) 0,
     var(--wm-color) 3px,
@@ -2192,53 +2190,47 @@ ha-card.info-multiline {
 }
 
 /* ---------- Line ---------- */
-.lwm-line .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-.hwm-line .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+.mark.wm-line {
   --wm-position: calc(var(--wm-value) - var(--wm-half-line));
   --mark-width: var(--wm-line-size);
   --mark-left: var(--wm-position);
   border: none;
   transform: none;
 }
-.vertical.up-orientation.overlay.lwm-line .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-.vertical.up-orientation.overlay.hwm-line .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+.vertical.up-orientation.overlay .mark.wm-line {
   --mark-height: var(--wm-line-size);
   --mark-bottom: var(--wm-position);
 }
 
 /* ---------- Round ---------- */
-/* Whole-pixel centering (same reasoning as bar_segments' dividers): this is a
-   real box, so /2 or translate(-50%) is fractional at the odd 5px default and
-   can blur or drift half a device pixel. Assumes an odd circle size. */
-.lwm-round .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-.hwm-round .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-  --mark-top: calc(50% - (var(--wm-circle-size) - 1px) / 2);
+/* Centered by translate, like .value-mark's own circle further down: every bar
+   height is even and the circle odd, so a whole-pixel offset can only floor -
+   1px more room above than below, flush with the edge at xsmall. A circle's
+   edge is antialiased anyway, unlike wm-line's hard 1px one. */
+.mark.wm-round {
+  --mark-top: 50%;
+  --mark-left: var(--wm-value);
   --mark-width: var(--wm-circle-size);
   --mark-height: var(--wm-circle-size);
   border-radius: 50%;
   border: none;
+  transform: translate(-50%, -50%);
 }
-.lwm-round .${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
-  --mark-left: calc(var(--wm-value) - (var(--wm-circle-size) - 1px) / 2);
-}
-.hwm-round .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-  --mark-left: calc(var(--wm-value) - (var(--wm-circle-size) - 1px) / 2);
-}
-.vertical.up-orientation.overlay.lwm-round .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-.vertical.up-orientation.overlay.hwm-round .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
-  --mark-left: calc(50% - (var(--wm-circle-size) - 1px) / 2);
+/* Anchored by --mark-bottom here, so the Y translate goes the other way. */
+.vertical.up-orientation.overlay .mark.wm-round {
+  --mark-left: 50%;
   --mark-right: auto;
   --mark-top: auto;
-  --mark-bottom: calc(var(--wm-value) - (var(--wm-circle-size) - 1px) / 2);
+  --mark-bottom: var(--wm-value);
   --mark-width: var(--wm-circle-size);
+  transform: translate(-50%, 50%);
 }
 
 /* ---------- Triangle ---------- */
 /* Widening the base by 1px on the side outside the position formula looks like
    it should move the apex, but doesn't: with width: 0 the apex sits where
    border-left ends, and --wm-half-tri cancels out of left + border-left. */
-.lwm-triangle .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-.hwm-triangle .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+.mark.wm-triangle {
   --mark-left: calc(var(--wm-value) - var(--wm-half-tri));
   --mark-width: 0;
   --mark-height: 0;
@@ -2247,8 +2239,7 @@ ha-card.info-multiline {
   border-left: var(--wm-half-tri) solid transparent;
   border-right: calc(var(--wm-half-tri) + 1px) solid transparent;
 }
-.vertical.up-orientation.overlay.lwm-triangle .${CARD.htmlStructure.elements.progressBar.lowWatermark.class},
-.vertical.up-orientation.overlay.hwm-triangle .${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+.vertical.up-orientation.overlay .mark.wm-triangle {
   --mark-left: 0;
   --mark-bottom: calc(var(--wm-value) - var(--wm-half-tri));
   border-right: none;
@@ -2259,8 +2250,8 @@ ha-card.info-multiline {
 
 /* =============================================================================
    PEAK MARKER (peak_marker: min/max/average from HA history)
-   Each mark can have its own type/opacity (unlike watermark's shared low/
-   high type), so the type classes below key off the mark, not the card.
+   Each mark carries its own type/opacity, unlike watermark's shared low/high
+   type - only the value/color inputs live here, the shapes are shared above.
    ============================================================================= */
 
 .${CARD.htmlStructure.elements.progressBar.minMarker.class} {
@@ -2282,74 +2273,7 @@ ha-card.info-multiline {
   opacity: var(--epb-peak-average-opacity, var(--peak-average-opacity-value, 0.8));
 }
 
-.show-peak-min .${CARD.htmlStructure.elements.progressBar.minMarker.class},
-.show-peak-max .${CARD.htmlStructure.elements.progressBar.maxMarker.class},
-.show-peak-avg .${CARD.htmlStructure.elements.progressBar.averageMarker.class} {
-  --mark-display: flex;
-}
-
-/* ---------- Line ---------- */
-.peak-min-line .${CARD.htmlStructure.elements.progressBar.minMarker.class},
-.peak-max-line .${CARD.htmlStructure.elements.progressBar.maxMarker.class},
-.peak-avg-line .${CARD.htmlStructure.elements.progressBar.averageMarker.class} {
-  --wm-position: calc(var(--wm-value) - var(--wm-half-line));
-  --mark-width: var(--wm-line-size);
-  --mark-left: var(--wm-position);
-  --mark-background: var(--wm-color);
-  border: none;
-  transform: none;
-}
-.vertical.up-orientation.overlay.peak-min-line .${CARD.htmlStructure.elements.progressBar.minMarker.class},
-.vertical.up-orientation.overlay.peak-max-line .${CARD.htmlStructure.elements.progressBar.maxMarker.class},
-.vertical.up-orientation.overlay.peak-avg-line .${CARD.htmlStructure.elements.progressBar.averageMarker.class} {
-  --mark-height: var(--wm-line-size);
-  --mark-bottom: var(--wm-position);
-}
-
-/* ---------- Round ---------- */
-.peak-min-round .${CARD.htmlStructure.elements.progressBar.minMarker.class},
-.peak-max-round .${CARD.htmlStructure.elements.progressBar.maxMarker.class},
-.peak-avg-round .${CARD.htmlStructure.elements.progressBar.averageMarker.class} {
-  --mark-top: calc(50% - (var(--wm-circle-size) - 1px) / 2);
-  --mark-left: calc(var(--wm-value) - (var(--wm-circle-size) - 1px) / 2);
-  --mark-width: var(--wm-circle-size);
-  --mark-height: var(--wm-circle-size);
-  --mark-background: var(--wm-color);
-  border-radius: 50%;
-  border: none;
-}
-.vertical.up-orientation.overlay.peak-min-round .${CARD.htmlStructure.elements.progressBar.minMarker.class},
-.vertical.up-orientation.overlay.peak-max-round .${CARD.htmlStructure.elements.progressBar.maxMarker.class},
-.vertical.up-orientation.overlay.peak-avg-round .${CARD.htmlStructure.elements.progressBar.averageMarker.class} {
-  --mark-left: calc(50% - (var(--wm-circle-size) - 1px) / 2);
-  --mark-right: auto;
-  --mark-top: auto;
-  --mark-bottom: calc(var(--wm-value) - (var(--wm-circle-size) - 1px) / 2);
-  --mark-width: var(--wm-circle-size);
-}
-
-/* ---------- Triangle ---------- */
-.peak-min-triangle .${CARD.htmlStructure.elements.progressBar.minMarker.class},
-.peak-max-triangle .${CARD.htmlStructure.elements.progressBar.maxMarker.class},
-.peak-avg-triangle .${CARD.htmlStructure.elements.progressBar.averageMarker.class} {
-  --mark-left: calc(var(--wm-value) - var(--wm-half-tri));
-  --mark-width: 0;
-  --mark-height: 0;
-  --mark-background: transparent;
-  border-top: var(--wm-tri-size) solid var(--wm-color);
-  border-left: var(--wm-half-tri) solid transparent;
-  border-right: calc(var(--wm-half-tri) + 1px) solid transparent;
-}
-.vertical.up-orientation.overlay.peak-min-triangle .${CARD.htmlStructure.elements.progressBar.minMarker.class},
-.vertical.up-orientation.overlay.peak-max-triangle .${CARD.htmlStructure.elements.progressBar.maxMarker.class},
-.vertical.up-orientation.overlay.peak-avg-triangle .${CARD.htmlStructure.elements.progressBar.averageMarker.class} {
-  --mark-left: 0;
-  --mark-bottom: calc(var(--wm-value) - var(--wm-half-tri));
-  border-right: none;
-  border-top: calc(var(--wm-half-tri) + 1px) solid transparent;
-  border-left: var(--wm-tri-size) solid var(--wm-color);
-  border-bottom: var(--wm-half-tri) solid transparent;
-}
+/* Line, round and triangle come from the shared .mark.wm-* rules above. */
 
 /* =============================================================================
    RAINBOW FULL BAR (bar_color_mode: rainbow_full)

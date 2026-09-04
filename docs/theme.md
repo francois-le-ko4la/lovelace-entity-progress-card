@@ -1231,13 +1231,18 @@ ha-card.entity-progress-card...
      └─ div.bar-container
          └─ div.progress-bar.default / center-zero (depends on bar type)
              ├─ div.inner
-             ├─ div.low.watermark.mark
-             ├─ div.high.watermark.mark
-             ├─ div.peak-min.watermark.mark (Card only)
-             ├─ div.peak-max.watermark.mark (Card only)
-             ├─ div.peak-avg.watermark.mark (Card only)
+             ├─ div.low.watermark.mark.wm-<type>
+             ├─ div.high.watermark.mark.wm-<type>
+             ├─ div.peak-min.watermark.mark.wm-<type> (Card only)
+             ├─ div.peak-max.watermark.mark.wm-<type> (Card only)
+             ├─ div.peak-avg.watermark.mark.wm-<type> (Card only)
              └─ div.zero.mark (if center-zero)
 ```
+
+Every mark carries its own shape class — `wm-blended`, `wm-area`, `wm-striped`,
+`wm-line`, `wm-round` or `wm-triangle` — matching that mark's own
+[`type`](configuration.md#watermark). One rule per shape styles every mark,
+watermark and `peak_marker` alike.
 
 With [`multiline: true`](configuration.md#multiline),
 `div.secondary-info-wrapper` looks like this instead — two independent
@@ -1292,8 +1297,8 @@ ha-card...
      └─ div.bar-container
          └─ div.progress-bar.default / center-zero
              ├─ div.inner
-             ├─ div.low.watermark.mark
-             ├─ div.high.watermark.mark
+             ├─ div.low.watermark.mark.wm-<type>
+             ├─ div.high.watermark.mark.wm-<type>
              ├─ div.peak-min.watermark.mark (always present, never shown - peak_marker is Card only)
              ├─ div.peak-max.watermark.mark (always present, never shown - peak_marker is Card only)
              ├─ div.peak-avg.watermark.mark (always present, never shown - peak_marker is Card only)
@@ -1361,11 +1366,11 @@ ha-card...
          │   └─ div.inner.negative
          ├─ div.bar-half.positive-zone
          │   └─ div.inner.positive
-         ├─ div.low.watermark.mark
-         ├─ div.high.watermark.mark
-         ├─ div.peak-min.watermark.mark (Card only)
-         ├─ div.peak-max.watermark.mark (Card only)
-         ├─ div.peak-avg.watermark.mark (Card only)
+         ├─ div.low.watermark.mark.wm-<type>
+         ├─ div.high.watermark.mark.wm-<type>
+         ├─ div.peak-min.watermark.mark.wm-<type> (Card only)
+         ├─ div.peak-max.watermark.mark.wm-<type> (Card only)
+         ├─ div.peak-avg.watermark.mark.wm-<type> (Card only)
          └─ div.zero.mark
 ```
 

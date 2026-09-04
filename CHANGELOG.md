@@ -213,6 +213,8 @@ whichever entity the parent Tile card is already using.
   precision", translated in 36 languages.
 - **`layout: horizontal`** no longer carries a "(default)" suffix in the editor,
   across all 39 languages.
+- **Round watermark and peak marks sat 1px low**, flush with the bar's bottom
+  edge at `bar_size: xsmall` — exactly centered now.
 
 ### 📚 Documentation
 
@@ -337,6 +339,8 @@ ring burst, shared by `alert_when`'s border and label modes and by
   precision", translated in 36 languages.
 - **`layout: horizontal`** no longer carries a "(default)" suffix in the editor,
   across all 39 languages.
+- **Round watermark and peak marks sat 1px low**, flush with the bar's bottom
+  edge at `bar_size: xsmall` — exactly centered now.
 
 ### 🧹 Under the hood
 

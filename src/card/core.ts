@@ -20,6 +20,8 @@ import {
   SCHEMA_DEFAULTS,
   BAR_POSITIONS,
   BAR_SIZES,
+  WATERMARK_TYPES,
+  PEAK_MARK_TYPES,
 } from './schema.js';
 import { ResourceManager, DOMHelper, ActionHelper } from './dom-helpers.js';
 import type { CacheValue } from './dom-helpers.js';
@@ -501,6 +503,9 @@ class HACore extends HTMLElement {
     // element.style is null when the shared constructed sheet is adopted
     this._shadow.replaceChildren(...(element.style ? [element.style, element.card] : [element.card]));
     this._storeDOM();
+    // After _storeDOM(): _handleWatermarkClasses/_handlePeakMarkerClasses set
+    // the shape class on the mark elements, which must be registered by then.
+    this._buildStyle();
     this._buildSegmentCells();
     requestAnimationFrame(() => {
       this._dom.addClass(CARD.htmlStructure.card.element, 'transition-ready');
@@ -539,7 +544,6 @@ class HACore extends HTMLElement {
     this._dom.destroy();
     this._dom.register(CARD.htmlStructure.card.element, card);
     this._dom.setStyle(CARD.htmlStructure.card.element, CARD.style.dynamic.progressBar.value.var, 0);
-    this._buildStyle();
     // Cloned from the per-options <template> cache; _structureOptions is read
     // fresh here so a setConfig that changes the structure picks the right
     // template.
@@ -611,6 +615,11 @@ class HACore extends HTMLElement {
     CARD.htmlStructure.elements.secondaryInfoMain.class,
     CARD.htmlStructure.elements.secondaryInfoExtra.class,
     CARD.htmlStructure.elements.secondaryInfoExtra2.class,
+    CARD.htmlStructure.elements.progressBar.lowWatermark.class,
+    CARD.htmlStructure.elements.progressBar.highWatermark.class,
+    CARD.htmlStructure.elements.progressBar.minMarker.class,
+    CARD.htmlStructure.elements.progressBar.maxMarker.class,
+    CARD.htmlStructure.elements.progressBar.averageMarker.class,
   ];
 
   get domKeys(): string[] {
@@ -635,8 +644,8 @@ class HACore extends HTMLElement {
     const marker = (this._cardView as ViewBase).peakMarker;
     if (!marker) return;
 
-    const showClass = CARD.style.dynamic.show;
-    const cardKey = CARD.htmlStructure.card.element;
+    const pb = CARD.htmlStructure.elements.progressBar;
+    const markKeys = { min: pb.minMarker.class, max: pb.maxMarker.class, avg: pb.averageMarker.class };
     (
       [
         ['min', marker.min],
@@ -644,8 +653,8 @@ class HACore extends HTMLElement {
         ['avg', marker.average],
       ] as const
     ).forEach(([key, mark]) => {
-      this._dom.toggleClass(cardKey, `${showClass}-peak-${key}`, mark.shown);
-      this._dom.toggleClass(cardKey, `peak-${key}-${mark.type}`, mark.shown);
+      this._dom.toggleClass(markKeys[key], CARD.style.dynamic.markShown, mark.shown);
+      this._applyMarkShape(markKeys[key], mark.type, PEAK_MARK_TYPES, 'line');
     });
   }
 
@@ -733,6 +742,15 @@ class HACore extends HTMLElement {
     this._toggleClasses(this._baseClassStyle);
   }
 
+  // The shape class sits on the mark itself, so one CSS rule per shape serves
+  // every family (watermark, peak_marker) instead of one per family x shape.
+  _applyMarkShape(markKey: string, type: string, shapes: readonly string[], fallback: string) {
+    const shape = shapes.includes(type) ? type : fallback;
+    // Every shape is toggled, not just the active one: toggleClass on its own
+    // would leave the previously applied shape's class behind.
+    for (const candidate of shapes) this._dom.toggleClass(markKey, `wm-${candidate}`, candidate === shape);
+  }
+
   _handleWatermarkClasses() {
     // Captured once so the null-check below actually narrows what the rest
     // of this method reads - hasWatermark and watermark are two separate
@@ -740,15 +758,13 @@ class HACore extends HTMLElement {
     const watermark = this._cardView.watermark;
     if (!watermark) return;
 
-    const validTypes = ['area', 'blended', 'striped', 'line', 'triangle', 'round'];
-    const resolveType = (t: string) => (validTypes.includes(t) ? t : 'blended');
-    const showClass = CARD.style.dynamic.show;
-    const cardKey = CARD.htmlStructure.card.element;
+    const pb = CARD.htmlStructure.elements.progressBar;
+    const shownClass = CARD.style.dynamic.markShown;
 
-    this._dom.toggleClass(cardKey, `${showClass}-hwm`, watermark.high.shown);
-    this._dom.toggleClass(cardKey, `hwm-${resolveType(watermark.high.type)}`, watermark.high.shown);
-    this._dom.toggleClass(cardKey, `${showClass}-lwm`, watermark.low.shown);
-    this._dom.toggleClass(cardKey, `lwm-${resolveType(watermark.low.type)}`, watermark.low.shown);
+    this._dom.toggleClass(pb.highWatermark.class, shownClass, watermark.high.shown);
+    this._dom.toggleClass(pb.lowWatermark.class, shownClass, watermark.low.shown);
+    this._applyMarkShape(pb.highWatermark.class, watermark.high.type, WATERMARK_TYPES, 'blended');
+    this._applyMarkShape(pb.lowWatermark.class, watermark.low.type, WATERMARK_TYPES, 'blended');
   }
 
   // The editor (EntityProgressEffectChips) can only guard interactive
@@ -812,8 +828,8 @@ class HACore extends HTMLElement {
     });
     this._applyWatermarkCSS(bar.hasWatermark ? bar.watermark : null);
     this._applyPeakMarkerCSS(bar.peakMarker);
-    // History-seeded (async, after the initial _buildStyle() pass): show-peak-*
-    // needs recomputing here too, not just at render() time.
+    // History-seeded (async, after the initial _buildStyle() pass): the marks'
+    // own shown class needs recomputing here too, not just at render() time.
     this._handlePeakMarkerClasses();
   }
 
