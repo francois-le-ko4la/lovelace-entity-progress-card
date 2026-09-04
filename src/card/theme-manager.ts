@@ -243,8 +243,7 @@ class ThemeManager {
     if (!ctx) return null;
     // Canvas drops an invalid fillStyle silently, so a surviving sentinel is
     // the only way to tell a bad color apart from one that resolved.
-    ctx.fillStyle = ThemeManager.#UNRESOLVED_SENTINEL;
-    // skipcq: JS-W1032 - the pair IS the probe, not a duplicate assignment.
+    ctx.fillStyle = ThemeManager.#UNRESOLVED_SENTINEL; // skipcq: JS-W1032 - the pair IS the probe
     ctx.fillStyle = computedColor;
     if (ctx.fillStyle === ThemeManager.#UNRESOLVED_SENTINEL) return null;
     ctx.fillRect(0, 0, 1, 1);
