@@ -1346,6 +1346,12 @@ class HABase extends HACore {
       this._cardView.config,
       this.hasDisabledIconTap,
     );
+    // render() also runs from setConfig, before HA inserts the card - and the
+    // status pill's color goes through getComputedStyle, which reads nothing
+    // on a detached element, leaving the pill on its grey CSS fallback.
+    // Repainted here, now that there is a document to measure against. Only
+    // this layer needs it: the rest is pure CSS or driven by a later push.
+    this._applyAlertClasses();
   }
 
   // custom-card-helpers' own LovelaceCard interface types this as
@@ -2096,7 +2102,6 @@ class HABase extends HACore {
   // the browser normalize it into rgb(...) for parsing, then it's removed.
   _paintLabel(text: string, color: string) {
     if (this.#lastPaintedLabel?.text === text && this.#lastPaintedLabel?.color === color) return;
-    this.#lastPaintedLabel = { text, color };
     const key = CARD.htmlStructure.elements.label.class;
     this._dom.setText(key, text);
     const el = this._dom.get(key);
@@ -2104,7 +2109,13 @@ class HABase extends HACore {
     el.style.setProperty('outline-color', color);
     const components = ThemeManager.labelColorComponents(getComputedStyle(el).outlineColor);
     el.style.removeProperty('outline-color');
+    // setConfig renders before HA inserts the card, and getComputedStyle reads
+    // nothing useful on a detached element - so the very first paint resolves
+    // no components. Recording the cache only once they land keeps that
+    // attempt retryable; recording it up front left the pill on its grey
+    // fallback for good, since every later call matched the cache and bailed.
     if (!components) return;
+    this.#lastPaintedLabel = { text, color };
     const label = CARD.style.dynamic.label;
     el.style.setProperty(label.r.var, String(components.r));
     el.style.setProperty(label.g.var, String(components.g));
