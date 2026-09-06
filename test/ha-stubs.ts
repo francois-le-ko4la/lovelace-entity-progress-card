@@ -61,7 +61,14 @@ const makeHass = (overrides: Record<string, unknown> = {}) => {
   const connection = new EventTarget() as EventTarget & {
     subscribeMessage?: (...args: unknown[]) => Promise<() => void>;
   };
-  connection.subscribeMessage = async () => () => {};
+  // What HA hands back from subscribeMessage: the caller keeps it to drop the
+  // subscription. Nothing to undo here, but it has to be callable.
+  const unsubscribe = () => {
+    /* no subscription to tear down in a stub */
+  };
+  // Promise.resolve, not async: there is nothing to await, and `async` would
+  // only claim otherwise.
+  connection.subscribeMessage = () => Promise.resolve(unsubscribe);
 
   return {
     states: {
@@ -81,8 +88,8 @@ const makeHass = (overrides: Record<string, unknown> = {}) => {
     themes: { darkMode: false, theme: 'default' },
     language: 'en',
     localize: (key: string) => key,
-    callWS: async () => [],
-    callService: async () => undefined,
+    callWS: () => Promise.resolve([]),
+    callService: () => Promise.resolve(undefined),
     connection,
     ...overrides,
   } as unknown as Record<string, unknown>;
