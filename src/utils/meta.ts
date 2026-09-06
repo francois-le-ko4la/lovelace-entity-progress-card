@@ -4,7 +4,7 @@
  * dev/debug context can both import it without an import cycle.
  */
 
-const VERSION = '1.6.2-rc6';
+const VERSION = '1.6.2';
 
 const CARD_DESCRIPTION = 'A cool custom card to show current entity status with a progress bar.';
 const BADGE_DESCRIPTION = 'A cool custom badge to show current entity status with a progress bar.';
