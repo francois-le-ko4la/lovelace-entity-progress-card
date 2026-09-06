@@ -109,7 +109,7 @@
         "average_toggle": "গড় দেখান",
         "toggle": "পিক মার্কার"
       },
-      "peak_marker_unsupported": "পিক মার্কারের জন্য sensor বা number সত্তা প্রয়োজন, attribute ওভাররাইড ছাড়া, যা timer বা counter নয় — এই সত্তার জন্য উপলব্ধ নয়।",
+      "peak_marker_unsupported": "পিক মার্কারের জন্য sensor বা number সত্তা প্রয়োজন, বৈশিষ্ট্য ওভাররাইড ছাড়া, যা timer বা counter নয় — এই সত্তার জন্য উপলব্ধ নয়।",
       "percent": "শতাংশ",
       "position": "অবস্থান",
       "reverse": "টাইমার উল্টানো",

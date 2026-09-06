@@ -59,9 +59,9 @@
         "toggle": "Odznak",
         "color_toggle": "Nezávislá farba odznaku"
       },
-      "bar_color": "Farba lišty",
+      "bar_color": "Farba pruhu",
       "bar_color_mode": "Farebný režim",
-      "bar_effect_mode": "Efekt lišty",
+      "bar_effect_mode": "Efekt pruhu",
       "bar_group": "Pruh",
       "bar_max_width_toggle": "Max. šírka pruhu",
       "bar_orientation": "Orientácia",
@@ -238,7 +238,7 @@
       "hide": {
         "icon": "Ikona",
         "name": "Názov",
-        "progress_bar": "Lišta",
+        "progress_bar": "Pruh",
         "secondary_info": "Sekundárne info",
         "shape": "Kruhové pozadie ikony",
         "unit": "Jednotka",

@@ -259,7 +259,7 @@
 views:
   - title: EP Showcase
     icon: mdi:image-frame
-    path: epb-hero
+    path: epb-showcase
     type: sections
     max_columns: 2
     sections:

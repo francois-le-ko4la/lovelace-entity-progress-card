@@ -41,7 +41,7 @@
         "tap": "Beteende vid tryck"
       },
       "action_picker": "Lägg till interaktion",
-      "add_entity": "Lägg till enhet",
+      "add_entity": "Lägg till entitet",
       "add_zone": "Lägg till zon",
       "alert_when": {
         "above": "Larm över",
@@ -59,9 +59,9 @@
         "toggle": "Märke",
         "color_toggle": "Oberoende märkesfärg"
       },
-      "bar_color": "Färg för baren",
+      "bar_color": "Färg på stapeln",
       "bar_color_mode": "Färgläge",
-      "bar_effect_mode": "Effekt på baren",
+      "bar_effect_mode": "Effekt på stapeln",
       "bar_group": "Stapel",
       "bar_max_width_toggle": "Max stapelbredd",
       "bar_orientation": "Riktning",
@@ -80,7 +80,7 @@
       "custom_theme": "Anpassade temazoner",
       "decimal": "Visningsprecision",
       "density_toggle": "Kompakt",
-      "entity": "Enhet",
+      "entity": "Entitet",
       "fast_refresh": "Snabb uppdatering (varje sekund)",
       "force_circular_background_mode": "Cirkulär ikonbakgrund",
       "frameless": "Utan ram",
@@ -198,12 +198,12 @@
       },
       "bar_position": {
         "background": "Kortbakgrund",
-        "below": "Bar under innehållet",
-        "bottom": "Bar längst ned",
+        "below": "Stapeln under innehållet",
+        "bottom": "Stapeln längst ned",
         "compact_below": "Kompakt stapel under (namn/värde på en rad)",
         "default": "Standard",
-        "overlay": "Bar överlagrad på innehållet (overlay)",
-        "top": "Bar längst upp"
+        "overlay": "Stapeln överlagrad på innehållet (overlay)",
+        "top": "Stapeln längst upp"
       },
       "bar_scale": {
         "linear": "Linjär",

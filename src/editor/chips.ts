@@ -124,6 +124,14 @@ abstract class MultiSelectChipsBase extends ChipsBase {
     this._config = config ?? ({} as LovelaceConfig);
     this._render();
   }
+
+  // Membership toggle shared by both concrete sets: drop the value when it is
+  // already picked, otherwise add it and evict whatever it blocks.
+  _toggled(value: string, blocked: string[] = []): string[] {
+    return this._selected.includes(value)
+      ? this._selected.filter((v) => v !== value)
+      : [...this._selected.filter((v) => !blocked.includes(v)), value];
+  }
 }
 
 /**
@@ -158,13 +166,7 @@ class EntityProgressEffectChips extends MultiSelectChipsBase {
   }
 
   #toggle(value: string) {
-    const isSelected = this._selected.includes(value);
-    const blocked = isSelected ? [] : (EntityProgressEffectChips.#INCOMPATIBLE[value] ?? []);
-    this._emit(
-      isSelected
-        ? this._selected.filter((v) => v !== value)
-        : [...this._selected.filter((v) => !blocked.includes(v)), value],
-    );
+    this._emit(this._toggled(value, EntityProgressEffectChips.#INCOMPATIBLE[value] ?? []));
   }
 
   _render() {
@@ -239,7 +241,7 @@ class EntityProgressHideChips extends MultiSelectChipsBase {
 
   #toggle(value: string) {
     if (this.#forcedItems().includes(value)) return;
-    this._emit(this._selected.includes(value) ? this._selected.filter((v) => v !== value) : [...this._selected, value]);
+    this._emit(this._toggled(value));
   }
 
   _render() {

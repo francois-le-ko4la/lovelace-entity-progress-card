@@ -208,7 +208,7 @@ class EntityCollectionHelper {
       (helper) => (EntityCollectionHelper.#magnitude(helper) / total) * 100 * progressRatio,
     );
 
-    return `linear-gradient(${isVertical ? 'to top' : 'to right'}, ${gradientStops.join(', ')})`;
+    return `linear-gradient(${ThemeManager.gradientDirection(isVertical)}, ${gradientStops.join(', ')})`;
   }
 
   // 'stacked' mode: each entity occupies its own literal width on the card's
@@ -234,7 +234,7 @@ class EntityCollectionHelper {
     );
 
     return gradientStops.length
-      ? `linear-gradient(${isVertical ? 'to top' : 'to right'}, ${gradientStops.join(', ')})`
+      ? `linear-gradient(${ThemeManager.gradientDirection(isVertical)}, ${gradientStops.join(', ')})`
       : null;
   }
 

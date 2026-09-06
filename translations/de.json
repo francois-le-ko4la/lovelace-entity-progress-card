@@ -61,8 +61,8 @@
       },
       "bar_color": "Balkenfarbe",
       "bar_color_mode": "Balkenfarbmodus",
-      "bar_effect_mode": "Effekt auf die Leiste",
-      "bar_group": "Leiste",
+      "bar_effect_mode": "Effekt auf den Balken",
+      "bar_group": "Balken",
       "bar_max_width_toggle": "Max. Balkenbreite",
       "bar_orientation": "Ausrichtung",
       "bar_scale": "Skala",
@@ -198,12 +198,12 @@
       },
       "bar_position": {
         "background": "Kartenhintergrund",
-        "below": "Leiste unter dem Inhalt",
-        "bottom": "Leiste unten",
+        "below": "Balken unter dem Inhalt",
+        "bottom": "Balken unten",
         "compact_below": "Kompakter Balken unten (Name/Wert in einer Zeile)",
         "default": "Standard",
-        "overlay": "Leiste über dem Inhalt (Overlay)",
-        "top": "Leiste oben"
+        "overlay": "Balken über dem Inhalt (Overlay)",
+        "top": "Balken oben"
       },
       "bar_scale": {
         "linear": "Linear",

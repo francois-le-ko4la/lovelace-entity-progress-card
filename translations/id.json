@@ -59,9 +59,9 @@
         "toggle": "Lencana",
         "color_toggle": "Warna lencana independen"
       },
-      "bar_color": "Warna bar",
+      "bar_color": "Warna bilah",
       "bar_color_mode": "Mode warna",
-      "bar_effect_mode": "Efek pada bar",
+      "bar_effect_mode": "Efek pada bilah",
       "bar_group": "Bilah",
       "bar_max_width_toggle": "Lebar maks. batang",
       "bar_orientation": "Orientasi",
@@ -198,12 +198,12 @@
       },
       "bar_position": {
         "background": "Latar belakang kartu",
-        "below": "Bar di bawah konten",
-        "bottom": "Bar di bawah",
+        "below": "Bilah di bawah konten",
+        "bottom": "Bilah di bawah",
         "compact_below": "Batang ringkas di bawah (nama/nilai dalam satu baris)",
         "default": "Bawaan",
-        "overlay": "Bar ditumpangkan pada konten (overlay)",
-        "top": "Bar di atas"
+        "overlay": "Bilah ditumpangkan pada konten (overlay)",
+        "top": "Bilah di atas"
       },
       "bar_scale": {
         "linear": "Linear",

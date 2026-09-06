@@ -63,7 +63,7 @@
       "bar_color_mode": "Λειτουργία χρώματος",
       "bar_effect_mode": "Εφέ γραμμής",
       "bar_group": "Γραμμή",
-      "bar_max_width_toggle": "Μέγιστο πλάτος ράβδου",
+      "bar_max_width_toggle": "Μέγιστο πλάτος γραμμής",
       "bar_orientation": "Προσανατολισμός",
       "bar_scale": "Κλίμακα",
       "bar_segments": "Τμήματα",
@@ -238,7 +238,7 @@
       "hide": {
         "icon": "Εικονίδιο",
         "name": "Όνομα",
-        "progress_bar": "Μπάρα",
+        "progress_bar": "Γραμμή",
         "secondary_info": "Δευτ. πληροφορίες",
         "shape": "Κυκλικό φόντο του εικονιδίου",
         "unit": "Μονάδα",

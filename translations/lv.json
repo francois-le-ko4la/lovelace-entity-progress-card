@@ -41,7 +41,7 @@
         "tap": "Darbība pieskaroties"
       },
       "action_picker": "Pievienot mijiedarbību",
-      "add_entity": "Pievienot vienību",
+      "add_entity": "Pievienot entītiju",
       "add_zone": "Pievienot zonu",
       "alert_when": {
         "above": "Brīdinājums virs",
@@ -80,7 +80,7 @@
       "custom_theme": "Pielāgotas tēmas zonas",
       "decimal": "Noapaļošana",
       "density_toggle": "Kompakts",
-      "entity": "Vienība",
+      "entity": "Entītija",
       "fast_refresh": "Ātra atsvaidze (katru sekundi)",
       "force_circular_background_mode": "Ikonas apaļais fons",
       "frameless": "Bez rāmja",

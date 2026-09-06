@@ -31,6 +31,8 @@ import { CARD, META, devName } from '../utils/parameters.js';
 import { is } from '../utils/common-checks.js';
 import { HACore } from './core.js';
 import { NumberFormatter } from './formatting.js';
+import { EntityHelper } from './entity-helper.js';
+import { resolveDisplayDecimal } from '../utils/display-defaults.js';
 import type { HomeAssistant } from '../utils/hass-provider.js';
 import type { LovelaceConfig } from '../utils/types.js';
 
@@ -40,10 +42,14 @@ type ChildEl = HTMLElement & { hass?: HomeAssistant | null; setConfig?: (config:
 // re-format that entity's state on every hass push, without reaching back
 // into its (bare, text-less) entity-progress-feature child.
 type ValueTarget = {
-  entity: string;
+  entityId: string;
+  // Same unit/decimal resolution as a standalone card: the effective values
+  // depend on live entity state (display_precision, timer/counter type), so
+  // the raw config is kept here and resolved at render - see display-defaults.
+  helper: EntityHelper;
   el: HTMLElement;
-  decimal: number;
-  unit?: string;
+  configDecimal: unknown;
+  configUnit?: string;
   disableUnit: boolean;
   unitSpacing: string;
 };
@@ -239,13 +245,17 @@ class EntityProgressMultiBase extends HACore {
         } else {
           wrapper.append(barBox, valueEl);
         }
+        const helper = new EntityHelper();
+        helper.entityId = childConfig.entity as string;
+        helper.attribute = is.nonEmptyString(childConfig.attribute as string)
+          ? (childConfig.attribute as string)
+          : null;
         this._valueTargets.push({
-          entity: childConfig.entity as string,
+          entityId: childConfig.entity as string,
+          helper,
           el: valueEl,
-          decimal: is.unsignedInteger(childConfig.decimal)
-            ? (childConfig.decimal as number)
-            : CARD.config.decimal.other,
-          unit: childConfig.unit as string | undefined,
+          configDecimal: childConfig.decimal,
+          configUnit: childConfig.unit as string | undefined,
           disableUnit: Boolean(childConfig.disable_unit),
           unitSpacing: is.nonEmptyString(childConfig.unit_spacing as string)
             ? (childConfig.unit_spacing as string)
@@ -267,18 +277,32 @@ class EntityProgressMultiBase extends HACore {
   // back from, see YamlSchemaFactory.feature).
   #updateValues() {
     for (const target of this._valueTargets) {
-      const stateObj = this._hassProvider.getEntityStateObj(target.entity);
+      const stateObj = this._hassProvider.getEntityStateObj(target.entityId);
       if (!stateObj) {
         target.el.textContent = '';
         continue;
       }
+      // An entity that only appeared after the children were built was invalid
+      // at that point - re-seed rather than stay stuck on its empty state.
+      if (!target.helper.isValid) target.helper.entityId = target.entityId;
+      // The entity's own unit_of_measurement, NOT EntityHelper.unit: the latter
+      // reports the unit the card's value pipeline converts to ('s' for a
+      // duration, '%' for a unitless entity), and this row prints the raw
+      // state, which that pipeline never touched.
+      const rawUnit =
+        target.configUnit ??
+        (this._hassProvider.getEntityAttribute<string>(target.entityId, 'unit_of_measurement') || '');
+      const decimal = resolveDisplayDecimal(target.configDecimal, {
+        configUnit: target.configUnit,
+        resolvedUnit: rawUnit,
+        entityPrecision: target.helper.precision,
+        entityType: target.helper.entityType,
+        entityUnit: rawUnit,
+      });
       const raw = stateObj.state;
       const numeric = parseFloat(raw);
-      const unit = target.disableUnit
-        ? ''
-        : (target.unit ?? (this._hassProvider.getEntityAttribute<string>(target.entity, 'unit_of_measurement') || ''));
       target.el.textContent = Number.isFinite(numeric)
-        ? NumberFormatter.formatValueAndUnit(numeric, target.decimal, unit, {
+        ? NumberFormatter.formatValueAndUnit(numeric, decimal, target.disableUnit ? '' : rawUnit, {
             locale: this._hassProvider.language,
             unitSpacing: target.unitSpacing,
           })

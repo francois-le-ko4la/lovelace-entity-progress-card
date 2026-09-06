@@ -59,9 +59,9 @@
         "toggle": "Badge",
         "color_toggle": "Uafhængig badge-farve"
       },
-      "bar_color": "Farve til bar",
+      "bar_color": "Farve på bjælken",
       "bar_color_mode": "Farvetilstand",
-      "bar_effect_mode": "Effekt på bar",
+      "bar_effect_mode": "Effekt på bjælken",
       "bar_group": "Bjælke",
       "bar_max_width_toggle": "Maks. bjælkebredde",
       "bar_orientation": "Retning",
@@ -198,12 +198,12 @@
       },
       "bar_position": {
         "background": "Kortbaggrund",
-        "below": "Bar under indhold",
-        "bottom": "Bar nederst",
+        "below": "Bjælken under indhold",
+        "bottom": "Bjælken nederst",
         "compact_below": "Kompakt bjælke nedenunder (navn/værdi på én linje)",
         "default": "Standard",
-        "overlay": "Bar over indhold (overlay)",
-        "top": "Bar øverst"
+        "overlay": "Bjælken over indhold (overlay)",
+        "top": "Bjælken øverst"
       },
       "bar_scale": {
         "linear": "Lineær",

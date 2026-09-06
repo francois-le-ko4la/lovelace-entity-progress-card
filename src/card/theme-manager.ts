@@ -224,6 +224,13 @@ class ThemeManager {
   }
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
+  // Fill direction for every gradient: a vertical bar fills upward, a
+  // horizontal one rightward; `reversed` mirrors both (center_zero's arm).
+  static gradientDirection(isVertical: boolean, reversed = false): string {
+    if (reversed) return isVertical ? 'to bottom' : 'to left';
+    return isVertical ? 'to top' : 'to right';
+  }
+
   static adaptColor(curColor: string | null): string | null {
     return HA_CONTEXT.haColors.get(curColor as string) ?? curColor;
   }
@@ -352,9 +359,7 @@ class ThemeManager {
     // A reversed window (center_zero's negative arm) mirrors the gradient's
     // own CSS direction instead of re-deriving the stop logic per direction.
     const isReversedWindow = windowEnd < windowStart;
-    const forward = isVertical ? 'to top' : 'to right';
-    const backward = isVertical ? 'to bottom' : 'to left';
-    const direction = isReversedWindow ? backward : forward;
+    const direction = ThemeManager.gradientDirection(isVertical, isReversedWindow);
 
     // style is already windowed to this arm's own slice, so this works
     // identically for a single-arm bar and each of center_zero's two arms.

@@ -42,18 +42,6 @@ class EntityProgressCardBase extends HABase {
     CARD.style.dynamic.hiddenComponent.value,
   ];
 
-  // async (like most cards' getStubConfig, e.g. Mushroom's) so a thrown
-  // error becomes a rejected promise instead of a synchronous exception
-  // that could abort whatever loop HA's card-picker uses to build previews
-  // for every registered card type, not just this one.
-  // skipcq: JS-0116 -- async is intentional, no await by design.
-  static async getStubConfig(hass: HomeAssistant): Promise<LovelaceConfig> {
-    return {
-      type: `custom:${devName(this._baseClass)}`,
-      entity: HABase.getStubEntity(hass),
-    } as unknown as LovelaceConfig;
-  }
-
   static get _loggedMethods() {
     return [...super._loggedMethods, '_getStandardFields', '_renderCustomInfo', '_renderNameInfo'];
   }
@@ -234,7 +222,7 @@ class EntityProgressFeatures extends HACore {
 
   // ─── STATIC ───────────────────────────────────────────────────────────────
 
-  // See EntityProgressCardBase.getStubConfig for why this is async.
+  // See HABase.getStubConfig for why this is async.
   // skipcq: JS-0116 -- async is intentional, no await by design.
   static async getStubConfig(): Promise<LovelaceConfig> {
     return { type: `custom:${devName(META.types.feature.typeName)}` } as unknown as LovelaceConfig;
@@ -387,6 +375,9 @@ class EntityProgressFeatures extends HACore {
  */
 class EntityProgressTemplateBase extends HABase {
   static _structureType = 'template';
+  // The picker's template stub ships a worked example (icon/name/secondary/
+  // badge_*) on top of the shared type/entity pair.
+  static _stubExtras: Record<string, unknown> = CARD.config.stub.template;
   // TemplateView (not the specific CardTemplateView) -
   // EntityProgressTemplateBadge below overrides this with its sibling
   // BadgeTemplateView, which wouldn't be assignable to CardTemplateView.
@@ -443,16 +434,6 @@ class EntityProgressTemplateBase extends HABase {
     for (const [key, template] of Object.entries(templates)) {
       if (is.nonEmptyString(template)) this._subscribeToTemplate(key, template, true);
     }
-  }
-
-  // See EntityProgressCardBase.getStubConfig for why this is async.
-  // skipcq: JS-0116 -- async is intentional, no await by design.
-  static async getStubConfig(hass: HomeAssistant): Promise<LovelaceConfig> {
-    return {
-      type: `custom:${devName(META.types.template.typeName)}`,
-      entity: HABase.getStubEntity(hass),
-      ...CARD.config.stub.template,
-    } as unknown as LovelaceConfig;
   }
 
   // ─── CSS MANAGEMENT ───────────────────────────────────────────────────────
@@ -644,6 +625,8 @@ class EntityProgressTemplateCard extends EntityProgressTemplateBase {
  */
 class EntityProgressTemplateBadge extends EntityProgressTemplateBase {
   static _baseClass: string = META.types.badgeTemplate.typeName;
+  // A badge has no icon/name/secondary row - back to the bare stub.
+  static _stubExtras: Record<string, unknown> = {};
   static _structureType = 'badge';
   _cardView: TemplateView = new BadgeTemplateView();
 
@@ -665,15 +648,6 @@ class EntityProgressTemplateBadge extends EntityProgressTemplateBase {
     // so cleanup() cancels it (the shared id also dedupes rapid setConfig
     // calls)
     if (this.hass) this._resourceManager?.setTimeout(() => this.refresh(), 0, 'deferredRefresh');
-  }
-
-  // See EntityProgressCardBase.getStubConfig for why this is async.
-  // skipcq: JS-0116 -- async is intentional, no await by design.
-  static async getStubConfig(hass: HomeAssistant): Promise<LovelaceConfig> {
-    return {
-      type: `custom:${devName(META.types.badgeTemplate.typeName)}`,
-      entity: HABase.getStubEntity(hass),
-    } as unknown as LovelaceConfig;
   }
 }
 

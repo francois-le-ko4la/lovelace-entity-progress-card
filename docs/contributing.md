@@ -205,8 +205,11 @@ There's no automated test suite (see
 in the dev guide for how correctness is verified instead). Before submitting a
 PR, please ensure:
 
-- ✅ `npm run validate` passes locally (syntax check + lint + translations sync)
-  — CI runs the same check on `src/**` changes
+- ✅ `npm run check:code` passes locally (syntax, format, lint, types,
+  translation structure, unit tests)
+- ✅ `npm run check:push` before pushing — adds knip, the full i18n sync,
+  markdown, the DOM mount suite and both builds — CI runs the same check on
+  `src/**` changes
 - ✅ `npm run format:js:check` passes (or just commit — the pre-commit hook
   auto-fixes formatting for you)
 - ✅ **Card loads** without console errors

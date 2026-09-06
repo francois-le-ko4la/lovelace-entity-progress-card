@@ -208,6 +208,17 @@ class ResourceManager {
 type UpdateFn = () => void;
 type CacheValue = string | number | boolean | null | undefined;
 
+// The only two DOM writes this helper performs - shared by each method and its
+// synchronous *Now counterpart, which differ solely in queued vs immediate.
+const applyStyle =
+  (prop: string) =>
+  (el: HTMLElement, value: CacheValue): void => {
+    el.style.setProperty(prop, String(value));
+  };
+const applyText = (el: HTMLElement, value: CacheValue): void => {
+  el.textContent = String(value);
+};
+
 // _domElements is typed `any` (not HTMLElement) because EditorDOMHelper
 // (src/editor/dom-helper.ts) registers custom elements accessed through it
 // with dynamic, editor-specific properties (hass, value, selector, context,
@@ -290,12 +301,12 @@ class DOMHelper {
 
   // Sync counterpart to #cachedUpdate, for the *Now methods below - no RAF,
   // no cache-skip, just an immediate write and cache record.
-  #applyNow(key: string, cacheKey: string, value: CacheValue, apply: (el: HTMLElement, value: CacheValue) => void) {
+  #applyNow(key: string, cacheSuffix: string, value: CacheValue, apply: (el: HTMLElement, value: CacheValue) => void) {
     if (is.nullish(value)) return;
     const el = this._domElements.get(key);
     if (!el) return;
     apply(el, value);
-    this._appliedValues.set(cacheKey, value);
+    this._appliedValues.set(`${key}:${cacheSuffix}`, value);
   }
 
   /**
@@ -303,7 +314,7 @@ class DOMHelper {
    * Skipped if the value matches the cache — no DOM read required.
    */
   setStyle(key: string, prop: string, value: CacheValue) {
-    this._cachedUpdate(key, `style:${prop}`, value, (el, v) => el.style.setProperty(prop, String(v)));
+    this._cachedUpdate(key, `style:${prop}`, value, applyStyle(prop));
   }
 
   /**
@@ -331,7 +342,7 @@ class DOMHelper {
    * queue. Use when immediate DOM update is required.
    */
   setStyleNow(key: string, prop: string, value: CacheValue) {
-    this.#applyNow(key, `${key}:style:${prop}`, value, (el, v) => el.style.setProperty(prop, String(v)));
+    this.#applyNow(key, `style:${prop}`, value, applyStyle(prop));
   }
 
   /**
@@ -339,9 +350,7 @@ class DOMHelper {
    * Skipped if the value matches the cache.
    */
   setText(key: string, value: CacheValue) {
-    this._cachedUpdate(key, 'text', value, (el, v) => {
-      el.textContent = String(v);
-    });
+    this._cachedUpdate(key, 'text', value, applyText);
   }
 
   /**
@@ -349,9 +358,7 @@ class DOMHelper {
    * Use when immediate DOM update is required (mirrors setStyleNow).
    */
   setTextNow(key: string, value: CacheValue) {
-    this.#applyNow(key, `${key}:text`, value, (el, v) => {
-      el.textContent = String(v);
-    });
+    this.#applyNow(key, 'text', value, applyText);
   }
 
   // CF5 - issue (security) resolved - Jinja results are injected via innerHTML

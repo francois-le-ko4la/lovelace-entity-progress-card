@@ -59,9 +59,9 @@
         "toggle": "Значок",
         "color_toggle": "Незалежний колір значка"
       },
-      "bar_color": "Колір панелі",
+      "bar_color": "Колір смуги",
       "bar_color_mode": "Режим кольору",
-      "bar_effect_mode": "Ефект на панелі",
+      "bar_effect_mode": "Ефект на смузі",
       "bar_group": "Смуга",
       "bar_max_width_toggle": "Макс. ширина смуги",
       "bar_orientation": "Орієнтація",
@@ -198,12 +198,12 @@
       },
       "bar_position": {
         "background": "Фон картки",
-        "below": "Панель під вмістом",
-        "bottom": "Панель знизу",
+        "below": "Смуга під вмістом",
+        "bottom": "Смуга знизу",
         "compact_below": "Компактна смуга знизу (назва/значення в одному рядку)",
         "default": "За замовчуванням",
-        "overlay": "Панель поверх вмісту (overlay)",
-        "top": "Панель зверху"
+        "overlay": "Смуга поверх вмісту (overlay)",
+        "top": "Смуга зверху"
       },
       "bar_scale": {
         "linear": "Лінійна",

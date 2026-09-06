@@ -2257,12 +2257,28 @@ class HABase extends HACore {
   }
 
   // ─── getStubConfig -> select entity ───────────────────────────────────────
+  // Extra keys a concrete card wants in its own stub, on top of type/entity.
+  static _stubExtras: Record<string, unknown> = {};
+
+  // async (like most cards' getStubConfig, e.g. Mushroom's) so a thrown error
+  // becomes a rejected promise instead of a synchronous exception that could
+  // abort whatever loop HA's card-picker uses to build previews for every
+  // registered card type, not just this one.
+  // skipcq: JS-0116 -- async is intentional, no await by design.
+  static async getStubConfig(hass: HomeAssistant): Promise<LovelaceConfig> {
+    return {
+      type: `custom:${devName(this._baseClass)}`,
+      entity: HABase.getStubEntity(hass),
+      ...this._stubExtras,
+    } as unknown as LovelaceConfig;
+  }
+
   // Called directly by HA's own card-picker/gallery to build the preview for
   // this card type - an external caller we don't control, unlike our normal
   // render path where hass is already known to be populated by the time
-  // anything reads it. hass?.states isn't optional in the HomeAssistant
-  // type, but that's a compile-time annotation, not a runtime guarantee
-  // from a caller outside this codebase.
+  // anything reads it. hass?.states isn't optional in the HomeAssistant type,
+  // but that's a compile-time annotation, not a runtime guarantee from a
+  // caller outside this codebase.
   static getStubEntity(hass: HomeAssistant): string {
     return (
       Object.keys(hass?.states ?? {}).find((id) => /^(sensor\..*battery|fan\.|cover\.|light\.)/i.test(id)) ||

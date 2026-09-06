@@ -59,10 +59,10 @@
         "toggle": "Merke",
         "color_toggle": "Uavhengig merkefarge"
       },
-      "bar_color": "Farge for baren",
+      "bar_color": "Farge for stolpen",
       "bar_color_mode": "Fargemodus",
-      "bar_effect_mode": "Effekt på baren",
-      "bar_group": "Linje",
+      "bar_effect_mode": "Effekt på stolpen",
+      "bar_group": "Stolpe",
       "bar_max_width_toggle": "Maks. stolpebredde",
       "bar_orientation": "Retning",
       "bar_scale": "Skala",
@@ -198,12 +198,12 @@
       },
       "bar_position": {
         "background": "Kortbakgrunn",
-        "below": "Bar under innholdet",
-        "bottom": "Bar nederst",
+        "below": "Stolpen under innholdet",
+        "bottom": "Stolpen nederst",
         "compact_below": "Kompakt stolpe under (navn/verdi på én linje)",
         "default": "Standard",
-        "overlay": "Bar lagt over innholdet (overlay)",
-        "top": "Bar øverst"
+        "overlay": "Stolpen lagt over innholdet (overlay)",
+        "top": "Stolpen øverst"
       },
       "bar_scale": {
         "linear": "Lineær",

@@ -133,6 +133,19 @@ class ValidationError extends Error {
 
 const SKIP_PROPERTY = Symbol('SKIP_PROPERTY');
 
+// What object()/watermarkObject() return: the validated shape of their field
+// map, plus the _schema handle every introspection helper below reads.
+// Exclude<T, SKIP_PROPERTY>: a skipped field is absent from the result at
+// runtime, never stored as the sentinel.
+type ObjectValidator<S extends Record<string, Validator<unknown>>> = Validator<{
+  [K in keyof S]: S[K] extends Validator<infer T> ? Exclude<T, typeof SKIP_PROPERTY> : never;
+}> & { _schema: S };
+
+// An ERROR_CODES entry already pairs a code with its severity - callers name
+// the entry instead of re-opening the pair at each throw site.
+const invalid = (path: Path, entry: { code: string; severity: string }) =>
+  new ValidationError(path, entry.code, entry.severity);
+
 // Deprecated theme names, remapped for this session by types.theme below and
 // rewritten for good by the editor's "Migrate config" button (see EditorBase).
 const THEME_ALIASES: Record<string, string> = {
@@ -198,13 +211,8 @@ const ERROR_CODES = {
 const validateType =
   <T>(typeCheck: (v: unknown) => v is T, errorCode: { code: string; severity: string }): Validator<T> =>
   (value: unknown, path: Path = []) => {
-    if (is.nullish(value))
-      throw new ValidationError(
-        path,
-        ERROR_CODES.missingRequiredProperty.code,
-        ERROR_CODES.missingRequiredProperty.severity,
-      );
-    if (!typeCheck(value)) throw new ValidationError(path, errorCode.code, errorCode.severity);
+    if (is.nullish(value)) throw invalid(path, ERROR_CODES.missingRequiredProperty);
+    if (!typeCheck(value)) throw invalid(path, errorCode);
     return value;
   };
 
@@ -243,8 +251,7 @@ const types = {
   array:
     <T>(itemValidator: Validator<T>): Validator<Exclude<T, typeof SKIP_PROPERTY>[]> =>
     (value: unknown, path: Path = []) => {
-      if (!is.array(value))
-        throw new ValidationError(path, ERROR_CODES.invalidTypeArray.code, ERROR_CODES.invalidTypeArray.severity);
+      if (!is.array(value)) throw invalid(path, ERROR_CODES.invalidTypeArray);
 
       const validItems: Exclude<T, typeof SKIP_PROPERTY>[] = [];
       value.forEach((item: unknown, index: number) => {
@@ -261,14 +268,10 @@ const types = {
   // as array() above. Doesn't mark the key itself optional (a real
   // per-field-conditional mapped type is a step further TS makes awkward) -
   // every consumer already reads through `?.`/`??` regardless.
-  object: <S extends Record<string, Validator<unknown>>>(
-    schema: S,
-  ): Validator<{ [K in keyof S]: S[K] extends Validator<infer T> ? Exclude<T, typeof SKIP_PROPERTY> : never }> & {
-    _schema: S;
-  } => {
+  object: <S extends Record<string, Validator<unknown>>>(schema: S): ObjectValidator<S> => {
     const validator = (value: unknown, path: Path = []) => {
       if (!is.plainObject(value)) {
-        throw new ValidationError(path, ERROR_CODES.invalidTypeObject.code, ERROR_CODES.invalidTypeObject.severity);
+        throw invalid(path, ERROR_CODES.invalidTypeObject);
       }
 
       const result: Record<string, unknown> = {};
@@ -300,11 +303,7 @@ const types = {
     };
 
     (validator as unknown as { _schema: S })._schema = schema;
-    return validator as unknown as Validator<{
-      [K in keyof S]: S[K] extends Validator<infer T> ? Exclude<T, typeof SKIP_PROPERTY> : never;
-    }> & {
-      _schema: S;
-    };
+    return validator as unknown as ObjectValidator<S>;
   },
 
   // SKIP_PROPERTY here IS the field's own declared T | typeof SKIP_PROPERTY
@@ -375,14 +374,10 @@ const types = {
   enums: <T extends readonly unknown[]>(allowedValues: T): Validator<T[number]> => {
     const fn = (value: unknown, path: Path = []) => {
       if (is.nullish(value)) {
-        throw new ValidationError(
-          path,
-          ERROR_CODES.missingRequiredProperty.code,
-          ERROR_CODES.missingRequiredProperty.severity,
-        );
+        throw invalid(path, ERROR_CODES.missingRequiredProperty);
       }
       if (!allowedValues.includes(value)) {
-        throw new ValidationError(path, ERROR_CODES.invalidEnumValue.code, ERROR_CODES.invalidEnumValue.severity);
+        throw invalid(path, ERROR_CODES.invalidEnumValue);
       }
       return value as T[number];
     };
@@ -398,11 +393,9 @@ const types = {
   theme: <T extends readonly string[]>(allowedValues: T): Validator<T[number]> => {
     const fn = (value: unknown, path: Path = []) => {
       if (is.nullish(value) || is.emptyString(value)) return SKIP_PROPERTY as unknown as T[number];
-      if (!is.string(value))
-        throw new ValidationError(path, ERROR_CODES.invalidTheme.code, ERROR_CODES.invalidTheme.severity);
+      if (!is.string(value)) throw invalid(path, ERROR_CODES.invalidTheme);
       const resolved = (THEME_ALIASES[value] || value) as T[number];
-      if (!allowedValues.includes(resolved))
-        throw new ValidationError(path, ERROR_CODES.invalidTheme.code, ERROR_CODES.invalidTheme.severity);
+      if (!allowedValues.includes(resolved)) throw invalid(path, ERROR_CODES.invalidTheme);
       return resolved;
     };
     return Object.assign(fn, { allowedValues });
@@ -429,7 +422,7 @@ const types = {
         }
       }
 
-      throw new ValidationError(path, ERROR_CODES.invalidUnionType.code, ERROR_CODES.invalidUnionType.severity);
+      throw invalid(path, ERROR_CODES.invalidUnionType);
     };
     // First branch that carries a list wins: an enum|jinja union's options are
     // the enum branch's, the jinja branch has none of its own.
@@ -463,11 +456,7 @@ const types = {
   // since it tolerates per-field failures (a malformed zone doesn't drop the
   // whole watermark, see the CF5 fix this behavior traces back to) instead
   // of object()'s all-or-nothing error bundling.
-  watermarkObject: <S extends Record<string, Validator<unknown>>>(
-    schema: S,
-  ): Validator<{ [K in keyof S]: S[K] extends Validator<infer T> ? Exclude<T, typeof SKIP_PROPERTY> : never }> & {
-    _schema: S;
-  } => {
+  watermarkObject: <S extends Record<string, Validator<unknown>>>(schema: S): ObjectValidator<S> => {
     const fn = (value: unknown, path: Path = []) => {
       if (is.nullish(value) || !is.plainObject(value)) return SKIP_PROPERTY;
 
@@ -492,22 +481,13 @@ const types = {
 
       return result;
     };
-    return Object.assign(fn, { _schema: schema }) as Validator<{
-      [K in keyof S]: S[K] extends Validator<infer T> ? Exclude<T, typeof SKIP_PROPERTY> : never;
-    }> & { _schema: S };
+    return Object.assign(fn, { _schema: schema }) as ObjectValidator<S>;
   },
 
   entityId: ((value: unknown, path: Path = []) => {
-    if (is.nullish(value))
-      throw new ValidationError(
-        path,
-        ERROR_CODES.missingRequiredProperty.code,
-        ERROR_CODES.missingRequiredProperty.severity,
-      );
-    if (!is.string(value))
-      throw new ValidationError(path, ERROR_CODES.invalidTypeString.code, ERROR_CODES.invalidTypeString.severity);
-    if (!/^[a-z_]+\.[a-z0-9_]+$/.test(value))
-      throw new ValidationError(path, ERROR_CODES.invalidEntityId.code, ERROR_CODES.invalidEntityId.severity);
+    if (is.nullish(value)) throw invalid(path, ERROR_CODES.missingRequiredProperty);
+    if (!is.string(value)) throw invalid(path, ERROR_CODES.invalidTypeString);
+    if (!/^[a-z_]+\.[a-z0-9_]+$/.test(value)) throw invalid(path, ERROR_CODES.invalidEntityId);
 
     return value;
   }) as Validator<string>,
@@ -556,8 +536,7 @@ const types = {
   // seconds so every consumer works in one unit.
   duration: ((value: unknown, path: Path = []) => {
     const match = is.string(value) ? value.match(/^(\d+(?:\.\d+)?)(s|min|h|d)$/) : null;
-    if (!match)
-      throw new ValidationError(path, ERROR_CODES.invalidTypeString.code, ERROR_CODES.invalidTypeString.severity);
+    if (!match) throw invalid(path, ERROR_CODES.invalidTypeString);
     return NumberFormatter.durationToSeconds(Number(match[1]), match[2]) as number;
   }) as Validator<number>,
 
@@ -654,8 +633,7 @@ const types = {
 
   decimal: ((value: unknown, path: Path = []) => {
     if (is.nullish(value)) return SKIP_PROPERTY;
-    if (!is.unsignedInteger(value))
-      throw new ValidationError(path, ERROR_CODES.invalidDecimal.code, ERROR_CODES.invalidDecimal.severity);
+    if (!is.unsignedInteger(value)) throw invalid(path, ERROR_CODES.invalidDecimal);
 
     return value;
   }) as Validator<number>,
@@ -666,14 +644,10 @@ const types = {
   // output type, not a fully tagged union of every action kind.
   tapAction: ((value: unknown, path: Path = []) => {
     if (!is.plainObject(value)) {
-      throw new ValidationError(path, ERROR_CODES.invalidActionObject.code, ERROR_CODES.invalidActionObject.severity);
+      throw invalid(path, ERROR_CODES.invalidActionObject);
     }
     if (!is.string(value.action)) {
-      throw new ValidationError(
-        [...path, 'action'],
-        ERROR_CODES.missingActionKey.code,
-        ERROR_CODES.missingActionKey.severity,
-      );
+      throw invalid([...path, 'action'], ERROR_CODES.missingActionKey);
     }
 
     return value;
@@ -731,16 +705,12 @@ const types = {
     if (is.array(value)) {
       const invalidIndex = value.findIndex((v: unknown) => !is.string(v));
       if (invalidIndex !== -1) {
-        throw new ValidationError(
-          [...path, invalidIndex],
-          ERROR_CODES.invalidStateContentEntry.code,
-          ERROR_CODES.invalidStateContentEntry.severity,
-        );
+        throw invalid([...path, invalidIndex], ERROR_CODES.invalidStateContentEntry);
       }
       return value;
     }
 
-    throw new ValidationError(path, ERROR_CODES.invalidStateContent.code, ERROR_CODES.invalidStateContent.severity);
+    throw invalid(path, ERROR_CODES.invalidStateContent);
   }) as Validator<string[]>,
 
   // Discriminated on `key` (usually 'type') - picks the one validator in
@@ -754,27 +724,19 @@ const types = {
   ): Validator<M[keyof M] extends Validator<infer T> ? T : never> =>
     ((value: unknown, path: Path = []) => {
       if (!is.plainObject(value)) {
-        throw new ValidationError(path, ERROR_CODES.invalidTypeObject.code, ERROR_CODES.invalidTypeObject.severity);
+        throw invalid(path, ERROR_CODES.invalidTypeObject);
       }
 
       const discriminator = value[key];
 
       if (!is.string(discriminator)) {
-        throw new ValidationError(
-          [...path, key],
-          ERROR_CODES.invalidTypeString.code,
-          ERROR_CODES.invalidTypeString.severity,
-        );
+        throw invalid([...path, key], ERROR_CODES.invalidTypeString);
       }
 
       const validator = mapping[discriminator];
 
       if (!validator) {
-        throw new ValidationError(
-          [...path, key],
-          ERROR_CODES.invalidEnumValue.code,
-          ERROR_CODES.invalidEnumValue.severity,
-        );
+        throw invalid([...path, key], ERROR_CODES.invalidEnumValue);
       }
 
       return validator(value, path);
@@ -839,6 +801,11 @@ function getSchemaOptions(validator: Validator<unknown>): readonly unknown[] | u
   return (validator as { allowedValues?: readonly unknown[] }).allowedValues;
 }
 
+// Options carried by a struct beyond its field set. A derived schema
+// (delete/extend/reorder) inherits them: dropping them would silently
+// re-enable a rule the source variant opted out of.
+type StructOptions = { allowBelowBarPosition?: boolean };
+
 // eslint-disable-next-line sonarjs/max-lines-per-function -- fixed call chain.
 function struct<T>(
   // skipcq: JS-0323 -- `_schema` is used for dynamic per-field introspection
@@ -848,8 +815,9 @@ function struct<T>(
   // breaks every one of those call sites' property access; measured, not
   // guessed (see git history for this line).
   validator: Validator<T> & { _schema?: Record<string, Validator<any>> },
-  { allowBelowBarPosition = true } = {},
+  structOptions: StructOptions = {},
 ) {
+  const { allowBelowBarPosition = true } = structOptions;
   // Each applyXxxRule below is one independent preProcess step, pulled out
   // for the same reason as postProcess's own rules further down: keeps
   // preProcess itself just a fixed call sequence, not the source of its
@@ -1178,7 +1146,7 @@ function struct<T>(
     // through types.object(...) - a brand new call, so its own generic
     // infers the merged/filtered shape straight from newSchema's structure;
     // no need to thread the exact per-field S type through struct<T> itself.
-    extend: <E extends Record<string, Validator<unknown>>>(additionalFields: E) => {
+    extend: <E extends Record<string, Validator<unknown>>>(additionalFields: E, overrides: StructOptions = {}) => {
       if (!validator._schema) {
         throw new Error('Can only extend object schemas created with types.object');
       }
@@ -1188,10 +1156,10 @@ function struct<T>(
         ...additionalFields,
       };
 
-      return struct(types.object(newSchema));
+      return struct(types.object(newSchema), { ...structOptions, ...overrides });
     },
 
-    delete: (fieldsToDelete: string | string[]) => {
+    delete: (fieldsToDelete: string | string[], overrides: StructOptions = {}) => {
       if (!validator._schema) {
         throw new Error('Can only delete from object schemas created with types.object');
       }
@@ -1199,7 +1167,7 @@ function struct<T>(
       const toDelete = new Set(is.array(fieldsToDelete) ? fieldsToDelete : [fieldsToDelete]);
       const newSchema = Object.fromEntries(Object.entries(validator._schema).filter(([key]) => !toDelete.has(key)));
 
-      return struct(types.object(newSchema));
+      return struct(types.object(newSchema), { ...structOptions, ...overrides });
     },
 
     // No behavioral effect (nothing outside schema.ts reads .fields()) - lets
@@ -1219,7 +1187,7 @@ function struct<T>(
       const schema = validator._schema;
       const newSchema = Object.fromEntries(order.map((key) => [key, schema[key]]));
 
-      return struct(types.object(newSchema));
+      return struct(types.object(newSchema), structOptions);
     },
 
     fields: () => {
@@ -1340,68 +1308,89 @@ const badgeOverrides = <T extends readonly string[]>(hideTargets: T) => ({
  * normalize a raw config.
  */
 const YamlSchemaFactory = {
+  // Derived from card, not written out: 15 of its 20 fields were byte-identical
+  // copies, so a new card option had to be mirrored here by hand or silently
+  // skip the Feature. The five that genuinely differ are extended below.
   get feature() {
-    return struct(
-      types.object({
-        // ─── Entity & Data ──────────────────────────────────────────────────
-        // Optional, unlike every other variant: defaults to the parent Tile's
-        // own entity at runtime (see EntityProgressFeatures's `set context`).
+    return YamlSchemaFactory.card
+      .delete(
+        [
+          'name',
+          'decimal',
+          'unit',
+          'disable_unit',
+          'unit_spacing',
+          'unit_position',
+          'value_compact',
+          'value_sign',
+          'icon',
+          'color',
+          'bar_single_line',
+          'bar_max_width',
+          'icon_animation',
+          'density',
+          'min_width',
+          'height',
+          'frameless',
+          'marginless',
+          'reverse',
+          'reverse_secondary_info_row',
+          'force_circular_background',
+          'trend_indicator',
+          'status_label',
+          'text_shadow',
+          'hide',
+          'name_info',
+          'custom_info',
+          'multiline',
+          'state_content',
+          'badge_icon',
+          'badge_color',
+          'alert_when',
+          'tap_action',
+          'hold_action',
+          'double_tap_action',
+          'icon_tap_action',
+          'icon_hold_action',
+          'icon_double_tap_action',
+        ],
+        // A Feature defaults to bar_size: xlarge, which
+        // applyBelowBarPositionRule would rewrite to a bar_position: below
+        // that FEATURE_BAR_POSITIONS does not even offer.
+        { allowBelowBarPosition: false },
+      )
+      .extend({
+        // Optional, unlike every other variant: defaults to the parent Tile
+        // own entity at runtime (see EntityProgressFeatures set context).
         entity: types.optional(types.entityId),
-        attribute: types.optionalString(),
-        // Explicit shape instead of type-sniffing a scalar (number vs entity-id
-        // string vs jinja-looking string), symmetric with max_value: min_value:
-        // 10 | {entity, attribute} | {jinja}.
-        min_value: types.optional(types.numericEntityOrJinja()),
-        // Explicit shape, mirrors min_value: max_value: 10 | {entity,
-        // attribute} | {jinja}. The legacy bare entity-id string is rewritten
-        // into the map form by _customizeConfig before this schema ever sees it
-        // (single call site, see BaseConfigHelper.set config), so no string
-        // form is needed here.
-        max_value: types.fallbackTo(types.numericEntityOrJinja(), 100),
-
-        // ─── Appearance ─────────────────────────────────────────────────────
-        bar_color: types.optionalString(),
-        // Unlike Card/Badge/Template, a Feature's row height is fixed
-        // (--feature-height, see the .entity-progress-feature CSS rule) and
-        // doesn't scale with bar_size - so 'small' (8px) looks lost inside a
-        // 42px row. 'xlarge' matches --feature-height by construction.
+        // Tuned for the fixed 42px feature row, unlike card small.
         bar_size: types.enumsWithDefault(BAR_SIZES, 'xlarge'),
-        // 'up' is excluded (Card/Template only): scoped to .vertical.up-
-        // orientation CSS, and `layout` below is locked to 'horizontal'.
         bar_orientation: types.enumsWithDefault(BAR_ORIENTATIONS_NO_UP, 'ltr'),
-        // Locked to its only real value - see YamlSchemaFactory.badge.
         layout: types.enumsWithDefault(['horizontal'], 'horizontal'),
-        bar_color_mode: types.enumsWithDefault(BAR_COLOR_MODES, 'auto'),
-        // Only engages outside center_zero with a well-formed positive range
-        // (min > 0, max > min) — ProgressCalc.isLogScale falls back to linear
-        // otherwise, so an invalid combination degrades quietly instead of
-        // producing NaN.
-        bar_scale: types.enumsWithDefault(BAR_SCALES, 'linear'),
-        // [('radius', 'glass', 'gradient', 'shimmer')]
-        bar_effect: types.jinjaOrArrayWithValidatedElem(
-          Object.values(CARD.style.dynamic.progressBar.effect).map((e) => e.label),
-        ),
         bar_position: types.enumsWithDefault(FEATURE_BAR_POSITIONS, 'default'),
-        bar_segments: types.optionalNumber(),
-        center_zero: types.centerZero(),
-
-        // ─── Theme & Watermark ──────────────────────────────────────────────
-        theme: types.theme(THEME_KEYS),
-        custom_theme: types.fallbackTo(types.customTheme, SKIP_PROPERTY),
-        interpolate: types.optionalBooleanWithDefault(false),
-        watermark: types.watermarkObject(watermarkSchema),
-        peak_marker: types.peakMarker(),
-
-        // ─── Bar Stack ──────────────────────────────────────────────────────
-        bar_stack: types.optional(
-          types.object({
-            mode: types.enumsWithDefault(BAR_STACK_MODES, 'stacked'),
-            entities: types.optional(types.array(barStackEntity)),
-          }),
-        ),
-      }),
-      { allowBelowBarPosition: false },
-    );
+      })
+      .reorder([
+        'entity',
+        'attribute',
+        'min_value',
+        'max_value',
+        'bar_color',
+        'bar_size',
+        'bar_orientation',
+        'layout',
+        'bar_color_mode',
+        'bar_scale',
+        'bar_effect',
+        'bar_position',
+        'bar_segments',
+        'center_zero',
+        'theme',
+        'custom_theme',
+        'interpolate',
+        'watermark',
+        'peak_marker',
+        'bar_stack',
+      ]);
   },
 
   // eslint-disable-next-line sonarjs/max-lines-per-function -- flat field decl.

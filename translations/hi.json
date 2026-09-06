@@ -109,7 +109,7 @@
         "average_toggle": "औसत दिखाएं",
         "toggle": "पीक मार्कर"
       },
-      "peak_marker_unsupported": "पीक मार्कर के लिए sensor या number एंटिटी चाहिए, बिना attribute ओवरराइड के, जो timer या counter न हो — इस एंटिटी के लिए उपलब्ध नहीं है।",
+      "peak_marker_unsupported": "पीक मार्कर के लिए sensor या number एंटिटी चाहिए, बिना एट्रिब्यूट ओवरराइड के, जो timer या counter न हो — इस एंटिटी के लिए उपलब्ध नहीं है।",
       "percent": "प्रतिशत",
       "position": "स्थिति",
       "reverse": "टाइमर उलटें",

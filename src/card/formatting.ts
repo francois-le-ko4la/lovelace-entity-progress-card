@@ -102,25 +102,15 @@ const NumberFormatter = {
   },
 
   durationToSeconds(value: number, unit: string): number | null {
-    switch (unit) {
-      case 'd':
-        return value * 86400;
-      case 'h':
-        return value * 3600;
-      case 'min':
-        return value * 60;
-      case 's':
-        return value;
-      case 'ms':
-        return value * 0.001;
-      case 'μs':
-        return value * 0.000001;
-      default:
-        // CF5 - issue (critical) resolved - unknown/missing unit threw and
-        // crashed the card; return null so the caller can flag the entity as
-        // invalid
-        return null;
-    }
+    // Own property only: `unit` comes from an integration's own
+    // unit_of_measurement, and a prototype key ('constructor') would otherwise
+    // resolve to a function and turn the result into NaN instead of null.
+    const factor = Object.hasOwn(CARD.config.duration.secondsPerUnit, unit)
+      ? CARD.config.duration.secondsPerUnit[unit]
+      : undefined;
+    // CF5 - issue (critical) resolved - unknown/missing unit threw and crashed
+    // the card; return null so the caller can flag the entity as invalid
+    return factor === undefined ? null : value * factor;
   },
 
   convertDuration(duration: unknown): number {

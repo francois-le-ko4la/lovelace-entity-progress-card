@@ -10,26 +10,29 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v7
+        with:
+          # Full history: the preflight below resolves origin/main to prove the
+          # tag sits on it, which a shallow checkout makes impossible.
+          fetch-depth: 0
       - uses: actions/setup-node@v7
         with:
           node-version: '24'
           cache: 'npm'
       - run: npm ci
-      - name: Ensure dev mode and debug logging are off
-        run: npm run check:release-flags
-      - name: Validate before publishing (syntax, lint, translations sync)
-        run: npm run validate
-      - name: Build (minify)
-        run: npm run build:prod
-      - name: Sanity-check the minified output
-        run: node --check dist/entity-progress-card.js
-      - name: Enforce the language floor (issue #128)
-        run: npm run check:es-target
+      # The three things a push cannot check, because no tag exists yet. First,
+      # so an incoherent tag fails in seconds instead of after the full gate.
+      - name: Release preflight (tag ↔ VERSION ↔ CHANGELOG ↔ main)
+        run: node scripts/check-release-tag.js
+      # check:github is check:push minus the dev bundle: that one carries
+      # debug defaults and has no business on a release runner. Everything else
+      # is identical - check:push just calls this and adds the dev build.
+      - name: Full pre-release gate
+        run: npm run check:github
       - name: Upload to Release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: dist/*
-          file_glob: true
+          # Named, not a glob - the shipped bundle, explicitly.
+          file: dist/entity-progress-card.js
           tag: ${{ github.event.release.tag_name }}
           overwrite: true

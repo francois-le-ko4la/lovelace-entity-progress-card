@@ -1,12 +1,19 @@
 // Editor "duration field" (number+unit) for peak_marker.window (schema.ts's
 // types.duration) - same split as length.ts, minus the calc()/custom fallback.
 
+import { CARD } from './parameters.js';
+
 type DurationUnit = 's' | 'min' | 'h' | 'd';
 type ParsedDuration = { value: number; unit: DurationUnit };
 
-// Each unit's max is the 7-day equivalent (CARD.config.history.
-// maxWindowSeconds) - _fetchHistory's own cap, never silently exceeded here.
-const DURATION_MAX: Record<DurationUnit, number> = { s: 604800, min: 10080, h: 168, d: 7 };
+// Each unit's max is the maxWindowSeconds equivalent - _fetchHistory's own
+// cap, derived here rather than mirrored so the two can't drift apart.
+const DURATION_MAX = Object.fromEntries(
+  (['s', 'min', 'h', 'd'] as DurationUnit[]).map((unit) => [
+    unit,
+    Math.floor(CARD.config.history.maxWindowSeconds / CARD.config.duration.secondsPerUnit[unit]),
+  ]),
+) as Record<DurationUnit, number>;
 const DURATION_RE = /^(\d+(?:\.\d+)?)(s|min|h|d)$/;
 
 const parseDuration = (raw: unknown): ParsedDuration => {

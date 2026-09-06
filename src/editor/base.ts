@@ -91,6 +91,15 @@ const ENABLED_DISABLED_MODES = ['disabled', 'enabled'];
 type SchemaLookup = { variant: SchemaVariant; field: string };
 const from = (variant: SchemaVariant, field: string): SchemaLookup => ({ variant, field });
 
+// Every field element is born the same way - only what happens next differs
+// per field type (see #registerFieldEl for the matching tail).
+const createFieldEl = (field: FieldDef, tagName: string): EditorFieldElement => {
+  const el = document.createElement(tagName) as EditorFieldElement;
+  el.id = field.name;
+  el.style.width = '100%';
+  return el;
+};
+
 // Plain dropdowns: field type -> its translated option group, optionally
 // narrowed to the values one schema variant accepts.
 const SELECT_TYPES: Record<string, string | [group: string, keys: readonly string[] | SchemaLookup]> = {
@@ -577,19 +586,20 @@ class EditorBase extends HTMLElement {
     el.style.width = '100%';
     el.textContent = this.#hassProvider.localizeGroup(EDITOR_FIELD_NS)?.[field.name] ?? field.name;
     el.value = undefined;
+    return this.#registerFieldEl(field, el);
+  }
+
+  #registerFieldEl(field: FieldDef, el: EditorFieldElement): EditorFieldElement {
     this.#dom.registerField(field.name, el, field);
     return el;
   }
 
   #buildChipsField(field: FieldDef, tagName: string, optionKey: string): EditorFieldElement {
-    const el = document.createElement(tagName) as EditorFieldElement;
-    el.id = field.name;
-    el.style.width = '100%';
+    const el = createFieldEl(field, tagName);
     if (field.items) el.items = field.items;
     el.setLabels?.(this.#localizedOptions?.[optionKey]);
     el.value = is.array(this.#config?.[field.target ?? field.name]) ? this.#config[field.target ?? field.name] : [];
-    this.#dom.registerField(field.name, el, field);
-    return el;
+    return this.#registerFieldEl(field, el);
   }
 
   // optionKey defaults to field.name; overridden below for fields sharing a
@@ -602,9 +612,7 @@ class EditorBase extends HTMLElement {
     modes: string[],
     optionKey: string = field.name,
   ): EditorFieldElement {
-    const el = document.createElement(tagName) as EditorFieldElement;
-    el.id = field.name;
-    el.style.width = '100%';
+    const el = createFieldEl(field, tagName);
     el.modes = modes;
     // #resolveFieldMeta so labelKey is honored (this used to look up
     // field.name directly, stale once a field shares another's label).
@@ -612,8 +620,7 @@ class EditorBase extends HTMLElement {
     el.label = label ?? field.name;
     el.setLabels?.(this.#localizedOptions?.[optionKey]);
     el.value = value;
-    this.#dom.registerField(field.name, el, field);
-    return el;
+    return this.#registerFieldEl(field, el);
   }
 
   // labelKey != field.name: a dot-path field ('bar_stack.entities') labels
@@ -627,24 +634,19 @@ class EditorBase extends HTMLElement {
     addLabelDefault: string;
   }): EditorFieldElement {
     const { field, tagName, labelKey, rows, addLabelKey, addLabelDefault } = opts;
-    const el = document.createElement(tagName) as EditorFieldElement;
-    el.id = field.name;
-    el.style.width = '100%';
+    const el = createFieldEl(field, tagName);
     const fieldLabels = this.#hassProvider.localizeGroup(EDITOR_FIELD_NS);
     el.label = fieldLabels?.[labelKey] ?? labelKey;
     el.setAddLabel?.(fieldLabels?.[addLabelKey] ?? addLabelDefault);
     el.hass = this.hass;
     el.value = is.array(rows) ? rows : [];
-    this.#dom.registerField(field.name, el, field);
-    return el;
+    return this.#registerFieldEl(field, el);
   }
 
   // field.items is the optional-action key list; mirrors each field's own
   // labelKey convention ('hold_action' -> action.hold).
   #buildActionPickerField(field: FieldDef): EditorFieldElement {
-    const el = document.createElement(EntityProgressActionPicker.ELEMENT_NAME) as EditorFieldElement;
-    el.id = field.name;
-    el.style.width = '100%';
+    const el = createFieldEl(field, EntityProgressActionPicker.ELEMENT_NAME);
     const fieldLabels = this.#hassProvider.localizeGroup(EDITOR_FIELD_NS);
     const actionLabels = fieldLabels?.action as unknown as Record<string, string> | undefined;
     el.buttonLabel = fieldLabels?.action_picker ?? 'Add interaction';
@@ -652,8 +654,7 @@ class EditorBase extends HTMLElement {
       (field.items ?? []).map((k: string) => [k, actionLabels?.[k.replace(/_action$/, '')] ?? k]),
     );
     el.value = this.#resolveFieldMeta(field).value;
-    this.#dom.registerField(field.name, el, field);
-    return el;
+    return this.#registerFieldEl(field, el);
   }
 
   // Dispatch table (mirrors #getSelectorForType's own pattern) instead of a
@@ -770,9 +771,7 @@ class EditorBase extends HTMLElement {
       );
     }
 
-    this.#dom.registerField(field.name, el, field);
-
-    return el;
+    return this.#registerFieldEl(field, el);
   }
 
   // `config` is deliberately either source: #resolveValue below picks

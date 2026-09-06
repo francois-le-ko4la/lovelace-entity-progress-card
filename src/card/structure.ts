@@ -49,6 +49,16 @@ const Element = (obj: StructureElementSpec, extraClass = '') => {
   };
 };
 
+// The nesting every secondary-info variant shares: an ellipsis wrapper around
+// the value, holding its own `extra` span plus the `main` one when the card
+// type has a slot for it.
+const infoLine = (extraEl: StructureElementSpec, showMain: boolean, extraClass = '') =>
+  Element(CARD.htmlStructure.elements.ellipsisWrapper, extraClass).html(
+    Element(CARD.htmlStructure.elements.secondaryInfoValue).html(
+      Element(extraEl).html() + (showMain ? Element(CARD.htmlStructure.elements.secondaryInfoMain).html() : ''),
+    ),
+  );
+
 const StructureElements = {
   ripple: () => '<ha-ripple></ha-ripple>',
   // The card-level ripple lives in its own sibling div (see
@@ -84,32 +94,23 @@ const StructureElements = {
   // (never a main, whatever the caller passes); line 2 adds the main span only
   // when this card type actually has one (card/badge: yes, template: no slot at
   // all - see StructureElements.secondaryInfoWrapperMinimal).
-  secondaryInfoLine: (index: 1 | 2, hasMain: boolean) => {
-    const extraEl =
-      index === 1 ? CARD.htmlStructure.elements.secondaryInfoExtra : CARD.htmlStructure.elements.secondaryInfoExtra2;
-    const showMain = index === 2 && hasMain;
-    return Element(CARD.htmlStructure.elements.ellipsisWrapper, `secondary-info-line-${index}`).html(
-      Element(CARD.htmlStructure.elements.secondaryInfoValue).html(
-        Element(extraEl).html() + (showMain ? Element(CARD.htmlStructure.elements.secondaryInfoMain).html() : ''),
-      ),
-    );
-  },
+  secondaryInfoLine: (index: 1 | 2, hasMain: boolean) =>
+    infoLine(
+      index === 1 ? CARD.htmlStructure.elements.secondaryInfoExtra : CARD.htmlStructure.elements.secondaryInfoExtra2,
+      index === 2 && hasMain,
+      `secondary-info-line-${index}`,
+    ),
 
   secondaryInfoWrapperMultiline: (hasMain: boolean) =>
     Element(CARD.htmlStructure.elements.secondaryInfoWrapper).html(
       StructureElements.secondaryInfoLine(1, hasMain) + StructureElements.secondaryInfoLine(2, hasMain),
     ),
 
-  // Single-line counterpart to secondaryInfoLine above - same hasMain
-  // pattern, just one wrapper instead of two stacked lines.
+  // Single-line counterpart to secondaryInfoLine above - one wrapper instead
+  // of two stacked lines, and no per-line class.
   secondaryInfoWrapperSingleLine: (hasMain: boolean) =>
     Element(CARD.htmlStructure.elements.secondaryInfoWrapper).html(
-      Element(CARD.htmlStructure.elements.ellipsisWrapper).html(
-        Element(CARD.htmlStructure.elements.secondaryInfoValue).html(
-          Element(CARD.htmlStructure.elements.secondaryInfoExtra).html() +
-            (hasMain ? Element(CARD.htmlStructure.elements.secondaryInfoMain).html() : ''),
-        ),
-      ),
+      infoLine(CARD.htmlStructure.elements.secondaryInfoExtra, hasMain),
     ),
 
   secondaryInfoWrapper: (options: StructureOptions = {}) =>

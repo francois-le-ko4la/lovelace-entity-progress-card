@@ -41,17 +41,35 @@ npm run build:test   # → dist/entity-progress-card_dev.js (readable, not minif
 feature custom elements and prints the console banner — everything else in
 `src/` is reached from there, directly or transitively.
 
-`npm test` covers pure logic (schema validation, math, formatting) - see
-`test/`. It proves nothing about rendering, the editor, or Jinja timing: no test
-touches a real customElement, shadow root, or `hass` object, and there's no plan
-to change that (see [Rendering & performance](#rendering--performance)). To see
-the card render against real entities, point a Lovelace resource at the dev
-build and import [`docs/demo-dashboard-dev.yaml`](demo-dashboard-dev.yaml) into
-a real Home Assistant instance. Full steps (and the PR checklist) are in the
-[Contributing Guide](contributing.md#contribution-guidelines).
+Tests come in two layers, run by two different gates:
 
-Before opening a PR: `npm run validate` (syntax check + lint + type-check + unit
-tests + translations sync) — the same gate CI runs.
+- **`npm test`** — pure logic (schema validation, math, formatting), in
+  `test/card/` and `test/utils/`. No DOM, no `hass`.
+- **`npm run test:dom`** — mounts every registered custom element and builds
+  every editor against a real DOM (`happy-dom`), in `test/dom/`. It asserts that
+  things mount and build, never what they look like. `test/dom-setup.ts`
+  installs the browser globals - **never bind a constructor to the window**, it
+  breaks the `HTMLElement` prototype chain and the elements silently lose
+  `.style`. `test/ha-stubs.ts` stands in for what Home Assistant provides
+  (`ha-card`, `ha-svg-icon`, `action-handler`'s `bind()`) plus a `makeHass()`
+  whose `connection` is a real `EventTarget`.
+
+Neither covers rendering, real entity state, or the WebSocket Jinja round trip.
+To see the card render against real entities, point a Lovelace resource at the
+dev build and import [`docs/demo-dashboard-dev.yaml`](demo-dashboard-dev.yaml)
+into a real Home Assistant instance. Full steps (and the PR checklist) are in
+the [Contributing Guide](contributing.md#contribution-guidelines).
+
+Three gates, each named for when you run it. Each one contains the previous:
+
+|                | when                           | adds                                                                                  |
+| -------------- | ------------------------------ | ------------------------------------------------------------------------------------- |
+| `check:code`   | while you code                 | syntax, format, lint, types, i18n structure, logic tests                              |
+| `check:github` | every push **and** the release | release flags, knip, full i18n sync, markdown, `test:dom`, `build:prod`, es2021 floor |
+| `check:push`   | before pushing                 | the dev bundle (`build:test` + `node --check`)                                        |
+
+`check:github` deliberately never builds the dev bundle - it bakes in
+`__EPB_DEV_BUILD__: true` and has no business on a release runner.
 
 ## Design principles
 
@@ -1078,7 +1096,7 @@ Checklist for a new YAML option, in the order that avoids back-tracking:
   project-wide, `strict: true`): `src/` is virtually 100% `.ts` — the one
   remaining `.js` file, `translations.js`, is generated and never hand-edited
   (see [Internationalization](#internationalization)). `.ts` files are
-  type-checked by `npm run type-check` (`tsc`, wired into `validate`).
+  type-checked by `npm run type-check` (`tsc`, wired into `check:code`).
   `allowJs`/`checkJs: false` stay in place for the day a `.js` file is added: it
   can opt into the same checking without converting, via a `// @ts-check` pragma
   plus JSDoc type annotations. `eslint.config.mjs` has a matching `**/*.ts`
@@ -1161,9 +1179,11 @@ reasoning survives a maintainer handoff instead of living only in chat history.
     validation (`hacs/action`, category `plugin`). Deliberately unscoped — it
     checks `hacs.json`/README compliance too, not just `src/`, so a path filter
     would risk missing a manifest/README-only regression.
-  - `validate-js.yaml` — on `src/**`/`eslint.config.mjs`/`package.json`/
-    `package-lock.json` changes: `npm run validate` (syntax check, lint, full
-    translations sync).
+  - `validate-js.yaml` — on `src/**`/`test/**`/`scripts/**`/
+    `.github/workflows/**`/`translations/**`/`eslint.config.mjs`/
+    `package.json`/`package-lock.json` changes: `npm run check:github`, the same
+    gate `release.yaml` runs — whatever would block a release blocks the push
+    that feeds it.
   - `validate-i18n.yaml` — on `translations/**` changes:
     `npm run i18n:validate:structure` (well-formed JSON + template structure
     only — no JS sync required, so a translation-only PR isn't blocked on
@@ -1171,17 +1191,22 @@ reasoning survives a maintainer handoff instead of living only in chat history.
     [Internationalization](#internationalization)).
   - `validate-md.yaml` — on `**/*.md` changes: `npm run lint:md`.
   - `release.yaml` — on a **published GitHub release**:
-    `npm run check:release-flags` (safety net — fails if the committed
-    `DEBUG_DEFAULTS` baseline has any flag left `true`; `dev` is URL-derived so
-    it isn't checked here, see [Logging & debugging](#logging--debugging)),
-    `npm run validate`, `npm run build:prod` (esbuild, `--target=es2021`, pinned
-    as a devDependency — re-forces `DEBUG_DEFAULTS` all-`false` in the built
-    output regardless of the source state, see `scripts/lib/release-flags.js`),
-    a `node --check` sanity pass on the minified output,
-    `npm run check:es-target` (`es-check`, catches syntax newer than the
-    language floor that `node --check` alone can't - Node's own parser is newer
-    than the target, see issue #128), then uploads the artifact to the release
-    assets. HACS serves that asset.
+    `node scripts/check-release-tag.js` first (the three things a push cannot
+    check, because no tag exists yet: the tag equals `VERSION` in `meta.ts`,
+    `CHANGELOG.md` has that version's section, and the tagged commit is
+    reachable from `main` — hence the `fetch-depth: 0` checkout), then
+    `npm run check:github`, then uploads the artifact to the release assets.
+    That single gate opens on `check:release-flags` (safety net — fails if the
+    committed `DEBUG_DEFAULTS` baseline has any flag left `true`; `dev` is
+    URL-derived so it isn't checked here, see
+    [Logging & debugging](#logging--debugging)) and ends on `build:prod`
+    (esbuild, `--target=es2021`, pinned as a devDependency — re-forces
+    `DEBUG_DEFAULTS` all-`false` in the built output regardless of the source
+    state, see `scripts/lib/release-flags.js`), a `node --check` sanity pass on
+    the minified output and `npm run check:es-target` (`es-check`, catches
+    syntax newer than the language floor that `node --check` alone can't -
+    Node's own parser is newer than the target, see issue #128). The uploaded
+    file is named explicitly, never a `dist/*` glob. HACS serves that asset.
 - **Two build modes** (`scripts/build.js`, bundling `src/index.ts` via esbuild
   with `keepNames: true`): `build:test` → `entity-progress-card_dev.js` (debug
   baseline left as committed) and `build:prod` (`--prod`) →

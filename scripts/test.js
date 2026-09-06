@@ -12,6 +12,11 @@ const esbuild = require('esbuild');
 
 const TEST_DIR = 'test';
 const OUT_DIR = 'test-dist';
+// test/dom/ mounts real custom elements through happy-dom - slower, and only
+// worth paying for before a release (see the check:push npm script).
+// Everything else is pure logic and runs on every push.
+const DOM_DIR = path.join(TEST_DIR, 'dom');
+const DOM_ONLY = process.argv.includes('--dom');
 
 function findTestFiles(dir) {
   const found = [];
@@ -28,9 +33,13 @@ function main() {
     console.log(`No ${TEST_DIR}/ directory - nothing to test.`);
     return;
   }
-  const files = findTestFiles(TEST_DIR);
+  // OUT_DIR is wiped below, so the runner's own glob needs no filter: it runs
+  // whatever this pass decided to build.
+  const files = findTestFiles(TEST_DIR).filter((file) =>
+    DOM_ONLY ? file.startsWith(DOM_DIR) : !file.startsWith(DOM_DIR),
+  );
   if (files.length === 0) {
-    console.log(`No *.test.ts file found under ${TEST_DIR}/.`);
+    console.log(`No *.test.ts file found under ${DOM_ONLY ? DOM_DIR : TEST_DIR}/.`);
     return;
   }
 
@@ -47,9 +56,13 @@ function main() {
       // same reasoning as build.js's own --prod define, dev flags aren't
       // what's under test here.
       define: { __EPB_DEV_BUILD__: 'false' },
+      // src/ has no runtime dependency, so this only ever leaves the test-only
+      // ones (happy-dom) to Node's own resolver instead of inlining a whole
+      // DOM implementation into every test bundle.
+      packages: 'external',
     });
   }
-  console.log(`✅ Built ${files.length} test file(s) into ${OUT_DIR}/`);
+  console.log(`✅ Built ${files.length} ${DOM_ONLY ? 'DOM' : 'logic'} test file(s) into ${OUT_DIR}/`);
 }
 
 main();

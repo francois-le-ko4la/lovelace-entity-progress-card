@@ -41,7 +41,7 @@
         "tap": "Puudutuse käitumine"
       },
       "action_picker": "Lisa interaktsioon",
-      "add_entity": "Lisa objekt",
+      "add_entity": "Lisa olem",
       "add_zone": "Lisa tsoon",
       "alert_when": {
         "above": "Häire üle",
@@ -80,7 +80,7 @@
       "custom_theme": "Kohandatud teema tsoonid",
       "decimal": "Kuvamise täpsus",
       "density_toggle": "Kompaktne",
-      "entity": "Objekt",
+      "entity": "Olem",
       "fast_refresh": "Kiire värskendus (iga sekund)",
       "force_circular_background_mode": "Ikooni ümmargune taust",
       "frameless": "Raamita",

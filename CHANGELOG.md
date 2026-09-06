@@ -223,6 +223,18 @@ whichever entity the parent Tile card is already using.
   across all 39 languages.
 - **Round watermark and peak marks sat 1px low**, flush with the bar's bottom
   edge at `bar_size: xsmall` — exactly centered now.
+- **Editor labels named the wrong thing in 15 languages.** Swedish, Danish,
+  Norwegian, Indonesian, German and Ukrainian called the progress bar a drinks
+  bar, a toolbar strip or a panel; Swedish, Estonian and Latvian called an
+  entity a device, an object or a unit; Macedonian's unit label read as "unity";
+  Bengali and Hindi left `attribute` in English mid-sentence. Czech, Slovak,
+  Slovene and Greek each used two different words for the bar in the same editor
+  — one each now.  
+  ➡️ Discord @mooseBringer
+- **[`show_value`][multi-show_value] ignored the entity's own display
+  precision** in Multi-Card and Multi-Feature, always showing two decimals. It
+  now follows `display_precision` like a standalone card, and shows none for
+  timer, counter and duration entities or for a percentage.
 
 ### 📚 Documentation
 
@@ -300,12 +312,52 @@ whichever entity the parent Tile card is already using.
   schema that validates them, instead of a parallel list per variant.
 - Duplicated logic consolidated across the card, schema and editor — no visible
   change.
+- The Tile Feature's validation schema is derived from the Card's instead of
+  being written out separately — a new option reaches every variant the same
+  way.
+- A DOM test suite now mounts every card, badge, feature and editor on each
+  release build, and CI builds the shipped bundle on every push.
 
 > We care about getting the details right — but even so, something here might
 > have slipped through. You don't need to be a developer to notice it. If
 > something feels off, that's reason enough. Open a [GitHub issue]. Or say hi on
 > [Discord]. We'd rather know than have you go looking for a workaround on your
 > own.
+
+---
+
+## What's new (1.6.2-rc6)
+
+### 🐛 Fixes
+
+- **Editor labels named the wrong thing in 15 languages.** Swedish, Danish,
+  Norwegian, Indonesian, German and Ukrainian called the progress bar a drinks
+  bar, a toolbar strip or a panel; Swedish, Estonian and Latvian called an
+  entity a device, an object or a unit; Macedonian's unit label read as "unity";
+  Bengali and Hindi left `attribute` in English mid-sentence. Czech, Slovak,
+  Slovene and Greek each used two different words for the bar in the same editor
+  — one each now.  
+  ➡️ Discord @mooseBringer
+- **[`show_value`][multi-show_value] ignored the entity's own display
+  precision** in Multi-Card and Multi-Feature, always showing two decimals. It
+  now follows `display_precision` like a standalone card, and shows none for
+  timer, counter and duration entities or for a percentage.
+
+### 🧹 Under the hood
+
+- The Tile Feature's validation schema is derived from the Card's instead of
+  being written out separately, so a new option reaches it the same way it
+  already reached Badge and Template.
+- A DOM test suite mounts all seven registered elements and builds all five
+  editors against a real DOM (`happy-dom`), covering the half of the codebase
+  the pure-logic tests cannot reach.
+- The validation gates are named for when they run — `check:code` while coding,
+  `check:github` in CI, `check:push` before pushing — each one containing the
+  previous. CI now builds the shipped bundle on every push instead of only at
+  release time, and never builds the dev bundle.
+- Duplicated logic consolidated across the card, editor and schema internals:
+  the stub-config builder, the secondary-info line renderer, gradient direction,
+  DOM write helpers, duration units and the editor's field-element boilerplate.
 
 ---
 
@@ -6148,6 +6200,8 @@ experience:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#trend_indicator
 [peak_marker]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#peak_marker
+[multi-show_value]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#multi-show_value
 [card_mod]: https://github.com/thomasloven/lovelace-card-mod
 [README.md]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card#-prerequisites

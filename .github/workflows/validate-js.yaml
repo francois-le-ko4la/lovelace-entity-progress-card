@@ -4,20 +4,58 @@ on:
   push:
     paths:
       - "src/**"
+      - "test/**"
+      - "scripts/**"
+      - "translations/**"
+      - ".github/workflows/**"
       - "eslint.config.mjs"
       - "package.json"
       - "package-lock.json"
   pull_request:
     paths:
       - "src/**"
+      - "test/**"
+      - "scripts/**"
+      - "translations/**"
+      - ".github/workflows/**"
       - "eslint.config.mjs"
       - "package.json"
       - "package-lock.json"
   workflow_dispatch:
 
+# A second push supersedes the first: no point finishing a run nobody reads.
+concurrency:
+  group: validate-js-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  validate-js:
-    runs-on: "ubuntu-latest"
+  # The job list is derived from the `check:github` npm script, never written
+  # out here - a check added to the gate cannot be silently missing from CI.
+  matrix:
+    name: Build the check matrix
+    runs-on: ubuntu-latest
+    outputs:
+      checks: ${{ steps.derive.outputs.checks }}
+      chain: ${{ steps.derive.outputs.chain }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - id: derive
+        run: |
+          echo "checks=$(node scripts/ci-matrix.js)" >> "$GITHUB_OUTPUT"
+          echo "chain=$(node scripts/ci-matrix.js --chain)" >> "$GITHUB_OUTPUT"
+
+  # fail-fast: false — one failing check must not hide the other ten.
+  check:
+    name: ${{ matrix.check.name }}
+    needs: matrix
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        check: ${{ fromJson(needs.matrix.outputs.checks) }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -25,5 +63,19 @@ jobs:
           node-version: '24'
           cache: 'npm'
       - run: npm ci
-      - name: Syntax, lint and full translations sync (JSON ↔ JS ↔ template)
-        run: npm run validate
+      - run: ${{ matrix.check.run }}
+
+  # Genuinely sequential: check:es-target reads the built bundle, and the DOM
+  # suite mounts it.
+  bundle:
+    name: Build and exercise the shipped bundle
+    needs: matrix
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: 'npm'
+      - run: npm ci
+      - run: ${{ needs.matrix.outputs.chain }}

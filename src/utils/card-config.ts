@@ -39,6 +39,9 @@ const configBase = {
   // How far back trend_indicator.window/peak_marker.window may seed from HA
   // history (7 days) - shared cap, both read the same recorder data.
   history: { maxWindowSeconds: 604800 },
+  // Seconds per duration unit - the single source for both parsing a duration
+  // string and deriving each unit's slider bound from maxWindowSeconds above.
+  duration: { secondsPerUnit: { d: 86400, h: 3600, min: 60, s: 1, ms: 0.001, μs: 0.000001 } as Record<string, number> },
   msFactor: 1000,
   shadowMode: 'open',
   stub: {

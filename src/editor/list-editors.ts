@@ -98,8 +98,22 @@ abstract class ListEditorBase extends HTMLElement {
   _shadow!: ShadowRoot;
 
   abstract _buildDOM(): void;
-  abstract _render(): void;
   abstract _dispatch(): void;
+
+  // Wrapper class of one rendered row, and its contents. Only these differ
+  // between the concrete lists - the loop below is the same for both.
+  abstract _rowClass: string;
+  abstract _buildRow(item: Record<string, unknown>, index: number): Node[];
+
+  _render() {
+    this._listEl.innerHTML = '';
+    this._value.forEach((item, index) => {
+      const row = document.createElement('div');
+      row.className = this._rowClass;
+      row.append(...this._buildRow(item, index));
+      this._listEl.appendChild(row);
+    });
+  }
 
   get hass(): HomeAssistant | null {
     return this._hass;
@@ -304,19 +318,17 @@ class EntityProgressBarStackEditor extends ListEditorBase {
     });
   }
 
-  _render() {
-    this._listEl.innerHTML = '';
-    for (let i = 0; i < this._value.length; i++) {
-      const item = this._value[i];
+  _rowClass = 'row-card';
 
-      const card = document.createElement('div');
-      card.className = 'row-card';
-      card.append(this._buildRowHeader('row-header', 'row-title', `#${i + 1}`, i), this.#entityField(item, i));
-      if (item.entity) card.append(this.#attributeField(item, i));
-      card.append(this._colorField(i, 'color', 'Color', item.color), this.#subtractField(item, i));
-
-      this._listEl.appendChild(card);
-    }
+  _buildRow(item: Record<string, unknown>, index: number): Node[] {
+    return [
+      this._buildRowHeader('row-header', 'row-title', `#${index + 1}`, index),
+      this.#entityField(item, index),
+      // Nothing to pick an attribute on until an entity is chosen.
+      ...(item.entity ? [this.#attributeField(item, index)] : []),
+      this._colorField(index, 'color', 'Color', item.color),
+      this.#subtractField(item, index),
+    ];
   }
 }
 
@@ -367,27 +379,21 @@ class EntityProgressCustomThemeEditor extends ListEditorBase {
     });
   }
 
-  _render() {
-    this._listEl.innerHTML = '';
-    for (let i = 0; i < this._value.length; i++) {
-      const item = this._value[i];
+  _rowClass = 'zone';
 
-      const numbers = document.createElement('div');
-      numbers.className = 'numbers-row';
-      numbers.append(this.#numberField(item, i, 'min'), this.#numberField(item, i, 'max'));
+  _buildRow(item: Record<string, unknown>, index: number): Node[] {
+    const numbers = document.createElement('div');
+    numbers.className = 'numbers-row';
+    numbers.append(this.#numberField(item, index, 'min'), this.#numberField(item, index, 'max'));
 
-      const zone = document.createElement('div');
-      zone.className = 'zone';
-      zone.append(
-        this._buildRowHeader('zone-header', 'zone-title', `Zone ${i + 1}`, i),
-        numbers,
-        this.#iconField(item, i),
-        this._colorField(i, 'color', 'Icon & bar color', item.color),
-        this._colorField(i, 'icon_color', 'Icon color', item.icon_color),
-        this._colorField(i, 'bar_color', 'Bar color', item.bar_color),
-      );
-      this._listEl.appendChild(zone);
-    }
+    return [
+      this._buildRowHeader('zone-header', 'zone-title', `Zone ${index + 1}`, index),
+      numbers,
+      this.#iconField(item, index),
+      this._colorField(index, 'color', 'Icon & bar color', item.color),
+      this._colorField(index, 'icon_color', 'Icon color', item.icon_color),
+      this._colorField(index, 'bar_color', 'Bar color', item.bar_color),
+    ];
   }
 }
 

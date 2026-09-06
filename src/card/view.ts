@@ -1117,11 +1117,7 @@ class ViewBase extends ViewCore {
       unitPosition: this._configHelper.config.unit_position ?? CARD.config.unit.unitPosition.after,
     });
 
-    this.#theme.configure({
-      theme: this.resolvedTheme,
-      customTheme: this._configHelper.config.custom_theme,
-      interpolate: this._configHelper.config.interpolate,
-    });
+    this.#configureTheme();
 
     Object.assign(this._currentValue, {
       value: this._configHelper.config.entity,
@@ -1504,11 +1500,7 @@ class ViewBase extends ViewCore {
     // and stable across refreshes, so this stays scoped to the one case
     // that actually needs re-resolving on every hass update.
     if (this._configHelper.config.theme === 'battery_adaptive') {
-      this.#theme.configure({
-        theme: this.resolvedTheme,
-        customTheme: this._configHelper.config.custom_theme,
-        interpolate: this._configHelper.config.interpolate,
-      });
+      this.#configureTheme();
     }
     this.#theme.value =
       this.#percentHelper.valueForThemes(this.#theme.isCustomTheme, this.#theme.isBasedOnPercentage) ?? 0;
@@ -1602,6 +1594,16 @@ class ViewBase extends ViewCore {
   get autoRefreshInterval(): number | null {
     if (!this.isActiveTimer) return null;
     return ViewBase.#SECONDS_SHOWING_UNITS.has(this.#getCurrentUnit()) ? 1000 : 60000;
+  }
+
+  // Which config keys feed the theme, in one place: called on `set config`
+  // and again per refresh for battery_adaptive (see its own comment there).
+  #configureTheme() {
+    this.#theme.configure({
+      theme: this.resolvedTheme,
+      customTheme: this._configHelper.config.custom_theme,
+      interpolate: this._configHelper.config.interpolate,
+    });
   }
 
   #getCurrentUnit(): string {

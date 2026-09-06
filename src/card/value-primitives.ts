@@ -27,7 +27,7 @@ class TypedValueHelper<T = unknown> {
 
   set value(newValue: unknown) {
     this.#isValid = this._validate(newValue);
-    this.#value = this._validate(newValue) ? newValue : null;
+    this.#value = this.#isValid ? (newValue as T) : null;
   }
 
   get value(): T | null {
@@ -94,7 +94,7 @@ class UnitHelper {
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
   toString(): string {
-    return this.#isDisabled ? '' : this.#value;
+    return this.value;
   }
 }
 
