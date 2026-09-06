@@ -89,7 +89,7 @@ const makeHass = (overrides: Record<string, unknown> = {}) => {
     language: 'en',
     localize: (key: string) => key,
     callWS: () => Promise.resolve([]),
-    callService: () => Promise.resolve(undefined),
+    callService: () => Promise.resolve(),
     connection,
     ...overrides,
   } as unknown as Record<string, unknown>;
