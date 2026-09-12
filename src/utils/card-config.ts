@@ -92,6 +92,10 @@ const htmlStructure = {
     // they can share one row, with the bar as a separate sibling row below
     // (see StructureElements.createContentBody).
     nameSecondaryRow: { element: 'div', class: 'name-secondary-row' },
+    // density: single_line only - wraps name+secondary_info so the whole row
+    // truncates once, at its end, instead of each box ellipsing on its own
+    // (see StructureElements.createContentBody and styles.ts's DENSITY block).
+    infoRow: { element: 'div', class: 'info-row' },
   },
   elements: {
     icon: { element: 'div', class: 'icon' },
@@ -310,12 +314,16 @@ const style = {
         value: { var: '--low-watermark-value', default: 20 },
         color: { var: '--low-watermark-color', default: HA_CONTEXT.colors.red },
         opacity: { var: '--low-watermark-opacity-value' },
+        lineSize: { var: '--low-watermark-line-size' },
       },
       high: {
         value: { var: '--high-watermark-value', default: 80 },
         color: { var: '--high-watermark-color', default: HA_CONTEXT.colors.red },
         opacity: { var: '--high-watermark-opacity-value' },
+        lineSize: { var: '--high-watermark-line-size' },
       },
+      // Still written, still the fallback each side reads when it has no
+      // line_size of its own - it is no longer the only value there is.
       lineSize: { var: '--watermark-line-size' },
       // Still the base .mark opacity (zeroMark/valueMarker, and low/high's
       // own fallback when a side doesn't override it) - see styles.ts.
@@ -326,17 +334,24 @@ const style = {
         value: { var: '--peak-min-value' },
         color: { var: '--peak-min-color', default: HA_CONTEXT.colors.stateIcon },
         opacity: { var: '--peak-min-opacity-value' },
+        lineSize: { var: '--peak-min-line-size' },
       },
       max: {
         value: { var: '--peak-max-value' },
         color: { var: '--peak-max-color', default: HA_CONTEXT.colors.stateIcon },
         opacity: { var: '--peak-max-opacity-value' },
+        lineSize: { var: '--peak-max-line-size' },
       },
       average: {
         value: { var: '--peak-average-value' },
         color: { var: '--peak-average-color', default: HA_CONTEXT.colors.stateIcon },
         opacity: { var: '--peak-average-opacity-value' },
+        lineSize: { var: '--peak-average-line-size' },
       },
+      // The family's shared thickness, read by a mark that has none of its
+      // own - watermark's own twin, and what stops a peak line from borrowing
+      // watermark's.
+      lineSize: { var: '--peak-marker-line-size' },
     },
     secondaryInfoError: 'secondary-info-error',
     show: 'show',
@@ -352,6 +367,9 @@ const style = {
       unit: { label: 'unit' },
       progress_bar: { label: 'progress_bar', class: 'hide-progress-bar' },
     },
+    // density: single_line - set on .content-section itself by
+    // StructureElements.createContent, not on the card.
+    singleLineRow: 'single-line-row',
     frameless: 'frameless',
     marginless: 'marginless',
   },

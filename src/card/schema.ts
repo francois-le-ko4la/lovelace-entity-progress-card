@@ -43,6 +43,7 @@ type WatermarkMarkOverride = {
   type?: string;
   opacity?: number;
   color?: string;
+  line_size?: string;
 };
 type WatermarkMark = boolean | ValueConfig | WatermarkMarkOverride;
 // Discriminates the override object from ValueConfig's own {entity,
@@ -75,6 +76,8 @@ const markType = (mark: WatermarkMark, fallback: string): string =>
   isMarkOverride(mark) && is.string(mark.type) ? mark.type : fallback;
 const markColor = (mark: WatermarkMark, fallback?: string): string | undefined =>
   (isMarkOverride(mark) ? mark.color : undefined) ?? fallback;
+const markLineSize = (mark: WatermarkMark, fallback: string): string =>
+  (isMarkOverride(mark) ? mark.line_size : undefined) ?? fallback;
 
 // status_label: string (shorthand for { jinja }) | { jinja, position,
 // color_source } - same idea as badge_icon/badge_color, already bare Jinja
@@ -169,19 +172,17 @@ const FEATURE_BAR_POSITIONS = ['default', 'top', 'bottom'];
 // applyDensityRule), so the editor and the view share this list rather than
 // deriving one.
 const DENSITY_COMPACT_BAR_POSITIONS = ['top', 'bottom', 'background'];
+
+// 'single_line' lays icon, name, secondary and bar out as four siblings on one
+// row - a shape only 'horizontal' has, hence the forcing in applyDensityRule.
+const DENSITY_MODES = ['default', 'compact', 'single_line'];
 const BAR_COLOR_MODES = ['auto', 'segment', 'rainbow', 'rainbow_full'];
 const BAR_SCALES = ['linear', 'log'];
 const BAR_STACK_MODES = ['stacked', 'proportional', 'net'];
 // The six interaction fields, shared by the badge schema's own delete list,
 // SCHEMA_DEFAULTS below and the editor's isolated-keys set.
-const ACTION_FIELDS = [
-  'tap_action',
-  'hold_action',
-  'double_tap_action',
-  'icon_tap_action',
-  'icon_hold_action',
-  'icon_double_tap_action',
-] as const;
+const ICON_ACTION_FIELDS = ['icon_tap_action', 'icon_hold_action', 'icon_double_tap_action'] as const;
+const ACTION_FIELDS = ['tap_action', 'hold_action', 'double_tap_action', ...ICON_ACTION_FIELDS] as const;
 const UNIT_SPACINGS = Object.values(CARD.config.unit.unitSpacing);
 const WATERMARK_TYPES = ['blended', 'area', 'striped', 'triangle', 'round', 'line'];
 const PEAK_MARK_TYPES = ['line', 'round', 'triangle'];
@@ -430,9 +431,8 @@ const types = {
     return withOptions(fn as Validator<T[number] extends Validator<infer U> ? U : never>, source ?? {});
   },
 
-  arrayWithValidatedElem:
-    <T extends readonly unknown[]>(allowedValues: T): Validator<T[number][]> =>
-    (value: unknown, _path: Path = []) => {
+  arrayWithValidatedElem: <T extends readonly unknown[]>(allowedValues: T): Validator<T[number][]> => {
+    const fn = (value: unknown, _path: Path = []) => {
       if (is.nullish(value)) return SKIP_PROPERTY as unknown as T[number][];
 
       const valueArray = is.array(value) ? value : [value];
@@ -441,7 +441,11 @@ const types = {
       if (validItems.length === 0) return SKIP_PROPERTY as unknown as T[number][];
 
       return validItems;
-    },
+    };
+    // Same as jinjaOrArrayWithValidatedElem below: fieldOptions() reads this
+    // to build the editor list, so the array-only form has to carry it too.
+    return Object.assign(fn, { allowedValues });
+  },
 
   jinjaOrArrayWithValidatedElem: <T extends readonly unknown[]>(allowedValues: T): Validator<string | T[number][]> => {
     const fn = (value: unknown, path: Path = []) => {
@@ -573,10 +577,11 @@ const types = {
           types.numericEntityOrJinja(),
           types.object({
             value: types.optional(types.numericEntityOrJinja()),
-            as: types.enumsWithDefault(['auto', 'percent'], 'auto'),
+            as: types.optional(types.enums(['auto', 'percent'])),
             type: types.optional(types.enums(WATERMARK_TYPES)),
             opacity: types.optionalNumber(),
             color: types.optionalString(),
+            line_size: types.optionalString(),
           }),
         )(nestValueShapeUnderValue(value), path)) as Validator<WatermarkMark>,
       defaultValue,
@@ -584,7 +589,7 @@ const types = {
 
   // peak_marker.min/.max/.average: absent (hidden) | true (shown, inherits
   // the top-level type/opacity) | a color string (shorthand) | { type,
-  // opacity, color } to override just that mark.
+  // opacity, color, line_size } to override just that mark.
   peakMark: () =>
     types.union(
       types.boolean,
@@ -593,6 +598,7 @@ const types = {
         type: types.optional(types.enums(PEAK_MARK_TYPES)),
         opacity: types.optionalNumber(),
         color: types.optionalString(),
+        line_size: types.optionalString(),
       }),
     ),
 
@@ -624,6 +630,10 @@ const types = {
       type: types.enumsWithDefault(PEAK_MARK_TYPES, 'line'),
       opacity: types.optionalNumberWithDefault(0.8),
       color: types.optionalString(),
+      // Its own, no longer borrowed from watermark's - a peak mark drawn as a
+      // line used to read watermark.line_size through the shared .wm-line
+      // rule, whatever the two had to do with each other.
+      line_size: types.optionalStringWithDefault('1px'),
       min: types.optional(types.peakMark()),
       max: types.optional(types.peakMark()),
       average: types.optional(types.peakMark()),
@@ -931,9 +941,14 @@ function struct<T>(
   // either. By this point layout/bar_position/bar_size are already resolved
   // to final values, so this check can't be fooled by an unset field.
   const applyBarMaxWidthRule = (result: Record<string, unknown>) => {
+    // `??`: a Multi row has no layout/bar_position key at all (multiRow deletes
+    // both - its shape settles them, see #toRowConfig forcing single_line),
+    // where a bare `=== 'horizontal'` read as "not allowed" and wiped a width
+    // the row does honor. Every other variant always carries both, so the
+    // fallbacks only ever apply where the key is genuinely gone.
     const barMaxWidthAllowed =
-      result.layout === CARD.layout.orientations.horizontal.label &&
-      result.bar_position === 'default' &&
+      (result.layout ?? CARD.layout.orientations.horizontal.label) === CARD.layout.orientations.horizontal.label &&
+      (result.bar_position ?? 'default') === 'default' &&
       result.bar_size !== CARD.style.bar.sizeOptions.xlarge;
     if (result.bar_max_width && !barMaxWidthAllowed) result.bar_max_width = undefined;
   };
@@ -1024,6 +1039,17 @@ function struct<T>(
   // Either way bar_position must leave {default, below, compact_below},
   // which share a row with name/secondary_info and need the room back.
   const applyDensityRule = (result: Record<string, unknown>) => {
+    // 'single_line' only has a horizontal shape, so it takes the layout with
+    // it rather than rendering as something it isn't. bar_position stays
+    // 'default': the row puts the bar after the content itself (see
+    // StructureElements.createContent), it is not one of the standalone
+    // top/bottom/background containers.
+    if (result.density === 'single_line') {
+      result.layout = CARD.layout.orientations.horizontal.label;
+      result.bar_position = 'default';
+      result.multiline = false;
+      return;
+    }
     if (result.density !== 'compact') return;
     if (!DENSITY_COMPACT_BAR_POSITIONS.includes(result.bar_position as string)) {
       result.bar_position = 'top';
@@ -1235,6 +1261,41 @@ type Infer<S extends { validate: (data: Record<string, unknown>) => { isValid: b
   { isValid: true }
 >['config'];
 
+// Shared by card's own `hide` and multiRow's array-only variant below.
+// The card's own hide - array or Jinja, so the editor keeps its simple/
+// advanced switch - with a default, and an explicit `[]` that survives it:
+// without
+// that second half a default could never be turned off, since
+// arrayWithValidatedElem reads an empty list as "nothing said" - which is the
+// only way to ask a Feature row for its icon back.
+const hideWithDefault = <T extends readonly unknown[]>(targets: T, fallback: T[number][]) => {
+  const inner = types.jinjaOrArrayWithValidatedElem(targets);
+  const fn = (value: unknown, path: Path = []) => {
+    if (is.array(value) && value.length === 0) return [];
+    const parsed = inner(value, path);
+    return parsed === (SKIP_PROPERTY as unknown) ? fallback : parsed;
+  };
+  return Object.assign(fn, { allowedValues: targets, defaultValue: fallback });
+};
+
+// What a row IS, never how the stack looks: meaningless above one row, so
+// absent from both aggregator schemas.
+const ROW_IDENTITY_FIELDS = ['entity', 'attribute', 'name', 'icon'] as const;
+
+const HIDE_TARGETS = ['icon', 'name', 'value', 'unit', 'secondary_info', 'progress_bar', 'shape'];
+
+// A Multi row is handed straight to its own entity-progress-card child, which
+// runs the full card schema on it - postProcess included. Re-validating it
+// here would duplicate that with a weaker engine (no postProcess), so this
+// checks only the shape the aggregator itself reads and keeps the rest
+// verbatim. Same per-item leniency as barStackEntity: one bad row drops, the
+// others stand.
+const multiRowEntry: Validator<unknown> = (value: unknown, _path: Path = []) => {
+  if (is.nonEmptyString(value)) return value;
+  if (is.plainObject(value) && is.nonEmptyString(value.entity)) return value;
+  return SKIP_PROPERTY;
+};
+
 const barStackEntity = types.fallbackTo(
   types.object({
     entity: types.entityId,
@@ -1262,6 +1323,9 @@ const watermarkSchema = {
   color: types.optionalString(),
   type: types.optional(types.enums(WATERMARK_TYPES)),
   line_size: types.optionalStringWithDefault('1px'),
+  // Shared by both sides unless one says otherwise - same three-level shape
+  // as type/opacity/color/line_size above it.
+  as: types.enumsWithDefault(['auto', 'percent'], 'auto'),
 };
 
 // Dropped from Badge and Badge Template alike - deleting a key the source
@@ -1449,7 +1513,7 @@ const YamlSchemaFactory = {
         // 'compact' forces layout: horizontal and bar_position into
         // {top, bottom, background} - see applyDensityRule for the full
         // rewrite/clear list this triggers.
-        density: types.enumsWithDefault(['default', 'compact'], 'default'),
+        density: types.enumsWithDefault(DENSITY_MODES, 'default'),
         min_width: types.optionalString(),
         height: types.optionalString(),
         frameless: types.optionalBooleanWithDefault(false),
@@ -1468,15 +1532,7 @@ const YamlSchemaFactory = {
         text_shadow: types.optionalBooleanWithDefault(false),
 
         // ─── Visibility & Content ───────────────────────────────────────────
-        hide: types.jinjaOrArrayWithValidatedElem([
-          'icon',
-          'name',
-          'value',
-          'unit',
-          'secondary_info',
-          'progress_bar',
-          'shape',
-        ]),
+        hide: types.jinjaOrArrayWithValidatedElem(HIDE_TARGETS),
         name_info: types.optionalString(),
         custom_info: types.optionalString(),
         // Badge/badgeTemplate opt out (see their own .delete(['multiline'])):
@@ -1647,6 +1703,85 @@ const YamlSchemaFactory = {
       ]);
   },
 
+  // A Multi row IS an entity-progress-card (see multi.ts) - so this is the
+  // card, minus only what the row shape has already settled on its behalf:
+  // its frame, its layout, and where the bar sits. Everything else it keeps,
+  // Jinja text fields included, because everything else still means the same
+  // thing on a row as on a card - and its editor is the card's own form minus
+  // the same sections (see EditorFactory.buildMultiRow).
+  get multiRow() {
+    return YamlSchemaFactory.card.delete([
+      'layout',
+      'density',
+      'bar_position',
+      'bar_single_line',
+      'multiline',
+      'min_width',
+      'height',
+      'frameless',
+      'marginless',
+    ]);
+  },
+
+  // A Feature's rows are a fraction of a single 42px HA row, so their icon
+  // lands at a few px (see multi.ts's rowMetrics). Too small to aim at, and
+  // too small for a circular background to read as one: both notions go from
+  // the ROW, not from the aggregator - it is the row that would have offered
+  // them, in its own editor and its own hide chips. The Card's rows have the
+  // room and keep all three.
+  get multiFeatureRow() {
+    return YamlSchemaFactory.multiRow
+      .delete([
+        ...ICON_ACTION_FIELDS,
+        'force_circular_background',
+        // Everything that annotates a corner of the card, and the alert with
+        // them: a Feature row is a slice of a single 42px HA row, with no
+        // corner to annotate, no frame to color and an icon a badge cannot
+        // sit on.
+        'trend_indicator',
+        'status_label',
+        'badge_icon',
+        'badge_color',
+        'alert_when',
+      ])
+      .extend({
+        // Hidden by default, not forced: a Feature's rows split one 42px HA
+        // row between them, so an icon and a name do not fit unless the
+        // stack is short. `hide: []` asks for them back.
+        hide: hideWithDefault(
+          HIDE_TARGETS.filter((target) => target !== 'shape'),
+          ['icon', 'name'],
+        ),
+      });
+  },
+
+  // What both aggregators share: the row options minus the four that identify
+  // one row rather than describing the stack. A name or an icon common to
+  // every row is a coincidence, never a default - see the editor's own
+  // NEVER_SHARED (multi-cascade.ts), which keeps them off this level too.
+  // Plus the entity list itself, which multi.ts spreads into each child.
+  get multiAggregator() {
+    return YamlSchemaFactory.multiRow.delete([...ROW_IDENTITY_FIELDS]).extend({
+      entities: types.optional(types.array(multiRowEntry)),
+    });
+  },
+
+  get multiCard() {
+    return YamlSchemaFactory.multiAggregator.extend({
+      // Grid rows the card occupies; one per entity when unset.
+      rows: types.optional(types.number),
+    });
+  },
+
+  // Same, minus `rows`: a Multi Feature is always exactly one HA feature row,
+  // never more (see EntityProgressMultiFeature._applySizing). Everything else
+  // it drops, it drops because its rows do (multiFeatureRow above).
+  get multiFeature() {
+    return YamlSchemaFactory.multiFeatureRow.delete([...ROW_IDENTITY_FIELDS]).extend({
+      entities: types.optional(types.array(multiRowEntry)),
+    });
+  },
+
   // Same badge shape as .badge above, applied to .template instead of .card -
   // `hide` drops 'unit' too, which Template has no key for.
   get badgeTemplate() {
@@ -1659,12 +1794,22 @@ const YamlSchemaFactory = {
 export type { Infer };
 export type { ValueConfig };
 export { entityOf, attributeOf, jinjaOf };
-export { markShown, markValue, markAs, markType, markOpacity, markColor, isMarkOverride };
+export { markShown, markValue, markAs, markType, markOpacity, markColor, markLineSize, isMarkOverride };
 export { statusLabelObj, rewrapStatusLabel };
 export { THEME_ALIASES };
 // Each YamlSchemaFactory getter rebuilds its whole schema on access - cached
 // here so a caller can ask per field without paying for it every time.
-type SchemaVariant = 'card' | 'template' | 'badge' | 'badgeTemplate' | 'feature';
+type SchemaVariant =
+  | 'card'
+  | 'template'
+  | 'badge'
+  | 'badgeTemplate'
+  | 'feature'
+  | 'multiRow'
+  | 'multiFeatureRow'
+  | 'multiAggregator'
+  | 'multiCard'
+  | 'multiFeature';
 const SCHEMA_CACHE = new Map<SchemaVariant, { fieldOptions: (name: string) => readonly unknown[] | undefined }>();
 const schemaOptions = (variant: SchemaVariant, field: string): readonly string[] => {
   let schema = SCHEMA_CACHE.get(variant);
@@ -1682,6 +1827,8 @@ export { schemaOptions, type SchemaVariant };
 // struct().fieldOptions - see SELECT_TYPES.
 export { BAR_SIZES, BAR_POSITIONS, WATERMARK_TYPES, PEAK_MARK_TYPES, DENSITY_COMPACT_BAR_POSITIONS };
 export { ACTION_FIELDS };
+export { DENSITY_MODES };
+export { ROW_IDENTITY_FIELDS };
 export type { WatermarkMark };
 export { YamlSchemaFactory };
 

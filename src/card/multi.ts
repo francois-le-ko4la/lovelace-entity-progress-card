@@ -1,11 +1,12 @@
 /*
  * Multi-bar orchestrators (V1 skeleton).
  *
- * The child brick is entity-progress-FEATURE: it already renders the bare bar
- * (a <div>, no ha-card frame, bar centered in --feature-height), so there is no
- * card chrome to fight - it's created directly (document.createElement, sync),
- * gets setConfig + hass, and watches/refreshes/more-info's itself. The
- * aggregator only stacks N of them and sizes them (--feature-height per child).
+ * The child brick is entity-progress-CARD in density: single_line - one row
+ * holding icon, name, value and bar, frameless so there is no nested card
+ * chrome to fight. It's created directly (document.createElement, sync), gets
+ * setConfig + hass, and watches/refreshes/more-info's itself - including its
+ * own text, which is why the aggregator no longer formats any. It only stacks
+ * N of them and gives each one its slice (--card-height per child).
  *
  * The two subclasses differ ONLY in how much of a "host" they need to provide,
  * via two overridable hooks (_wrapFrame/_applySizing):
@@ -30,33 +31,33 @@
 import { CARD, META, devName } from '../utils/parameters.js';
 import { is } from '../utils/common-checks.js';
 import { HACore } from './core.js';
-import { NumberFormatter } from './formatting.js';
-import { EntityHelper } from './entity-helper.js';
-import { resolveDisplayDecimal } from '../utils/display-defaults.js';
+import { MultiCardConfigHelper, MultiFeatureConfigHelper, type BaseConfigHelper } from './config-helpers.js';
 import type { HomeAssistant } from '../utils/hass-provider.js';
 import type { LovelaceConfig } from '../utils/types.js';
 
 type ChildEl = HTMLElement & { hass?: HomeAssistant | null; setConfig?: (config: LovelaceConfig) => void };
 
-// One per entity with show_value: true - the bits #updateValues needs to
-// re-format that entity's state on every hass push, without reaching back
-// into its (bare, text-less) entity-progress-feature child.
-type ValueTarget = {
-  entityId: string;
-  // Same unit/decimal resolution as a standalone card: the effective values
-  // depend on live entity state (display_precision, timer/counter type), so
-  // the raw config is kept here and resolved at render - see display-defaults.
-  helper: EntityHelper;
-  el: HTMLElement;
-  configDecimal: unknown;
-  configUnit?: string;
-  disableUnit: boolean;
-  unitSpacing: string;
-};
-
-// HA's per-feature row-height variable - read for the row unit, overridden on
-// each child to give it its slice (the child feature centers its bar in it).
+// HA's per-feature row-height variable - read for the container's own row
+// unit only (see #featureRowPx); the children are cards, sized by the var
+// below.
 const FEATURE_HEIGHT_VAR = '--feature-height';
+
+// The same var an explicit `height:` writes inline on a standalone card (see
+// styles.ts's ha-card height rule). Custom properties cross a shadow boundary,
+// so setting it on the child host reaches its own ha-card.
+const CARD_HEIGHT_VAR = CARD.style.dynamic.card.height.var;
+
+// What never travels down to a row: the aggregator's own keys, plus the
+// derived ones the negotiated config carries (a child re-derives its own).
+// Everything else at the top level is a row option shared by every row.
+// 24 out of a 36px shape: the glyph's job is to sit inside the circle with
+// room to spare. Without a circle there is nothing to shrink for, so it takes
+// the same box as the text beside it - which is what makes the two read as one
+// row, and gives back the third of the height the shape was costing.
+const shapedIconSize = (_per: number, shape: number) => Math.min(24, (shape * 2) / 3);
+const bareIconSize = (per: number) => Math.min(16, per);
+
+const NOT_ROW_OPTIONS = new Set(['entities', 'rows', 'type', 'centerZero', 'resolvedUnit', 'resolvedDecimal']);
 
 // Minimal own stylesheet (V1). TODO: fold into the shared constructed-sheet
 // path the cards use instead of a per-instance <style>.
@@ -69,41 +70,22 @@ const FEATURE_HEIGHT_VAR = '--feature-height';
 // EntityProgressMultiCard's _wrapFrame() adds that wrapper - they turn the
 // same bare stack into a self-contained, fixed-height, equally divided card.
 const MULTI_CSS = `
-  .multi-container { display: flex; flex-direction: column; gap: 0; box-sizing: border-box; }
+  /* Without this the host stays inline: ha-card.multi-card's own height: 100%
+     then resolves against nothing and falls back to its content, which is what
+     leaves the stack sitting low in the grid item instead of filling it. */
+  :host { display: block; height: 100%; }
+  /* overflow: hidden is the Feature's guarantee, not decoration: _applySizing
+     pins this box to exactly ONE HA feature row, and a child that asks for
+     more must be clipped rather than grow the tile past the row HA reserved. */
+  .multi-container { display: flex; flex-direction: column; gap: 0; box-sizing: border-box; overflow: hidden; }
   /* Homogeneous split, shared by both variants: every bar gets an equal slice
      of the container (whose height is imposed by the grid for the card, and
      derived as N x 42px rows for the feature - see _applySizing). */
   .multi-item { flex: 1 1 0; min-height: 0; overflow: hidden; }
-  .multi-item > * { height: 100%; }
-
-  /* show_value: true - bar and value sit side by side, bar gives up the width
-     the value needs instead of the value overlaying it (a bare feature bar is
-     already thin - overlay text would fight it for contrast at most sizes). */
-  .multi-item.with-value { display: flex; align-items: center; gap: var(--epb-spacing, 8px); }
-  .multi-item.with-value .multi-bar-box { flex: 1 1 auto; min-width: 0; height: 100%; }
-  .multi-value {
-    /* Fixed basis (not auto): several bars in the same stack rarely share the
-       exact same digit count (900 vs 1600 W) - an auto width lets each one
-       claim a different amount of space, so bars meant to read as comparable
-       end up different lengths for no meaningful reason. A shared width
-       keeps every bar in the stack starting/ending at the same x - overridable
-       via --epb-multi-value-width for values that need more room; a value
-       wider than this only ever overflows visually (never clipped/ellipsized
-       - silently truncating the one thing this option exists to show would
-       defeat its own purpose). */
-    flex: 0 0 var(--epb-multi-value-width, 30px);
-    display: flex;
-    align-items: center;
-    height: 100%;
-    white-space: nowrap;
-    font-size: var(--epb-name-font-size, var(--ha-font-size-s, 12px));
-    font-weight: var(--epb-name-font-weight, var(--ha-font-weight-medium, 500));
-    color: var(--primary-text-color);
-    font-variant-numeric: tabular-nums;
-  }
-  /* value_position: left (the default) - value comes first in the DOM, so its
-     text hugs its own right edge, right up against the bar next to it. */
-  .multi-value.align-end { justify-content: flex-end; }
+  /* display: block, not just height: a custom element host defaults to
+     inline, where height: 100% applies to nothing and each row adds a baseline
+     gap - enough of them and the stack outgrows its container. */
+  .multi-item > * { display: block; height: 100%; }
 
   ha-card.multi-card {
     height: 100%; box-sizing: border-box; overflow: hidden;
@@ -128,10 +110,6 @@ class EntityProgressMultiBase extends HACore {
   // read/append to these directly.
   _children: ChildEl[] = [];
   _container: HTMLElement | null = null;
-  // show_value: true targets (see #buildChildren/#updateValues) - separate
-  // from _children since a bare entity-progress-feature has no text of its
-  // own to hold this.
-  _valueTargets: ValueTarget[] = [];
   #rendered = false;
   // Structure signature (entity list). A bare hass update only forwards hass;
   // a change here (entity added/removed/reordered) rebuilds the children.
@@ -149,11 +127,13 @@ class EntityProgressMultiBase extends HACore {
   }
 
   // ─── CONFIG ───────────────────────────────────────────────────────────────
-  // TODO(schema): validate against YamlSchemaFactory.multiCard/.multiFeature,
-  // move the defaults-merge into a MultiConfigHelper. Inline for the skeleton.
+  // Negotiated, not raw: the helper runs the aggregator's own schema (which
+  // also migrates show_value, see config-helpers.ts) and what comes out is
+  // what every row inherits.
   setConfig(config: LovelaceConfig) {
     if (!config) throw new Error('setConfig: invalid config');
-    this.#config = config;
+    this._configHelper.config = config;
+    this.#config = this._configHelper.config as unknown as LovelaceConfig;
     const key = EntityProgressMultiBase.#computeStructureKey(config);
     if (key !== this.#structureKey || !this.#rendered) {
       this.#structureKey = key;
@@ -164,28 +144,37 @@ class EntityProgressMultiBase extends HACore {
     }
   }
 
-  // Each child feature config = shared top-level options merged under the
-  // per-entity item (item wins). No type/frame injection: a feature is already
-  // a bare bar in a <div>. bar_size defaults to 'small' here (not the
-  // standalone Feature schema's own 'xlarge' default, tuned for its fixed 42px
-  // row - see schema.ts) since our own row height is derived FROM bar_size
-  // (see #barSizeFor), so a compact stack needs a compact default too. Still
-  // overridable, shared or per-item.
+  // Each child config = the shared top-level options merged under the
+  // per-entity item (item wins), then given the row shape. bar_size defaults
+  // to 'small' (not the card schema's own default): a stack of N rows needs a
+  // compact one. Still overridable, shared or per-item.
   get #childConfigs(): LovelaceConfig[] {
     const config = this.#config;
     if (!config || !is.array(config.entities)) return [];
-    // Shared defaults = top-level keys except our own (entities/rows/type).
     const shared: Record<string, unknown> = { bar_size: 'small' };
     for (const [key, value] of Object.entries(config)) {
-      if (key !== 'entities' && key !== 'rows' && key !== 'type') shared[key] = value;
+      if (!NOT_ROW_OPTIONS.has(key)) shared[key] = value;
     }
-    return (config.entities as Record<string, unknown>[]).map(
-      (item) =>
-        ({
-          ...shared,
-          ...(is.plainObject(item) ? item : { entity: item }),
-        }) as unknown as LovelaceConfig,
+    return (config.entities as Record<string, unknown>[]).map((item) =>
+      this.#toRowConfig({
+        ...shared,
+        ...(is.plainObject(item) ? item : { entity: item }),
+      }),
     );
+  }
+
+  // The row shape itself, which is the aggregator's to impose and not the
+  // user's - hence absent from YamlSchemaFactory.multiRow. Nothing else is
+  // translated here any more: a row speaks the card's own vocabulary.
+  #toRowConfig(row: Record<string, unknown>): LovelaceConfig {
+    const hide = new Set([...(is.array(row.hide) ? (row.hide as string[]) : []), ...this.forcedHide]);
+    return {
+      ...row,
+      ...(hide.size > 0 ? { hide: [...hide] } : {}),
+      density: 'single_line',
+      frameless: true,
+      marginless: true,
+    } as unknown as LovelaceConfig;
   }
 
   static #computeStructureKey(config: LovelaceConfig): string {
@@ -220,94 +209,20 @@ class EntityProgressMultiBase extends HACore {
   #buildChildren() {
     const container = this._container;
     if (!container) return;
-    const tag = devName(META.types.feature.typeName);
-    this._valueTargets = [];
+    const tag = devName(META.types.card.typeName);
     this._children = this.#childConfigs.map((childConfig) => {
       const child = document.createElement(tag) as ChildEl;
       child.setConfig?.(childConfig);
       if (this.hass) child.hass = this.hass;
+      // The wrapper, not the child, carries the equal-slice flex: a card host
+      // has its own layout to keep out of.
       const wrapper = document.createElement('div');
       wrapper.className = 'multi-item';
-      if (childConfig.show_value && is.nonEmptyString(childConfig.entity as string)) {
-        wrapper.classList.add('with-value');
-        const barBox = document.createElement('div');
-        barBox.className = 'multi-bar-box';
-        barBox.append(child);
-        const valueEl = document.createElement('span');
-        valueEl.className = 'multi-value';
-        // 'left' (default): value first, text hugs its own right edge (next
-        // to the bar) via .align-end. 'right': bar first, value's default
-        // left-alignment already hugs the bar on its other side.
-        const onLeft = childConfig.value_position !== 'right';
-        if (onLeft) {
-          valueEl.classList.add('align-end');
-          wrapper.append(valueEl, barBox);
-        } else {
-          wrapper.append(barBox, valueEl);
-        }
-        const helper = new EntityHelper();
-        helper.entityId = childConfig.entity as string;
-        helper.attribute = is.nonEmptyString(childConfig.attribute as string)
-          ? (childConfig.attribute as string)
-          : null;
-        this._valueTargets.push({
-          entityId: childConfig.entity as string,
-          helper,
-          el: valueEl,
-          configDecimal: childConfig.decimal,
-          configUnit: childConfig.unit as string | undefined,
-          disableUnit: Boolean(childConfig.disable_unit),
-          unitSpacing: is.nonEmptyString(childConfig.unit_spacing as string)
-            ? (childConfig.unit_spacing as string)
-            : CARD.config.unit.unitSpacing.auto,
-        });
-      } else {
-        wrapper.append(child);
-      }
+      wrapper.append(child);
       container.append(wrapper);
       return child;
     });
-    this.#updateValues();
     this._applySizing();
-  }
-
-  // Formats and writes each show_value target's text - called whenever the
-  // underlying state could have changed (every hass push), independently of
-  // the bare feature children (which have no text of their own to read this
-  // back from, see YamlSchemaFactory.feature).
-  #updateValues() {
-    for (const target of this._valueTargets) {
-      const stateObj = this._hassProvider.getEntityStateObj(target.entityId);
-      if (!stateObj) {
-        target.el.textContent = '';
-        continue;
-      }
-      // An entity that only appeared after the children were built was invalid
-      // at that point - re-seed rather than stay stuck on its empty state.
-      if (!target.helper.isValid) target.helper.entityId = target.entityId;
-      // The entity's own unit_of_measurement, NOT EntityHelper.unit: the latter
-      // reports the unit the card's value pipeline converts to ('s' for a
-      // duration, '%' for a unitless entity), and this row prints the raw
-      // state, which that pipeline never touched.
-      const rawUnit =
-        target.configUnit ??
-        (this._hassProvider.getEntityAttribute<string>(target.entityId, 'unit_of_measurement') || '');
-      const decimal = resolveDisplayDecimal(target.configDecimal, {
-        configUnit: target.configUnit,
-        resolvedUnit: rawUnit,
-        entityPrecision: target.helper.precision,
-        entityType: target.helper.entityType,
-        entityUnit: rawUnit,
-      });
-      const raw = stateObj.state;
-      const numeric = parseFloat(raw);
-      target.el.textContent = Number.isFinite(numeric)
-        ? NumberFormatter.formatValueAndUnit(numeric, decimal, target.disableUnit ? '' : rawUnit, {
-            locale: this._hassProvider.language,
-            unitSpacing: target.unitSpacing,
-          })
-        : raw;
-    }
   }
 
   // Same-structure config edits (e.g. changing a shared bar_size at the top
@@ -334,10 +249,10 @@ class EntityProgressMultiBase extends HACore {
   // An earlier attempt let the container grow to N rows and relied on HA's
   // hui-grid-section measuring that height to reserve them - live testing
   // showed this doesn't work reliably. So this deliberately does NOT try to
-  // span multiple rows: bars split evenly within one fixed row and get
-  // thinner instead of overflowing (pick `xsmall` for more entities in the
-  // same row). Revisit only after confirming HA's real row-reservation
-  // mechanism (#126).
+  // span multiple rows: rows split evenly within one fixed row and get
+  // shorter instead of overflowing (pick `xsmall` for more entities in the
+  // same row, and expect the text to give way before the bar does). Revisit
+  // only after confirming HA's real row-reservation mechanism (#126).
   _applySizing() {
     const container = this._container;
     if (!container || this._children.length === 0) return;
@@ -346,13 +261,42 @@ class EntityProgressMultiBase extends HACore {
     this._distributeHeight(total);
   }
 
-  // Equal slice of `total` px per child (each centers its bar in its own
-  // --feature-height) - shared with MultiCard's measured-container sizing.
+  // Equal slice of `total` px per child - shared with MultiCard's measured-
+  // container sizing. A card stands at its own natural height otherwise, so
+  // the slice has to be handed to it explicitly (see CARD_HEIGHT_VAR).
   _distributeHeight(total: number) {
     const count = this._children.length;
     if (!total || count === 0) return;
     const per = total / count;
-    for (const child of this._children) child.style.setProperty(FEATURE_HEIGHT_VAR, `${per}px`);
+    for (const child of this._children) {
+      child.style.setProperty(CARD_HEIGHT_VAR, `${per}px`);
+      for (const [name, value] of Object.entries(this.rowMetrics(per))) {
+        child.style.setProperty(name, value);
+      }
+    }
+  }
+
+  // A standalone card sizes its row from its own defaults; a Multi row has its
+  // height imposed instead, so everything that would otherwise overflow it is
+  // derived from the slice. Ratios, not constants: they are the card's own
+  // defaults at a full-size row (36px shape, 24px icon inside it, 16px text
+  // box, 12px type) and shrink with it, capped so a tall row never grows past
+  // what the card would have done on its own. --current-row-* sits behind the
+  // matching --epb-* hook (see styles.ts), so a user override still wins.
+  rowMetrics(per: number): Record<string, string> {
+    const shape = Math.min(36, per);
+    return {
+      '--current-row-shape-size': `${shape}px`,
+      '--current-row-icon-size': `${(this.constructor as typeof EntityProgressMultiBase)._iconSize(per, shape)}px`,
+      '--current-row-detail-height': `${Math.min(16, per)}px`,
+      '--current-row-bar-box': `${Math.min(16, per)}px`,
+      // The line box IS the slice here, so the only leading left to keep is
+      // what the descenders need - 1.1, not .info-row's own 1.2em floor, which
+      // guards against something (OS font scaling) that cannot move a row
+      // whose height is imposed. Worth ~10% of type size at four rows.
+      '--current-row-line-height': `${per}px`,
+      '--current-row-detail-font-size': `${Math.min(12, per / 1.1)}px`,
+    };
   }
 
   // ─── HASS PASSTHROUGH (no ChangeTracker, no bar pipeline) ─────────────────
@@ -360,7 +304,6 @@ class EntityProgressMultiBase extends HACore {
     if (!hass) return;
     this._hassProvider.hass = hass;
     for (const child of this._children) child.hass = hass;
-    this.#updateValues();
   }
 
   get hass(): HomeAssistant | null {
@@ -381,9 +324,23 @@ class EntityProgressMultiBase extends HACore {
     this.#rendered = false;
     this._resourceManager?.remove('multiDivideHeight');
     this._children = [];
-    this._valueTargets = [];
     this._container = null;
     this._shadow.replaceChildren();
+  }
+
+  // Hook: what this aggregator takes off every row whatever the config says.
+  // Nothing for the Card, which has the room for all of it. Static + getter,
+  // same pattern as HABase._hiddenComponents: a subclass declares the list,
+  // the getter reaches it through the instance.
+  static _forcedHide: string[] = [];
+  // Per-subclass like _forcedHide above: a Feature draws no shape, so its
+  // glyph is not sized to fit one.
+  static _iconSize: (per: number, shape: number) => number = shapedIconSize;
+  // Per-subclass: each aggregator validates against its own schema variant.
+  declare _configHelper: BaseConfigHelper;
+
+  get forcedHide(): string[] {
+    return (this.constructor as typeof EntityProgressMultiBase)._forcedHide;
   }
 
   // Rows the aggregator occupies: explicit `rows`, else one per entity.
@@ -396,6 +353,7 @@ class EntityProgressMultiBase extends HACore {
 
 class EntityProgressMultiCard extends EntityProgressMultiBase {
   static _baseClass: string = META.types.multiCard.typeName;
+  _configHelper = new MultiCardConfigHelper();
 
   // Snap to the Sections grid: one grid item, `_rows` tall. TODO(live): tune
   // columns / min_rows against real section layouts.
@@ -446,6 +404,11 @@ class EntityProgressMultiCard extends EntityProgressMultiBase {
 // needs the base's defaults (bare render, fixed compact per-child height).
 class EntityProgressMultiFeature extends EntityProgressMultiBase {
   static _baseClass: string = META.types.multiFeature.typeName;
+  // A few px of icon can't carry a circular background - the schema drops the
+  // option (YamlSchemaFactory.multiFeature), this drops the shape itself.
+  static _forcedHide: string[] = ['shape'];
+  static _iconSize = bareIconSize;
+  _configHelper = new MultiFeatureConfigHelper();
 
   // skipcq: JS-0116 -- async matches the custom-card-helpers contract
   static async getStubConfig(): Promise<LovelaceConfig> {

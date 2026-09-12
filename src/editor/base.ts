@@ -11,6 +11,7 @@ import {
   HA_SELECTOR_TAG,
   EDITOR_FIELD_NS,
   EDITOR_FIELD_HELPER_NS,
+  CONFIG_CHANGED_EVENT,
 } from '../utils/parameters.js';
 import { EDITOR_BASE_STYLE } from '../utils/styles.js';
 import { is } from '../utils/common-checks.js';
@@ -22,6 +23,7 @@ import type { LovelaceConfig, Config, FieldDef } from '../utils/types.js';
 import { EntityProgressEffectChips, EntityProgressHideChips, EntityProgressModeChips } from './chips.js';
 import {
   EntityProgressBarStackEditor,
+  EntityProgressMultiRowEditor,
   EntityProgressCustomThemeEditor,
   EntityProgressActionPicker,
 } from './list-editors.js';
@@ -93,10 +95,22 @@ const from = (variant: SchemaVariant, field: string): SchemaLookup => ({ variant
 
 // Every field element is born the same way - only what happens next differs
 // per field type (see #registerFieldEl for the matching tail).
+// full (default) | half | grow | a px string of its own - see EDITOR_BASE_STYLE
+// for what each one does to the row.
+const applyFieldWidth = (el: HTMLElement, width: unknown): void => {
+  const value = is.string(width) ? width : 'full';
+  if (value === 'half' || value === 'grow' || value === 'full') {
+    el.classList.add(`field-${value}`);
+    return;
+  }
+  el.classList.add('field-fixed');
+  el.style.width = value;
+};
+
 const createFieldEl = (field: FieldDef, tagName: string): EditorFieldElement => {
   const el = document.createElement(tagName) as EditorFieldElement;
   el.id = field.name;
-  el.style.width = '100%';
+  applyFieldWidth(el, field.width);
   return el;
 };
 
@@ -583,8 +597,10 @@ class EditorBase extends HTMLElement {
   #buildSectionLabel(field: FieldDef): EditorFieldElement {
     const el = document.createElement('div') as unknown as EditorFieldElement;
     el.className = 'section-label';
-    el.style.width = '100%';
-    el.textContent = this.#hassProvider.localizeGroup(EDITOR_FIELD_NS)?.[field.name] ?? field.name;
+    el.classList.add('field-full');
+    // Two labels can say the same thing one family apart (the watermark and
+    // peak_marker "shared defaults" headings), so labelKey is honored here too.
+    el.textContent = this.#resolveExplicitLabel(field) ?? field.name;
     el.value = undefined;
     return this.#registerFieldEl(field, el);
   }
@@ -613,7 +629,10 @@ class EditorBase extends HTMLElement {
     optionKey: string = field.name,
   ): EditorFieldElement {
     const el = createFieldEl(field, tagName);
-    el.modes = modes;
+    // A field that declares its own list answers to the config (density drops
+    // single_line on a vertical card); is.func's predicate returns unknown,
+    // hence the cast.
+    el.modes = is.func(field.modes) ? (field.modes(this.#config ?? {}) as string[]) : modes;
     // #resolveFieldMeta so labelKey is honored (this used to look up
     // field.name directly, stale once a field shares another's label).
     const { label, value } = this.#resolveFieldMeta(field);
@@ -677,6 +696,7 @@ class EditorBase extends HTMLElement {
       'alert_when.below_mode': modeChipsField(VALUE_SOURCE_MODES, 'value_source_mode'),
       theme_mode: modeChipsField(THEME_MODE_MODES),
       bar_stack_mode: modeChipsField([...schemaOptions('card', 'bar_stack.mode')]),
+      density: modeChipsField([...schemaOptions('card', 'density')]),
       trigger: modeChipsField(SIMPLE_ADVANCED_MODES, 'simple_advanced_mode'),
       bar_effect_mode: modeChipsField(SIMPLE_ADVANCED_MODES, 'simple_advanced_mode'),
       hide_mode: modeChipsField(SIMPLE_ADVANCED_MODES, 'simple_advanced_mode'),
@@ -690,6 +710,15 @@ class EditorBase extends HTMLElement {
           tagName: EntityProgressBarStackEditor.ELEMENT_NAME,
           labelKey: 'bar_stack',
           rows: this.#config?.bar_stack?.entities,
+          addLabelKey: 'add_entity',
+          addLabelDefault: 'Add entity',
+        }),
+      multi_row_editor: () =>
+        this.#buildListEditorField({
+          field,
+          tagName: EntityProgressMultiRowEditor.ELEMENT_NAME,
+          labelKey: 'entities',
+          rows: this.#config?.entities,
           addLabelKey: 'add_entity',
           addLabelDefault: 'Add entity',
         }),
@@ -730,9 +759,7 @@ class EditorBase extends HTMLElement {
     el.id = field.name;
     el.hass = this.hass;
     el.required = field.required ?? false;
-    // width/type can be functions (re-evaluated reactively elsewhere in
-    // EditorDOMHelper) - this is just their initial value.
-    el.style.width = is.func(field.width) ? (field.width(this.#config ?? {}) as string) : (field.width ?? '100%');
+    applyFieldWidth(el, field.width);
     el.selector = this.#getSelectorForType(
       is.func(field.type) ? (field.type(this.#config ?? {}) as string) : field.type,
     );
@@ -758,7 +785,10 @@ class EditorBase extends HTMLElement {
     }
 
     if (field.isInGroup) el.classList.add(field.isInGroup);
-    if (field.type === 'toggle') el.classList.add('field-toggle');
+    // field-<type>: lets the stylesheet answer for a kind of input (a number
+    // selector's own 8px hint padding, a toggle's phantom label box) without
+    // every such field having to be tagged by hand at its call site.
+    if (is.string(field.type)) el.classList.add(`field-${field.type}`);
 
     const { label, value, isInverted } = this.#resolveFieldMeta(field);
     el.label = label;
@@ -878,6 +908,27 @@ class EditorBase extends HTMLElement {
     this.#runFieldUpdate((ctx) => this.#dom.updateKeys(keys, ctx));
   }
 
+  // ─── SUB-EDITOR HOST ──────────────────────────────────────────────────────
+  // A subclass that hosts an editor of its own (the Multi swaps its whole form
+  // for one row's, see editors.ts) needs two things no field of its own can
+  // give it: the raw config to read defaults off, and a way to write a change
+  // back through the same path a field write takes - same round trip, same
+  // update pass, same _-prefixed stripping.
+  get _rawConfig(): LovelaceConfig {
+    return this.#config;
+  }
+
+  _applyConfigPatch(patch: LovelaceConfig) {
+    this.#config = { ...this.#config, ...patch };
+    this.#updateFields();
+    this.#sendConfig(this.#config);
+  }
+
+  // The form itself, so a host can put something else in its place.
+  get _formEl(): HTMLElement | null {
+    return this.#shadow.querySelector('.editor');
+  }
+
   // ─── EVENTS ───────────────────────────────────────────────────────────────
 
   #handleVirtualField(def: FieldDef, value: unknown) {
@@ -951,10 +1002,17 @@ class EditorBase extends HTMLElement {
   // how fast native events fire. The 1-frame delay (~16ms) is not perceptible.
   #sendConfig(config: LovelaceConfig) {
     // Strip _-prefixed UI state keys (editor-only, must never reach the saved
-    // YAML), then normalize key order (entity on top, HA layout meta at the
-    // bottom - see #canonicalOrder).
+    // YAML) and any top-level key carrying a dot - no option here is ever
+    // spelled that way, a nested one is a map. The only thing that ever wrote
+    // one was lengthField addressing 'watermark.line_size' as a key instead of
+    // a path; the value was inert (the schema never read it), so a config
+    // still holding one loses nothing by having it swept on its next edit.
+    // Then normalize key order (entity on top, HA layout meta at the bottom -
+    // see #canonicalOrder).
     this.#pendingSentConfig = EditorBase.#canonicalOrder(
-      Object.fromEntries(Object.entries(config).filter(([k]) => !k.startsWith('_'))) as LovelaceConfig,
+      Object.fromEntries(
+        Object.entries(config).filter(([key]) => !key.startsWith('_') && !key.includes('.')),
+      ) as LovelaceConfig,
     );
     if (this.#sendConfigScheduled) return;
     this.#sendConfigScheduled = true;
@@ -965,7 +1023,7 @@ class EditorBase extends HTMLElement {
       this.#pendingSentConfig = null;
       this.#log?.debug('config-changed →', clean);
       this.dispatchEvent(
-        new CustomEvent('config-changed', {
+        new CustomEvent(CONFIG_CHANGED_EVENT, {
           detail: { config: clean },
           bubbles: true,
           composed: true,

@@ -16,6 +16,7 @@ import {
   markType,
   markOpacity,
   markColor,
+  markLineSize,
   SCHEMA_DEFAULTS,
   DENSITY_COMPACT_BAR_POSITIONS,
   type WatermarkMark,
@@ -62,6 +63,7 @@ type ResolvedWatermarkMark = {
   type: WatermarkType;
   opacity: number;
   color: string | null;
+  line_size: string;
 };
 type ResolvedWatermark = {
   low: ResolvedWatermarkMark;
@@ -74,7 +76,14 @@ type ResolvedWatermark = {
 type PeakMarkType = 'line' | 'round' | 'triangle';
 // One resolved peak_marker.min/.max/.average - shown=false still carries a
 // type/opacity/value so callers never need an extra null-check per field.
-type ResolvedPeakMark = { shown: boolean; type: PeakMarkType; opacity: number; color: string | null; value: number };
+type ResolvedPeakMark = {
+  shown: boolean;
+  type: PeakMarkType;
+  opacity: number;
+  color: string | null;
+  line_size: string;
+  value: number;
+};
 
 // Mirrors schema.ts's barStackEntity - one row of bar_stack.entities.
 type BarStackEntityConfig = { entity: string; attribute?: string; color?: string; subtract?: boolean };
@@ -549,6 +558,7 @@ class ViewCore {
       type: markType(mark, globalType) as WatermarkType,
       opacity: markOpacity(mark, globalOpacity),
       color: ThemeManager.adaptColor(markColor(mark, watermark.color) ?? null),
+      line_size: markLineSize(mark, watermark.line_size),
     });
     return {
       low: resolveMark(watermark.low, jinjaLow, lowValue),
@@ -958,6 +968,14 @@ class ViewCore {
   // config.hide covers the static-array case). density: compact + layout:
   // vertical forces name/secondary_info hidden ahead of both, unconditionally
   // - no room left for them at a single grid row (applyDensityRule).
+  // A Jinja `hide` can flip on any push, so its components have to stay in the
+  // DOM for the class toggle to reach them. A static array is settled by the
+  // time setConfig runs, so the structure can leave them out entirely instead
+  // of building them only to display: none them.
+  isStaticallyHidden(component: string): boolean {
+    return !is.jinja(this.config?.hide) && this.hasComponentHiddenFlag(component);
+  }
+
   hasComponentHiddenFlag(component: string): boolean {
     if (
       this.config?.density === 'compact' &&
@@ -1368,13 +1386,18 @@ class ViewBase extends ViewCore {
     const config = this.config.peak_marker;
     const globalColor = config.color as string | undefined;
     const resolve = (mark: unknown, value: number): ResolvedPeakMark => {
-      const defaults = { type: config.type as PeakMarkType, opacity: config.opacity as number };
+      const defaults = {
+        type: config.type as PeakMarkType,
+        opacity: config.opacity as number,
+        line_size: config.line_size as string,
+      };
       if (is.plainObject(mark))
         return {
           shown: true,
           value,
           type: (mark.type as PeakMarkType) ?? defaults.type,
           opacity: (mark.opacity as number) ?? defaults.opacity,
+          line_size: (mark.line_size as string) ?? defaults.line_size,
           color: ThemeManager.adaptColor((mark.color as string) ?? globalColor ?? null),
         };
       return {

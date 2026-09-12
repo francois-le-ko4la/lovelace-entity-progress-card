@@ -51,8 +51,7 @@
         "highlight": "Poudarek",
         "label": "Oznaka",
         "above_mode": "Vir zgornjega opozorila",
-        "below_mode": "Vir spodnjega opozorila",
-        "toggle": "Opozorilo"
+        "below_mode": "Vir spodnjega opozorila"
       },
       "attribute": "Atribut",
       "badge": {
@@ -79,7 +78,7 @@
       "custom_info": "Prilagojena sekundarna informacija",
       "custom_theme": "Cone motiva po meri",
       "decimal": "Natančnost prikaza",
-      "density_toggle": "Kompaktno",
+      "density": "Gostota",
       "entity": "Entiteta",
       "fast_refresh": "Hitro osveževanje (vsako sekundo)",
       "force_circular_background_mode": "Okroglo ozadje ikone",
@@ -106,8 +105,7 @@
       "peak_marker": {
         "min_toggle": "Prikaži minimum",
         "max_toggle": "Prikaži maksimum",
-        "average_toggle": "Prikaži povprečje",
-        "toggle": "Oznake vrhov"
+        "average_toggle": "Prikaži povprečje"
       },
       "peak_marker_unsupported": "Oznake vrhov potrebujejo entiteto sensor ali number brez prepisa atributa, ki ni timer ali counter — za to entiteto ni na voljo.",
       "percent": "Odstotek",
@@ -144,13 +142,15 @@
         "high_toggle": "Prikaži zgornjo",
         "low_toggle": "Prikaži spodnjo",
         "high": "Zgornja",
-        "line_size": "Debelina črte",
         "low": "Spodnja",
         "low_mode": "Vir spodnje oznake",
-        "high_mode": "Vir zgornje oznake",
-        "toggle": "Označbe"
+        "high_mode": "Vir zgornje oznake"
       },
-      "window": "Časovno okno"
+      "window": "Časovno okno",
+      "entities": "Entitete",
+      "rows": "Vrstice",
+      "line_size": "Debelina črte",
+      "mark_defaults": "Skupne privzete vrednosti"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -220,6 +220,11 @@
         "net": "Neto",
         "proportional": "Sorazmerno",
         "stacked": "Zloženo"
+      },
+      "density": {
+        "default": "Privzeto",
+        "compact": "Kompaktno",
+        "single_line": "Ena vrstica"
       },
       "duration_unit": {
         "s": "Sekunde",
@@ -328,8 +333,11 @@
       "content": "Vsebina",
       "interaction": "Interakcije",
       "layout": "Postavitev in velikost",
-      "markers": "Označbe in opozorila",
-      "theme": "Videz in uporabnost"
+      "theme": "Videz in uporabnost",
+      "watermark": "Oznake praga",
+      "peak_marker": "Oznake vrhov",
+      "indicators": "Kazalniki in oznake",
+      "alerts": "Opozorila"
     }
   }
 }

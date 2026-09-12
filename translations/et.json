@@ -51,8 +51,7 @@
         "highlight": "Esiletõst",
         "label": "Silt",
         "above_mode": "Ülemise hoiatuse allikas",
-        "below_mode": "Alumise hoiatuse allikas",
-        "toggle": "Hoiatus"
+        "below_mode": "Alumise hoiatuse allikas"
       },
       "attribute": "Atribuut",
       "badge": {
@@ -79,7 +78,7 @@
       "custom_info": "Kohandatud sekundaarne teave",
       "custom_theme": "Kohandatud teema tsoonid",
       "decimal": "Kuvamise täpsus",
-      "density_toggle": "Kompaktne",
+      "density": "Tihedus",
       "entity": "Olem",
       "fast_refresh": "Kiire värskendus (iga sekund)",
       "force_circular_background_mode": "Ikooni ümmargune taust",
@@ -106,8 +105,7 @@
       "peak_marker": {
         "min_toggle": "Näita miinimumi",
         "max_toggle": "Näita maksimumi",
-        "average_toggle": "Näita keskmist",
-        "toggle": "Tipumärgised"
+        "average_toggle": "Näita keskmist"
       },
       "peak_marker_unsupported": "Tipumärgised vajavad sensor- või number-olemit ilma atribuudi ülekirjutuseta, mis ei ole timer ega counter — selle olemi jaoks pole saadaval.",
       "percent": "Protsent",
@@ -144,13 +142,15 @@
         "high_toggle": "Näita ülemist",
         "low_toggle": "Näita alumist",
         "high": "Ülemine",
-        "line_size": "Joone paksus",
         "low": "Alumine",
         "low_mode": "Madala markeri allikas",
-        "high_mode": "Kõrge markeri allikas",
-        "toggle": "Markerid"
+        "high_mode": "Kõrge markeri allikas"
       },
-      "window": "Ajaaken"
+      "window": "Ajaaken",
+      "entities": "Olemid",
+      "rows": "Read",
+      "line_size": "Joone paksus",
+      "mark_defaults": "Jagatud vaikeväärtused"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -220,6 +220,11 @@
         "net": "Neto",
         "proportional": "Proportsionaalne",
         "stacked": "Virnastatud"
+      },
+      "density": {
+        "default": "Vaikimisi",
+        "compact": "Kompaktne",
+        "single_line": "Üherealine"
       },
       "duration_unit": {
         "s": "Sekundid",
@@ -328,8 +333,11 @@
       "content": "Sisu",
       "interaction": "Interaktsioonid",
       "layout": "Paigutus ja suurus",
-      "markers": "Markerid ja hoiatused",
-      "theme": "Välimus ja kasutatavus"
+      "theme": "Välimus ja kasutatavus",
+      "watermark": "Tasememärgised",
+      "peak_marker": "Tippmärgised",
+      "indicators": "Näidikud ja sildid",
+      "alerts": "Hoiatused"
     }
   }
 }

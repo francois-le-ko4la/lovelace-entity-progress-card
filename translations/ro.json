@@ -51,8 +51,7 @@
         "highlight": "Evidențiere",
         "label": "Etichetă",
         "above_mode": "Sursa alertei superioare",
-        "below_mode": "Sursa alertei inferioare",
-        "toggle": "Alertă"
+        "below_mode": "Sursa alertei inferioare"
       },
       "attribute": "Atribut",
       "badge": {
@@ -79,7 +78,7 @@
       "custom_info": "Info secundară personalizată",
       "custom_theme": "Zone temă personalizată",
       "decimal": "Precizie",
-      "density_toggle": "Compact",
+      "density": "Densitate",
       "entity": "Entitate",
       "fast_refresh": "Reîmprospătare rapidă (la fiecare secundă)",
       "force_circular_background_mode": "Fundal circular al pictogramei",
@@ -106,8 +105,7 @@
       "peak_marker": {
         "min_toggle": "Afișează minimul",
         "max_toggle": "Afișează maximul",
-        "average_toggle": "Afișează media",
-        "toggle": "Marcatori de vârf"
+        "average_toggle": "Afișează media"
       },
       "peak_marker_unsupported": "Marcatorii de vârf necesită o entitate sensor sau number, fără suprascriere de atribut, și care nu este un timer sau un counter — indisponibil pentru această entitate.",
       "percent": "Procent",
@@ -144,13 +142,15 @@
         "high_toggle": "Afișează ridicat",
         "low_toggle": "Afișează scăzut",
         "high": "Ridicat",
-        "line_size": "Grosime linie",
         "low": "Scăzut",
         "low_mode": "Sursa marcatorului inferior",
-        "high_mode": "Sursa marcatorului superior",
-        "toggle": "Marcatori"
+        "high_mode": "Sursa marcatorului superior"
       },
-      "window": "Fereastră de timp"
+      "window": "Fereastră de timp",
+      "entities": "Entități",
+      "rows": "Rânduri",
+      "line_size": "Grosimea liniei",
+      "mark_defaults": "Valori implicite comune"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -220,6 +220,11 @@
         "net": "Net",
         "proportional": "Proporțional",
         "stacked": "Stivuit"
+      },
+      "density": {
+        "default": "Implicit",
+        "compact": "Compact",
+        "single_line": "Un rând"
       },
       "duration_unit": {
         "s": "Secunde",
@@ -328,8 +333,11 @@
       "content": "Conținut",
       "interaction": "Interacțiuni",
       "layout": "Aspect și dimensiune",
-      "markers": "Marcatori și alerte",
-      "theme": "Aspect & Stil"
+      "theme": "Aspect & Stil",
+      "watermark": "Marcaje de prag",
+      "peak_marker": "Marcaje de vârf",
+      "indicators": "Indicatori și etichete",
+      "alerts": "Alerte"
     }
   }
 }

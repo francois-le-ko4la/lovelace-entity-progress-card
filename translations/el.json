@@ -51,8 +51,7 @@
         "highlight": "Επισήμανση",
         "label": "Ετικέτα",
         "above_mode": "Πηγή ειδοποίησης άνω ορίου",
-        "below_mode": "Πηγή ειδοποίησης κάτω ορίου",
-        "toggle": "Ειδοποίηση"
+        "below_mode": "Πηγή ειδοποίησης κάτω ορίου"
       },
       "attribute": "Χαρακτηριστικό",
       "badge": {
@@ -79,7 +78,7 @@
       "custom_info": "Προσαρμοσμένη δευτερεύουσα πληροφορία",
       "custom_theme": "Ζώνες προσαρμοσμένου θέματος",
       "decimal": "Ακρίβεια οθόνης",
-      "density_toggle": "Συμπαγές",
+      "density": "Πυκνότητα",
       "entity": "Οντότητα",
       "fast_refresh": "Γρήγορη ανανέωση (ανά δευτερόλεπτο)",
       "force_circular_background_mode": "Κυκλικό φόντο εικονιδίου",
@@ -106,8 +105,7 @@
       "peak_marker": {
         "min_toggle": "Εμφάνιση ελαχίστου",
         "max_toggle": "Εμφάνιση μεγίστου",
-        "average_toggle": "Εμφάνιση μέσου όρου",
-        "toggle": "Δείκτες κορυφής"
+        "average_toggle": "Εμφάνιση μέσου όρου"
       },
       "peak_marker_unsupported": "Οι δείκτες κορυφής απαιτούν οντότητα sensor ή number χωρίς παράκαμψη ιδιότητας, που δεν είναι timer ούτε counter — μη διαθέσιμο για αυτήν την οντότητα.",
       "percent": "Ποσοστό",
@@ -144,13 +142,15 @@
         "high_toggle": "Εμφάνιση υψηλού",
         "low_toggle": "Εμφάνιση χαμηλού",
         "high": "Υψηλό",
-        "line_size": "Πάχος γραμμής",
         "low": "Χαμηλό",
         "low_mode": "Πηγή χαμηλού δείκτη",
-        "high_mode": "Πηγή υψηλού δείκτη",
-        "toggle": "Δείκτες"
+        "high_mode": "Πηγή υψηλού δείκτη"
       },
-      "window": "Χρονικό παράθυρο"
+      "window": "Χρονικό παράθυρο",
+      "entities": "Οντότητες",
+      "rows": "Γραμμές",
+      "line_size": "Πάχος γραμμής",
+      "mark_defaults": "Κοινές προεπιλογές"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -220,6 +220,11 @@
         "net": "Καθαρό",
         "proportional": "Αναλογικό",
         "stacked": "Στοιβαγμένο"
+      },
+      "density": {
+        "default": "Προεπιλογή",
+        "compact": "Συμπαγές",
+        "single_line": "Μία γραμμή"
       },
       "duration_unit": {
         "s": "Δευτερόλεπτα",
@@ -328,8 +333,11 @@
       "content": "Περιεχόμενο",
       "interaction": "Αλληλεπιδράσεις",
       "layout": "Διάταξη & Μέγεθος",
-      "markers": "Δείκτες & Ειδοποιήσεις",
-      "theme": "Εμφάνιση"
+      "theme": "Εμφάνιση",
+      "watermark": "Δείκτες ορίου",
+      "peak_marker": "Δείκτες αιχμής",
+      "indicators": "Δείκτες και ετικέτες",
+      "alerts": "Ειδοποιήσεις"
     }
   }
 }

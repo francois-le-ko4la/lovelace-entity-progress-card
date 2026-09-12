@@ -94,7 +94,7 @@
       - [`bar_color` (Jinja)](#bar_color-jinja)
   - [🧩 entity-progress-multi-card / entity-progress-multi-feature](#multi)
     - [`entities`](#multi-entities)
-    - [`show_value`](#multi-show_value)
+    - [The value, and which side it sits on](#multi-value)
     - [`rows`](#multi-rows)
 
 ## Introduction
@@ -323,9 +323,10 @@ reused as-is rather than reinvented per option:
 
 [`watermark`](#watermark)'s `low`/`high` and [`peak_marker`](#peak_marker)'s
 `min`/`max`/`average` are both a "mark": a per-item override object
-(`type`/`opacity`/`color`) that falls back to the feature's own shared defaults
-until it sets its own. Both also accept a single-word shorthand instead of the
-full object — but the shorthand isn't the same _kind_ of value in both:
+(`type`/`opacity`/`color`/`line_size`) that falls back to the feature's own
+shared defaults until it sets its own. Both also accept a single-word shorthand
+instead of the full object — but the shorthand isn't the same _kind_ of value in
+both:
 
 | Option                              | Shorthand is a... | Why                                                                                |
 | ----------------------------------- | ----------------- | ---------------------------------------------------------------------------------- |
@@ -1088,8 +1089,8 @@ in the Jinja output at the point where the second line should start.
 
 > [!NOTE]
 >
-> [`density: compact`](#density) clears this option and hides the field from the
-> editor while active.
+> [`density: compact`](#density) and [`single_line`](#density) both clear this
+> option and hide the field from the editor while active.
 
 _Example_:
 
@@ -1742,6 +1743,8 @@ _Options:_
 >
 > [`density: compact`](#density) restricts this to `top`, `bottom`, or
 > `background` — any other value falls back to `top` while `compact` is active.
+> [`density: single_line`](#density) clears it back to `default` instead: the
+> bar sits in the row itself there.
 
 _Default value_:
 
@@ -2062,6 +2065,16 @@ Limits the maximum width of the progress bar in horizontal layout.
 > Outside this combination the option is cleared automatically — it has no
 > effect anywhere else.
 
+In [`density: single_line`](#density) — the shape a [Multi](#multi) row is built
+on — it stops being only a cap: the bar takes exactly this width, and the text
+beside it takes everything else. That is what lines a stack's bars up at the
+same x instead of each one starting where its own row's text ends. On a card too
+narrow to hold both, the text ellipses first and the bar keeps its width;
+without `bar_max_width` the opposite still holds, the bar giving ground down to
+its own floor while the text keeps its space. Every other shape keeps the plain
+cap described above: the bar sits in the content column there, with no
+horizontal room to hand over.
+
 _Example_:
 
 ```yaml
@@ -2159,6 +2172,15 @@ force_circular_background: true
 Displays a trend icon indicating the direction of the entity's value, positioned
 at the top right of the card.
 
+What it actually follows is the **bar's own percentage**, not the entity's raw
+state — the value already projected between [`min_value`](#min_value) and
+[`max_value`](#max_value). Changing either of those changes the deltas it
+measures. On the Template card, that percentage is the Jinja
+[`percent`](#percent-jinja) result, and a sample is recorded only when that
+template resolves: the entity declared alongside it never enters the
+calculation, and the sampling rate is the template's own, not the card's refresh
+tick.
+
 _Example — simple boolean_:
 
 ```yaml
@@ -2181,6 +2203,28 @@ comparison instead, pass an object:
 | `down_color` | String  | —         | Explicit color when trending down, overriding `colored`.                                                                   |
 | `flat_color` | String  | —         | Explicit color when stable, overriding `colored`.                                                                          |
 
+Each `basis` turns the window's samples into one delta, then compares it to
+`threshold`:
+
+- `average`: the current value against the **mean of every earlier sample**.
+  Reads as "above its own recent norm" more than as a direction — a dip that has
+  since recovered leaves the mean below the current value, so it still reads up.
+- `edge`: the current value against the **oldest sample** in the window. Only
+  the two ends count, so a window that dipped and came back reads flat — and a
+  single odd reading at either end decides on its own.
+- `slope`: the least-squares slope across **every** sample, scaled to the
+  window's own span. The same dip-and-back window reads flat because the fitted
+  line is flat, and one outlier can't tip it.
+
+On a steady climb all three read up — `average` with the smallest delta (its
+mean follows the value), `edge` with the largest.
+
+> [!NOTE]
+>
+> Without a `window`, the three are equivalent: only two samples are kept (the
+> previous render and the current one), and all three reduce to _current −
+> previous_. `basis` only starts to mean something once a window is set.
+
 _Example — time-windowed, theme-colored_:
 
 ```yaml
@@ -2192,6 +2236,11 @@ trend_indicator:
   threshold: 1
   colored: true
 ```
+
+In the visual editor, switching to **Advanced** starts with a `window` already
+set (`2h`) - it is the one setting that changes what the indicator measures,
+history over that span instead of the previous render alone. Turn it off there
+to keep the point-to-point comparison and only use Advanced's other settings.
 
 > ℹ️ For sensor/number entities with no `attribute` override, `window` seeds
 > itself once from Home Assistant's own recorder history on load (capped at 7
@@ -2226,15 +2275,16 @@ directly on the bar — reads at a glance where the current value sits relative 
 its own recent history. `min`/`max`/`average` are each absent by default (no
 mark shown) — set one to opt it in.
 
-| Property  | Type                    | Default | Description                                                         |
-| --------- | ----------------------- | ------- | ------------------------------------------------------------------- |
-| `window`  | String                  | —       | How far back to look: `'30s'`, `'5min'`, `'2h'`, `'1d'` (required). |
-| `type`    | String                  | `line`  | Default mark shape: `line`, `round`, or `triangle`.                 |
-| `opacity` | Number                  | `0.8`   | Default opacity, applied to every mark that doesn't override it.    |
-| `color`   | String                  | —       | Default color, applied to every mark that doesn't override it.      |
-| `min`     | Boolean\|String\|Object | —       | Shows the minimum mark. See below.                                  |
-| `max`     | Boolean\|String\|Object | —       | Shows the maximum mark. See below.                                  |
-| `average` | Boolean\|String\|Object | —       | Shows the average mark. See below.                                  |
+| Property    | Type                    | Default | Description                                                                     |
+| ----------- | ----------------------- | ------- | ------------------------------------------------------------------------------- |
+| `window`    | String                  | —       | How far back to look: `'30s'`, `'5min'`, `'2h'`, `'1d'` (required).             |
+| `type`      | String                  | `line`  | Default mark shape: `line`, `round`, or `triangle`.                             |
+| `opacity`   | Number                  | `0.8`   | Default opacity, applied to every mark that doesn't override it.                |
+| `color`     | String                  | —       | Default color, applied to every mark that doesn't override it.                  |
+| `line_size` | String                  | `1px`   | Thickness of a mark drawn as a `line`, for every mark that doesn't override it. |
+| `min`       | Boolean\|String\|Object | —       | Shows the minimum mark. See below.                                              |
+| `max`       | Boolean\|String\|Object | —       | Shows the maximum mark. See below.                                              |
+| `average`   | Boolean\|String\|Object | —       | Shows the average mark. See below.                                              |
 
 `min`/`max`/`average` each accept:
 
@@ -2242,8 +2292,9 @@ mark shown) — set one to opt it in.
 - `false` — explicitly hidden (same as leaving it unset).
 - a color string — shorthand for `{ color: '...' }`, overriding the top-level
   `color` for this mark only.
-- an object `{ type, opacity, color }` — overrides just that mark, falling back
-  to the top-level `type`/`opacity`/`color` for whatever's left out.
+- an object `{ type, opacity, color, line_size }` — overrides just that mark,
+  falling back to the top-level `type`/`opacity`/`color`/`line_size` for
+  whatever's left out.
 
 A color, not a value: unlike [`watermark`](#watermark)'s marks, the position
 here always comes from history — see
@@ -2418,13 +2469,16 @@ _Default value_:
 [![Card OK][Card-OK]](#compatibility)
 [![Template OK][Template-OK]](#compatibility)
 
-> **`density`** [String] ➡️ {`default` | `compact`} _(optional, default:
-> `default`)_:
+> **`density`** [String] ➡️ {`default` | `compact` | `single_line`} _(optional,
+> default: `default`)_:
 
-A preset that trims the card down to its smallest useful footprint for whichever
-[`layout`](#layout) is already set. Rather than juggling
-`bar_position`/`hide`/`multiline` by hand to get there, `density: compact` sets
-them for you:
+A preset that reshapes the card into a smaller footprint. Rather than juggling
+`layout`/`bar_position`/`hide`/`multiline` by hand to get there, each value sets
+them for you.
+
+##### `compact`
+
+The smallest useful footprint for whichever [`layout`](#layout) is already set:
 
 - `layout: horizontal` (the default): narrows the card to a single column,
   `name`/`value` still shown.
@@ -2465,6 +2519,36 @@ needs to be forced.
 > (`grid_options: { columns: 3, rows: 1 }`) if you want the same pinned effect
 > there too.
 
+##### `single_line`
+
+Lays icon, name, secondary info and bar out as four siblings on one row, instead
+of stacking the name/value block beside the icon. Nothing the card already
+displays is dropped - it is the same content on a single line:
+
+- Forces [`layout`](#layout)`: horizontal` - the row has no vertical shape. In
+  the visual editor the two settle it between them: `single_line` is not offered
+  while the layout is vertical, and picking vertical on a `single_line` card
+  puts the density back to `default`.
+- Puts the bar back in the row itself, so [`bar_position`](#bar_position) is
+  cleared to `default`: the standalone `top`/`bottom`/`background`/`overlay`
+  containers are a different placement altogether, and aren't offered.
+- Clears [`multiline`](#multiline) - there is no second line to wrap onto.
+- [`reverse_secondary_info_row`](#reverse_secondary_info_row) reverses the whole
+  row here: the bar first, then the text.
+- Unlike `compact`, forces nothing under [`hide`](#hide): trim the row down to
+  whatever you want, a bar on its own included.
+- The name takes secondary info's own type scale, weight and color: on one row
+  it reads as another info on the line, not a title above one. The
+  `--epb-name-*` hooks ([Theme](theme.md)) still override it - they just fall
+  back to the `--epb-detail-*` values instead of the title ones.
+- A name _and_ a secondary info on the same row are joined by the same `·`
+  separator that already joins infos inside secondary info - it only appears
+  when both are actually there. The row is one text line: it truncates once, at
+  its end, rather than each field ellipsing inside its own box.
+
+Unlike `compact`, it doesn't touch `grid_options`: `layout: horizontal` already
+resolves to a single grid row.
+
 _Examples:_
 
 ```yaml
@@ -2478,6 +2562,13 @@ type: custom:entity-progress-card
 entity: sensor.cpu_usage
 layout: vertical
 density: compact
+```
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.cpu_usage
+density: single_line
+bar_size: small
 ```
 
 [🔼 Back to top]
@@ -2501,6 +2592,7 @@ different layouts based on your visual preferences:
 > [`density: compact`](#density) works with either value - it hides
 > `name`/`secondary_info` instead of narrowing the column once this is
 > `vertical`, since vertical has no matching narrow shape of its own.
+> [`density: single_line`](#density) forces `horizontal` outright.
 
 _Examples:_
 
@@ -2656,6 +2748,13 @@ first, or for adapting to specific design preferences.
 > always renders the secondary info in a column regardless of this option,
 > ignoring it entirely. Outside that combination, `reverse_secondary_info_row`
 > is disabled automatically.
+
+> [!NOTE]
+>
+> Under [`density: single_line`](#density) it reverses the whole row rather than
+> just the secondary info: the bar comes first, icon aside, and the text
+> follows. Same meaning, one level up - and `single_line` forces exactly the
+> `horizontal` + `default` combination this option needs anyway.
 
 ```yaml
 type: custom:entity-progress-card
@@ -3137,8 +3236,11 @@ _Map definition_:
   - `triangle`: Triangle shapes as a watermark.
   - `round`: Rounded shapes applied as a watermark.
   - `line`: Vertical lines pattern (like a hatch effect).
-- `line_size` (string): Defines the thickness of the lines when a side's
-  effective type (its own, or the default above) is `line` (e.g., `"3px"`).
+- `line_size` (string, default `1px`): Thickness of the lines when a side's
+  effective type (its own, or the default above) is `line` (e.g., `"3px"`) -
+  used by whichever of `low`/`high` doesn't override it.
+- `as` (string, default `auto`): How `low`/`high`'s own `value` is read, for
+  whichever of them doesn't override it - see the per-side `as` below.
 - `opacity` (number): Default transparency (0 = fully transparent to 1 = fully
   opaque), used by whichever of `low`/`high` doesn't override it.
 - `color` (string, optional): Default CSS color, used by whichever of
@@ -3152,8 +3254,8 @@ value, unlike [`peak_marker`](#peak_marker)'s):
 - `false` — hides that side entirely.
 - a fixed numeric value, `{ entity: ..., attribute: ... }`, or `{ jinja: ... }`
   — shown, using `watermark`'s own `type`/`opacity`/`color`.
-- `{ value: ..., as, type, opacity, color }` — full control over just that side,
-  each falling back to `watermark`'s own value when omitted:
+- `{ value: ..., as, type, opacity, color, line_size }` — full control over just
+  that side, each falling back to `watermark`'s own value when omitted:
   - `value`: the threshold itself, same three forms as above (fixed number,
     entity, or Jinja).
   - `as` (string): how `value` is interpreted.
@@ -3165,14 +3267,19 @@ value, unlike [`peak_marker`](#peak_marker)'s):
   - `opacity` (number, optional): overrides `watermark.opacity` for this side
     only.
   - `color` (string, optional): overrides `watermark.color` for this side only.
+  - `line_size` (string, optional): overrides `watermark.line_size` for this
+    side only - only read when this side ends up drawn as a `line`.
 
 In the visual editor, a chip selector (Fixed value / Entity / Template) lets you
 switch `value`'s mode, mirroring `min_value`/`max_value`; a "Show low"/"Show
 high" toggle replaces the old `disable_low`/`disable_high`. Each side's own
-Type/Opacity/Color fields show the global value until you pick something else
-for that side — once **both** sides have their own value for a given field, the
-global one is dropped (nothing reads it anymore); its editor field then shows a
-greyed placeholder (`blended`/`0.8`) instead of a live value nothing reads.
+Type/Line size/Opacity/Color fields show the global value until you pick
+something else for that side — once **both** sides have their own value for a
+given field, the global one is dropped (nothing reads it anymore); its editor
+field then shows a greyed placeholder (`blended`/`0.8`) instead of a live value
+nothing reads. Line size only appears for a mark actually drawn as a `line`, and
+a hidden side has no say in any of this — one value shared by the sides still
+shown is enough for it to move up.
 
 > [!NOTE]
 >
@@ -3820,14 +3927,53 @@ bar_color: >-
 
 > [!NOTE]
 >
-> New in 1.6.1. YAML only for now — no visual editor yet.
+> New in 1.6.1. Both have a visual editor since 1.6.3: an entity list you can
+> add to, reorder and delete from, and a pencil on each row that opens that
+> row's own configuration. An option set on enough rows moves up to the card as
+> a shared default on its own.
 
-These two aggregate several progress bars into a single card
+These two aggregate several progress rows into a single card
 (`entity-progress-multi-card`) or a single Tile feature
-(`entity-progress-multi-feature`), instead of one bar per entity. Each bar is a
-real `entity-progress-feature` under the hood, so it keeps its own more-info
-tap, its own colors, and its own state — the aggregator only stacks them and
-divides the available height.
+(`entity-progress-multi-feature`), instead of one bar per entity. Each row is a
+real [`entity-progress-card`](#standard) in [`density: single_line`](#density)
+under the hood — icon, name, value and bar on one line — so it keeps its own
+more-info tap, colors, state and text. The aggregator only stacks them and
+divides the available height between them.
+
+Because a row is a whole card, every row option it accepts is the card's own:
+[`hide`](#hide), [`unit`](#unit), [`decimal`](#decimal),
+[`watermark`](#watermark), [`alert_when`](#alert_when) and the rest. What it
+does **not** accept is anything the row shape settles on its behalf: `layout`,
+`bar_position`, `bar_single_line`, `density`, `frameless`, `marginless`,
+`multiline`, `height` and `min_width`.
+
+[`bar_max_width`](#bar_max_width) is the exception worth knowing: a row does
+take it, and it is how a stack's bars are made to start at the same x rather
+than each one beginning where its own text ends. Set once at the top level, it
+applies to every row. The CSS hook `--epb-multi-value-width` does the same from
+the other side, by pinning the text column instead of the bar.
+
+> [!IMPORTANT]
+>
+> `entity-progress-multi-feature` is the tight one. Its rows split a **single**
+> 42px feature row between them, so everything scales down with the row height:
+> the icon, the text and the bar's own box.
+>
+> Because of that, its rows default to `hide: [icon, name]` — a bar and its
+> value, which is all that reads at four rows. Ask for the rest back with an
+> explicit `hide: []`, or name exactly what you want gone. It also drops the
+> icon's own tap/hold/double-tap actions and
+> [`force_circular_background`](#force_circular_background) (with `shape` as a
+> [`hide`](#hide) target): a few pixels of icon are too small to aim at, and too
+> small for a circular background to read as one. It drops what has nowhere to
+> go on a slice of a row too: [`trend_indicator`](#trend_indicator),
+> [`status_label`](#status_label), [`badge_icon`](#badge_icon) /
+> [`badge_color`](#badge_color) — a corner each, and the row has none — and
+> [`alert_when`](#alert_when), whose frame and ring have no room to draw inside
+> the Tile.
+>
+> `entity-progress-multi-card` has the room and keeps all of it, hiding nothing
+> by default.
 
 <a id="multi-entities"></a>
 
@@ -3835,11 +3981,10 @@ divides the available height.
 
 > **`entities`** [List] ➡️ list of maps _(required)_
 
-Each item is a card/feature config (see
-[entity-progress-card / entity-progress-badge / entity-progress-feature](#standard)
-for the available options) — at minimum an `entity`. Any option set at the **top
-level** of the multi config (outside `entities`) is applied to every item as a
-shared default; an item can override it individually.
+Each item is a row config — at minimum an `entity`, plus any of the row options
+listed above. Any option set at the **top level** of the multi config (outside
+`entities`) is applied to every row as a shared default; a row can override it
+individually.
 
 `bar_size` defaults to `small` for every item unless set otherwise. Pick
 `xsmall` (see [`bar_size`](#bar_size)) to fit more bars in the same space.
@@ -3883,59 +4028,70 @@ features:
 >
 > `entity-progress-multi-feature` always fits its bars into a **single** Tile
 > feature row (HA's own `--feature-height`, 42px by default) — it never spans
-> multiple rows. With too many entities for the chosen `bar_size`, bars get
-> thinner rather than overflowing; switch to `xsmall` to comfortably fit more
-> (up to 5, vs. 4 with `small`).
+> multiple rows. With too many entities for the chosen `bar_size`, rows get
+> shorter rather than overflowing, and the text gives way before the bar does;
+> switch to `xsmall` to comfortably fit more.
 
 [🔼 Back to top]
 
-<a id="multi-show_value"></a>
+<a id="multi-value"></a> <a id="multi-show_value"></a>
 
-### `show_value`
+### The value, and which side it sits on
 
-> **`show_value`** [Boolean] ➡️ _(optional, per item or shared, default:
-> `false`)_
-
-The bare bar alone doesn't say _how much_ — fine for something like a printer
-cartridge (a glance at the fill level is the point), less so for anything where
-the actual number matters (energy in Watts, a tank in liters…). Set
-`show_value: true` (top level for every item, or on a single item) to show the
-entity's own state and unit next to its bar. The bar gives up part of its width
-to make room — there's no overlay mode, a bare feature bar is already thin
-enough that overlaid text would fight it for contrast.
-
-`decimal`, `unit`, `disable_unit` and `unit_spacing` all work the same as on
-[entity-progress-card / entity-progress-feature](#standard) and can be set per
-item — left unset, the value falls back to the entity's own
-`unit_of_measurement` with 2 decimals.
-
-`value_position: left | right` (per item or shared, default `left`) picks which
-side of the bar the value sits on.
-
-Every value takes up the same fixed width (`30px` by default, overridable via
-`--epb-multi-value-width`) instead of sizing to its own text — several bars in
-the same stack rarely share the same digit count (`900` vs `1600 W`), and
-letting each value claim a different width would make bars meant to read as
-directly comparable end up different lengths for no meaningful reason. A value
-wider than this space only ever overflows visually — it's never clipped, since
-silently truncating the one thing this option exists to show would defeat its
-own purpose; widen `--epb-multi-value-width` if your values regularly need more
-room.
-
-_Example_:
+A row shows its entity's value by default — it is a whole card, with its own
+text. Take it off with [`hide`](#hide), top level for every row or on a single
+row:
 
 ```yaml
 type: custom:entity-progress-multi-card
-show_value: true
+hide:
+  - value
 entities:
-  - entity: sensor.living_room_power
-    bar_color: amber
-  - entity: sensor.kitchen_power
-    bar_color: orange
-    decimal: 0
-  - entity: sensor.garage_power
-    bar_color: red
+  - entity: sensor.printer_black_cartridge
+    bar_color: black
 ```
+
+[`decimal`](#decimal), [`unit`](#unit), [`disable_unit`](#disable_unit) and
+[`unit_spacing`](#unit_spacing) all work exactly as on a standalone card and can
+be set per row.
+
+Which side of the bar the text sits on is
+[`reverse_secondary_info_row`](#reverse_secondary_info_row), the card's own
+option — a row takes it like any other, top level for every row or on a single
+row. Left unset, icon, name and value come first and the bar takes the rest of
+the row; set to `true`, the bar comes first and the text follows it.
+
+```yaml
+type: custom:entity-progress-multi-card
+reverse_secondary_info_row: true
+entities:
+  - entity: sensor.printer_black_cartridge
+```
+
+> [!IMPORTANT]
+>
+> **`value_position` is deprecated since 1.6.3** (a console warning is logged) —
+> use [`reverse_secondary_info_row`](#reverse_secondary_info_row) instead
+> (`right` becomes `true`). It still works and is automatically migrated for the
+> session, at the top level and per row; the editor's **Migrate config** button
+> writes the new form into your YAML for good. See [Deprecated Options].
+
+> [!IMPORTANT]
+>
+> **`show_value` is deprecated.** It existed when a row was a bare bar that
+> could not print anything else, so showing a value had to be opted into. A row
+> is a whole card now — icon, name, value, bar — and the option collapses into
+> [`hide`](#hide).
+>
+> A config carrying `show_value` is auto-migrated for the session
+> (console-warned) to the hide list that keeps its previous look:
+> `show_value: true` becomes `hide: [icon, name]`, and `show_value: false` adds
+> `secondary_info`. Your rows render exactly as they did; drop entries from that
+> list to let the rest of the card through. Update your YAML whenever you're
+> ready, no rush.
+>
+> A config that never mentioned `show_value` has nothing to migrate from and
+> gets the full row — icon and name included.
 
 [🔼 Back to top]
 

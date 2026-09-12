@@ -230,9 +230,11 @@ references) in a real Home Assistant instance. It's a comprehensive showroom —
 one section per documented option, plus a non-regression card per closed bug —
 and is the actual way every fix in this project gets confirmed, not just read
 through. If your change is worth demonstrating, add a card for it in both
-`docs/demo-dashboard.yaml` and `docs/demo-dashboard-dev.yaml` (kept structurally
-parallel — the `-dev` file only differs by a `-dev` suffix on every custom card
-`type:`).
+`docs/demo-dashboard.yaml` and `docs/demo-dashboard-dev.yaml` — the showroom
+views are kept parallel, the `-dev` file differing only by a `-dev` suffix on
+every custom card `type:`. A card that proves a past bug stays fixed goes to the
+`-dev` file alone, in its "Regression tests" view: it is only ever run against a
+dev build, and it would be noise on a user's dashboard.
 
 [demo-dashboard-dev.yaml]: demo-dashboard-dev.yaml
 [demo-dashboard-helpers.yaml]: demo-dashboard-helpers.yaml

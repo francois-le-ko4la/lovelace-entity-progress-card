@@ -51,8 +51,7 @@
         "highlight": "Markering",
         "label": "Etikett",
         "above_mode": "Källa för övre larm",
-        "below_mode": "Källa för nedre larm",
-        "toggle": "Larm"
+        "below_mode": "Källa för nedre larm"
       },
       "attribute": "Attribut",
       "badge": {
@@ -79,7 +78,7 @@
       "custom_info": "Anpassad sekundär info",
       "custom_theme": "Anpassade temazoner",
       "decimal": "Visningsprecision",
-      "density_toggle": "Kompakt",
+      "density": "Täthet",
       "entity": "Entitet",
       "fast_refresh": "Snabb uppdatering (varje sekund)",
       "force_circular_background_mode": "Cirkulär ikonbakgrund",
@@ -106,8 +105,7 @@
       "peak_marker": {
         "min_toggle": "Visa min",
         "max_toggle": "Visa max",
-        "average_toggle": "Visa medel",
-        "toggle": "Toppmarkeringar"
+        "average_toggle": "Visa medel"
       },
       "peak_marker_unsupported": "Toppmarkeringar kräver en sensor- eller number-entitet utan attributöverskrivning, som inte är en timer eller counter — inte tillgängligt för denna entitet.",
       "percent": "Procent",
@@ -144,13 +142,15 @@
         "high_toggle": "Visa hög",
         "low_toggle": "Visa låg",
         "high": "Hög",
-        "line_size": "Linjebredd",
         "low": "Låg",
         "low_mode": "Källa för nedre markör",
-        "high_mode": "Källa för övre markör",
-        "toggle": "Markörer"
+        "high_mode": "Källa för övre markör"
       },
-      "window": "Tidsfönster"
+      "window": "Tidsfönster",
+      "entities": "Entiteter",
+      "rows": "Rader",
+      "line_size": "Linjetjocklek",
+      "mark_defaults": "Delade standardvärden"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -220,6 +220,11 @@
         "net": "Netto",
         "proportional": "Proportionell",
         "stacked": "Staplad"
+      },
+      "density": {
+        "default": "Standard",
+        "compact": "Kompakt",
+        "single_line": "En rad"
       },
       "duration_unit": {
         "s": "Sekunder",
@@ -328,8 +333,11 @@
       "content": "Innehåll",
       "interaction": "Interaktioner",
       "layout": "Layout & storlek",
-      "markers": "Markörer & larm",
-      "theme": "Utseende och funktionalitet"
+      "theme": "Utseende och funktionalitet",
+      "watermark": "Nivåmarkörer",
+      "peak_marker": "Toppmarkörer",
+      "indicators": "Indikatorer och etiketter",
+      "alerts": "Varningar"
     }
   }
 }

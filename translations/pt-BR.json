@@ -51,8 +51,7 @@
         "highlight": "Destaque",
         "label": "Rótulo",
         "above_mode": "Origem do alerta superior",
-        "below_mode": "Origem do alerta inferior",
-        "toggle": "Alerta"
+        "below_mode": "Origem do alerta inferior"
       },
       "attribute": "Atributo",
       "badge": {
@@ -79,7 +78,7 @@
       "custom_info": "Informação secundária personalizada",
       "custom_theme": "Zonas de tema personalizado",
       "decimal": "Precisão de exibição",
-      "density_toggle": "Compacto",
+      "density": "Densidade",
       "entity": "Entidade",
       "fast_refresh": "Atualização rápida (a cada segundo)",
       "force_circular_background_mode": "Fundo circular do ícone",
@@ -106,8 +105,7 @@
       "peak_marker": {
         "min_toggle": "Mostrar mínimo",
         "max_toggle": "Mostrar máximo",
-        "average_toggle": "Mostrar média",
-        "toggle": "Marcadores de pico"
+        "average_toggle": "Mostrar média"
       },
       "peak_marker_unsupported": "Os marcadores de pico precisam de uma entidade sensor ou number, sem substituição de atributo, e que não seja um timer nem um counter — não disponível para esta entidade.",
       "percent": "Porcentagem",
@@ -144,13 +142,15 @@
         "high_toggle": "Mostrar alto",
         "low_toggle": "Mostrar baixo",
         "high": "Alto",
-        "line_size": "Espessura da linha",
         "low": "Baixo",
         "low_mode": "Origem do marcador baixo",
-        "high_mode": "Origem do marcador alto",
-        "toggle": "Marcadores"
+        "high_mode": "Origem do marcador alto"
       },
-      "window": "Janela de tempo"
+      "window": "Janela de tempo",
+      "entities": "Entidades",
+      "rows": "Linhas",
+      "line_size": "Espessura da linha",
+      "mark_defaults": "Padrões compartilhados"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -220,6 +220,11 @@
         "net": "Líquido",
         "proportional": "Proporcional",
         "stacked": "Empilhado"
+      },
+      "density": {
+        "default": "Padrão",
+        "compact": "Compacto",
+        "single_line": "Uma linha"
       },
       "duration_unit": {
         "s": "Segundos",
@@ -328,8 +333,11 @@
       "content": "Conteúdo",
       "interaction": "Interações",
       "layout": "Layout e tamanho",
-      "markers": "Marcadores e alertas",
-      "theme": "Aparência e usabilidade"
+      "theme": "Aparência e usabilidade",
+      "watermark": "Marcadores de nível",
+      "peak_marker": "Marcadores de pico",
+      "indicators": "Indicadores e rótulos",
+      "alerts": "Alertas"
     }
   }
 }

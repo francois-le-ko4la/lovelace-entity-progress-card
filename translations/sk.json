@@ -51,8 +51,7 @@
         "highlight": "Zvýraznenie",
         "label": "Popisok",
         "above_mode": "Zdroj horného upozornenia",
-        "below_mode": "Zdroj dolného upozornenia",
-        "toggle": "Upozornenie"
+        "below_mode": "Zdroj dolného upozornenia"
       },
       "attribute": "Atribút",
       "badge": {
@@ -79,7 +78,7 @@
       "custom_info": "Vlastné sekundárne info",
       "custom_theme": "Zóny vlastnej témy",
       "decimal": "Presnosť zobrazenia",
-      "density_toggle": "Kompaktné",
+      "density": "Hustota",
       "entity": "Entita",
       "fast_refresh": "Rýchle obnovenie (každú sekundu)",
       "force_circular_background_mode": "Kruhové pozadie ikony",
@@ -106,8 +105,7 @@
       "peak_marker": {
         "min_toggle": "Zobraziť minimum",
         "max_toggle": "Zobraziť maximum",
-        "average_toggle": "Zobraziť priemer",
-        "toggle": "Značky vrcholov"
+        "average_toggle": "Zobraziť priemer"
       },
       "peak_marker_unsupported": "Značky vrcholov vyžadujú entitu sensor alebo number bez prepísania atribútu, ktorá nie je timer ani counter — pre túto entitu nie je k dispozícii.",
       "percent": "Percento",
@@ -144,13 +142,15 @@
         "high_toggle": "Zobraziť horný",
         "low_toggle": "Zobraziť dolný",
         "high": "Horný",
-        "line_size": "Hrúbka čiary",
         "low": "Dolný",
         "low_mode": "Zdroj dolnej značky",
-        "high_mode": "Zdroj hornej značky",
-        "toggle": "Značky"
+        "high_mode": "Zdroj hornej značky"
       },
-      "window": "Časové okno"
+      "window": "Časové okno",
+      "entities": "Entity",
+      "rows": "Riadky",
+      "line_size": "Hrúbka čiary",
+      "mark_defaults": "Zdieľané predvolené hodnoty"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -220,6 +220,11 @@
         "net": "Čistý",
         "proportional": "Proporcionálny",
         "stacked": "Skladaný"
+      },
+      "density": {
+        "default": "Predvolené",
+        "compact": "Kompaktné",
+        "single_line": "Jeden riadok"
       },
       "duration_unit": {
         "s": "Sekundy",
@@ -328,8 +333,11 @@
       "content": "Obsah",
       "interaction": "Interakcie",
       "layout": "Rozloženie a veľkosť",
-      "markers": "Značky a upozornenia",
-      "theme": "Vzhľad a použiteľnosť"
+      "theme": "Vzhľad a použiteľnosť",
+      "watermark": "Značky úrovne",
+      "peak_marker": "Značky extrémov",
+      "indicators": "Ukazovatele a štítky",
+      "alerts": "Upozornenia"
     }
   }
 }

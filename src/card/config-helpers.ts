@@ -27,6 +27,7 @@ import {
   entityOf,
   attributeOf,
   type ValueConfig,
+  ROW_IDENTITY_FIELDS,
 } from './schema.js';
 import { EntityHelper } from './entity-helper.js';
 import { resolveDisplayUnit, resolveDisplayDecimal } from '../utils/display-defaults.js';
@@ -71,6 +72,10 @@ const hasLegacyWatermarkMarkKeys = (config: LovelaceConfig, side: 'low' | 'high'
   config?.watermark?.[`${side}_color`] !== undefined ||
   config?.watermark?.[`disable_${side}`] !== undefined;
 
+// What a Multi row looked like before it was a card: a bar, and nothing the
+// aggregator's own children were able to draw.
+const LEGACY_BARE_ROW = ['icon', 'name'];
+
 // Single source for "this config still uses a deprecated shape" - read by the
 // console warnings and migrations below, and by the editor's Migrate button.
 const DEPRECATED_OPTIONS: Record<string, (config: LovelaceConfig) => boolean> = {
@@ -83,6 +88,18 @@ const DEPRECATED_OPTIONS: Record<string, (config: LovelaceConfig) => boolean> = 
   navigate_to: (config) => config?.navigate_to !== undefined,
   show_more_info: (config) => config?.show_more_info !== undefined,
   theme: (config) => Boolean(THEME_ALIASES[config?.theme]),
+  // Multi only, top level or per row - harmless for every other type, which
+  // has no such key to carry.
+  // Multi only. Superseded by the card's own reverse_secondary_info_row now
+  // that a row is a card - one spelling, so the two can't disagree.
+  value_position: (config) =>
+    config?.value_position !== undefined ||
+    (is.array(config?.entities) &&
+      config.entities.some((row: unknown) => is.plainObject(row) && row.value_position !== undefined)),
+  show_value: (config) =>
+    config?.show_value !== undefined ||
+    (is.array(config?.entities) &&
+      config.entities.some((row: unknown) => is.plainObject(row) && row.show_value !== undefined)),
 };
 
 // Also drives the editor's "Migrate config" button - see
@@ -223,6 +240,45 @@ class BaseConfigHelper {
     return { ...config, icon_animation: undefined };
   }
 
+  // A Multi used to draw bare bars: no icon, no name, and a value only where
+  // show_value asked for one - it could not have printed the rest. A row is a
+  // whole card now, so keeping that look is a hide list rather than the
+  // absence of one, and the option collapses into the card's own vocabulary.
+  // Applied at both levels, since it was settable on either.
+  static _migrateValuePosition(config: LovelaceConfig): LovelaceConfig {
+    if (!DEPRECATED_OPTIONS.value_position(config)) return config;
+    const swap = (level: Record<string, unknown>) => {
+      const { value_position: position, ...rest } = level;
+      if (position === undefined) return rest;
+      return { ...rest, reverse_secondary_info_row: position === 'right' };
+    };
+    const migrated = swap(config) as LovelaceConfig;
+    if (!is.array(migrated.entities)) return migrated;
+    return {
+      ...migrated,
+      entities: migrated.entities.map((row: unknown) => (is.plainObject(row) ? swap(row) : row)),
+    };
+  }
+
+  static _migrateShowValue(config: LovelaceConfig): LovelaceConfig {
+    if (!DEPRECATED_OPTIONS.show_value(config)) return config;
+    const drop = (level: Record<string, unknown>) => {
+      const { show_value: showValue, ...rest } = level;
+      // Absent at this level: it says nothing about this level's look, so
+      // nothing is decided here - the other one may still speak for it.
+      if (showValue === undefined) return rest;
+      const hide = new Set([...(is.array(rest.hide) ? (rest.hide as string[]) : []), ...LEGACY_BARE_ROW]);
+      if (showValue === false) hide.add('secondary_info');
+      return { ...rest, hide: [...hide] };
+    };
+    const migrated = drop(config) as LovelaceConfig;
+    if (!is.array(migrated.entities)) return migrated;
+    return {
+      ...migrated,
+      entities: migrated.entities.map((row: unknown) => (is.plainObject(row) ? drop(row) : row)),
+    };
+  }
+
   // watermark.low/high: two legacy layers, folded per side in one pass -
   // (1) the pre-1.6 bare-entity-string trap (same as max_value's, with a
   // low_attribute/high_attribute sibling), (2) low_as/high_as/low_color/
@@ -293,6 +349,17 @@ class BaseConfigHelper {
     // freeze bug). The entity form is now an explicit map; the bare string form
     // is auto-migrated for this session (see CardConfigHelper._customizeConfig)
     // but should be updated in the YAML.
+    if (DEPRECATED_OPTIONS.value_position(config))
+      BaseConfigHelper.#warnDeprecated(
+        'value_position',
+        'A Multi row is a whole card now and uses its own reverse_secondary_info_row.',
+      );
+    if (DEPRECATED_OPTIONS.show_value(config))
+      BaseConfigHelper.#warnDeprecated(
+        'show_value',
+        'A Multi row is a whole card now - icon, name, value and bar. Your rows were ' +
+          'migrated to the hide list that keeps their previous look; adjust it to show more.',
+      );
     if (DEPRECATED_OPTIONS.max_value(config))
       BaseConfigHelper.#warnDeprecated(
         'max_value: <entity id>',
@@ -617,6 +684,83 @@ class BadgeTemplateConfigHelper extends BaseConfigHelper {
   _yamlSchema = YamlSchemaFactory.badgeTemplate;
 }
 
+/**
+ * Config helper for both Multi aggregators. Plain BaseConfigHelper: an
+ * aggregator has no entity, icon or action of its own to negotiate - every row
+ * option it carries is a default its children re-validate for themselves (see
+ * multi.ts's #childConfigs).
+ *
+ * @extends BaseConfigHelper
+ */
+class MultiConfigHelper extends BaseConfigHelper {
+  static _customizeConfig(config: LovelaceConfig): LovelaceConfig {
+    return BaseConfigHelper._customizeConfig(
+      MultiConfigHelper._migrateShowValue(
+        MultiConfigHelper._migrateValuePosition(MultiConfigHelper._migrateSharedRowIdentity(config)),
+      ),
+    );
+  }
+
+  // A name or an icon at the shared level is what an earlier build produced by
+  // hoisting a lone row's own settings. The aggregator schemas no longer carry
+  // either (ROW_IDENTITY_FIELDS), so the value has to reach its rows before
+  // validation drops it - deliberately not shared with the editor's own
+  // pushDown (multi-cascade.ts): card code doesn't reach into editor code, and
+  // this one also has the bare entity-id shorthand to expand.
+  static _migrateSharedRowIdentity(config: LovelaceConfig): LovelaceConfig {
+    const stale = ROW_IDENTITY_FIELDS.filter((field) => field !== 'entity' && config?.[field] !== undefined);
+    if (stale.length === 0 || !is.array(config.entities)) return config;
+    const migrated: LovelaceConfig = { ...config };
+    for (const field of stale) migrated[field] = undefined;
+    migrated.entities = config.entities.map((row: unknown) => {
+      const own: Record<string, unknown> = is.plainObject(row) ? { ...row } : { entity: row };
+      for (const field of stale) own[field] ??= config[field];
+      return own;
+    });
+    return migrated;
+  }
+}
+
+/**
+ * MultiConfigHelper variant for the standalone card —
+ * `YamlSchemaFactory.multiCard`.
+ *
+ * @extends MultiConfigHelper
+ */
+/**
+ * One row of a Multi, edited on its own — `YamlSchemaFactory.multiRow`. Same
+ * migrations as its aggregator (show_value was settable per row too).
+ *
+ * @extends MultiConfigHelper
+ */
+class MultiRowConfigHelper extends MultiConfigHelper {
+  _yamlSchema = YamlSchemaFactory.multiRow;
+}
+
+/**
+ * The same row, inside a Feature — `YamlSchemaFactory.multiFeatureRow`, which
+ * drops what a few pixels of icon cannot carry.
+ *
+ * @extends MultiConfigHelper
+ */
+class MultiFeatureRowConfigHelper extends MultiConfigHelper {
+  _yamlSchema = YamlSchemaFactory.multiFeatureRow;
+}
+
+class MultiCardConfigHelper extends MultiConfigHelper {
+  _yamlSchema = YamlSchemaFactory.multiCard;
+}
+
+/**
+ * MultiConfigHelper variant for the tile feature —
+ * `YamlSchemaFactory.multiFeature`.
+ *
+ * @extends MultiConfigHelper
+ */
+class MultiFeatureConfigHelper extends MultiConfigHelper {
+  _yamlSchema = YamlSchemaFactory.multiFeature;
+}
+
 export type { ActionBag };
 export { hasDeprecatedOptions };
 export { BaseConfigHelper };
@@ -625,3 +769,7 @@ export { BadgeConfigHelper };
 export { FeatureConfigHelper };
 export { TemplateConfigHelper };
 export { BadgeTemplateConfigHelper };
+export { MultiRowConfigHelper };
+export { MultiFeatureRowConfigHelper };
+export { MultiCardConfigHelper };
+export { MultiFeatureConfigHelper };

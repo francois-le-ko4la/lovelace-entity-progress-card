@@ -51,8 +51,7 @@
         "highlight": "Korostus",
         "label": "Merkintä",
         "above_mode": "Ylähälytyksen lähde",
-        "below_mode": "Alahälytyksen lähde",
-        "toggle": "Hälytys"
+        "below_mode": "Alahälytyksen lähde"
       },
       "attribute": "Attribuutti",
       "badge": {
@@ -79,7 +78,7 @@
       "custom_info": "Mukautettu toissijainen tieto",
       "custom_theme": "Mukautetun teeman vyöhykkeet",
       "decimal": "Näytön tarkkuus",
-      "density_toggle": "Kompakti",
+      "density": "Tiheys",
       "entity": "Entiteetti",
       "fast_refresh": "Nopea päivitys (joka sekunti)",
       "force_circular_background_mode": "Kuvakkeen pyöreä tausta",
@@ -106,8 +105,7 @@
       "peak_marker": {
         "min_toggle": "Näytä minimi",
         "max_toggle": "Näytä maksimi",
-        "average_toggle": "Näytä keskiarvo",
-        "toggle": "Huippumerkinnät"
+        "average_toggle": "Näytä keskiarvo"
       },
       "peak_marker_unsupported": "Huippumerkinnät vaativat sensor- tai number-entiteetin ilman attribuutin ylikirjoitusta, joka ei ole timer eikä counter — ei käytettävissä tälle entiteetille.",
       "percent": "Prosentti",
@@ -144,13 +142,15 @@
         "high_toggle": "Näytä ylä",
         "low_toggle": "Näytä ala",
         "high": "Ylä",
-        "line_size": "Viivan paksuus",
         "low": "Ala",
         "low_mode": "Alarajan merkin lähde",
-        "high_mode": "Ylärajan merkin lähde",
-        "toggle": "Merkit"
+        "high_mode": "Ylärajan merkin lähde"
       },
-      "window": "Aikaikkuna"
+      "window": "Aikaikkuna",
+      "entities": "Entiteetit",
+      "rows": "Rivit",
+      "line_size": "Viivan paksuus",
+      "mark_defaults": "Jaetut oletusarvot"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -220,6 +220,11 @@
         "net": "Netto",
         "proportional": "Suhteellinen",
         "stacked": "Pinottu"
+      },
+      "density": {
+        "default": "Oletus",
+        "compact": "Kompakti",
+        "single_line": "Yksi rivi"
       },
       "duration_unit": {
         "s": "Sekuntia",
@@ -328,8 +333,11 @@
       "content": "Sisältö",
       "interaction": "Vuorovaikutukset",
       "layout": "Asettelu ja koko",
-      "markers": "Merkit ja hälytykset",
-      "theme": "Ulkoasu"
+      "theme": "Ulkoasu",
+      "watermark": "Tasomerkit",
+      "peak_marker": "Huippumerkit",
+      "indicators": "Ilmaisimet ja tunnisteet",
+      "alerts": "Hälytykset"
     }
   }
 }

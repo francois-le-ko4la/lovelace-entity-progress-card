@@ -37,6 +37,8 @@ import {
   EntityProgressTemplateEditor,
   EntityProgressBadgeTemplateEditor,
   EntityProgressFeatureEditor,
+  EntityProgressMultiCardEditor,
+  EntityProgressMultiFeatureEditor,
 } from './editor/editors.js';
 
 /******************************************************************************
@@ -60,8 +62,12 @@ RegistrationHelper.registerBadge(
   EntityProgressBadgeTemplateEditor,
 );
 RegistrationHelper.registerCardFeature(META.types.feature, EntityProgressFeatures, EntityProgressFeatureEditor);
-RegistrationHelper.registerCard(META.types.multiCard, EntityProgressMultiCard);
-RegistrationHelper.registerCardFeature(META.types.multiFeature, EntityProgressMultiFeature);
+RegistrationHelper.registerCard(META.types.multiCard, EntityProgressMultiCard, EntityProgressMultiCardEditor);
+RegistrationHelper.registerCardFeature(
+  META.types.multiFeature,
+  EntityProgressMultiFeature,
+  EntityProgressMultiFeatureEditor,
+);
 
 /******************************************************************************
  * 🔧 Diagnostic helper — window.EPB_DIAG.dump(), see utils/diagnostic.ts

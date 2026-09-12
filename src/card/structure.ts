@@ -23,6 +23,14 @@ type StructureElementSpec = {
 // barType, trendIndicator, hasLabel, multiline, barSingleLine), never all at
 // once.
 type StructureOptions = {
+  // Statically hidden subtrees, left out of the markup rather than built and
+  // hidden. The matching hide-* class still goes on the card: it carries the
+  // layout compensation (--current-content-width, --name-height), not just the
+  // display: none.
+  hideIcon?: boolean;
+  hideName?: boolean;
+  hideSecondaryInfo?: boolean;
+  singleLine?: boolean;
   layout?: string;
   barPosition?: string;
   barType?: string;
@@ -169,9 +177,18 @@ const StructureElements = {
     const excludedPositions = ['top', 'bottom', 'below', 'compact_below', 'overlay', 'background'];
     const excludedLayouts = ['vertical'];
 
-    let content = secondaryInfoWrapperFn(options);
+    // In a single row the bar is a sibling, never nested here (see
+    // createContent's `after` slot), so a statically hidden secondary-info has
+    // nothing left to hold - the box goes with it. Standing empty, it still
+    // took the row's gap next to the bar.
+    if (options.singleLine && options.hideSecondaryInfo) return '';
 
-    if (!excludedPositions.includes(barPosition) && !excludedLayouts.includes(layout)) {
+    // Everywhere else only the wrapper goes: .secondary-info itself may be
+    // holding the progress bar (see the barPosition/layout test just below),
+    // and that is exactly what .hide-secondary-info targets in CSS too.
+    let content = options.hideSecondaryInfo ? '' : secondaryInfoWrapperFn(options);
+
+    if (!options.singleLine && !excludedPositions.includes(barPosition) && !excludedLayouts.includes(layout)) {
       content += StructureElements.progressBar(options);
     }
 
@@ -188,11 +205,20 @@ const StructureElements = {
     const isOverlay = options.barPosition === 'overlay';
     const isSingleLine = options.barSingleLine;
     const isVertical = options.layout === 'vertical';
+    const isSingleLineRow = Boolean(options.singleLine);
     const isBelowTopOrBottom = ['below', 'top', 'bottom', 'background'].includes(options.barPosition ?? '');
 
-    const extraClass = (isOverlay ? ' overlay' : '') + (isSingleLine ? ' single-line' : '');
+    const extraClass =
+      (isOverlay ? ' overlay' : '') +
+      (isSingleLine ? ' single-line' : '') +
+      (isSingleLineRow ? ' single-line-row' : '');
     const before = isOverlay ? StructureElements.progressBar(options) : '';
-    const after = !isOverlay && !isBelowTopOrBottom && isVertical ? StructureElements.progressBar(options) : '';
+    // Same slot vertical already uses: the bar sits after the content instead
+    // of inside secondary-info, which is what makes it a sibling on the row.
+    const after =
+      !isOverlay && !isBelowTopOrBottom && (isVertical || isSingleLineRow)
+        ? StructureElements.progressBar(options)
+        : '';
     const content = before + rightContent + after;
 
     return Element(CARD.htmlStructure.sections.content, extraClass).html(content);
@@ -207,11 +233,18 @@ const StructureElements = {
     options: StructureOptions,
     nameHtml: string,
     secondaryInfoFn: (options: StructureOptions) => string,
-  ) =>
-    options.barPosition === 'compact_below'
-      ? Element(CARD.htmlStructure.sections.nameSecondaryRow).html(nameHtml + secondaryInfoFn(options)) +
-        StructureElements.progressBar(options)
-      : nameHtml + secondaryInfoFn(options),
+  ) => {
+    const body = (options.hideName ? '' : nameHtml) + secondaryInfoFn(options);
+    if (options.barPosition === 'compact_below') {
+      return Element(CARD.htmlStructure.sections.nameSecondaryRow).html(body) + StructureElements.progressBar(options);
+    }
+    // density: single_line wraps the same two in one box instead, so the row
+    // truncates once at its end rather than each group inside its own. With
+    // both statically hidden there is nothing to wrap, and an empty box is not
+    // free: it still claims its share of the row's gap.
+    if (!options.singleLine || body === '') return body;
+    return Element(CARD.htmlStructure.sections.infoRow).html(body);
+  },
 
   contentFull: (options: StructureOptions) =>
     StructureElements.createContent(
@@ -266,7 +299,7 @@ const buildCardLike = (options: StructureOptions, contentFn: (options: Structure
       CONTENT_SLOT,
       StructureElements.trendIndicator(options) +
         StructureElements.label(options) +
-        StructureElements.iconSection() +
+        (options.hideIcon ? '' : StructureElements.iconSection()) +
         contentFn(options),
     ),
     options,
@@ -278,7 +311,7 @@ const StructureTemplates = {
   badge: (options: StructureOptions = {}) => {
     return StructureElements.container(options).replace(
       CONTENT_SLOT,
-      StructureElements.iconSectionWoBadge() + StructureElements.contentFull(options),
+      (options.hideIcon ? '' : StructureElements.iconSectionWoBadge()) + StructureElements.contentFull(options),
     );
   },
 
@@ -342,8 +375,9 @@ class ObjStructure {
   clone(options: StructureOptions = {}): Node {
     // Options are small flat objects of primitives built in a fixed key order
     // by each class's _structureOptions getter -> JSON is a stable cache key.
-    // The option space is bounded (a handful of enums/booleans), so is the
-    // cache.
+    // Still bounded now that hideIcon/hideName join the enums and booleans:
+    // only the subtrees a static hide can drop are encoded, not every hide
+    // member, and a dashboard uses two or three of those combinations.
     const key = JSON.stringify(options);
     let tpl = this.#templates.get(key);
     if (!tpl) {

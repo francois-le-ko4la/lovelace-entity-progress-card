@@ -897,12 +897,13 @@ class HACore extends HTMLElement {
   // number, not a percentage it would have to divide back out.
   _applyMarkCSS(
     cardKey: string,
-    vars: { value: { var: string }; opacity: { var: string }; color: { var: string } },
-    mark: { value: number; opacity: number; color?: string | null },
+    vars: { value: { var: string }; opacity: { var: string }; color: { var: string }; lineSize: { var: string } },
+    mark: { value: number; opacity: number; color?: string | null; line_size: string },
   ) {
     this._dom.setStyle(cardKey, vars.value.var, `${mark.value}%`);
     this._dom.setStyle(cardKey, `${vars.value.var}-num`, mark.value);
     this._dom.setStyle(cardKey, vars.opacity.var, mark.opacity);
+    this._dom.setStyle(cardKey, vars.lineSize.var, mark.line_size);
     if (mark.color) this._dom.setStyle(cardKey, vars.color.var, mark.color);
     else this._dom.removeStyle(cardKey, vars.color.var);
   }
@@ -932,6 +933,7 @@ class HACore extends HTMLElement {
         [pm.average, marker.average],
       ] as const
     ).forEach(([vars, mark]) => this._applyMarkCSS(cardKey, vars, mark));
+    this._dom.setStyle(cardKey, pm.lineSize.var, this._cardView.config.peak_marker?.line_size);
   }
 
   // ─── JINJA TEMPLATE RENDERING ─────────────────────────────────────────────
@@ -1466,6 +1468,10 @@ class HABase extends HACore {
         this._cardView.config.alert_when?.highlight === 'label' ||
         this._cardView.hasJinjaAlertWhen,
       multiline: Boolean(this._cardView.config.multiline),
+      hideIcon: this._cardView.isStaticallyHidden(CARD.style.dynamic.hiddenComponent.icon.label),
+      hideName: this._cardView.isStaticallyHidden(CARD.style.dynamic.hiddenComponent.name.label),
+      singleLine: this._cardView.config.density === 'single_line',
+      hideSecondaryInfo: this._cardView.isStaticallyHidden(CARD.style.dynamic.hiddenComponent.secondary_info.label),
     };
   }
 
@@ -1485,6 +1491,9 @@ class HABase extends HACore {
       // Badge/Badge Template have no such field, so they match none of them.
       ...BAR_POSITIONS.map((position): [string, boolean] => [position, config.bar_position === position]),
       ['row-reverse', this._cardView.hasReversedSecondaryInfoRow],
+      // A pinned bar makes the text the flexible half - the CSS can't branch
+      // on a variable being set, so the config says it here.
+      ['bar-max-width', Boolean(config.bar_max_width)],
       ['text-shadow', Boolean(config.text_shadow)],
       ['label-left', statusLabelObj(config.status_label).position === 'left'],
     ]);
@@ -1822,10 +1831,9 @@ class HABase extends HACore {
     const hasPicture = is.nonEmptyString(srcPicture);
 
     const iconContainer = this._dom.get(CARD.htmlStructure.elements.icon.class);
-    if (!iconContainer) {
-      this._log?.error('Icon container not found for _showIcon.');
-      return;
-    }
+    // Absent by design under a static hide: [icon] - the subtree is never
+    // built (see StructureOptions.hideIcon), so this is a no-op, not a fault.
+    if (!iconContainer) return;
 
     if (hasPicture && !hasIconOverride) {
       this._handleImgIcon(stateObj, srcPicture);

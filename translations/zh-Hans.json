@@ -51,8 +51,7 @@
         "highlight": "高亮显示",
         "label": "标签",
         "above_mode": "上限警报来源",
-        "below_mode": "下限警报来源",
-        "toggle": "警报"
+        "below_mode": "下限警报来源"
       },
       "attribute": "属性",
       "badge": {
@@ -79,7 +78,7 @@
       "custom_info": "自定义次要信息",
       "custom_theme": "自定义主题区域",
       "decimal": "显示精度",
-      "density_toggle": "紧凑",
+      "density": "密度",
       "entity": "实体",
       "fast_refresh": "快速刷新（每秒）",
       "force_circular_background_mode": "图标圆形背景",
@@ -106,8 +105,7 @@
       "peak_marker": {
         "min_toggle": "显示最小值",
         "max_toggle": "显示最大值",
-        "average_toggle": "显示平均值",
-        "toggle": "峰值标记"
+        "average_toggle": "显示平均值"
       },
       "peak_marker_unsupported": "峰值标记需要一个没有属性覆盖的 sensor 或 number 实体，且不能是 timer 或 counter — 此实体不可用。",
       "percent": "百分比",
@@ -144,13 +142,15 @@
         "high_toggle": "显示上限",
         "low_toggle": "显示下限",
         "high": "上限",
-        "line_size": "线条粗细",
         "low": "下限",
         "low_mode": "低标记来源",
-        "high_mode": "高标记来源",
-        "toggle": "标记"
+        "high_mode": "高标记来源"
       },
-      "window": "时间窗口"
+      "window": "时间窗口",
+      "entities": "实体",
+      "rows": "行数",
+      "line_size": "线条粗细",
+      "mark_defaults": "共享默认值"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -220,6 +220,11 @@
         "net": "净值",
         "proportional": "按比例",
         "stacked": "堆叠"
+      },
+      "density": {
+        "default": "默认",
+        "compact": "紧凑",
+        "single_line": "单行"
       },
       "duration_unit": {
         "s": "秒",
@@ -328,8 +333,11 @@
       "content": "内容",
       "interaction": "交互",
       "layout": "布局与尺寸",
-      "markers": "标记与警报",
-      "theme": "外观与体验"
+      "theme": "外观与体验",
+      "watermark": "阈值标记",
+      "peak_marker": "峰值标记",
+      "indicators": "指示器与标签",
+      "alerts": "警报"
     }
   }
 }

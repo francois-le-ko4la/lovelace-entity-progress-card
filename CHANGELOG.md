@@ -4,6 +4,386 @@ All notable changes to the Entity Progress Card are documented here, most recent
 first. See [`docs/rc-testing.md`](docs/rc-testing.md) for how to try a release
 candidate safely before it becomes stable.
 
+## 1.6.3
+
+**Your Multi cards just stopped being a stack of bare bars.**
+
+Every row of an [`entity-progress-multi-card`][multi] and
+[`entity-progress-multi-feature`][multi] is now a real progress card in its own
+right — icon, name, value and bar on one line — which means it finally takes the
+options a card takes. Both of them also get a visual editor, with a pencil on
+each row that opens that row's whole configuration. And the row format behind
+all this, [`density: single_line`][density], is available on any card. A couple
+of Multi options changed name along the way, fully backward-compatible — see
+[Breaking Changes](#️-breaking-changes) below.
+
+### ⚠️ Breaking Changes
+
+#### 🧹 The Multi's rows speak the card's own vocabulary
+
+**You can update right away — no extra action needed on your part.** A Multi row
+used to be a bare bar with two options of its own; now that it is a whole card,
+both collapse into what the card already said. `show_value` becomes
+[`hide`][hide], and `value_position` becomes
+[`reverse_secondary_info_row`][reverse_secondary_info_row]. Existing configs
+keep working exactly as before — auto-migrated for the session (console-warned),
+and to the hide list that preserves your rows' previous look — use the editor's
+**Migrate config** button to update your YAML permanently whenever you're ready,
+no rush.
+
+This one wasn't a preference: a row is validated by the card's own schema now,
+so an option both of them have has to be spelled the same way in both. Keeping
+the Multi's names would have meant two keys for one behaviour, free to drift
+apart at the first change to either.
+
+### ✨ New
+
+#### 📏 `density: single_line`: the whole card on one line
+
+A third value for [`density`][density]: icon, name, value and bar laid out as
+four neighbours on a single row instead of a name/value block beside the icon.
+The row reads as one sentence — the name takes the secondary info's own type,
+the two are joined by the same `·` separator that already joins infos, and the
+line truncates once at its end rather than each field cutting off inside its own
+box. [`reverse_secondary_info_row`][reverse_secondary_info_row] flips the whole
+row here: bar first, text after.
+
+#### 🧩 Both Multi cards get a visual editor
+
+No more YAML-only. An entity list you can add to, reorder and delete from, and a
+pencil on every row that opens that row's **entire** configuration — the card
+editor itself, not a cut-down copy of it.
+
+What the two levels do between them is automatic: set something on enough rows
+and it moves up to the card as a shared default; contradict it on one row and
+that row keeps its own. Nothing to declare, nothing to keep in sync, and the
+YAML stays as short as it can be.
+
+#### 📏 A thickness and a reading mode per mark
+
+[`watermark`][watermark] and [`peak_marker`][peak_marker] take `line_size` at
+three levels now — the whole family, one side (`low`/`high`), or a single mark —
+each falling back to the one above it. `watermark`'s `as` follows the same three
+levels, and `peak_marker` gains a `line_size` of its own.
+
+```yaml
+watermark:
+  line_size: 4px
+  low: { value: 20, line_size: 9px } # this side only
+```
+
+### 🔧 Improvements
+
+#### A Multi row is a whole card
+
+It used to be a bare bar, with the aggregator printing a value beside it. Every
+row now shows its own icon, name and value, and accepts what a card accepts:
+[`hide`][hide], [`unit`][unit], [`decimal`][decimal], [`watermark`][watermark],
+[`alert_when`][alert_when], per-row Jinja, tap actions — the lot.
+`entity-progress-multi-feature` keeps its rows tight (it still fits a single
+42px tile row): everything scales with the row height, and its rows start with
+`hide: [icon, name]`, which you can lift with an explicit `hide: []`. A slice of
+a 42px row has no corner to annotate and no frame to light up, so it also leaves
+out [`trend_indicator`][trend_indicator], [`status_label`][status_label], the
+icon badge and [`alert_when`][alert_when].
+
+#### Hiding a component now hides its settings too
+
+Across **every** card, not just the Multi: [`hide`][hide]`: [icon]` also takes
+the icon's color, its animation, its circular background and its badge out of
+the editor; `[progress_bar]` takes the bar's own appearance and its
+watermark/peak marks; `[name]`, `[value]`, `[unit]` and `[secondary_info]` each
+take theirs. A Jinja `hide` changes nothing — its result can flip on any state
+push, so those fields stay reachable.
+
+#### A statically hidden component leaves the page entirely
+
+A `hide` list (not a Jinja one) is settled before the card renders, so what it
+hides is no longer built and then covered up — it simply isn't there. A bar-only
+card went from 31 DOM nodes to 15.
+
+#### The marker editor, in four panels
+
+One "Markers & Alerts" panel held a hundred options; there are four now —
+Watermarks, Peak markers, Indicators & Labels, Alerts — and a card only gets the
+ones it can use. Inside each, a mark's fields follow what it draws: the line
+thickness only shows for a mark drawn as a line and sits next to its type, the
+watermark's reading mode sits with the threshold it reads, and every greyed hint
+shows the value that mark inherits rather than a built-in default.
+
+- **The editor's panels**: `Layout & Sizing` comes last on every card now, and
+  reads top to bottom as shape (`layout`, `density`), then size, then frame
+  (`frameless`/`marginless`).
+- **[`trend_indicator`][trend_indicator]**: switching it to Advanced now arrives
+  with a `window` already set — the one setting that changes what the indicator
+  measures. Turn it off there to keep the point-to-point comparison.
+- **[`bar_max_width`][bar_max_width]** reaches a Multi row, and in
+  [`density: single_line`][density] it pins the bar rather than only capping it:
+  every row's bar starts at the same x whatever its text, and the text ellipses
+  first on a card too narrow for both. The `--epb-multi-value-width` CSS hook
+  does the same from the text side.
+
+#### Rows that fill, and Home Assistant's own spacing
+
+A field left alone on its row takes the whole width now instead of leaving a
+hole beside it — whatever the card, the layout, and whichever options your
+config happens to hide. The editor's spacing follows Home Assistant's own card
+editors too: 24px between rows, 8px between two fields sharing one, 12px inside
+a panel.
+
+### 🐛 Fixes
+
+- **`watermark.line_size`**: the line-thickness slider had no effect — the
+  editor saved the value in a place the card never reads, so the line stayed at
+  its default. It lands in the right place now, and a leftover key from before
+  is swept the next time you edit the card. See [`watermark`][watermark].  
+  ➡️ Teams Benjamin D
+- A custom icon size (`--epb-icon-size`, or any theme setting it) resized the
+  icon's box but not the icon itself, which stayed at Home Assistant's own 24px.
+  Both follow now.
+- [`alert_when`][alert_when] with `highlight: label` showed the label but left
+  it on its grey fallback color instead of the alert's, on any card rendered
+  before Home Assistant inserted it.
+- A [`peak_marker`][peak_marker] mark drawn as a line took its thickness from
+  [`watermark`][watermark]'s `line_size`. It has its own now, 1px unless you set
+  it.
+- The editor left a mark's **Type** empty whenever it followed its family's
+  value instead of carrying its own, and showed nothing at all for a bare
+  `watermark: {}`.
+- A value set the same way on every visible [`peak_marker`][peak_marker] mark
+  never moved up to the shared level, and editing one mark could switch a hidden
+  one back on.
+- **[`trend_indicator`][trend_indicator]** with `threshold: 0` — the object
+  form's own default — showed a downward arrow on a value that had not moved at
+  all. It reads stable now.
+- A card in `layout: vertical` cut the top off its icon badge
+  ([`badge_icon`][badge_icon]) for every [`bar_position`][bar_position] but
+  `default` — since 1.6.1.  
+  ➡️ Discord @mooseBringer
+
+### 📚 Documentation
+
+- [`trend_indicator`][trend_indicator] now says what it measures — the bar's own
+  percentage, not the entity's raw state — and what each `basis` compares:
+  `average` against the window's mean, `edge` against its oldest sample, `slope`
+  against a line fitted through all of them. The three are identical without a
+  `window`, which wasn't written down anywhere either.
+- The Multi section says what a row actually accepts, announces both visual
+  editors, and `show_value`/`value_position` join the deprecated-options table
+  with what replaces them.
+- The demo dashboard splits in two: `demo-dashboard.yaml` is the showroom,
+  `demo-dashboard-dev.yaml` keeps it plus the regression and deprecated-option
+  benches.
+
+### 🧹 Under the hood
+
+- The Multi cards are validated by a real schema at last, like every other card
+  type — an unknown option is dropped instead of quietly reaching the DOM.
+- Three dead exports and one orphan translation key removed.
+
+We care about getting the details right — but even so, something here might have
+slipped through. You don't need to be a developer to notice it. If something
+feels off, that's reason enough. Open a [GitHub issue]. Or say hi on [Discord].
+We'd rather know than have you go looking for a workaround on your own.
+
+## What's new (1.6.3-rc1)
+
+### ⚠️ Breaking Changes
+
+#### 🧹 `show_value` and `value_position` retired
+
+**You can update right away — no extra action needed on your part.** Both were
+Multi-only spellings for what the card already had. `show_value` collapses into
+[`hide`][hide]: `show_value: true` migrates to `hide: [icon, name]` and
+`show_value: false` adds `secondary_info`, which is exactly the look those rows
+had. `value_position` becomes
+[`reverse_secondary_info_row`][reverse_secondary_info_row] (`right` → `true`).
+Both are auto-migrated for the session (console-warned) at the top level and per
+row — use the editor's **Migrate config** button to update your YAML permanently
+whenever you're ready, no rush.
+
+Forced, not chosen: `multiRow` is `YamlSchemaFactory.card` minus the frame
+fields, and its editor is the card's own field tree minus the same. An option
+carried by both surfaces has to have one name, or the two spellings drift the
+day either one changes.
+
+### ✨ New
+
+#### 📏 `density: single_line`
+
+A third [`density`][density] value, on Card and Template. Lays icon, name,
+secondary info and bar out as four siblings of one row, with the bar as the
+row's last item rather than nested in `.secondary-info`. Forces
+`layout: horizontal` and `bar_position: default`, and clears `multiline` — the
+shape has no vertical equivalent. The name takes `.secondary-info-value`'s own
+scale, weight and color (its `--epb-name-*` hooks still win), the two are joined
+by `CARD.config.separator`, and the whole row shares one ellipsis context
+instead of one per field.
+[`reverse_secondary_info_row`][reverse_secondary_info_row] reverses the row
+itself here — same meaning, one level up.
+
+#### 🧩 A visual editor for both Multi cards
+
+An [`entities`][entities] list editor, and a per-row editor opened from a pencil
+— built from the card's own field tree minus what the row shape settles (the
+layout panel, `bar_position`, `multiline`), never a hand-written second form.
+
+Shared and per-row values are reconciled by an election: a value carried by two
+or more rows moves to the top level and the rows stop repeating it; a value
+carried once stays on its row; a shared value every row contradicts is dropped.
+`entity`, `attribute`, `name` and `icon` never rise — a value whose job is
+telling one row from another is not a default. A row losing a shared value
+writes down what it was rendering, so the election never changes what a row
+looks like.
+
+#### 📏 `line_size` and `as` cascade over three levels
+
+[`watermark`][watermark] and [`peak_marker`][peak_marker] resolve `line_size` —
+and `as`, watermark only — from the mark's own value, then the family's global
+one, then the schema default. `watermark.low`/`.high` and
+`peak_marker.min`/`.max`/`.average` each accept both keys, and
+`peak_marker.line_size` exists for the first time.
+
+### 🔧 Improvements
+
+#### Multi rows are `entity-progress-card` children
+
+`multi.ts` no longer wraps a bare `entity-progress-feature` in a half-card of
+its own: no more `.multi-value` span, `ValueTarget` bookkeeping or manual
+unit/decimal formatting (−157 lines). Each row is a `density: single_line` card,
+`frameless` and `marginless`, given its slice through `--card-height`.
+`entity-progress-multi-feature` derives the icon, the text box, the type size
+and the bar's own box from that slice, and drops what a few pixels of icon
+cannot carry: the icon's gestures, `force_circular_background`, and `shape` as a
+`hide` target. Its rows default to `hide: [icon, name]`; an explicit `hide: []`
+lifts it. `trend_indicator`, `status_label`, `badge_icon`/`badge_color` and
+`alert_when` leave `YamlSchemaFactory.multiFeatureRow` too, and the interactions
+panel's own "+" picker loses the icon gestures it was still offering.
+
+#### The editor gates options on `hide`
+
+One table maps each [`hide`][hide] target to the fields it makes pointless —
+`icon` takes `color`/`icon_animation`/`force_circular_background`/`badge_*` and
+the icon's own actions, `progress_bar` takes the bar's appearance plus
+`watermark.*`/`peak_marker.*`, and so on. Anything that still feeds the _number_
+(`bar_stack`, `center_zero`, `bar_scale`, min/max) is deliberately left alone,
+as is `theme`, which still colors the icon. Static `hide` only.
+
+#### Static `hide` is structural, not cosmetic
+
+`ViewCore.isStaticallyHidden` tells a settled `hide` array from a Jinja one: the
+array's targets are left out of the markup instead of built and
+`display: none`d. A bar-only card drops from 31 nodes to 15. The matching
+`hide-*` class still goes on the card — it carries the layout compensation, not
+just the hiding.
+
+#### The Markers panel splits into four
+
+`EditorFactory.markers()` returns four sections instead of one — `watermark`,
+`peak_marker`, `indicators` (trend indicator, badge, status label) and `alerts`
+— and a section a variant has no field for is dropped rather than rendered
+empty: the Badge gets neither peak markers nor indicators.
+`EditorDOMHelper.updateAll` skips collapsed panels, so editing a watermark no
+longer re-evaluates every alert field on each keystroke.
+
+#### A mark's fields follow what it draws
+
+`line_size` shows only once the mark's effective type resolves to `line`, in the
+row its type gives back; `as` sits with the threshold it reads instead of among
+the drawing options; a mark's placeholder shows the value it inherits from its
+family, `color` included; and a "Shared defaults" heading opens each family's
+global block.
+
+- **Panel order**: `Layout & Sizing` is the last section of every editor now,
+  and its own fields read shape (`layout`, `density`) → size → frame.
+- **`density`**: the picker drops `single_line` while `layout` is vertical, and
+  picking vertical on a `single_line` card resets the density to `default` —
+  `EntityProgressModeChips` takes a config-dependent list for it.
+- **`trend_indicator`**: the first switch to Advanced writes `window` alongside
+  the threshold it already carried over from Simple.
+- **`bar_max_width`** stays in `multiRow`'s schema, and `applyBarMaxWidthRule`
+  reads the defaults for `layout`/`bar_position` when the variant has no such
+  key — a row deletes both, so the rule used to wipe the width it had just been
+  given. In `single_line` the bar takes it as a fixed basis (`flex: 0 0`) and
+  the text takes the rest.
+
+#### Field widths are the engine's job
+
+`.panel-body` packs its own rows — `flex: 1 1 calc(50% - 4px)` fits two and
+stretches whichever is left alone — so the eleven width functions computing "do
+I have a neighbour right now?" per variant are gone, and with them
+`EditorDOMHelper.updateWidth`'s pass on every keystroke. No half-empty row left
+across seven variants × sixteen configurations. Spacing follows
+`ha-form`/`ha-form-grid`/`config-elements-style` (24px/8px/12px), with
+`--ha-input-padding-bottom` and `--expansion-panel-content-padding` zeroed so
+Home Assistant's own insets stop stacking on ours.
+
+### 🐛 Fixes
+
+- **`watermark.line_size`** was saved as a literal `"watermark.line_size"` key
+  instead of nesting under [`watermark`][watermark], so the schema never saw it
+  and the line stayed at `1px` — since 1.6.2. `EditorFactory.lengthField` walks
+  the dot path now, and `#sendConfig` drops any top-level dotted key on its way
+  out: none is ever a valid option here.  
+  ➡️ Teams Benjamin D
+- `--mdc-icon-size` was set only on the badge's own icon, so `--epb-icon-size`
+  resized `.icon`'s box while the inner `ha-state-icon` stayed at Home
+  Assistant's 24px default. Invisible at the default (the two match), obvious at
+  any other size.
+- `alert_when.highlight: 'label'` left the pill on its grey CSS fallback:
+  `render()` also runs from `setConfig`, before insertion, where
+  `getComputedStyle` reads nothing — and the color cache recorded that failed
+  attempt, so every later repaint matched it and bailed.
+- A `peak_marker` mark drawn as a line read `--watermark-line-size` through the
+  shared `.wm-line` rule: `.watermark`'s own declaration beat each mark's on
+  source order, so `peak_marker.line_size` did nothing. The five mark classes
+  are qualified by `.watermark` now.
+- A mark following its family's `type` resolved against the raw config, where
+  the key stays absent until set explicitly — the select rendered empty while
+  the card drew the default.
+- `factorizeGlobalOverride`/`pruneGlobalOverride` counted a hidden mark as
+  disagreeing, so `peak_marker` factorised nothing with one of its three marks
+  off, and rewriting a hidden mark switched it back on (`high: false` came back
+  as `{ value: 20 }`).
+- `trend_indicator`'s `threshold: 0`, the object form's own schema default, let
+  a delta of exactly `0` fall through to `down` — `Math.abs(0) < 0` is false. A
+  value that never moved reads `flat` now.
+- `layout: vertical` clips its own container, and since 1.6.1 a vertical card is
+  exactly as tall as its parts — leaving the badge's `--badge-offset` overhang
+  nowhere to go except under `.vertical.default`'s own padding, which is why
+  only that one bar position looked right. The container stops clipping while a
+  badge is shown.  
+  ➡️ Discord @mooseBringer
+
+### 📚 Documentation
+
+- [`trend_indicator`][trend_indicator] now says what it measures — the bar's own
+  percentage, not the entity's raw state — and what each `basis` compares:
+  `average` against the window's mean, `edge` against its oldest sample, `slope`
+  against a line fitted through all of them. The three are identical without a
+  `window`, which wasn't written down anywhere either.
+- The Multi section says what a row actually accepts, announces both visual
+  editors, and `show_value`/`value_position` join the deprecated-options table
+  with what replaces them.
+- The demo dashboard splits in two: `demo-dashboard.yaml` is the showroom,
+  `demo-dashboard-dev.yaml` keeps it plus the regression and deprecated-option
+  benches.
+
+### 🧹 Under the hood
+
+- `YamlSchemaFactory` gains `multiRow`/`multiFeatureRow`/`multiCard`/
+  `multiFeature`, and both aggregators validate through a `MultiConfigHelper` —
+  closing `multi.ts`'s own `TODO(schema)`. Rows are passed through rather than
+  re-validated: their child card already runs the full card schema,
+  `postProcess` included.
+- A logic suite for the shared/per-row election (`multi-cascade.ts`, pure and
+  DOM-free) and DOM coverage for the two Multi editors, their row editors and
+  the `single_line` structure.
+- A logic suite for `TrendTracker`: the threshold boundary, what each `basis`
+  computes over the same window, and the buffer's own rules (two samples without
+  a window, eviction with one, `seed()` sorting and replacing).
+- Three dead exports and one orphan translation key removed.
+
 ## 1.6.2
 
 **This release finally gives your bars a memory — and your alerts a brain.**
@@ -6154,6 +6534,16 @@ experience:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/demo-dashboard-dev.yaml
 [demo-dashboard-helpers.yaml]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/demo-dashboard-helpers.yaml
+[density]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#density
+[entities]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#multi-entities
+[reverse_secondary_info_row]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#reverse_secondary_info_row
+[unit]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#unit
+[decimal]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#decimal
 [hide]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#hide
 [Card types]:

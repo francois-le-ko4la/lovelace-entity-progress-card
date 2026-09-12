@@ -51,8 +51,7 @@
         "highlight": "Markering",
         "label": "Label",
         "above_mode": "Bron van bovengrens-alarm",
-        "below_mode": "Bron van ondergrens-alarm",
-        "toggle": "Alarm"
+        "below_mode": "Bron van ondergrens-alarm"
       },
       "attribute": "Attribuut",
       "badge": {
@@ -79,7 +78,7 @@
       "custom_info": "Aangepaste secundaire info",
       "custom_theme": "Aangepaste themazones",
       "decimal": "Precisie weergeven",
-      "density_toggle": "Compact",
+      "density": "Dichtheid",
       "entity": "Entiteit",
       "fast_refresh": "Snel vernieuwen (elke seconde)",
       "force_circular_background_mode": "Cirkelvormige pictogramachtergrond",
@@ -106,8 +105,7 @@
       "peak_marker": {
         "min_toggle": "Minimum tonen",
         "max_toggle": "Maximum tonen",
-        "average_toggle": "Gemiddelde tonen",
-        "toggle": "Piekmarkeringen"
+        "average_toggle": "Gemiddelde tonen"
       },
       "peak_marker_unsupported": "Piekmarkeringen vereisen een sensor- of number-entiteit zonder attribuut-override, en geen timer of counter — niet beschikbaar voor deze entiteit.",
       "percent": "Percentage",
@@ -144,13 +142,15 @@
         "high_toggle": "Hoog tonen",
         "low_toggle": "Laag tonen",
         "high": "Hoge waarde",
-        "line_size": "Lijndikte",
         "low": "Lage waarde",
         "low_mode": "Bron van lage markering",
-        "high_mode": "Bron van hoge markering",
-        "toggle": "Markeringen"
+        "high_mode": "Bron van hoge markering"
       },
-      "window": "Tijdvenster"
+      "window": "Tijdvenster",
+      "entities": "Entiteiten",
+      "rows": "Rijen",
+      "line_size": "Lijndikte",
+      "mark_defaults": "Gedeelde standaardwaarden"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -220,6 +220,11 @@
         "net": "Netto",
         "proportional": "Proportioneel",
         "stacked": "Gestapeld"
+      },
+      "density": {
+        "default": "Standaard",
+        "compact": "Compact",
+        "single_line": "Eén regel"
       },
       "duration_unit": {
         "s": "Seconden",
@@ -328,8 +333,11 @@
       "content": "Inhoud",
       "interaction": "Interactie",
       "layout": "Layout & grootte",
-      "markers": "Markeringen & alarmen",
-      "theme": "Uiterlijk en gebruiksgemak"
+      "theme": "Uiterlijk en gebruiksgemak",
+      "watermark": "Niveaumarkeringen",
+      "peak_marker": "Piekmarkeringen",
+      "indicators": "Indicatoren & labels",
+      "alerts": "Waarschuwingen"
     }
   }
 }

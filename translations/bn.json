@@ -51,8 +51,7 @@
         "highlight": "হাইলাইট",
         "label": "লেবেল",
         "above_mode": "ঊর্ধ্ব অ্যালার্টের উৎস",
-        "below_mode": "নিম্ন অ্যালার্টের উৎস",
-        "toggle": "অ্যালার্ট"
+        "below_mode": "নিম্ন অ্যালার্টের উৎস"
       },
       "attribute": "বৈশিষ্ট্য",
       "badge": {
@@ -79,7 +78,7 @@
       "custom_info": "কাস্টম সেকেন্ডারি তথ্য",
       "custom_theme": "কাস্টম থিম জোন",
       "decimal": "Display precision",
-      "density_toggle": "কমপ্যাক্ট",
+      "density": "ঘনত্ব",
       "entity": "সত্তা",
       "fast_refresh": "দ্রুত রিফ্রেশ (প্রতি সেকেন্ডে)",
       "force_circular_background_mode": "আইকনের বৃত্তাকার পটভূমি",
@@ -106,8 +105,7 @@
       "peak_marker": {
         "min_toggle": "সর্বনিম্ন দেখান",
         "max_toggle": "সর্বোচ্চ দেখান",
-        "average_toggle": "গড় দেখান",
-        "toggle": "পিক মার্কার"
+        "average_toggle": "গড় দেখান"
       },
       "peak_marker_unsupported": "পিক মার্কারের জন্য sensor বা number সত্তা প্রয়োজন, বৈশিষ্ট্য ওভাররাইড ছাড়া, যা timer বা counter নয় — এই সত্তার জন্য উপলব্ধ নয়।",
       "percent": "শতাংশ",
@@ -144,13 +142,15 @@
         "high_toggle": "উচ্চ দেখান",
         "low_toggle": "নিম্ন দেখান",
         "high": "উচ্চ",
-        "line_size": "লাইনের পুরুত্ব",
         "low": "নিম্ন",
         "low_mode": "নিম্ন মার্কারের উৎস",
-        "high_mode": "উচ্চ মার্কারের উৎস",
-        "toggle": "মার্কার"
+        "high_mode": "উচ্চ মার্কারের উৎস"
       },
-      "window": "সময় উইন্ডো"
+      "window": "সময় উইন্ডো",
+      "entities": "এনটিটি",
+      "rows": "সারি",
+      "line_size": "রেখার পুরুত্ব",
+      "mark_defaults": "শেয়ার করা ডিফল্ট"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -220,6 +220,11 @@
         "net": "নিট",
         "proportional": "আনুপাতিক",
         "stacked": "স্ট্যাকড"
+      },
+      "density": {
+        "default": "ডিফল্ট",
+        "compact": "কমপ্যাক্ট",
+        "single_line": "এক লাইনে"
       },
       "duration_unit": {
         "s": "সেকেন্ড",
@@ -328,8 +333,11 @@
       "content": "বিষয়বস্তু",
       "interaction": "মিথস্ক্রিয়া",
       "layout": "লেআউট ও আকার",
-      "markers": "মার্কার ও অ্যালার্ট",
-      "theme": "চেহারা এবং অনুভূতি"
+      "theme": "চেহারা এবং অনুভূতি",
+      "watermark": "ওয়াটারমার্ক",
+      "peak_marker": "পিক মার্কার",
+      "indicators": "সূচক ও লেবেল",
+      "alerts": "সতর্কতা"
     }
   }
 }

@@ -4,7 +4,7 @@
  * dev/debug context can both import it without an import cycle.
  */
 
-const VERSION = '1.6.2';
+const VERSION = '1.6.3-rc1';
 
 const CARD_DESCRIPTION = 'A cool custom card to show current entity status with a progress bar.';
 const BADGE_DESCRIPTION = 'A cool custom badge to show current entity status with a progress bar.';
@@ -46,11 +46,13 @@ const META = {
       typeName: 'entity-progress-multi-card',
       name: 'Entity Progress Multi Card',
       description: 'Aggregates several entity progress bars in one grid-sized card.',
+      editor: 'entity-progress-multi-card-editor',
     },
     multiFeature: {
       typeName: 'entity-progress-multi-feature',
       name: 'Entity Progress Multi Feature',
       description: 'Aggregates several entity progress bars in one tile feature.',
+      editor: 'entity-progress-multi-feature-editor',
     },
   },
 };

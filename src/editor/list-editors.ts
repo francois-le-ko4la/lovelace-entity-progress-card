@@ -4,7 +4,12 @@
  */
 
 import { VALUE_CHANGED_EVENT, HA_SELECTOR_TAG, HA_SVG_ICON_TAG, devName } from '../utils/parameters.js';
-import { BAR_STACK_EDITOR_STYLE, CUSTOM_THEME_EDITOR_STYLE, ACTION_PICKER_STYLE } from '../utils/styles.js';
+import {
+  BAR_STACK_EDITOR_STYLE,
+  MULTI_ROW_EDITOR_STYLE,
+  CUSTOM_THEME_EDITOR_STYLE,
+  ACTION_PICKER_STYLE,
+} from '../utils/styles.js';
 import { is, assertDefined } from '../utils/common-checks.js';
 import { defineElement } from '../utils/register.js';
 import type { HomeAssistant } from '../utils/hass-provider.js';
@@ -28,18 +33,36 @@ const ADD_ICON_PATH = 'M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z';
 const DELETE_ICON_PATH =
   'M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2C6.47,2 2,6.47 2,12C2,18.53 6.47,22 12,22C17.53,22 22,17.53 22,12C22,6.47 17.53,2 12,2M14.59,8L12,10.59L9.41,8L8,9.41L10.59,12L8,14.59L9.41,16L12,13.41L14.59,16L16,14.59L13.41,12L16,9.41L14.59,8Z';
 
-// Same "Delete" button in every row (bar-stack entities, custom-theme zones)
-// - only the delete callback differs per call site.
-const buildDeleteButton = (onDelete: () => void): HTMLElement => {
-  const delBtn = document.createElement('button');
-  delBtn.className = 'del-btn';
-  delBtn.title = 'Delete';
-  const delIcon = document.createElement(HA_SVG_ICON_TAG) as HaSvgIconElement;
-  delIcon.path = DELETE_ICON_PATH;
-  delBtn.appendChild(delIcon);
-  delBtn.addEventListener('click', onDelete);
-  return delBtn;
+// mdi:pencil / mdi:arrow-left - the row's own sub-editor, opened and left.
+const EDIT_ICON_PATH =
+  'M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z';
+// The row's own editor, addressed by tag rather than imported: EditorBase
+// already imports this file, and a cycle around a class whose fields are
+// static (EditorFactory.buildMultiRow() runs at module load) fails as a
+// silent undefined, not as an error.
+const MULTI_CARD_ROW_EDITOR_NAME = devName('entity-progress-multi-card-row-editor');
+const MULTI_FEATURE_ROW_EDITOR_NAME = devName('entity-progress-multi-feature-row-editor');
+
+// "Open row N" - raised by the list, answered by whoever hosts it.
+const EDIT_ROW_EVENT = 'epb-edit-row';
+
+const BACK_ICON_PATH = 'M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z';
+
+// Every icon button in this file is the same borderless 28px circle (.del-btn
+// carries its look, see ROW_DELETE_STYLE) - only path, tooltip and callback
+// differ, so delete/edit/back are one builder rather than three copies.
+const buildIconButton = (path: string, title: string, onClick: () => void): HTMLElement => {
+  const btn = document.createElement('button');
+  btn.className = 'del-btn';
+  btn.title = title;
+  const icon = document.createElement(HA_SVG_ICON_TAG) as HaSvgIconElement;
+  icon.path = path;
+  btn.appendChild(icon);
+  btn.addEventListener('click', onClick);
+  return btn;
 };
+
+const buildDeleteButton = (onDelete: () => void): HTMLElement => buildIconButton(DELETE_ICON_PATH, 'Delete', onDelete);
 
 // Same "+ Add ..." button everywhere it's built - only label/callback differ.
 // appearance="filled" matches ha-form-optional_actions.ts's own add button.
@@ -335,6 +358,63 @@ class EntityProgressBarStackEditor extends ListEditorBase {
 defineElement(EntityProgressBarStackEditor.ELEMENT_NAME, EntityProgressBarStackEditor);
 
 /**
+ * Custom element that renders the Multi aggregators' `entities` list — one
+ * row per entity. Deliberately a short field set, not the row schema's forty:
+ * a row IS a whole card (see multi.ts), so generating its full editor per row
+ * would just be the card editor repeated N times. What stays here is what
+ * makes a row differ from its siblings; everything else is a shared default at
+ * the aggregator's top level.
+ *
+ * @extends ListEditorBase
+ */
+class EntityProgressMultiRowEditor extends ListEditorBase {
+  static ELEMENT_NAME = devName('entity-progress-multi-row-editor');
+  _addLabel = 'Add entity';
+
+  _buildDOM() {
+    this._buildListScaffold(MULTI_ROW_EDITOR_STYLE, this._addLabel);
+  }
+
+  _dispatch() {
+    this._dispatchRows((item) => Boolean(item.entity));
+  }
+
+  _rowClass = 'row-card';
+
+  // The entity stays inline: picking one is the whole point of adding a row,
+  // and a brand-new row has no title to show behind a pencil yet. Everything
+  // else a row can carry is edited whole, in the sub-editor its own host
+  // opens - this list only says which row was asked for.
+  _buildRow(item: Record<string, unknown>, index: number): Node[] {
+    const main = document.createElement('div');
+    main.className = 'row-main';
+    main.appendChild(
+      this._buildSelectorField({
+        selector: { entity: {} },
+        value: item.entity ?? '',
+        required: false,
+        fullWidth: true,
+        onChange: (value) => this._updateItem(index, { entity: (value as string) || undefined, attribute: undefined }),
+      }),
+    );
+    return [
+      main,
+      buildIconButton(EDIT_ICON_PATH, 'Edit', () => this.#requestEdit(index)),
+      buildDeleteButton(() => this._deleteRow(index)),
+    ];
+  }
+
+  // Asked of the host, not done here: the row's editor replaces the whole
+  // form, and this list is only one field inside it - swapping in place would
+  // leave the host's own panels stacked underneath.
+  #requestEdit(index: number) {
+    this.dispatchEvent(new CustomEvent(EDIT_ROW_EVENT, { detail: { index }, bubbles: true, composed: true }));
+  }
+}
+
+defineElement(EntityProgressMultiRowEditor.ELEMENT_NAME, EntityProgressMultiRowEditor);
+
+/**
  * Custom element that renders an editable list of custom_theme zones, each a
  * contiguous { min, max, color?, icon_color?, bar_color?, icon? } range.
  * Mirrors EntityProgressBarStackEditor's row-list pattern (label, list, add
@@ -501,5 +581,9 @@ class EntityProgressActionPicker extends HTMLElement {
 defineElement(EntityProgressActionPicker.ELEMENT_NAME, EntityProgressActionPicker);
 
 export { EntityProgressBarStackEditor };
+export { EntityProgressMultiRowEditor };
+export { MULTI_CARD_ROW_EDITOR_NAME, MULTI_FEATURE_ROW_EDITOR_NAME };
+export { EDIT_ROW_EVENT };
+export { buildIconButton, BACK_ICON_PATH };
 export { EntityProgressCustomThemeEditor };
 export { EntityProgressActionPicker };

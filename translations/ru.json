@@ -51,8 +51,7 @@
         "highlight": "Выделение",
         "label": "Метка",
         "above_mode": "Источник верхнего оповещения",
-        "below_mode": "Источник нижнего оповещения",
-        "toggle": "Оповещение"
+        "below_mode": "Источник нижнего оповещения"
       },
       "attribute": "Атрибут",
       "badge": {
@@ -79,7 +78,7 @@
       "custom_info": "Дополнительная информация",
       "custom_theme": "Зоны пользовательской темы",
       "decimal": "Округление значений",
-      "density_toggle": "Компактно",
+      "density": "Плотность",
       "entity": "Сущность",
       "fast_refresh": "Быстрое обновление (каждую секунду)",
       "force_circular_background_mode": "Круглый фон значка",
@@ -106,8 +105,7 @@
       "peak_marker": {
         "min_toggle": "Показать минимум",
         "max_toggle": "Показать максимум",
-        "average_toggle": "Показать среднее",
-        "toggle": "Маркеры пиков"
+        "average_toggle": "Показать среднее"
       },
       "peak_marker_unsupported": "Маркерам пиков нужна сущность sensor или number без переопределения атрибута, не являющаяся timer или counter — недоступно для этой сущности.",
       "percent": "Процент",
@@ -144,13 +142,15 @@
         "high_toggle": "Показать верхний",
         "low_toggle": "Показать нижний",
         "high": "Верхний",
-        "line_size": "Толщина линии",
         "low": "Нижний",
         "low_mode": "Источник нижнего маркера",
-        "high_mode": "Источник верхнего маркера",
-        "toggle": "Маркеры"
+        "high_mode": "Источник верхнего маркера"
       },
-      "window": "Временное окно"
+      "window": "Временное окно",
+      "entities": "Объекты",
+      "rows": "Строки",
+      "line_size": "Толщина линии",
+      "mark_defaults": "Общие значения по умолчанию"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -220,6 +220,11 @@
         "net": "Нетто",
         "proportional": "Пропорционально",
         "stacked": "Стек"
+      },
+      "density": {
+        "default": "По умолчанию",
+        "compact": "Компактно",
+        "single_line": "Одна строка"
       },
       "duration_unit": {
         "s": "Секунды",
@@ -328,8 +333,11 @@
       "content": "Содержимое",
       "interaction": "Взаимодействия",
       "layout": "Макет и размер",
-      "markers": "Маркеры и оповещения",
-      "theme": "Внешний вид"
+      "theme": "Внешний вид",
+      "watermark": "Метки уровня",
+      "peak_marker": "Метки пиков",
+      "indicators": "Индикаторы и метки",
+      "alerts": "Оповещения"
     }
   }
 }

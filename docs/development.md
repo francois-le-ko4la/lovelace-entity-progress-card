@@ -1264,12 +1264,16 @@ reasoning survives a maintainer handoff instead of living only in chat history.
   [`docs/demo-dashboard-dev.yaml`](demo-dashboard-dev.yaml) exists as its own
   file rather than a URL flag on `demo-dashboard.yaml`: every card type in it
   carries the same `-dev` suffix, so it only renders against the dev build, side
-  by side with a production install. The two files must stay byte-for-byte
-  parallel otherwise — edit both together, `-dev` suffixes only, no other
-  difference. A dev build can't be shipped by accident, and HACS's own
-  `?hacstag=…` doesn't trigger it. `?dev=true` is an optional _runtime override_
-  on the **prod** file on top of that baked value, for testing dev behavior
-  against the exact shipped bundle.
+  by side with a production install. The `-dev` file is a **superset**: every
+  showroom view exists in both, card for card, `-dev` suffixes as the only
+  difference — and the two views nobody but a developer opens (the regression
+  bench, one card per closed bug, and the deprecated-options bench) live in the
+  `-dev` file alone. A bug is confirmed fixed against a dev build, never against
+  the shipped one, so its card has no reason to reach a user's dashboard. A dev
+  build can't be shipped by accident, and HACS's own `?hacstag=…` doesn't
+  trigger it. `?dev=true` is an optional _runtime override_ on the **prod** file
+  on top of that baked value, for testing dev behavior against the exact shipped
+  bundle.
 - **debug** (`?debug=area1,area2`, or `?debug=all`) turns on per-area console
   logging at runtime, no rebuild, and works against the shipped file too. The
   committed baseline is `DEBUG_DEFAULTS` (all-`false`) — `?debug=` only ever

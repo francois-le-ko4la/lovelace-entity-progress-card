@@ -51,8 +51,7 @@
         "highlight": "Vurgu",
         "label": "Etiket",
         "above_mode": "Üst uyarı kaynağı",
-        "below_mode": "Alt uyarı kaynağı",
-        "toggle": "Uyarı"
+        "below_mode": "Alt uyarı kaynağı"
       },
       "attribute": "Öznitelik",
       "badge": {
@@ -79,7 +78,7 @@
       "custom_info": "Özel ikincil bilgi",
       "custom_theme": "Özel tema bölgeleri",
       "decimal": "Ekran hassasiyeti",
-      "density_toggle": "Kompakt",
+      "density": "Yoğunluk",
       "entity": "Varlık",
       "fast_refresh": "Hızlı yenileme (saniyede bir)",
       "force_circular_background_mode": "Simge dairesel arka planı",
@@ -106,8 +105,7 @@
       "peak_marker": {
         "min_toggle": "Minimumu göster",
         "max_toggle": "Maksimumu göster",
-        "average_toggle": "Ortalamayı göster",
-        "toggle": "Tepe işaretleri"
+        "average_toggle": "Ortalamayı göster"
       },
       "peak_marker_unsupported": "Tepe işaretleri, öznitelik geçersiz kılma olmayan ve timer veya counter olmayan bir sensor ya da number varlığı gerektirir — bu varlık için kullanılamaz.",
       "percent": "Yüzde",
@@ -144,13 +142,15 @@
         "high_toggle": "Yükseği göster",
         "low_toggle": "Düşüğü göster",
         "high": "Yüksek",
-        "line_size": "Çizgi kalınlığı",
         "low": "Düşük",
         "low_mode": "Düşük işaretçi kaynağı",
-        "high_mode": "Yüksek işaretçi kaynağı",
-        "toggle": "İşaretler"
+        "high_mode": "Yüksek işaretçi kaynağı"
       },
-      "window": "Zaman penceresi"
+      "window": "Zaman penceresi",
+      "entities": "Varlıklar",
+      "rows": "Satırlar",
+      "line_size": "Çizgi kalınlığı",
+      "mark_defaults": "Ortak varsayılanlar"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -220,6 +220,11 @@
         "net": "Net",
         "proportional": "Orantılı",
         "stacked": "Yığılmış"
+      },
+      "density": {
+        "default": "Varsayılan",
+        "compact": "Kompakt",
+        "single_line": "Tek satır"
       },
       "duration_unit": {
         "s": "Saniye",
@@ -328,8 +333,11 @@
       "content": "İçerik",
       "interaction": "Etkileşimler",
       "layout": "Düzen ve boyut",
-      "markers": "İşaretler ve uyarılar",
-      "theme": "Görünüm"
+      "theme": "Görünüm",
+      "watermark": "Seviye işaretleri",
+      "peak_marker": "Tepe işaretleri",
+      "indicators": "Göstergeler ve etiketler",
+      "alerts": "Uyarılar"
     }
   }
 }

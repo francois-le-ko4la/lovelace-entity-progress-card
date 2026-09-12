@@ -51,8 +51,7 @@
         "highlight": "Paryškinimas",
         "label": "Etiketė",
         "above_mode": "Viršutinio įspėjimo šaltinis",
-        "below_mode": "Apatinio įspėjimo šaltinis",
-        "toggle": "Įspėjimas"
+        "below_mode": "Apatinio įspėjimo šaltinis"
       },
       "attribute": "Atributas",
       "badge": {
@@ -79,7 +78,7 @@
       "custom_info": "Pasirinktinė papildoma informacija",
       "custom_theme": "Pasirinktinės temos zonos",
       "decimal": "Rodomas tikslumas",
-      "density_toggle": "Kompaktiškas",
+      "density": "Tankis",
       "entity": "Esybė",
       "fast_refresh": "Greitas atnaujinimas (kas sekundę)",
       "force_circular_background_mode": "Apvalus piktogramos fonas",
@@ -106,8 +105,7 @@
       "peak_marker": {
         "min_toggle": "Rodyti minimumą",
         "max_toggle": "Rodyti maksimumą",
-        "average_toggle": "Rodyti vidurkį",
-        "toggle": "Piko žymos"
+        "average_toggle": "Rodyti vidurkį"
       },
       "peak_marker_unsupported": "Piko žymoms reikia sensor arba number esybės be atributo perrašymo, kuri nėra timer ar counter — neprieinama šiai esybei.",
       "percent": "Procentai",
@@ -144,13 +142,15 @@
         "high_toggle": "Rodyti viršutinę",
         "low_toggle": "Rodyti apatinę",
         "high": "Viršutinė",
-        "line_size": "Linijos storis",
         "low": "Apatinė",
         "low_mode": "Žemo žymeklio šaltinis",
-        "high_mode": "Aukšto žymeklio šaltinis",
-        "toggle": "Žymekliai"
+        "high_mode": "Aukšto žymeklio šaltinis"
       },
-      "window": "Laiko langas"
+      "window": "Laiko langas",
+      "entities": "Objektai",
+      "rows": "Eilutės",
+      "line_size": "Linijos storis",
+      "mark_defaults": "Bendrosios numatytosios reikšmės"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -220,6 +220,11 @@
         "net": "Grynasis",
         "proportional": "Proporcingas",
         "stacked": "Sukrautas"
+      },
+      "density": {
+        "default": "Numatyta",
+        "compact": "Kompaktiškas",
+        "single_line": "Viena eilutė"
       },
       "duration_unit": {
         "s": "Sekundės",
@@ -328,8 +333,11 @@
       "content": "Turinys",
       "interaction": "Sąveikos",
       "layout": "Išdėstymas ir dydis",
-      "markers": "Žymekliai ir įspėjimai",
-      "theme": "Išvaizda ir naudojamumas"
+      "theme": "Išvaizda ir naudojamumas",
+      "watermark": "Lygio žymos",
+      "peak_marker": "Piko žymos",
+      "indicators": "Indikatoriai ir etiketės",
+      "alerts": "Įspėjimai"
     }
   }
 }

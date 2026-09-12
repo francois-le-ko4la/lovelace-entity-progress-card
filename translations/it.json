@@ -51,8 +51,7 @@
         "highlight": "Evidenziazione",
         "label": "Etichetta",
         "above_mode": "Origine dell'avviso superiore",
-        "below_mode": "Origine dell'avviso inferiore",
-        "toggle": "Avviso"
+        "below_mode": "Origine dell'avviso inferiore"
       },
       "attribute": "Attributo",
       "badge": {
@@ -79,7 +78,7 @@
       "custom_info": "Info secondaria personalizzata",
       "custom_theme": "Zone tema personalizzato",
       "decimal": "Visualizza la precisione",
-      "density_toggle": "Compatto",
+      "density": "Densità",
       "entity": "Entità",
       "fast_refresh": "Aggiornamento rapido (al secondo)",
       "force_circular_background_mode": "Sfondo circolare dell'icona",
@@ -106,8 +105,7 @@
       "peak_marker": {
         "min_toggle": "Mostra minimo",
         "max_toggle": "Mostra massimo",
-        "average_toggle": "Mostra media",
-        "toggle": "Marcatori di picco"
+        "average_toggle": "Mostra media"
       },
       "peak_marker_unsupported": "I marcatori di picco richiedono un'entità sensor o number, senza sovrascrittura dell'attributo, e che non sia un timer né un counter — non disponibile per questa entità.",
       "percent": "Percentuale",
@@ -144,13 +142,15 @@
         "high_toggle": "Mostra alto",
         "low_toggle": "Mostra basso",
         "high": "Soglia alta",
-        "line_size": "Spessore linea",
         "low": "Soglia bassa",
         "low_mode": "Origine dell'indicatore basso",
-        "high_mode": "Origine dell'indicatore alto",
-        "toggle": "Indicatori"
+        "high_mode": "Origine dell'indicatore alto"
       },
-      "window": "Finestra temporale"
+      "window": "Finestra temporale",
+      "entities": "Entità",
+      "rows": "Righe",
+      "line_size": "Spessore della linea",
+      "mark_defaults": "Valori predefiniti condivisi"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -220,6 +220,11 @@
         "net": "Netto",
         "proportional": "Proporzionale",
         "stacked": "Impilato"
+      },
+      "density": {
+        "default": "Predefinito",
+        "compact": "Compatto",
+        "single_line": "Una riga"
       },
       "duration_unit": {
         "s": "Secondi",
@@ -328,8 +333,11 @@
       "content": "Contenuto",
       "interaction": "Interazioni",
       "layout": "Layout e dimensioni",
-      "markers": "Indicatori e avvisi",
-      "theme": "Aspetto e funzionalità"
+      "theme": "Aspetto e funzionalità",
+      "watermark": "Marcatori di soglia",
+      "peak_marker": "Marcatori di picco",
+      "indicators": "Indicatori ed etichette",
+      "alerts": "Avvisi"
     }
   }
 }

@@ -51,8 +51,7 @@
         "highlight": "التمييز",
         "label": "تسمية",
         "above_mode": "مصدر تنبيه الحد الأعلى",
-        "below_mode": "مصدر تنبيه الحد الأدنى",
-        "toggle": "تنبيه"
+        "below_mode": "مصدر تنبيه الحد الأدنى"
       },
       "attribute": "السمة",
       "badge": {
@@ -79,7 +78,7 @@
       "custom_info": "معلومات إضافية (ثانوية)",
       "custom_theme": "مناطق السمة المخصصة",
       "decimal": "دقة العرض",
-      "density_toggle": "مضغوط",
+      "density": "الكثافة",
       "entity": "الكيان",
       "fast_refresh": "تحديث سريع (كل ثانية)",
       "force_circular_background_mode": "خلفية الأيقونة الدائرية",
@@ -106,8 +105,7 @@
       "peak_marker": {
         "min_toggle": "إظهار الحد الأدنى",
         "max_toggle": "إظهار الحد الأقصى",
-        "average_toggle": "إظهار المتوسط",
-        "toggle": "علامات الذروة"
+        "average_toggle": "إظهار المتوسط"
       },
       "peak_marker_unsupported": "تتطلب علامات الذروة كيان sensor أو number بدون تجاوز للسمة، وليس timer أو counter — غير متاح لهذا الكيان.",
       "percent": "النسبة المئوية",
@@ -144,13 +142,15 @@
         "high_toggle": "إظهار العلوي",
         "low_toggle": "إظهار السفلي",
         "high": "العلوي",
-        "line_size": "سُمك الخط",
         "low": "السفلي",
         "low_mode": "مصدر العلامة المنخفضة",
-        "high_mode": "مصدر العلامة المرتفعة",
-        "toggle": "العلامات"
+        "high_mode": "مصدر العلامة المرتفعة"
       },
-      "window": "النافذة الزمنية"
+      "window": "النافذة الزمنية",
+      "entities": "الكيانات",
+      "rows": "الصفوف",
+      "line_size": "سُمك الخط",
+      "mark_defaults": "الإعدادات الافتراضية المشتركة"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -220,6 +220,11 @@
         "net": "صافي",
         "proportional": "تناسبي",
         "stacked": "مكدس"
+      },
+      "density": {
+        "default": "افتراضي",
+        "compact": "مضغوط",
+        "single_line": "سطر واحد"
       },
       "duration_unit": {
         "s": "ثوانٍ",
@@ -328,8 +333,11 @@
       "content": "المحتوى",
       "interaction": "التفاعلات",
       "layout": "التخطيط والحجم",
-      "markers": "العلامات والتنبيهات",
-      "theme": "المظهر"
+      "theme": "المظهر",
+      "watermark": "علامات الحد",
+      "peak_marker": "علامات الذروة",
+      "indicators": "المؤشرات والتسميات",
+      "alerts": "التنبيهات"
     }
   }
 }

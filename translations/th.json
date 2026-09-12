@@ -51,8 +51,7 @@
         "highlight": "ไฮไลต์",
         "label": "ป้ายกำกับ",
         "above_mode": "แหล่งการแจ้งเตือนขอบบน",
-        "below_mode": "แหล่งการแจ้งเตือนขอบล่าง",
-        "toggle": "การแจ้งเตือน"
+        "below_mode": "แหล่งการแจ้งเตือนขอบล่าง"
       },
       "attribute": "แอตทริบิวต์",
       "badge": {
@@ -79,7 +78,7 @@
       "custom_info": "ข้อมูลรองที่กำหนดเอง",
       "custom_theme": "โซนธีมกำหนดเอง",
       "decimal": "Display precision",
-      "density_toggle": "กะทัดรัด",
+      "density": "ความหนาแน่น",
       "entity": "เอนทิตี",
       "fast_refresh": "รีเฟรชเร็ว (ทุกวินาที)",
       "force_circular_background_mode": "พื้นหลังวงกลมของไอคอน",
@@ -106,8 +105,7 @@
       "peak_marker": {
         "min_toggle": "แสดงค่าต่ำสุด",
         "max_toggle": "แสดงค่าสูงสุด",
-        "average_toggle": "แสดงค่าเฉลี่ย",
-        "toggle": "เครื่องหมายจุดสูงสุด"
+        "average_toggle": "แสดงค่าเฉลี่ย"
       },
       "peak_marker_unsupported": "เครื่องหมายจุดสูงสุดต้องใช้เอนทิตี sensor หรือ number โดยไม่มีการเขียนทับแอตทริบิวต์ และไม่ใช่ timer หรือ counter — ไม่พร้อมใช้งานสำหรับเอนทิตีนี้",
       "percent": "เปอร์เซ็นต์",
@@ -144,13 +142,15 @@
         "high_toggle": "แสดงสูง",
         "low_toggle": "แสดงต่ำ",
         "high": "สูง",
-        "line_size": "ความหนาของเส้น",
         "low": "ต่ำ",
         "low_mode": "แหล่งเครื่องหมายต่ำ",
-        "high_mode": "แหล่งเครื่องหมายสูง",
-        "toggle": "เครื่องหมาย"
+        "high_mode": "แหล่งเครื่องหมายสูง"
       },
-      "window": "ช่วงเวลา"
+      "window": "ช่วงเวลา",
+      "entities": "เอนทิตี",
+      "rows": "จำนวนแถว",
+      "line_size": "ความหนาของเส้น",
+      "mark_defaults": "ค่าเริ่มต้นร่วม"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -220,6 +220,11 @@
         "net": "สุทธิ",
         "proportional": "ตามสัดส่วน",
         "stacked": "ซ้อนกัน"
+      },
+      "density": {
+        "default": "ค่าเริ่มต้น",
+        "compact": "กะทัดรัด",
+        "single_line": "บรรทัดเดียว"
       },
       "duration_unit": {
         "s": "วินาที",
@@ -328,8 +333,11 @@
       "content": "เนื้อหา",
       "interaction": "การโต้ตอบ",
       "layout": "เค้าโครงและขนาด",
-      "markers": "เครื่องหมายและการแจ้งเตือน",
-      "theme": "รูปลักษณ์และความรู้สึก"
+      "theme": "รูปลักษณ์และความรู้สึก",
+      "watermark": "เครื่องหมายระดับ",
+      "peak_marker": "เครื่องหมายค่าสูงสุด",
+      "indicators": "ตัวบ่งชี้และป้ายกำกับ",
+      "alerts": "การแจ้งเตือน"
     }
   }
 }

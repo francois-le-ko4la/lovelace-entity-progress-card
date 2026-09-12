@@ -47,7 +47,10 @@ class TrendTracker {
   direction(): Direction | null {
     if (!this.hasEnoughData) return null;
     const delta = this.#delta();
-    if (Math.abs(delta) < this.#thresholdPoints) return 'flat';
+    // `delta === 0` on its own: threshold 0 is the object form's own schema
+    // default, and `Math.abs(0) < 0` is false - a value that never moved used
+    // to fall through to the 'down' arrow.
+    if (delta === 0 || Math.abs(delta) < this.#thresholdPoints) return 'flat';
     return delta > 0 ? 'up' : 'down';
   }
 

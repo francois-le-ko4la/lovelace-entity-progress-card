@@ -51,8 +51,7 @@
         "highlight": "Isticanje",
         "label": "Oznaka",
         "above_mode": "Izvor gornjeg upozorenja",
-        "below_mode": "Izvor donjeg upozorenja",
-        "toggle": "Upozorenje"
+        "below_mode": "Izvor donjeg upozorenja"
       },
       "attribute": "Atribut",
       "badge": {
@@ -79,7 +78,7 @@
       "custom_info": "Prilagođena sekundarna informacija",
       "custom_theme": "Zone prilagođene teme",
       "decimal": "Preciznost prikaza",
-      "density_toggle": "Kompaktno",
+      "density": "Gustoća",
       "entity": "Entitet",
       "fast_refresh": "Brzo osvježavanje (svake sekunde)",
       "force_circular_background_mode": "Kružna pozadina ikone",
@@ -106,8 +105,7 @@
       "peak_marker": {
         "min_toggle": "Prikaži minimum",
         "max_toggle": "Prikaži maksimum",
-        "average_toggle": "Prikaži prosjek",
-        "toggle": "Oznake vrhova"
+        "average_toggle": "Prikaži prosjek"
       },
       "peak_marker_unsupported": "Oznake vrhova zahtijevaju entitet sensor ili number bez preklapanja atributa, koji nije timer ni counter — nije dostupno za ovaj entitet.",
       "percent": "Postotak",
@@ -144,13 +142,15 @@
         "high_toggle": "Prikaži gornju",
         "low_toggle": "Prikaži donju",
         "high": "Gornja",
-        "line_size": "Debljina linije",
         "low": "Donja",
         "low_mode": "Izvor donje oznake",
-        "high_mode": "Izvor gornje oznake",
-        "toggle": "Oznake"
+        "high_mode": "Izvor gornje oznake"
       },
-      "window": "Vremenski prozor"
+      "window": "Vremenski prozor",
+      "entities": "Entiteti",
+      "rows": "Redovi",
+      "line_size": "Debljina linije",
+      "mark_defaults": "Zajedničke zadane vrijednosti"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -220,6 +220,11 @@
         "net": "Neto",
         "proportional": "Proporcionalno",
         "stacked": "Naslagano"
+      },
+      "density": {
+        "default": "Zadano",
+        "compact": "Kompaktno",
+        "single_line": "Jedan redak"
       },
       "duration_unit": {
         "s": "Sekunde",
@@ -328,8 +333,11 @@
       "content": "Sadržaj",
       "interaction": "Interakcije",
       "layout": "Izgled i veličina",
-      "markers": "Oznake i upozorenja",
-      "theme": "Izgled i funkcionalnost"
+      "theme": "Izgled i funkcionalnost",
+      "watermark": "Oznake razine",
+      "peak_marker": "Oznake vrhova",
+      "indicators": "Pokazatelji i oznake",
+      "alerts": "Upozorenja"
     }
   }
 }

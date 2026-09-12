@@ -51,8 +51,7 @@
         "highlight": "Fremhævning",
         "label": "Mærkat",
         "above_mode": "Kilde til øvre alarm",
-        "below_mode": "Kilde til nedre alarm",
-        "toggle": "Alarm"
+        "below_mode": "Kilde til nedre alarm"
       },
       "attribute": "Attribut",
       "badge": {
@@ -79,7 +78,7 @@
       "custom_info": "Tilpasset sekundær info",
       "custom_theme": "Tilpassede temazoner",
       "decimal": "Visningspræcision",
-      "density_toggle": "Kompakt",
+      "density": "Tæthed",
       "entity": "Enhed",
       "fast_refresh": "Hurtig opdatering (hvert sekund)",
       "force_circular_background_mode": "Cirkulær baggrund for ikon",
@@ -106,8 +105,7 @@
       "peak_marker": {
         "min_toggle": "Vis minimum",
         "max_toggle": "Vis maksimum",
-        "average_toggle": "Vis gennemsnit",
-        "toggle": "Topmarkeringer"
+        "average_toggle": "Vis gennemsnit"
       },
       "peak_marker_unsupported": "Topmarkeringer kræver en sensor- eller number-enhed uden attribut-overskrivning, som ikke er en timer eller counter — ikke tilgængelig for denne enhed.",
       "percent": "Procent",
@@ -144,13 +142,15 @@
         "high_toggle": "Vis høj",
         "low_toggle": "Vis lav",
         "high": "Høj",
-        "line_size": "Linjetykkelse",
         "low": "Lav",
         "low_mode": "Kilde til nedre markør",
-        "high_mode": "Kilde til øvre markør",
-        "toggle": "Markører"
+        "high_mode": "Kilde til øvre markør"
       },
-      "window": "Tidsvindue"
+      "window": "Tidsvindue",
+      "entities": "Entiteter",
+      "rows": "Rækker",
+      "line_size": "Linjetykkelse",
+      "mark_defaults": "Fælles standardværdier"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -220,6 +220,11 @@
         "net": "Netto",
         "proportional": "Proportional",
         "stacked": "Stablet"
+      },
+      "density": {
+        "default": "Standard",
+        "compact": "Kompakt",
+        "single_line": "Én linje"
       },
       "duration_unit": {
         "s": "Sekunder",
@@ -328,8 +333,11 @@
       "content": "Indhold",
       "interaction": "Interaktioner",
       "layout": "Layout og størrelse",
-      "markers": "Markører og alarmer",
-      "theme": "Udseende og funktionalitet"
+      "theme": "Udseende og funktionalitet",
+      "watermark": "Niveaumarkører",
+      "peak_marker": "Topmarkører",
+      "indicators": "Indikatorer og etiketter",
+      "alerts": "Advarsler"
     }
   }
 }

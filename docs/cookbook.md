@@ -229,7 +229,7 @@ work out on its own.
 | `trend_indicator`            | string (optional)      | `false`                   | Displays trend icons.                 | [Config Ref.][config-trend_indicator]            |
 | `peak_marker`                | Map (optional)         | —                         | Min/max/average marks from history    | [Config Ref.][config-peak_marker]                |
 | `text_shadow`                | boolean (optional)     | `false`                   | Display a text shadow (overlay)       | [Config Ref.][config-text_shadow]                |
-| `density`                    | string (optional)      | `default`                 | Smallest useful footprint preset      | [Config Ref.][config-density]                    |
+| `density`                    | string (optional)      | `default`                 | Smaller footprint preset              | [Config Ref.][config-density]                    |
 | `layout`                     | string (optional)      | `horizontal`              | Layout direction                      | [Config Ref.][config-layout]                     |
 | `frameless`                  | boolean (optional)     | `false`                   | Remove card frame                     | [Config Ref.][config-frameless]                  |
 | `marginless`                 | boolean (optional)     | `false`                   | Remove top/bottom margin              | [Config Ref.][config-marginless]                 |
@@ -705,7 +705,7 @@ fixed min/max.
 | `force_circular_background`  | boolean (optional) | Force icon circle background.                                                  | [Config Ref.][config-force_circular_background]  |
 | `trend_indicator`            | string (optional)  | Displays trend icons.                                                          | [Config Ref.][config-trend_indicator]            |
 | `text_shadow`                | boolean (optional) | Display a text shadow (overlay)                                                | [Config Ref.][config-text_shadow]                |
-| `density`                    | string (optional)  | Smallest useful footprint preset (`default`, `compact`).                       | [Config Ref.][config-density]                    |
+| `density`                    | string (optional)  | Smaller footprint preset (`default`, `compact`, `single_line`).                | [Config Ref.][config-density]                    |
 | `layout`                     | string (optional)  | Adjust the overall layout (e.g., `horizontal`, `vertical`).                    | [Config Ref.][config-layout]                     |
 | `frameless`                  | boolean (optional) | Remove the default card border and background for a seamless, flat appearance. | [Config Ref.][config-frameless]                  |
 | `marginless`                 | boolean (optional) | Remove vertical margin for a more compact template display.                    | [Config Ref.][config-marginless]                 |
@@ -1176,18 +1176,23 @@ aggregator only stacks them and divides the available height.
 <details>
 <summary>Show options</summary>
 
-| **Option**   | **Type**           | **Default**        | **Description**                                            | **Link**                         |
-| :----------- | :----------------- | :----------------- | :--------------------------------------------------------- | :------------------------------- |
-| `entities`   | list (required)    | —                  | List of card/feature configs, at minimum an `entity` each  | [Config Ref.][config-entities]   |
-| `show_value` | boolean (optional) | `false`            | Show each entity's value/unit next to its bar              | [Config Ref.][config-show_value] |
-| `rows`       | integer (optional) | one row per entity | `entity-progress-multi-card` only — Sections grid row span | [Config Ref.][config-rows]       |
+| **Option**       | **Type**           | **Default**        | **Description**                                            | **Link**                             |
+| :--------------- | :----------------- | :----------------- | :--------------------------------------------------------- | :----------------------------------- |
+| `entities`       | list (required)    | —                  | List of row configs, at minimum an `entity` each           | [Config Ref.][config-entities]       |
+| `value_position` | string (optional)  | `left`             | Which side of the bar the text sits on                     | [Config Ref.][config-value_position] |
+| `rows`           | integer (optional) | one row per entity | `entity-progress-multi-card` only — Sections grid row span | [Config Ref.][config-rows]           |
 
 </details>
 <br />
 
 Any option set at the top level (outside `entities`) applies to every item as a
-shared default; an item can override it individually. `bar_size` defaults to
-`small` for every item — pick `xsmall` to fit more bars in the same space.
+shared default; a row can override it individually. `bar_size` defaults to
+`small` for every row — pick `xsmall` to fit more rows in the same space.
+
+Each row is a whole [`entity-progress-card`](configuration.md#standard) in
+[`density: single_line`](configuration.md#density), so it shows its value by
+default and takes the card's own options. Use `hide: ['value']` to turn the
+value off.
 
 See [Full Configuration Reference][FCR].
 
@@ -1209,7 +1214,6 @@ See [Full Configuration Reference][FCR].
 ```yaml
 type: custom:entity-progress-multi-card
 bar_size: small
-show_value: true
 decimal: 0
 entities:
   - entity: sensor.printer_black_cartridge
@@ -1220,11 +1224,6 @@ entities:
     bar_color: magenta
   - entity: sensor.printer_yellow_cartridge
     bar_color: yellow
-card_mod:
-  style: |
-    :host {
-      --epb-multi-value-width: 40px; # aligns every % to the same width
-    }
 ```
 
 </details>
@@ -1276,8 +1275,8 @@ them.
 
 Most of what makes this card feel alive doesn't show up in a static screenshot.
 Each GIF below is captured straight from
-[`docs/demo-dashboard.yaml`](demo-dashboard.yaml) — the card's own test bench —
-so what you see is exactly what you get, at real speed.
+[`docs/demo-dashboard.yaml`](demo-dashboard.yaml) — the card's own showroom — so
+what you see is exactly what you get, at real speed.
 
 This chapter doesn't walk through every single one yet — captures take time —
 but every option below is real, shipped, and documented in full in
@@ -2194,7 +2193,6 @@ name: Energy (consumption vs production)
 features:
   - type: custom:entity-progress-multi-feature
     bar_size: medium
-    show_value: true
     decimal: 0
     entities:
       - entity: sensor.grid_consumption
@@ -2218,11 +2216,6 @@ features:
         - entity: sensor.grid_consumption
           subtract: true
           color: blue
-card_mod:
-  style: |
-    :host {
-      --epb-multi-value-width: 45px;
-    }
 ```
 
 </details>
@@ -2233,9 +2226,8 @@ One native HA `tile` card, two of our features stacked inside it: an
 by side with their values, and a second
 [`entity-progress-feature`](#tile-feature) below it renders the same data as one
 [`bar_stack: net`](configuration.md#bar_stack) balance, `center_zero` centered.
-`card_mod` only widens the value column
-([`--epb-multi-value-width`](configuration.md#multi-show_value)) so three-digit
-watt values don't wrap.
+Each Multi row prints its own value, so nothing else is needed to read the
+watts.
 
 [🔼 Back to top]
 
@@ -2914,8 +2906,8 @@ track solar cycles from your dashboard.
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#xyz_action
 [config-entities]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#multi-entities
-[config-show_value]:
-  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#multi-show_value
+[config-value_position]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#multi-value
 [config-rows]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#multi-rows
 [name-jinja]:

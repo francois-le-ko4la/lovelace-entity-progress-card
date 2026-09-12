@@ -10,8 +10,6 @@ import type { LovelaceConfig, Config, FieldDef } from '../utils/types.js';
 import { DOMHelper } from '../card/dom-helpers.js';
 import { SCHEMA_DEFAULTS } from '../card/schema.js';
 
-const availableSpace = (gap = 16, factor = 0.5): string => `calc((100% - ${gap}px) * ${factor})`;
-
 // HA's ha-expansion-panel, reduced to what we read: its reflected `expanded`
 // boolean. `expanded-changed` (a CustomEvent<{ expanded: boolean }>) is
 // listened to in EditorBase, not here.
@@ -102,18 +100,6 @@ class EditorDOMHelper extends DOMHelper {
   }
 
   // ─── Width ────────────────────────────────────────────────────────────────
-
-  /**
-   * Updates a field's width. Only reached for fields whose `width` is a
-   * function of config (e.g. icon_animation pairing up with `icon` once
-   * `color`'s row disappears under a theme) - a plain string width is applied
-   * once in EditorBase#buildField and never revisited.
-   */
-  updateWidth(name: string, width: string) {
-    this._cachedUpdate(name, 'width', width, (el, v) => {
-      el.style.width = v;
-    });
-  }
 
   // ─── Placeholder ──────────────────────────────────────────────────────────
 
@@ -244,10 +230,6 @@ class EditorDOMHelper extends DOMHelper {
       this.updateVisibility(name, def.showIf(config, negotiated));
     }
 
-    if (is.func(def.width)) {
-      this.updateWidth(name, def.width(config) as string);
-    }
-
     // Dynamic type (e.g. bar_orientation offering 'up' only in the two
     // combinations where it has a visible effect - see
     // HACore#_addBaseClasses)
@@ -281,6 +263,8 @@ class EditorDOMHelper extends DOMHelper {
     // Placeholder (negotiated default shown greyed - e.g. unit/decimal)
     this._applyPlaceholder(name, def, config, negotiated);
 
+    this._applyModes(name, def, config);
+
     // Virtual fields: no value in config, showIf alone drives them.
     if (def.virtual) {
       this._updateVirtualValue(name, def, config);
@@ -301,12 +285,20 @@ class EditorDOMHelper extends DOMHelper {
     if (def.type === 'action') this._updateActionSelector(name, def, config);
   }
 
+  // A chip set whose list depends on the config (density, see factory.ts) -
+  // applied before the value, which falls back to the first chip when the one
+  // it holds has just left the list.
+  _applyModes(name: string, def: FieldDef, config: LovelaceConfig) {
+    if (!is.func(def.modes)) return;
+    const chips = this._domElements.get(name);
+    if (chips) chips.modes = def.modes(config) as string[];
+  }
+
   _updateVirtualValue(name: string, def: FieldDef, config: LovelaceConfig) {
     if (!def.resolveVirtual) return;
     this.updateValue(name, def.resolveVirtual(config));
   }
 }
 
-export { availableSpace };
 export { EditorDOMHelper };
 export type { FieldUpdateContext };

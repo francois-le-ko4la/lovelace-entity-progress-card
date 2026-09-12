@@ -39,6 +39,8 @@ const HA_CONTEXT = {
     listBox: 'mdi:list-box',
     textShort: 'mdi:text-short',
     radar: 'mdi:radar',
+    chartBellCurve: 'mdi:chart-bell-curve',
+    labelOutline: 'mdi:label-outline',
     aspectRatio: 'mdi:aspect-ratio',
     sizeExtraSmall: 'mdi:size-xs',
     sizeSmall: 'mdi:size-s',

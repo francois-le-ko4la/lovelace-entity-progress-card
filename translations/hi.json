@@ -51,8 +51,7 @@
         "highlight": "हाइलाइट",
         "label": "लेबल",
         "above_mode": "ऊपरी अलर्ट स्रोत",
-        "below_mode": "निचला अलर्ट स्रोत",
-        "toggle": "अलर्ट"
+        "below_mode": "निचला अलर्ट स्रोत"
       },
       "attribute": "एट्रिब्यूट",
       "badge": {
@@ -79,7 +78,7 @@
       "custom_info": "कस्टम द्वितीयक जानकारी",
       "custom_theme": "कस्टम थीम ज़ोन",
       "decimal": "Display precision",
-      "density_toggle": "कॉम्पैक्ट",
+      "density": "घनत्व",
       "entity": "एंटिटी",
       "fast_refresh": "तेज़ रिफ्रेश (प्रति सेकंड)",
       "force_circular_background_mode": "आइकन का गोलाकार पृष्ठभूमि",
@@ -106,8 +105,7 @@
       "peak_marker": {
         "min_toggle": "न्यूनतम दिखाएं",
         "max_toggle": "अधिकतम दिखाएं",
-        "average_toggle": "औसत दिखाएं",
-        "toggle": "पीक मार्कर"
+        "average_toggle": "औसत दिखाएं"
       },
       "peak_marker_unsupported": "पीक मार्कर के लिए sensor या number एंटिटी चाहिए, बिना एट्रिब्यूट ओवरराइड के, जो timer या counter न हो — इस एंटिटी के लिए उपलब्ध नहीं है।",
       "percent": "प्रतिशत",
@@ -144,13 +142,15 @@
         "high_toggle": "उच्च दिखाएं",
         "low_toggle": "निम्न दिखाएं",
         "high": "उच्च",
-        "line_size": "रेखा मोटाई",
         "low": "निम्न",
         "low_mode": "निम्न मार्कर स्रोत",
-        "high_mode": "उच्च मार्कर स्रोत",
-        "toggle": "मार्कर"
+        "high_mode": "उच्च मार्कर स्रोत"
       },
-      "window": "समय विंडो"
+      "window": "समय विंडो",
+      "entities": "एंटिटी",
+      "rows": "पंक्तियाँ",
+      "line_size": "रेखा की मोटाई",
+      "mark_defaults": "साझा डिफ़ॉल्ट"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -220,6 +220,11 @@
         "net": "नेट",
         "proportional": "आनुपातिक",
         "stacked": "स्टैक्ड"
+      },
+      "density": {
+        "default": "डिफ़ॉल्ट",
+        "compact": "कॉम्पैक्ट",
+        "single_line": "एक पंक्ति"
       },
       "duration_unit": {
         "s": "सेकंड",
@@ -328,8 +333,11 @@
       "content": "सामग्री",
       "interaction": "बातचीत",
       "layout": "लेआउट और आकार",
-      "markers": "मार्कर और अलर्ट",
-      "theme": "रूप और अनुभव"
+      "theme": "रूप और अनुभव",
+      "watermark": "स्तर चिह्न",
+      "peak_marker": "पीक चिह्न",
+      "indicators": "संकेतक और लेबल",
+      "alerts": "अलर्ट"
     }
   }
 }

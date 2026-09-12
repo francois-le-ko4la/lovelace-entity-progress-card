@@ -47,6 +47,19 @@ abstract class ChipsBase extends HTMLElement {
     this._render();
   }
 
+  // A chip list that answers to the config (density drops 'single_line' once
+  // the layout is vertical) changes after the element is built - the shadow
+  // tree is thrown away and rebuilt, not patched chip by chip. No-op before
+  // the first build, so a setter can call it freely.
+  _rebuildChips() {
+    if (!this.#shadow?.querySelector('.chip-set')) return;
+    this.#shadow.replaceChildren();
+    this._chips.clear();
+    this.#labelEl = null;
+    this._buildDOM();
+    this._render();
+  }
+
   get label(): string {
     return this.#labelText;
   }
@@ -273,7 +286,14 @@ class EntityProgressModeChips extends ChipsBase {
   }
 
   set modes(list: string[]) {
-    this.#modes = is.nonEmptyArray(list) ? (list as string[]) : [];
+    const next = is.nonEmptyArray(list) ? (list as string[]) : [];
+    if (next.length === this.#modes.length && next.every((mode, i) => mode === this.#modes[i])) return;
+    this.#modes = next;
+    // The selection can be the mode that just left the list (single_line on a
+    // card turning vertical) - the config is corrected in the same pass (see
+    // the layout field's own onChange), this only keeps the chips coherent.
+    if (this.#selected !== null && !next.includes(this.#selected)) this.#selected = next[0] ?? null;
+    this._rebuildChips();
   }
 
   _buildDOM() {
@@ -281,7 +301,11 @@ class EntityProgressModeChips extends ChipsBase {
     // 2-mode sets (Simple/Advanced, Preset/Custom) render as one fused
     // segmented pill instead of separate chips - see .chip-set.segmented.
     const segmented = this.#modes.length === 2;
-    if (segmented) this.classList.add('inline-row');
+    // toggle, not add: a list that changes with the config (density drops
+    // single_line on a vertical card) rebuilds through here, and a set that
+    // grew back past two would otherwise keep the class its shorter self left
+    // behind - label and chips stuck on one row.
+    this.classList.toggle('inline-row', segmented);
     this._buildChipSet(this.#modes, (value) => this.#select(value), segmented ? 'segmented' : undefined);
   }
 

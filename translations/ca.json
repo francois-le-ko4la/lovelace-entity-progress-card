@@ -51,8 +51,7 @@
         "highlight": "Ressaltat",
         "label": "Etiqueta",
         "above_mode": "Font de l'alerta superior",
-        "below_mode": "Font de l'alerta inferior",
-        "toggle": "Alerta"
+        "below_mode": "Font de l'alerta inferior"
       },
       "attribute": "Atribut",
       "badge": {
@@ -79,7 +78,7 @@
       "custom_info": "Informació addicional (secundària)",
       "custom_theme": "Zones de tema personalitzat",
       "decimal": "Precisió de visualització",
-      "density_toggle": "Compacte",
+      "density": "Densitat",
       "entity": "Entitat",
       "fast_refresh": "Actualització ràpida (per segon)",
       "force_circular_background_mode": "Fons circular de la icona",
@@ -106,8 +105,7 @@
       "peak_marker": {
         "min_toggle": "Mostra mínim",
         "max_toggle": "Mostra màxim",
-        "average_toggle": "Mostra mitjana",
-        "toggle": "Marcadors de pic"
+        "average_toggle": "Mostra mitjana"
       },
       "peak_marker_unsupported": "Els marcadors de pic necessiten una entitat sensor o number, sense sobreescriptura d'atribut, i que no sigui un timer ni un counter — no disponible per a aquesta entitat.",
       "percent": "Percentatge",
@@ -144,13 +142,15 @@
         "high_toggle": "Mostra alt",
         "low_toggle": "Mostra baix",
         "high": "Alt",
-        "line_size": "Gruix de línia",
         "low": "Baix",
         "low_mode": "Font del marcador baix",
-        "high_mode": "Font del marcador alt",
-        "toggle": "Marcadors"
+        "high_mode": "Font del marcador alt"
       },
-      "window": "Finestra de temps"
+      "window": "Finestra de temps",
+      "entities": "Entitats",
+      "rows": "Files",
+      "line_size": "Gruix de la línia",
+      "mark_defaults": "Valors per defecte compartits"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -220,6 +220,11 @@
         "net": "Net",
         "proportional": "Proporcional",
         "stacked": "Apilat"
+      },
+      "density": {
+        "default": "Predeterminada",
+        "compact": "Compacte",
+        "single_line": "Una línia"
       },
       "duration_unit": {
         "s": "Segons",
@@ -328,8 +333,11 @@
       "content": "Contingut",
       "interaction": "Interacció",
       "layout": "Disposició i mida",
-      "markers": "Marcadors i alertes",
-      "theme": "Aparença i tema"
+      "theme": "Aparença i tema",
+      "watermark": "Marques de nivell",
+      "peak_marker": "Marcadors de pic",
+      "indicators": "Indicadors i etiquetes",
+      "alerts": "Alertes"
     }
   }
 }

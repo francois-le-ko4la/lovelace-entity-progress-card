@@ -51,8 +51,7 @@
         "highlight": "Highlight",
         "label": "Label",
         "above_mode": "Above alert source",
-        "below_mode": "Below alert source",
-        "toggle": "Alert"
+        "below_mode": "Below alert source"
       },
       "attribute": "Attribute",
       "badge": {
@@ -79,7 +78,7 @@
       "custom_info": "Custom secondary info",
       "custom_theme": "Custom theme zones",
       "decimal": "Display precision",
-      "density_toggle": "Compact",
+      "density": "Density",
       "entity": "Entity",
       "fast_refresh": "Fast refresh (per-second)",
       "force_circular_background_mode": "Icon circular background",
@@ -106,8 +105,7 @@
       "peak_marker": {
         "min_toggle": "Show minimum",
         "max_toggle": "Show maximum",
-        "average_toggle": "Show average",
-        "toggle": "Peak markers"
+        "average_toggle": "Show average"
       },
       "peak_marker_unsupported": "Peak markers need a sensor or number entity, no attribute override, and not a timer or counter — not available for this entity.",
       "percent": "Percentage",
@@ -144,13 +142,15 @@
         "high_toggle": "Show high",
         "low_toggle": "Show low",
         "high": "High",
-        "line_size": "Line size",
         "low": "Low",
         "low_mode": "Low marker source",
-        "high_mode": "High marker source",
-        "toggle": "Markers"
+        "high_mode": "High marker source"
       },
-      "window": "Time window"
+      "window": "Time window",
+      "entities": "Entities",
+      "rows": "Rows",
+      "line_size": "Line thickness",
+      "mark_defaults": "Shared defaults"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -220,6 +220,11 @@
         "net": "Net",
         "proportional": "Proportional",
         "stacked": "Stacked"
+      },
+      "density": {
+        "default": "Default",
+        "compact": "Compact",
+        "single_line": "Single line"
       },
       "duration_unit": {
         "s": "Seconds",
@@ -328,8 +333,11 @@
       "content": "Content",
       "interaction": "Interactions",
       "layout": "Layout & Sizing",
-      "markers": "Markers & Alerts",
-      "theme": "Look & Feel"
+      "theme": "Look & Feel",
+      "watermark": "Watermarks",
+      "peak_marker": "Peak markers",
+      "indicators": "Indicators & Labels",
+      "alerts": "Alerts"
     }
   }
 }

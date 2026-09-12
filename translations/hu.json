@@ -51,8 +51,7 @@
         "highlight": "Kiemelés",
         "label": "Címke",
         "above_mode": "Felső riasztás forrása",
-        "below_mode": "Alsó riasztás forrása",
-        "toggle": "Riasztás"
+        "below_mode": "Alsó riasztás forrása"
       },
       "attribute": "Attribútum",
       "badge": {
@@ -79,7 +78,7 @@
       "custom_info": "Egyéni másodlagos info",
       "custom_theme": "Egyéni téma zónák",
       "decimal": "Pontosság",
-      "density_toggle": "Kompakt",
+      "density": "Sűrűség",
       "entity": "Entitás",
       "fast_refresh": "Gyors frissítés (másodpercenként)",
       "force_circular_background_mode": "Ikon kör alakú háttere",
@@ -106,8 +105,7 @@
       "peak_marker": {
         "min_toggle": "Minimum megjelenítése",
         "max_toggle": "Maximum megjelenítése",
-        "average_toggle": "Átlag megjelenítése",
-        "toggle": "Csúcsjelölők"
+        "average_toggle": "Átlag megjelenítése"
       },
       "peak_marker_unsupported": "A csúcsjelölőkhöz sensor vagy number entitás szükséges attribútum-felülírás nélkül, amely nem timer és nem counter — ehhez az entitáshoz nem elérhető.",
       "percent": "Százalék",
@@ -144,13 +142,15 @@
         "high_toggle": "Felső megjelenítése",
         "low_toggle": "Alsó megjelenítése",
         "high": "Felső",
-        "line_size": "Vonalvastagság",
         "low": "Alsó",
         "low_mode": "Alsó jelölő forrása",
-        "high_mode": "Felső jelölő forrása",
-        "toggle": "Jelölők"
+        "high_mode": "Felső jelölő forrása"
       },
-      "window": "Időablak"
+      "window": "Időablak",
+      "entities": "Entitások",
+      "rows": "Sorok",
+      "line_size": "Vonalvastagság",
+      "mark_defaults": "Közös alapértelmezések"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -220,6 +220,11 @@
         "net": "Nettó",
         "proportional": "Arányos",
         "stacked": "Halmozott"
+      },
+      "density": {
+        "default": "Alapértelmezett",
+        "compact": "Kompakt",
+        "single_line": "Egy sor"
       },
       "duration_unit": {
         "s": "Másodperc",
@@ -328,8 +333,11 @@
       "content": "Tartalom",
       "interaction": "Interakciók",
       "layout": "Elrendezés és méret",
-      "markers": "Jelölők és riasztások",
-      "theme": "Megjelenés és használhatóság"
+      "theme": "Megjelenés és használhatóság",
+      "watermark": "Szintjelölők",
+      "peak_marker": "Csúcsjelölők",
+      "indicators": "Jelzők és címkék",
+      "alerts": "Riasztások"
     }
   }
 }

@@ -108,6 +108,9 @@ const SEV = {
 const CONTENT_SLOT = '{{content}}';
 
 const VALUE_CHANGED_EVENT = 'value-changed';
+// HA's own "the config changed" event, dispatched by EditorBase and caught by
+// whoever hosts it (the card itself, or a row list hosting a sub-editor).
+const CONFIG_CHANGED_EVENT = 'config-changed';
 const HA_SELECTOR_TAG = 'ha-selector';
 const HA_SVG_ICON_TAG = 'ha-svg-icon';
 const HA_ACTION_HANDLER_TAG = 'action-handler';
@@ -141,6 +144,7 @@ export { THEME_KEYS };
 export { PERCENT_THEME_KEYS };
 export { SEV };
 export { CONTENT_SLOT };
+export { CONFIG_CHANGED_EVENT };
 export { VALUE_CHANGED_EVENT };
 export { HA_SELECTOR_TAG };
 export { HA_SVG_ICON_TAG };

@@ -51,8 +51,7 @@
         "highlight": "강조 표시",
         "label": "레이블",
         "above_mode": "상한 알림 소스",
-        "below_mode": "하한 알림 소스",
-        "toggle": "알림"
+        "below_mode": "하한 알림 소스"
       },
       "attribute": "속성",
       "badge": {
@@ -79,7 +78,7 @@
       "custom_info": "사용자 정의 보조 정보",
       "custom_theme": "사용자 지정 테마 구간",
       "decimal": "표시 정밀도",
-      "density_toggle": "컴팩트",
+      "density": "밀도",
       "entity": "엔티티",
       "fast_refresh": "빠른 새로고침 (매초)",
       "force_circular_background_mode": "아이콘 원형 배경",
@@ -106,8 +105,7 @@
       "peak_marker": {
         "min_toggle": "최솟값 표시",
         "max_toggle": "최댓값 표시",
-        "average_toggle": "평균값 표시",
-        "toggle": "피크 마커"
+        "average_toggle": "평균값 표시"
       },
       "peak_marker_unsupported": "피크 마커는 속성 재정의가 없고 timer나 counter가 아닌 sensor 또는 number 엔티티가 필요합니다 — 이 엔티티에는 사용할 수 없습니다.",
       "percent": "퍼센트",
@@ -144,13 +142,15 @@
         "high_toggle": "상한 표시",
         "low_toggle": "하한 표시",
         "high": "상한",
-        "line_size": "선 두께",
         "low": "하한",
         "low_mode": "하한 마커 소스",
-        "high_mode": "상한 마커 소스",
-        "toggle": "마커"
+        "high_mode": "상한 마커 소스"
       },
-      "window": "시간 창"
+      "window": "시간 창",
+      "entities": "엔터티",
+      "rows": "행 수",
+      "line_size": "선 두께",
+      "mark_defaults": "공통 기본값"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -220,6 +220,11 @@
         "net": "순",
         "proportional": "비례",
         "stacked": "누적"
+      },
+      "density": {
+        "default": "기본",
+        "compact": "컴팩트",
+        "single_line": "한 줄 표시"
       },
       "duration_unit": {
         "s": "초",
@@ -328,8 +333,11 @@
       "content": "콘텐츠",
       "interaction": "상호작용",
       "layout": "레이아웃 및 크기",
-      "markers": "마커 및 알림",
-      "theme": "테마 및 스타일"
+      "theme": "테마 및 스타일",
+      "watermark": "기준선 마커",
+      "peak_marker": "피크 마커",
+      "indicators": "표시기 및 라벨",
+      "alerts": "알림"
     }
   }
 }

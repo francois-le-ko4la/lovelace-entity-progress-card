@@ -1,11 +1,15 @@
 # =============================================================================
 # Entity Progress Card — Demo dashboard (-dev build variant)
 # =============================================================================
-# Same as demo-dashboard.yaml, but every `custom:entity-progress-*` card type
-# targets its `-dev` resource instead (e.g. `entity-progress-card-dev`) - use
-# this one when testing against a locally-built dev resource
-# (CARD_CONTEXT.dev: true) rather than the production build. Regenerate after
-# editing demo-dashboard.yaml rather than hand-editing this file.
+# The development bench: every `custom:entity-progress-*` card type targets its
+# `-dev` resource (e.g. `entity-progress-card-dev`), so this one only renders
+# against a locally-built dev resource (CARD_CONTEXT.dev: true), side by side
+# with a production install.
+#
+# It is a superset of demo-dashboard.yaml: the same showroom views, card for
+# card, plus what only a developer runs - the regression view (one card per
+# closed bug) and the deprecated-options bench. A card demonstrating an option
+# belongs in both files; a card proving a bug stays dead belongs here alone.
 #
 # 1. Create the demo helpers - three options:
 #    a. UI: Settings → Devices & services → Helpers → + Add helper, one by
@@ -3530,6 +3534,108 @@ views:
             bar_position: background
             color: white
         column_span: 2
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'density: single_line — icon, name, secondary and bar on one row'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: input_number.epb_demo_battery
+              density: single_line
+              ```
+              The other density preset: instead of trimming the card down,
+              it lays the four parts out as siblings on a single row - the
+              bar takes whatever width the rest leaves. `layout` is forced
+              to `horizontal` and `bar_position` back to `default` (the bar
+              lives in the row itself, not in a `top`/`bottom`/`background`
+              container), `multiline` cleared. Unlike `compact`, nothing is
+              forced under `hide`: trim the row down to whatever you want,
+              a bar on its own included. `grid_options` is left alone too -
+              `layout: horizontal` already resolves to one grid row.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: single_line
+            density: single_line
+            grid_options:
+              columns: 12
+              rows: 1
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '+ small bar'
+            bar_size: small
+            density: single_line
+            grid_options:
+              columns: 12
+              rows: 1
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '+ no name'
+            hide:
+              - name
+            density: single_line
+            grid_options:
+              columns: 12
+              rows: 1
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '+ no icon'
+            hide:
+              - icon
+            density: single_line
+            grid_options:
+              columns: 12
+              rows: 1
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '+ no secondary_info'
+            hide:
+              - secondary_info
+            density: single_line
+            grid_options:
+              columns: 12
+              rows: 1
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '+ bar only'
+            bar_size: small
+            hide:
+              - icon
+              - name
+              - secondary_info
+            density: single_line
+            grid_options:
+              columns: 12
+              rows: 1
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '+ status_label'
+            status_label:
+              jinja: standard
+            hide:
+              - secondary_info
+            density: single_line
+            grid_options:
+              columns: 12
+              rows: 1
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '+ watermark'
+            watermark:
+              low: 20
+              high: 80
+            density: single_line
+            grid_options:
+              columns: 12
+              rows: 1
+        column_span: 2
     show_icon_and_title: true
     cards: []
   - title: EP Demo - Aggregation & card_mod
@@ -4292,6 +4398,216 @@ views:
                   --epb-detail-font-weight: 300;
                   --epb-detail-letter-spacing: 1px;
                 }
+      - type: grid
+        cards:
+          - type: heading
+            heading: Multi row prototype — stacked cards, not a real mode yet
+            heading_style: title
+          - type: markdown
+            content: >-
+              Hand-stacked `entity-progress-card` rows, standing in for what a
+              `density: single_line` row would render. Three questions to answer
+              by eye: does `frameless` really neutralise the nested `ha-card`,
+              is a row readable at `bar_size: xsmall`, and does the icon hold up
+              at that height. Nothing here is a supported config — it is a
+              throwaway probe.
+
+          - type: heading
+            heading: 1. bar only (today Multi look)
+            heading_style: subtitle
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_printer_ink_black
+            name: Black
+            bar_color: black
+            bar_size: xsmall
+            frameless: true
+            marginless: true
+            hide:
+              - icon
+              - name
+              - value
+              - unit
+              - secondary_info
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_printer_ink_cyan
+            name: Cyan
+            bar_color: cyan
+            bar_size: xsmall
+            frameless: true
+            marginless: true
+            hide:
+              - icon
+              - name
+              - value
+              - unit
+              - secondary_info
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_circuit_kitchen
+            name: Kitchen
+            bar_color: amber
+            bar_size: xsmall
+            frameless: true
+            marginless: true
+            hide:
+              - icon
+              - name
+              - value
+              - unit
+              - secondary_info
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_circuit_garage
+            name: Garage
+            bar_color: orange
+            bar_size: xsmall
+            frameless: true
+            marginless: true
+            hide:
+              - icon
+              - name
+              - value
+              - unit
+              - secondary_info
+
+          - type: heading
+            heading: 2. icon + value (no name)
+            heading_style: subtitle
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_printer_ink_black
+            name: Black
+            bar_color: black
+            bar_size: xsmall
+            frameless: true
+            marginless: true
+            hide:
+              - name
+              - secondary_info
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_printer_ink_cyan
+            name: Cyan
+            bar_color: cyan
+            bar_size: xsmall
+            frameless: true
+            marginless: true
+            hide:
+              - name
+              - secondary_info
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_circuit_kitchen
+            name: Kitchen
+            bar_color: amber
+            bar_size: xsmall
+            frameless: true
+            marginless: true
+            hide:
+              - name
+              - secondary_info
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_circuit_garage
+            name: Garage
+            bar_color: orange
+            bar_size: xsmall
+            frameless: true
+            marginless: true
+            hide:
+              - name
+              - secondary_info
+
+          - type: heading
+            heading: 3. name + value, no icon
+            heading_style: subtitle
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_printer_ink_black
+            name: Black
+            bar_color: black
+            bar_size: xsmall
+            frameless: true
+            marginless: true
+            hide:
+              - icon
+              - secondary_info
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_printer_ink_cyan
+            name: Cyan
+            bar_color: cyan
+            bar_size: xsmall
+            frameless: true
+            marginless: true
+            hide:
+              - icon
+              - secondary_info
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_circuit_kitchen
+            name: Kitchen
+            bar_color: amber
+            bar_size: xsmall
+            frameless: true
+            marginless: true
+            hide:
+              - icon
+              - secondary_info
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_circuit_garage
+            name: Garage
+            bar_color: orange
+            bar_size: xsmall
+            frameless: true
+            marginless: true
+            hide:
+              - icon
+              - secondary_info
+
+          - type: heading
+            heading: 4. density single_line — icon | name | secondary | bar
+            heading_style: subtitle
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_printer_ink_black
+            name: Black
+            bar_color: black
+            bar_size: xsmall
+            density: single_line
+            frameless: true
+            marginless: true
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_printer_ink_cyan
+            name: Cyan
+            bar_color: cyan
+            bar_size: xsmall
+            density: single_line
+            frameless: true
+            marginless: true
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_circuit_kitchen
+            name: Kitchen
+            bar_color: amber
+            bar_size: xsmall
+            density: single_line
+            frameless: true
+            marginless: true
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_circuit_garage
+            name: Garage
+            bar_color: orange
+            bar_size: xsmall
+            density: single_line
+            frameless: true
+            marginless: true
+
+          - type: heading
+            heading: reference — the real entity-progress-multi-card today
+            heading_style: subtitle
+          - type: custom:entity-progress-multi-card-dev
+            show_value: true
+            bar_size: xsmall
+            entities:
+              - entity: input_number.epb_demo_printer_ink_black
+                bar_color: black
+              - entity: input_number.epb_demo_printer_ink_cyan
+                bar_color: cyan
+              - entity: input_number.epb_demo_circuit_kitchen
+                bar_color: amber
+              - entity: input_number.epb_demo_circuit_garage
+                bar_color: orange
+
     badges:
       - type: custom:entity-progress-badge-dev
         entity: input_number.epb_demo_battery
@@ -6122,6 +6438,84 @@ views:
             grid_options:
               columns: 12
               rows: 1
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'badge + layout: vertical — no clipping on any bar_position'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card
+              entity: input_number.epb_demo_battery
+              layout: vertical
+              bar_position: top
+              badge_icon: mdi:alert
+              ```
+              The badge overhangs the icon's own box, and a vertical card clips
+              its container. `default` reserves padding above and always looked
+              right; every other position cut the badge's top edge off from
+              1.6.1 on. Check: the six badges below are whole circles, the
+              first one included.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 3
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: default
+            layout: vertical
+            bar_position: default
+            badge_icon: mdi:alert
+            grid_options:
+              columns: 4
+              rows: 2
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: below
+            layout: vertical
+            bar_position: below
+            badge_icon: mdi:alert
+            grid_options:
+              columns: 4
+              rows: 2
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: top
+            layout: vertical
+            bar_position: top
+            badge_icon: mdi:alert
+            grid_options:
+              columns: 4
+              rows: 2
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: bottom
+            layout: vertical
+            bar_position: bottom
+            badge_icon: mdi:alert
+            grid_options:
+              columns: 4
+              rows: 2
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: overlay
+            layout: vertical
+            bar_position: overlay
+            badge_icon: mdi:alert
+            grid_options:
+              columns: 4
+              rows: 2
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: background
+            layout: vertical
+            bar_position: background
+            badge_icon: mdi:alert
+            grid_options:
+              columns: 4
+              rows: 2
     subview: false
     cards: []
     badges:

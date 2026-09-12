@@ -31,8 +31,8 @@ const CARD_CSS = css`
   --gap-entities: 16px;
 
   /* === SIZE VARIABLES === */
-  --shape-default-size: var(--epb-shape-size, 36px);
-  --icon-default-size: var(--epb-icon-size, 24px);
+  --shape-default-size: var(--epb-shape-size, var(--current-row-shape-size, 36px));
+  --icon-default-size: var(--epb-icon-size, var(--current-row-icon-size, 24px));
   --entities-shape-size: 40px;
   --badge-size: 16px;
   --badge-icon-size: 12px;
@@ -46,10 +46,19 @@ const CARD_CSS = css`
 
   /* === HEIGHT VARIABLES === */
   --name-height: 20px;
-  --detail-height: 16px;
+  /* --current-row-* is the slot a host that owns its children's box writes
+     into (EntityProgressMultiBase._distributeHeight, multi.ts): a Multi row
+     gets its whole height imposed, so the icon, its shape and the text line
+     have to be derived from it rather than standing at the card's own
+     defaults. Behind --epb-*, never in front: a user override still wins. */
+  --detail-height: var(--current-row-detail-height, 16px);
   --entities-height: 22.4px;
   --vertical-name-large-height: 18px;
-  --progress-container-height: 16px;
+  /* The row the bar is centred in, fixed in horizontal whatever bar_size is -
+     so it needs the same --current-row-* slot as the text box above, or it
+     alone overflows a row shorter than itself. .xlarge and .overlay still
+     override it further down, unchanged. */
+  --progress-container-height: var(--current-row-bar-box, 16px);
 
   /* === COLOR OPACITY VARIABLES === */
   --shape-opacity: 20%;
@@ -126,8 +135,8 @@ ${CARD.htmlStructure.card.element} {
      var() substitution happens on the declaring element, and ha-card is where users
      apply per-card styles. The :host declarations keep theme-level overrides working. */
   --spacing: var(--epb-spacing, 10px);
-  --shape-default-size: var(--epb-shape-size, 36px);
-  --icon-default-size: var(--epb-icon-size, 24px);
+  --shape-default-size: var(--epb-shape-size, var(--current-row-shape-size, 36px));
+  --icon-default-size: var(--epb-icon-size, var(--current-row-icon-size, 24px));
   --progress-transition: var(--epb-progress-transition, 0.5s cubic-bezier(0.4, 0, 0.2, 1));
   /* --current-embed-*: fed by the .type-entities/.type-picture-elements
      input rules below (single declaration point for the terminal vars
@@ -326,6 +335,18 @@ ${CARD.htmlStructure.card.element}:not(.${CARD.style.dynamic.clickable.card}) .$
 
 .vertical.default {
   --current-container-padding-top: var(--progress-size);
+}
+
+/* The badge sits --badge-offset outside the icon's own box, and vertical clips
+   its container: since 1.6.1 a vertical card is exactly as tall as its parts,
+   so only .vertical.default's own padding above still leaves the overhang any
+   room - every other bar_position cut its top edge off. Written against the
+   container and not ha-card, which carries .vertical too: the container
+   redeclares the variable for itself, so a card-level rule never reaches it.
+   ha-card's own overflow: hidden still holds the outer edge. */
+.${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.badge.container.class}
+  .${CARD.htmlStructure.sections.container.class}.vertical {
+  --current-container-overflow: visible;
 }
 
 .${CARD.htmlStructure.sections.container.class}.vertical.up-orientation.overlay {
@@ -630,6 +651,13 @@ ha-card.label-left .status-label {
 .${CARD.htmlStructure.elements.icon.class},
 .custom-icon-img {
   --current-icon-size: var(--icon-default-size);
+  /* The box below only frames the glyph - what actually sizes it is HA's own
+     --mdc-icon-size on the inner ha-state-icon, which otherwise stays at its
+     24px default however small this box gets. Invisible at our own default
+     (the two match), immediately visible once --current-icon-size is derived
+     from something else - a Multi row's slice, see multi.ts's #rowMetrics.
+     A custom property, so it reaches the inner element on its own. */
+  --mdc-icon-size: var(--current-icon-size);
 
   display: flex;
   align-items: center;
@@ -647,8 +675,6 @@ ha-card.label-left .status-label {
 }
 
 .progress-badge .icon ha-state-icon {
-  --current-icon-size: 18px;
-  --mdc-icon-size: var(--current-icon-size);
   --ha-icon-display: flex;
   height: var(--current-icon-size);
   width: var(--current-icon-size);
@@ -690,6 +716,154 @@ ha-card.label-left .status-label {
   min-width: 0;
   overflow: hidden;
   position: relative; /* overlay */
+}
+
+/* =============================================================================
+   DENSITY: SINGLE_LINE
+   ============================================================================= */
+
+/* density: single_line lays icon, name, secondary and bar out as four siblings
+   on one row. The class sits on .content-section itself (see
+   StructureElements.createContent), and only its own direction has to flip -
+   everything else is already driven by the vars the base rules read. The bar
+   is a sibling of the groups here, not nested inside secondary-info. */
+.${CARD.style.dynamic.singleLineRow} {
+  /* Same var, same meaning as in .secondary-info below (bar first, text
+     second) - only the row it applies to moves up a level here. Its gating
+     (horizontal + bar_position: default, see ViewCore#hasReversedSecondaryInfo
+     Row) is what single_line forces anyway. */
+  flex-direction: var(--secondary-info-row-reverse, row);
+  align-items: center;
+  /* The stacked name+detail height means nothing on one row - let the row's
+     own content decide, so a thin bar can shrink the card with it. */
+  --current-content-height: auto;
+}
+
+/* Weighted past ha-card.horizontal's own .content-section rule, which zeroes
+   the gap: nothing sits side by side in a column, so it had nothing to space.
+   Here it is what keeps the bar off the text. */
+ha-card.horizontal .${CARD.htmlStructure.sections.content.class}.${CARD.style.dynamic.singleLineRow} {
+  --current-content-gap: var(--spacing);
+  /* The 56px the horizontal rule deducts is a full-size icon column (36px
+     shape + its gaps). A row derives its shape from the height it is given
+     (see multi.ts #rowMetrics), so the column can be a third of that - and the
+     text was giving up width to an icon no longer there. */
+  --current-content-width: calc(100% - var(--shape-default-size) - var(--spacing));
+}
+
+/* On a single row the name is another info on the line, not a title above one:
+   it takes .secondary-info-value's scale, weight and color so the row reads as
+   one sentence. Its own --epb-name-* hooks still come first (theme.md), the
+   detail values are only what they now fall back to. */
+.${CARD.style.dynamic.singleLineRow} .${CARD.htmlStructure.elements.nameValue.class} {
+  --text-color: var(--epb-name-color, var(--epb-detail-color, var(--primary-text-color)));
+  --text-font-size: var(--epb-name-font-size, var(--epb-detail-font-size, var(--current-row-detail-font-size, var(--ha-font-size-s))));
+  --text-font-weight: var(--epb-name-font-weight, var(--epb-detail-font-weight, var(--ha-font-weight-body)));
+  --text-height: var(--detail-height);
+  --text-line-height: max(var(--detail-height), 1.2em);
+  --text-letter-spacing: var(--epb-name-letter-spacing, var(--detail-letter-spacing));
+}
+
+/* The group box has to follow its text: a name box still reserving
+   --name-height would keep the row taller than the line it holds. */
+.${CARD.style.dynamic.singleLineRow} .${CARD.htmlStructure.elements.nameContent.class} {
+  --group-height: var(--detail-height);
+}
+
+/* The same separator that joins infos inside secondary-info
+   (CARD.config.separator), spaces included, now joining the name to it too.
+   Carried by the wrapper, which is absent (static hide), display: none
+   (dynamic hide) or collapsed (.secondary-info-blank) in every case where
+   there is nothing to separate - except a Jinja-driven hide: name, which
+   leaves .name in place as a sibling and so needs the override below. */
+.${CARD.style.dynamic.singleLineRow}
+  .${CARD.htmlStructure.elements.nameContent.class}
+  + .${CARD.htmlStructure.elements.secondaryInfo.class}
+  .${CARD.htmlStructure.elements.secondaryInfoWrapper.class}::before {
+  /* Inline like everything else in .info-row: the row gap it used to sit next
+     to is gone with the two boxes it separated. */
+  content: var(--current-row-separator, '${CARD.config.separator}');
+  white-space: pre;
+  color: var(--epb-detail-color, var(--primary-text-color));
+  font-size: var(--epb-detail-font-size, var(--current-row-detail-font-size, var(--ha-font-size-s)));
+}
+
+ha-card.${CARD.style.dynamic.hiddenComponent.name.class} .${CARD.style.dynamic.singleLineRow} {
+  --current-row-separator: none;
+}
+
+/* .info-row is the row's single ellipsis context: every box under it drops to
+   an inline run, so the whole "Name · 45 %" reads as one line truncated once at
+   its end instead of each group ellipsing inside its own box. Their widths,
+   floors, caps and overflow stop applying by construction - an inline box has
+   none of them - which also retires the ones this shape would otherwise fight
+   (.secondary-info's min-content, its wrapper's 60% cap). The bar keeps its
+   own min(30px, 33%) floor: that coupling is what makes text give way first.
+   Deliberately two classes and no .single-line-row scope: at that weight the
+   VISIBILITY CONTROLS further down, and .secondary-info-blank, still win their
+   display: none by source order. Tightening this selector re-shows every
+   hidden box. */
+.${CARD.htmlStructure.sections.infoRow.class} :is(
+    .${CARD.htmlStructure.elements.nameContent.class},
+    .ellipsis-wrapper,
+    .${CARD.htmlStructure.elements.secondaryInfo.class},
+    .${CARD.htmlStructure.elements.secondaryInfoWrapper.class},
+    .${CARD.htmlStructure.elements.secondaryInfoValue.class}
+  ) {
+  display: inline;
+}
+
+/* Nothing left to show is not the same as nothing left to build. With the name
+   hidden and the value blanked - .secondary-info-blank, pushed by core.ts's
+   _updateSecondaryInfoWrapperVisibility whenever every info line comes out
+   empty - both boxes are invisible but .info-row is still a flex item, and
+   still claims the row's gap. That gap is what reads as a margin to the left
+   of a lone bar. The all-hidden case never gets here: it builds no .info-row
+   at all (see StructureElements.createContentBody). */
+ha-card.${CARD.style.dynamic.hiddenComponent.name.class}.secondary-info-blank
+  .${CARD.htmlStructure.sections.infoRow.class} {
+  display: none;
+}
+
+/* .ellipsis-wrapper's own width: 100% would pin the text at whatever is left
+   after the bar's floor, however short it is; here it is a flex item and the
+   bar takes what the text doesn't. The line-height comes back from the
+   detail's, since an inline box ignores the min-height its children carry. */
+.${CARD.style.dynamic.singleLineRow} .${CARD.htmlStructure.sections.infoRow.class} {
+  /* auto by default: the text asks for what it needs and the bar takes the
+     rest, so a bar's left edge follows its own row's text. --epb-multi-value
+     -width pins that column instead - the hook the Multi carried when it drew
+     the value itself (1.6.1/1.6.2), kept under its own name: a stack whose
+     bars are meant to be compared needs them to start at the same x. */
+  width: var(--epb-multi-value-width, auto);
+  /* Its own font-size, not the document one it would otherwise inherit: the
+     block strut is what floors the line box, so 1.2em there measured ~16px of
+     inherited body text and kept the row 8px taller than its slice, whatever
+     the spans inside were set to. */
+  font-size: var(--epb-detail-font-size, var(--current-row-detail-font-size, var(--ha-font-size-s)));
+  /* The 1.2em floor protects a standalone card from OS font scaling (#131).
+     A host that imposes the row's height owns that trade instead: it can spend
+     the leading on type size, since nothing it does can grow the box anyway. */
+  line-height: var(--current-row-line-height, max(var(--detail-height), 1.2em));
+}
+
+/* bar_max_width pins the bar, so the text is everything else - one option,
+   both halves, and several rows' bars line up at the same x. The bar stops
+   growing and takes the width as its basis instead: left growing, it would
+   compete with the text for the free space and settle for its half of it,
+   never reaching the width asked for. It doesn't shrink either: sharing the
+   negative space of a text longer than its room had the bar giving pixels back
+   every time the line ellipsed, which is the one thing a pinned width is asked
+   to prevent. The text ellipses first, at every width.
+   Nothing to do outside single_line, where the two are siblings on one row. */
+ha-card.bar-max-width .${CARD.style.dynamic.singleLineRow} .${CARD.htmlStructure.sections.infoRow.class} {
+  flex-grow: 1;
+}
+
+ha-card.bar-max-width
+  .${CARD.style.dynamic.singleLineRow}
+  .${CARD.htmlStructure.elements.progressBar.container.class} {
+  flex: 0 0 var(${CARD.style.dynamic.progressBar.maxWidth.var}, auto);
 }
 
 ha-card.horizontal .${CARD.htmlStructure.sections.content.class} {
@@ -923,7 +1097,8 @@ ha-card.horizontal.compact_below .${CARD.htmlStructure.elements.progressBar.cont
   --group-margin-right: 0;
 }
 
-.ellipsis-wrapper {
+.ellipsis-wrapper,
+.${CARD.htmlStructure.sections.infoRow.class} {
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -975,7 +1150,7 @@ ha-card.horizontal.compact_below .${CARD.htmlStructure.elements.progressBar.cont
   text-overflow: ellipsis;
   white-space: nowrap;
   --text-color: var(--epb-detail-color, var(--primary-text-color));
-  --text-font-size: var(--epb-detail-font-size, var(--ha-font-size-s));
+  --text-font-size: var(--epb-detail-font-size, var(--current-row-detail-font-size, var(--ha-font-size-s)));
   --text-font-weight: var(--epb-detail-font-weight, var(--ha-font-weight-body));
   --text-height: var(--detail-height);
   /* See .name-value's own --text-line-height comment (issue #131) - same
@@ -2101,6 +2276,30 @@ ha-card.info-multiline {
   --mark-top: 50%;
 }
 
+/* Each mark carries its own thickness now, watermark and peak_marker alike -
+   a peak line used to read --watermark-line-size through the shared .wm-line
+   rule below, whatever the two had to do with each other. .wm-line itself is
+   untouched: it still reads one variable, each mark just answers for its own.
+   Per-mark value first, then its family's shared one, then the default.
+   Qualified by .watermark, which every mark also carries: its own
+   --wm-line-size declaration further down would otherwise win on source
+   order alone and hand a peak mark the watermark family's thickness. */
+.watermark.${CARD.htmlStructure.elements.progressBar.lowWatermark.class} {
+  --wm-line-size: var(--epb-watermark-line-size, var(--low-watermark-line-size, var(--watermark-line-size, 1px)));
+}
+.watermark.${CARD.htmlStructure.elements.progressBar.highWatermark.class} {
+  --wm-line-size: var(--epb-watermark-line-size, var(--high-watermark-line-size, var(--watermark-line-size, 1px)));
+}
+.watermark.${CARD.htmlStructure.elements.progressBar.minMarker.class} {
+  --wm-line-size: var(--epb-peak-marker-line-size, var(--peak-min-line-size, var(--peak-marker-line-size, 1px)));
+}
+.watermark.${CARD.htmlStructure.elements.progressBar.maxMarker.class} {
+  --wm-line-size: var(--epb-peak-marker-line-size, var(--peak-max-line-size, var(--peak-marker-line-size, 1px)));
+}
+.watermark.${CARD.htmlStructure.elements.progressBar.averageMarker.class} {
+  --wm-line-size: var(--epb-peak-marker-line-size, var(--peak-average-line-size, var(--peak-marker-line-size, 1px)));
+}
+
 /* --- Base watermark styles ---*/
 .watermark {
   --wm-line-size: var(--epb-watermark-line-size, var(--watermark-line-size, 1px));
@@ -2643,7 +2842,12 @@ const CHIPS_HOST_STYLE = css`
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  :host(.inline-row) .chip-set.segmented { flex-shrink: 0; }
+  /* margin-left: auto, not justify-content: flex-end on the host: with a label
+     the host's own space-between already puts the chips on the right, and
+     without one (the master Enabled/Disabled pills, whose panel title names
+     them - see enabledToggleField) the auto margin is what keeps them there
+     instead of letting the only child sit at the start of the row. */
+  :host(.inline-row) .chip-set.segmented { flex-shrink: 0; margin-left: auto; }
   .chip-set { display: flex; flex-wrap: wrap; gap: 8px; }
   /* Solid standby/accent fills everywhere, not an opacity-layer tint -
      that layer didn't repaint live on a theme switch (see :host's tokens). */
@@ -2676,6 +2880,16 @@ const BAR_STACK_EDITOR_STYLE = css`
   .row-header { display: flex; align-items: center; justify-content: space-between; }
   .row-title { font-size: 0.9rem; color: var(--secondary-text-color); }
   ${ROW_DELETE_STYLE}
+`;
+
+// The bar-stack list plus what only a pencil-per-row list needs: the row's
+// own inline picker sharing its header, and the sub-editor's back bar.
+const MULTI_ROW_EDITOR_STYLE = css`
+  ${BAR_STACK_EDITOR_STYLE}
+  .row-card { flex-direction: row; align-items: center; gap: 8px; margin-bottom: 8px; padding: 8px 12px; }
+  .row-main { flex: 1 1 auto; min-width: 0; }
+  .back-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .back-title { font-size: 0.9rem; color: var(--secondary-text-color); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 `;
 
 const ACTION_PICKER_STYLE = css`
@@ -2737,13 +2951,58 @@ const CUSTOM_THEME_EDITOR_STYLE = css`
 `;
 
 const EDITOR_BASE_STYLE = css`
-  /* padding-bottom matches the 16px gap between top-level items - without it the
-     last panel sits flush against the editor's bottom edge. */
-  .editor { display: flex; flex-direction: column; gap: 16px; padding-bottom: 16px; }
-  .panel-body { display: flex; flex-direction: row; gap: 16px; flex-wrap: wrap; align-content: flex-start; padding: 8px 0; }
+  /* 24px, like everything Home Assistant stacks in a card editor: ha-form gives
+     every child but the last a 24px margin-bottom, which is what separates two
+     expandable panels there, and hui-tile-card-editor adds the same 24px under
+     its own form blocks. That covers both what sits between our panels and the
+     flat fields above them. padding-bottom repeats it so the last panel doesn't
+     sit flush against the editor's bottom edge. */
+  .editor {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding-bottom: 24px;
+    /* ha-input pads itself with var(--ha-input-padding-bottom, --ha-space-2)
+       - 8px of reserved hint line inside a field that is already 56px tall,
+       which made a number selector's row sit one notch lower than the selects
+       beside it. A custom property crosses the shadow boundary its padding
+       lives behind; our own rows carry their spacing themselves (see
+       .panel-body's gap). */
+    --ha-input-padding-bottom: 0;
+    /* ha-expansion-panel pads its own .container with
+       var(--expansion-panel-content-padding, 0 8px), which lands on top of the
+       12px .panel-body sets for itself. HA zeroes the same variable in
+       config-elements-style for exactly this reason - the panel holds the
+       content, the content decides its own inset. */
+    --expansion-panel-content-padding: 0;
+  }
+  /* Home Assistant's own form spacing, so a panel of ours sits in a dialog
+     next to a native one without reading as a different form: 24px between
+     rows (ha-form gives every child but the last a 24px margin-bottom, and
+     ha-form-grid sets grid-row-gap to --ha-space-6), 8px between two fields
+     on the same row (its grid-column-gap, --ha-space-2), and 12px inside the
+     panel itself (config-elements-style's own ha-expansion-panel .content).
+     The same 24 works here only because ha-input's own hint padding is off
+     (see --ha-input-padding-bottom on .editor): with it on, a number selector
+     sat 8px lower than the selects beside it and the whole panel read as
+     over-spaced. */
+  .panel-body { display: flex; flex-direction: row; gap: 24px 8px; flex-wrap: wrap; align-content: flex-start; padding: 12px; }
   /* min-width: auto (flex default) lets a narrow field wrap its label to
      2 lines instead of eliding - throws its row height off from siblings. */
   .panel-body > * { min-width: 0; }
+  /* Row packing, decided by the engine rather than computed per field: a
+     half basis fits exactly two per row with the gap, and the flex-grow is
+     what makes a field left alone on its row - last one, or the one before a
+     full-width neighbour - take the whole width by itself. Widths used to be
+     a function of the config in JS (which of my neighbours are visible right
+     now?), and every one of those functions was wrong in some state. */
+  .panel-body > .field-full { flex: 0 0 100%; }
+  .panel-body > .field-half { flex: 1 1 calc(50% - 4px); }
+  /* The slider half of a number+unit composite: takes what its unit select
+     leaves, whatever that select's own width is. */
+  .panel-body > .field-grow { flex: 1 1 auto; }
+  /* A unit select and nothing else - its own px width, never stretched. */
+  .panel-body > .field-fixed { flex: 0 0 auto; }
   .panel-body ha-selector.field-toggle { margin-block: -18px; }
   .panel-body ha-selector.length-unit { align-self: flex-end; margin-block-end: 8px; }
   .section-label {
@@ -2806,6 +3065,7 @@ const CONSTRUCTIBLE_STYLESHEETS = (() => {
 
 export { CARD_CSS };
 export { CHIPS_HOST_STYLE };
+export { MULTI_ROW_EDITOR_STYLE };
 export { BAR_STACK_EDITOR_STYLE };
 export { ACTION_PICKER_STYLE };
 export { CUSTOM_THEME_EDITOR_STYLE };
