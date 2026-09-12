@@ -25,11 +25,11 @@ describe('the Multi row cascade', () => {
       decimal: 0,
       entities: [{ entity: BLACK, name: BLACK_NAME, bar_color: 'black' }],
     });
-    assert.equal(out.name, undefined, 'a single row must not push its name up');
-    assert.equal(out.bar_color, undefined, 'nor its colour');
+    assert.equal('name' in out, false, 'a single row must not push its name up');
+    assert.equal('bar_color' in out, false, 'nor its colour');
     // Even a value that arrived already shared: with one row there is nobody
     // to share it with, so it lands where it is actually read.
-    assert.equal(out.decimal, undefined);
+    assert.equal('decimal' in out, false);
     assert.deepEqual(out.entities, [{ entity: BLACK, name: BLACK_NAME, bar_color: 'black', decimal: 0 }]);
   });
 
@@ -65,10 +65,10 @@ describe('the Multi row cascade', () => {
       bar_color: 'black',
       entities: [{ entity: BLACK }, { entity: CYAN, name: 'Cyan', bar_color: 'cyan' }],
     });
-    assert.equal(out.name, undefined, 'the stale shared name must go');
+    assert.equal('name' in out, false, 'the stale shared name must go');
     // One black against one cyan elects nothing, so the colour follows the
     // name down rather than staying as a default nobody voted for.
-    assert.equal(out.bar_color, undefined);
+    assert.equal('bar_color' in out, false);
     assert.deepEqual(out.entities, [
       { entity: BLACK, name: BLACK_NAME, bar_color: 'black' },
       { entity: CYAN, name: 'Cyan', bar_color: 'cyan' },
@@ -85,7 +85,7 @@ describe('the Multi row cascade - the election', () => {
         { entity: CYAN, bar_color: 'cyan' },
       ],
     });
-    assert.equal(out.bar_color, undefined);
+    assert.equal('bar_color' in out, false);
   });
 
   test('a row is left alone when it says what the shared level already says', () => {

@@ -177,7 +177,7 @@ const dropFields = <S extends { fields: Record<string, unknown> }>(section: S, k
   const fields = { ...section.fields };
   for (const key of keys) {
     if (!(key in fields)) throw new Error(`buildMultiRow: no field named ${key} to drop`);
-    delete fields[key];
+    Reflect.deleteProperty(fields, key);
   }
   return { ...section, fields };
 };

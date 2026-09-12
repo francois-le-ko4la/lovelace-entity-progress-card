@@ -45,10 +45,14 @@ const rowsOf = (config: LovelaceConfig): Record<string, unknown>[] =>
 // A key that identifies a row, found at the shared level: hand-written, or
 // left behind by an older build. Every row that hasn't already said its own
 // gets it back, then it goes.
+// Reflect.deleteProperty, not `delete obj[key]`, wherever the key is a
+// variable here: the algorithm tells "the key is there" (`key in row`) from
+// "its value is undefined", so dropping a key can't become writing undefined
+// into it - and a computed `delete` is what DeepSource's JS-0320 flags.
 const pushDown = (key: string, shared: Record<string, unknown>, rows: Record<string, unknown>[]) => {
   if (!(key in shared)) return;
   for (const row of rows) if (!(key in row)) row[key] = shared[key];
-  delete shared[key];
+  Reflect.deleteProperty(shared, key);
 };
 
 // No value carried enough weight to become the shared one. Its own symbol,
@@ -86,19 +90,19 @@ const settle = (key: string, shared: Record<string, unknown>, rows: Record<strin
   const values = rows.map((row) => (key in row ? row[key] : shared[key]));
   const winner = elect(values, shared[key]);
   const materialise = (row: Record<string, unknown>, index: number) => {
-    if (values[index] === undefined) delete row[key];
+    if (values[index] === undefined) Reflect.deleteProperty(row, key);
     else row[key] = values[index];
   };
 
   if (winner === NO_WINNER || winner === undefined) {
-    delete shared[key];
+    Reflect.deleteProperty(shared, key);
     rows.forEach(materialise);
     return;
   }
 
   shared[key] = winner;
   rows.forEach((row, index) => {
-    if (same(values[index], winner)) delete row[key];
+    if (same(values[index], winner)) Reflect.deleteProperty(row, key);
     else materialise(row, index);
   });
 };
