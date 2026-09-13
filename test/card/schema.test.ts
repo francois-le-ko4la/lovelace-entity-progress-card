@@ -11,6 +11,7 @@ import {
   markOpacity,
   markColor,
   markLineSize,
+  type PeakMark,
   YamlSchemaFactory,
 } from '../../src/card/schema.js';
 
@@ -141,11 +142,14 @@ describe('mark helpers - one cascade for watermark and peak marks alike', () => 
   });
 
   test('a watermark side exists unless turned off; a peak mark only once set', () => {
+    // Read off an object rather than written as a literal: this is what an
+    // unset peak_marker.min actually hands the helper.
+    const unset = ({} as { min?: PeakMark }).min;
     // The schema always fills a watermark side, so markShown never sees
     // undefined in production - the cast states that, and pins the contrast.
     assert.equal(markShown(undefined as unknown as boolean), true);
     assert.equal(markShown(false), false);
-    assert.equal(peakMarkShown(undefined), false);
+    assert.equal(peakMarkShown(unset), false);
     assert.equal(peakMarkShown(false), false);
     assert.equal(peakMarkShown(true), true);
     assert.equal(peakMarkShown({}), true);

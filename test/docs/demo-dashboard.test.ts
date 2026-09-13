@@ -69,7 +69,10 @@ type Card = { variant: SchemaVariant; config: LovelaceConfig; file: string };
 const collect = (file: string): Card[] => {
   const found: Card[] = [];
   const walk = (node: unknown) => {
-    if (Array.isArray(node)) return node.forEach(walk);
+    if (Array.isArray(node)) {
+      node.forEach(walk);
+      return;
+    }
     if (!node || typeof node !== 'object') return;
     const record = node as Record<string, unknown>;
     if (typeof record.type === 'string' && record.type.startsWith('custom:entity-progress')) {

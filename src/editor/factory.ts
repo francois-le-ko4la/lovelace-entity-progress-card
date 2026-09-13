@@ -1328,7 +1328,9 @@ const EditorFactory = {
   ) => {
     const { units, convertRef, showIf, noLabel = false, customToggle = false } = opts;
     const read = (c: LovelaceConfig) => c[key];
-    const write = (c: LovelaceConfig, value: unknown) => ({ ...c, [key]: value });
+    // value omitted clears the key - same object either way, one less literal
+    // `undefined` at the call sites that mean "unset".
+    const write = (c: LovelaceConfig, value?: unknown) => ({ ...c, [key]: value });
     const parsed = (c: LovelaceConfig) => parseLength(read(c));
     const gate = (c: LovelaceConfig) => (showIf ? showIf(c) : true);
     // The toggle only ever writes the literal 'auto' (see below) - a custom
@@ -1349,8 +1351,7 @@ const EditorFactory = {
         virtual: true,
         showIf: gate,
         resolveVirtual: (c: LovelaceConfig) => parsed(c).custom,
-        onVirtualChange: (value: boolean, config: LovelaceConfig) =>
-          value ? write(config, 'auto') : write(config, undefined),
+        onVirtualChange: (value: boolean, config: LovelaceConfig) => (value ? write(config, 'auto') : write(config)),
       };
     }
     fields[key] = {
