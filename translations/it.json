@@ -58,7 +58,7 @@
         "toggle": "Distintivo",
         "color_toggle": "Colore distintivo indipendente"
       },
-      "bar_color": "Colore barra",
+      "bar_color": "Colore",
       "bar_color_mode": "Modalità colore barra",
       "bar_effect_mode": "Effetto sulla barra",
       "bar_group": "Barra",
@@ -74,7 +74,7 @@
       "center_zero": "Zero al centro",
       "center_zero_growth_percent": "Percentuale di crescita",
       "center_zero_value": "Valore centrale",
-      "color": "Colore icona",
+      "color": "Colore",
       "custom_info": "Info secondaria personalizzata",
       "custom_theme": "Zone tema personalizzato",
       "decimal": "Visualizza la precisione",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "Altezza automatica",
       "hide_mode": "Nascondi",
       "icon": "Icona",
+      "icon_group": "Icona",
       "icon_animation": "Animazione dell'icona",
       "interpolate": "Interpolazione colori",
       "layout": "Layout del contenuto",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "Mostra minimo",
         "max_toggle": "Mostra massimo",
-        "average_toggle": "Mostra media"
+        "average_toggle": "Mostra media",
+        "range_toggle": "Mostra intervallo"
       },
       "peak_marker_unsupported": "I marcatori di picco richiedono un'entità sensor o number, senza sovrascrittura dell'attributo, e che non sia un timer né un counter — non disponibile per questa entità.",
       "percent": "Percentuale",

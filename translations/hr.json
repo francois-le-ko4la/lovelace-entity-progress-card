@@ -58,7 +58,7 @@
         "toggle": "Značka",
         "color_toggle": "Neovisna boja značke"
       },
-      "bar_color": "Boja za traku",
+      "bar_color": "Boja",
       "bar_color_mode": "Način boje",
       "bar_effect_mode": "Efekt na traci",
       "bar_group": "Traka",
@@ -74,7 +74,7 @@
       "center_zero": "Nula u sredini",
       "center_zero_growth_percent": "Postotak rasta",
       "center_zero_value": "Vrijednost sredine",
-      "color": "Primarna boja",
+      "color": "Boja",
       "custom_info": "Prilagođena sekundarna informacija",
       "custom_theme": "Zone prilagođene teme",
       "decimal": "Preciznost prikaza",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "Automatska visina",
       "hide_mode": "Sakrij",
       "icon": "Ikona",
+      "icon_group": "Ikona",
       "icon_animation": "Animacija ikone",
       "interpolate": "Interpolacija boja",
       "layout": "Raspored sadržaja",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "Prikaži minimum",
         "max_toggle": "Prikaži maksimum",
-        "average_toggle": "Prikaži prosjek"
+        "average_toggle": "Prikaži prosjek",
+        "range_toggle": "Prikaži raspon"
       },
       "peak_marker_unsupported": "Oznake vrhova zahtijevaju entitet sensor ili number bez preklapanja atributa, koji nije timer ni counter — nije dostupno za ovaj entitet.",
       "percent": "Postotak",

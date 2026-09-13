@@ -152,8 +152,11 @@ const htmlStructure = {
       zeroMark: { element: 'div', class: 'zero', extraAttr: ARIA_HIDDEN },
       lowWatermark: { element: 'div', class: 'low', extraAttr: ARIA_HIDDEN },
       highWatermark: { element: 'div', class: 'high', extraAttr: ARIA_HIDDEN },
-      // peak_marker's three marks - same 'watermark mark' base class as
-      // low/high above, so they share the same size tokens for free.
+      // peak_marker's marks - same 'watermark mark' base class as low/high
+      // above, so they share the same size tokens for free. rangeMarker is the
+      // band between min and max; it reads their positions rather than one of
+      // its own.
+      rangeMarker: { element: 'div', class: 'peak-range', extraAttr: ARIA_HIDDEN },
       minMarker: { element: 'div', class: 'peak-min', extraAttr: ARIA_HIDDEN },
       maxMarker: { element: 'div', class: 'peak-max', extraAttr: ARIA_HIDDEN },
       averageMarker: { element: 'div', class: 'peak-avg', extraAttr: ARIA_HIDDEN },
@@ -170,6 +173,13 @@ const htmlStructure = {
     },
   },
 };
+
+// The parts of a card `hide` can remove. Every table keyed by a hide target -
+// hiddenComponent below, the schema's allowed values, the editor's per-target
+// field list and chip order - is typed off this one list, so adding a target
+// is a compile error wherever it isn't wired.
+const HIDE_TARGETS = ['icon', 'name', 'value', 'unit', 'secondary_info', 'progress_bar', 'shape'] as const;
+type HideTarget = (typeof HIDE_TARGETS)[number];
 
 const style = {
   element: 'style',
@@ -348,6 +358,13 @@ const style = {
         opacity: { var: '--peak-average-opacity-value' },
         lineSize: { var: '--peak-average-line-size' },
       },
+      // No value/lineSize: the band spans --peak-min-value to --peak-max-value
+      // (set for all three marks whether they are drawn or not), and a zone has
+      // no line to size.
+      range: {
+        color: { var: '--peak-range-color', default: HA_CONTEXT.colors.stateIcon },
+        opacity: { var: '--peak-range-opacity-value' },
+      },
       // The family's shared thickness, read by a mark that has none of its
       // own - watermark's own twin, and what stops a peak line from borrowing
       // watermark's.
@@ -366,7 +383,7 @@ const style = {
       value: { label: 'value' },
       unit: { label: 'unit' },
       progress_bar: { label: 'progress_bar', class: 'hide-progress-bar' },
-    },
+    } satisfies Record<HideTarget, { label: HideTarget; class?: string }>,
     // density: single_line - set on .content-section itself by
     // StructureElements.createContent, not on the card.
     singleLineRow: 'single-line-row',
@@ -450,4 +467,5 @@ const CARD = {
   console: consoleInfo,
 };
 
-export { CARD };
+export { CARD, HIDE_TARGETS };
+export type { HideTarget };

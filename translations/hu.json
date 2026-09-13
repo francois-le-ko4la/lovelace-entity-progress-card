@@ -58,7 +58,7 @@
         "toggle": "Jelvény",
         "color_toggle": "Független jelvényszín"
       },
-      "bar_color": "Sáv színe",
+      "bar_color": "Szín",
       "bar_color_mode": "Szín mód",
       "bar_effect_mode": "Sáv effektus",
       "bar_group": "Sáv",
@@ -74,7 +74,7 @@
       "center_zero": "Nulla középen",
       "center_zero_growth_percent": "Növekedési százalék",
       "center_zero_value": "Középérték",
-      "color": "Ikon színe",
+      "color": "Szín",
       "custom_info": "Egyéni másodlagos info",
       "custom_theme": "Egyéni téma zónák",
       "decimal": "Pontosság",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "Automatikus magasság",
       "hide_mode": "Elrejtés",
       "icon": "Ikon",
+      "icon_group": "Ikon",
       "icon_animation": "Ikon animáció",
       "interpolate": "Színinterpoláció",
       "layout": "Tartalom elrendezése",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "Minimum megjelenítése",
         "max_toggle": "Maximum megjelenítése",
-        "average_toggle": "Átlag megjelenítése"
+        "average_toggle": "Átlag megjelenítése",
+        "range_toggle": "Tartomány megjelenítése"
       },
       "peak_marker_unsupported": "A csúcsjelölőkhöz sensor vagy number entitás szükséges attribútum-felülírás nélkül, amely nem timer és nem counter — ehhez az entitáshoz nem elérhető.",
       "percent": "Százalék",

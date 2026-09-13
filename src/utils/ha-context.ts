@@ -9,6 +9,13 @@
 // colors/haColors below so the two never encode it separately and drift.
 const cssColorVar = (name: string): string => `var(--${name}-color)`;
 
+interface DomainMapping {
+  attribute: string;
+  scale?: number;
+  suggest?: string;
+  unit?: 'system_temperature' | 'attribute_suffix';
+}
+
 // from:
 // https://github.com/home-assistant/frontend/blob/master/src/resources/theme/color/color.globals.ts
 const HA_CONTEXT = {
@@ -214,14 +221,23 @@ const HA_CONTEXT = {
       'state-weather-windy',
     ].map((c) => [c, cssColorVar(c)]),
   ),
+  // Per-domain numeric source. `scale`: the attribute's native full scale when
+  // it isn't 0-100. `suggest`: what the entity-first picker offers instead -
+  // it has no hvac_mode context to tell climate's target apart from
+  // target_temp_high/low. `unit`: the two domains with no unit_of_measurement.
   attributeMapping: {
-    cover: { label: 'cover', attribute: 'current_position' },
-    light: { label: 'light', attribute: 'brightness' },
-    fan: { label: 'fan', attribute: 'percentage' },
-    // No unit_of_measurement on climate/weather - see EntityHelper.unit.
-    climate: { label: 'climate', attribute: 'temperature' },
-    weather: { label: 'weather', attribute: 'temperature' },
-  },
+    cover: { attribute: 'current_position' },
+    valve: { attribute: 'current_position' },
+    fan: { attribute: 'percentage' },
+    light: { attribute: 'brightness', scale: 255 },
+    humidifier: { attribute: 'current_humidity' },
+    water_heater: { attribute: 'current_temperature' },
+    media_player: { attribute: 'volume_level', scale: 1 },
+    climate: { attribute: 'temperature', suggest: 'current_temperature', unit: 'system_temperature' },
+    weather: { attribute: 'temperature', unit: 'attribute_suffix' },
+  } as Record<string, DomainMapping | undefined>,
+  // Domains whose own state is already a plain, directly-usable number.
+  stateDomains: ['sensor', 'number', 'input_number', 'counter'],
   numberFormat: {
     decimal_comma: 'de-DE', // 1.234,56 (Germany, France, etc.)
     comma_decimal: 'en-US', // 1,234.56 (USA, UK, etc.)

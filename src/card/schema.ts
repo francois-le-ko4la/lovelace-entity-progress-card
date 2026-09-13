@@ -5,7 +5,7 @@
  * them.
  */
 
-import { HA_CONTEXT, CARD, THEME, THEME_KEYS, PERCENT_THEME_KEYS, SEV } from '../utils/parameters.js';
+import { HA_CONTEXT, CARD, HIDE_TARGETS, THEME, THEME_KEYS, PERCENT_THEME_KEYS, SEV } from '../utils/parameters.js';
 import { is } from '../utils/common-checks.js';
 import { HassProviderSingleton } from '../utils/hass-provider.js';
 import { NumberFormatter } from './formatting.js';
@@ -46,12 +46,18 @@ type WatermarkMarkOverride = {
   line_size?: string;
 };
 type WatermarkMark = boolean | ValueConfig | WatermarkMarkOverride;
+// A peak mark carries no threshold of its own (its value is the measured
+// min/max/average) and takes a bare string as a color shorthand. Everything
+// else it can override is WatermarkMarkOverride's, so the mark* helpers below
+// serve both - see Mark.
+type PeakMark = boolean | string | WatermarkMarkOverride | undefined;
+type Mark = WatermarkMark | PeakMark;
 // Discriminates the override object from ValueConfig's own {entity,
 // attribute,jinja} shape - both are plain objects, so this checks for the
 // absence of ValueConfig's own keys rather than the presence of `value`:
 // `{ color: 'white' }` alone (no `value`) is still an override, defaulting
 // its threshold like `watermark: {}` itself always has.
-const isMarkOverride = (mark: WatermarkMark): mark is WatermarkMarkOverride =>
+const isMarkOverride = (mark: Mark): mark is WatermarkMarkOverride =>
   is.plainObject(mark) && !('entity' in mark) && !('jinja' in mark);
 // Nests a flattened `{ entity, attribute, color }` under `value` - otherwise
 // the union's bare-ValueConfig branch matches first and drops `color`.
@@ -70,14 +76,18 @@ const markValue = (mark: WatermarkMark, defaultValue: number): ValueConfig =>
       : (mark as ValueConfig);
 const markAs = (mark: WatermarkMark): 'auto' | 'percent' =>
   isMarkOverride(mark) ? ((mark.as as 'auto' | 'percent') ?? 'auto') : 'auto';
-const markOpacity = (mark: WatermarkMark, fallback: number): number =>
+const markOpacity = (mark: Mark, fallback: number): number =>
   isMarkOverride(mark) && is.number(mark.opacity) ? mark.opacity : fallback;
-const markType = (mark: WatermarkMark, fallback: string): string =>
+const markType = (mark: Mark, fallback: string): string =>
   isMarkOverride(mark) && is.string(mark.type) ? mark.type : fallback;
-const markColor = (mark: WatermarkMark, fallback?: string): string | undefined =>
+const markColor = (mark: Mark, fallback?: string): string | undefined =>
   (isMarkOverride(mark) ? mark.color : undefined) ?? fallback;
-const markLineSize = (mark: WatermarkMark, fallback: string): string =>
+const markLineSize = (mark: Mark, fallback: string): string =>
   (isMarkOverride(mark) ? mark.line_size : undefined) ?? fallback;
+// A watermark's low/high exist unless turned off; a peak mark exists only once
+// set. `false` is the editor's explicit "hidden" state (types.peakMark()'s
+// boolean branch) - distinct from absent, which is also hidden.
+const peakMarkShown = (mark: PeakMark): boolean => isMarkOverride(mark) || (mark !== undefined && mark !== false);
 
 // status_label: string (shorthand for { jinja }) | { jinja, position,
 // color_source } - same idea as badge_icon/badge_color, already bare Jinja
@@ -184,8 +194,17 @@ const BAR_STACK_MODES = ['stacked', 'proportional', 'net'];
 const ICON_ACTION_FIELDS = ['icon_tap_action', 'icon_hold_action', 'icon_double_tap_action'] as const;
 const ACTION_FIELDS = ['tap_action', 'hold_action', 'double_tap_action', ...ICON_ACTION_FIELDS] as const;
 const UNIT_SPACINGS = Object.values(CARD.config.unit.unitSpacing);
-const WATERMARK_TYPES = ['blended', 'area', 'striped', 'triangle', 'round', 'line'];
-const PEAK_MARK_TYPES = ['line', 'round', 'triangle'];
+// One list for both families: what a mark can look like never depended on
+// where its value comes from. MARK_ZONE_TYPES is the subset that paints a
+// region instead of a point - all peak_marker.range can be.
+const MARK_TYPES = ['blended', 'area', 'striped', 'triangle', 'round', 'line'];
+// The one spelling of peak_marker's default window: the schema turns it into
+// seconds, SCHEMA_DEFAULTS hands the editor the YAML form of the same thing.
+const PEAK_WINDOW_DEFAULT = '2h';
+// peak_marker.range's fallback shape, spelled once for the schema-default
+// table, the view's own resolution and the renderer's guard alike.
+const PEAK_RANGE_TYPE_DEFAULT = 'area';
+const MARK_ZONE_TYPES = ['area', 'blended', 'striped'];
 const ALERT_HIGHLIGHTS = ['border', 'background', 'label'];
 const ALERT_ANIMATIONS = ['static', 'blink', 'ping'];
 const ICON_ANIMATIONS = ['spin', 'pulse', 'bounce', 'shake', 'ping', 'reveal', 'washing_machine', 'battery_charging'];
@@ -578,7 +597,7 @@ const types = {
           types.object({
             value: types.optional(types.numericEntityOrJinja()),
             as: types.optional(types.enums(['auto', 'percent'])),
-            type: types.optional(types.enums(WATERMARK_TYPES)),
+            type: types.optional(types.enums(MARK_TYPES)),
             opacity: types.optionalNumber(),
             color: types.optionalString(),
             line_size: types.optionalString(),
@@ -595,12 +614,27 @@ const types = {
       types.boolean,
       types.string,
       types.object({
-        type: types.optional(types.enums(PEAK_MARK_TYPES)),
+        type: types.optional(types.enums(MARK_TYPES)),
         opacity: types.optionalNumber(),
         color: types.optionalString(),
         line_size: types.optionalString(),
       }),
     ),
+
+  // peak_marker.range: the band between min and max - the span the value
+  // actually travelled over the window. A point shape would mean nothing for
+  // it, so it takes the zone list; its value is the other two marks' own
+  // positions, so it carries none.
+  peakZone: () => {
+    const shape = types.object({
+      type: types.optional(types.enums(MARK_ZONE_TYPES)),
+      opacity: types.optionalNumber(),
+      color: types.optionalString(),
+    });
+    // _schema exposed like peakMarker's own: it is what lets the editor read
+    // this mark's allowed types off the live validator (schemaOptions).
+    return Object.assign(types.union(types.boolean, types.string, shape), { _schema: shape._schema });
+  },
 
   // status_label: string (shorthand for { jinja }) | { jinja, position,
   // color_source } - see statusLabelObj/rewrapStatusLabel above.
@@ -626,8 +660,10 @@ const types = {
   // getSchemaDefault can still reach type/opacity's own defaults.
   peakMarker: () => {
     const shape = types.object({
-      window: types.duration,
-      type: types.enumsWithDefault(PEAK_MARK_TYPES, 'line'),
+      // Defaulted, not required: a peak_marker with no window used to drop the
+      // whole block, so the card silently drew no mark at all.
+      window: types.optionalWithDefault(types.duration, types.duration(PEAK_WINDOW_DEFAULT)),
+      type: types.enumsWithDefault(MARK_TYPES, 'line'),
       opacity: types.optionalNumberWithDefault(0.8),
       color: types.optionalString(),
       // Its own, no longer borrowed from watermark's - a peak mark drawn as a
@@ -637,6 +673,7 @@ const types = {
       min: types.optional(types.peakMark()),
       max: types.optional(types.peakMark()),
       average: types.optional(types.peakMark()),
+      range: types.optional(types.peakZone()),
     });
     return Object.assign(types.optional(shape), { _schema: shape._schema });
   },
@@ -758,6 +795,10 @@ const types = {
 // reusable combinator, a one-off derived schema) so it doesn't need
 // types.name to exist as a literal property on an object TS otherwise infers
 // as closed/sealed once every entry lives in one literal.
+// EntityHelper._nameResolver is keyed off this too: a token added here with
+// no resolver there is a compile error, not a silently dropped part of a name.
+type NameTokenType = 'text' | 'entity' | 'device' | 'area' | 'floor';
+
 const nameItem = types.discriminatedUnion('type', {
   text: types.object({
     type: types.enums(['text'] as const),
@@ -779,7 +820,7 @@ const nameItem = types.discriminatedUnion('type', {
   floor: types.object({
     type: types.enums(['floor'] as const),
   }),
-});
+} satisfies Record<NameTokenType, unknown>);
 
 const nameValidator = types.array(nameItem);
 
@@ -926,6 +967,15 @@ function struct<T>(
   // corner - status_label wins, since setting a whole Jinja template is a
   // more deliberate choice than a boolean toggle left over from before
   // status_label was configured.
+  // The color picker offers "State" as the name of the unset state (see
+  // base.ts's color_state_default), and HA writes that name down when it is
+  // picked. Nothing reads it: the fallback is EntityHelper.defaultColor, which
+  // is per-domain and dynamic. Same treatment as icon_animation: none, the
+  // other value that only ever spelled out its own default.
+  const applyStateColorRule = (result: Record<string, unknown>) => {
+    for (const key of ['color', 'bar_color']) if (result[key] === 'state') result[key] = undefined;
+  };
+
   const applyLabelRule = (result: Record<string, unknown>) => {
     const jinja = statusLabelObj(result.status_label).jinja;
     if (is.nonEmptyString(jinja) && result.trend_indicator) result.trend_indicator = false;
@@ -1071,6 +1121,7 @@ function struct<T>(
     applyBelowBarPositionRule(result);
     applyCompactBelowRule(result);
     applyLabelRule(result);
+    applyStateColorRule(result);
     applyBarSingleLineRule(result);
     applyBarMaxWidthRule(result);
     applyBarOrientationUpRule(result);
@@ -1282,8 +1333,6 @@ const hideWithDefault = <T extends readonly unknown[]>(targets: T, fallback: T[n
 // absent from both aggregator schemas.
 const ROW_IDENTITY_FIELDS = ['entity', 'attribute', 'name', 'icon'] as const;
 
-const HIDE_TARGETS = ['icon', 'name', 'value', 'unit', 'secondary_info', 'progress_bar', 'shape'];
-
 // A Multi row is handed straight to its own entity-progress-card child, which
 // runs the full card schema on it - postProcess included. Re-validating it
 // here would duplicate that with a weaker engine (no postProcess), so this
@@ -1321,7 +1370,7 @@ const watermarkSchema = {
   // lives in SCHEMA_DEFAULTS.watermark (below) instead.
   opacity: types.optionalNumber(),
   color: types.optionalString(),
-  type: types.optional(types.enums(WATERMARK_TYPES)),
+  type: types.optional(types.enums(MARK_TYPES)),
   line_size: types.optionalStringWithDefault('1px'),
   // Shared by both sides unless one says otherwise - same three-level shape
   // as type/opacity/color/line_size above it.
@@ -1794,7 +1843,7 @@ const YamlSchemaFactory = {
 export type { Infer };
 export type { ValueConfig };
 export { entityOf, attributeOf, jinjaOf };
-export { markShown, markValue, markAs, markType, markOpacity, markColor, markLineSize, isMarkOverride };
+export { markShown, markValue, markAs, markType, markOpacity, markColor, markLineSize, peakMarkShown, isMarkOverride };
 export { statusLabelObj, rewrapStatusLabel };
 export { THEME_ALIASES };
 // Each YamlSchemaFactory getter rebuilds its whole schema on access - cached
@@ -1825,29 +1874,51 @@ export { schemaOptions, type SchemaVariant };
 // Only what the card runtime enumerates for its own CSS classes/shape lists
 // (core.ts). The editor reads its dropdown lists off the schema itself, via
 // struct().fieldOptions - see SELECT_TYPES.
-export { BAR_SIZES, BAR_POSITIONS, WATERMARK_TYPES, PEAK_MARK_TYPES, DENSITY_COMPACT_BAR_POSITIONS };
+export { BAR_SIZES, BAR_POSITIONS, MARK_TYPES, MARK_ZONE_TYPES, DENSITY_COMPACT_BAR_POSITIONS };
 export { ACTION_FIELDS };
 export { DENSITY_MODES };
 export { ROW_IDENTITY_FIELDS };
-export type { WatermarkMark };
+export type { WatermarkMark, PeakMark, NameTokenType };
 export { YamlSchemaFactory };
 
-// Computed once at module load, straight off the live schema. opacity/type/
-// window have no schema-level default by design (see watermarkSchema/
-// peakMarker()/trendIndicator() above, staying absent lets the editor tell
-// "inert" apart from "still in use") - written in by hand here instead.
+// Computed once at module load, straight off the live schema - only what the
+// schema deliberately leaves absent is written in by hand below, and each one
+// says why.
 const SCHEMA_DEFAULTS = {
   watermark: {
-    ...(YamlSchemaFactory.card.fieldDefault('watermark') as { low: number; high: number; line_size: string }),
+    ...(YamlSchemaFactory.card.fieldDefault('watermark') as {
+      low: number;
+      high: number;
+      line_size: string;
+      as: string;
+    }),
+    // Genuinely absent from the schema, not an oversight: it lets the editor
+    // tell "inert" apart from "still in use by one side" (see watermarkSchema).
     opacity: 0.8,
     type: 'blended',
   },
   peakMarker: {
-    ...(YamlSchemaFactory.card.fieldDefault('peak_marker') as { type: string; opacity: number }),
-    window: '2h',
+    ...(YamlSchemaFactory.card.fieldDefault('peak_marker') as {
+      window: number;
+      type: string;
+      opacity: number;
+      line_size: string;
+    }),
+    // The same window the schema defaults to, in the spelling the editor
+    // writes - the schema's own copy is already in seconds.
+    window: PEAK_WINDOW_DEFAULT,
+    // range's own, since it can't inherit the family's: 'line' is not a zone
+    // (see types.peakZone).
+    rangeType: PEAK_RANGE_TYPE_DEFAULT,
   },
   trendIndicator: {
-    ...(YamlSchemaFactory.card.fieldDefault('trend_indicator') as { basis: string; threshold: number }),
+    ...(YamlSchemaFactory.card.fieldDefault('trend_indicator') as {
+      basis: string;
+      threshold: number;
+      colored: boolean;
+    }),
+    // Optional within Advanced (its own reveal toggle), so no schema default
+    // to read - this is what the editor offers when the toggle goes on.
     window: '2h',
   },
   actions: Object.fromEntries(
@@ -1856,3 +1927,4 @@ const SCHEMA_DEFAULTS = {
 };
 
 export { SCHEMA_DEFAULTS };
+export { PEAK_RANGE_TYPE_DEFAULT };

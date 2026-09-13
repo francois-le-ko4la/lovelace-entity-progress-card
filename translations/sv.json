@@ -58,7 +58,7 @@
         "toggle": "Märke",
         "color_toggle": "Oberoende märkesfärg"
       },
-      "bar_color": "Färg på stapeln",
+      "bar_color": "Färg",
       "bar_color_mode": "Färgläge",
       "bar_effect_mode": "Effekt på stapeln",
       "bar_group": "Stapel",
@@ -74,7 +74,7 @@
       "center_zero": "Noll i mitten",
       "center_zero_growth_percent": "Tillväxtprocent",
       "center_zero_value": "Centervärde",
-      "color": "Primärfärg",
+      "color": "Färg",
       "custom_info": "Anpassad sekundär info",
       "custom_theme": "Anpassade temazoner",
       "decimal": "Visningsprecision",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "Automatisk höjd",
       "hide_mode": "Dölj",
       "icon": "Ikon",
+      "icon_group": "Ikon",
       "icon_animation": "Ikonanimering",
       "interpolate": "Interpolera färger",
       "layout": "Innehållslayout",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "Visa min",
         "max_toggle": "Visa max",
-        "average_toggle": "Visa medel"
+        "average_toggle": "Visa medel",
+        "range_toggle": "Visa intervall"
       },
       "peak_marker_unsupported": "Toppmarkeringar kräver en sensor- eller number-entitet utan attributöverskrivning, som inte är en timer eller counter — inte tillgängligt för denna entitet.",
       "percent": "Procent",

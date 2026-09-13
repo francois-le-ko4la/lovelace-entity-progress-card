@@ -13,7 +13,7 @@
 
 import { VERSION, META } from './meta.js';
 import { HA_CONTEXT } from './ha-context.js';
-import { CARD } from './card-config.js';
+import { CARD, HIDE_TARGETS, type HideTarget } from './card-config.js';
 import { THEME, THEME_KEYS, PERCENT_THEME_KEYS } from './card-themes.js';
 
 // Injected by scripts/build.js - see development.md's Logging & debugging
@@ -139,6 +139,8 @@ export { CARD_CONTEXT };
 export { devName };
 export { HA_CONTEXT };
 export { CARD };
+export { HIDE_TARGETS };
+export type { HideTarget };
 export { THEME };
 export { THEME_KEYS };
 export { PERCENT_THEME_KEYS };

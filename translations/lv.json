@@ -58,7 +58,7 @@
         "toggle": "Nozīmīte",
         "color_toggle": "Neatkarīga nozīmītes krāsa"
       },
-      "bar_color": "Joslas krāsa",
+      "bar_color": "Krāsa",
       "bar_color_mode": "Krāsas režīms",
       "bar_effect_mode": "Joslas efekts",
       "bar_group": "Josla",
@@ -74,7 +74,7 @@
       "center_zero": "Nulles centrā",
       "center_zero_growth_percent": "Pieauguma procents",
       "center_zero_value": "Centra vērtība",
-      "color": "Ikonas krāsa",
+      "color": "Krāsa",
       "custom_info": "Pielāgota sekundārā informācija",
       "custom_theme": "Pielāgotas tēmas zonas",
       "decimal": "Noapaļošana",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "Automātisks augstums",
       "hide_mode": "Slēpt",
       "icon": "Ikona",
+      "icon_group": "Ikona",
       "icon_animation": "Ikonas animācija",
       "interpolate": "Krāsu interpolācija",
       "layout": "Satura izkārtojums",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "Rādīt minimumu",
         "max_toggle": "Rādīt maksimumu",
-        "average_toggle": "Rādīt vidējo"
+        "average_toggle": "Rādīt vidējo",
+        "range_toggle": "Rādīt diapazonu"
       },
       "peak_marker_unsupported": "Maksimumu atzīmēm nepieciešama sensor vai number entītija bez atribūta pārrakstīšanas, kas nav timer vai counter — šai entītijai nav pieejams.",
       "percent": "Procenti",

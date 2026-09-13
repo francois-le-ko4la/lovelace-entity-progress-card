@@ -58,7 +58,7 @@
         "toggle": "Odznak",
         "color_toggle": "Nezávislá farba odznaku"
       },
-      "bar_color": "Farba pruhu",
+      "bar_color": "Farba",
       "bar_color_mode": "Farebný režim",
       "bar_effect_mode": "Efekt pruhu",
       "bar_group": "Pruh",
@@ -74,7 +74,7 @@
       "center_zero": "Nula v strede",
       "center_zero_growth_percent": "Percento rastu",
       "center_zero_value": "Hodnota stredu",
-      "color": "Farba ikony",
+      "color": "Farba",
       "custom_info": "Vlastné sekundárne info",
       "custom_theme": "Zóny vlastnej témy",
       "decimal": "Presnosť zobrazenia",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "Automatická výška",
       "hide_mode": "Skryť",
       "icon": "Ikona",
+      "icon_group": "Ikona",
       "icon_animation": "Animácia ikony",
       "interpolate": "Interpolácia farieb",
       "layout": "Rozloženie obsahu",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "Zobraziť minimum",
         "max_toggle": "Zobraziť maximum",
-        "average_toggle": "Zobraziť priemer"
+        "average_toggle": "Zobraziť priemer",
+        "range_toggle": "Zobraziť rozsah"
       },
       "peak_marker_unsupported": "Značky vrcholov vyžadujú entitu sensor alebo number bez prepísania atribútu, ktorá nie je timer ani counter — pre túto entitu nie je k dispozícii.",
       "percent": "Percento",

@@ -58,7 +58,7 @@
         "toggle": "Odznaka",
         "color_toggle": "Niezależny kolor odznaki"
       },
-      "bar_color": "Kolor paska",
+      "bar_color": "Kolor",
       "bar_color_mode": "Tryb koloru",
       "bar_effect_mode": "Efekt na pasku",
       "bar_group": "Pasek",
@@ -74,7 +74,7 @@
       "center_zero": "Zero na środku",
       "center_zero_growth_percent": "Procent wzrostu",
       "center_zero_value": "Wartość środkowa",
-      "color": "Kolor podstawowy",
+      "color": "Kolor",
       "custom_info": "Niestandardowa info pomocnicza",
       "custom_theme": "Strefy niestandardowego motywu",
       "decimal": "Precyzja",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "Automatyczna wysokość",
       "hide_mode": "Ukryj",
       "icon": "Ikona",
+      "icon_group": "Ikona",
       "icon_animation": "Animacja ikony",
       "interpolate": "Interpolacja kolorów",
       "layout": "Układ treści",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "Pokaż minimum",
         "max_toggle": "Pokaż maksimum",
-        "average_toggle": "Pokaż średnią"
+        "average_toggle": "Pokaż średnią",
+        "range_toggle": "Pokaż zakres"
       },
       "peak_marker_unsupported": "Znaczniki szczytowe wymagają encji sensor lub number bez nadpisania atrybutu, która nie jest timerem ani counterem — niedostępne dla tej encji.",
       "percent": "Procent",

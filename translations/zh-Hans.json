@@ -58,7 +58,7 @@
         "toggle": "徽章",
         "color_toggle": "独立徽章颜色"
       },
-      "bar_color": "进度条颜色",
+      "bar_color": "颜色",
       "bar_color_mode": "颜色模式",
       "bar_effect_mode": "进度条效果",
       "bar_group": "进度条",
@@ -74,7 +74,7 @@
       "center_zero": "中心為零",
       "center_zero_growth_percent": "增长百分比",
       "center_zero_value": "中心值",
-      "color": "主色",
+      "color": "颜色",
       "custom_info": "自定义次要信息",
       "custom_theme": "自定义主题区域",
       "decimal": "显示精度",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "自动高度",
       "hide_mode": "隐藏",
       "icon": "图标",
+      "icon_group": "图标",
       "icon_animation": "图标动画",
       "interpolate": "颜色插值",
       "layout": "内容布局",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "显示最小值",
         "max_toggle": "显示最大值",
-        "average_toggle": "显示平均值"
+        "average_toggle": "显示平均值",
+        "range_toggle": "显示范围"
       },
       "peak_marker_unsupported": "峰值标记需要一个没有属性覆盖的 sensor 或 number 实体，且不能是 timer 或 counter — 此实体不可用。",
       "percent": "百分比",

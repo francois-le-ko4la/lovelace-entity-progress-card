@@ -58,7 +58,7 @@
         "toggle": "बैज",
         "color_toggle": "स्वतंत्र बैज रंग"
       },
-      "bar_color": "बार का रंग",
+      "bar_color": "रंग",
       "bar_color_mode": "रंग मोड",
       "bar_effect_mode": "बार पर प्रभाव",
       "bar_group": "बार",
@@ -74,7 +74,7 @@
       "center_zero": "शून्य केंद्र में",
       "center_zero_growth_percent": "वृद्धि प्रतिशत",
       "center_zero_value": "केंद्र मान",
-      "color": "मुख्य रंग",
+      "color": "रंग",
       "custom_info": "कस्टम द्वितीयक जानकारी",
       "custom_theme": "कस्टम थीम ज़ोन",
       "decimal": "Display precision",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "स्वतः ऊँचाई",
       "hide_mode": "छिपाएँ",
       "icon": "आइकन",
+      "icon_group": "आइकन",
       "icon_animation": "आइकन एनिमेशन",
       "interpolate": "रंग इंटरपोलेशन",
       "layout": "सामग्री लेआउट",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "न्यूनतम दिखाएं",
         "max_toggle": "अधिकतम दिखाएं",
-        "average_toggle": "औसत दिखाएं"
+        "average_toggle": "औसत दिखाएं",
+        "range_toggle": "रेंज दिखाएं"
       },
       "peak_marker_unsupported": "पीक मार्कर के लिए sensor या number एंटिटी चाहिए, बिना एट्रिब्यूट ओवरराइड के, जो timer या counter न हो — इस एंटिटी के लिए उपलब्ध नहीं है।",
       "percent": "प्रतिशत",

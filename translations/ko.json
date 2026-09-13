@@ -58,7 +58,7 @@
         "toggle": "배지",
         "color_toggle": "독립 배지 색상"
       },
-      "bar_color": "바 색상",
+      "bar_color": "색상",
       "bar_color_mode": "색상 모드",
       "bar_effect_mode": "바 효과",
       "bar_group": "바",
@@ -74,7 +74,7 @@
       "center_zero": "중앙에 영점",
       "center_zero_growth_percent": "성장률",
       "center_zero_value": "중앙값",
-      "color": "기본 색상",
+      "color": "색상",
       "custom_info": "사용자 정의 보조 정보",
       "custom_theme": "사용자 지정 테마 구간",
       "decimal": "표시 정밀도",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "자동 높이",
       "hide_mode": "숨기기",
       "icon": "아이콘",
+      "icon_group": "아이콘",
       "icon_animation": "아이콘 애니메이션",
       "interpolate": "색상 보간",
       "layout": "콘텐츠 레이아웃",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "최솟값 표시",
         "max_toggle": "최댓값 표시",
-        "average_toggle": "평균값 표시"
+        "average_toggle": "평균값 표시",
+        "range_toggle": "범위 표시"
       },
       "peak_marker_unsupported": "피크 마커는 속성 재정의가 없고 timer나 counter가 아닌 sensor 또는 number 엔티티가 필요합니다 — 이 엔티티에는 사용할 수 없습니다.",
       "percent": "퍼센트",

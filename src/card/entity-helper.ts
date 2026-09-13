@@ -8,10 +8,11 @@ import { assertDefined, is } from '../utils/common-checks.js';
 import { traceInstance } from '../utils/log.js';
 import { HassProviderSingleton, type EntityState } from '../utils/hass-provider.js';
 import { NumberFormatter } from './formatting.js';
+import type { NameTokenType } from './schema.js';
 
 // One entry of the `name` config option's composition array (see
 // EditorFieldsType.entityName / types.stateContent in schema.ts).
-type NameToken = { type: string; text?: string };
+type NameToken = { type: NameTokenType; text?: string };
 
 // Shared with EntityOrValue's fallback - one source for this 4-key shape.
 const emptyEntityTypeFlags = (): Record<string, boolean> => ({
@@ -162,7 +163,7 @@ class EntityHelper {
   }
 
   get defaultAttribute(): string | null {
-    return HA_CONTEXT.attributeMapping[this.#domain as keyof typeof HA_CONTEXT.attributeMapping]?.attribute ?? null;
+    return HA_CONTEXT.attributeMapping[this.#domain as string]?.attribute ?? null;
   }
 
   get name(): string {
@@ -170,7 +171,7 @@ class EntityHelper {
   }
 
   _nameResolver(): string {
-    const resolvers: Record<string, (item: NameToken) => string | null> = {
+    const resolvers: Record<NameTokenType, (item: NameToken) => string | null> = {
       text: (item) => item.text ?? null,
       entity: () => this.#hassProvider.getEntityName(this.#entity),
       device: () => this.#hassProvider.getEntityDevice(this.#entity),
@@ -213,9 +214,10 @@ class EntityHelper {
     if (this.entityType.isCounter) return CARD.config.unit.disable;
     // Neither carries unit_of_measurement: climate uses the global unit
     // system, weather its own per-attribute `<attr>_unit` key.
-    if (this.#domain === HA_CONTEXT.attributeMapping.climate.label) return this.#hassProvider.temperatureUnit;
-    if (this.#domain === HA_CONTEXT.attributeMapping.weather.label) {
-      const attr = this.#attribute || HA_CONTEXT.attributeMapping.weather.attribute;
+    const mapping = HA_CONTEXT.attributeMapping[this.#domain as string];
+    if (mapping?.unit === 'system_temperature') return this.#hassProvider.temperatureUnit;
+    if (mapping?.unit === 'attribute_suffix') {
+      const attr = this.#attribute || mapping.attribute;
       const unitAttr = this.#hassProvider.getEntityAttribute<unknown>(this.#entity, `${attr}_unit`);
       return is.nonEmptyString(unitAttr) ? unitAttr : null;
     }
@@ -323,9 +325,8 @@ class EntityHelper {
   // ─── PRIVATE METHODS ──────────────────────────────────────────────────────
 
   _manageStdEntity() {
-    this.#attribute =
-      this.#attribute ||
-      HA_CONTEXT.attributeMapping[this.#domain as keyof typeof HA_CONTEXT.attributeMapping]?.attribute;
+    const mapping = HA_CONTEXT.attributeMapping[this.#domain as string];
+    this.#attribute = this.#attribute || (mapping?.attribute ?? null);
     if (!this.#attribute) {
       this.#value = parseFloat(this.#state as string) || 0;
       return;
@@ -335,11 +336,10 @@ class EntityHelper {
 
     if (is.numericString(attrValue) || is.number(attrValue)) {
       this.#value = parseFloat(String(attrValue));
-      if (
-        this.#domain === HA_CONTEXT.attributeMapping.light.label &&
-        this.#attribute === HA_CONTEXT.attributeMapping.light.attribute
-      ) {
-        this.#value = (100 * this.#value) / 255;
+      // Only the domain's own default attribute carries the declared scale -
+      // any other attribute the user picks is read as-is.
+      if (mapping?.scale && this.#attribute === mapping.attribute) {
+        this.#value = (100 * this.#value) / mapping.scale;
       }
     } else {
       this.#value = 0;

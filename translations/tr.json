@@ -58,7 +58,7 @@
         "toggle": "Rozet",
         "color_toggle": "Bağımsız rozet rengi"
       },
-      "bar_color": "Çubuk rengi",
+      "bar_color": "Renk",
       "bar_color_mode": "Renk modu",
       "bar_effect_mode": "Çubuk efekti",
       "bar_group": "Çubuk",
@@ -74,7 +74,7 @@
       "center_zero": "Нуль по центру",
       "center_zero_growth_percent": "Büyüme yüzdesi",
       "center_zero_value": "Merkez değeri",
-      "color": "Birincil renk",
+      "color": "Renk",
       "custom_info": "Özel ikincil bilgi",
       "custom_theme": "Özel tema bölgeleri",
       "decimal": "Ekran hassasiyeti",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "Otomatik yükseklik",
       "hide_mode": "Gizle",
       "icon": "Simge",
+      "icon_group": "Simge",
       "icon_animation": "Simge animasyonu",
       "interpolate": "Renk interpolasyonu",
       "layout": "İçerik düzeni",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "Minimumu göster",
         "max_toggle": "Maksimumu göster",
-        "average_toggle": "Ortalamayı göster"
+        "average_toggle": "Ortalamayı göster",
+        "range_toggle": "Aralığı göster"
       },
       "peak_marker_unsupported": "Tepe işaretleri, öznitelik geçersiz kılma olmayan ve timer veya counter olmayan bir sensor ya da number varlığı gerektirir — bu varlık için kullanılamaz.",
       "percent": "Yüzde",

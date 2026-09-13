@@ -58,7 +58,7 @@
         "toggle": "Odznak",
         "color_toggle": "Nezávislá barva odznaku"
       },
-      "bar_color": "Barva lišty",
+      "bar_color": "Barva",
       "bar_color_mode": "Barevný režim",
       "bar_effect_mode": "Efekt na liště",
       "bar_group": "Lišta",
@@ -74,7 +74,7 @@
       "center_zero": "Nula uprostřed",
       "center_zero_growth_percent": "Procento růstu",
       "center_zero_value": "Hodnota středu",
-      "color": "Hlavní barva",
+      "color": "Barva",
       "custom_info": "Vlastní sekundární info",
       "custom_theme": "Zóny vlastního motivu",
       "decimal": "Přesnost zobrazení",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "Automatická výška",
       "hide_mode": "Skrýt",
       "icon": "Ikona",
+      "icon_group": "Ikona",
       "icon_animation": "Animace ikony",
       "interpolate": "Interpolace barev",
       "layout": "Rozložení obsahu",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "Zobrazit minimum",
         "max_toggle": "Zobrazit maximum",
-        "average_toggle": "Zobrazit průměr"
+        "average_toggle": "Zobrazit průměr",
+        "range_toggle": "Zobrazit rozsah"
       },
       "peak_marker_unsupported": "Značky špiček vyžadují entitu sensor nebo number bez přepsání atributu, která není timer ani counter — pro tuto entitu není k dispozici.",
       "percent": "Procento",

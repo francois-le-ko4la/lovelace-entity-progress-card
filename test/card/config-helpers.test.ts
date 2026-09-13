@@ -55,6 +55,31 @@ describe('CardConfigHelper._migrateLegacyOptions - deprecated YAML shapes', () =
   });
 });
 
+// EntityHelper normalizes a scaled attribute to 0-100 on its own, so a
+// max_value repeating that native scale divided the fill a second time - a
+// light at full brightness rendered 39%.
+describe('CardConfigHelper._migrateLegacyOptions - a max_value repeating a native scale', () => {
+  const migrate = (raw: Record<string, unknown>) =>
+    CardConfigHelper._migrateLegacyOptions(asConfig(raw)) as { max_value?: unknown };
+
+  test("light's 255 and media_player's 1 are dropped", () => {
+    assertUndefined(migrate({ entity: 'light.x', attribute: 'brightness', max_value: 255 }).max_value);
+    assertUndefined(migrate({ entity: 'media_player.x', attribute: 'volume_level', max_value: 1 }).max_value);
+  });
+
+  test("any other max_value on the same attribute is the user's own and stays", () => {
+    assert.equal(migrate({ entity: 'light.x', attribute: 'brightness', max_value: 80 }).max_value, 80);
+  });
+
+  test('another attribute of the same domain is never touched', () => {
+    assert.equal(migrate({ entity: 'light.x', attribute: 'color_temp_kelvin', max_value: 255 }).max_value, 255);
+  });
+
+  test('a domain with no native scale is never touched', () => {
+    assert.equal(migrate({ entity: 'cover.x', attribute: 'current_position', max_value: 255 }).max_value, 255);
+  });
+});
+
 // One shared shape per legacy watermark key so low/high are exercised
 // symmetrically, and every stale key's removal is checked explicitly - not
 // just the ones a given case happens to set.

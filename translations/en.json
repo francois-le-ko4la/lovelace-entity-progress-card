@@ -58,7 +58,7 @@
         "toggle": "Badge",
         "color_toggle": "Independent badge color"
       },
-      "bar_color": "Bar color",
+      "bar_color": "Color",
       "bar_color_mode": "Bar color mode",
       "bar_effect_mode": "Bar effect",
       "bar_group": "Bar",
@@ -74,7 +74,7 @@
       "center_zero": "Zero at center",
       "center_zero_growth_percent": "Growth percentage",
       "center_zero_value": "Center value",
-      "color": "Icon color",
+      "color": "Color",
       "custom_info": "Custom secondary info",
       "custom_theme": "Custom theme zones",
       "decimal": "Display precision",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "Auto height",
       "hide_mode": "Hide",
       "icon": "Icon",
+      "icon_group": "Icon",
       "icon_animation": "Icon animation",
       "interpolate": "Interpolate colors",
       "layout": "Content layout",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "Show minimum",
         "max_toggle": "Show maximum",
-        "average_toggle": "Show average"
+        "average_toggle": "Show average",
+        "range_toggle": "Show range"
       },
       "peak_marker_unsupported": "Peak markers need a sensor or number entity, no attribute override, and not a timer or counter — not available for this entity.",
       "percent": "Percentage",

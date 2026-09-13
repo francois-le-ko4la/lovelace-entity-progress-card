@@ -334,7 +334,9 @@ RegistrationHelper.registerCardFeature(META.types.feature, EntityProgressFeature
    card picker with name, description and preview support. Card/Badge only, the
    descriptor also carries `getEntitySuggestion` (HA 2026.6+ entity-first card
    picker) — see `src/utils/entity-suggestions.ts` for the domain/ attribute
-   rules deciding which entities get a suggestion and what config comes back.
+   rules deciding which entities get a suggestion and what config comes back. It
+   resolves off the same `HA_CONTEXT.attributeMapping` the card itself reads for
+   a default attribute, so a picked entity and a hand-written one agree.
    Template/Badge Template/Feature don't get one: Template needs a hand-written
    Jinja `percent:` to render anything meaningful, and Features are never picked
    through this entity-first flow at all (`customCardFeatures`, not

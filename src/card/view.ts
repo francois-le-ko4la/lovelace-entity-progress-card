@@ -11,6 +11,7 @@ import { is, assertDefined } from '../utils/common-checks.js';
 import {
   entityOf,
   markShown,
+  peakMarkShown,
   markValue,
   markAs,
   markType,
@@ -18,8 +19,10 @@ import {
   markColor,
   markLineSize,
   SCHEMA_DEFAULTS,
+  PEAK_RANGE_TYPE_DEFAULT,
   DENSITY_COMPACT_BAR_POSITIONS,
   type WatermarkMark,
+  type PeakMark,
 } from './schema.js';
 import { cloneValue } from '../utils/browser-support.js';
 import { traceInstance } from '../utils/log.js';
@@ -73,7 +76,16 @@ type ResolvedWatermark = {
   line_size: string;
 };
 
-type PeakMarkType = 'line' | 'round' | 'triangle';
+type PeakMarkType = 'line' | 'round' | 'triangle' | 'blended' | 'area' | 'striped';
+type PeakZoneType = 'area' | 'blended' | 'striped';
+// peak_marker.range - no value of its own: it spans min to max. The family's
+// own `type` can't be its fallback (a line is not a zone), so 'area' is.
+type ResolvedPeakZone = {
+  shown: boolean;
+  type: PeakZoneType;
+  opacity: number;
+  color: string | null;
+};
 // One resolved peak_marker.min/.max/.average - shown=false still carries a
 // type/opacity/value so callers never need an extra null-check per field.
 type ResolvedPeakMark = {
@@ -985,7 +997,7 @@ class ViewCore {
     )
       return true;
     if (this.#resolvedHide) return this.#resolvedHide.has(component);
-    return is.array(this.config?.hide) && this.config.hide.includes(component);
+    return is.array(this.config?.hide) && this.config.hide.some((target) => target === component);
   }
 
   setResolvedHide(items: string[]): void {
@@ -1381,38 +1393,37 @@ class ViewBase extends ViewCore {
     this.#peakMarker = marker;
   }
 
-  get peakMarker(): { min: ResolvedPeakMark; max: ResolvedPeakMark; average: ResolvedPeakMark } | null {
+  get peakMarker(): {
+    min: ResolvedPeakMark;
+    max: ResolvedPeakMark;
+    average: ResolvedPeakMark;
+    range: ResolvedPeakZone;
+  } | null {
     if (!this.#peakMarker || !is.plainObject(this.config.peak_marker)) return null;
     const config = this.config.peak_marker;
     const globalColor = config.color as string | undefined;
-    const resolve = (mark: unknown, value: number): ResolvedPeakMark => {
-      const defaults = {
-        type: config.type as PeakMarkType,
-        opacity: config.opacity as number,
-        line_size: config.line_size as string,
-      };
-      if (is.plainObject(mark))
-        return {
-          shown: true,
-          value,
-          type: (mark.type as PeakMarkType) ?? defaults.type,
-          opacity: (mark.opacity as number) ?? defaults.opacity,
-          line_size: (mark.line_size as string) ?? defaults.line_size,
-          color: ThemeManager.adaptColor((mark.color as string) ?? globalColor ?? null),
-        };
-      return {
-        // false is the editor's explicit "hidden" state (types.peakMark()'s
-        // boolean branch) - distinct from absent, which is also hidden.
-        shown: mark !== undefined && mark !== false,
-        value,
-        ...defaults,
-        color: ThemeManager.adaptColor((is.string(mark) ? mark : globalColor) ?? null),
-      };
-    };
+    // Same per-mark cascade as _resolveWatermark above, through the same
+    // helpers - a peak mark differs only in existing solely once set, and in
+    // taking a bare string as a color shorthand.
+    const resolve = (mark: PeakMark, value: number): ResolvedPeakMark => ({
+      shown: peakMarkShown(mark),
+      value,
+      type: markType(mark, config.type as string) as PeakMarkType,
+      opacity: markOpacity(mark, config.opacity as number),
+      line_size: markLineSize(mark, config.line_size as string),
+      color: ThemeManager.adaptColor(markColor(mark, is.string(mark) ? mark : globalColor) ?? null),
+    });
+    const range = config.range as PeakMark;
     return {
-      min: resolve(config.min, this.#peakMarker.min),
-      max: resolve(config.max, this.#peakMarker.max),
-      average: resolve(config.average, this.#peakMarker.average),
+      min: resolve(config.min as PeakMark, this.#peakMarker.min),
+      max: resolve(config.max as PeakMark, this.#peakMarker.max),
+      average: resolve(config.average as PeakMark, this.#peakMarker.average),
+      range: {
+        shown: peakMarkShown(range),
+        type: markType(range, PEAK_RANGE_TYPE_DEFAULT) as PeakZoneType,
+        opacity: markOpacity(range, config.opacity as number),
+        color: ThemeManager.adaptColor(markColor(range, is.string(range) ? range : globalColor) ?? null),
+      },
     };
   }
 

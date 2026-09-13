@@ -58,7 +58,7 @@
         "toggle": "Insignă",
         "color_toggle": "Culoare insignă independentă"
       },
-      "bar_color": "Culoare bară",
+      "bar_color": "Culoare",
       "bar_color_mode": "Mod culoare",
       "bar_effect_mode": "Efect pe bară",
       "bar_group": "Bară",
@@ -74,7 +74,7 @@
       "center_zero": "Zero la centru",
       "center_zero_growth_percent": "Procent de creștere",
       "center_zero_value": "Valoare centrală",
-      "color": "Culoare principală",
+      "color": "Culoare",
       "custom_info": "Info secundară personalizată",
       "custom_theme": "Zone temă personalizată",
       "decimal": "Precizie",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "Înălțime automată",
       "hide_mode": "Ascunde",
       "icon": "Pictogramă",
+      "icon_group": "Pictogramă",
       "icon_animation": "Animația pictogramei",
       "interpolate": "Interpolare culori",
       "layout": "Aspect conținut",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "Afișează minimul",
         "max_toggle": "Afișează maximul",
-        "average_toggle": "Afișează media"
+        "average_toggle": "Afișează media",
+        "range_toggle": "Afișează intervalul"
       },
       "peak_marker_unsupported": "Marcatorii de vârf necesită o entitate sensor sau number, fără suprascriere de atribut, și care nu este un timer sau un counter — indisponibil pentru această entitate.",
       "percent": "Procent",

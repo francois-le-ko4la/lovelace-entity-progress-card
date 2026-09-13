@@ -58,7 +58,7 @@
         "toggle": "ป้าย",
         "color_toggle": "สีป้ายแยกต่างหาก"
       },
-      "bar_color": "สีแถบ",
+      "bar_color": "สี",
       "bar_color_mode": "โหมดสี",
       "bar_effect_mode": "เอฟเฟกต์บนแถบ",
       "bar_group": "แถบ",
@@ -74,7 +74,7 @@
       "center_zero": "Sıfırı ortala",
       "center_zero_growth_percent": "เปอร์เซ็นต์การเติบโต",
       "center_zero_value": "ค่ากึ่งกลาง",
-      "color": "สีหลัก",
+      "color": "สี",
       "custom_info": "ข้อมูลรองที่กำหนดเอง",
       "custom_theme": "โซนธีมกำหนดเอง",
       "decimal": "Display precision",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "ความสูงอัตโนมัติ",
       "hide_mode": "ซ่อน",
       "icon": "ไอคอน",
+      "icon_group": "ไอคอน",
       "icon_animation": "แอนิเมชันไอคอน",
       "interpolate": "การสอดแทรกสี",
       "layout": "รูปแบบเนื้อหา",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "แสดงค่าต่ำสุด",
         "max_toggle": "แสดงค่าสูงสุด",
-        "average_toggle": "แสดงค่าเฉลี่ย"
+        "average_toggle": "แสดงค่าเฉลี่ย",
+        "range_toggle": "แสดงช่วงค่า"
       },
       "peak_marker_unsupported": "เครื่องหมายจุดสูงสุดต้องใช้เอนทิตี sensor หรือ number โดยไม่มีการเขียนทับแอตทริบิวต์ และไม่ใช่ timer หรือ counter — ไม่พร้อมใช้งานสำหรับเอนทิตีนี้",
       "percent": "เปอร์เซ็นต์",

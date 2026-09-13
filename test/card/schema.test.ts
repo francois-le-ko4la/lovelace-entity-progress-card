@@ -1,7 +1,18 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import { assertUndefined } from '../helpers.js';
-import { entityOf, attributeOf, jinjaOf, YamlSchemaFactory } from '../../src/card/schema.js';
+import {
+  entityOf,
+  attributeOf,
+  jinjaOf,
+  markShown,
+  peakMarkShown,
+  markType,
+  markOpacity,
+  markColor,
+  markLineSize,
+  YamlSchemaFactory,
+} from '../../src/card/schema.js';
 
 describe('entityOf/attributeOf/jinjaOf', () => {
   test('read their own sub-field off an {entity, attribute} object', () => {
@@ -101,5 +112,43 @@ describe('YamlSchemaFactory.card.validate - end-to-end shape', () => {
   test('rejects a config missing the required entity', () => {
     const result = YamlSchemaFactory.card.validate({});
     assert.equal(result.isValid, false);
+  });
+});
+
+// One cascade serves both mark kinds (ViewCore's watermark and peak_marker
+// getters call these same helpers). The two differences are pinned here so a
+// future "simplification" of either side can't quietly re-fork them.
+describe('mark helpers - one cascade for watermark and peak marks alike', () => {
+  test('an override wins over the family value, on either mark kind', () => {
+    assert.equal(markType({ type: 'round' }, 'line'), 'round');
+    assert.equal(markOpacity({ opacity: 0.5 }, 0.8), 0.5);
+    assert.equal(markLineSize({ line_size: '4px' }, '2px'), '4px');
+    assert.equal(markColor({ color: 'blue' }, 'grey'), 'blue');
+  });
+
+  test('a mark carrying nothing of its own inherits the family value', () => {
+    for (const mark of [undefined, true, false, {}] as const) {
+      assert.equal(markType(mark, 'line'), 'line');
+      assert.equal(markOpacity(mark, 0.8), 0.8);
+      assert.equal(markLineSize(mark, '2px'), '2px');
+      assert.equal(markColor(mark, 'grey'), 'grey');
+    }
+  });
+
+  test('a threshold-shaped mark is a value, not an override - it inherits everything', () => {
+    assert.equal(markType({ entity: 'sensor.x' }, 'line'), 'line');
+    assert.equal(markColor({ jinja: '{{ 20 }}' }, 'grey'), 'grey');
+  });
+
+  test('a watermark side exists unless turned off; a peak mark only once set', () => {
+    // The schema always fills a watermark side, so markShown never sees
+    // undefined in production - the cast states that, and pins the contrast.
+    assert.equal(markShown(undefined as unknown as boolean), true);
+    assert.equal(markShown(false), false);
+    assert.equal(peakMarkShown(undefined), false);
+    assert.equal(peakMarkShown(false), false);
+    assert.equal(peakMarkShown(true), true);
+    assert.equal(peakMarkShown({}), true);
+    assert.equal(peakMarkShown('red'), true);
   });
 });

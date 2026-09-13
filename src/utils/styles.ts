@@ -233,6 +233,20 @@ ${CARD.htmlStructure.card.element} {
   --ha-card-background: transparent;
   --ha-card-border-width: 0;
   --ha-card-box-shadow: none;
+  /* The fourth thing ha-card paints (see its own :host). A transparent
+     background does not stop a filter: a glass theme sets this globally, and a
+     nested frameless card kept frosting whatever it sat on. */
+  --ha-card-backdrop-filter: none;
+}
+
+/* The same frost, painted where no variable can reach it: a glass theme
+   (card_mod) decorates ha-card::before, so a nested card inherits chrome meant
+   for a top-level one. Our sheet is adopted, hence cascades after the <style>
+   card_mod injects into this same shadow root - an !important there still wins. */
+.type-entities::before,
+.type-custom-vertical-stack-in-card::before,
+.${CARD.style.dynamic.frameless}::before {
+  content: none;
 }
 
 /* Embedded-context input only - the base ha-card rule is the single place the
@@ -1480,6 +1494,9 @@ ha-card.info-multiline {
    its rounded corner would round the first/last cell unevenly. */
 .bar-segmented .${CARD.htmlStructure.elements.progressBar.bar.class} {
   border-radius: 0;
+  /* Each cell paints its own share of the track, so .bar's own would only
+     ever show through the gaps - which is what makes them real holes. */
+  background-color: transparent;
 }
 
 /* Replaced by the cell row in segmented mode - left visible, its own
@@ -1542,10 +1559,9 @@ ha-card.info-multiline {
   display: flex;
   pointer-events: none;
   gap: var(--bar-segment-gap-effective);
-  /* Each opaque cell paints over its own share of this - only the real gaps
-     between them show it, reading as a cut to the card rather than to
-     .bar's own track color. */
-  background-color: var(--ha-card-background, var(--card-background-color));
+  /* Painted by nothing on purpose: copying the card color only reads as a cut
+     while the card really is that color - frameless and any translucent card
+     already make that false. Empty, the gap shows what is truly behind. */
 }
 
 /* --- Cell layout & windowing ---
@@ -2358,21 +2374,39 @@ ha-card.info-multiline {
 }
 
 /* ---------- Area, Blended, Striped positioning ---------- */
-.${CARD.htmlStructure.elements.progressBar.lowWatermark.class}:is(.wm-area, .wm-blended, .wm-striped) {
+.${CARD.htmlStructure.elements.progressBar.lowWatermark.class}:is(.wm-area, .wm-blended, .wm-striped),
+.${CARD.htmlStructure.elements.progressBar.minMarker.class}:is(.wm-area, .wm-blended, .wm-striped),
+.${CARD.htmlStructure.elements.progressBar.averageMarker.class}:is(.wm-area, .wm-blended, .wm-striped) {
   --mark-left: 0;
   --mark-width: var(--wm-value);
 }
-.${CARD.htmlStructure.elements.progressBar.highWatermark.class}:is(.wm-area, .wm-blended, .wm-striped) {
+.${CARD.htmlStructure.elements.progressBar.highWatermark.class}:is(.wm-area, .wm-blended, .wm-striped),
+.${CARD.htmlStructure.elements.progressBar.maxMarker.class}:is(.wm-area, .wm-blended, .wm-striped) {
   --mark-right: 0;
   --mark-width: calc(100% - var(--wm-value));
 }
+/* The band spans two marks instead of anchoring to an edge - the only zone
+   geometry the two families don't share. */
+.${CARD.htmlStructure.elements.progressBar.rangeMarker.class} {
+  --mark-left: var(--peak-min-value, 0%);
+  --mark-width: calc(var(--peak-max-value, 100%) - var(--peak-min-value, 0%));
+}
 
-.vertical.up-orientation.overlay .${CARD.htmlStructure.elements.progressBar.lowWatermark.class}:is(.wm-area, .wm-blended, .wm-striped) {
+.vertical.up-orientation.overlay .${CARD.htmlStructure.elements.progressBar.lowWatermark.class}:is(.wm-area, .wm-blended, .wm-striped),
+.vertical.up-orientation.overlay .${CARD.htmlStructure.elements.progressBar.minMarker.class}:is(.wm-area, .wm-blended, .wm-striped),
+.vertical.up-orientation.overlay .${CARD.htmlStructure.elements.progressBar.averageMarker.class}:is(.wm-area, .wm-blended, .wm-striped) {
   --mark-height: var(--wm-value);
 }
-.vertical.up-orientation.overlay .${CARD.htmlStructure.elements.progressBar.highWatermark.class}:is(.wm-area, .wm-blended, .wm-striped) {
+.vertical.up-orientation.overlay .${CARD.htmlStructure.elements.progressBar.highWatermark.class}:is(.wm-area, .wm-blended, .wm-striped),
+.vertical.up-orientation.overlay .${CARD.htmlStructure.elements.progressBar.maxMarker.class}:is(.wm-area, .wm-blended, .wm-striped) {
   --mark-bottom: var(--wm-value);
   --mark-height: calc(100% - var(--wm-value));
+}
+.vertical.up-orientation.overlay .${CARD.htmlStructure.elements.progressBar.rangeMarker.class} {
+  --mark-left: auto;
+  --mark-width: 100%;
+  --mark-bottom: var(--peak-min-value, 0%);
+  --mark-height: calc(var(--peak-max-value, 100%) - var(--peak-min-value, 0%));
 }
 
 /* ---------- Blended ---------- */
@@ -2472,7 +2506,13 @@ ha-card.info-multiline {
   opacity: var(--epb-peak-average-opacity, var(--peak-average-opacity-value, 0.8));
 }
 
-/* Line, round and triangle come from the shared .mark.wm-* rules above. */
+.${CARD.htmlStructure.elements.progressBar.rangeMarker.class} {
+  --wm-color: var(--epb-peak-range-color, var(--peak-range-color, ${CARD.style.dynamic.peakMarker.range.color.default}));
+  opacity: var(--epb-peak-range-opacity, var(--peak-range-opacity-value, 0.8));
+}
+
+/* Line, round and triangle come from the shared .mark.wm-* rules above, and so
+   do area, blended and striped - a peak mark takes all six now. */
 
 /* =============================================================================
    RAINBOW FULL BAR (bar_color_mode: rainbow_full)

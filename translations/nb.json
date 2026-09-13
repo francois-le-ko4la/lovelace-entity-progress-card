@@ -58,7 +58,7 @@
         "toggle": "Merke",
         "color_toggle": "Uavhengig merkefarge"
       },
-      "bar_color": "Farge for stolpen",
+      "bar_color": "Farge",
       "bar_color_mode": "Fargemodus",
       "bar_effect_mode": "Effekt på stolpen",
       "bar_group": "Stolpe",
@@ -74,7 +74,7 @@
       "center_zero": "Null i midten",
       "center_zero_growth_percent": "Vekstprosent",
       "center_zero_value": "Senterverdi",
-      "color": "Primærfarge",
+      "color": "Farge",
       "custom_info": "Egendefinert sekundær info",
       "custom_theme": "Tilpassede temasoner",
       "decimal": "Vis presisjon",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "Automatisk høyde",
       "hide_mode": "Skjul",
       "icon": "Ikon",
+      "icon_group": "Ikon",
       "icon_animation": "Ikonanimasjon",
       "interpolate": "Interpoler farger",
       "layout": "Innholdslayout",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "Vis minimum",
         "max_toggle": "Vis maksimum",
-        "average_toggle": "Vis gjennomsnitt"
+        "average_toggle": "Vis gjennomsnitt",
+        "range_toggle": "Vis område"
       },
       "peak_marker_unsupported": "Toppmarkeringer krever en sensor- eller number-enhet uten attributt-overstyring, som ikke er en timer eller counter — ikke tilgjengelig for denne enheten.",
       "percent": "Prosent",

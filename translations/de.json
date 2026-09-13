@@ -58,7 +58,7 @@
         "toggle": "Badge",
         "color_toggle": "Unabhängige Badge-Farbe"
       },
-      "bar_color": "Balkenfarbe",
+      "bar_color": "Farbe",
       "bar_color_mode": "Balkenfarbmodus",
       "bar_effect_mode": "Effekt auf den Balken",
       "bar_group": "Balken",
@@ -74,7 +74,7 @@
       "center_zero": "Null in der Mitte",
       "center_zero_growth_percent": "Wachstumsprozentsatz",
       "center_zero_value": "Zentrumswert",
-      "color": "Symbolfarbe",
+      "color": "Farbe",
       "custom_info": "Zusatzinfo (sekundär)",
       "custom_theme": "Benutzerdefinierte Themenzonen",
       "decimal": "Anzeigegenauigkeit",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "Automatische Höhe",
       "hide_mode": "Ausblenden",
       "icon": "Symbol",
+      "icon_group": "Symbol",
       "icon_animation": "Symbolanimation",
       "interpolate": "Farben interpolieren",
       "layout": "Inhaltslayout",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "Minimum anzeigen",
         "max_toggle": "Maximum anzeigen",
-        "average_toggle": "Durchschnitt anzeigen"
+        "average_toggle": "Durchschnitt anzeigen",
+        "range_toggle": "Bereich anzeigen"
       },
       "peak_marker_unsupported": "Spitzenmarkierungen benötigen eine sensor- oder number-Entität ohne Attribut-Überschreibung, die kein timer und kein counter ist — für diese Entität nicht verfügbar.",
       "percent": "Prozent",

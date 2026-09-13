@@ -58,7 +58,7 @@
         "toggle": "バッジ",
         "color_toggle": "バッジの色を個別指定"
       },
-      "bar_color": "バーの色",
+      "bar_color": "色",
       "bar_color_mode": "カラーモード",
       "bar_effect_mode": "バーのエフェクト",
       "bar_group": "バー",
@@ -74,7 +74,7 @@
       "center_zero": "ゼロを中央に",
       "center_zero_growth_percent": "成長率",
       "center_zero_value": "中心値",
-      "color": "メインカラー",
+      "color": "色",
       "custom_info": "カスタム補助情報",
       "custom_theme": "カスタムテーマゾーン",
       "decimal": "表示精度",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "高さ自動",
       "hide_mode": "非表示",
       "icon": "アイコン",
+      "icon_group": "アイコン",
       "icon_animation": "アイコンアニメーション",
       "interpolate": "色の補間",
       "layout": "コンテンツのレイアウト",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "最小値を表示",
         "max_toggle": "最大値を表示",
-        "average_toggle": "平均値を表示"
+        "average_toggle": "平均値を表示",
+        "range_toggle": "範囲を表示"
       },
       "peak_marker_unsupported": "ピークマーカーには、属性の上書きがなく、timerやcounterではないsensorまたはnumberエンティティが必要です — このエンティティでは利用できません。",
       "percent": "パーセント",

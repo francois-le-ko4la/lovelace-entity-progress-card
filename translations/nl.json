@@ -58,7 +58,7 @@
         "toggle": "Badge",
         "color_toggle": "Onafhankelijke badgekleur"
       },
-      "bar_color": "Kleur balk",
+      "bar_color": "Kleur",
       "bar_color_mode": "Balkkleurmodus",
       "bar_effect_mode": "Effect op de balk",
       "bar_group": "Balk",
@@ -74,7 +74,7 @@
       "center_zero": "Nul in het midden",
       "center_zero_growth_percent": "Groeipercentage",
       "center_zero_value": "Centrumwaarde",
-      "color": "Kleur pictogram",
+      "color": "Kleur",
       "custom_info": "Aangepaste secundaire info",
       "custom_theme": "Aangepaste themazones",
       "decimal": "Precisie weergeven",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "Automatische hoogte",
       "hide_mode": "Verbergen",
       "icon": "Pictogram",
+      "icon_group": "Pictogram",
       "icon_animation": "Pictogramanimatie",
       "interpolate": "Kleuren interpoleren",
       "layout": "Inhoudsindeling",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "Minimum tonen",
         "max_toggle": "Maximum tonen",
-        "average_toggle": "Gemiddelde tonen"
+        "average_toggle": "Gemiddelde tonen",
+        "range_toggle": "Bereik tonen"
       },
       "peak_marker_unsupported": "Piekmarkeringen vereisen een sensor- of number-entiteit zonder attribuut-override, en geen timer of counter — niet beschikbaar voor deze entiteit.",
       "percent": "Percentage",

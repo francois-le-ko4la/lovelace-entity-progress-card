@@ -87,6 +87,7 @@
       "height_custom_toggle": "",
       "hide_mode": "",
       "icon": "",
+      "icon_group": "",
       "icon_animation": "",
       "interpolate": "",
       "layout": "",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "",
         "max_toggle": "",
-        "average_toggle": ""
+        "average_toggle": "",
+        "range_toggle": ""
       },
       "peak_marker_unsupported": "",
       "percent": "",

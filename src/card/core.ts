@@ -20,8 +20,9 @@ import {
   SCHEMA_DEFAULTS,
   BAR_POSITIONS,
   BAR_SIZES,
-  WATERMARK_TYPES,
-  PEAK_MARK_TYPES,
+  MARK_TYPES,
+  MARK_ZONE_TYPES,
+  PEAK_RANGE_TYPE_DEFAULT,
 } from './schema.js';
 import { ResourceManager, DOMHelper, ActionHelper } from './dom-helpers.js';
 import type { CacheValue } from './dom-helpers.js';
@@ -622,6 +623,7 @@ class HACore extends HTMLElement {
     CARD.htmlStructure.elements.secondaryInfoExtra2.class,
     CARD.htmlStructure.elements.progressBar.lowWatermark.class,
     CARD.htmlStructure.elements.progressBar.highWatermark.class,
+    CARD.htmlStructure.elements.progressBar.rangeMarker.class,
     CARD.htmlStructure.elements.progressBar.minMarker.class,
     CARD.htmlStructure.elements.progressBar.maxMarker.class,
     CARD.htmlStructure.elements.progressBar.averageMarker.class,
@@ -659,8 +661,10 @@ class HACore extends HTMLElement {
       ] as const
     ).forEach(([key, mark]) => {
       this._dom.toggleClass(markKeys[key], CARD.style.dynamic.markShown, mark.shown);
-      this._applyMarkShape(markKeys[key], mark.type, PEAK_MARK_TYPES, 'line');
+      this._applyMarkShape(markKeys[key], mark.type, MARK_TYPES, SCHEMA_DEFAULTS.peakMarker.type);
     });
+    this._dom.toggleClass(pb.rangeMarker.class, CARD.style.dynamic.markShown, marker.range.shown);
+    this._applyMarkShape(pb.rangeMarker.class, marker.range.type, MARK_ZONE_TYPES, PEAK_RANGE_TYPE_DEFAULT);
   }
 
   // N real fill cells per fillable half (bar_segments: N), not a divider
@@ -768,8 +772,8 @@ class HACore extends HTMLElement {
 
     this._dom.toggleClass(pb.highWatermark.class, shownClass, watermark.high.shown);
     this._dom.toggleClass(pb.lowWatermark.class, shownClass, watermark.low.shown);
-    this._applyMarkShape(pb.highWatermark.class, watermark.high.type, WATERMARK_TYPES, 'blended');
-    this._applyMarkShape(pb.lowWatermark.class, watermark.low.type, WATERMARK_TYPES, 'blended');
+    this._applyMarkShape(pb.highWatermark.class, watermark.high.type, MARK_TYPES, SCHEMA_DEFAULTS.watermark.type);
+    this._applyMarkShape(pb.lowWatermark.class, watermark.low.type, MARK_TYPES, SCHEMA_DEFAULTS.watermark.type);
   }
 
   // The editor (EntityProgressEffectChips) can only guard interactive
@@ -934,6 +938,11 @@ class HACore extends HTMLElement {
       ] as const
     ).forEach(([vars, mark]) => this._applyMarkCSS(cardKey, vars, mark));
     this._dom.setStyle(cardKey, pm.lineSize.var, this._cardView.config.peak_marker?.line_size);
+    // Geometry excepted: the band reads --peak-min-value/--peak-max-value,
+    // both set just above whether their own mark is drawn or not.
+    this._dom.setStyle(cardKey, pm.range.opacity.var, marker.range.opacity);
+    if (marker.range.color) this._dom.setStyle(cardKey, pm.range.color.var, marker.range.color);
+    else this._dom.removeStyle(cardKey, pm.range.color.var);
   }
 
   // ─── JINJA TEMPLATE RENDERING ─────────────────────────────────────────────

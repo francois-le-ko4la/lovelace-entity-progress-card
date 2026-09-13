@@ -58,7 +58,7 @@
         "toggle": "Insígnia",
         "color_toggle": "Color d'insígnia independent"
       },
-      "bar_color": "Color barra",
+      "bar_color": "Color",
       "bar_color_mode": "Mode de color",
       "bar_effect_mode": "Efecte de la barra",
       "bar_group": "Barra",
@@ -74,7 +74,7 @@
       "center_zero": "Zero al centre",
       "center_zero_growth_percent": "Percentatge de creixement",
       "center_zero_value": "Valor de centratge",
-      "color": "Color principal",
+      "color": "Color",
       "custom_info": "Informació addicional (secundària)",
       "custom_theme": "Zones de tema personalitzat",
       "decimal": "Precisió de visualització",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "Alçada automàtica",
       "hide_mode": "Amaga",
       "icon": "Icona",
+      "icon_group": "Icona",
       "icon_animation": "Animació de la icona",
       "interpolate": "Interpolar colors",
       "layout": "Disposició del contingut",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "Mostra mínim",
         "max_toggle": "Mostra màxim",
-        "average_toggle": "Mostra mitjana"
+        "average_toggle": "Mostra mitjana",
+        "range_toggle": "Mostra interval"
       },
       "peak_marker_unsupported": "Els marcadors de pic necessiten una entitat sensor o number, sense sobreescriptura d'atribut, i que no sigui un timer ni un counter — no disponible per a aquesta entitat.",
       "percent": "Percentatge",

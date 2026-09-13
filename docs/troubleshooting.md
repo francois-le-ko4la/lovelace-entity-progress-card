@@ -65,6 +65,7 @@ In this context, we have two types of deprecated options:
 | `max_value_attribute`         | **Deprecated** | Fold into `max_value: { entity, attribute }`                  | `v1.6.0`      | Auto-migrated for the session, console warning |
 | `disable_unit`                | **Deprecated** | Use `hide: ['unit', ...]`                                     | `v1.6.0`      | Auto-migrated for the session, console warning |
 | `icon_animation: none`        | **Deprecated** | Omit the option — unset already means no animation            | `v1.6.2`      | Auto-migrated for the session, console warning |
+| `max_value` = native scale    | **Deprecated** | Omit it — the card already rescales to 0-100                  | `v1.6.3`      | Auto-migrated for the session, no warning      |
 | `show_value` (Multi)          | **Deprecated** | Use `hide: [...]` — `false` adds `secondary_info`             | `v1.6.3`      | Auto-migrated for the session, console warning |
 | `value_position` (Multi)      | **Deprecated** | Use `reverse_secondary_info_row` (`right` → `true`)           | `v1.6.3`      | Auto-migrated for the session, console warning |
 | `additions`                   | **Deprecated** | Use `bar_stack: { mode: 'proportional', entities: [...] }`    | `v1.6.0`      | Auto-migrated for the session, console warning |

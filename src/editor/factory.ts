@@ -12,6 +12,7 @@ import {
   WATERMARK_ENTITY_PATHS,
   ALERT_ABOVE_ENTITY_PATH,
   ALERT_BELOW_ENTITY_PATH,
+  type HideTarget,
 } from '../utils/parameters.js';
 import { is } from '../utils/common-checks.js';
 import { HassProviderSingleton } from '../utils/hass-provider.js';
@@ -46,6 +47,7 @@ import {
 // the value reads, and `theme` still colours the icon. Showing an inert field
 // is a nuisance; hiding one that still does something is a bug.
 const ICON_FIELDS = [
+  'icon_group',
   'icon',
   'color',
   'icon_animation',
@@ -85,7 +87,7 @@ const BAR_FIELDS = [
   'reverse_secondary_info_row',
 ];
 
-const HIDE_DEPENDENTS: Record<string, string[]> = {
+const HIDE_DEPENDENTS: Record<HideTarget, string[]> = {
   icon: ICON_FIELDS,
   shape: ['force_circular_background_mode'],
   name: ['name', 'name_info'],
@@ -156,7 +158,19 @@ const nonEmptySections = <T extends Record<string, { fields: Record<string, unkn
 const cardVariant = (template: boolean, badge: boolean): SchemaVariant =>
   badge ? (template && 'badgeTemplate') || 'badge' : (template && 'template') || 'card';
 
-const HIDE_DISPLAY_ORDER = ['icon', 'shape', 'name', 'value', 'unit', 'secondary_info', 'progress_bar'];
+// The same targets as HIDE_TARGETS, in the editor's own order: shape sits next
+// to the icon it draws behind, not last where the schema happened to append it.
+// Membership is typed; that none is missing is asserted in schema.test.ts - a
+// tuple can't state that about itself.
+const HIDE_DISPLAY_ORDER: readonly HideTarget[] = [
+  'icon',
+  'shape',
+  'name',
+  'value',
+  'unit',
+  'secondary_info',
+  'progress_bar',
+];
 
 // The two densities that collapse the card to a single row, and so leave
 // multiline nothing to wrap onto.
@@ -465,6 +479,10 @@ type CascadeSpec = {
   // threshold is read and sits with the threshold itself, 'look' is how it is
   // drawn. Both builders render one section at a time.
   section?: 'value' | 'look';
+  // False where the family level can't stand in for this mark: peak_marker's
+  // own type is a point shape, which the band can never be, so it falls back
+  // to its own default instead of inheriting a nonsense value.
+  inherits?: boolean;
 };
 
 // Everything that differs between watermark's low/high sides and peak_marker's
@@ -563,8 +581,10 @@ const overrideCascadeFields = <K extends string>(
     placeholder = true,
     showsDefault,
     gate,
+    inherits = true,
   }: CascadeSpec) => {
     const extra = gate?.(adapter, key);
+    const inherited = (c: LovelaceConfig) => (inherits ? c[adapter.parentKey]?.[field] : undefined);
     return fieldDef(`${adapter.parentKey}.${key}_${field}`, {
       ...fieldOpts,
       virtual: true,
@@ -576,10 +596,11 @@ const overrideCascadeFields = <K extends string>(
       // Shows what this mark inherits while it overrides nothing - the global
       // value if the family has one, the schema default otherwise.
       ...(placeholder && {
-        placeholder: (c: LovelaceConfig) => inheritedHint(c[adapter.parentKey]?.[field] ?? adapter.defaults[field]),
+        placeholder: (c: LovelaceConfig) => inheritedHint(inherited(c) ?? adapter.defaults[field]),
       }),
       resolveVirtual: (c: LovelaceConfig) =>
-        adapter.effective(c, key, field) ?? (showsDefault ? adapter.defaults[field] : undefined),
+        (inherits ? adapter.effective(c, key, field) : adapter.extractOwn(c[adapter.parentKey]?.[key], field)) ??
+        (showsDefault ? adapter.defaults[field] : undefined),
       onVirtualChange: (value: unknown, config: LovelaceConfig) => {
         const patched = {
           ...config,
@@ -795,6 +816,48 @@ const PEAK_MARKER_CASCADE: OverrideCascadeAdapter<(typeof PEAK_MARKS)[number]> =
   // No `as`: a peak's value comes from history, there is no threshold to read
   // one way or the other.
   cascade: SHARED_CASCADE('peak_marker_type'),
+};
+
+// peak_marker.range: the band between min and max (types.peakZone). Its own
+// adapter rather than a fourth PEAK_MARKS entry - it has no line to size, only
+// zone shapes to pick from, and no family type to inherit.
+const PEAK_RANGE_CASCADE: OverrideCascadeAdapter<'range'> = {
+  parentKey: 'peak_marker',
+  keys: ['range'],
+  extractOwn: (rawMark, field) => peakMarkObj(rawMark)[field],
+  rewrap: (_mark, rawMark, patch) => rewrapPeakMark(rawMark, patch),
+  effective: (config, _mark, field) => peakMarkObj(config.peak_marker?.range)[field] ?? config.peak_marker?.[field],
+  isActive: (config) => {
+    const raw = config.peak_marker?.range;
+    return raw !== undefined && raw !== false;
+  },
+  defaults: { ...SCHEMA_DEFAULTS.peakMarker, type: SCHEMA_DEFAULTS.peakMarker.rangeType },
+  cascade: [
+    {
+      field: 'type',
+      build: EditorFieldsType.select,
+      opts: { type: 'peak_range_type' },
+      showsDefault: true,
+      inherits: false,
+    },
+    { field: 'opacity', build: EditorFieldsType.decimal, opts: { type: 'opacity' } },
+    {
+      field: 'color',
+      build: (name, opts) => EditorFieldsType.templateOrType(name, false, 'color', opts),
+      labelKey: 'mark_color',
+    },
+  ],
+};
+
+// Independent of min/max being drawn: the band spans their values, which are
+// measured whether or not their own marks are shown.
+const peakRange = () => {
+  const isShown = (c: LovelaceConfig) => PEAK_RANGE_CASCADE.isActive(c, 'range');
+  const gate = (c: LovelaceConfig) => peakMarkerEligible(c) && Boolean(c.peak_marker);
+  return {
+    ...markToggleField(PEAK_RANGE_CASCADE, 'range', gate, isShown, true),
+    ...overrideCascadeFields(PEAK_RANGE_CASCADE, 'range', (c) => gate(c) && isShown(c), 'look'),
+  };
 };
 
 const peakMark = (mark: 'min' | 'max' | 'average') => {
@@ -1074,13 +1137,21 @@ const EditorFactory = {
             percent: EditorFieldsType.tpl('percent'),
           }
         : {
-            // Two half-half rows. unit/decimal stretch on their own once
-            // unit_spacing/unit_position hide with the unit (see
-            // EDITOR_BASE_STYLE) - nothing to compute here.
             ...(() => {
+              // disable_unit is deprecated (see
+              // BaseConfigHelper.#logDeprecatedOption): 'unit' is now just
+              // another hide target, folded into hide by _customizeConfig.
+              // The disable_unit check here only matters for a legacy raw
+              // config on first load, before that fold has round-tripped
+              // through the editor's own config-changed.
               const unitSpacingShown = (c: LovelaceConfig) =>
                 !(c.disable_unit || (is.array(c.hide) && c.hide.includes('unit')));
               return {
+                decimal: EditorFieldsType.decimal('decimal', {
+                  width: 'half',
+                  placeholder: (_c: LovelaceConfig, neg: Config) =>
+                    neg?.resolvedDecimal == null ? '' : String(neg.resolvedDecimal),
+                }),
                 unit: EditorFieldsType.text('unit', {
                   width: 'half',
                   placeholder: (_c: LovelaceConfig, neg: Config) => (neg?.resolvedUnit as string) ?? '',
@@ -1091,21 +1162,10 @@ const EditorFactory = {
                   width: 'half',
                   showIf: unitSpacingShown,
                 }),
-                // disable_unit is deprecated (see
-                // BaseConfigHelper.#logDeprecatedOption): 'unit' is now just
-                // another hide target, folded into hide by _customizeConfig.
-                // The disable_unit check here only matters for a legacy raw
-                // config on first load, before that fold has round-tripped
-                // through the editor's own config-changed.
                 unit_spacing: EditorFieldsType.select('unit_spacing', {
                   type: 'unit_spacing',
                   width: 'half',
                   showIf: unitSpacingShown,
-                }),
-                decimal: EditorFieldsType.decimal('decimal', {
-                  width: 'half',
-                  placeholder: (_c: LovelaceConfig, neg: Config) =>
-                    neg?.resolvedDecimal == null ? '' : String(neg.resolvedDecimal),
                 }),
               };
             })(),
@@ -1586,6 +1646,7 @@ const EditorFactory = {
       ...peakMark('min'),
       ...peakMark('max'),
       ...peakMark('average'),
+      ...peakRange(),
     };
   },
 
@@ -1660,12 +1721,15 @@ const EditorFactory = {
       'trend_indicator.colored': EditorFieldsType.toggle('trend_indicator.colored', { showIf: advanced }),
       'trend_indicator.up_color': EditorFieldsType.templateOrType('trend_indicator.up_color', false, 'color', {
         showIf: advanced,
+        width: 'half',
       }),
       'trend_indicator.down_color': EditorFieldsType.templateOrType('trend_indicator.down_color', false, 'color', {
         showIf: advanced,
+        width: 'half',
       }),
       'trend_indicator.flat_color': EditorFieldsType.templateOrType('trend_indicator.flat_color', false, 'color', {
         showIf: advanced,
+        width: 'half',
       }),
     };
   },
@@ -1972,7 +2036,7 @@ const EditorFactory = {
         // .bottom-container/.top-container, ha-card.background).
         showIf: barSizeAllowed,
       }),
-      bar_color: EditorFieldsType.templateOrType('bar_color', template, 'color', {
+      bar_color: EditorFieldsType.templateOrType('bar_color', template, 'color_state_default', {
         showIf: (c: LovelaceConfig) => !themeActive(c),
         // Full-width once bar_size (its row partner) hides for the same
         // bar_position values.
@@ -2012,6 +2076,9 @@ const EditorFactory = {
       fields: {
         ...EditorFactory.themeModeFields(template),
         ...EditorFactory.themeColorModeFields(template),
+        // Pendant to bar_group below: the panel runs theme, then the icon, then
+        // the bar, and only the bar half said so.
+        icon_group: EditorFieldsType.sectionLabel('icon_group'),
         // Half-width to pair with `color` below - but `color` hides once a
         // theme/custom_theme is active, so `icon` needs to reclaim the full
         // row then. Card: always half now, whether or not `color` is
@@ -2024,7 +2091,7 @@ const EditorFactory = {
                 width: 'half',
               }),
         }),
-        color: EditorFieldsType.templateOrType('color', template, 'color', {
+        color: EditorFieldsType.templateOrType('color', template, 'color_state_default', {
           showIf: (c: LovelaceConfig) => is.nullish(c.theme) && !is.array(c.custom_theme),
           ...(template ? { helper: true } : { width: 'half' }),
         }),
@@ -2311,7 +2378,7 @@ const EditorFactory = {
         fields: {
           ...EditorFactory.themeModeFields(false),
           ...EditorFactory.themeColorModeFields(false),
-          bar_color: EditorFieldsType.templateOrType('bar_color', false, 'color', {
+          bar_color: EditorFieldsType.templateOrType('bar_color', false, 'color_state_default', {
             showIf: (c: LovelaceConfig) => !EditorFactory.themeActive(c),
             width: 'half',
           }),

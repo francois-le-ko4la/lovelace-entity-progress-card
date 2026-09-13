@@ -58,7 +58,7 @@
         "toggle": "Значок",
         "color_toggle": "Независимый цвет значка"
       },
-      "bar_color": "Цвет полосы",
+      "bar_color": "Цвет",
       "bar_color_mode": "Режим цвета",
       "bar_effect_mode": "Эффект на полосе",
       "bar_group": "Полоса",
@@ -74,7 +74,7 @@
       "center_zero": "Ноль по центру",
       "center_zero_growth_percent": "Процент роста",
       "center_zero_value": "Центральное значение",
-      "color": "Основной цвет",
+      "color": "Цвет",
       "custom_info": "Дополнительная информация",
       "custom_theme": "Зоны пользовательской темы",
       "decimal": "Округление значений",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "Автоматическая высота",
       "hide_mode": "Скрыть",
       "icon": "Иконка",
+      "icon_group": "Иконка",
       "icon_animation": "Анимация значка",
       "interpolate": "Интерполяция цветов",
       "layout": "Расположение содержимого",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "Показать минимум",
         "max_toggle": "Показать максимум",
-        "average_toggle": "Показать среднее"
+        "average_toggle": "Показать среднее",
+        "range_toggle": "Показать диапазон"
       },
       "peak_marker_unsupported": "Маркерам пиков нужна сущность sensor или number без переопределения атрибута, не являющаяся timer или counter — недоступно для этой сущности.",
       "percent": "Процент",

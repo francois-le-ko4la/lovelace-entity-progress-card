@@ -58,7 +58,7 @@
         "toggle": "Σήμα",
         "color_toggle": "Ανεξάρτητο χρώμα σήματος"
       },
-      "bar_color": "Χρώμα γραμμής",
+      "bar_color": "Χρώμα",
       "bar_color_mode": "Λειτουργία χρώματος",
       "bar_effect_mode": "Εφέ γραμμής",
       "bar_group": "Γραμμή",
@@ -74,7 +74,7 @@
       "center_zero": "Μηδέν στο κέντρο",
       "center_zero_growth_percent": "Ποσοστό μεταβολής",
       "center_zero_value": "Τιμή κέντρου",
-      "color": "Κύριο χρώμα",
+      "color": "Χρώμα",
       "custom_info": "Προσαρμοσμένη δευτερεύουσα πληροφορία",
       "custom_theme": "Ζώνες προσαρμοσμένου θέματος",
       "decimal": "Ακρίβεια οθόνης",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "Αυτόματο ύψος",
       "hide_mode": "Απόκρυψη",
       "icon": "Εικονίδιο",
+      "icon_group": "Εικονίδιο",
       "icon_animation": "Κίνηση εικονιδίου",
       "interpolate": "Παρεμβολή χρωμάτων",
       "layout": "Διάταξη περιεχομένου",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "Εμφάνιση ελαχίστου",
         "max_toggle": "Εμφάνιση μεγίστου",
-        "average_toggle": "Εμφάνιση μέσου όρου"
+        "average_toggle": "Εμφάνιση μέσου όρου",
+        "range_toggle": "Εμφάνιση εύρους"
       },
       "peak_marker_unsupported": "Οι δείκτες κορυφής απαιτούν οντότητα sensor ή number χωρίς παράκαμψη ιδιότητας, που δεν είναι timer ούτε counter — μη διαθέσιμο για αυτήν την οντότητα.",
       "percent": "Ποσοστό",

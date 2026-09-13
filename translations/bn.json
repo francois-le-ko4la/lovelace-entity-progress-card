@@ -58,7 +58,7 @@
         "toggle": "ব্যাজ",
         "color_toggle": "স্বতন্ত্র ব্যাজের রঙ"
       },
-      "bar_color": "বারের রঙ",
+      "bar_color": "রং",
       "bar_color_mode": "রঙের মোড",
       "bar_effect_mode": "বারের প্রভাব",
       "bar_group": "বার",
@@ -74,7 +74,7 @@
       "center_zero": "মাঝে শূন্য",
       "center_zero_growth_percent": "প্রবৃদ্ধির শতাংশ",
       "center_zero_value": "কেন্দ্রীয় মান",
-      "color": "প্রাথমিক রঙ",
+      "color": "রং",
       "custom_info": "কাস্টম সেকেন্ডারি তথ্য",
       "custom_theme": "কাস্টম থিম জোন",
       "decimal": "Display precision",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "স্বয়ংক্রিয় উচ্চতা",
       "hide_mode": "লুকান",
       "icon": "আইকন",
+      "icon_group": "আইকন",
       "icon_animation": "আইকন অ্যানিমেশন",
       "interpolate": "রঙ ইন্টারপোলেশন",
       "layout": "বিষয়বস্তুর বিন্যাস",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "সর্বনিম্ন দেখান",
         "max_toggle": "সর্বোচ্চ দেখান",
-        "average_toggle": "গড় দেখান"
+        "average_toggle": "গড় দেখান",
+        "range_toggle": "পরিসর দেখান"
       },
       "peak_marker_unsupported": "পিক মার্কারের জন্য sensor বা number সত্তা প্রয়োজন, বৈশিষ্ট্য ওভাররাইড ছাড়া, যা timer বা counter নয় — এই সত্তার জন্য উপলব্ধ নয়।",
       "percent": "শতাংশ",

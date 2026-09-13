@@ -58,7 +58,7 @@
         "toggle": "Lencana",
         "color_toggle": "Warna lencana independen"
       },
-      "bar_color": "Warna bilah",
+      "bar_color": "Warna",
       "bar_color_mode": "Mode warna",
       "bar_effect_mode": "Efek pada bilah",
       "bar_group": "Bilah",
@@ -74,7 +74,7 @@
       "center_zero": "Nol di tengah",
       "center_zero_growth_percent": "Persentase pertumbuhan",
       "center_zero_value": "Nilai tengah",
-      "color": "Warna utama",
+      "color": "Warna",
       "custom_info": "Info sekunder kustom",
       "custom_theme": "Zona tema khusus",
       "decimal": "Presisi tampilan",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "Tinggi otomatis",
       "hide_mode": "Sembunyikan",
       "icon": "Ikon",
+      "icon_group": "Ikon",
       "icon_animation": "Animasi ikon",
       "interpolate": "Interpolasi warna",
       "layout": "Tata letak konten",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "Tampilkan minimum",
         "max_toggle": "Tampilkan maksimum",
-        "average_toggle": "Tampilkan rata-rata"
+        "average_toggle": "Tampilkan rata-rata",
+        "range_toggle": "Tampilkan rentang"
       },
       "peak_marker_unsupported": "Penanda puncak memerlukan entitas sensor atau number tanpa override atribut, yang bukan timer atau counter — tidak tersedia untuk entitas ini.",
       "percent": "Persentase",

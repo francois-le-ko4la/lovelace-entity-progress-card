@@ -142,6 +142,7 @@ const StructureElements = {
     const marks =
       Element(CARD.htmlStructure.elements.progressBar.lowWatermark, markClass).html() +
       Element(CARD.htmlStructure.elements.progressBar.highWatermark, markClass).html() +
+      Element(CARD.htmlStructure.elements.progressBar.rangeMarker, markClass).html() +
       Element(CARD.htmlStructure.elements.progressBar.minMarker, markClass).html() +
       Element(CARD.htmlStructure.elements.progressBar.maxMarker, markClass).html() +
       Element(CARD.htmlStructure.elements.progressBar.averageMarker, markClass).html() +
@@ -174,7 +175,9 @@ const StructureElements = {
 
   createSecondaryInfo: (options: StructureOptions, secondaryInfoWrapperFn: (options: StructureOptions) => string) => {
     const { layout = '', barPosition = '' } = options;
-    const excludedPositions = ['top', 'bottom', 'below', 'compact_below', 'overlay', 'background'];
+    // Only the default position nests the bar inside .secondary-info; the
+    // other six used to be listed here, a copy of BAR_POSITIONS minus one.
+    const nestsBar = !barPosition || barPosition === 'default';
     const excludedLayouts = ['vertical'];
 
     // In a single row the bar is a sibling, never nested here (see
@@ -188,7 +191,7 @@ const StructureElements = {
     // and that is exactly what .hide-secondary-info targets in CSS too.
     let content = options.hideSecondaryInfo ? '' : secondaryInfoWrapperFn(options);
 
-    if (!options.singleLine && !excludedPositions.includes(barPosition) && !excludedLayouts.includes(layout)) {
+    if (!options.singleLine && nestsBar && !excludedLayouts.includes(layout)) {
       content += StructureElements.progressBar(options);
     }
 

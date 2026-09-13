@@ -58,7 +58,7 @@
         "toggle": "Ознака",
         "color_toggle": "Независна боја на значка"
       },
-      "bar_color": "Боја за лентата",
+      "bar_color": "Боја",
       "bar_color_mode": "Режим на боја",
       "bar_effect_mode": "Ефект на лентата",
       "bar_group": "Лента",
@@ -74,7 +74,7 @@
       "center_zero": "Нула во центарот",
       "center_zero_growth_percent": "Процент на растеж",
       "center_zero_value": "Централна вредност",
-      "color": "Примарна боја",
+      "color": "Боја",
       "custom_info": "Прилагодена секундарна информација",
       "custom_theme": "Зони на прилагодена тема",
       "decimal": "Прецизност на прикажување",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "Автоматска висина",
       "hide_mode": "Сокриј",
       "icon": "Икона",
+      "icon_group": "Икона",
       "icon_animation": "Анимација на иконата",
       "interpolate": "Интерполација на бои",
       "layout": "Распоред на содржината",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "Прикажи минимум",
         "max_toggle": "Прикажи максимум",
-        "average_toggle": "Прикажи просек"
+        "average_toggle": "Прикажи просек",
+        "range_toggle": "Прикажи опсег"
       },
       "peak_marker_unsupported": "Ознаките на врвови бараат sensor или number ентитет без преклопување на атрибут, кој не е timer ниту counter — не е достапно за овој ентитет.",
       "percent": "Процент",

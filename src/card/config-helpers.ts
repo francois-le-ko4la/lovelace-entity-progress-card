@@ -78,6 +78,18 @@ const LEGACY_BARE_ROW = ['icon', 'name'];
 
 // Single source for "this config still uses a deprecated shape" - read by the
 // console warnings and migrations below, and by the editor's Migrate button.
+// A scaled attribute (light's 0-255 brightness, media_player's 0-1
+// volume_level) is already normalized to 0-100 by EntityHelper, so a
+// max_value repeating that native scale divides the fill a second time - the
+// shape getEntitySuggestion itself used to write. Returns the offending
+// scale, or null when the config is fine.
+const nativeScaleMaxValue = (config: LovelaceConfig): number | null => {
+  if (!is.nonEmptyString(config?.entity)) return null;
+  const mapping = HA_CONTEXT.attributeMapping[HassProviderSingleton.getEntityDomain(config.entity) as string];
+  if (!mapping?.scale) return null;
+  return config?.attribute === mapping.attribute && config?.max_value === mapping.scale ? mapping.scale : null;
+};
+
 const DEPRECATED_OPTIONS: Record<string, (config: LovelaceConfig) => boolean> = {
   watermark: (config) =>
     WATERMARK_SIDES.some((side) => hasLegacyWatermarkValue(config, side) || hasLegacyWatermarkMarkKeys(config, side)),
@@ -85,6 +97,7 @@ const DEPRECATED_OPTIONS: Record<string, (config: LovelaceConfig) => boolean> = 
   disable_unit: (config) => config?.disable_unit !== undefined,
   additions: (config) => is.array(config?.additions),
   icon_animation: (config) => config?.icon_animation === 'none',
+  native_scale_max_value: (config) => nativeScaleMaxValue(config) !== null,
   navigate_to: (config) => config?.navigate_to !== undefined,
   show_more_info: (config) => config?.show_more_info !== undefined,
   theme: (config) => Boolean(THEME_ALIASES[config?.theme]),
@@ -613,13 +626,14 @@ class CardConfigHelper extends BaseConfigHelper {
         additions: undefined,
       };
     }
+    if (nativeScaleMaxValue(config) !== null) normalized = { ...normalized, max_value: undefined };
     return normalized;
   }
 
   static _customizeConfig(config: LovelaceConfig): LovelaceConfig {
     let normalized = CardConfigHelper._migrateLegacyOptions(config);
     normalized = CardConfigHelper._applyCenterZeroMinDefault(config, normalized);
-    const attrMapping: Record<string, { attribute?: string }> = HA_CONTEXT.attributeMapping;
+    const attrMapping = HA_CONTEXT.attributeMapping;
     return {
       ...normalized,
       ...(is.nonEmptyString(normalized?.entity) && is.nullish(normalized?.attribute)

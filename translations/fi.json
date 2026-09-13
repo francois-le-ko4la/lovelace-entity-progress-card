@@ -58,7 +58,7 @@
         "toggle": "Merkki",
         "color_toggle": "Erillinen merkin väri"
       },
-      "bar_color": "Palkin väri",
+      "bar_color": "Väri",
       "bar_color_mode": "Väritila",
       "bar_effect_mode": "Palkin efekti",
       "bar_group": "Palkki",
@@ -74,7 +74,7 @@
       "center_zero": "Nolla keskellä",
       "center_zero_growth_percent": "Kasvuprosentti",
       "center_zero_value": "Keskiarvo",
-      "color": "Pääväri",
+      "color": "Väri",
       "custom_info": "Mukautettu toissijainen tieto",
       "custom_theme": "Mukautetun teeman vyöhykkeet",
       "decimal": "Näytön tarkkuus",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "Automaattinen korkeus",
       "hide_mode": "Piilota",
       "icon": "Ikoni",
+      "icon_group": "Ikoni",
       "icon_animation": "Kuvakkeen animaatio",
       "interpolate": "Interpoloi värit",
       "layout": "Sisällön asettelu",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "Näytä minimi",
         "max_toggle": "Näytä maksimi",
-        "average_toggle": "Näytä keskiarvo"
+        "average_toggle": "Näytä keskiarvo",
+        "range_toggle": "Näytä vaihteluväli"
       },
       "peak_marker_unsupported": "Huippumerkinnät vaativat sensor- tai number-entiteetin ilman attribuutin ylikirjoitusta, joka ei ole timer eikä counter — ei käytettävissä tälle entiteetille.",
       "percent": "Prosentti",

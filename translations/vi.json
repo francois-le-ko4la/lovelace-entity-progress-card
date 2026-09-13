@@ -58,7 +58,7 @@
         "toggle": "Huy hiệu",
         "color_toggle": "Màu huy hiệu riêng"
       },
-      "bar_color": "Màu thanh",
+      "bar_color": "Màu",
       "bar_color_mode": "Chế độ màu",
       "bar_effect_mode": "Hiệu ứng thanh",
       "bar_group": "Thanh",
@@ -74,7 +74,7 @@
       "center_zero": "零点居中",
       "center_zero_growth_percent": "Tỷ lệ tăng trưởng",
       "center_zero_value": "Giá trị tâm",
-      "color": "Màu chính",
+      "color": "Màu",
       "custom_info": "Thông tin phụ tùy chỉnh",
       "custom_theme": "Vùng chủ đề tùy chỉnh",
       "decimal": "Độ chính xác hiển thị",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "Chiều cao tự động",
       "hide_mode": "Ẩn",
       "icon": "Biểu tượng",
+      "icon_group": "Biểu tượng",
       "icon_animation": "Hoạt ảnh biểu tượng",
       "interpolate": "Nội suy màu sắc",
       "layout": "Bố cục nội dung",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "Hiện giá trị nhỏ nhất",
         "max_toggle": "Hiện giá trị lớn nhất",
-        "average_toggle": "Hiện giá trị trung bình"
+        "average_toggle": "Hiện giá trị trung bình",
+        "range_toggle": "Hiện khoảng giá trị"
       },
       "peak_marker_unsupported": "Dấu đỉnh cần thực thể sensor hoặc number không ghi đè thuộc tính, không phải timer hay counter — không khả dụng cho thực thể này.",
       "percent": "Phần trăm",

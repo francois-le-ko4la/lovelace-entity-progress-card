@@ -58,7 +58,7 @@
         "toggle": "徽章",
         "color_toggle": "獨立徽章顏色"
       },
-      "bar_color": "進度條顏色",
+      "bar_color": "顏色",
       "bar_color_mode": "顏色模式",
       "bar_effect_mode": "進度條效果",
       "bar_group": "進度條",
@@ -74,7 +74,7 @@
       "center_zero": "中心為零",
       "center_zero_growth_percent": "增長百分比",
       "center_zero_value": "中心值",
-      "color": "圖示顏色",
+      "color": "顏色",
       "custom_info": "自訂次要資訊",
       "custom_theme": "自訂主題區域",
       "decimal": "顯示準確度",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "自動高度",
       "hide_mode": "隱藏",
       "icon": "圖示",
+      "icon_group": "圖示",
       "icon_animation": "圖示動畫",
       "interpolate": "顏色插值",
       "layout": "內容佈局",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "顯示最小值",
         "max_toggle": "顯示最大值",
-        "average_toggle": "顯示平均值"
+        "average_toggle": "顯示平均值",
+        "range_toggle": "顯示範圍"
       },
       "peak_marker_unsupported": "峰值標記需要一個沒有屬性覆寫的 sensor 或 number 實體，且不能是 timer 或 counter — 此實體不可用。",
       "percent": "百分比",

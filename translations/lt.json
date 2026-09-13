@@ -58,7 +58,7 @@
         "toggle": "Ženkliukas",
         "color_toggle": "Nepriklausoma ženkliuko spalva"
       },
-      "bar_color": "Juostos spalva",
+      "bar_color": "Spalva",
       "bar_color_mode": "Spalvos režimas",
       "bar_effect_mode": "Juostos efektas",
       "bar_group": "Juosta",
@@ -74,7 +74,7 @@
       "center_zero": "Nulis centre",
       "center_zero_growth_percent": "Augimo procentas",
       "center_zero_value": "Centro reikšmė",
-      "color": "Ikonos spalva",
+      "color": "Spalva",
       "custom_info": "Pasirinktinė papildoma informacija",
       "custom_theme": "Pasirinktinės temos zonos",
       "decimal": "Rodomas tikslumas",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "Automatinis aukštis",
       "hide_mode": "Slėpti",
       "icon": "Ikona",
+      "icon_group": "Ikona",
       "icon_animation": "Piktogramos animacija",
       "interpolate": "Spalvų interpoliavimas",
       "layout": "Turinio išdėstymas",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "Rodyti minimumą",
         "max_toggle": "Rodyti maksimumą",
-        "average_toggle": "Rodyti vidurkį"
+        "average_toggle": "Rodyti vidurkį",
+        "range_toggle": "Rodyti intervalą"
       },
       "peak_marker_unsupported": "Piko žymoms reikia sensor arba number esybės be atributo perrašymo, kuri nėra timer ar counter — neprieinama šiai esybei.",
       "percent": "Procentai",

@@ -328,10 +328,10 @@ shared defaults until it sets its own. Both also accept a single-word shorthand
 instead of the full object — but the shorthand isn't the same _kind_ of value in
 both:
 
-| Option                              | Shorthand is a... | Why                                                                                |
-| ----------------------------------- | ----------------- | ---------------------------------------------------------------------------------- |
-| `watermark.low`/`.high`             | **value**         | the threshold is the whole point — where the mark sits is what you're setting      |
-| `peak_marker.min`/`.max`/`.average` | **color**         | the value comes from history automatically — color is the only knob worth one word |
+| Option                                       | Shorthand is a... | Why                                                                                |
+| -------------------------------------------- | ----------------- | ---------------------------------------------------------------------------------- |
+| `watermark.low`/`.high`                      | **value**         | the threshold is the whole point — where the mark sits is what you're setting      |
+| `peak_marker.min`/`.max`/`.average`/`.range` | **color**         | the value comes from history automatically — color is the only knob worth one word |
 
 Neither is "more correct" — a mark's shorthand always stands for whichever
 single value is actually user-decided for that particular option. Check the
@@ -531,11 +531,21 @@ Defining the attribute with the following is not supported:
 
 _default attribute:_
 
-| entity (supported) | default attribute |
-| :----------------- | :---------------- |
-| cover.xxx          | current_position  |
-| light.xxx          | brightness (%)    |
-| fan.xxx            | percentage        |
+| entity (supported) | default attribute   |
+| :----------------- | :------------------ |
+| climate.xxx        | temperature         |
+| cover.xxx          | current_position    |
+| fan.xxx            | percentage          |
+| humidifier.xxx     | current_humidity    |
+| light.xxx          | brightness          |
+| media_player.xxx   | volume_level        |
+| valve.xxx          | current_position    |
+| water_heater.xxx   | current_temperature |
+| weather.xxx        | temperature         |
+
+`brightness` (0-255) and `volume_level` (0-1) are rescaled to 0-100 by the card,
+so their `max_value` stays on the usual percentage scale - setting
+`max_value: 255` divides the bar a second time.
 
 [🔼 Back to top]
 
@@ -2272,19 +2282,21 @@ _Default value_:
 
 Marks the minimum, maximum, and average value observed over a time window,
 directly on the bar — reads at a glance where the current value sits relative to
-its own recent history. `min`/`max`/`average` are each absent by default (no
-mark shown) — set one to opt it in.
+its own recent history. `range` paints the band between the minimum and the
+maximum instead: the span the value actually travelled. All four are absent by
+default (no mark shown) — set one to opt it in.
 
-| Property    | Type                    | Default | Description                                                                     |
-| ----------- | ----------------------- | ------- | ------------------------------------------------------------------------------- |
-| `window`    | String                  | —       | How far back to look: `'30s'`, `'5min'`, `'2h'`, `'1d'` (required).             |
-| `type`      | String                  | `line`  | Default mark shape: `line`, `round`, or `triangle`.                             |
-| `opacity`   | Number                  | `0.8`   | Default opacity, applied to every mark that doesn't override it.                |
-| `color`     | String                  | —       | Default color, applied to every mark that doesn't override it.                  |
-| `line_size` | String                  | `1px`   | Thickness of a mark drawn as a `line`, for every mark that doesn't override it. |
-| `min`       | Boolean\|String\|Object | —       | Shows the minimum mark. See below.                                              |
-| `max`       | Boolean\|String\|Object | —       | Shows the maximum mark. See below.                                              |
-| `average`   | Boolean\|String\|Object | —       | Shows the average mark. See below.                                              |
+| Property    | Type                    | Default | Description                                                                      |
+| ----------- | ----------------------- | ------- | -------------------------------------------------------------------------------- |
+| `window`    | String                  | `2h`    | How far back to look: `'30s'`, `'5min'`, `'2h'`, `'1d'`.                         |
+| `type`      | String                  | `line`  | Default mark shape (see the six below), for every mark that doesn't override it. |
+| `opacity`   | Number                  | `0.8`   | Default opacity, applied to every mark that doesn't override it.                 |
+| `color`     | String                  | —       | Default color, applied to every mark that doesn't override it.                   |
+| `line_size` | String                  | `1px`   | Thickness of a mark drawn as a `line`, for every mark that doesn't override it.  |
+| `min`       | Boolean\|String\|Object | —       | Shows the minimum mark. See below.                                               |
+| `max`       | Boolean\|String\|Object | —       | Shows the maximum mark. See below.                                               |
+| `average`   | Boolean\|String\|Object | —       | Shows the average mark. See below.                                               |
+| `range`     | Boolean\|String\|Object | —       | Shows the band from minimum to maximum. See below.                               |
 
 `min`/`max`/`average` each accept:
 
@@ -2300,6 +2312,29 @@ A color, not a value: unlike [`watermark`](#watermark)'s marks, the position
 here always comes from history — see
 [Value shapes & shortcuts](#value-shapes--shortcuts) for why the two shorthands
 differ.
+
+`type` takes the same six shapes as [`watermark`](#watermark): `line`, `round`
+and `triangle` draw a point, `area`, `blended` and `striped` fill a region. A
+filled `min` covers everything below it, a filled `max` everything above — the
+zones the value never reached. `range` is the reverse: the zone it did.
+
+`range` takes the same forms as the three marks above, minus `line_size` (a band
+has no line) and with zone shapes only (`area`, `blended`, `striped`, default
+`area`). It doesn't need `min` or `max` to be shown — both are measured whether
+or not their own marks are drawn — so a band alone is a valid configuration.
+
+_Example — the travelled range alone, no marks_:
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.temperature
+peak_marker:
+  window: 1d
+  range:
+    type: striped
+    color: dodgerblue
+    opacity: 0.25
+```
 
 _Example — same shape and opacity for all three_:
 

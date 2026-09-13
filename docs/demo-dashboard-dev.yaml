@@ -488,7 +488,6 @@ views:
                     max_value: 3000
               - type: custom:entity-progress-feature-dev
                 entity: input_number.epb_demo_solar_production
-                name: Net
                 center_zero: true
                 min_value: -3000
                 max_value: 3000
@@ -1088,7 +1087,6 @@ views:
             heading_style: title
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
-            lv: zkejf
             decimal: 1
             layout: horizontal
             bar_size: xlarge
@@ -1103,7 +1101,6 @@ views:
               rows: 2
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
-            lv: zkejf
             decimal: 1
             layout: vertical
             unit: >-
@@ -1117,7 +1114,6 @@ views:
               rows: 1
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
-            lv: zkejf
             decimal: 1
             layout: horizontal
             unit: >-
@@ -1131,7 +1127,6 @@ views:
               rows: 1
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
-            lv: zkejf
             decimal: 1
             layout: horizontal
             unit: >-
@@ -1146,7 +1141,6 @@ views:
               rows: 1
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
-            lv: zkejf
             decimal: 1
             layout: horizontal
             unit: >-
@@ -1161,7 +1155,6 @@ views:
               rows: 1
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
-            lv: zkejf
             decimal: 1
             layout: horizontal
             unit: >-
@@ -1313,8 +1306,6 @@ views:
       - type: custom:entity-progress-badge-dev
         entity: input_number.epb_demo_battery
         name: 'badge_icon / badge_color (Jinja)'
-        badge_icon: '{% if states(entity) | float > 20 %}mdi:alert{% endif %}'
-        badge_color: red
     cards: []
     show_icon_and_title: true
   - title: EP Demo - Theme, watermarks & effects
@@ -2016,6 +2007,33 @@ views:
               opacity: 1
               min: true
               max: true
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: 'range alone - no min/max mark drawn'
+            peak_marker:
+              window: 2h
+              range:
+                type: striped
+                color: dodgerblue
+                opacity: 0.25
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: 'min/max as zones - what was never reached'
+            peak_marker:
+              window: 2h
+              min:
+                type: area
+              max:
+                type: area
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: 'range under the three lines'
+            peak_marker:
+              window: 2h
+              range: true
+              min: true
+              max: true
+              average: true
       - type: grid
         cards:
           - type: heading
@@ -3794,7 +3812,6 @@ views:
                     max_value: 3000
               - type: custom:entity-progress-feature-dev
                 entity: input_number.epb_demo_solar_production
-                name: Net
                 center_zero: true
                 min_value: -3000
                 max_value: 3000
@@ -4937,28 +4954,28 @@ views:
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
             name: '--epb-detail-color: #ff6600'
-            secondary_info: last_changed
+            state_content: last_changed
             card_mod:
               style: |
                 :host { --epb-detail-color: #ff6600; }
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
             name: '--epb-detail-font-size: 18px'
-            secondary_info: last_changed
+            state_content: last_changed
             card_mod:
               style: |
                 :host { --epb-detail-font-size: 18px; }
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
             name: '--epb-detail-font-weight: 900'
-            secondary_info: last_changed
+            state_content: last_changed
             card_mod:
               style: |
                 :host { --epb-detail-font-weight: 900; }
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
             name: '--epb-detail-letter-spacing: 4px'
-            secondary_info: last_changed
+            state_content: last_changed
             card_mod:
               style: |
                 :host { --epb-detail-letter-spacing: 4px; }
@@ -6530,10 +6547,6 @@ views:
         secondary: '{% if states(entity) | float < 20 %}low{% else %}ok{% endif %}'
         percent: '{{ states(entity) }}'
         color: '{% if states(entity) | float > 20 %}red{% else %}primary{% endif %}'
-        badge_icon: >-
-          {% if states(entity) | float < 20 %}mdi:battery-alert {% else
-          %}mdi:battery{% endif %}
-        badge_color: '{% if states(entity) | float < 20 %}red{% else %}green{% endif %}'
       - type: custom:entity-progress-badge-dev
         entity: input_number.epb_demo_battery
         name: '#124'
@@ -8250,7 +8263,6 @@ views:
                     max_value: 3000
               - type: custom:entity-progress-feature-dev
                 entity: input_number.epb_demo_solar_production
-                name: Net
                 center_zero: true
                 min_value: -3000
                 max_value: 3000
@@ -8699,10 +8711,6 @@ views:
               {{ '▲' if states(entity) | float > 0 else '▼' }} {{ states(entity)
               | float | abs }} W
             color: "{{ 'lime' if states(entity) | float > 0 else 'crimson' }}"
-            badge_icon: >-
-              {{ 'mdi:trending-up' if states(entity) | float > 0 else
-              'mdi:trending-down' }}
-            badge_color: "{{ 'lime' if states(entity) | float > 0 else 'crimson' }}"
             card_mod:
               style: |
                 ha-card {
@@ -8775,7 +8783,6 @@ views:
                 bar_size: medium
                 bar_effect: shimmer
                 entity: input_number.epb_demo_solar_production
-                name: NET FLOW
                 center_zero: true
                 min_value: -3000
                 max_value: 3000
@@ -8846,7 +8853,6 @@ views:
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_power
             name: ⚡ REACTOR CORE
-            secondary: '{{ states(entity) | float | abs }} W'
             icon: mdi:atom
             center_zero:
               growth_percent: true

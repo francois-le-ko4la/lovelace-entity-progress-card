@@ -58,7 +58,7 @@
         "toggle": "Emblema",
         "color_toggle": "Cor do emblema independente"
       },
-      "bar_color": "Cor da barra",
+      "bar_color": "Cor",
       "bar_color_mode": "Modo de cor da barra",
       "bar_effect_mode": "Efeito na barra",
       "bar_group": "Barra",
@@ -74,7 +74,7 @@
       "center_zero": "Zero no centro",
       "center_zero_growth_percent": "Percentagem de crescimento",
       "center_zero_value": "Valor central",
-      "color": "Cor do ícone",
+      "color": "Cor",
       "custom_info": "Informação secundária personalizada",
       "custom_theme": "Zonas de tema personalizado",
       "decimal": "Mostrar precisão",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "Altura automática",
       "hide_mode": "Ocultar",
       "icon": "Ícone",
+      "icon_group": "Ícone",
       "icon_animation": "Animação do ícone",
       "interpolate": "Interpolar cores",
       "layout": "Layout do conteúdo",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "Mostrar mínimo",
         "max_toggle": "Mostrar máximo",
-        "average_toggle": "Mostrar média"
+        "average_toggle": "Mostrar média",
+        "range_toggle": "Mostrar intervalo"
       },
       "peak_marker_unsupported": "Os marcadores de pico precisam de uma entidade sensor ou number, sem substituição de atributo, e que não seja um timer nem um counter — não disponível para esta entidade.",
       "percent": "Percentagem",

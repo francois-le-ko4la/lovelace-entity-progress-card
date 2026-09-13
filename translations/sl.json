@@ -58,7 +58,7 @@
         "toggle": "Značka",
         "color_toggle": "Neodvisna barva značke"
       },
-      "bar_color": "Barva vrstice",
+      "bar_color": "Barva",
       "bar_color_mode": "Barvni način",
       "bar_effect_mode": "Učinek vrstice",
       "bar_group": "Vrstica",
@@ -74,7 +74,7 @@
       "center_zero": "Ni ničle na sredini",
       "center_zero_growth_percent": "Odstotek rasti",
       "center_zero_value": "Srednja vrednost",
-      "color": "Barva ikone",
+      "color": "Barva",
       "custom_info": "Prilagojena sekundarna informacija",
       "custom_theme": "Cone motiva po meri",
       "decimal": "Natančnost prikaza",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "Samodejna višina",
       "hide_mode": "Skrij",
       "icon": "Ikona",
+      "icon_group": "Ikona",
       "icon_animation": "Animacija ikone",
       "interpolate": "Interpolacija barv",
       "layout": "Postavitev vsebine",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "Prikaži minimum",
         "max_toggle": "Prikaži maksimum",
-        "average_toggle": "Prikaži povprečje"
+        "average_toggle": "Prikaži povprečje",
+        "range_toggle": "Prikaži razpon"
       },
       "peak_marker_unsupported": "Oznake vrhov potrebujejo entiteto sensor ali number brez prepisa atributa, ki ni timer ali counter — za to entiteto ni na voljo.",
       "percent": "Odstotek",

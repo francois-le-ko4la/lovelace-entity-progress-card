@@ -58,7 +58,7 @@
         "toggle": "Badge",
         "color_toggle": "Uafhængig badge-farve"
       },
-      "bar_color": "Farve på bjælken",
+      "bar_color": "Farve",
       "bar_color_mode": "Farvetilstand",
       "bar_effect_mode": "Effekt på bjælken",
       "bar_group": "Bjælke",
@@ -74,7 +74,7 @@
       "center_zero": "Center nul",
       "center_zero_growth_percent": "Vækstprocent",
       "center_zero_value": "Centerværdi",
-      "color": "Primær farve",
+      "color": "Farve",
       "custom_info": "Tilpasset sekundær info",
       "custom_theme": "Tilpassede temazoner",
       "decimal": "Visningspræcision",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "Automatisk højde",
       "hide_mode": "Skjul",
       "icon": "Ikon",
+      "icon_group": "Ikon",
       "icon_animation": "Ikonanimation",
       "interpolate": "Interpoler farver",
       "layout": "Indholdslayout",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "Vis minimum",
         "max_toggle": "Vis maksimum",
-        "average_toggle": "Vis gennemsnit"
+        "average_toggle": "Vis gennemsnit",
+        "range_toggle": "Vis interval"
       },
       "peak_marker_unsupported": "Topmarkeringer kræver en sensor- eller number-enhed uden attribut-overskrivning, som ikke er en timer eller counter — ikke tilgængelig for denne enhed.",
       "percent": "Procent",

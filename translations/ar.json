@@ -58,7 +58,7 @@
         "toggle": "شارة",
         "color_toggle": "لون شارة مستقل"
       },
-      "bar_color": "لون الشريط",
+      "bar_color": "اللون",
       "bar_color_mode": "وضع اللون",
       "bar_effect_mode": "تأثير الشريط",
       "bar_group": "الشريط",
@@ -74,7 +74,7 @@
       "center_zero": "صفر في الوسط",
       "center_zero_growth_percent": "نسبة النمو",
       "center_zero_value": "قيمة المركز",
-      "color": "اللون الأساسي",
+      "color": "اللون",
       "custom_info": "معلومات إضافية (ثانوية)",
       "custom_theme": "مناطق السمة المخصصة",
       "decimal": "دقة العرض",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "ارتفاع تلقائي",
       "hide_mode": "إخفاء",
       "icon": "أيقونة",
+      "icon_group": "أيقونة",
       "icon_animation": "حركة الأيقونة",
       "interpolate": "تدرج الألوان",
       "layout": "تخطيط المحتوى",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "إظهار الحد الأدنى",
         "max_toggle": "إظهار الحد الأقصى",
-        "average_toggle": "إظهار المتوسط"
+        "average_toggle": "إظهار المتوسط",
+        "range_toggle": "إظهار المدى"
       },
       "peak_marker_unsupported": "تتطلب علامات الذروة كيان sensor أو number بدون تجاوز للسمة، وليس timer أو counter — غير متاح لهذا الكيان.",
       "percent": "النسبة المئوية",

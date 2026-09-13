@@ -58,7 +58,7 @@
         "toggle": "Значок",
         "color_toggle": "Незалежний колір значка"
       },
-      "bar_color": "Колір смуги",
+      "bar_color": "Колір",
       "bar_color_mode": "Режим кольору",
       "bar_effect_mode": "Ефект на смузі",
       "bar_group": "Смуга",
@@ -74,7 +74,7 @@
       "center_zero": "Không ở giữa",
       "center_zero_growth_percent": "Відсоток зростання",
       "center_zero_value": "Центральне значення",
-      "color": "Основний колір",
+      "color": "Колір",
       "custom_info": "Додаткова вторинна інформація",
       "custom_theme": "Зони власної теми",
       "decimal": "Точність",
@@ -87,6 +87,7 @@
       "height_custom_toggle": "Автоматична висота",
       "hide_mode": "Приховати",
       "icon": "Іконка",
+      "icon_group": "Іконка",
       "icon_animation": "Анімація значка",
       "interpolate": "Інтерполяція кольорів",
       "layout": "Розташування вмісту",
@@ -105,7 +106,8 @@
       "peak_marker": {
         "min_toggle": "Показати мінімум",
         "max_toggle": "Показати максимум",
-        "average_toggle": "Показати середнє"
+        "average_toggle": "Показати середнє",
+        "range_toggle": "Показати діапазон"
       },
       "peak_marker_unsupported": "Маркерам піків потрібна сутність sensor або number без перевизначення атрибута, яка не є timer чи counter — недоступно для цієї сутності.",
       "percent": "Відсоток",

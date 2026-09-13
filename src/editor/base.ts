@@ -116,6 +116,12 @@ const createFieldEl = (field: FieldDef, tagName: string): EditorFieldElement => 
 
 // Plain dropdowns: field type -> its translated option group, optionally
 // narrowed to the values one schema variant accepts.
+// What an unset field hands its element: an empty string everywhere, except
+// where the element reads its own default from a nullish value. ha-color-picker
+// resolves `this.value ?? this.defaultColor`, so an empty string is a value to
+// it - the "State (Default)" entry would never be the selected one.
+const EMPTY_IS_UNDEFINED = new Set(['toggle', 'number', 'decimal', 'color_state_default']);
+
 const SELECT_TYPES: Record<string, string | [group: string, keys: readonly string[] | SchemaLookup]> = {
   bar_size: ['bar_size', from('card', 'bar_size')],
   bar_size_no_xlarge: ['bar_size', from('badge', 'bar_size')],
@@ -141,6 +147,8 @@ const SELECT_TYPES: Record<string, string | [group: string, keys: readonly strin
   watermark_as: 'watermark_as',
   // peak_marker's own enum, reusing watermark_type's labels.
   peak_marker_type: ['watermark_type', from('card', 'peak_marker.type')],
+  // The band's: the zone shapes only, same labels again.
+  peak_range_type: ['watermark_type', from('card', 'peak_marker.range.type')],
   duration_unit: 'duration_unit',
   trend_indicator_basis: 'trend_indicator_basis',
 };
@@ -508,6 +516,12 @@ class EditorBase extends HTMLElement {
       action: () => ({ 'ui-action': {} }),
       icon: () => ({ icon: { icon_set: ['mdi'] } }),
       color: () => ({ 'ui-color': {} }),
+      // icon/bar color only: left unset, both fall back to the entity's own
+      // state color (EntityHelper.defaultColor), so the picker names that
+      // fallback as "State (Default)" instead of showing an empty box.
+      // Picking it writes `state`, which postProcess drops back to unset -
+      // the fallback is per-domain and dynamic, not a value we could store.
+      color_state_default: () => ({ 'ui-color': { include_state: true, default_color: 'state' } }),
       default: () => ({ text: { mode: 'box' } }),
       // The one select whose options carry an image, hence not in SELECT_TYPES.
       layout: () => buildBoxSelect(options.layout, tileImage),
@@ -813,7 +827,7 @@ class EditorBase extends HTMLElement {
   }
 
   static #resolveValue(def: FieldDef, rawConfig: LovelaceConfig, negotiated: Config | null = null): unknown {
-    const empty = ['toggle', 'number', 'decimal'].includes(def.type) ? undefined : '';
+    const empty = EMPTY_IS_UNDEFINED.has(def.type as string) ? undefined : '';
     if (!rawConfig) return empty;
 
     // Virtual fields derive their value from raw config (explicit user state).

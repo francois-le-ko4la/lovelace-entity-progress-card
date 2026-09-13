@@ -72,6 +72,13 @@ watermark:
   low: { value: 20, line_size: 9px } # this side only
 ```
 
+#### 📊 The range a value travelled, painted
+
+[`peak_marker`][peak_marker] gains `range`: the band between the minimum and the
+maximum over its window, filled on the bar. The bar says where the value is now;
+the band says how far it has swung. It doesn't need the minimum and maximum
+marks themselves — a band alone is enough.
+
 ### 🔧 Improvements
 
 #### A Multi row is a whole card
@@ -122,6 +129,21 @@ shows the value that mark inherits rather than a built-in default.
   every row's bar starts at the same x whatever its text, and the text ellipses
   first on a card too narrow for both. The `--epb-multi-value-width` CSS hook
   does the same from the text side.
+- **[`color`][color]** and **[`bar_color`][bar_color]**: their picker names the
+  default instead of leaving the box empty — "State (Default)", the entity's own
+  state color, which is what the card draws while neither is set. Picking that
+  entry writes nothing into your YAML.
+- **More entities find their own value**: a `valve`, a `humidifier`, a
+  `water_heater` and a `media_player` now read their position, humidity,
+  temperature and volume without the [`attribute`][attribute] option spelled
+  out, and Home Assistant's entity-first card picker offers them too.
+- **[`peak_marker`][peak_marker]**: a mark takes the same six shapes as a
+  [`watermark`][watermark] now — `area`, `blended` and `striped` fill a region
+  besides `line`, `round` and `triangle`. A filled `min` covers everything below
+  it, a filled `max` everything above: the zones the value never reached.
+- **The editor's rows**: the decimal count sits beside the unit, the trend's up
+  and down colors share a row, and an **Icon** heading separates the icon fields
+  from the theme ones.
 
 #### Rows that fill, and Home Assistant's own spacing
 
@@ -133,6 +155,12 @@ a panel.
 
 ### 🐛 Fixes
 
+- Segmented bars ([`bar_segments`][bar_segments]) drew opaque strips between the
+  cells on a translucent card, and no visible gaps at all on a frameless one.
+  The gaps let the card through now.
+- A Multi row could still draw a card frame of its own on a themed dashboard
+  instead of disappearing into the card holding it.  
+  ➡️ Discord @mooseBringer
 - **`watermark.line_size`**: the line-thickness slider had no effect — the
   editor saved the value in a place the card never reads, so the line stayed at
   its default. It lands in the right place now, and a leftover key from before
@@ -160,6 +188,11 @@ a panel.
   ([`badge_icon`][badge_icon]) for every [`bar_position`][bar_position] but
   `default` — since 1.6.1.  
   ➡️ Discord @mooseBringer
+- A [`peak_marker`][peak_marker] written without a `window` drew nothing at all.
+  It falls back to `2h` now instead of dropping the whole block.
+- A light added through Home Assistant's own entity-first card picker filled its
+  bar to about 39% at full brightness. It reads the real brightness now, and the
+  setting behind it is swept the next time you edit the card — since 1.6.1.
 
 ### 📚 Documentation
 
@@ -174,17 +207,104 @@ a panel.
 - The demo dashboard splits in two: `demo-dashboard.yaml` is the showroom,
   `demo-dashboard-dev.yaml` keeps it plus the regression and deprecated-option
   benches.
+- The demo dashboards are checked against the real schema now: every card must
+  survive the card's own validation without losing an option it declared. Six
+  options that silently did nothing — a missing `peak_marker` window, a
+  `secondary_info` key that was never one, `badge_icon` on a badge that no
+  longer takes it — are fixed.
 
 ### 🧹 Under the hood
 
 - The Multi cards are validated by a real schema at last, like every other card
   type — an unknown option is dropped instead of quietly reaching the DOM.
 - Three dead exports and one orphan translation key removed.
+- The card's default attribute per domain and the entity picker's own
+  suggestions come from one shared table instead of two that had drifted.
 
 We care about getting the details right — but even so, something here might have
 slipped through. You don't need to be a developer to notice it. If something
 feels off, that's reason enough. Open a [GitHub issue]. Or say hi on [Discord].
 We'd rather know than have you go looking for a workaround on your own.
+
+## What's new (1.6.3-rc2)
+
+### ✨ New
+
+#### 📊 `peak_marker.range`: the span, not just its ends
+
+A fourth mark on the bar: the band from the minimum to the maximum measured over
+the window — what the value actually travelled, filled, instead of two lines to
+join by eye. Takes `area`, `blended` or `striped` (default `area`), with its own
+`color`/`opacity` falling back to the family's.
+
+It needs neither `min` nor `max` to be drawn — both are measured whether or not
+their own marks are shown — so a band alone is a valid config.
+
+```yaml
+peak_marker:
+  window: 1d
+  range:
+    type: striped
+    color: dodgerblue
+    opacity: 0.25
+```
+
+### 🔧 Improvements
+
+- **[`color`][color]** and **[`bar_color`][bar_color]**: the editor's color
+  picker declares `state` as its default entry ("State (Default)") instead of
+  showing an empty box, and `color: state` is dropped from the saved config —
+  the state color is what an unset field already draws.
+- **Default attribute per domain**: `valve` → `current_position`, `humidifier` →
+  `current_humidity`, `water_heater` → `current_temperature`, `media_player` →
+  `volume_level`, and `brightness` (0-255) / `volume_level` (0-1) are normalized
+  to 0-100 by the card. Home Assistant's entity-first picker (2026.6+) resolves
+  off that same table and now covers `water_heater`, `media_player` and
+  `weather` too. See [`attribute`][attribute].
+- **[`peak_marker`][peak_marker]**: a mark takes the same six shapes as a
+  [`watermark`][watermark] now — `area`, `blended` and `striped` fill a region
+  besides `line`, `round` and `triangle`. A filled `min` covers everything below
+  it, a filled `max` everything above: the zones the value never reached.
+- **Editor**: `decimal` pairs with `unit` and the two unit-placement fields
+  share the next row, the trend's `up`/`down` colors share one, and an **Icon**
+  heading separates the icon fields from the theme ones.
+
+### 🐛 Fixes
+
+- **[`bar_segments`][bar_segments]**: the gaps between cells painted a copy of
+  the card's own background color, which only reads as a cut while the card
+  really is that color — on a translucent card they showed as opaque strips, and
+  with [`frameless`][frameless] they vanished into the bar's own track. They are
+  holes now, showing whatever is actually behind the bar.
+- **[`frameless`][frameless]**: a nested card — which every Multi row is — still
+  drew chrome of its own under a glass theme. `--ha-card-backdrop-filter` is
+  neutralised alongside the background, border and shadow it already cleared,
+  and an `ha-card::before` decoration is dropped in the embedded contexts too.  
+  ➡️ Discord @mooseBringer
+- **[`peak_marker`][peak_marker]**: `window` has a default (`2h`) instead of
+  being required. A `peak_marker` written without one had its whole block
+  rejected, so the card drew no mark at all — including in this project's own
+  demo dashboard, where twelve cards had been demonstrating peak-marker CSS
+  hooks on bars that never had a mark to hook onto.
+- A `light` added through Home Assistant's entity-first card picker rendered
+  ~39% at full brightness: the suggestion wrote `max_value: 255` next to a
+  `brightness` the card already normalizes to 0-100. No suggestion carries a
+  `max_value` now, and an existing one matching its attribute's native scale is
+  dropped on load and swept from the YAML by **Migrate config** — since 1.6.1.
+
+### 📚 Documentation
+
+- The demo dashboards are checked against the real schema now: every card must
+  survive the card's own validation without losing an option it declared. Six
+  options that silently did nothing — a missing `peak_marker` window, a
+  `secondary_info` key that was never one, `badge_icon` on a badge that no
+  longer takes it — are fixed.
+
+### 🧹 Under the hood
+
+- The card's default attribute and the entity picker's suggestions read one
+  shared `HA_CONTEXT.attributeMapping` instead of two tables that had drifted
+  apart; `resolveEntitySuggestion` gets its own test file.
 
 ## What's new (1.6.3-rc1)
 
@@ -6550,12 +6670,20 @@ experience:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#standard
 [bar_color_mode]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_color_mode
+[attribute]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#attribute
+[color]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#color
+[bar_color]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_color
 [theme]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#theme
 [badge_icon]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#badge_icon
 [bar_segments]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_segments
+[frameless]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#frameless
 [icon_animation]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#icon_animation
 [alert_when]:
