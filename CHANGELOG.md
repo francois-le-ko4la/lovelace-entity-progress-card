@@ -161,6 +161,8 @@ a panel.
 - A Multi row could still draw a card frame of its own on a themed dashboard
   instead of disappearing into the card holding it.  
   ➡️ Discord @mooseBringer
+- Setting a card's [`height`][height] to its custom mode lost the height you
+  had. It comes back when you switch out of it.
 - **`watermark.line_size`**: the line-thickness slider had no effect — the
   editor saved the value in a place the card never reads, so the line stayed at
   its default. It lands in the right place now, and a leftover key from before
@@ -225,6 +227,20 @@ We care about getting the details right — but even so, something here might ha
 slipped through. You don't need to be a developer to notice it. If something
 feels off, that's reason enough. Open a [GitHub issue]. Or say hi on [Discord].
 We'd rather know than have you go looking for a workaround on your own.
+
+## What's new (1.6.3-rc3)
+
+### 🐛 Fixes
+
+- **[`height`][height]**: switching the field into its custom mode overwrote the
+  length that was set, and leaving the mode cleared it. The value is put aside
+  and handed back instead, like every other toggle in the editor.
+
+### 🧹 Under the hood
+
+- The editor's dropdown table moved to its own module and `status_label`'s two
+  enums are read off the live schema, so every select now offers exactly what
+  the schema accepts - asserted per dropdown.
 
 ## What's new (1.6.3-rc2)
 
@@ -6684,6 +6700,8 @@ experience:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_segments
 [frameless]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#frameless
+[height]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#height
 [icon_animation]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#icon_animation
 [alert_when]:

@@ -29,15 +29,8 @@ import {
 } from './list-editors.js';
 import { lengthSliderSelector, lengthUnitSelector } from '../utils/length.js';
 import { durationSliderSelector } from '../utils/duration.js';
-import {
-  isMarkOverride,
-  THEME_ALIASES,
-  schemaOptions,
-  DENSITY_COMPACT_BAR_POSITIONS,
-  ACTION_FIELDS,
-  type SchemaVariant,
-  type WatermarkMark,
-} from '../card/schema.js';
+import { isMarkOverride, THEME_ALIASES, schemaOptions, ACTION_FIELDS, type WatermarkMark } from '../card/schema.js';
+import { SELECT_TYPES, type SchemaLookup } from './select-types.js';
 
 // Every dynamic editor field element built below (ha-selector, the chip
 // custom elements from chips.ts, the list editors from list-editors.ts)
@@ -86,13 +79,6 @@ const CIRCULAR_BACKGROUND_MODES = ['auto', 'forced'];
 // status_label/alert_when) - a pill instead of a switch.
 const ENABLED_DISABLED_MODES = ['disabled', 'enabled'];
 
-// A dropdown's list comes from the schema variant that actually validates the
-// field, so it can never drift from what a config may hold. The two explicit
-// arrays are editor-only restrictions, mirroring schema.ts's own postProcess
-// rules (applyCompactBelowRule/applyDensityRule) - no enum of their own.
-type SchemaLookup = { variant: SchemaVariant; field: string };
-const from = (variant: SchemaVariant, field: string): SchemaLookup => ({ variant, field });
-
 // Every field element is born the same way - only what happens next differs
 // per field type (see #registerFieldEl for the matching tail).
 // full (default) | half | grow | a px string of its own - see EDITOR_BASE_STYLE
@@ -114,44 +100,11 @@ const createFieldEl = (field: FieldDef, tagName: string): EditorFieldElement => 
   return el;
 };
 
-// Plain dropdowns: field type -> its translated option group, optionally
-// narrowed to the values one schema variant accepts.
 // What an unset field hands its element: an empty string everywhere, except
 // where the element reads its own default from a nullish value. ha-color-picker
 // resolves `this.value ?? this.defaultColor`, so an empty string is a value to
 // it - the "State (Default)" entry would never be the selected one.
 const EMPTY_IS_UNDEFINED = new Set(['toggle', 'number', 'decimal', 'color_state_default']);
-
-const SELECT_TYPES: Record<string, string | [group: string, keys: readonly string[] | SchemaLookup]> = {
-  bar_size: ['bar_size', from('card', 'bar_size')],
-  bar_size_no_xlarge: ['bar_size', from('badge', 'bar_size')],
-  bar_orientation: ['bar_orientation', from('card', 'bar_orientation')],
-  bar_orientation_no_up: ['bar_orientation', from('badge', 'bar_orientation')],
-  bar_position: ['bar_position', from('card', 'bar_position')],
-  bar_position_no_compact_below: ['bar_position', ['default', 'below', 'top', 'bottom', 'overlay', 'background']],
-  bar_position_density_compact: ['bar_position', DENSITY_COMPACT_BAR_POSITIONS],
-  bar_position_feature: ['bar_position', from('feature', 'bar_position')],
-  bar_color_mode: ['bar_color_mode', from('card', 'bar_color_mode')],
-  bar_scale: ['bar_scale', from('card', 'bar_scale')],
-  icon_animation: ['icon_animation', from('card', 'icon_animation')],
-  alert_highlight: ['alert_highlight', from('card', 'alert_when.highlight')],
-  alert_animation: ['alert_animation', from('card', 'alert_when.animation')],
-  label_position: 'label_position',
-  status_label_color_source: 'status_label_color_source',
-  theme: ['theme', from('card', 'theme')],
-  // Template has no min_value/max_value to project a real-value theme onto.
-  theme_percent_only: ['theme', from('template', 'theme')],
-  unit_spacing: ['unit_spacing', from('card', 'unit_spacing')],
-  unit_position: 'unit_position',
-  watermark_type: ['watermark_type', from('card', 'watermark.type')],
-  watermark_as: 'watermark_as',
-  // peak_marker's own enum, reusing watermark_type's labels.
-  peak_marker_type: ['watermark_type', from('card', 'peak_marker.type')],
-  // The band's: the zone shapes only, same labels again.
-  peak_range_type: ['watermark_type', from('card', 'peak_marker.range.type')],
-  duration_unit: 'duration_unit',
-  trend_indicator_basis: 'trend_indicator_basis',
-};
 
 /**
  * Shared base for every per-card-type visual editor. Builds the

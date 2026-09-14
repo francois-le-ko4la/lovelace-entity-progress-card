@@ -1338,6 +1338,8 @@ const EditorFactory = {
     // falls back to the raw text field below.
     const isAutoToggled = (c: LovelaceConfig) => customToggle && read(c) === 'auto';
     const hasUnit = units.length > 1; // a single unit (e.g. px) needs no dropdown
+    // Where the length goes while custom mode holds the key (see below).
+    const customDraftKey = `_${key}_length_draft`;
     const fields: Record<string, unknown> = {};
     if (customToggle) {
       // Lets the user reach 'auto' from the slider UI - without this, custom
@@ -1351,7 +1353,10 @@ const EditorFactory = {
         virtual: true,
         showIf: gate,
         resolveVirtual: (c: LovelaceConfig) => parsed(c).custom,
-        onVirtualChange: (value: boolean, config: LovelaceConfig) => (value ? write(config, 'auto') : write(config)),
+        onVirtualChange: (value: boolean, config: LovelaceConfig) =>
+          value
+            ? { ...write(config, 'auto'), [customDraftKey]: read(config) }
+            : { ...write(config, config[customDraftKey]), [customDraftKey]: undefined },
       };
     }
     fields[key] = {

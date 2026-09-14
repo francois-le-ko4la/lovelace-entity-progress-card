@@ -638,22 +638,18 @@ const types = {
 
   // status_label: string (shorthand for { jinja }) | { jinja, position,
   // color_source } - see statusLabelObj/rewrapStatusLabel above.
-  statusLabel: () =>
-    types.optional(
-      types.union(
-        types.string,
-        types.object({
-          jinja: types.optionalString(),
-          position: types.enumsWithDefault(['left', 'right'], 'right'),
-          // Which color the pill follows when its own `jinja` doesn't return
-          // an explicit `{label, color}` (see HACore._repaintStatusLabel) -
-          // 'bar' by default (the theme zones that actually carry "status"
-          // semantics live there), 'icon' for whoever colors the icon
-          // specifically and wants the pill to match it instead.
-          color_source: types.enumsWithDefault(['bar', 'icon'], 'bar'),
-        }),
-      ),
-    ),
+  statusLabel: () => {
+    const shape = types.object({
+      jinja: types.optionalString(),
+      position: types.enumsWithDefault(['left', 'right'], 'right'),
+      // Which color the pill follows when its own `jinja` returns no explicit
+      // one (see HACore._repaintStatusLabel) - the bar carries the theme zones.
+      color_source: types.enumsWithDefault(['bar', 'icon'], 'bar'),
+    });
+    // _schema exposed like peakZone's: it is what lets the editor read these
+    // two enums off the live validator instead of restating them.
+    return Object.assign(types.optional(types.union(types.string, shape)), { _schema: shape._schema });
+  },
 
   // peak_marker: { window, type, opacity, min, max, average } (Card only).
   // _schema re-attached (types.optional doesn't forward it) so
