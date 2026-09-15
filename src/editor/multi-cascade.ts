@@ -71,14 +71,12 @@ const tally = (values: unknown[]): { value: unknown; count: number }[] => {
   return [...counts.values()];
 };
 
-// What the rows elect: the value most of them carry, and only if more than one
-// does - a value with a single copy describes one entity, not the stack. A tie
-// keeps whatever is already shared, so editing an unrelated row can't make the
-// winner flip back and forth.
-const elect = (values: unknown[], current: unknown): unknown => {
+// The value most rows carry, if it reaches the quorum. A tie keeps whatever is
+// already shared, so editing an unrelated row can't flip the winner.
+const elect = (values: unknown[], current: unknown, quorum: number): unknown => {
   const entries = tally(values);
   const best = Math.max(...entries.map((entry) => entry.count));
-  if (best < 2) return NO_WINNER;
+  if (best < quorum) return NO_WINNER;
   const winners = entries.filter((entry) => entry.count === best);
   return (winners.find((entry) => same(entry.value, current)) ?? winners[0]).value;
 };
@@ -88,7 +86,9 @@ const elect = (values: unknown[], current: unknown): unknown => {
 // election decides where a value lives, never what a row renders.
 const settle = (key: string, shared: Record<string, unknown>, rows: Record<string, unknown>[]) => {
   const values = rows.map((row) => (key in row ? row[key] : shared[key]));
-  const winner = elect(values, shared[key]);
+  // One copy doesn't make a rule - unless it is the only one: a lone row's
+  // setting describes the card, and the rows added next inherit it.
+  const winner = elect(values, shared[key], rows.length > 1 ? 2 : 1);
   const materialise = (row: Record<string, unknown>, index: number) => {
     if (values[index] === undefined) Reflect.deleteProperty(row, key);
     else row[key] = values[index];

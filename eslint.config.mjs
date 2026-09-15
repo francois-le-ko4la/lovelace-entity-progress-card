@@ -61,7 +61,7 @@ const sharedRules = {
   'no-console': ['error', { allow: ['debug', 'info', 'warn', 'error', 'groupCollapsed', 'groupEnd'] }],
   'import-x/no-cycle': 'error',
   'class-methods-use-this': ['error', {
-    exceptMethods: ['connectedCallback', 'disconnectedCallback', 'setConfig', '_validate'],
+    exceptMethods: ['connectedCallback', 'disconnectedCallback', 'setConfig', '_validate', '_settle'],
     enforceForClassFields: true,
   }],
 };

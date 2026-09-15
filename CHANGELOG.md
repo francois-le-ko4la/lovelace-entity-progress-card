@@ -144,6 +144,9 @@ shows the value that mark inherits rather than a built-in default.
 - **The editor's rows**: the decimal count sits beside the unit, the trend's up
   and down colors share a row, and an **Icon** heading separates the icon fields
   from the theme ones.
+- **[`peak_marker`][peak_marker]**: hiding a mark in the editor leaves nothing
+  behind in the YAML — the redundant `min: false` it used to write is gone.
+  Existing ones keep working.
 
 #### Rows that fill, and Home Assistant's own spacing
 
@@ -230,8 +233,23 @@ We'd rather know than have you go looking for a workaround on your own.
 
 ## What's new (1.6.3-rc3)
 
+### 🔧 Improvements
+
+- **Multi editor**: with a single row, what you set on it becomes the card's
+  shared default - the rows you add next inherit it instead of starting bare.
+- **[`peak_marker`][peak_marker]**: turning a mark off writes the key away
+  instead of `min: false`; a `watermark` side keeps its `false`, which is the
+  only thing that hides it.
+
 ### 🐛 Fixes
 
+- **[`reverse_secondary_info_row`][reverse_secondary_info_row]** had no effect
+  on a Multi row: it was reset on every save. It applies now, on the row's own
+  horizontal layout.
+- **Multi editor**: a shared default no row carried any more was never dropped
+  from the card level.
+- **Multi editor**: adding, deleting or reordering a row left the shared level
+  as it was - a value the remaining rows now agreed on didn't rise.
 - **[`height`][height]**: switching the field into its custom mode overwrote the
   length that was set, and leaving the mode cleared it. The value is put aside
   and handed back instead, like every other toggle in the editor.

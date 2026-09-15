@@ -500,6 +500,9 @@ type OverrideCascadeAdapter<K extends string> = {
   // as often as not, and counting an absent one as "disagrees" kept every
   // value stuck on its own mark, global side empty.
   isActive: (config: LovelaceConfig, key: K) => boolean;
+  // Absent means hidden here (peak's marks are opt-in), so turning one off
+  // drops the key; a watermark side is shown unless `false`, which it keeps.
+  optIn?: boolean;
   // What this family lets a mark override. watermark has `as` (its thresholds
   // are user-supplied, so how to read them is a choice); peak_marker's come
   // from history and have nothing to interpret.
@@ -647,6 +650,7 @@ const markToggleField = <K extends string>(
   const { parentKey } = adapter;
   const toggleKey = `${parentKey}.${key}_toggle`;
   const draftKey = `_${parentKey}_${key}_hidden_draft`;
+  const hidden = adapter.optIn ? undefined : false;
   return {
     [toggleKey]: EditorFieldsType.toggle(toggleKey, {
       virtual: true,
@@ -654,7 +658,7 @@ const markToggleField = <K extends string>(
       resolveVirtual: isShown,
       onVirtualChange: (value: boolean, config: LovelaceConfig) => ({
         ...config,
-        [parentKey]: { ...config[parentKey], [key]: value ? (config[draftKey] ?? shownValue) : false },
+        [parentKey]: { ...config[parentKey], [key]: value ? (config[draftKey] ?? shownValue) : hidden },
         [draftKey]: value ? undefined : config[parentKey]?.[key],
       }),
     }),
@@ -813,6 +817,7 @@ const PEAK_MARKER_CASCADE: OverrideCascadeAdapter<(typeof PEAK_MARKS)[number]> =
     return raw !== undefined && raw !== false;
   },
   defaults: SCHEMA_DEFAULTS.peakMarker,
+  optIn: true,
   // No `as`: a peak's value comes from history, there is no threshold to read
   // one way or the other.
   cascade: SHARED_CASCADE('peak_marker_type'),
@@ -832,6 +837,7 @@ const PEAK_RANGE_CASCADE: OverrideCascadeAdapter<'range'> = {
     return raw !== undefined && raw !== false;
   },
   defaults: { ...SCHEMA_DEFAULTS.peakMarker, type: SCHEMA_DEFAULTS.peakMarker.rangeType },
+  optIn: true,
   cascade: [
     {
       field: 'type',

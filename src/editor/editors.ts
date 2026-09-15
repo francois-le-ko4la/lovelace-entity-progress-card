@@ -75,6 +75,12 @@ class MultiEditorBase extends EditorBase {
   #sub: SubEditorElement | null = null;
   #back: HTMLElement | null = null;
 
+  // Where a value belongs depends on the rows there are, so adding, removing
+  // or reordering one settles the shared level exactly like editing one does.
+  _settle(config: LovelaceConfig): LovelaceConfig {
+    return cascade(config);
+  }
+
   connectedCallback() {
     super.connectedCallback();
     this.addEventListener(EDIT_ROW_EVENT, this.#onEditRow as EventListener);
@@ -140,7 +146,7 @@ class MultiEditorBase extends EditorBase {
     const rows = rowsOf(config);
     rows[index] = Object.fromEntries(Object.entries(rowConfig).filter(([key]) => isRowOption(key) || key === 'entity'));
     const next = cascade({ ...config, entities: rows } as unknown as LovelaceConfig);
-    this._applyConfigPatch(next);
+    this._replaceConfig(next);
 
     // Home Assistant closes this loop for a top-level editor: config-changed
     // goes out, setConfig comes back, the fields re-read themselves. Nothing

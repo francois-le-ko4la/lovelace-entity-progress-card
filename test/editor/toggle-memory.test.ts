@@ -51,14 +51,18 @@ type Field = {
   resolveVirtual?: (config: LovelaceConfig) => unknown;
 };
 
+// What `toggles()` hands back: only fields that carry both halves, so nothing
+// below has to assert its way past the optionals.
+type ToggleField = Field & Required<Pick<Field, 'onVirtualChange' | 'resolveVirtual'>>;
+
 const BASE = { type: 'custom:entity-progress-card', entity: TEST_ENTITY } as unknown as LovelaceConfig;
 
 const typeOf = (field: Field) => (typeof field.type === 'function' ? field.type(BASE) : field.type);
 const on = (field: Field) => (typeOf(field) === 'enabled_toggle' ? 'enabled' : true);
 const off = (field: Field) => (typeOf(field) === 'enabled_toggle' ? 'disabled' : false);
 
-const toggles = (): [string, Field][] => {
-  const found: [string, Field][] = [];
+const toggles = (): [string, ToggleField][] => {
+  const found: [string, ToggleField][] = [];
   const tree = EditorFactory.build({ template: false, badge: false }) as unknown as Record<
     string,
     { fields?: Record<string, Field> }
@@ -66,7 +70,8 @@ const toggles = (): [string, Field][] => {
   for (const section of Object.values(tree))
     for (const [name, field] of Object.entries(section.fields ?? {})) {
       const kind = typeOf(field);
-      if (field.onVirtualChange && (kind === 'toggle' || kind === 'enabled_toggle')) found.push([name, field]);
+      if (field.onVirtualChange && field.resolveVirtual && (kind === 'toggle' || kind === 'enabled_toggle'))
+        found.push([name, field as ToggleField]);
     }
   return found;
 };
@@ -84,10 +89,10 @@ const saved = (config: LovelaceConfig) =>
 
 // Away from wherever the toggle currently sits, then back to it -
 // `height_custom_toggle` reads off on a plain length, on for every other one.
-const roundTrip = (field: Field, config: LovelaceConfig) => {
-  const here = field.resolveVirtual!(config) ? on(field) : off(field);
+const roundTrip = (field: ToggleField, config: LovelaceConfig) => {
+  const here = field.resolveVirtual(config) ? on(field) : off(field);
   const there = here === on(field) ? off(field) : on(field);
-  return field.onVirtualChange!(here, field.onVirtualChange!(there, config));
+  return field.onVirtualChange(here, field.onVirtualChange(there, config));
 };
 
 // The key a toggle writes to: what it changed against a config with the
@@ -106,13 +111,13 @@ describe('the editor gives back what a toggle put away', () => {
 
   for (const [name, field] of toggles()) {
     test(`${name}: flipping away and back leaves the config as it was`, () => {
-      const turnedOn = field.onVirtualChange!(on(field), BASE);
+      const turnedOn = field.onVirtualChange(on(field), BASE);
       assert.equal(saved(roundTrip(field, turnedOn)), saved(turnedOn));
     });
   }
 
   for (const [name, field] of toggles()) {
-    const turnedOn = field.onVirtualChange!(on(field), BASE);
+    const turnedOn = field.onVirtualChange(on(field), BASE);
     const key = ownedKey(field, turnedOn);
     const setting = key ? A_USER_SETTING[key] : undefined;
     const held = turnedOn[key ?? ''];
@@ -132,7 +137,7 @@ describe('the editor gives back what a toggle put away', () => {
   test('every toggle that owns a settable key is covered by A_USER_SETTING', () => {
     const missing = new Set<string>();
     for (const [, field] of toggles()) {
-      const turnedOn = field.onVirtualChange!(on(field), BASE);
+      const turnedOn = field.onVirtualChange(on(field), BASE);
       const key = ownedKey(field, turnedOn);
       if (!key || typeof turnedOn[key] === 'boolean') continue;
       if (A_USER_SETTING[key] === undefined) missing.add(key);

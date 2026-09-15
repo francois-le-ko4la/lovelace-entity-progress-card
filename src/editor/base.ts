@@ -885,8 +885,10 @@ class EditorBase extends HTMLElement {
     return this.#config;
   }
 
-  _applyConfigPatch(patch: LovelaceConfig) {
-    this.#config = { ...this.#config, ...patch };
+  // Replaces, never merges: the Multi cascade's job includes taking a key off
+  // the shared level, and a spread would put it straight back.
+  _replaceConfig(next: LovelaceConfig) {
+    this.#config = next;
     this.#updateFields();
     this.#sendConfig(this.#config);
   }
@@ -967,7 +969,15 @@ class EditorBase extends HTMLElement {
   // latest config — each individual input event now only does O(1) work (store
   // + maybe schedule), so the browser can no longer fall behind regardless of
   // how fast native events fire. The 1-frame delay (~16ms) is not perceptible.
-  #sendConfig(config: LovelaceConfig) {
+  // Last word on a config before it leaves, for a subclass whose shape has to
+  // settle whatever caused the write - the Multi's shared level (editors.ts).
+  _settle(config: LovelaceConfig): LovelaceConfig {
+    return config;
+  }
+
+  #sendConfig(rawConfig: LovelaceConfig) {
+    const config = this._settle(rawConfig);
+    this.#config = config;
     // Strip _-prefixed UI state keys (editor-only, must never reach the saved
     // YAML) and any top-level key carrying a dot - no option here is ever
     // spelled that way, a nested one is a map. The only thing that ever wrote

@@ -20,17 +20,30 @@ const SHARED_ICON = 'mdi:printer';
 const CYAN = 'input_number.ink_cyan';
 
 describe('the Multi row cascade', () => {
-  test('a lone row keeps its own settings - one copy is never a default', () => {
+  test('a lone row sets the card - one copy is a rule when it is the only one', () => {
     const out = run({
-      decimal: 0,
-      entities: [{ entity: BLACK, name: BLACK_NAME, bar_color: 'black' }],
+      entities: [{ entity: BLACK, name: BLACK_NAME, bar_color: 'black', decimal: 0 }],
     });
-    assert.equal('name' in out, false, 'a single row must not push its name up');
-    assert.equal('bar_color' in out, false, 'nor its colour');
-    // Even a value that arrived already shared: with one row there is nobody
-    // to share it with, so it lands where it is actually read.
-    assert.equal('decimal' in out, false);
-    assert.deepEqual(out.entities, [{ entity: BLACK, name: BLACK_NAME, bar_color: 'black', decimal: 0 }]);
+    // Whoever configures the first row is describing the stack: the rows added
+    // next inherit it instead of being configured all over again.
+    assert.equal(out.bar_color, 'black');
+    assert.equal(out.decimal, 0);
+    // Except what tells one row from another - that stays where it belongs.
+    assert.equal('name' in out, false, 'a name can never be a shared default');
+    assert.deepEqual(out.entities, [{ entity: BLACK, name: BLACK_NAME }]);
+  });
+
+  test('a second row inherits what the first one settled, and adds nothing', () => {
+    const settled = run({ entities: [{ entity: BLACK, bar_color: 'black' }] });
+    const out = run({ ...settled, entities: [...(settled.entities as unknown[]), { entity: CYAN }] });
+    assert.equal(out.bar_color, 'black');
+    assert.deepEqual(out.entities, [{ entity: BLACK }, { entity: CYAN }]);
+  });
+
+  test('a lone row that contradicts the shared level wins it over', () => {
+    const out = run({ bar_color: 'black', entities: [{ entity: BLACK, bar_color: 'cyan' }] });
+    assert.equal(out.bar_color, 'cyan');
+    assert.deepEqual(out.entities, [{ entity: BLACK }]);
   });
 
   test('two rows that agree hand the value up, and stop repeating it', () => {

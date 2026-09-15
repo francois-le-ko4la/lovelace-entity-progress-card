@@ -1071,9 +1071,10 @@ function struct<T>(
   // nullish-coalesced to 'default' so Badge/Badge Template, which never have
   // that key at all, aren't wrongly treated as invalid).
   const applyReverseSecondaryInfoRowRule = (result: Record<string, unknown>) => {
+    const layout = result.layout ?? CARD.layout.orientations.horizontal.label;
     if (
       result.reverse_secondary_info_row &&
-      !(result.layout === CARD.layout.orientations.horizontal.label && (result.bar_position ?? 'default') === 'default')
+      !(layout === CARD.layout.orientations.horizontal.label && (result.bar_position ?? 'default') === 'default')
     ) {
       result.reverse_secondary_info_row = false;
     }
