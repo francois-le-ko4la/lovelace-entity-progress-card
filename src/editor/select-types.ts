@@ -5,6 +5,17 @@ import { DENSITY_COMPACT_BAR_POSITIONS, type SchemaVariant } from '../card/schem
 type SchemaLookup = { variant: SchemaVariant; field: string };
 const from = (variant: SchemaVariant, field: string): SchemaLookup => ({ variant, field });
 
+// Option values naming something the field list already names: the label is
+// borrowed instead of stored a second time (see EditorBase#localizedOptions).
+// Only where every language agreed on the very same string - a near-match would
+// silently retranslate it. Here rather than in base.ts so the dropdown test
+// reads the same table the editor does.
+const BORROWED_OPTION_LABELS: Record<string, Record<string, string>> = {
+  hide: { progress_bar: 'shared.bar', shape: 'force_circular_background_mode' },
+  status_label_color_source: { bar: 'shared.bar' },
+  value_source_mode: { entity: 'shared.ent' },
+};
+
 // A bare string names the translation group and offers all of it; a pair adds
 // the values to keep, either listed or read off the live schema.
 const SELECT_TYPES: Record<string, string | [group: string, keys: readonly string[] | SchemaLookup]> = {
@@ -38,5 +49,5 @@ const SELECT_TYPES: Record<string, string | [group: string, keys: readonly strin
   trend_indicator_basis: 'trend_indicator_basis',
 };
 
-export { SELECT_TYPES };
+export { SELECT_TYPES, BORROWED_OPTION_LABELS };
 export type { SchemaLookup };

@@ -32,7 +32,7 @@ import {
 import { lengthSliderSelector, lengthUnitSelector } from '../utils/length.js';
 import { durationSliderSelector } from '../utils/duration.js';
 import { isMarkOverride, THEME_ALIASES, schemaOptions, ACTION_FIELDS, type WatermarkMark } from '../card/schema.js';
-import { SELECT_TYPES, type SchemaLookup } from './select-types.js';
+import { BORROWED_OPTION_LABELS, SELECT_TYPES, type SchemaLookup } from './select-types.js';
 
 // Every dynamic editor field element built below (ha-selector, the chip
 // custom elements from chips.ts, the list editors from list-editors.ts)
@@ -226,14 +226,6 @@ class EditorBase extends HTMLElement {
   #log: LoggerInstance | null = null;
   // `declare`: EditorBase is never instantiated, every subclass has its own.
   declare _configHelper: BaseConfigHelper;
-// Option values naming something the field list already names: the label is
-  // borrowed instead of stored a second time. Only where every language agreed
-  // on the very same string - a near-match would silently retranslate it.
-  static #BORROWED_OPTION_LABELS: Record<string, Record<string, string>> = {
-    hide: { progress_bar: 'shared.bar', shape: 'force_circular_background_mode' },
-    status_label_color_source: { bar: 'shared.bar' },
-    value_source_mode: { entity: 'shared.ent' },
-  };
 
   // The `editor.option` node of the translations tree: one level deeper than
   // localizeGroup models (option group -> value -> label), so typed loosely as
@@ -251,15 +243,12 @@ class EditorBase extends HTMLElement {
     >;
     const borrow = (group: string) =>
       Object.fromEntries(
-        Object.entries(EditorBase.#BORROWED_OPTION_LABELS[group]).map(([value, key]) => [
-          value,
-          this.#labelFor(key) ?? value,
-        ]),
+        Object.entries(BORROWED_OPTION_LABELS[group]).map(([value, key]) => [value, this.#labelFor(key) ?? value]),
       );
     return Object.fromEntries(
       Object.entries(tree).map(([group, values]) => [
         group,
-        group in EditorBase.#BORROWED_OPTION_LABELS ? { ...borrow(group), ...values } : values,
+        group in BORROWED_OPTION_LABELS ? { ...borrow(group), ...values } : values,
       ]),
     );
   }

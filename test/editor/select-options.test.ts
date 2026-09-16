@@ -11,7 +11,7 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { SELECT_TYPES, type SchemaLookup } from '../../src/editor/select-types.js';
+import { BORROWED_OPTION_LABELS, SELECT_TYPES, type SchemaLookup } from '../../src/editor/select-types.js';
 import { schemaOptions } from '../../src/card/schema.js';
 import { TRANSLATION_KEYS } from '../../src/utils/translations.js';
 
@@ -19,9 +19,12 @@ import { TRANSLATION_KEYS } from '../../src/utils/translations.js';
 // `editor.option.bar_size.*` has a label for.
 const labelled = (group: string): string[] => {
   const prefix = `editor.option.${group}.`;
-  return (TRANSLATION_KEYS as readonly string[])
+  const own = (TRANSLATION_KEYS as readonly string[])
     .filter((key) => key.startsWith(prefix))
     .map((key) => key.slice(prefix.length));
+  // A value can name its label instead of carrying one (EditorBase#localizedOptions
+  // merges them in), so the group alone no longer answers "is this one labelled".
+  return [...own, ...Object.keys(BORROWED_OPTION_LABELS[group] ?? {})];
 };
 
 const isLookup = (source: unknown): source is SchemaLookup =>
