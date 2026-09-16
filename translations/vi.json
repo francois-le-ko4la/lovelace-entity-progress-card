@@ -1,16 +1,12 @@
 {
   "card": {
     "msg": {
-      "appliedDefaultValue": "Một giá trị mặc định đã được áp dụng tự động.",
-      "invalidDecimal": "Giá trị phải là một số thập phân hợp lệ.",
-      "invalidEnumValue": "Giá trị được cung cấp không nằm trong các tùy chọn được phép.",
+      "appliedDefaultValue": "Đã áp dụng giá trị mặc định.",
+      "invalidEnumValue": "Giá trị không được phép.",
       "invalidNoun": "Không hợp lệ hoặc sai định dạng: {noun}.",
-      "invalidStateContentEntry": "Một hoặc nhiều mục trong nội dung trạng thái không hợp lệ.",
-      "invalidTheme": "Chủ đề được chỉ định không xác định. Chủ đề mặc định sẽ được sử dụng.",
+      "invalidTheme": "Chủ đề không xác định.",
       "invalidType": "Loại mong đợi: {type}.",
-      "invalidUnionType": "Giá trị không khớp với bất kỳ loại nào được phép.",
-      "missingActionKey": "Một khóa bắt buộc bị thiếu trong đối tượng hành động.",
-      "missingRequiredProperty": "Thuộc tính bắt buộc bị thiếu.",
+      "missingRequiredProperty": "Thiếu thuộc tính bắt buộc.",
       "notFound": "Không tìm thấy trong HA: {noun}.",
       "words": {
         "nouns": {
@@ -24,6 +20,7 @@
           "array": "mảng",
           "boolean": "boolean",
           "number": "số",
+          "positiveinteger": "số nguyên dương",
           "object": "đối tượng",
           "string": "chuỗi"
         }
@@ -44,24 +41,20 @@
       "add_entity": "Thêm thực thể",
       "add_zone": "Thêm vùng",
       "alert_when": {
-        "above": "Cảnh báo khi trên",
+        "above": "Khi trên",
         "animation": "Hoạt ảnh",
-        "below": "Cảnh báo khi dưới",
-        "color": "Màu cảnh báo",
+        "below": "Khi dưới",
         "highlight": "Làm nổi bật",
         "label": "Nhãn",
         "above_mode": "Nguồn cảnh báo giới hạn trên",
         "below_mode": "Nguồn cảnh báo giới hạn dưới"
       },
-      "attribute": "Thuộc tính",
       "badge": {
         "toggle": "Huy hiệu",
-        "color_toggle": "Màu huy hiệu riêng"
+        "color_toggle": "Màu riêng"
       },
-      "bar_color": "Màu",
       "bar_color_mode": "Chế độ màu",
       "bar_effect_mode": "Hiệu ứng thanh",
-      "bar_group": "Thanh",
       "bar_max_width_toggle": "Chiều rộng tối đa của thanh",
       "bar_orientation": "Hướng",
       "bar_scale": "Tỷ lệ",
@@ -74,51 +67,39 @@
       "center_zero": "零点居中",
       "center_zero_growth_percent": "Tỷ lệ tăng trưởng",
       "center_zero_value": "Giá trị tâm",
-      "color": "Màu",
       "custom_info": "Thông tin phụ tùy chỉnh",
       "custom_theme": "Vùng chủ đề tùy chỉnh",
-      "decimal": "Độ chính xác hiển thị",
+      "decimal": "Độ chính xác",
       "density": "Mật độ",
-      "entity": "Thực thể",
-      "fast_refresh": "Làm mới nhanh (mỗi giây)",
-      "force_circular_background_mode": "Nền hình tròn của biểu tượng",
+      "fast_refresh": "Làm mới nhanh",
+      "force_circular_background_mode": "Nền hình tròn",
       "frameless": "Không viền",
       "height": "Chiều cao",
       "height_custom_toggle": "Chiều cao tự động",
       "hide_mode": "Ẩn",
       "icon": "Biểu tượng",
-      "icon_group": "Biểu tượng",
       "icon_animation": "Hoạt ảnh biểu tượng",
       "interpolate": "Nội suy màu sắc",
       "layout": "Bố cục nội dung",
       "marginless": "Không lề",
-      "mark_color": "Màu",
-      "max_value": "Giá trị tối đa",
-      "max_value_mode": "Nguồn giá trị tối đa",
       "migrate_config": "Di chuyển cấu hình",
-      "min_value": "Giá trị tối thiểu",
-      "min_value_mode": "Nguồn giá trị tối thiểu",
       "min_width": "Chiều rộng tối thiểu",
       "multiline": "Nhiều dòng",
       "name": "Tên",
       "name_info": "Thông tin tên tùy chỉnh",
       "opacity": "Độ mờ đục",
       "peak_marker": {
-        "min_toggle": "Hiện giá trị nhỏ nhất",
-        "max_toggle": "Hiện giá trị lớn nhất",
-        "average_toggle": "Hiện giá trị trung bình",
-        "range_toggle": "Hiện khoảng giá trị"
+        "average_toggle": "Trung bình",
+        "range_toggle": "Khoảng"
       },
-      "peak_marker_unsupported": "Dấu đỉnh cần thực thể sensor hoặc number không ghi đè thuộc tính, không phải timer hay counter — không khả dụng cho thực thể này.",
+      "peak_marker_unsupported": "Không khả dụng: cần thực thể sensor hoặc number không có thuộc tính.",
       "percent": "Phần trăm",
-      "position": "Vị trí",
       "reverse": "Đảo ngược bộ đếm thời gian",
       "reverse_secondary_info_row": "Hoán đổi thanh và văn bản",
       "secondary": "Thông tin phụ",
       "state_content": "Nội dung trạng thái",
       "status_label": {
         "color_source": "Nguồn màu",
-        "position": "Vị trí nhãn",
         "toggle": "Nhãn trạng thái"
       },
       "text_shadow": "Thêm bóng cho văn bản",
@@ -141,18 +122,14 @@
       "value_compact": "Giá trị rút gọn (1.2k)",
       "value_sign": "Hiển thị dấu (+/-)",
       "watermark": {
-        "high_toggle": "Hiện cao",
-        "low_toggle": "Hiện thấp",
-        "high": "Cao",
-        "low": "Thấp",
-        "low_mode": "Nguồn điểm đánh dấu thấp",
-        "high_mode": "Nguồn điểm đánh dấu cao"
+        "high_toggle": "Ngưỡng trên",
+        "low_toggle": "Ngưỡng dưới"
       },
       "window": "Cửa sổ thời gian",
       "entities": "Thực thể",
       "rows": "Số hàng",
       "line_size": "Độ dày đường",
-      "mark_defaults": "Giá trị mặc định dùng chung"
+      "mark_defaults": "Giá trị mặc định"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -194,18 +171,18 @@
         "shimmer_reverse": "Lấp lánh ngược"
       },
       "bar_orientation": {
-        "ltr": "Trái sang phải",
-        "rtl": "Phải sang trái",
-        "up": "Hướng lên"
+        "ltr": "LTR",
+        "rtl": "RTL",
+        "up": "UP"
       },
       "bar_position": {
         "background": "Nền thẻ",
-        "below": "Thanh bên dưới nội dung",
-        "bottom": "Thanh ở dưới cùng",
-        "compact_below": "Thanh gọn bên dưới (tên/giá trị trên một dòng)",
+        "below": "Bên dưới nội dung",
+        "bottom": "Ở dưới cùng",
+        "compact_below": "Gọn bên dưới",
         "default": "Mặc định",
-        "overlay": "Thanh phủ lên nội dung (overlay)",
-        "top": "Thanh ở trên cùng"
+        "overlay": "Phủ lên nội dung",
+        "top": "Ở trên cùng"
       },
       "bar_scale": {
         "linear": "Tuyến tính",
@@ -245,9 +222,7 @@
       "hide": {
         "icon": "Biểu tượng",
         "name": "Tên",
-        "progress_bar": "Thanh",
         "secondary_info": "Thông tin phụ",
-        "shape": "Nền tròn của biểu tượng",
         "unit": "Đơn vị",
         "value": "Giá trị"
       },
@@ -263,7 +238,7 @@
       },
       "icon_animation_mode": {
         "auto": "Tự động",
-        "template": "Mẫu"
+        "template": "Jinja"
       },
       "label_position": {
         "left": "Trái",
@@ -278,15 +253,14 @@
         "simple": "Đơn giản"
       },
       "status_label_color_source": {
-        "bar": "Thanh tiến trình",
         "icon": "Biểu tượng"
       },
       "theme": {
         "battery_adaptive": "Pin (thích ứng theo trạng thái sạc)",
-        "critical_when_extreme": "Nghiêm trọng khi cực đoan (mức bồn chứa, độ lệch...)",
+        "critical_when_extreme": "Nghiêm trọng khi cực đoan",
         "critical_when_extreme_center": "Nghiêm trọng khi cực đoan, căn giữa (center_zero)",
-        "critical_when_high": "Nghiêm trọng khi cao (CPU, RAM, mức sử dụng ổ đĩa...)",
-        "critical_when_low": "Nghiêm trọng khi thấp (pin...)",
+        "critical_when_high": "Nghiêm trọng khi cao",
+        "critical_when_low": "Nghiêm trọng khi thấp",
         "humidity": "Độ ẩm",
         "light": "Ánh sáng",
         "optimal_when_high": "Tối ưu khi cao",
@@ -314,8 +288,7 @@
         "space": "Khoảng trắng"
       },
       "value_source_mode": {
-        "entity": "Thực thể",
-        "jinja": "Mẫu",
+        "jinja": "Jinja",
         "standard": "Giá trị cố định"
       },
       "watermark_as": {
@@ -340,6 +313,15 @@
       "peak_marker": "Dấu đỉnh",
       "indicators": "Chỉ báo và nhãn",
       "alerts": "Cảnh báo"
+    },
+    "shared": {
+      "col": "Màu",
+      "pos": "Vị trí",
+      "attr": "Thuộc tính",
+      "min": "Nhỏ nhất",
+      "max": "Lớn nhất",
+      "bar": "Thanh",
+      "ent": "Thực thể"
     }
   }
 }

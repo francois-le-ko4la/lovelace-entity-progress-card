@@ -1,15 +1,11 @@
 {
   "card": {
     "msg": {
-      "appliedDefaultValue": "A default value has been applied automatically.",
-      "invalidDecimal": "The value must be a valid decimal number.",
-      "invalidEnumValue": "The provided value is not one of the allowed options.",
+      "appliedDefaultValue": "Default value applied.",
+      "invalidEnumValue": "Not an allowed value.",
       "invalidNoun": "Invalid or malformed: {noun}.",
-      "invalidStateContentEntry": "One or more entries in the state content are invalid.",
-      "invalidTheme": "The specified theme is unknown. Default theme will be used.",
+      "invalidTheme": "Unknown theme.",
       "invalidType": "Expected type: {type}.",
-      "invalidUnionType": "The value does not match any of the allowed types.",
-      "missingActionKey": "A required key is missing in the action object.",
       "missingRequiredProperty": "Required property is missing.",
       "notFound": "Not found in HA: {noun}.",
       "words": {
@@ -24,6 +20,7 @@
           "array": "array",
           "boolean": "boolean",
           "number": "number",
+          "positiveinteger": "positive integer",
           "object": "object",
           "string": "string"
         }
@@ -44,24 +41,20 @@
       "add_entity": "Add entity",
       "add_zone": "Add zone",
       "alert_when": {
-        "above": "Alert above",
+        "above": "Above",
         "animation": "Animation",
-        "below": "Alert below",
-        "color": "Alert color",
+        "below": "Below",
         "highlight": "Highlight",
         "label": "Label",
         "above_mode": "Above alert source",
         "below_mode": "Below alert source"
       },
-      "attribute": "Attribute",
       "badge": {
         "toggle": "Badge",
-        "color_toggle": "Independent badge color"
+        "color_toggle": "Independent color"
       },
-      "bar_color": "Color",
-      "bar_color_mode": "Bar color mode",
+      "bar_color_mode": "Color mode",
       "bar_effect_mode": "Bar effect",
-      "bar_group": "Bar",
       "bar_max_width_toggle": "Bar max width",
       "bar_orientation": "Orientation",
       "bar_scale": "Scale",
@@ -74,51 +67,39 @@
       "center_zero": "Zero at center",
       "center_zero_growth_percent": "Growth percentage",
       "center_zero_value": "Center value",
-      "color": "Color",
       "custom_info": "Custom secondary info",
       "custom_theme": "Custom theme zones",
-      "decimal": "Display precision",
+      "decimal": "Precision",
       "density": "Density",
-      "entity": "Entity",
-      "fast_refresh": "Fast refresh (per-second)",
-      "force_circular_background_mode": "Icon circular background",
+      "fast_refresh": "Fast refresh",
+      "force_circular_background_mode": "Circular background",
       "frameless": "Frameless",
       "height": "Height",
       "height_custom_toggle": "Auto height",
       "hide_mode": "Hide",
       "icon": "Icon",
-      "icon_group": "Icon",
       "icon_animation": "Icon animation",
       "interpolate": "Interpolate colors",
       "layout": "Content layout",
       "marginless": "Marginless",
-      "mark_color": "Color",
-      "max_value": "Maximum value",
-      "max_value_mode": "Max value source",
       "migrate_config": "Migrate config",
-      "min_value": "Minimum value",
-      "min_value_mode": "Min value source",
       "min_width": "Min width",
       "multiline": "Multiline",
       "name": "Name",
       "name_info": "Custom name info",
       "opacity": "Opacity",
       "peak_marker": {
-        "min_toggle": "Show minimum",
-        "max_toggle": "Show maximum",
-        "average_toggle": "Show average",
-        "range_toggle": "Show range"
+        "average_toggle": "Average",
+        "range_toggle": "Range"
       },
-      "peak_marker_unsupported": "Peak markers need a sensor or number entity, no attribute override, and not a timer or counter — not available for this entity.",
+      "peak_marker_unsupported": "Unavailable: needs a sensor or number entity without an attribute.",
       "percent": "Percentage",
-      "position": "Position",
       "reverse": "Reverse timer",
       "reverse_secondary_info_row": "Swap bar and text",
       "secondary": "Secondary info",
       "state_content": "State content",
       "status_label": {
         "color_source": "Color source",
-        "position": "Label position",
         "toggle": "Status label"
       },
       "text_shadow": "Add text shadow",
@@ -141,18 +122,14 @@
       "value_compact": "Compact value (1.2k)",
       "value_sign": "Show sign (+/-)",
       "watermark": {
-        "high_toggle": "Show high",
-        "low_toggle": "Show low",
-        "high": "High",
-        "low": "Low",
-        "low_mode": "Low marker source",
-        "high_mode": "High marker source"
+        "high_toggle": "High threshold",
+        "low_toggle": "Low threshold"
       },
       "window": "Time window",
       "entities": "Entities",
       "rows": "Rows",
       "line_size": "Line thickness",
-      "mark_defaults": "Shared defaults"
+      "mark_defaults": "Defaults"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -194,18 +171,18 @@
         "shimmer_reverse": "Shimmer reverse"
       },
       "bar_orientation": {
-        "ltr": "Left to Right",
-        "rtl": "Right to Left",
-        "up": "Up"
+        "ltr": "LTR",
+        "rtl": "RTL",
+        "up": "UP"
       },
       "bar_position": {
         "background": "Full card background",
-        "below": "Bar below content",
-        "bottom": "Bar on bottom",
-        "compact_below": "Compact bar below (name/value on one row)",
+        "below": "Below content",
+        "bottom": "On bottom",
+        "compact_below": "Compact below",
         "default": "Default",
-        "overlay": "Bar overlay on content",
-        "top": "Bar on top"
+        "overlay": "Overlay on content",
+        "top": "On top"
       },
       "bar_scale": {
         "linear": "Linear",
@@ -245,9 +222,7 @@
       "hide": {
         "icon": "Icon",
         "name": "Name",
-        "progress_bar": "Bar",
         "secondary_info": "Secondary info",
-        "shape": "Icon's circular background",
         "unit": "Unit",
         "value": "Value"
       },
@@ -263,7 +238,7 @@
       },
       "icon_animation_mode": {
         "auto": "Auto",
-        "template": "Template"
+        "template": "Jinja"
       },
       "label_position": {
         "left": "Left",
@@ -278,15 +253,14 @@
         "simple": "Simple"
       },
       "status_label_color_source": {
-        "bar": "Progress bar",
         "icon": "Icon"
       },
       "theme": {
         "battery_adaptive": "Battery (adapts to charging state)",
-        "critical_when_extreme": "Critical when Extreme (Tank level, deviation...)",
+        "critical_when_extreme": "Critical when Extreme",
         "critical_when_extreme_center": "Critical when Extreme, centered (center_zero)",
-        "critical_when_high": "Critical when High (CPU, RAM, disk usage...)",
-        "critical_when_low": "Critical when Low (Battery...)",
+        "critical_when_high": "Critical when High",
+        "critical_when_low": "Critical when Low",
         "humidity": "Humidity",
         "light": "Light",
         "optimal_when_high": "Optimal when High",
@@ -314,8 +288,7 @@
         "space": "Space"
       },
       "value_source_mode": {
-        "entity": "Entity",
-        "jinja": "Template",
+        "jinja": "Jinja",
         "standard": "Fixed value"
       },
       "watermark_as": {
@@ -340,6 +313,15 @@
       "peak_marker": "Peak markers",
       "indicators": "Indicators & Labels",
       "alerts": "Alerts"
+    },
+    "shared": {
+      "col": "Color",
+      "pos": "Position",
+      "attr": "Attribute",
+      "min": "Minimum",
+      "max": "Maximum",
+      "bar": "Bar",
+      "ent": "Entity"
     }
   }
 }

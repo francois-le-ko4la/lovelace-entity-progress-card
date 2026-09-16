@@ -1,16 +1,12 @@
 {
   "card": {
     "msg": {
-      "appliedDefaultValue": "Nilai default telah diterapkan secara otomatis.",
-      "invalidDecimal": "Nilai harus berupa angka desimal yang valid.",
-      "invalidEnumValue": "Nilai yang diberikan bukan salah satu dari opsi yang diizinkan.",
+      "appliedDefaultValue": "Nilai default diterapkan.",
+      "invalidEnumValue": "Nilai tidak diizinkan.",
       "invalidNoun": "Tidak valid atau salah format: {noun}.",
-      "invalidStateContentEntry": "Satu atau lebih entri dalam konten state tidak valid.",
-      "invalidTheme": "Tema yang ditentukan tidak dikenal. Tema default akan digunakan.",
+      "invalidTheme": "Tema tidak dikenal.",
       "invalidType": "Tipe yang diharapkan: {type}.",
-      "invalidUnionType": "Nilai tidak cocok dengan tipe yang diizinkan.",
-      "missingActionKey": "Kunci yang diperlukan hilang dalam objek aksi.",
-      "missingRequiredProperty": "Properti yang diperlukan hilang.",
+      "missingRequiredProperty": "Properti wajib tidak ada.",
       "notFound": "Tidak ditemukan di HA: {noun}.",
       "words": {
         "nouns": {
@@ -24,6 +20,7 @@
           "array": "array",
           "boolean": "boolean",
           "number": "angka",
+          "positiveinteger": "bilangan bulat positif",
           "object": "object",
           "string": "string"
         }
@@ -44,24 +41,20 @@
       "add_entity": "Tambahkan entitas",
       "add_zone": "Tambahkan zona",
       "alert_when": {
-        "above": "Peringatan di atas",
+        "above": "Di atas",
         "animation": "Animasi",
-        "below": "Peringatan di bawah",
-        "color": "Warna peringatan",
+        "below": "Di bawah",
         "highlight": "Sorotan",
         "label": "Label",
         "above_mode": "Sumber peringatan atas",
         "below_mode": "Sumber peringatan bawah"
       },
-      "attribute": "Atribut",
       "badge": {
         "toggle": "Lencana",
-        "color_toggle": "Warna lencana independen"
+        "color_toggle": "Warna independen"
       },
-      "bar_color": "Warna",
       "bar_color_mode": "Mode warna",
       "bar_effect_mode": "Efek pada bilah",
-      "bar_group": "Bilah",
       "bar_max_width_toggle": "Lebar maks. batang",
       "bar_orientation": "Orientasi",
       "bar_scale": "Skala",
@@ -74,51 +67,39 @@
       "center_zero": "Nol di tengah",
       "center_zero_growth_percent": "Persentase pertumbuhan",
       "center_zero_value": "Nilai tengah",
-      "color": "Warna",
       "custom_info": "Info sekunder kustom",
       "custom_theme": "Zona tema khusus",
-      "decimal": "Presisi tampilan",
+      "decimal": "Presisi",
       "density": "Kepadatan",
-      "entity": "Entitas",
-      "fast_refresh": "Penyegaran cepat (per detik)",
-      "force_circular_background_mode": "Latar belakang bulat ikon",
+      "fast_refresh": "Penyegaran cepat",
+      "force_circular_background_mode": "Latar belakang bulat",
       "frameless": "Tanpa bingkai",
       "height": "Tinggi",
       "height_custom_toggle": "Tinggi otomatis",
       "hide_mode": "Sembunyikan",
       "icon": "Ikon",
-      "icon_group": "Ikon",
       "icon_animation": "Animasi ikon",
       "interpolate": "Interpolasi warna",
       "layout": "Tata letak konten",
       "marginless": "Tanpa margin",
-      "mark_color": "Warna",
-      "max_value": "Nilai maksimum",
-      "max_value_mode": "Sumber nilai maksimum",
       "migrate_config": "Migrasikan konfigurasi",
-      "min_value": "Nilai minimum",
-      "min_value_mode": "Sumber nilai minimum",
       "min_width": "Lebar min.",
       "multiline": "Multibaris",
       "name": "Nama",
       "name_info": "Info nama kustom",
       "opacity": "Opasitas",
       "peak_marker": {
-        "min_toggle": "Tampilkan minimum",
-        "max_toggle": "Tampilkan maksimum",
-        "average_toggle": "Tampilkan rata-rata",
-        "range_toggle": "Tampilkan rentang"
+        "average_toggle": "Rata-rata",
+        "range_toggle": "Rentang"
       },
-      "peak_marker_unsupported": "Penanda puncak memerlukan entitas sensor atau number tanpa override atribut, yang bukan timer atau counter — tidak tersedia untuk entitas ini.",
+      "peak_marker_unsupported": "Tidak tersedia: perlu entitas sensor atau number tanpa atribut.",
       "percent": "Persentase",
-      "position": "Posisi",
       "reverse": "Timer terbalik",
       "reverse_secondary_info_row": "Tukar bilah dan teks",
       "secondary": "Informasi sekunder",
       "state_content": "Konten status",
       "status_label": {
         "color_source": "Sumber warna",
-        "position": "Posisi label",
         "toggle": "Label status"
       },
       "text_shadow": "Tambahkan bayangan teks",
@@ -141,18 +122,14 @@
       "value_compact": "Nilai ringkas (1.2k)",
       "value_sign": "Tampilkan tanda (+/-)",
       "watermark": {
-        "high_toggle": "Tampilkan tinggi",
-        "low_toggle": "Tampilkan rendah",
-        "high": "Tinggi",
-        "low": "Rendah",
-        "low_mode": "Sumber penanda rendah",
-        "high_mode": "Sumber penanda tinggi"
+        "high_toggle": "Ambang atas",
+        "low_toggle": "Ambang bawah"
       },
       "window": "Jendela waktu",
       "entities": "Entitas",
       "rows": "Baris",
       "line_size": "Ketebalan garis",
-      "mark_defaults": "Default bersama"
+      "mark_defaults": "Nilai default"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -194,18 +171,18 @@
         "shimmer_reverse": "Kilau terbalik"
       },
       "bar_orientation": {
-        "ltr": "Kiri ke kanan",
-        "rtl": "Kanan ke kiri",
-        "up": "Ke atas"
+        "ltr": "LTR",
+        "rtl": "RTL",
+        "up": "UP"
       },
       "bar_position": {
         "background": "Latar belakang kartu",
-        "below": "Bilah di bawah konten",
-        "bottom": "Bilah di bawah",
-        "compact_below": "Batang ringkas di bawah (nama/nilai dalam satu baris)",
+        "below": "Di bawah konten",
+        "bottom": "Di bawah",
+        "compact_below": "Ringkas di bawah",
         "default": "Bawaan",
-        "overlay": "Bilah ditumpangkan pada konten (overlay)",
-        "top": "Bilah di atas"
+        "overlay": "Ditumpangkan pada konten",
+        "top": "Di atas"
       },
       "bar_scale": {
         "linear": "Linear",
@@ -245,9 +222,7 @@
       "hide": {
         "icon": "Ikon",
         "name": "Nama",
-        "progress_bar": "Bilah",
         "secondary_info": "Info sekunder",
-        "shape": "Latar belakang bulat ikon",
         "unit": "Satuan",
         "value": "Nilai"
       },
@@ -263,7 +238,7 @@
       },
       "icon_animation_mode": {
         "auto": "Otomatis",
-        "template": "Templat"
+        "template": "Jinja"
       },
       "label_position": {
         "left": "Kiri",
@@ -278,15 +253,14 @@
         "simple": "Sederhana"
       },
       "status_label_color_source": {
-        "bar": "Bilah kemajuan",
         "icon": "Ikon"
       },
       "theme": {
         "battery_adaptive": "Baterai (menyesuaikan status pengisian daya)",
-        "critical_when_extreme": "Kritis saat ekstrem (level tangki, deviasi...)",
+        "critical_when_extreme": "Kritis saat ekstrem",
         "critical_when_extreme_center": "Kritis saat ekstrem, terpusat (center_zero)",
-        "critical_when_high": "Kritis saat tinggi (CPU, RAM, penggunaan disk...)",
-        "critical_when_low": "Kritis saat rendah (baterai...)",
+        "critical_when_high": "Kritis saat tinggi",
+        "critical_when_low": "Kritis saat rendah",
         "humidity": "Kelembaban",
         "light": "Cahaya",
         "optimal_when_high": "Optimal saat Tinggi",
@@ -314,8 +288,7 @@
         "space": "Spasi"
       },
       "value_source_mode": {
-        "entity": "Entitas",
-        "jinja": "Templat",
+        "jinja": "Jinja",
         "standard": "Nilai tetap"
       },
       "watermark_as": {
@@ -340,6 +313,15 @@
       "peak_marker": "Penanda puncak",
       "indicators": "Indikator & label",
       "alerts": "Peringatan"
+    },
+    "shared": {
+      "col": "Warna",
+      "pos": "Posisi",
+      "attr": "Atribut",
+      "min": "Minimum",
+      "max": "Maksimum",
+      "bar": "Bilah",
+      "ent": "Entitas"
     }
   }
 }

@@ -1,16 +1,12 @@
 {
   "card": {
     "msg": {
-      "appliedDefaultValue": "Alapértelmezett érték automatikusan alkalmazva.",
-      "invalidDecimal": "Az értéknek pozitív egész számnak kell lennie.",
-      "invalidEnumValue": "A megadott érték nem része az engedélyezett opcióknak.",
+      "appliedDefaultValue": "Alapértelmezett érték alkalmazva.",
+      "invalidEnumValue": "Nem engedélyezett érték.",
       "invalidNoun": "Érvénytelen vagy hibás: {noun}.",
-      "invalidStateContentEntry": "Az állapot tartalmának egy vagy több eleme érvénytelen.",
-      "invalidTheme": "Az adott téma ismeretlen. Az alapértelmezett téma lesz használva.",
+      "invalidTheme": "Ismeretlen téma.",
       "invalidType": "Várt típus: {type}.",
-      "invalidUnionType": "Az érték nem felel meg egyik engedélyezett típusnak sem.",
-      "missingActionKey": "Egy kötelező kulcs hiányzik az action objektumból.",
-      "missingRequiredProperty": "Egy kötelező tulajdonság hiányzik.",
+      "missingRequiredProperty": "Kötelező tulajdonság hiányzik.",
       "notFound": "Nem található a HA-ban: {noun}.",
       "words": {
         "nouns": {
@@ -24,6 +20,7 @@
           "array": "tömb",
           "boolean": "logikai",
           "number": "szám",
+          "positiveinteger": "pozitív egész szám",
           "object": "objektum",
           "string": "szöveg"
         }
@@ -44,24 +41,20 @@
       "add_entity": "Entitás hozzáadása",
       "add_zone": "Zóna hozzáadása",
       "alert_when": {
-        "above": "Riasztás felett",
+        "above": "Felett",
         "animation": "Animáció",
-        "below": "Riasztás alatt",
-        "color": "Riasztás színe",
+        "below": "Alatt",
         "highlight": "Kiemelés",
         "label": "Címke",
         "above_mode": "Felső riasztás forrása",
         "below_mode": "Alsó riasztás forrása"
       },
-      "attribute": "Attribútum",
       "badge": {
         "toggle": "Jelvény",
-        "color_toggle": "Független jelvényszín"
+        "color_toggle": "Független szín"
       },
-      "bar_color": "Szín",
       "bar_color_mode": "Szín mód",
       "bar_effect_mode": "Sáv effektus",
-      "bar_group": "Sáv",
       "bar_max_width_toggle": "Sáv max. szélessége",
       "bar_orientation": "Tájolás",
       "bar_scale": "Skála",
@@ -74,51 +67,39 @@
       "center_zero": "Nulla középen",
       "center_zero_growth_percent": "Növekedési százalék",
       "center_zero_value": "Középérték",
-      "color": "Szín",
       "custom_info": "Egyéni másodlagos info",
       "custom_theme": "Egyéni téma zónák",
       "decimal": "Pontosság",
       "density": "Sűrűség",
-      "entity": "Entitás",
-      "fast_refresh": "Gyors frissítés (másodpercenként)",
-      "force_circular_background_mode": "Ikon kör alakú háttere",
+      "fast_refresh": "Gyors frissítés",
+      "force_circular_background_mode": "Kör alakú háttér",
       "frameless": "Keret nélküli",
       "height": "Magasság",
       "height_custom_toggle": "Automatikus magasság",
       "hide_mode": "Elrejtés",
       "icon": "Ikon",
-      "icon_group": "Ikon",
       "icon_animation": "Ikon animáció",
       "interpolate": "Színinterpoláció",
       "layout": "Tartalom elrendezése",
       "marginless": "Margó nélküli",
-      "mark_color": "Szín",
-      "max_value": "Maximális érték",
-      "max_value_mode": "Maximumérték forrása",
       "migrate_config": "Konfiguráció migrálása",
-      "min_value": "Minimális érték",
-      "min_value_mode": "Minimumérték forrása",
       "min_width": "Min. szélesség",
       "multiline": "Többsoros",
       "name": "Név",
       "name_info": "Egyéni névinfo",
       "opacity": "Átlátszatlanság",
       "peak_marker": {
-        "min_toggle": "Minimum megjelenítése",
-        "max_toggle": "Maximum megjelenítése",
-        "average_toggle": "Átlag megjelenítése",
-        "range_toggle": "Tartomány megjelenítése"
+        "average_toggle": "Átlag",
+        "range_toggle": "Tartomány"
       },
-      "peak_marker_unsupported": "A csúcsjelölőkhöz sensor vagy number entitás szükséges attribútum-felülírás nélkül, amely nem timer és nem counter — ehhez az entitáshoz nem elérhető.",
+      "peak_marker_unsupported": "Nem érhető el: sensor vagy number entitás szükséges attribútum nélkül.",
       "percent": "Százalék",
-      "position": "Pozíció",
       "reverse": "Fordított időzítő",
       "reverse_secondary_info_row": "Cserélje fel a sávot és a szöveget",
       "secondary": "Másodlagos információ",
       "state_content": "Állapot tartalma",
       "status_label": {
         "color_source": "Szín forrása",
-        "position": "Címke pozíciója",
         "toggle": "Állapotcímke"
       },
       "text_shadow": "Szöveg árnyék hozzáadása",
@@ -141,18 +122,14 @@
       "value_compact": "Kompakt érték (1.2k)",
       "value_sign": "Előjel megjelenítése (+/-)",
       "watermark": {
-        "high_toggle": "Felső megjelenítése",
-        "low_toggle": "Alsó megjelenítése",
-        "high": "Felső",
-        "low": "Alsó",
-        "low_mode": "Alsó jelölő forrása",
-        "high_mode": "Felső jelölő forrása"
+        "high_toggle": "Felső küszöb",
+        "low_toggle": "Alsó küszöb"
       },
       "window": "Időablak",
       "entities": "Entitások",
       "rows": "Sorok",
       "line_size": "Vonalvastagság",
-      "mark_defaults": "Közös alapértelmezések"
+      "mark_defaults": "Alapértelmezések"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -194,18 +171,18 @@
         "shimmer_reverse": "Fordított csillogás"
       },
       "bar_orientation": {
-        "ltr": "Balról jobbra",
-        "rtl": "Jobbról balra",
-        "up": "Felfelé"
+        "ltr": "LTR",
+        "rtl": "RTL",
+        "up": "UP"
       },
       "bar_position": {
         "background": "Kártya háttér",
-        "below": "Sáv a tartalom alatt",
-        "bottom": "Sáv lent",
-        "compact_below": "Kompakt sáv alul (név/érték egy sorban)",
+        "below": "A tartalom alatt",
+        "bottom": "Lent",
+        "compact_below": "Kompakt alul",
         "default": "Alapértelmezett",
-        "overlay": "Sáv a tartalmon (overlay)",
-        "top": "Sáv fent"
+        "overlay": "A tartalmon",
+        "top": "Fent"
       },
       "bar_scale": {
         "linear": "Lineáris",
@@ -245,9 +222,7 @@
       "hide": {
         "icon": "Ikon",
         "name": "Név",
-        "progress_bar": "Sáv",
         "secondary_info": "Másodlagos info",
-        "shape": "Ikon körkörös háttere",
         "unit": "Egység",
         "value": "Érték"
       },
@@ -263,7 +238,7 @@
       },
       "icon_animation_mode": {
         "auto": "Automatikus",
-        "template": "Sablon"
+        "template": "Jinja"
       },
       "label_position": {
         "left": "Bal",
@@ -278,15 +253,14 @@
         "simple": "Egyszerű"
       },
       "status_label_color_source": {
-        "bar": "Folyamatsáv",
         "icon": "Ikon"
       },
       "theme": {
         "battery_adaptive": "Akkumulátor (alkalmazkodik a töltési állapothoz)",
-        "critical_when_extreme": "Kritikus szélsőértéknél (tartályszint, eltérés...)",
+        "critical_when_extreme": "Kritikus szélsőértéknél",
         "critical_when_extreme_center": "Kritikus szélsőértéknél, középre igazítva (center_zero)",
-        "critical_when_high": "Kritikus magas értéknél (CPU, RAM, lemezhasználat...)",
-        "critical_when_low": "Kritikus alacsony értéknél (akkumulátor...)",
+        "critical_when_high": "Kritikus magas értéknél",
+        "critical_when_low": "Kritikus alacsony értéknél",
         "humidity": "Páratartalom",
         "light": "Világos",
         "optimal_when_high": "Optimális magas értéknél",
@@ -314,8 +288,7 @@
         "space": "Szóköz"
       },
       "value_source_mode": {
-        "entity": "Entitás",
-        "jinja": "Sablon",
+        "jinja": "Jinja",
         "standard": "Rögzített érték"
       },
       "watermark_as": {
@@ -340,6 +313,15 @@
       "peak_marker": "Csúcsjelölők",
       "indicators": "Jelzők és címkék",
       "alerts": "Riasztások"
+    },
+    "shared": {
+      "col": "Szín",
+      "pos": "Pozíció",
+      "attr": "Attribútum",
+      "min": "Minimum",
+      "max": "Maximum",
+      "bar": "Sáv",
+      "ent": "Entitás"
     }
   }
 }

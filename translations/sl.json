@@ -1,15 +1,11 @@
 {
   "card": {
     "msg": {
-      "appliedDefaultValue": "Privzeta vrednost je bila samodejno uporabljena.",
-      "invalidDecimal": "Vrednost mora biti pozitivno celo število.",
-      "invalidEnumValue": "Podana vrednost ni med dovoljenimi možnostmi.",
+      "appliedDefaultValue": "Uporabljena privzeta vrednost.",
+      "invalidEnumValue": "Nedovoljena vrednost.",
       "invalidNoun": "Neveljavno ali okvarjeno: {noun}.",
-      "invalidStateContentEntry": "Eden ali več vnosov vsebine stanja je neveljavno.",
-      "invalidTheme": "Določena tema je neznana. Uporabila se bo privzeta tema.",
+      "invalidTheme": "Neznana tema.",
       "invalidType": "Pričakovan tip: {type}.",
-      "invalidUnionType": "Vrednost ne ustreza nobeni dovoljeni vrsti.",
-      "missingActionKey": "Manjka obvezni ključ v objektu akcije.",
       "missingRequiredProperty": "Manjka obvezna lastnost.",
       "notFound": "Ni najdeno v HA: {noun}.",
       "words": {
@@ -24,6 +20,7 @@
           "array": "polje",
           "boolean": "boolean",
           "number": "število",
+          "positiveinteger": "pozitivno celo število",
           "object": "objekt",
           "string": "niz"
         }
@@ -44,24 +41,20 @@
       "add_entity": "Dodaj entiteto",
       "add_zone": "Dodaj cono",
       "alert_when": {
-        "above": "Opozorilo nad",
+        "above": "Nad",
         "animation": "Animacija",
-        "below": "Opozorilo pod",
-        "color": "Barva opozorila",
+        "below": "Pod",
         "highlight": "Poudarek",
         "label": "Oznaka",
         "above_mode": "Vir zgornjega opozorila",
         "below_mode": "Vir spodnjega opozorila"
       },
-      "attribute": "Atribut",
       "badge": {
         "toggle": "Značka",
-        "color_toggle": "Neodvisna barva značke"
+        "color_toggle": "Neodvisna barva"
       },
-      "bar_color": "Barva",
       "bar_color_mode": "Barvni način",
       "bar_effect_mode": "Učinek vrstice",
-      "bar_group": "Vrstica",
       "bar_max_width_toggle": "Najv. širina vrstice",
       "bar_orientation": "Usmerjenost",
       "bar_scale": "Merilo",
@@ -74,51 +67,39 @@
       "center_zero": "Ni ničle na sredini",
       "center_zero_growth_percent": "Odstotek rasti",
       "center_zero_value": "Srednja vrednost",
-      "color": "Barva",
       "custom_info": "Prilagojena sekundarna informacija",
       "custom_theme": "Cone motiva po meri",
-      "decimal": "Natančnost prikaza",
+      "decimal": "Natančnost",
       "density": "Gostota",
-      "entity": "Entiteta",
-      "fast_refresh": "Hitro osveževanje (vsako sekundo)",
-      "force_circular_background_mode": "Okroglo ozadje ikone",
+      "fast_refresh": "Hitro osveževanje",
+      "force_circular_background_mode": "Okroglo ozadje",
       "frameless": "Brez okvirja",
       "height": "Višina",
       "height_custom_toggle": "Samodejna višina",
       "hide_mode": "Skrij",
       "icon": "Ikona",
-      "icon_group": "Ikona",
       "icon_animation": "Animacija ikone",
       "interpolate": "Interpolacija barv",
       "layout": "Postavitev vsebine",
       "marginless": "Brez roba",
-      "mark_color": "Barva",
-      "max_value": "Največja vrednost",
-      "max_value_mode": "Vir največje vrednosti",
       "migrate_config": "Preseli konfiguracijo",
-      "min_value": "Najmanjša vrednost",
-      "min_value_mode": "Vir najmanjše vrednosti",
       "min_width": "Najm. širina",
       "multiline": "Večvrstično",
       "name": "Ime",
       "name_info": "Prilagojena informacija o imenu",
       "opacity": "Prekrivnost",
       "peak_marker": {
-        "min_toggle": "Prikaži minimum",
-        "max_toggle": "Prikaži maksimum",
-        "average_toggle": "Prikaži povprečje",
-        "range_toggle": "Prikaži razpon"
+        "average_toggle": "Povprečje",
+        "range_toggle": "Razpon"
       },
-      "peak_marker_unsupported": "Oznake vrhov potrebujejo entiteto sensor ali number brez prepisa atributa, ki ni timer ali counter — za to entiteto ni na voljo.",
+      "peak_marker_unsupported": "Ni na voljo: potrebuje entiteto sensor ali number brez atributa.",
       "percent": "Odstotek",
-      "position": "Položaj",
       "reverse": "Obrnjen časovnik",
       "reverse_secondary_info_row": "Zamenjaj vrstico in besedilo",
       "secondary": "Sekundarne informacije",
       "state_content": "Vsebina stanja",
       "status_label": {
         "color_source": "Vir barve",
-        "position": "Položaj oznake",
         "toggle": "Oznaka stanja"
       },
       "text_shadow": "Dodaj senco besedila",
@@ -141,18 +122,14 @@
       "value_compact": "Kompaktna vrednost (1.2k)",
       "value_sign": "Prikaži predznak (+/-)",
       "watermark": {
-        "high_toggle": "Prikaži zgornjo",
-        "low_toggle": "Prikaži spodnjo",
-        "high": "Zgornja",
-        "low": "Spodnja",
-        "low_mode": "Vir spodnje oznake",
-        "high_mode": "Vir zgornje oznake"
+        "high_toggle": "Zgornji prag",
+        "low_toggle": "Spodnji prag"
       },
       "window": "Časovno okno",
       "entities": "Entitete",
       "rows": "Vrstice",
       "line_size": "Debelina črte",
-      "mark_defaults": "Skupne privzete vrednosti"
+      "mark_defaults": "Privzete vrednosti"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -194,18 +171,18 @@
         "shimmer_reverse": "Obrnjen blesk"
       },
       "bar_orientation": {
-        "ltr": "Levo proti desni",
-        "rtl": "Desno proti levi",
-        "up": "Navzgor"
+        "ltr": "LTR",
+        "rtl": "RTL",
+        "up": "UP"
       },
       "bar_position": {
         "background": "Ozadje kartice",
-        "below": "Vrstica pod vsebino",
-        "bottom": "Vrstica spodaj",
-        "compact_below": "Kompaktna vrstica spodaj (ime/vrednost v eni vrstici)",
+        "below": "Pod vsebino",
+        "bottom": "Spodaj",
+        "compact_below": "Kompaktna spodaj",
         "default": "Privzeto",
-        "overlay": "Vrstica čez vsebino (overlay)",
-        "top": "Vrstica zgoraj"
+        "overlay": "Čez vsebino",
+        "top": "Zgoraj"
       },
       "bar_scale": {
         "linear": "Linearna",
@@ -245,9 +222,7 @@
       "hide": {
         "icon": "Ikona",
         "name": "Ime",
-        "progress_bar": "Vrstica",
         "secondary_info": "Sekundarni info",
-        "shape": "Krožno ozadje ikone",
         "unit": "Enota",
         "value": "Vrednost"
       },
@@ -263,7 +238,7 @@
       },
       "icon_animation_mode": {
         "auto": "Samodejno",
-        "template": "Predloga"
+        "template": "Jinja"
       },
       "label_position": {
         "left": "Levo",
@@ -278,15 +253,14 @@
         "simple": "Preprosto"
       },
       "status_label_color_source": {
-        "bar": "Vrstica napredka",
         "icon": "Ikona"
       },
       "theme": {
         "battery_adaptive": "Baterija (se prilagaja stanju polnjenja)",
-        "critical_when_extreme": "Kritično pri skrajni vrednosti (nivo rezervoarja, odstopanje...)",
+        "critical_when_extreme": "Kritično pri skrajni vrednosti",
         "critical_when_extreme_center": "Kritično pri skrajni vrednosti, sredinsko (center_zero)",
-        "critical_when_high": "Kritično pri visoki vrednosti (CPU, RAM, uporaba diska...)",
-        "critical_when_low": "Kritično pri nizki vrednosti (baterija...)",
+        "critical_when_high": "Kritično pri visoki vrednosti",
+        "critical_when_low": "Kritično pri nizki vrednosti",
         "humidity": "Vlažnost",
         "light": "Svetla",
         "optimal_when_high": "Optimalno pri visokih vrednostih",
@@ -314,8 +288,7 @@
         "space": "Presledek"
       },
       "value_source_mode": {
-        "entity": "Entiteta",
-        "jinja": "Predloga",
+        "jinja": "Jinja",
         "standard": "Fiksna vrednost"
       },
       "watermark_as": {
@@ -340,6 +313,15 @@
       "peak_marker": "Oznake vrhov",
       "indicators": "Kazalniki in oznake",
       "alerts": "Opozorila"
+    },
+    "shared": {
+      "col": "Barva",
+      "pos": "Položaj",
+      "attr": "Atribut",
+      "min": "Minimum",
+      "max": "Maksimum",
+      "bar": "Vrstica",
+      "ent": "Entiteta"
     }
   }
 }

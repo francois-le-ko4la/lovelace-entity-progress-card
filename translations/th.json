@@ -1,15 +1,11 @@
 {
   "card": {
     "msg": {
-      "appliedDefaultValue": "ค่าเริ่มต้นถูกนำไปใช้โดยอัตโนมัติ",
-      "invalidDecimal": "ค่าต้องเป็นตัวเลขทศนิยมที่ถูกต้อง",
-      "invalidEnumValue": "ค่าที่ให้มาไม่ใช่หนึ่งในตัวเลือกที่อนุญาต",
+      "appliedDefaultValue": "ใช้ค่าเริ่มต้นแล้ว",
+      "invalidEnumValue": "ค่าไม่ได้รับอนุญาต",
       "invalidNoun": "ไม่ถูกต้องหรือมีรูปแบบผิดพลาด: {noun}",
-      "invalidStateContentEntry": "หนึ่งหรือหลายรายการในเนื้อหาสถานะไม่ถูกต้อง",
-      "invalidTheme": "ธีมที่ระบุไม่รู้จัก จะใช้ธีมเริ่มต้น",
+      "invalidTheme": "ไม่รู้จักธีม",
       "invalidType": "ประเภทที่คาดไว้: {type}",
-      "invalidUnionType": "ค่าไม่ตรงกับประเภทที่อนุญาตใด ๆ",
-      "missingActionKey": "ขาดคีย์ที่จำเป็นในออบเจ็กต์แอ็กชัน",
       "missingRequiredProperty": "ขาดคุณสมบัติที่จำเป็น",
       "notFound": "ไม่พบใน HA: {noun}",
       "words": {
@@ -24,6 +20,7 @@
           "array": "อาร์เรย์",
           "boolean": "บูลีน",
           "number": "ตัวเลข",
+          "positiveinteger": "จำนวนเต็มบวก",
           "object": "ออบเจ็กต์",
           "string": "สตริง"
         }
@@ -44,24 +41,20 @@
       "add_entity": "เพิ่มเอนทิตี",
       "add_zone": "เพิ่มโซน",
       "alert_when": {
-        "above": "แจ้งเตือนเมื่อสูงกว่า",
+        "above": "เมื่อสูงกว่า",
         "animation": "แอนิเมชัน",
-        "below": "แจ้งเตือนเมื่อต่ำกว่า",
-        "color": "สีการแจ้งเตือน",
+        "below": "เมื่อต่ำกว่า",
         "highlight": "ไฮไลต์",
         "label": "ป้ายกำกับ",
         "above_mode": "แหล่งการแจ้งเตือนขอบบน",
         "below_mode": "แหล่งการแจ้งเตือนขอบล่าง"
       },
-      "attribute": "แอตทริบิวต์",
       "badge": {
         "toggle": "ป้าย",
-        "color_toggle": "สีป้ายแยกต่างหาก"
+        "color_toggle": "สีแยกต่างหาก"
       },
-      "bar_color": "สี",
       "bar_color_mode": "โหมดสี",
       "bar_effect_mode": "เอฟเฟกต์บนแถบ",
-      "bar_group": "แถบ",
       "bar_max_width_toggle": "ความกว้างสูงสุดของแถบ",
       "bar_orientation": "ทิศทาง",
       "bar_scale": "มาตราส่วน",
@@ -74,51 +67,39 @@
       "center_zero": "Sıfırı ortala",
       "center_zero_growth_percent": "เปอร์เซ็นต์การเติบโต",
       "center_zero_value": "ค่ากึ่งกลาง",
-      "color": "สี",
       "custom_info": "ข้อมูลรองที่กำหนดเอง",
       "custom_theme": "โซนธีมกำหนดเอง",
-      "decimal": "Display precision",
+      "decimal": "ความแม่นยำ",
       "density": "ความหนาแน่น",
-      "entity": "เอนทิตี",
-      "fast_refresh": "รีเฟรชเร็ว (ทุกวินาที)",
-      "force_circular_background_mode": "พื้นหลังวงกลมของไอคอน",
+      "fast_refresh": "รีเฟรชเร็ว",
+      "force_circular_background_mode": "พื้นหลังวงกลม",
       "frameless": "ไม่มีกรอบ",
       "height": "ความสูง",
       "height_custom_toggle": "ความสูงอัตโนมัติ",
       "hide_mode": "ซ่อน",
       "icon": "ไอคอน",
-      "icon_group": "ไอคอน",
       "icon_animation": "แอนิเมชันไอคอน",
       "interpolate": "การสอดแทรกสี",
       "layout": "รูปแบบเนื้อหา",
       "marginless": "ไม่มีระยะขอบ",
-      "mark_color": "สี",
-      "max_value": "ค่าสูงสุด",
-      "max_value_mode": "แหล่งค่าสูงสุด",
       "migrate_config": "ย้ายการตั้งค่า",
-      "min_value": "ค่าต่ำสุด",
-      "min_value_mode": "แหล่งค่าต่ำสุด",
       "min_width": "ความกว้างต่ำสุด",
       "multiline": "หลายบรรทัด",
       "name": "ชื่อ",
       "name_info": "ข้อมูลชื่อที่กำหนดเอง",
       "opacity": "ความทึบ",
       "peak_marker": {
-        "min_toggle": "แสดงค่าต่ำสุด",
-        "max_toggle": "แสดงค่าสูงสุด",
-        "average_toggle": "แสดงค่าเฉลี่ย",
-        "range_toggle": "แสดงช่วงค่า"
+        "average_toggle": "ค่าเฉลี่ย",
+        "range_toggle": "ช่วงค่า"
       },
-      "peak_marker_unsupported": "เครื่องหมายจุดสูงสุดต้องใช้เอนทิตี sensor หรือ number โดยไม่มีการเขียนทับแอตทริบิวต์ และไม่ใช่ timer หรือ counter — ไม่พร้อมใช้งานสำหรับเอนทิตีนี้",
+      "peak_marker_unsupported": "ไม่พร้อมใช้งาน: ต้องใช้เอนทิตี sensor หรือ number โดยไม่มีแอตทริบิวต์",
       "percent": "เปอร์เซ็นต์",
-      "position": "ตำแหน่ง",
       "reverse": "กลับเวลานับถอยหลัง",
       "reverse_secondary_info_row": "แถบและข้อความสลับกัน",
       "secondary": "ข้อมูลรอง",
       "state_content": "เนื้อหาของสถานะ",
       "status_label": {
         "color_source": "แหล่งสี",
-        "position": "ตำแหน่งป้ายกำกับ",
         "toggle": "ป้ายสถานะ"
       },
       "text_shadow": "เพิ่มเงาให้ข้อความ",
@@ -141,18 +122,14 @@
       "value_compact": "ค่าแบบย่อ (1.2k)",
       "value_sign": "แสดงเครื่องหมาย (+/-)",
       "watermark": {
-        "high_toggle": "แสดงสูง",
-        "low_toggle": "แสดงต่ำ",
-        "high": "สูง",
-        "low": "ต่ำ",
-        "low_mode": "แหล่งเครื่องหมายต่ำ",
-        "high_mode": "แหล่งเครื่องหมายสูง"
+        "high_toggle": "เกณฑ์สูง",
+        "low_toggle": "เกณฑ์ต่ำ"
       },
       "window": "ช่วงเวลา",
       "entities": "เอนทิตี",
       "rows": "จำนวนแถว",
       "line_size": "ความหนาของเส้น",
-      "mark_defaults": "ค่าเริ่มต้นร่วม"
+      "mark_defaults": "ค่าเริ่มต้น"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -194,18 +171,18 @@
         "shimmer_reverse": "แวววาวย้อน"
       },
       "bar_orientation": {
-        "ltr": "ซ้ายไปขวา",
-        "rtl": "ขวาไปซ้าย",
-        "up": "ขึ้นบน"
+        "ltr": "LTR",
+        "rtl": "RTL",
+        "up": "UP"
       },
       "bar_position": {
         "background": "พื้นหลังการ์ด",
-        "below": "แถบใต้เนื้อหา",
-        "bottom": "แถบด้านล่าง",
-        "compact_below": "แถบกะทัดรัดด้านล่าง (ชื่อ/ค่าในบรรทัดเดียว)",
+        "below": "ใต้เนื้อหา",
+        "bottom": "ด้านล่าง",
+        "compact_below": "กะทัดรัดด้านล่าง",
         "default": "ค่าเริ่มต้น",
-        "overlay": "แถบซ้อนทับเนื้อหา (overlay)",
-        "top": "แถบด้านบน"
+        "overlay": "ซ้อนทับเนื้อหา",
+        "top": "ด้านบน"
       },
       "bar_scale": {
         "linear": "เชิงเส้น",
@@ -245,9 +222,7 @@
       "hide": {
         "icon": "ไอคอน",
         "name": "ชื่อ",
-        "progress_bar": "แถบ",
         "secondary_info": "ข้อมูลรอง",
-        "shape": "พื้นหลังวงกลมของไอคอน",
         "unit": "หน่วย",
         "value": "ค่า"
       },
@@ -263,7 +238,7 @@
       },
       "icon_animation_mode": {
         "auto": "อัตโนมัติ",
-        "template": "เทมเพลต"
+        "template": "Jinja"
       },
       "label_position": {
         "left": "ซ้าย",
@@ -278,15 +253,14 @@
         "simple": "ธรรมดา"
       },
       "status_label_color_source": {
-        "bar": "แถบความคืบหน้า",
         "icon": "ไอคอน"
       },
       "theme": {
         "battery_adaptive": "แบตเตอรี่ (ปรับตามสถานะการชาร์จ)",
-        "critical_when_extreme": "วิกฤตเมื่อค่าสุดขั้ว (ระดับถัง, ค่าเบี่ยงเบน...)",
+        "critical_when_extreme": "วิกฤตเมื่อค่าสุดขั้ว",
         "critical_when_extreme_center": "วิกฤตเมื่อค่าสุดขั้ว, จัดกึ่งกลาง (center_zero)",
-        "critical_when_high": "วิกฤตเมื่อค่าสูง (CPU, RAM, การใช้ดิสก์...)",
-        "critical_when_low": "วิกฤตเมื่อค่าต่ำ (แบตเตอรี่...)",
+        "critical_when_high": "วิกฤตเมื่อค่าสูง",
+        "critical_when_low": "วิกฤตเมื่อค่าต่ำ",
         "humidity": "ความชื้น",
         "light": "แสง",
         "optimal_when_high": "เหมาะสมเมื่อสูง",
@@ -314,8 +288,7 @@
         "space": "เว้นวรรค"
       },
       "value_source_mode": {
-        "entity": "เอนทิตี",
-        "jinja": "เทมเพลต",
+        "jinja": "Jinja",
         "standard": "ค่าคงที่"
       },
       "watermark_as": {
@@ -340,6 +313,15 @@
       "peak_marker": "เครื่องหมายค่าสูงสุด",
       "indicators": "ตัวบ่งชี้และป้ายกำกับ",
       "alerts": "การแจ้งเตือน"
+    },
+    "shared": {
+      "col": "สี",
+      "pos": "ตำแหน่ง",
+      "attr": "แอตทริบิวต์",
+      "min": "ค่าต่ำสุด",
+      "max": "ค่าสูงสุด",
+      "bar": "แถบ",
+      "ent": "เอนทิตี"
     }
   }
 }

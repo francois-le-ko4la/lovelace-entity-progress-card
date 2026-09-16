@@ -1,15 +1,11 @@
 {
   "card": {
     "msg": {
-      "appliedDefaultValue": "Predvolená hodnota bola automaticky použitá.",
-      "invalidDecimal": "Hodnota musí byť kladné celé číslo.",
-      "invalidEnumValue": "Zadaná hodnota nie je súčasťou povolených možností.",
+      "appliedDefaultValue": "Použitá predvolená hodnota.",
+      "invalidEnumValue": "Nepovolená hodnota.",
       "invalidNoun": "Neplatné alebo poškodené: {noun}.",
-      "invalidStateContentEntry": "Jedna alebo viac položiek obsahu stavu je neplatných.",
-      "invalidTheme": "Zadaná téma je neznáma. Použije sa predvolená téma.",
+      "invalidTheme": "Neznáma téma.",
       "invalidType": "Očakávaný typ: {type}.",
-      "invalidUnionType": "Hodnota nezodpovedá žiadnemu povolenému typu.",
-      "missingActionKey": "Chýba povinný kľúč v objekte akcie.",
       "missingRequiredProperty": "Chýba povinná vlastnosť.",
       "notFound": "Nenájdené v HA: {noun}.",
       "words": {
@@ -24,6 +20,7 @@
           "array": "pole",
           "boolean": "boolean",
           "number": "číslo",
+          "positiveinteger": "kladné celé číslo",
           "object": "objekt",
           "string": "reťazec"
         }
@@ -44,24 +41,20 @@
       "add_entity": "Pridať entitu",
       "add_zone": "Pridať zónu",
       "alert_when": {
-        "above": "Upozornenie nad",
+        "above": "Nad",
         "animation": "Animácia",
-        "below": "Upozornenie pod",
-        "color": "Farba upozornenia",
+        "below": "Pod",
         "highlight": "Zvýraznenie",
         "label": "Popisok",
         "above_mode": "Zdroj horného upozornenia",
         "below_mode": "Zdroj dolného upozornenia"
       },
-      "attribute": "Atribút",
       "badge": {
         "toggle": "Odznak",
-        "color_toggle": "Nezávislá farba odznaku"
+        "color_toggle": "Nezávislá farba"
       },
-      "bar_color": "Farba",
       "bar_color_mode": "Farebný režim",
       "bar_effect_mode": "Efekt pruhu",
-      "bar_group": "Pruh",
       "bar_max_width_toggle": "Max. šírka pruhu",
       "bar_orientation": "Orientácia",
       "bar_scale": "Mierka",
@@ -74,51 +67,39 @@
       "center_zero": "Nula v strede",
       "center_zero_growth_percent": "Percento rastu",
       "center_zero_value": "Hodnota stredu",
-      "color": "Farba",
       "custom_info": "Vlastné sekundárne info",
       "custom_theme": "Zóny vlastnej témy",
-      "decimal": "Presnosť zobrazenia",
+      "decimal": "Presnosť",
       "density": "Hustota",
-      "entity": "Entita",
-      "fast_refresh": "Rýchle obnovenie (každú sekundu)",
-      "force_circular_background_mode": "Kruhové pozadie ikony",
+      "fast_refresh": "Rýchle obnovenie",
+      "force_circular_background_mode": "Kruhové pozadie",
       "frameless": "Bez rámu",
       "height": "Výška",
       "height_custom_toggle": "Automatická výška",
       "hide_mode": "Skryť",
       "icon": "Ikona",
-      "icon_group": "Ikona",
       "icon_animation": "Animácia ikony",
       "interpolate": "Interpolácia farieb",
       "layout": "Rozloženie obsahu",
       "marginless": "Bez okraja",
-      "mark_color": "Farba",
-      "max_value": "Maximálna hodnota",
-      "max_value_mode": "Zdroj maximálnej hodnoty",
       "migrate_config": "Migrovať konfiguráciu",
-      "min_value": "Minimálna hodnota",
-      "min_value_mode": "Zdroj minimálnej hodnoty",
       "min_width": "Min. šírka",
       "multiline": "Viacriadkové",
       "name": "Názov",
       "name_info": "Vlastné info názvu",
       "opacity": "Krytie",
       "peak_marker": {
-        "min_toggle": "Zobraziť minimum",
-        "max_toggle": "Zobraziť maximum",
-        "average_toggle": "Zobraziť priemer",
-        "range_toggle": "Zobraziť rozsah"
+        "average_toggle": "Priemer",
+        "range_toggle": "Rozsah"
       },
-      "peak_marker_unsupported": "Značky vrcholov vyžadujú entitu sensor alebo number bez prepísania atribútu, ktorá nie je timer ani counter — pre túto entitu nie je k dispozícii.",
+      "peak_marker_unsupported": "Nedostupné: vyžaduje entitu sensor alebo number bez atribútu.",
       "percent": "Percento",
-      "position": "Pozícia",
       "reverse": "Obrátený časovač",
       "reverse_secondary_info_row": "Vymeňte lištu a text",
       "secondary": "Sekundárna informácia",
       "state_content": "Obsah stavu",
       "status_label": {
         "color_source": "Zdroj farby",
-        "position": "Pozícia popisku",
         "toggle": "Popisok stavu"
       },
       "text_shadow": "Pridať tieň textu",
@@ -141,18 +122,14 @@
       "value_compact": "Kompaktná hodnota (1.2k)",
       "value_sign": "Zobraziť znamienko (+/-)",
       "watermark": {
-        "high_toggle": "Zobraziť horný",
-        "low_toggle": "Zobraziť dolný",
-        "high": "Horný",
-        "low": "Dolný",
-        "low_mode": "Zdroj dolnej značky",
-        "high_mode": "Zdroj hornej značky"
+        "high_toggle": "Horný prah",
+        "low_toggle": "Dolný prah"
       },
       "window": "Časové okno",
       "entities": "Entity",
       "rows": "Riadky",
       "line_size": "Hrúbka čiary",
-      "mark_defaults": "Zdieľané predvolené hodnoty"
+      "mark_defaults": "Predvolené hodnoty"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -194,18 +171,18 @@
         "shimmer_reverse": "Trblietanie obrátenou"
       },
       "bar_orientation": {
-        "ltr": "Zľava doprava",
-        "rtl": "Sprava doľava",
-        "up": "Nahor"
+        "ltr": "LTR",
+        "rtl": "RTL",
+        "up": "UP"
       },
       "bar_position": {
         "background": "Pozadie karty",
-        "below": "Pruh pod obsahom",
-        "bottom": "Pruh dole",
-        "compact_below": "Kompaktný pruh dole (názov/hodnota na jednom riadku)",
+        "below": "Pod obsahom",
+        "bottom": "Dole",
+        "compact_below": "Kompaktný dole",
         "default": "Predvolené",
-        "overlay": "Pruh cez obsah (overlay)",
-        "top": "Pruh hore"
+        "overlay": "Cez obsah",
+        "top": "Hore"
       },
       "bar_scale": {
         "linear": "Lineárna",
@@ -245,9 +222,7 @@
       "hide": {
         "icon": "Ikona",
         "name": "Názov",
-        "progress_bar": "Pruh",
         "secondary_info": "Sekundárne info",
-        "shape": "Kruhové pozadie ikony",
         "unit": "Jednotka",
         "value": "Hodnota"
       },
@@ -263,7 +238,7 @@
       },
       "icon_animation_mode": {
         "auto": "Automaticky",
-        "template": "Šablóna"
+        "template": "Jinja"
       },
       "label_position": {
         "left": "Vľavo",
@@ -278,15 +253,14 @@
         "simple": "Jednoduché"
       },
       "status_label_color_source": {
-        "bar": "Ukazovateľ priebehu",
         "icon": "Ikona"
       },
       "theme": {
         "battery_adaptive": "Batéria (prispôsobí sa stavu nabíjania)",
-        "critical_when_extreme": "Kritické pri extrémnej hodnote (hladina nádrže, odchýlka...)",
+        "critical_when_extreme": "Kritické pri extrémnej hodnote",
         "critical_when_extreme_center": "Kritické pri extrémnej hodnote, vystredené (center_zero)",
-        "critical_when_high": "Kritické pri vysokej hodnote (CPU, RAM, využitie disku...)",
-        "critical_when_low": "Kritické pri nízkej hodnote (batéria...)",
+        "critical_when_high": "Kritické pri vysokej hodnote",
+        "critical_when_low": "Kritické pri nízkej hodnote",
         "humidity": "Vlhkosť",
         "light": "Svetlá",
         "optimal_when_high": "Optimálne pri vysokej hodnote",
@@ -314,8 +288,7 @@
         "space": "Medzera"
       },
       "value_source_mode": {
-        "entity": "Entita",
-        "jinja": "Šablóna",
+        "jinja": "Jinja",
         "standard": "Pevná hodnota"
       },
       "watermark_as": {
@@ -340,6 +313,15 @@
       "peak_marker": "Značky extrémov",
       "indicators": "Ukazovatele a štítky",
       "alerts": "Upozornenia"
+    },
+    "shared": {
+      "col": "Farba",
+      "pos": "Pozícia",
+      "attr": "Atribút",
+      "min": "Minimum",
+      "max": "Maximum",
+      "bar": "Pruh",
+      "ent": "Entita"
     }
   }
 }

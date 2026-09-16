@@ -180,14 +180,17 @@ const writeJsTranslations = (translations) => {
   fs.writeFileSync(JS_FILE, content);
 };
 
-const walkJsFiles = (dir) => fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+// .ts as well as .js: src/ is TypeScript now, and matching .js alone left the
+// corpus below empty - every key then read as unused, and every localize() path
+// as fine.
+const walkSourceFiles = (dir) => fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
   const full = path.join(dir, entry.name);
-  return entry.isDirectory() ? walkJsFiles(full) : (entry.name.endsWith('.js') ? [full] : []);
+  return entry.isDirectory() ? walkSourceFiles(full) : (/\.(js|ts)$/.test(entry.name) ? [full] : []);
 });
 
 /** Every src/ file's code, translations.js itself excluded — for code-usage searches. */
 const jsCodeWithoutTranslations = () =>
-  walkJsFiles(SRC_DIR).filter((f) => f !== JS_FILE).map((f) => fs.readFileSync(f, 'utf8')).join('\n');
+  walkSourceFiles(SRC_DIR).filter((f) => f !== JS_FILE).map((f) => fs.readFileSync(f, 'utf8')).join('\n');
 
 // ─── diff engine ─────────────────────────────────────────────────────────────
 
@@ -333,25 +336,45 @@ const cmdSynchronize = async (args) => {
   else console.log('Nothing done.');
 };
 
+/** Escapes a translation key segment for use inside a RegExp. */
+const escapeForSearch = (segment) => segment.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 /** orphans: heuristic detection of unused translation keys and unresolved localize() paths. */
 const cmdOrphans = () => {
   const code = jsCodeWithoutTranslations();
   const en = readJSON(langPath('en'));
   const flat = flatten(en);
 
-  console.log('— Keys never referenced in the code (heuristic: last segment word-search) —');
-  console.log('  ⚠️  editor.field.toggle_* keys can be reached dynamically (toggle_<childKey>);');
-  console.log('      verify manually before deleting anything.\n');
+  // A key is looked up under a name the code rarely spells the same way:
+  // EditorBase derives editor.field_helper.<helperKey> from a field name with
+  // its dots turned into underscores (base.ts's helperKey), so '_' has to match
+  // '.' too. A name built by concatenation can't be proven by any search at all -
+  // those are listed apart rather than called orphans.
+  const COMPOSED_SUFFIX = /_(custom_)?toggle$/;
+  // card.msg.words.*: getMessage builds the name from the error code's own
+  // suffix (invalidTypePositiveInteger -> positiveinteger), never spells it.
+  const COMPOSED_GROUP = 'card.msg.words.';
+  const searchFor = (last) =>
+    new RegExp(`\\b${escapeForSearch(last).replace(/_/g, '[._]')}\\b`);
+
+  console.log('— Keys never referenced in the code (heuristic: last segment, "_" matching "." too) —');
   let candidates = 0;
+  const composed = [];
   for (const key of Object.keys(flat)) {
     const last = key.split('.').pop();
-    const re = new RegExp(`\\b${last.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`);
-    if (!re.test(code)) {
-      console.log(`  🕳️  ${key}`);
-      candidates++;
+    if (searchFor(last).test(code)) continue;
+    if (COMPOSED_SUFFIX.test(last) || key.startsWith(COMPOSED_GROUP)) {
+      composed.push(key);
+      continue;
     }
+    console.log(`  🕳️  ${key}`);
+    candidates++;
   }
   if (!candidates) console.log('  none 🎉');
+
+  console.log('\n— Reached by a name built at runtime - verify by hand —');
+  for (const key of composed) console.log(`  🧩 ${key}`);
+  if (!composed.length) console.log('  none');
 
   console.log('\n— localize() literal paths not found in en.json —');
   let broken = 0;

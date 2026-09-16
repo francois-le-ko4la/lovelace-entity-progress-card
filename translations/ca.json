@@ -1,15 +1,11 @@
 {
   "card": {
     "msg": {
-      "appliedDefaultValue": "S'ha aplicat automàticament un valor per defecte.",
-      "invalidDecimal": "El valor ha de ser un decimal vàlid.",
-      "invalidEnumValue": "El valor proporcionat no és una opció vàlida.",
+      "appliedDefaultValue": "Valor per defecte aplicat.",
+      "invalidEnumValue": "Valor no permès.",
       "invalidNoun": "No vàlid o mal format: {noun}.",
-      "invalidStateContentEntry": "Una o més entrades del contingut de l'estat són invàlides.",
-      "invalidTheme": "El tema especificat és desconegut. S'utilitzarà el tema per defecte.",
+      "invalidTheme": "Tema desconegut.",
       "invalidType": "Tipus esperat: {type}.",
-      "invalidUnionType": "El valor no coincideix amb cap dels tipus permesos.",
-      "missingActionKey": "Falta una clau obligatòria a l'objecte d'acció.",
       "missingRequiredProperty": "Falta una propietat obligatòria.",
       "notFound": "No trobat a Home Assistant: {noun}.",
       "words": {
@@ -24,6 +20,7 @@
           "array": "array",
           "boolean": "boolean",
           "number": "número",
+          "positiveinteger": "enter positiu",
           "object": "objecte",
           "string": "cadena"
         }
@@ -44,24 +41,20 @@
       "add_entity": "Afegeix entitat",
       "add_zone": "Afegeix zona",
       "alert_when": {
-        "above": "Alerta per sobre",
+        "above": "Per sobre de",
         "animation": "Animació",
-        "below": "Alerta per sota",
-        "color": "Color d'alerta",
+        "below": "Per sota de",
         "highlight": "Ressaltat",
         "label": "Etiqueta",
         "above_mode": "Font de l'alerta superior",
         "below_mode": "Font de l'alerta inferior"
       },
-      "attribute": "Atribut",
       "badge": {
         "toggle": "Insígnia",
-        "color_toggle": "Color d'insígnia independent"
+        "color_toggle": "Color independent"
       },
-      "bar_color": "Color",
       "bar_color_mode": "Mode de color",
       "bar_effect_mode": "Efecte de la barra",
-      "bar_group": "Barra",
       "bar_max_width_toggle": "Amplada màxima de la barra",
       "bar_orientation": "Orientació",
       "bar_scale": "Escala",
@@ -74,51 +67,39 @@
       "center_zero": "Zero al centre",
       "center_zero_growth_percent": "Percentatge de creixement",
       "center_zero_value": "Valor de centratge",
-      "color": "Color",
       "custom_info": "Informació addicional (secundària)",
       "custom_theme": "Zones de tema personalitzat",
-      "decimal": "Precisió de visualització",
+      "decimal": "Precisió",
       "density": "Densitat",
-      "entity": "Entitat",
-      "fast_refresh": "Actualització ràpida (per segon)",
-      "force_circular_background_mode": "Fons circular de la icona",
+      "fast_refresh": "Actualització ràpida",
+      "force_circular_background_mode": "Fons circular",
       "frameless": "Sense marc",
       "height": "Alçada",
       "height_custom_toggle": "Alçada automàtica",
       "hide_mode": "Amaga",
       "icon": "Icona",
-      "icon_group": "Icona",
       "icon_animation": "Animació de la icona",
       "interpolate": "Interpolar colors",
       "layout": "Disposició del contingut",
       "marginless": "Sense marge",
-      "mark_color": "Color",
-      "max_value": "Valor màxim",
-      "max_value_mode": "Font del valor màxim",
       "migrate_config": "Migra la configuració",
-      "min_value": "Valor mínim",
-      "min_value_mode": "Font del valor mínim",
       "min_width": "Amplada mínima",
       "multiline": "Multilínia",
       "name": "Nom",
       "name_info": "Informació addicional (nom)",
       "opacity": "Opacitat",
       "peak_marker": {
-        "min_toggle": "Mostra mínim",
-        "max_toggle": "Mostra màxim",
-        "average_toggle": "Mostra mitjana",
-        "range_toggle": "Mostra interval"
+        "average_toggle": "Mitjana",
+        "range_toggle": "Interval"
       },
-      "peak_marker_unsupported": "Els marcadors de pic necessiten una entitat sensor o number, sense sobreescriptura d'atribut, i que no sigui un timer ni un counter — no disponible per a aquesta entitat.",
+      "peak_marker_unsupported": "No disponible: cal una entitat sensor o number sense atribut.",
       "percent": "Percentatge",
-      "position": "Posició",
       "reverse": "Temporitzador invers",
       "reverse_secondary_info_row": "Intercanvia barra i text",
       "secondary": "Informació secundària",
       "state_content": "Contingut de l'estat",
       "status_label": {
         "color_source": "Font del color",
-        "position": "Posició de l'etiqueta",
         "toggle": "Etiqueta d'estat"
       },
       "text_shadow": "Afegir ombra al text",
@@ -141,18 +122,14 @@
       "value_compact": "Valor compacte (1.2k)",
       "value_sign": "Mostra el signe (+/-)",
       "watermark": {
-        "high_toggle": "Mostra alt",
-        "low_toggle": "Mostra baix",
-        "high": "Alt",
-        "low": "Baix",
-        "low_mode": "Font del marcador baix",
-        "high_mode": "Font del marcador alt"
+        "high_toggle": "Llindar alt",
+        "low_toggle": "Llindar baix"
       },
       "window": "Finestra de temps",
       "entities": "Entitats",
       "rows": "Files",
       "line_size": "Gruix de la línia",
-      "mark_defaults": "Valors per defecte compartits"
+      "mark_defaults": "Valors per defecte"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -194,18 +171,18 @@
         "shimmer_reverse": "Resplendor invers"
       },
       "bar_orientation": {
-        "ltr": "D'esquerra a dreta",
-        "rtl": "De dreta a esquerra",
-        "up": "Cap amunt"
+        "ltr": "LTR",
+        "rtl": "RTL",
+        "up": "UP"
       },
       "bar_position": {
         "background": "Fons de la targeta",
-        "below": "Barra sota el contingut",
-        "bottom": "Barra a sota",
-        "compact_below": "Barra compacta a sota (nom/valor en una línia)",
+        "below": "Sota el contingut",
+        "bottom": "A sota",
+        "compact_below": "Compacta a sota",
         "default": "Predeterminada",
-        "overlay": "Barra superposada al contingut (overlay)",
-        "top": "Barra a sobre"
+        "overlay": "Superposada al contingut",
+        "top": "A sobre"
       },
       "bar_scale": {
         "linear": "Lineal",
@@ -245,9 +222,7 @@
       "hide": {
         "icon": "Icona",
         "name": "Nom",
-        "progress_bar": "Barra",
         "secondary_info": "Info secundària",
-        "shape": "Fons circular de la icona",
         "unit": "Unitat",
         "value": "Valor"
       },
@@ -263,7 +238,7 @@
       },
       "icon_animation_mode": {
         "auto": "Automàtic",
-        "template": "Plantilla"
+        "template": "Jinja"
       },
       "label_position": {
         "left": "Esquerra",
@@ -278,15 +253,14 @@
         "simple": "Simple"
       },
       "status_label_color_source": {
-        "bar": "Barra de progrés",
         "icon": "Icona"
       },
       "theme": {
         "battery_adaptive": "Bateria (s'adapta a l'estat de càrrega)",
-        "critical_when_extreme": "Crític en extrem (nivell de dipòsit, desviació...)",
+        "critical_when_extreme": "Crític en extrem",
         "critical_when_extreme_center": "Crític en extrem, centrat (center_zero)",
-        "critical_when_high": "Crític si és alt (CPU, RAM, ús de disc...)",
-        "critical_when_low": "Crític si és baix (bateria...)",
+        "critical_when_high": "Crític si és alt",
+        "critical_when_low": "Crític si és baix",
         "humidity": "Humitat",
         "light": "Llum",
         "optimal_when_high": "Òptim quan és alt",
@@ -314,8 +288,7 @@
         "space": "Espai"
       },
       "value_source_mode": {
-        "entity": "Entitat",
-        "jinja": "Plantilla",
+        "jinja": "Jinja",
         "standard": "Valor fix"
       },
       "watermark_as": {
@@ -340,6 +313,15 @@
       "peak_marker": "Marcadors de pic",
       "indicators": "Indicadors i etiquetes",
       "alerts": "Alertes"
+    },
+    "shared": {
+      "col": "Color",
+      "pos": "Posició",
+      "attr": "Atribut",
+      "min": "Mínim",
+      "max": "Màxim",
+      "bar": "Barra",
+      "ent": "Entitat"
     }
   }
 }

@@ -1,16 +1,12 @@
 {
   "card": {
     "msg": {
-      "appliedDefaultValue": "Ett standardvärde har tillämpats automatiskt.",
-      "invalidDecimal": "Värdet måste vara ett giltigt decimaltal.",
-      "invalidEnumValue": "Det angivna värdet är inte ett giltigt alternativ.",
+      "appliedDefaultValue": "Standardvärde tillämpat.",
+      "invalidEnumValue": "Inte ett tillåtet värde.",
       "invalidNoun": "Ogiltig eller felformaterad: {noun}.",
-      "invalidStateContentEntry": "En eller flera poster i tillståndsinnehållet är ogiltiga.",
-      "invalidTheme": "Det angivna temat är okänt. Standardtema används.",
+      "invalidTheme": "Okänt tema.",
       "invalidType": "Förväntad typ: {type}.",
-      "invalidUnionType": "Värdet matchar inte något av de tillåtna typerna.",
-      "missingActionKey": "En obligatorisk nyckel saknas i åtgärdsobjektet.",
-      "missingRequiredProperty": "En obligatorisk egenskap saknas.",
+      "missingRequiredProperty": "Obligatorisk egenskap saknas.",
       "notFound": "Hittades inte i HA: {noun}.",
       "words": {
         "nouns": {
@@ -24,6 +20,7 @@
           "array": "array",
           "boolean": "boolean",
           "number": "nummer",
+          "positiveinteger": "positivt heltal",
           "object": "objekt",
           "string": "sträng"
         }
@@ -44,24 +41,20 @@
       "add_entity": "Lägg till entitet",
       "add_zone": "Lägg till zon",
       "alert_when": {
-        "above": "Larm över",
+        "above": "Över",
         "animation": "Animering",
-        "below": "Larm under",
-        "color": "Larmfärg",
+        "below": "Under",
         "highlight": "Markering",
         "label": "Etikett",
         "above_mode": "Källa för övre larm",
         "below_mode": "Källa för nedre larm"
       },
-      "attribute": "Attribut",
       "badge": {
         "toggle": "Märke",
-        "color_toggle": "Oberoende märkesfärg"
+        "color_toggle": "Oberoende färg"
       },
-      "bar_color": "Färg",
       "bar_color_mode": "Färgläge",
       "bar_effect_mode": "Effekt på stapeln",
-      "bar_group": "Stapel",
       "bar_max_width_toggle": "Max stapelbredd",
       "bar_orientation": "Riktning",
       "bar_scale": "Skala",
@@ -74,51 +67,39 @@
       "center_zero": "Noll i mitten",
       "center_zero_growth_percent": "Tillväxtprocent",
       "center_zero_value": "Centervärde",
-      "color": "Färg",
       "custom_info": "Anpassad sekundär info",
       "custom_theme": "Anpassade temazoner",
-      "decimal": "Visningsprecision",
+      "decimal": "Precision",
       "density": "Täthet",
-      "entity": "Entitet",
-      "fast_refresh": "Snabb uppdatering (varje sekund)",
-      "force_circular_background_mode": "Cirkulär ikonbakgrund",
+      "fast_refresh": "Snabb uppdatering",
+      "force_circular_background_mode": "Cirkulär bakgrund",
       "frameless": "Utan ram",
       "height": "Höjd",
       "height_custom_toggle": "Automatisk höjd",
       "hide_mode": "Dölj",
       "icon": "Ikon",
-      "icon_group": "Ikon",
       "icon_animation": "Ikonanimering",
       "interpolate": "Interpolera färger",
       "layout": "Innehållslayout",
       "marginless": "Utan marginal",
-      "mark_color": "Färg",
-      "max_value": "Maximalt värde",
-      "max_value_mode": "Källa för maxvärde",
       "migrate_config": "Migrera konfiguration",
-      "min_value": "Minsta värde",
-      "min_value_mode": "Källa för minimivärde",
       "min_width": "Min bredd",
       "multiline": "Flerradig",
       "name": "Namn",
       "name_info": "Anpassad namninfo",
       "opacity": "Opacitet",
       "peak_marker": {
-        "min_toggle": "Visa min",
-        "max_toggle": "Visa max",
-        "average_toggle": "Visa medel",
-        "range_toggle": "Visa intervall"
+        "average_toggle": "Medel",
+        "range_toggle": "Intervall"
       },
-      "peak_marker_unsupported": "Toppmarkeringar kräver en sensor- eller number-entitet utan attributöverskrivning, som inte är en timer eller counter — inte tillgängligt för denna entitet.",
+      "peak_marker_unsupported": "Inte tillgängligt: kräver en sensor- eller number-entitet utan attribut.",
       "percent": "Procent",
-      "position": "Position",
       "reverse": "Omvänd timer",
       "reverse_secondary_info_row": "Byt ut stapel och text",
       "secondary": "Sekundär information",
       "state_content": "Statusinnehåll",
       "status_label": {
         "color_source": "Färgkälla",
-        "position": "Etikettposition",
         "toggle": "Statusetikett"
       },
       "text_shadow": "Lägg till textskugga",
@@ -141,18 +122,14 @@
       "value_compact": "Kompakt värde (1.2k)",
       "value_sign": "Visa tecken (+/-)",
       "watermark": {
-        "high_toggle": "Visa hög",
-        "low_toggle": "Visa låg",
-        "high": "Hög",
-        "low": "Låg",
-        "low_mode": "Källa för nedre markör",
-        "high_mode": "Källa för övre markör"
+        "high_toggle": "Övre gräns",
+        "low_toggle": "Undre gräns"
       },
       "window": "Tidsfönster",
       "entities": "Entiteter",
       "rows": "Rader",
       "line_size": "Linjetjocklek",
-      "mark_defaults": "Delade standardvärden"
+      "mark_defaults": "Standardvärden"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -194,18 +171,18 @@
         "shimmer_reverse": "Omvänd glans"
       },
       "bar_orientation": {
-        "ltr": "Vänster till höger",
-        "rtl": "Höger till vänster",
-        "up": "Uppåt"
+        "ltr": "LTR",
+        "rtl": "RTL",
+        "up": "UP"
       },
       "bar_position": {
         "background": "Kortbakgrund",
-        "below": "Stapeln under innehållet",
-        "bottom": "Stapeln längst ned",
-        "compact_below": "Kompakt stapel under (namn/värde på en rad)",
+        "below": "Under innehållet",
+        "bottom": "Längst ned",
+        "compact_below": "Kompakt under",
         "default": "Standard",
-        "overlay": "Stapeln överlagrad på innehållet (overlay)",
-        "top": "Stapeln längst upp"
+        "overlay": "Överlagrad på innehållet",
+        "top": "Längst upp"
       },
       "bar_scale": {
         "linear": "Linjär",
@@ -245,9 +222,7 @@
       "hide": {
         "icon": "Ikon",
         "name": "Namn",
-        "progress_bar": "Stapel",
         "secondary_info": "Sekundär info",
-        "shape": "Cirkulär bakgrund för ikonen",
         "unit": "Enhet",
         "value": "Värde"
       },
@@ -263,7 +238,7 @@
       },
       "icon_animation_mode": {
         "auto": "Automatisk",
-        "template": "Mall"
+        "template": "Jinja"
       },
       "label_position": {
         "left": "Vänster",
@@ -278,15 +253,14 @@
         "simple": "Enkel"
       },
       "status_label_color_source": {
-        "bar": "Förloppsindikator",
         "icon": "Ikon"
       },
       "theme": {
         "battery_adaptive": "Batteri (anpassar sig till laddningsstatus)",
-        "critical_when_extreme": "Kritiskt vid extremvärde (tanknivå, avvikelse...)",
+        "critical_when_extreme": "Kritiskt vid extremvärde",
         "critical_when_extreme_center": "Kritiskt vid extremvärde, centrerat (center_zero)",
-        "critical_when_high": "Kritiskt vid högt värde (CPU, RAM, diskanvändning...)",
-        "critical_when_low": "Kritiskt vid lågt värde (batteri...)",
+        "critical_when_high": "Kritiskt vid högt värde",
+        "critical_when_low": "Kritiskt vid lågt värde",
         "humidity": "Luftfuktighet",
         "light": "Ljus",
         "optimal_when_high": "Optimal när det är högt",
@@ -314,8 +288,7 @@
         "space": "Mellanrum"
       },
       "value_source_mode": {
-        "entity": "Entitet",
-        "jinja": "Mall",
+        "jinja": "Jinja",
         "standard": "Fast värde"
       },
       "watermark_as": {
@@ -340,6 +313,15 @@
       "peak_marker": "Toppmarkörer",
       "indicators": "Indikatorer och etiketter",
       "alerts": "Varningar"
+    },
+    "shared": {
+      "col": "Färg",
+      "pos": "Position",
+      "attr": "Attribut",
+      "min": "Minimum",
+      "max": "Maximum",
+      "bar": "Stapel",
+      "ent": "Entitet"
     }
   }
 }

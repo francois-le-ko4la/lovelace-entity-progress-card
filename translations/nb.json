@@ -1,16 +1,12 @@
 {
   "card": {
     "msg": {
-      "appliedDefaultValue": "En standardverdi har blitt brukt automatisk.",
-      "invalidDecimal": "Verdien må være et gyldig desimaltall.",
-      "invalidEnumValue": "Den oppgitte verdien er ikke en gyldig mulighet.",
+      "appliedDefaultValue": "Standardverdi brukt.",
+      "invalidEnumValue": "Ikke en tillatt verdi.",
       "invalidNoun": "Ugyldig eller feil formatert: {noun}.",
-      "invalidStateContentEntry": "En eller flere oppføringer i tilstandsinnholdet er ugyldige.",
-      "invalidTheme": "Angitt tema er ukjent. Standardtema vil bli brukt.",
+      "invalidTheme": "Ukjent tema.",
       "invalidType": "Forventet type: {type}.",
-      "invalidUnionType": "Verdien samsvarer ikke med noen av de tillatte typene.",
-      "missingActionKey": "En påkrevd nøkkel mangler i handlingsobjektet.",
-      "missingRequiredProperty": "En påkrevd egenskap mangler.",
+      "missingRequiredProperty": "Påkrevd egenskap mangler.",
       "notFound": "Ikke funnet i HA: {noun}.",
       "words": {
         "nouns": {
@@ -24,6 +20,7 @@
           "array": "verdi av typen array",
           "boolean": "boolsk verdi",
           "number": "numerisk verdi",
+          "positiveinteger": "positivt heltall",
           "object": "verdi av typen objekt",
           "string": "verdi av typen string"
         }
@@ -44,24 +41,20 @@
       "add_entity": "Legg til enhet",
       "add_zone": "Legg til sone",
       "alert_when": {
-        "above": "Varsel over",
+        "above": "Over",
         "animation": "Animasjon",
-        "below": "Varsel under",
-        "color": "Varselfarge",
+        "below": "Under",
         "highlight": "Fremheving",
         "label": "Merkelapp",
         "above_mode": "Kilde til øvre varsel",
         "below_mode": "Kilde til nedre varsel"
       },
-      "attribute": "Attributt",
       "badge": {
         "toggle": "Merke",
-        "color_toggle": "Uavhengig merkefarge"
+        "color_toggle": "Uavhengig farge"
       },
-      "bar_color": "Farge",
       "bar_color_mode": "Fargemodus",
       "bar_effect_mode": "Effekt på stolpen",
-      "bar_group": "Stolpe",
       "bar_max_width_toggle": "Maks. stolpebredde",
       "bar_orientation": "Retning",
       "bar_scale": "Skala",
@@ -74,51 +67,39 @@
       "center_zero": "Null i midten",
       "center_zero_growth_percent": "Vekstprosent",
       "center_zero_value": "Senterverdi",
-      "color": "Farge",
       "custom_info": "Egendefinert sekundær info",
       "custom_theme": "Tilpassede temasoner",
-      "decimal": "Vis presisjon",
+      "decimal": "Presisjon",
       "density": "Tetthet",
-      "entity": "Enhet",
-      "fast_refresh": "Rask oppdatering (hvert sekund)",
-      "force_circular_background_mode": "Sirkulær ikonbakgrunn",
+      "fast_refresh": "Rask oppdatering",
+      "force_circular_background_mode": "Sirkulær bakgrunn",
       "frameless": "Uten ramme",
       "height": "Høyde",
       "height_custom_toggle": "Automatisk høyde",
       "hide_mode": "Skjul",
       "icon": "Ikon",
-      "icon_group": "Ikon",
       "icon_animation": "Ikonanimasjon",
       "interpolate": "Interpoler farger",
       "layout": "Innholdslayout",
       "marginless": "Uten marg",
-      "mark_color": "Farge",
-      "max_value": "Maksimal verdi",
-      "max_value_mode": "Kilde til maksimumsverdi",
       "migrate_config": "Migrer konfigurasjon",
-      "min_value": "Minste verdi",
-      "min_value_mode": "Kilde til minimumsverdi",
       "min_width": "Min. bredde",
       "multiline": "Flerlinjet",
       "name": "Navn",
       "name_info": "Egendefinert navneinfo",
       "opacity": "Ugjennomsiktighet",
       "peak_marker": {
-        "min_toggle": "Vis minimum",
-        "max_toggle": "Vis maksimum",
-        "average_toggle": "Vis gjennomsnitt",
-        "range_toggle": "Vis område"
+        "average_toggle": "Gjennomsnitt",
+        "range_toggle": "Område"
       },
-      "peak_marker_unsupported": "Toppmarkeringer krever en sensor- eller number-enhet uten attributt-overstyring, som ikke er en timer eller counter — ikke tilgjengelig for denne enheten.",
+      "peak_marker_unsupported": "Ikke tilgjengelig: krever en sensor- eller number-enhet uten attributt.",
       "percent": "Prosent",
-      "position": "Posisjon",
       "reverse": "Omvendt tidtaker",
       "reverse_secondary_info_row": "Bytt linje og tekst",
       "secondary": "Sekundær informasjon",
       "state_content": "Innhold i tilstand",
       "status_label": {
         "color_source": "Fargekilde",
-        "position": "Plassering av merkelapp",
         "toggle": "Statusmerkelapp"
       },
       "text_shadow": "Legg til tekstskygge",
@@ -141,18 +122,14 @@
       "value_compact": "Kompakt verdi (1.2k)",
       "value_sign": "Vis fortegn (+/-)",
       "watermark": {
-        "high_toggle": "Vis høy",
-        "low_toggle": "Vis lav",
-        "high": "Høy",
-        "low": "Lav",
-        "low_mode": "Kilde til nedre markør",
-        "high_mode": "Kilde til øvre markør"
+        "high_toggle": "Øvre grense",
+        "low_toggle": "Nedre grense"
       },
       "window": "Tidsvindu",
       "entities": "Entiteter",
       "rows": "Rader",
       "line_size": "Linjetykkelse",
-      "mark_defaults": "Felles standardverdier"
+      "mark_defaults": "Standardverdier"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -194,18 +171,18 @@
         "shimmer_reverse": "Omvendt glans"
       },
       "bar_orientation": {
-        "ltr": "Venstre til høyre",
-        "rtl": "Høyre til venstre",
-        "up": "Oppover"
+        "ltr": "LTR",
+        "rtl": "RTL",
+        "up": "UP"
       },
       "bar_position": {
         "background": "Kortbakgrunn",
-        "below": "Stolpen under innholdet",
-        "bottom": "Stolpen nederst",
-        "compact_below": "Kompakt stolpe under (navn/verdi på én linje)",
+        "below": "Under innholdet",
+        "bottom": "Nederst",
+        "compact_below": "Kompakt under",
         "default": "Standard",
-        "overlay": "Stolpen lagt over innholdet (overlay)",
-        "top": "Stolpen øverst"
+        "overlay": "Over innholdet",
+        "top": "Øverst"
       },
       "bar_scale": {
         "linear": "Lineær",
@@ -245,9 +222,7 @@
       "hide": {
         "icon": "Ikon",
         "name": "Navn",
-        "progress_bar": "Stolpe",
         "secondary_info": "Sekundær info",
-        "shape": "Sirkulær bakgrunn for ikonet",
         "unit": "Enhet",
         "value": "Verdi"
       },
@@ -263,7 +238,7 @@
       },
       "icon_animation_mode": {
         "auto": "Automatisk",
-        "template": "Mal"
+        "template": "Jinja"
       },
       "label_position": {
         "left": "Venstre",
@@ -278,15 +253,14 @@
         "simple": "Enkel"
       },
       "status_label_color_source": {
-        "bar": "Fremdriftslinje",
         "icon": "Ikon"
       },
       "theme": {
         "battery_adaptive": "Batteri (tilpasser seg ladetilstand)",
-        "critical_when_extreme": "Kritisk ved ekstremverdi (tanknivå, avvik...)",
+        "critical_when_extreme": "Kritisk ved ekstremverdi",
         "critical_when_extreme_center": "Kritisk ved ekstremverdi, sentrert (center_zero)",
-        "critical_when_high": "Kritisk ved høy verdi (CPU, RAM, diskbruk...)",
-        "critical_when_low": "Kritisk ved lav verdi (batteri...)",
+        "critical_when_high": "Kritisk ved høy verdi",
+        "critical_when_low": "Kritisk ved lav verdi",
         "humidity": "Fuktighet",
         "light": "Lys",
         "optimal_when_high": "Optimal når høyt",
@@ -314,8 +288,7 @@
         "space": "Mellomrom"
       },
       "value_source_mode": {
-        "entity": "Enhet",
-        "jinja": "Mal",
+        "jinja": "Jinja",
         "standard": "Fast verdi"
       },
       "watermark_as": {
@@ -340,6 +313,15 @@
       "peak_marker": "Toppmarkører",
       "indicators": "Indikatorer og etiketter",
       "alerts": "Varsler"
+    },
+    "shared": {
+      "col": "Farge",
+      "pos": "Posisjon",
+      "attr": "Attributt",
+      "min": "Minimum",
+      "max": "Maksimum",
+      "bar": "Stolpe",
+      "ent": "Enhet"
     }
   }
 }

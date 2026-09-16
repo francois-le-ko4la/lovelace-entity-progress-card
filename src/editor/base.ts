@@ -10,6 +10,8 @@ import {
   VALUE_CHANGED_EVENT,
   HA_SELECTOR_TAG,
   EDITOR_FIELD_NS,
+  SHARED_LABEL_NS,
+  SHARED_LABEL_PREFIX,
   EDITOR_FIELD_HELPER_NS,
   CONFIG_CHANGED_EVENT,
 } from '../utils/parameters.js';
@@ -224,6 +226,14 @@ class EditorBase extends HTMLElement {
   #log: LoggerInstance | null = null;
   // `declare`: EditorBase is never instantiated, every subclass has its own.
   declare _configHelper: BaseConfigHelper;
+// Option values naming something the field list already names: the label is
+  // borrowed instead of stored a second time. Only where every language agreed
+  // on the very same string - a near-match would silently retranslate it.
+  static #BORROWED_OPTION_LABELS: Record<string, Record<string, string>> = {
+    hide: { progress_bar: 'shared.bar', shape: 'force_circular_background_mode' },
+    status_label_color_source: { bar: 'shared.bar' },
+    value_source_mode: { entity: 'shared.ent' },
+  };
 
   // The `editor.option` node of the translations tree: one level deeper than
   // localizeGroup models (option group -> value -> label), so typed loosely as
@@ -233,12 +243,25 @@ class EditorBase extends HTMLElement {
     // translations load; select builders then crashed on
     // Object.entries(undefined). Fall back to the default language.
     const options = this.#hassProvider.localizeGroup('editor.option');
-    return (is.plainObject(options)
+    const tree = (is.plainObject(options)
       ? options
       : (buildTranslationTree(CARD.config.language).editor as Record<string, unknown>).option) as unknown as Record<
       string,
       Record<string, string>
     >;
+    const borrow = (group: string) =>
+      Object.fromEntries(
+        Object.entries(EditorBase.#BORROWED_OPTION_LABELS[group]).map(([value, key]) => [
+          value,
+          this.#labelFor(key) ?? value,
+        ]),
+      );
+    return Object.fromEntries(
+      Object.entries(tree).map(([group, values]) => [
+        group,
+        group in EditorBase.#BORROWED_OPTION_LABELS ? { ...borrow(group), ...values } : values,
+      ]),
+    );
   }
 
   // ─── LIFECYCLE ────────────────────────────────────────────────────────────
@@ -516,13 +539,19 @@ class EditorBase extends HTMLElement {
     return { parentKey, childKey };
   }
 
-  // Every field label lives under EDITOR_FIELD_NS ('editor.option' holds only
-  // what a select offers): a dot-path name or labelKey walks its nested group.
-  #resolveExplicitLabel(field: FieldDef): string | undefined {
-    const path: string = is.string(field.labelKey) ? field.labelKey : field.name;
-    const root = this.#hassProvider.localizeGroup(EDITOR_FIELD_NS);
+  // A label path is relative to EDITOR_FIELD_NS ('editor.option' holds only what
+  // a select offers), except the shared group - a word several fields answer to,
+  // named apart so editing it there is visibly editing all of them.
+  #labelFor(path: string): string | undefined {
+    const shared = path.startsWith(SHARED_LABEL_PREFIX);
+    const root = this.#hassProvider.localizeGroup(shared ? SHARED_LABEL_NS : EDITOR_FIELD_NS);
     const walk = (node: unknown, segment: string) => (node as Record<string, unknown> | undefined)?.[segment];
-    return path.split('.').reduce<unknown>(walk, root) as string | undefined;
+    return (shared ? path.slice(SHARED_LABEL_PREFIX.length) : path).split('.').reduce<unknown>(walk, root) as
+      string | undefined;
+  }
+
+  #resolveExplicitLabel(field: FieldDef): string | undefined {
+    return this.#labelFor(is.string(field.labelKey) ? field.labelKey : field.name);
   }
 
   #resolveFieldMeta(field: FieldDef): { label: string | undefined; value: unknown; isInverted: boolean } {

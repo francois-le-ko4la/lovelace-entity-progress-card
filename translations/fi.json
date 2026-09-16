@@ -1,15 +1,11 @@
 {
   "card": {
     "msg": {
-      "appliedDefaultValue": "Oletusarvo on asetettu automaattisesti.",
-      "invalidDecimal": "Arvon on oltava kelvollinen desimaaliluku.",
-      "invalidEnumValue": "Annettu arvo ei ole sallituista vaihtoehdoista.",
+      "appliedDefaultValue": "Oletusarvo asetettu.",
+      "invalidEnumValue": "Arvo ei ole sallittu.",
       "invalidNoun": "Virheellinen tai väärin muotoiltu: {noun}.",
-      "invalidStateContentEntry": "Yksi tai useampi tilasisällön merkintä on virheellinen.",
-      "invalidTheme": "Määritetty teema on tuntematon. Käytetään oletusteemaa.",
+      "invalidTheme": "Tuntematon teema.",
       "invalidType": "Odotettu tyyppi: {type}.",
-      "invalidUnionType": "Arvo ei vastaa mitään sallituista tyypeistä.",
-      "missingActionKey": "Toiminto-objektista puuttuu vaadittu avain.",
       "missingRequiredProperty": "Pakollinen ominaisuus puuttuu.",
       "notFound": "Ei löytynyt HA:sta: {noun}.",
       "words": {
@@ -24,6 +20,7 @@
           "array": "taulukko",
           "boolean": "totuusarvo",
           "number": "numero",
+          "positiveinteger": "positiivinen kokonaisluku",
           "object": "objekti",
           "string": "merkkijono"
         }
@@ -44,24 +41,20 @@
       "add_entity": "Lisää entiteetti",
       "add_zone": "Lisää vyöhyke",
       "alert_when": {
-        "above": "Hälytys yli",
+        "above": "Yli",
         "animation": "Animaatio",
-        "below": "Hälytys alle",
-        "color": "Hälytyksen väri",
+        "below": "Alle",
         "highlight": "Korostus",
         "label": "Merkintä",
         "above_mode": "Ylähälytyksen lähde",
         "below_mode": "Alahälytyksen lähde"
       },
-      "attribute": "Attribuutti",
       "badge": {
         "toggle": "Merkki",
-        "color_toggle": "Erillinen merkin väri"
+        "color_toggle": "Erillinen väri"
       },
-      "bar_color": "Väri",
       "bar_color_mode": "Väritila",
       "bar_effect_mode": "Palkin efekti",
-      "bar_group": "Palkki",
       "bar_max_width_toggle": "Palkin enimmäisleveys",
       "bar_orientation": "Suunta",
       "bar_scale": "Asteikko",
@@ -74,51 +67,39 @@
       "center_zero": "Nolla keskellä",
       "center_zero_growth_percent": "Kasvuprosentti",
       "center_zero_value": "Keskiarvo",
-      "color": "Väri",
       "custom_info": "Mukautettu toissijainen tieto",
       "custom_theme": "Mukautetun teeman vyöhykkeet",
-      "decimal": "Näytön tarkkuus",
+      "decimal": "Tarkkuus",
       "density": "Tiheys",
-      "entity": "Entiteetti",
-      "fast_refresh": "Nopea päivitys (joka sekunti)",
-      "force_circular_background_mode": "Kuvakkeen pyöreä tausta",
+      "fast_refresh": "Nopea päivitys",
+      "force_circular_background_mode": "Pyöreä tausta",
       "frameless": "Kehyksetön",
       "height": "Korkeus",
       "height_custom_toggle": "Automaattinen korkeus",
       "hide_mode": "Piilota",
       "icon": "Ikoni",
-      "icon_group": "Ikoni",
       "icon_animation": "Kuvakkeen animaatio",
       "interpolate": "Interpoloi värit",
       "layout": "Sisällön asettelu",
       "marginless": "Marginaaliton",
-      "mark_color": "Väri",
-      "max_value": "Maksimiarvo",
-      "max_value_mode": "Enimmäisarvon lähde",
       "migrate_config": "Siirrä asetukset",
-      "min_value": "Minimiarvo",
-      "min_value_mode": "Vähimmäisarvon lähde",
       "min_width": "Vähimmäisleveys",
       "multiline": "Monirivinen",
       "name": "Nimi",
       "name_info": "Mukautettu nimitieto",
       "opacity": "Peittävyys",
       "peak_marker": {
-        "min_toggle": "Näytä minimi",
-        "max_toggle": "Näytä maksimi",
-        "average_toggle": "Näytä keskiarvo",
-        "range_toggle": "Näytä vaihteluväli"
+        "average_toggle": "Keskiarvo",
+        "range_toggle": "Vaihteluväli"
       },
-      "peak_marker_unsupported": "Huippumerkinnät vaativat sensor- tai number-entiteetin ilman attribuutin ylikirjoitusta, joka ei ole timer eikä counter — ei käytettävissä tälle entiteetille.",
+      "peak_marker_unsupported": "Ei käytettävissä: vaatii sensor- tai number-entiteetin ilman attribuuttia.",
       "percent": "Prosentti",
-      "position": "Sijainti",
       "reverse": "Käänteinen ajastin",
       "reverse_secondary_info_row": "Vaihda palkki ja teksti",
       "secondary": "Lisätiedot",
       "state_content": "Tilan sisältö",
       "status_label": {
         "color_source": "Värin lähde",
-        "position": "Merkinnän sijainti",
         "toggle": "Tilamerkintä"
       },
       "text_shadow": "Lisää tekstivarjo",
@@ -141,18 +122,14 @@
       "value_compact": "Tiivistetty arvo (1.2k)",
       "value_sign": "Näytä etumerkki (+/-)",
       "watermark": {
-        "high_toggle": "Näytä ylä",
-        "low_toggle": "Näytä ala",
-        "high": "Ylä",
-        "low": "Ala",
-        "low_mode": "Alarajan merkin lähde",
-        "high_mode": "Ylärajan merkin lähde"
+        "high_toggle": "Yläraja",
+        "low_toggle": "Alaraja"
       },
       "window": "Aikaikkuna",
       "entities": "Entiteetit",
       "rows": "Rivit",
       "line_size": "Viivan paksuus",
-      "mark_defaults": "Jaetut oletusarvot"
+      "mark_defaults": "Oletusarvot"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -194,18 +171,18 @@
         "shimmer_reverse": "Hohto käänteinen"
       },
       "bar_orientation": {
-        "ltr": "Vasemmalta oikealle",
-        "rtl": "Oikealta vasemmalle",
-        "up": "Ylös"
+        "ltr": "LTR",
+        "rtl": "RTL",
+        "up": "UP"
       },
       "bar_position": {
         "background": "Kortin tausta",
-        "below": "Palkki sisällön alla",
-        "bottom": "Palkki alhaalla",
-        "compact_below": "Kompakti palkki alla (nimi/arvo samalla rivillä)",
+        "below": "Sisällön alla",
+        "bottom": "Alhaalla",
+        "compact_below": "Kompakti alla",
         "default": "Oletus",
-        "overlay": "Palkki sisällön päällä (overlay)",
-        "top": "Palkki ylhäällä"
+        "overlay": "Sisällön päällä",
+        "top": "Ylhäällä"
       },
       "bar_scale": {
         "linear": "Lineaarinen",
@@ -245,9 +222,7 @@
       "hide": {
         "icon": "Kuvake",
         "name": "Nimi",
-        "progress_bar": "Palkki",
         "secondary_info": "Lisätiedot",
-        "shape": "Kuvakkeen pyöreä tausta",
         "unit": "Yksikkö",
         "value": "Arvo"
       },
@@ -263,7 +238,7 @@
       },
       "icon_animation_mode": {
         "auto": "Automaattinen",
-        "template": "Malline"
+        "template": "Jinja"
       },
       "label_position": {
         "left": "Vasen",
@@ -278,15 +253,14 @@
         "simple": "Yksinkertainen"
       },
       "status_label_color_source": {
-        "bar": "Edistymispalkki",
         "icon": "Kuvake"
       },
       "theme": {
         "battery_adaptive": "Akku (mukautuu latauksen tilaan)",
-        "critical_when_extreme": "Kriittinen ääriarvossa (säiliön taso, poikkeama...)",
+        "critical_when_extreme": "Kriittinen ääriarvossa",
         "critical_when_extreme_center": "Kriittinen ääriarvossa, keskitetty (center_zero)",
-        "critical_when_high": "Kriittinen korkeana (CPU, RAM, levyn käyttö...)",
-        "critical_when_low": "Kriittinen matalana (akku...)",
+        "critical_when_high": "Kriittinen korkeana",
+        "critical_when_low": "Kriittinen matalana",
         "humidity": "Kosteus",
         "light": "Valoisuus",
         "optimal_when_high": "Optimaalinen korkeana",
@@ -314,8 +288,7 @@
         "space": "Väli"
       },
       "value_source_mode": {
-        "entity": "Entiteetti",
-        "jinja": "Malline",
+        "jinja": "Jinja",
         "standard": "Kiinteä arvo"
       },
       "watermark_as": {
@@ -340,6 +313,15 @@
       "peak_marker": "Huippumerkit",
       "indicators": "Ilmaisimet ja tunnisteet",
       "alerts": "Hälytykset"
+    },
+    "shared": {
+      "col": "Väri",
+      "pos": "Sijainti",
+      "attr": "Attribuutti",
+      "min": "Minimi",
+      "max": "Maksimi",
+      "bar": "Palkki",
+      "ent": "Entiteetti"
     }
   }
 }

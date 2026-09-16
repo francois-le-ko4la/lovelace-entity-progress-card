@@ -1,16 +1,12 @@
 {
   "card": {
     "msg": {
-      "appliedDefaultValue": "Noklusējuma vērtība tika automātiski piemērota.",
-      "invalidDecimal": "Vērtībai jābūt pozitīvam veselajam skaitlim.",
-      "invalidEnumValue": "Ievadītā vērtība nav atļauto opciju sarakstā.",
+      "appliedDefaultValue": "Piemērota noklusējuma vērtība.",
+      "invalidEnumValue": "Neatļauta vērtība.",
       "invalidNoun": "Nederīgs vai nepareizi strukturēts: {noun}.",
-      "invalidStateContentEntry": "Viena vai vairākas stāvokļa satura ievades nav derīgas.",
-      "invalidTheme": "Norādītā tēma nav zināma. Tiks izmantota noklusējuma tēma.",
+      "invalidTheme": "Nezināma tēma.",
       "invalidType": "Gaidītais tips: {type}.",
-      "invalidUnionType": "Vērtība neatbilst nevienam atļautajam tipam.",
-      "missingActionKey": "Trūkst obligātā atslēga darbības objektā.",
-      "missingRequiredProperty": "Trūkst obligātā īpašība.",
+      "missingRequiredProperty": "Trūkst obligātās īpašības.",
       "notFound": "Nav atrasts HA: {noun}.",
       "words": {
         "nouns": {
@@ -24,6 +20,7 @@
           "array": "masīvs",
           "boolean": "loģiska vērtība",
           "number": "skaitlis",
+          "positiveinteger": "pozitīvs vesels skaitlis",
           "object": "objekts",
           "string": "virkne"
         }
@@ -44,24 +41,20 @@
       "add_entity": "Pievienot entītiju",
       "add_zone": "Pievienot zonu",
       "alert_when": {
-        "above": "Brīdinājums virs",
+        "above": "Virs",
         "animation": "Animācija",
-        "below": "Brīdinājums zem",
-        "color": "Brīdinājuma krāsa",
+        "below": "Zem",
         "highlight": "Izcēlums",
         "label": "Etiķete",
         "above_mode": "Augšējā brīdinājuma avots",
         "below_mode": "Apakšējā brīdinājuma avots"
       },
-      "attribute": "Atribūts",
       "badge": {
         "toggle": "Nozīmīte",
-        "color_toggle": "Neatkarīga nozīmītes krāsa"
+        "color_toggle": "Neatkarīga krāsa"
       },
-      "bar_color": "Krāsa",
       "bar_color_mode": "Krāsas režīms",
       "bar_effect_mode": "Joslas efekts",
-      "bar_group": "Josla",
       "bar_max_width_toggle": "Maks. joslas platums",
       "bar_orientation": "Orientācija",
       "bar_scale": "Skala",
@@ -74,51 +67,39 @@
       "center_zero": "Nulles centrā",
       "center_zero_growth_percent": "Pieauguma procents",
       "center_zero_value": "Centra vērtība",
-      "color": "Krāsa",
       "custom_info": "Pielāgota sekundārā informācija",
       "custom_theme": "Pielāgotas tēmas zonas",
       "decimal": "Noapaļošana",
       "density": "Blīvums",
-      "entity": "Entītija",
-      "fast_refresh": "Ātra atsvaidze (katru sekundi)",
-      "force_circular_background_mode": "Ikonas apaļais fons",
+      "fast_refresh": "Ātra atsvaidze",
+      "force_circular_background_mode": "Apaļais fons",
       "frameless": "Bez rāmja",
       "height": "Augstums",
       "height_custom_toggle": "Automātisks augstums",
       "hide_mode": "Slēpt",
       "icon": "Ikona",
-      "icon_group": "Ikona",
       "icon_animation": "Ikonas animācija",
       "interpolate": "Krāsu interpolācija",
       "layout": "Satura izkārtojums",
       "marginless": "Bez malas",
-      "mark_color": "Krāsa",
-      "max_value": "Maksimālā vērtība",
-      "max_value_mode": "Maksimālās vērtības avots",
       "migrate_config": "Migrēt konfigurāciju",
-      "min_value": "Minimālā vērtība",
-      "min_value_mode": "Minimālās vērtības avots",
       "min_width": "Min. platums",
       "multiline": "Vairākrindu",
       "name": "Nosaukums",
       "name_info": "Pielāgota nosaukuma informācija",
       "opacity": "Necaurspīdīgums",
       "peak_marker": {
-        "min_toggle": "Rādīt minimumu",
-        "max_toggle": "Rādīt maksimumu",
-        "average_toggle": "Rādīt vidējo",
-        "range_toggle": "Rādīt diapazonu"
+        "average_toggle": "Vidējais",
+        "range_toggle": "Diapazons"
       },
-      "peak_marker_unsupported": "Maksimumu atzīmēm nepieciešama sensor vai number entītija bez atribūta pārrakstīšanas, kas nav timer vai counter — šai entītijai nav pieejams.",
+      "peak_marker_unsupported": "Nav pieejams: nepieciešama sensor vai number entītija bez atribūta.",
       "percent": "Procenti",
-      "position": "Pozīcija",
       "reverse": "Apgriezts taimeris",
       "reverse_secondary_info_row": "Mainīt joslu un tekstu",
       "secondary": "Papildu informācija",
       "state_content": "Stāvokļa saturs",
       "status_label": {
         "color_source": "Krāsas avots",
-        "position": "Etiķetes novietojums",
         "toggle": "Statusa etiķete"
       },
       "text_shadow": "Pievienot teksta ēnu",
@@ -141,18 +122,14 @@
       "value_compact": "Kompakta vērtība (1.2k)",
       "value_sign": "Rādīt zīmi (+/-)",
       "watermark": {
-        "high_toggle": "Rādīt augšējo",
-        "low_toggle": "Rādīt apakšējo",
-        "high": "Augšējais",
-        "low": "Apakšējais",
-        "low_mode": "Zemā marķiera avots",
-        "high_mode": "Augstā marķiera avots"
+        "high_toggle": "Augšējā robeža",
+        "low_toggle": "Apakšējā robeža"
       },
       "window": "Laika logs",
       "entities": "Entītijas",
       "rows": "Rindas",
       "line_size": "Līnijas biezums",
-      "mark_defaults": "Kopīgās noklusējuma vērtības"
+      "mark_defaults": "Noklusējuma vērtības"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -194,18 +171,18 @@
         "shimmer_reverse": "Apgriezts mirdzums"
       },
       "bar_orientation": {
-        "ltr": "No kreisās uz labo",
-        "rtl": "No labās uz kreiso",
-        "up": "Uz augšu"
+        "ltr": "LTR",
+        "rtl": "RTL",
+        "up": "UP"
       },
       "bar_position": {
         "background": "Kartes fons",
-        "below": "Josla zem satura",
-        "bottom": "Josla apakšā",
-        "compact_below": "Kompakta josla apakšā (nosaukums/vērtība vienā rindā)",
+        "below": "Zem satura",
+        "bottom": "Apakšā",
+        "compact_below": "Kompakta apakšā",
         "default": "Noklusētais",
-        "overlay": "Josla virs satura (overlay)",
-        "top": "Josla augšā"
+        "overlay": "Virs satura",
+        "top": "Augšā"
       },
       "bar_scale": {
         "linear": "Lineāra",
@@ -245,9 +222,7 @@
       "hide": {
         "icon": "Ikona",
         "name": "Nosaukums",
-        "progress_bar": "Josla",
         "secondary_info": "Papildu info",
-        "shape": "Ikonas apļveida fons",
         "unit": "Vienība",
         "value": "Vērtība"
       },
@@ -263,7 +238,7 @@
       },
       "icon_animation_mode": {
         "auto": "Automātisks",
-        "template": "Veidne"
+        "template": "Jinja"
       },
       "label_position": {
         "left": "Kreisā",
@@ -278,15 +253,14 @@
         "simple": "Vienkāršs"
       },
       "status_label_color_source": {
-        "bar": "Progresa josla",
         "icon": "Ikona"
       },
       "theme": {
         "battery_adaptive": "Baterija (pielāgojas uzlādes stāvoklim)",
-        "critical_when_extreme": "Kritiski ekstremālā vērtībā (tvertnes līmenis, novirze...)",
+        "critical_when_extreme": "Kritiski ekstremālā vērtībā",
         "critical_when_extreme_center": "Kritiski ekstremālā vērtībā, centrēts (center_zero)",
-        "critical_when_high": "Kritiski augstā vērtībā (CPU, RAM, diska lietojums...)",
-        "critical_when_low": "Kritiski zemā vērtībā (baterija...)",
+        "critical_when_high": "Kritiski augstā vērtībā",
+        "critical_when_low": "Kritiski zemā vērtībā",
         "humidity": "Mitrums",
         "light": "Gaiša",
         "optimal_when_high": "Optimāli pie augstām vērtībām",
@@ -314,8 +288,7 @@
         "space": "Atstarpe"
       },
       "value_source_mode": {
-        "entity": "Entītija",
-        "jinja": "Veidne",
+        "jinja": "Jinja",
         "standard": "Fiksēta vērtība"
       },
       "watermark_as": {
@@ -340,6 +313,15 @@
       "peak_marker": "Maksimuma atzīmes",
       "indicators": "Indikatori un etiķetes",
       "alerts": "Brīdinājumi"
+    },
+    "shared": {
+      "col": "Krāsa",
+      "pos": "Pozīcija",
+      "attr": "Atribūts",
+      "min": "Minimums",
+      "max": "Maksimums",
+      "bar": "Josla",
+      "ent": "Entītija"
     }
   }
 }

@@ -421,8 +421,12 @@ class BaseConfigHelper {
 
   get _errorMessage(): { content: string; sev: string } {
     const errorSrc = this.#HAError ? this.#HAError : this._configParsed;
+    // HAError carries a ready-made "a.b" string, the schema a Path array -
+    // interpolated raw, the array came out comma-joined on the visible alert
+    // while the console (_showConfigErrorConsole) joined it properly.
+    const path = is.array(errorSrc.path) ? errorSrc.path.join('.') : errorSrc.path;
     return {
-      content: `${errorSrc.path}: ${this.#hassProvider.getMessage(errorSrc.errorCode)}`,
+      content: `${path}: ${this.#hassProvider.getMessage(errorSrc.errorCode)}`,
       sev: errorSrc.severity ?? SEV.error,
     };
   }

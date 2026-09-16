@@ -1,15 +1,11 @@
 {
   "card": {
     "msg": {
-      "appliedDefaultValue": "تم تطبيق قيمة افتراضية تلقائيًا.",
-      "invalidDecimal": "يجب أن تكون القيمة رقمًا عشريًا صحيحًا.",
-      "invalidEnumValue": "القيمة المُقدمة ليست من الخيارات المسموح بها.",
+      "appliedDefaultValue": "تم تطبيق القيمة الافتراضية.",
+      "invalidEnumValue": "قيمة غير مسموح بها.",
       "invalidNoun": "غير صالح أو تالف: {noun}.",
-      "invalidStateContentEntry": "إدخال أو أكثر في محتوى الحالة غير صالحة.",
-      "invalidTheme": "السمة المحددة غير معروفة. سيتم استخدام السمة الافتراضية.",
+      "invalidTheme": "السمة غير معروفة.",
       "invalidType": "النوع المتوقع: {type}.",
-      "invalidUnionType": "القيمة لا تطابق أي نوع مسموح.",
-      "missingActionKey": "مفتاح مطلوب مفقود في كائن الإجراء.",
       "missingRequiredProperty": "خاصية مطلوبة مفقودة.",
       "notFound": "لم يتم العثور على: {noun} في Home Assistant.",
       "words": {
@@ -24,6 +20,7 @@
           "array": "مصفوفة",
           "boolean": "منطقي",
           "number": "رقم",
+          "positiveinteger": "عدد صحيح موجب",
           "object": "كائن",
           "string": "سلسلة"
         }
@@ -44,24 +41,20 @@
       "add_entity": "إضافة كيان",
       "add_zone": "إضافة منطقة",
       "alert_when": {
-        "above": "تنبيه أعلى من",
+        "above": "أعلى من",
         "animation": "حركة",
-        "below": "تنبيه أقل من",
-        "color": "لون التنبيه",
+        "below": "أقل من",
         "highlight": "التمييز",
         "label": "تسمية",
         "above_mode": "مصدر تنبيه الحد الأعلى",
         "below_mode": "مصدر تنبيه الحد الأدنى"
       },
-      "attribute": "السمة",
       "badge": {
         "toggle": "شارة",
-        "color_toggle": "لون شارة مستقل"
+        "color_toggle": "لون مستقل"
       },
-      "bar_color": "اللون",
       "bar_color_mode": "وضع اللون",
       "bar_effect_mode": "تأثير الشريط",
-      "bar_group": "الشريط",
       "bar_max_width_toggle": "أقصى عرض للشريط",
       "bar_orientation": "اتجاه",
       "bar_scale": "المقياس",
@@ -74,51 +67,39 @@
       "center_zero": "صفر في الوسط",
       "center_zero_growth_percent": "نسبة النمو",
       "center_zero_value": "قيمة المركز",
-      "color": "اللون",
       "custom_info": "معلومات إضافية (ثانوية)",
       "custom_theme": "مناطق السمة المخصصة",
-      "decimal": "دقة العرض",
+      "decimal": "دقة",
       "density": "الكثافة",
-      "entity": "الكيان",
-      "fast_refresh": "تحديث سريع (كل ثانية)",
-      "force_circular_background_mode": "خلفية الأيقونة الدائرية",
+      "fast_refresh": "تحديث سريع",
+      "force_circular_background_mode": "خلفية دائرية",
       "frameless": "بدون إطار",
       "height": "الارتفاع",
       "height_custom_toggle": "ارتفاع تلقائي",
       "hide_mode": "إخفاء",
       "icon": "أيقونة",
-      "icon_group": "أيقونة",
       "icon_animation": "حركة الأيقونة",
       "interpolate": "تدرج الألوان",
       "layout": "تخطيط المحتوى",
       "marginless": "بدون هامش",
-      "mark_color": "اللون",
-      "max_value": "القيمة القصوى",
-      "max_value_mode": "مصدر القيمة القصوى",
       "migrate_config": "ترحيل الإعداد",
-      "min_value": "القيمة الدنيا",
-      "min_value_mode": "مصدر القيمة الدنيا",
       "min_width": "أدنى عرض",
       "multiline": "متعدد الأسطر",
       "name": "الاسم",
       "name_info": "معلومات إضافية (الاسم)",
       "opacity": "العتامة",
       "peak_marker": {
-        "min_toggle": "إظهار الحد الأدنى",
-        "max_toggle": "إظهار الحد الأقصى",
-        "average_toggle": "إظهار المتوسط",
-        "range_toggle": "إظهار المدى"
+        "average_toggle": "المتوسط",
+        "range_toggle": "المدى"
       },
-      "peak_marker_unsupported": "تتطلب علامات الذروة كيان sensor أو number بدون تجاوز للسمة، وليس timer أو counter — غير متاح لهذا الكيان.",
+      "peak_marker_unsupported": "غير متاح: يتطلب كيان sensor أو number بدون سمة.",
       "percent": "النسبة المئوية",
-      "position": "الموضع",
       "reverse": "عكس المؤقت",
       "reverse_secondary_info_row": "تبديل الشريط والنص",
       "secondary": "معلومات ثانوية",
       "state_content": "محتوى الحالة",
       "status_label": {
         "color_source": "مصدر اللون",
-        "position": "موضع التسمية",
         "toggle": "تسمية الحالة"
       },
       "text_shadow": "إضافة ظل للنص",
@@ -141,18 +122,14 @@
       "value_compact": "قيمة مختصرة (1.2k)",
       "value_sign": "إظهار الإشارة (+/-)",
       "watermark": {
-        "high_toggle": "إظهار العلوي",
-        "low_toggle": "إظهار السفلي",
-        "high": "العلوي",
-        "low": "السفلي",
-        "low_mode": "مصدر العلامة المنخفضة",
-        "high_mode": "مصدر العلامة المرتفعة"
+        "high_toggle": "العتبة العليا",
+        "low_toggle": "العتبة الدنيا"
       },
       "window": "النافذة الزمنية",
       "entities": "الكيانات",
       "rows": "الصفوف",
       "line_size": "سُمك الخط",
-      "mark_defaults": "الإعدادات الافتراضية المشتركة"
+      "mark_defaults": "الإعدادات الافتراضية"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -194,18 +171,18 @@
         "shimmer_reverse": "لمعان معكوس"
       },
       "bar_orientation": {
-        "ltr": "من اليسار إلى اليمين",
-        "rtl": "من اليمين إلى اليسار",
-        "up": "اتجاه لأعلى"
+        "ltr": "LTR",
+        "rtl": "RTL",
+        "up": "UP"
       },
       "bar_position": {
         "background": "خلفية البطاقة",
-        "below": "الشريط تحت المحتوى",
-        "bottom": "الشريط أسفل المحتوى",
-        "compact_below": "شريط مضغوط أسفل (الاسم/القيمة في سطر واحد)",
+        "below": "تحت المحتوى",
+        "bottom": "في الأسفل",
+        "compact_below": "مضغوط في الأسفل",
         "default": "افتراضي",
-        "overlay": "الشريط فوق المحتوى (تراكب)",
-        "top": "الشريط أعلى المحتوى"
+        "overlay": "فوق المحتوى",
+        "top": "في الأعلى"
       },
       "bar_scale": {
         "linear": "خطي",
@@ -245,9 +222,7 @@
       "hide": {
         "icon": "أيقونة",
         "name": "الاسم",
-        "progress_bar": "الشريط",
         "secondary_info": "معلومات ثانوية",
-        "shape": "الخلفية الدائرية للأيقونة",
         "unit": "الوحدة",
         "value": "القيمة"
       },
@@ -263,7 +238,7 @@
       },
       "icon_animation_mode": {
         "auto": "تلقائي",
-        "template": "قالب"
+        "template": "Jinja"
       },
       "label_position": {
         "left": "يسار",
@@ -278,15 +253,14 @@
         "simple": "بسيط"
       },
       "status_label_color_source": {
-        "bar": "شريط التقدم",
         "icon": "أيقونة"
       },
       "theme": {
         "battery_adaptive": "بطارية (تتكيف مع حالة الشحن)",
-        "critical_when_extreme": "حرج عند التطرف (مستوى الخزان، الانحراف...)",
+        "critical_when_extreme": "حرج عند التطرف",
         "critical_when_extreme_center": "حرج عند التطرف، ممركز (center_zero)",
-        "critical_when_high": "حرج عند الارتفاع (المعالج، الذاكرة، القرص...)",
-        "critical_when_low": "حرج عند الانخفاض (بطارية...)",
+        "critical_when_high": "حرج عند الارتفاع",
+        "critical_when_low": "حرج عند الانخفاض",
         "humidity": "الرطوبة",
         "light": "الضوء",
         "optimal_when_high": "مثالي عند الارتفاع",
@@ -314,8 +288,7 @@
         "space": "مسافة"
       },
       "value_source_mode": {
-        "entity": "كيان",
-        "jinja": "قالب",
+        "jinja": "Jinja",
         "standard": "قيمة ثابتة"
       },
       "watermark_as": {
@@ -340,6 +313,15 @@
       "peak_marker": "علامات الذروة",
       "indicators": "المؤشرات والتسميات",
       "alerts": "التنبيهات"
+    },
+    "shared": {
+      "col": "اللون",
+      "pos": "الموضع",
+      "attr": "السمة",
+      "min": "الحد الأدنى",
+      "max": "الحد الأقصى",
+      "bar": "الشريط",
+      "ent": "الكيان"
     }
   }
 }

@@ -1,15 +1,11 @@
 {
   "card": {
     "msg": {
-      "appliedDefaultValue": "Zadana vrijednost automatski je primijenjena.",
-      "invalidDecimal": "Vrijednost mora biti valjani decimalni broj.",
-      "invalidEnumValue": "Navedena vrijednost nije među dopuštenim opcijama.",
+      "appliedDefaultValue": "Primijenjena zadana vrijednost.",
+      "invalidEnumValue": "Nedopuštena vrijednost.",
       "invalidNoun": "Nevažeće ili pogrešno oblikovano: {noun}.",
-      "invalidStateContentEntry": "Jedan ili više unosa stanja su nevažeći.",
-      "invalidTheme": "Navedena tema je nepoznata. Koristi se zadana tema.",
+      "invalidTheme": "Nepoznata tema.",
       "invalidType": "Očekivani tip: {type}.",
-      "invalidUnionType": "Vrijednost ne odgovara nijednom dopuštenom tipu.",
-      "missingActionKey": "Nedostaje obavezni ključ u objektu radnje.",
       "missingRequiredProperty": "Nedostaje obavezno svojstvo.",
       "notFound": "Nije pronađeno u HA: {noun}.",
       "words": {
@@ -24,6 +20,7 @@
           "array": "polje",
           "boolean": "boolean",
           "number": "broj",
+          "positiveinteger": "pozitivan cijeli broj",
           "object": "objekt",
           "string": "string"
         }
@@ -44,24 +41,20 @@
       "add_entity": "Dodaj entitet",
       "add_zone": "Dodaj zonu",
       "alert_when": {
-        "above": "Upozorenje iznad",
+        "above": "Iznad",
         "animation": "Animacija",
-        "below": "Upozorenje ispod",
-        "color": "Boja upozorenja",
+        "below": "Ispod",
         "highlight": "Isticanje",
         "label": "Oznaka",
         "above_mode": "Izvor gornjeg upozorenja",
         "below_mode": "Izvor donjeg upozorenja"
       },
-      "attribute": "Atribut",
       "badge": {
         "toggle": "Značka",
-        "color_toggle": "Neovisna boja značke"
+        "color_toggle": "Neovisna boja"
       },
-      "bar_color": "Boja",
       "bar_color_mode": "Način boje",
       "bar_effect_mode": "Efekt na traci",
-      "bar_group": "Traka",
       "bar_max_width_toggle": "Maks. širina trake",
       "bar_orientation": "Orijentacija",
       "bar_scale": "Ljestvica",
@@ -74,51 +67,39 @@
       "center_zero": "Nula u sredini",
       "center_zero_growth_percent": "Postotak rasta",
       "center_zero_value": "Vrijednost sredine",
-      "color": "Boja",
       "custom_info": "Prilagođena sekundarna informacija",
       "custom_theme": "Zone prilagođene teme",
-      "decimal": "Preciznost prikaza",
+      "decimal": "Preciznost",
       "density": "Gustoća",
-      "entity": "Entitet",
-      "fast_refresh": "Brzo osvježavanje (svake sekunde)",
-      "force_circular_background_mode": "Kružna pozadina ikone",
+      "fast_refresh": "Brzo osvježavanje",
+      "force_circular_background_mode": "Kružna pozadina",
       "frameless": "Bez okvira",
       "height": "Visina",
       "height_custom_toggle": "Automatska visina",
       "hide_mode": "Sakrij",
       "icon": "Ikona",
-      "icon_group": "Ikona",
       "icon_animation": "Animacija ikone",
       "interpolate": "Interpolacija boja",
       "layout": "Raspored sadržaja",
       "marginless": "Bez margine",
-      "mark_color": "Boja",
-      "max_value": "Maksimalna vrijednost",
-      "max_value_mode": "Izvor maksimalne vrijednosti",
       "migrate_config": "Migriraj konfiguraciju",
-      "min_value": "Minimalna vrijednost",
-      "min_value_mode": "Izvor minimalne vrijednosti",
       "min_width": "Min. širina",
       "multiline": "Višelinijski",
       "name": "Ime",
       "name_info": "Prilagođena informacija naziva",
       "opacity": "Neprozirnost",
       "peak_marker": {
-        "min_toggle": "Prikaži minimum",
-        "max_toggle": "Prikaži maksimum",
-        "average_toggle": "Prikaži prosjek",
-        "range_toggle": "Prikaži raspon"
+        "average_toggle": "Prosjek",
+        "range_toggle": "Raspon"
       },
-      "peak_marker_unsupported": "Oznake vrhova zahtijevaju entitet sensor ili number bez preklapanja atributa, koji nije timer ni counter — nije dostupno za ovaj entitet.",
+      "peak_marker_unsupported": "Nije dostupno: zahtijeva entitet sensor ili number bez atributa.",
       "percent": "Postotak",
-      "position": "Položaj",
       "reverse": "Obrnuti tajmer",
       "reverse_secondary_info_row": "Zamijeni traku i tekst",
       "secondary": "Sekundarne informacije",
       "state_content": "Sadržaj stanja",
       "status_label": {
         "color_source": "Izvor boje",
-        "position": "Položaj oznake",
         "toggle": "Oznaka statusa"
       },
       "text_shadow": "Dodaj sjenu tekstu",
@@ -141,18 +122,14 @@
       "value_compact": "Kompaktna vrijednost (1.2k)",
       "value_sign": "Prikaži predznak (+/-)",
       "watermark": {
-        "high_toggle": "Prikaži gornju",
-        "low_toggle": "Prikaži donju",
-        "high": "Gornja",
-        "low": "Donja",
-        "low_mode": "Izvor donje oznake",
-        "high_mode": "Izvor gornje oznake"
+        "high_toggle": "Gornji prag",
+        "low_toggle": "Donji prag"
       },
       "window": "Vremenski prozor",
       "entities": "Entiteti",
       "rows": "Redovi",
       "line_size": "Debljina linije",
-      "mark_defaults": "Zajedničke zadane vrijednosti"
+      "mark_defaults": "Zadane vrijednosti"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -194,18 +171,18 @@
         "shimmer_reverse": "Obrnuti sjaj"
       },
       "bar_orientation": {
-        "ltr": "Lijevo na desno",
-        "rtl": "Desno na lijevo",
-        "up": "Prema gore"
+        "ltr": "LTR",
+        "rtl": "RTL",
+        "up": "UP"
       },
       "bar_position": {
         "background": "Pozadina kartice",
-        "below": "Traka ispod sadržaja",
-        "bottom": "Traka na dnu",
-        "compact_below": "Kompaktna traka ispod (naziv/vrijednost u istom retku)",
+        "below": "Ispod sadržaja",
+        "bottom": "Na dnu",
+        "compact_below": "Kompaktna ispod",
         "default": "Zadano",
-        "overlay": "Traka preklopljena na sadržaj (overlay)",
-        "top": "Traka na vrhu"
+        "overlay": "Preklopljena na sadržaj",
+        "top": "Na vrhu"
       },
       "bar_scale": {
         "linear": "Linearna",
@@ -245,9 +222,7 @@
       "hide": {
         "icon": "Ikona",
         "name": "Ime",
-        "progress_bar": "Traka",
         "secondary_info": "Sekundarni info",
-        "shape": "Kružna pozadina ikone",
         "unit": "Jedinica",
         "value": "Vrijednost"
       },
@@ -263,7 +238,7 @@
       },
       "icon_animation_mode": {
         "auto": "Automatski",
-        "template": "Predložak"
+        "template": "Jinja"
       },
       "label_position": {
         "left": "Lijevo",
@@ -278,15 +253,14 @@
         "simple": "Jednostavno"
       },
       "status_label_color_source": {
-        "bar": "Traka napretka",
         "icon": "Ikona"
       },
       "theme": {
         "battery_adaptive": "Baterija (prilagođava se stanju punjenja)",
-        "critical_when_extreme": "Kritično pri ekstremnoj vrijednosti (razina spremnika, odstupanje...)",
+        "critical_when_extreme": "Kritično pri ekstremnoj vrijednosti",
         "critical_when_extreme_center": "Kritično pri ekstremnoj vrijednosti, centrirano (center_zero)",
-        "critical_when_high": "Kritično pri visokoj vrijednosti (CPU, RAM, iskorištenost diska...)",
-        "critical_when_low": "Kritično pri niskoj vrijednosti (baterija...)",
+        "critical_when_high": "Kritično pri visokoj vrijednosti",
+        "critical_when_low": "Kritično pri niskoj vrijednosti",
         "humidity": "Vlažnost",
         "light": "Svjetlo",
         "optimal_when_high": "Optimalno kada je visoko",
@@ -314,8 +288,7 @@
         "space": "Razmak"
       },
       "value_source_mode": {
-        "entity": "Entitet",
-        "jinja": "Predložak",
+        "jinja": "Jinja",
         "standard": "Fiksna vrijednost"
       },
       "watermark_as": {
@@ -340,6 +313,15 @@
       "peak_marker": "Oznake vrhova",
       "indicators": "Pokazatelji i oznake",
       "alerts": "Upozorenja"
+    },
+    "shared": {
+      "col": "Boja",
+      "pos": "Položaj",
+      "attr": "Atribut",
+      "min": "Minimum",
+      "max": "Maksimum",
+      "bar": "Traka",
+      "ent": "Entitet"
     }
   }
 }

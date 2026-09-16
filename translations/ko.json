@@ -1,16 +1,12 @@
 {
   "card": {
     "msg": {
-      "appliedDefaultValue": "기본값이 자동으로 적용되었습니다.",
-      "invalidDecimal": "값은 유효한 소수여야 합니다.",
-      "invalidEnumValue": "제공된 값이 허용된 옵션 중 하나가 아닙니다.",
+      "appliedDefaultValue": "기본값이 적용되었습니다.",
+      "invalidEnumValue": "허용되지 않는 값입니다.",
       "invalidNoun": "잘못되었거나 형식이 잘못됨: {noun}",
-      "invalidStateContentEntry": "상태 콘텐츠에 하나 이상의 잘못된 항목이 있습니다.",
-      "invalidTheme": "지정된 테마를 알 수 없습니다. 기본 테마가 사용됩니다.",
+      "invalidTheme": "알 수 없는 테마입니다.",
       "invalidType": "예상 유형: {type}",
-      "invalidUnionType": "값이 허용된 유형 중 어떤 것과도 일치하지 않습니다.",
-      "missingActionKey": "액션 객체에 필수 키가 없습니다.",
-      "missingRequiredProperty": "필수 속성이 누락되었습니다.",
+      "missingRequiredProperty": "필수 속성이 없습니다.",
       "notFound": "HA에서 찾을 수 없음: {noun}",
       "words": {
         "nouns": {
@@ -24,6 +20,7 @@
           "array": "배열",
           "boolean": "불리언",
           "number": "숫자",
+          "positiveinteger": "양의 정수",
           "object": "객체",
           "string": "문자열"
         }
@@ -44,24 +41,20 @@
       "add_entity": "엔티티 추가",
       "add_zone": "구간 추가",
       "alert_when": {
-        "above": "이상일 때 경고",
+        "above": "이상일 때",
         "animation": "애니메이션",
-        "below": "이하일 때 경고",
-        "color": "경고 색상",
+        "below": "이하일 때",
         "highlight": "강조 표시",
         "label": "레이블",
         "above_mode": "상한 알림 소스",
         "below_mode": "하한 알림 소스"
       },
-      "attribute": "속성",
       "badge": {
         "toggle": "배지",
-        "color_toggle": "독립 배지 색상"
+        "color_toggle": "독립 색상"
       },
-      "bar_color": "색상",
       "bar_color_mode": "색상 모드",
       "bar_effect_mode": "바 효과",
-      "bar_group": "바",
       "bar_max_width_toggle": "바 최대 너비",
       "bar_orientation": "방향",
       "bar_scale": "배율",
@@ -74,51 +67,39 @@
       "center_zero": "중앙에 영점",
       "center_zero_growth_percent": "성장률",
       "center_zero_value": "중앙값",
-      "color": "색상",
       "custom_info": "사용자 정의 보조 정보",
       "custom_theme": "사용자 지정 테마 구간",
-      "decimal": "표시 정밀도",
+      "decimal": "정밀도",
       "density": "밀도",
-      "entity": "엔티티",
-      "fast_refresh": "빠른 새로고침 (매초)",
-      "force_circular_background_mode": "아이콘 원형 배경",
+      "fast_refresh": "빠른 새로고침",
+      "force_circular_background_mode": "원형 배경",
       "frameless": "테두리 없음",
       "height": "높이",
       "height_custom_toggle": "자동 높이",
       "hide_mode": "숨기기",
       "icon": "아이콘",
-      "icon_group": "아이콘",
       "icon_animation": "아이콘 애니메이션",
       "interpolate": "색상 보간",
       "layout": "콘텐츠 레이아웃",
       "marginless": "여백 없음",
-      "mark_color": "색상",
-      "max_value": "최대값",
-      "max_value_mode": "최댓값 소스",
       "migrate_config": "구성 마이그레이션",
-      "min_value": "최소값",
-      "min_value_mode": "최솟값 소스",
       "min_width": "최소 너비",
       "multiline": "여러 줄",
       "name": "이름",
       "name_info": "사용자 정의 이름 정보",
       "opacity": "불투명도",
       "peak_marker": {
-        "min_toggle": "최솟값 표시",
-        "max_toggle": "최댓값 표시",
-        "average_toggle": "평균값 표시",
-        "range_toggle": "범위 표시"
+        "average_toggle": "평균값",
+        "range_toggle": "범위"
       },
-      "peak_marker_unsupported": "피크 마커는 속성 재정의가 없고 timer나 counter가 아닌 sensor 또는 number 엔티티가 필요합니다 — 이 엔티티에는 사용할 수 없습니다.",
+      "peak_marker_unsupported": "사용할 수 없음: 속성 없는 sensor 또는 number 엔티티가 필요합니다.",
       "percent": "퍼센트",
-      "position": "위치",
       "reverse": "타이머 역방향",
       "reverse_secondary_info_row": "막대와 텍스트 교체",
       "secondary": "보조 정보",
       "state_content": "상태 콘텐츠",
       "status_label": {
         "color_source": "색상 소스",
-        "position": "레이블 위치",
         "toggle": "상태 레이블"
       },
       "text_shadow": "텍스트 그림자 추가",
@@ -141,18 +122,14 @@
       "value_compact": "컴팩트 값 (1.2k)",
       "value_sign": "부호 표시 (+/-)",
       "watermark": {
-        "high_toggle": "상한 표시",
-        "low_toggle": "하한 표시",
-        "high": "상한",
-        "low": "하한",
-        "low_mode": "하한 마커 소스",
-        "high_mode": "상한 마커 소스"
+        "high_toggle": "상한",
+        "low_toggle": "하한"
       },
       "window": "시간 창",
       "entities": "엔터티",
       "rows": "행 수",
       "line_size": "선 두께",
-      "mark_defaults": "공통 기본값"
+      "mark_defaults": "기본값"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -194,18 +171,18 @@
         "shimmer_reverse": "역 시머"
       },
       "bar_orientation": {
-        "ltr": "왼쪽에서 오른쪽",
-        "rtl": "오른쪽에서 왼쪽",
-        "up": "위쪽 방향"
+        "ltr": "LTR",
+        "rtl": "RTL",
+        "up": "UP"
       },
       "bar_position": {
         "background": "카드 배경",
-        "below": "콘텐츠 아래 바",
-        "bottom": "하단 바",
-        "compact_below": "아래에 컴팩트 바 (이름/값을 한 줄에 표시)",
+        "below": "콘텐츠 아래",
+        "bottom": "하단",
+        "compact_below": "아래에 컴팩트",
         "default": "기본",
-        "overlay": "콘텐츠 위에 바 (오버레이)",
-        "top": "상단 바"
+        "overlay": "콘텐츠 위에",
+        "top": "상단"
       },
       "bar_scale": {
         "linear": "선형",
@@ -245,9 +222,7 @@
       "hide": {
         "icon": "아이콘",
         "name": "이름",
-        "progress_bar": "바",
         "secondary_info": "보조 정보",
-        "shape": "아이콘의 원형 배경",
         "unit": "단위",
         "value": "값"
       },
@@ -263,7 +238,7 @@
       },
       "icon_animation_mode": {
         "auto": "자동",
-        "template": "템플릿"
+        "template": "Jinja"
       },
       "label_position": {
         "left": "왼쪽",
@@ -278,15 +253,14 @@
         "simple": "간단"
       },
       "status_label_color_source": {
-        "bar": "진행률 표시줄",
         "icon": "아이콘"
       },
       "theme": {
         "battery_adaptive": "배터리 (충전 상태에 따라 적응)",
-        "critical_when_extreme": "극단일 때 위험 (탱크 수위, 편차...)",
+        "critical_when_extreme": "극단일 때 위험",
         "critical_when_extreme_center": "극단일 때 위험, 중앙 정렬 (center_zero)",
-        "critical_when_high": "높을 때 위험 (CPU, RAM, 디스크 사용량...)",
-        "critical_when_low": "낮을 때 위험 (배터리...)",
+        "critical_when_high": "높을 때 위험",
+        "critical_when_low": "낮을 때 위험",
         "humidity": "습도",
         "light": "조도",
         "optimal_when_high": "높을 때 최적",
@@ -314,8 +288,7 @@
         "space": "공백"
       },
       "value_source_mode": {
-        "entity": "엔티티",
-        "jinja": "템플릿",
+        "jinja": "Jinja",
         "standard": "고정값"
       },
       "watermark_as": {
@@ -340,6 +313,15 @@
       "peak_marker": "피크 마커",
       "indicators": "표시기 및 라벨",
       "alerts": "알림"
+    },
+    "shared": {
+      "col": "색상",
+      "pos": "위치",
+      "attr": "속성",
+      "min": "최솟값",
+      "max": "최댓값",
+      "bar": "바",
+      "ent": "엔티티"
     }
   }
 }

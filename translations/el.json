@@ -1,16 +1,12 @@
 {
   "card": {
     "msg": {
-      "appliedDefaultValue": "Εφαρμόστηκε αυτόματα προεπιλεγμένη τιμή.",
-      "invalidDecimal": "Η τιμή πρέπει να είναι έγκυρος δεκαδικός αριθμός.",
-      "invalidEnumValue": "Η παρεχόμενη τιμή δεν είναι αποδεκτή επιλογή.",
+      "appliedDefaultValue": "Εφαρμόστηκε προεπιλεγμένη τιμή.",
+      "invalidEnumValue": "Μη αποδεκτή τιμή.",
       "invalidNoun": "Μη έγκυρο ή κακοδιαμορφωμένο: {noun}.",
-      "invalidStateContentEntry": "Μία ή περισσότερες καταχωρήσεις στο περιεχόμενο κατάστασης είναι άκυρες.",
-      "invalidTheme": "Το καθορισμένο θέμα είναι άγνωστο. Θα χρησιμοποιηθεί το προεπιλεγμένο θέμα.",
+      "invalidTheme": "Άγνωστο θέμα.",
       "invalidType": "Αναμενόμενος τύπος: {type}.",
-      "invalidUnionType": "Η τιμή δεν ταιριάζει σε κανέναν από τους επιτρεπόμενους τύπους.",
-      "missingActionKey": "Λείπει απαιτούμενο κλειδί στο αντικείμενο ενέργειας.",
-      "missingRequiredProperty": "Λείπει μια απαιτούμενη ιδιότητα.",
+      "missingRequiredProperty": "Λείπει απαιτούμενη ιδιότητα.",
       "notFound": "Δεν βρέθηκε στο HA: {noun}.",
       "words": {
         "nouns": {
@@ -24,6 +20,7 @@
           "array": "πίνακα",
           "boolean": "boolean",
           "number": "αριθμού",
+          "positiveinteger": "θετικού ακεραίου",
           "object": "αντικειμένου",
           "string": "συμβολοσειράς"
         }
@@ -44,24 +41,20 @@
       "add_entity": "Προσθήκη οντότητας",
       "add_zone": "Προσθήκη ζώνης",
       "alert_when": {
-        "above": "Ειδοποίηση πάνω από",
+        "above": "Πάνω από",
         "animation": "Κίνηση",
-        "below": "Ειδοποίηση κάτω από",
-        "color": "Χρώμα ειδοποίησης",
+        "below": "Κάτω από",
         "highlight": "Επισήμανση",
         "label": "Ετικέτα",
         "above_mode": "Πηγή ειδοποίησης άνω ορίου",
         "below_mode": "Πηγή ειδοποίησης κάτω ορίου"
       },
-      "attribute": "Χαρακτηριστικό",
       "badge": {
         "toggle": "Σήμα",
-        "color_toggle": "Ανεξάρτητο χρώμα σήματος"
+        "color_toggle": "Ανεξάρτητο χρώμα"
       },
-      "bar_color": "Χρώμα",
       "bar_color_mode": "Λειτουργία χρώματος",
       "bar_effect_mode": "Εφέ γραμμής",
-      "bar_group": "Γραμμή",
       "bar_max_width_toggle": "Μέγιστο πλάτος γραμμής",
       "bar_orientation": "Προσανατολισμός",
       "bar_scale": "Κλίμακα",
@@ -74,51 +67,39 @@
       "center_zero": "Μηδέν στο κέντρο",
       "center_zero_growth_percent": "Ποσοστό μεταβολής",
       "center_zero_value": "Τιμή κέντρου",
-      "color": "Χρώμα",
       "custom_info": "Προσαρμοσμένη δευτερεύουσα πληροφορία",
       "custom_theme": "Ζώνες προσαρμοσμένου θέματος",
-      "decimal": "Ακρίβεια οθόνης",
+      "decimal": "Ακρίβεια",
       "density": "Πυκνότητα",
-      "entity": "Οντότητα",
-      "fast_refresh": "Γρήγορη ανανέωση (ανά δευτερόλεπτο)",
-      "force_circular_background_mode": "Κυκλικό φόντο εικονιδίου",
+      "fast_refresh": "Γρήγορη ανανέωση",
+      "force_circular_background_mode": "Κυκλικό φόντο",
       "frameless": "Χωρίς πλαίσιο",
       "height": "Ύψος",
       "height_custom_toggle": "Αυτόματο ύψος",
       "hide_mode": "Απόκρυψη",
       "icon": "Εικονίδιο",
-      "icon_group": "Εικονίδιο",
       "icon_animation": "Κίνηση εικονιδίου",
       "interpolate": "Παρεμβολή χρωμάτων",
       "layout": "Διάταξη περιεχομένου",
       "marginless": "Χωρίς περιθώριο",
-      "mark_color": "Χρώμα",
-      "max_value": "Μέγιστη τιμή",
-      "max_value_mode": "Πηγή μέγιστης τιμής",
       "migrate_config": "Μετάβαση διαμόρφωσης",
-      "min_value": "Ελάχιστη τιμή",
-      "min_value_mode": "Πηγή ελάχιστης τιμής",
       "min_width": "Ελάχιστο πλάτος",
       "multiline": "Πολλαπλών γραμμών",
       "name": "Όνομα",
       "name_info": "Προσαρμοσμένη πληροφορία ονόματος",
       "opacity": "Αδιαφάνεια",
       "peak_marker": {
-        "min_toggle": "Εμφάνιση ελαχίστου",
-        "max_toggle": "Εμφάνιση μεγίστου",
-        "average_toggle": "Εμφάνιση μέσου όρου",
-        "range_toggle": "Εμφάνιση εύρους"
+        "average_toggle": "Μέσος όρος",
+        "range_toggle": "Εύρος"
       },
-      "peak_marker_unsupported": "Οι δείκτες κορυφής απαιτούν οντότητα sensor ή number χωρίς παράκαμψη ιδιότητας, που δεν είναι timer ούτε counter — μη διαθέσιμο για αυτήν την οντότητα.",
+      "peak_marker_unsupported": "Μη διαθέσιμο: απαιτεί οντότητα sensor ή number χωρίς ιδιότητα.",
       "percent": "Ποσοστό",
-      "position": "Θέση",
       "reverse": "Αντίστροφο χρονόμετρο",
       "reverse_secondary_info_row": "Εναλλαγή γραμμής και κειμένου",
       "secondary": "Πρόσθετες πληροφορίες",
       "state_content": "Περιεχόμενο κατάστασης",
       "status_label": {
         "color_source": "Πηγή χρώματος",
-        "position": "Θέση ετικέτας",
         "toggle": "Ετικέτα κατάστασης"
       },
       "text_shadow": "Προσθήκη σκιάς στο κείμενο",
@@ -141,18 +122,14 @@
       "value_compact": "Συμπαγής τιμή (1.2k)",
       "value_sign": "Εμφάνιση προσήμου (+/-)",
       "watermark": {
-        "high_toggle": "Εμφάνιση υψηλού",
-        "low_toggle": "Εμφάνιση χαμηλού",
-        "high": "Υψηλό",
-        "low": "Χαμηλό",
-        "low_mode": "Πηγή χαμηλού δείκτη",
-        "high_mode": "Πηγή υψηλού δείκτη"
+        "high_toggle": "Άνω όριο",
+        "low_toggle": "Κάτω όριο"
       },
       "window": "Χρονικό παράθυρο",
       "entities": "Οντότητες",
       "rows": "Γραμμές",
       "line_size": "Πάχος γραμμής",
-      "mark_defaults": "Κοινές προεπιλογές"
+      "mark_defaults": "Προεπιλογές"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -194,18 +171,18 @@
         "shimmer_reverse": "Αχτινοβολία αντίστροφη"
       },
       "bar_orientation": {
-        "ltr": "Από αριστερά προς δεξιά",
-        "rtl": "Από δεξιά προς αριστερά",
-        "up": "Προς τα πάνω"
+        "ltr": "LTR",
+        "rtl": "RTL",
+        "up": "UP"
       },
       "bar_position": {
         "background": "Φόντο κάρτας",
-        "below": "Γραμμή κάτω από το περιεχόμενο",
-        "bottom": "Γραμμή κάτω",
-        "compact_below": "Συμπαγής ράβδος από κάτω (όνομα/τιμή σε μία γραμμή)",
+        "below": "Κάτω από το περιεχόμενο",
+        "bottom": "Κάτω",
+        "compact_below": "Συμπαγής από κάτω",
         "default": "Προεπιλογή",
-        "overlay": "Γραμμή πάνω από περιεχόμενο (overlay)",
-        "top": "Γραμμή πάνω"
+        "overlay": "Πάνω από το περιεχόμενο",
+        "top": "Πάνω"
       },
       "bar_scale": {
         "linear": "Γραμμική",
@@ -245,9 +222,7 @@
       "hide": {
         "icon": "Εικονίδιο",
         "name": "Όνομα",
-        "progress_bar": "Γραμμή",
         "secondary_info": "Δευτ. πληροφορίες",
-        "shape": "Κυκλικό φόντο του εικονιδίου",
         "unit": "Μονάδα",
         "value": "Τιμή"
       },
@@ -263,7 +238,7 @@
       },
       "icon_animation_mode": {
         "auto": "Αυτόματο",
-        "template": "Πρότυπο"
+        "template": "Jinja"
       },
       "label_position": {
         "left": "Αριστερά",
@@ -278,15 +253,14 @@
         "simple": "Απλό"
       },
       "status_label_color_source": {
-        "bar": "Γραμμή προόδου",
         "icon": "Εικονίδιο"
       },
       "theme": {
         "battery_adaptive": "Μπαταρία (προσαρμόζεται στην κατάσταση φόρτισης)",
-        "critical_when_extreme": "Κρίσιμο σε ακραία τιμή (στάθμη δεξαμενής, απόκλιση...)",
+        "critical_when_extreme": "Κρίσιμο σε ακραία τιμή",
         "critical_when_extreme_center": "Κρίσιμο σε ακραία τιμή, κεντραρισμένο (center_zero)",
-        "critical_when_high": "Κρίσιμο σε υψηλή τιμή (CPU, RAM, χρήση δίσκου...)",
-        "critical_when_low": "Κρίσιμο σε χαμηλή τιμή (μπαταρία...)",
+        "critical_when_high": "Κρίσιμο σε υψηλή τιμή",
+        "critical_when_low": "Κρίσιμο σε χαμηλή τιμή",
         "humidity": "Υγρασία",
         "light": "Φωτεινότητα",
         "optimal_when_high": "Βέλτιστο όταν είναι υψηλό",
@@ -314,8 +288,7 @@
         "space": "Κενό"
       },
       "value_source_mode": {
-        "entity": "Οντότητα",
-        "jinja": "Πρότυπο",
+        "jinja": "Jinja",
         "standard": "Σταθερή τιμή"
       },
       "watermark_as": {
@@ -340,6 +313,15 @@
       "peak_marker": "Δείκτες αιχμής",
       "indicators": "Δείκτες και ετικέτες",
       "alerts": "Ειδοποιήσεις"
+    },
+    "shared": {
+      "col": "Χρώμα",
+      "pos": "Θέση",
+      "attr": "Χαρακτηριστικό",
+      "min": "Ελάχιστο",
+      "max": "Μέγιστο",
+      "bar": "Γραμμή",
+      "ent": "Οντότητα"
     }
   }
 }

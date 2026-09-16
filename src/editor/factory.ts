@@ -304,6 +304,10 @@ const valueModeField = (
 // (see wmSide below), sit at the top level of the config - one dot-path deep
 // at most - so entity/attribute/jinja can stay plain dot-path fields instead
 // of virtual ones.
+// min_value/max_value read the shared Minimum/Maximum label - the same words
+// the peak marks use (see PEAK_SHARED_LABEL).
+const SHARED_VALUE_LABEL = { min_value: 'shared.min', max_value: 'shared.max' } as const;
+
 const valueField = (
   key: 'min_value' | 'max_value',
   entityPath: string,
@@ -311,14 +315,22 @@ const valueField = (
 ) => {
   const modeType = `${key}_mode`;
   const attrType = `${key.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase())}Attribute`;
+  const modeFields = valueModeField(
+    modeType,
+    (c) => c[key],
+    (c, v) => ({ [key]: v }),
+    key,
+  );
   return {
-    ...valueModeField(
-      modeType,
-      (c) => c[key],
-      (c, v) => ({ [key]: v }),
-      key,
-    ),
-    [key]: EditorFieldsType.number(key, { showIf: (c: LovelaceConfig) => !is.plainObject(c[key]), ...numberOverrides }),
+    ...modeFields,
+    // The source selector carries the option name; the inputs under it are the
+    // same value read three ways, so they go unlabelled like the entity one.
+    [modeType]: { ...modeFields[modeType], labelKey: SHARED_VALUE_LABEL[key] },
+    [key]: EditorFieldsType.number(key, {
+      noLabel: true,
+      showIf: (c: LovelaceConfig) => !is.plainObject(c[key]),
+      ...numberOverrides,
+    }),
     [entityPath]: EditorFieldsType.entity(entityPath, {
       noLabel: true,
       showIf: (c: LovelaceConfig) => is.plainObject(c[key]) && !is.nonEmptyString(c[key].jinja),
@@ -326,7 +338,7 @@ const valueField = (
     [`${key}.attribute`]: EditorFieldsType.select(`${key}.attribute`, {
       type: attrType,
       selectorOf: entityPath,
-      labelKey: 'attribute',
+      labelKey: 'shared.attr',
       showIf: (c: LovelaceConfig) => is.plainObject(c[key]) && is.nonEmptyString(c[key].entity),
     }),
     [`${key}.jinja`]: EditorFieldsType.tpl(`${key}.jinja`, {
@@ -414,7 +426,7 @@ const nestedValueField = (
       type: attrType,
       virtual: true,
       selectorOf: entityPath,
-      labelKey: 'attribute',
+      labelKey: 'shared.attr',
       showIf: (c: LovelaceConfig) =>
         isEnabled(c) && ent(c) && is.nonEmptyString((readValue(c) as { entity?: string })?.entity),
       resolveVirtual: (c: LovelaceConfig) => (readValue(c) as { attribute?: string } | undefined)?.attribute ?? '',
@@ -634,7 +646,7 @@ const SHARED_CASCADE = (selectType: string): CascadeSpec[] => [
   {
     field: 'color',
     build: (name, opts) => EditorFieldsType.templateOrType(name, false, 'color', opts),
-    labelKey: 'mark_color',
+    labelKey: 'shared.col',
   },
 ];
 
@@ -764,9 +776,15 @@ const wmSide = (side: 'low' | 'high', defaultVal: number) => {
   const entityPath = WATERMARK_ENTITY_PATHS[side];
   const isShown = (c: LovelaceConfig) => WATERMARK_CASCADE.isActive(c, side);
   const isEnabled = (c: LovelaceConfig) => Boolean(c.watermark) && isShown(c);
+  const valueFields = nestedValueField('watermark', side, entityPath, isEnabled, defaultVal, 'value');
+  // No label on either: the toggle right above names the side, and repeating it
+  // twice under itself said nothing. Re-keyed, not appended - an existing key
+  // keeps its position, hence the panel order.
   return {
     ...markToggleField(WATERMARK_CASCADE, side, (c: LovelaceConfig) => Boolean(c.watermark), isShown, defaultVal),
-    ...nestedValueField('watermark', side, entityPath, isEnabled, defaultVal, 'value'),
+    ...valueFields,
+    [`watermark.${side}`]: { ...valueFields[`watermark.${side}`], noLabel: true },
+    [`watermark.${side}_mode`]: { ...valueFields[`watermark.${side}_mode`], noLabel: true },
     ...overrideCascadeFields(WATERMARK_CASCADE, side, isEnabled, 'value'),
     ...overrideCascadeFields(WATERMARK_CASCADE, side, isEnabled, 'look'),
   };
@@ -850,7 +868,7 @@ const PEAK_RANGE_CASCADE: OverrideCascadeAdapter<'range'> = {
     {
       field: 'color',
       build: (name, opts) => EditorFieldsType.templateOrType(name, false, 'color', opts),
-      labelKey: 'mark_color',
+      labelKey: 'shared.col',
     },
   ],
 };
@@ -866,12 +884,23 @@ const peakRange = () => {
   };
 };
 
+// min and max say the same word as the min_value/max_value options above, so
+// they read the same key - average has no such twin and keeps its own.
+const PEAK_SHARED_LABEL: Partial<Record<'min' | 'max' | 'average', string>> = {
+  min: 'shared.min',
+  max: 'shared.max',
+};
+
 const peakMark = (mark: 'min' | 'max' | 'average') => {
   const isShown = (c: LovelaceConfig) => PEAK_MARKER_CASCADE.isActive(c, mark);
   const isEnabled = (c: LovelaceConfig) => peakMarkerEligible(c) && Boolean(c.peak_marker) && isShown(c);
   const gate = (c: LovelaceConfig) => peakMarkerEligible(c) && Boolean(c.peak_marker);
+  const toggle = markToggleField(PEAK_MARKER_CASCADE, mark, gate, isShown, true);
+  const toggleKey = `peak_marker.${mark}_toggle`;
+  const shared = PEAK_SHARED_LABEL[mark];
   return {
-    ...markToggleField(PEAK_MARKER_CASCADE, mark, gate, isShown, true),
+    ...toggle,
+    ...(shared ? { [toggleKey]: { ...toggle[toggleKey], labelKey: shared } } : {}),
     ...overrideCascadeFields(PEAK_MARKER_CASCADE, mark, isEnabled, 'look'),
   };
 };
@@ -1064,7 +1093,7 @@ const EditorFactory = {
   general: (template: boolean) => ({
     flat: true,
     fields: {
-      entity: EditorFieldsType.entity('entity', { required: !template }),
+      entity: EditorFieldsType.entity('entity', { labelKey: 'shared.ent', required: !template }),
       // Off by default: a now()/utcnow()-driven Jinja field already gets a
       // free once-a-minute refresh from HA's own render_template push
       // (issue #127) - this opts into a forced resubscribe every second
@@ -1164,7 +1193,7 @@ const EditorFactory = {
                 }),
                 unit_position: EditorFieldsType.select('unit_position', {
                   type: 'unit_position',
-                  labelKey: 'position',
+                  labelKey: 'shared.pos',
                   width: 'half',
                   showIf: unitSpacingShown,
                 }),
@@ -1530,7 +1559,7 @@ const EditorFactory = {
             },
           }),
           ...circularBackgroundField(),
-          bar_group: EditorFieldsType.sectionLabel('bar_group'),
+          bar_group: EditorFieldsType.sectionLabel('bar_group', { labelKey: 'shared.bar' }),
           bar_position: EditorFieldsType.select('bar_position', {
             // density: compact is the most restrictive case (top/bottom/
             // background only, see EditorFactory.applyDensityConstraints) and
@@ -1544,7 +1573,7 @@ const EditorFactory = {
                 : c.layout === 'vertical'
                   ? 'bar_position_no_compact_below'
                   : 'bar_position',
-            labelKey: 'position',
+            labelKey: 'shared.pos',
             width: 'half',
             showIf: (c: LovelaceConfig) => c.density !== 'single_line',
             onChange: (_value: unknown, config: LovelaceConfig) =>
@@ -1561,18 +1590,14 @@ const EditorFactory = {
     badge
       ? {}
       : {
-          // bar_single_line only ever shows for 'overlay', where text_shadow
-          // is always shown too (its own condition includes 'overlay') - so
-          // it always has that row partner and can stay a flat half-width.
-          // text_shadow itself also shows alone for 'background' (no
-          // bar_single_line there), so its own width stays conditional.
+          // Both full width (the default): text_shadow shows alone under
+          // 'background', where bar_single_line does not, and a half-width toggle
+          // left alone on its row only reads as a hole beside a long label.
           bar_single_line: EditorFieldsType.toggle('bar_single_line', {
             showIf: (c: LovelaceConfig) => c.bar_position === 'overlay',
-            width: 'half',
           }),
           text_shadow: EditorFieldsType.toggle('text_shadow', {
             showIf: (c: LovelaceConfig) => c.bar_position === 'overlay' || c.bar_position === 'background',
-            width: 'half',
           }),
         },
 
@@ -1818,6 +1843,7 @@ const EditorFactory = {
           }),
           'alert_when.color': EditorFieldsType.select('alert_when.color', {
             type: 'color',
+            labelKey: 'shared.col',
             showIf: (c: LovelaceConfig) => Boolean(c.alert_when),
           }),
           'alert_when.highlight': EditorFieldsType.select('alert_when.highlight', {
@@ -2030,7 +2056,7 @@ const EditorFactory = {
     return {
       // Badge has no bar_position (where the label normally sits, see
       // themeCardOnlyFields) - bar_orientation is its first bar field.
-      ...(badge ? { bar_group: EditorFieldsType.sectionLabel('bar_group') } : {}),
+      ...(badge ? { bar_group: EditorFieldsType.sectionLabel('bar_group', { labelKey: 'shared.bar' }) } : {}),
       bar_orientation: EditorFieldsType.select('bar_orientation', {
         // Badge/Badge Template have no bar_position/layout, so 'up' is
         // statically excluded there; elsewhere, only offered when upAllowed
@@ -2049,6 +2075,9 @@ const EditorFactory = {
         showIf: barSizeAllowed,
       }),
       bar_color: EditorFieldsType.templateOrType('bar_color', template, 'color_state_default', {
+        // One 'Color' label for every color field: the panel it sits in says
+        // which color it is, the field name would only repeat it.
+        labelKey: 'shared.col',
         showIf: (c: LovelaceConfig) => !themeActive(c),
         // Full-width once bar_size (its row partner) hides for the same
         // bar_position values.
@@ -2090,7 +2119,9 @@ const EditorFactory = {
         ...EditorFactory.themeColorModeFields(template),
         // Pendant to bar_group below: the panel runs theme, then the icon, then
         // the bar, and only the bar half said so.
-        icon_group: EditorFieldsType.sectionLabel('icon_group'),
+        // The heading over the icon fields says the same word the icon field
+        // itself does - one key, two places.
+        icon_group: EditorFieldsType.sectionLabel('icon_group', { labelKey: 'icon' }),
         // Half-width to pair with `color` below - but `color` hides once a
         // theme/custom_theme is active, so `icon` needs to reclaim the full
         // row then. Card: always half now, whether or not `color` is
@@ -2098,12 +2129,15 @@ const EditorFactory = {
         // keeps the old theme-aware behavior (full once `color` hides).
         icon: EditorFieldsType.templateOrType('icon', template, 'icon', {
           ...(template
-            ? { helper: true }
+            ? // Right under the icon_group heading, which already says 'Icon' -
+              // labelling it too said the word twice in a row.
+              { helper: true, noLabel: true }
             : {
                 width: 'half',
               }),
         }),
         color: EditorFieldsType.templateOrType('color', template, 'color_state_default', {
+          labelKey: 'shared.col',
           showIf: (c: LovelaceConfig) => is.nullish(c.theme) && !is.array(c.custom_theme),
           ...(template ? { helper: true } : { width: 'half' }),
         }),
@@ -2191,6 +2225,8 @@ const EditorFactory = {
       name: 'status_label.position',
       type: 'label_position',
       virtual: true,
+      // Same word as the badge's own position field, one key for both.
+      labelKey: 'shared.pos',
       width: 'half',
       showIf: (c: LovelaceConfig) => Boolean(c.status_label),
       resolveVirtual: (c: LovelaceConfig) => statusLabelObj(c.status_label).position ?? 'right',
@@ -2391,6 +2427,7 @@ const EditorFactory = {
           ...EditorFactory.themeModeFields(false),
           ...EditorFactory.themeColorModeFields(false),
           bar_color: EditorFieldsType.templateOrType('bar_color', false, 'color_state_default', {
+            labelKey: 'shared.col',
             showIf: (c: LovelaceConfig) => !EditorFactory.themeActive(c),
             width: 'half',
           }),
@@ -2401,7 +2438,7 @@ const EditorFactory = {
           bar_size: EditorFieldsType.select('bar_size', { width: 'half', showIf: barSizeAllowed }),
           bar_position: EditorFieldsType.select('bar_position', {
             type: 'bar_position_feature',
-            labelKey: 'position',
+            labelKey: 'shared.pos',
             width: 'half',
             onChange: (_value: unknown, config: LovelaceConfig) => EditorFactory.resetBarSizeIfInvalid(config),
           }),

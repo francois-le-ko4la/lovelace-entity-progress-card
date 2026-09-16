@@ -1,15 +1,11 @@
 {
   "card": {
     "msg": {
-      "appliedDefaultValue": "Vaikimisi väärtus rakendati automaatselt.",
-      "invalidDecimal": "Väärtus peab olema positiivne täisarv.",
-      "invalidEnumValue": "Antud väärtus ei kuulu lubatud valikute hulka.",
+      "appliedDefaultValue": "Vaikeväärtus rakendatud.",
+      "invalidEnumValue": "Lubamatu väärtus.",
       "invalidNoun": "Vigane või valesti vormistatud: {noun}.",
-      "invalidStateContentEntry": "Üks või mitu seisundi sisu kirjet on vigased.",
-      "invalidTheme": "Määratud teema on tundmatu. Kasutatakse vaikimisi teemat.",
+      "invalidTheme": "Tundmatu teema.",
       "invalidType": "Oodatud tüüp: {type}.",
-      "invalidUnionType": "Väärtus ei vasta ühelegi lubatud tüübile.",
-      "missingActionKey": "Tegevuse objektist puudub kohustuslik võti.",
       "missingRequiredProperty": "Puudub kohustuslik atribuut.",
       "notFound": "Ei leitud HA-st: {noun}.",
       "words": {
@@ -24,6 +20,7 @@
           "array": "massiiv",
           "boolean": "tõeväärtus",
           "number": "number",
+          "positiveinteger": "positiivne täisarv",
           "object": "objekt",
           "string": "string"
         }
@@ -44,24 +41,20 @@
       "add_entity": "Lisa olem",
       "add_zone": "Lisa tsoon",
       "alert_when": {
-        "above": "Häire üle",
+        "above": "Üle",
         "animation": "Animatsioon",
-        "below": "Häire alla",
-        "color": "Häire värv",
+        "below": "Alla",
         "highlight": "Esiletõst",
         "label": "Silt",
         "above_mode": "Ülemise hoiatuse allikas",
         "below_mode": "Alumise hoiatuse allikas"
       },
-      "attribute": "Atribuut",
       "badge": {
         "toggle": "Märk",
-        "color_toggle": "Sõltumatu märgi värv"
+        "color_toggle": "Sõltumatu värv"
       },
-      "bar_color": "Värv",
       "bar_color_mode": "Värvirežiim",
       "bar_effect_mode": "Riba efekt",
-      "bar_group": "Riba",
       "bar_max_width_toggle": "Riba max laius",
       "bar_orientation": "Suund",
       "bar_scale": "Skaala",
@@ -74,51 +67,39 @@
       "center_zero": "Null keskel",
       "center_zero_growth_percent": "Kasvuprotsent",
       "center_zero_value": "Keskväärtus",
-      "color": "Värv",
       "custom_info": "Kohandatud sekundaarne teave",
       "custom_theme": "Kohandatud teema tsoonid",
-      "decimal": "Kuvamise täpsus",
+      "decimal": "Täpsus",
       "density": "Tihedus",
-      "entity": "Olem",
-      "fast_refresh": "Kiire värskendus (iga sekund)",
-      "force_circular_background_mode": "Ikooni ümmargune taust",
+      "fast_refresh": "Kiire värskendus",
+      "force_circular_background_mode": "Ümmargune taust",
       "frameless": "Raamita",
       "height": "Kõrgus",
       "height_custom_toggle": "Automaatne kõrgus",
       "hide_mode": "Peida",
       "icon": "Ikoon",
-      "icon_group": "Ikoon",
       "icon_animation": "Ikooni animatsioon",
       "interpolate": "Värvide interpoleerimine",
       "layout": "Sisu paigutus",
       "marginless": "Ilma veeriseta",
-      "mark_color": "Värv",
-      "max_value": "Maksimaalne väärtus",
-      "max_value_mode": "Maksimumväärtuse allikas",
       "migrate_config": "Migreeri seadistus",
-      "min_value": "Minimaalne väärtus",
-      "min_value_mode": "Miinimumväärtuse allikas",
       "min_width": "Min laius",
       "multiline": "Mitmerealine",
       "name": "Nimi",
       "name_info": "Kohandatud nime teave",
       "opacity": "Läbipaistmatus",
       "peak_marker": {
-        "min_toggle": "Näita miinimumi",
-        "max_toggle": "Näita maksimumi",
-        "average_toggle": "Näita keskmist",
-        "range_toggle": "Näita vahemikku"
+        "average_toggle": "Keskmine",
+        "range_toggle": "Vahemik"
       },
-      "peak_marker_unsupported": "Tipumärgised vajavad sensor- või number-olemit ilma atribuudi ülekirjutuseta, mis ei ole timer ega counter — selle olemi jaoks pole saadaval.",
+      "peak_marker_unsupported": "Pole saadaval: vajab sensor- või number-olemit ilma atribuudita.",
       "percent": "Protsent",
-      "position": "Asukoht",
       "reverse": "Pööratud taimer",
       "reverse_secondary_info_row": "Vaheta riba ja tekst",
       "secondary": "Täiendav info",
       "state_content": "Oleku sisu",
       "status_label": {
         "color_source": "Värvi allikas",
-        "position": "Sildi asukoht",
         "toggle": "Oleku silt"
       },
       "text_shadow": "Lisa teksti vari",
@@ -141,18 +122,14 @@
       "value_compact": "Kompaktne väärtus (1.2k)",
       "value_sign": "Näita märki (+/-)",
       "watermark": {
-        "high_toggle": "Näita ülemist",
-        "low_toggle": "Näita alumist",
-        "high": "Ülemine",
-        "low": "Alumine",
-        "low_mode": "Madala markeri allikas",
-        "high_mode": "Kõrge markeri allikas"
+        "high_toggle": "Ülemine lävi",
+        "low_toggle": "Alumine lävi"
       },
       "window": "Ajaaken",
       "entities": "Olemid",
       "rows": "Read",
       "line_size": "Joone paksus",
-      "mark_defaults": "Jagatud vaikeväärtused"
+      "mark_defaults": "Vaikeväärtused"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -194,18 +171,18 @@
         "shimmer_reverse": "Sära pööratud"
       },
       "bar_orientation": {
-        "ltr": "Vasakult paremale",
-        "rtl": "Paremalt vasakule",
-        "up": "Üles"
+        "ltr": "LTR",
+        "rtl": "RTL",
+        "up": "UP"
       },
       "bar_position": {
         "background": "Kaardi taust",
-        "below": "Riba sisu all",
-        "bottom": "Riba all",
-        "compact_below": "Kompaktne riba all (nimi/väärtus samal real)",
+        "below": "Sisu all",
+        "bottom": "All",
+        "compact_below": "Kompaktne all",
         "default": "Vaikimisi",
-        "overlay": "Riba sisu kohal (overlay)",
-        "top": "Riba üleval"
+        "overlay": "Sisu kohal",
+        "top": "Üleval"
       },
       "bar_scale": {
         "linear": "Lineaarne",
@@ -245,9 +222,7 @@
       "hide": {
         "icon": "Ikoon",
         "name": "Nimi",
-        "progress_bar": "Riba",
         "secondary_info": "Lisainfo",
-        "shape": "Ikooni ümmargune taust",
         "unit": "Ühik",
         "value": "Väärtus"
       },
@@ -263,7 +238,7 @@
       },
       "icon_animation_mode": {
         "auto": "Automaatne",
-        "template": "Mall"
+        "template": "Jinja"
       },
       "label_position": {
         "left": "Vasak",
@@ -278,15 +253,14 @@
         "simple": "Lihtne"
       },
       "status_label_color_source": {
-        "bar": "Edenemisriba",
         "icon": "Ikoon"
       },
       "theme": {
         "battery_adaptive": "Aku (kohandub laadimisolekuga)",
-        "critical_when_extreme": "Kriitiline äärmuslikul (paagi tase, kõrvalekalle...)",
+        "critical_when_extreme": "Kriitiline äärmuslikul",
         "critical_when_extreme_center": "Kriitiline äärmuslikul, tsentreeritud (center_zero)",
-        "critical_when_high": "Kriitiline kõrgel (CPU, RAM, kettakasutus...)",
-        "critical_when_low": "Kriitiline madalal (aku...)",
+        "critical_when_high": "Kriitiline kõrgel",
+        "critical_when_low": "Kriitiline madalal",
         "humidity": "Niiskus",
         "light": "Hele",
         "optimal_when_high": "Optimaalne kõrgetel väärtustel",
@@ -314,8 +288,7 @@
         "space": "Tühik"
       },
       "value_source_mode": {
-        "entity": "Olem",
-        "jinja": "Mall",
+        "jinja": "Jinja",
         "standard": "Fikseeritud väärtus"
       },
       "watermark_as": {
@@ -340,6 +313,15 @@
       "peak_marker": "Tippmärgised",
       "indicators": "Näidikud ja sildid",
       "alerts": "Hoiatused"
+    },
+    "shared": {
+      "col": "Värv",
+      "pos": "Asukoht",
+      "attr": "Atribuut",
+      "min": "Miinimum",
+      "max": "Maksimum",
+      "bar": "Riba",
+      "ent": "Olem"
     }
   }
 }

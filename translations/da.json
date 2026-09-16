@@ -1,16 +1,12 @@
 {
   "card": {
     "msg": {
-      "appliedDefaultValue": "Standardværdi er blevet anvendt automatisk.",
-      "invalidDecimal": "Værdien skal være et gyldigt decimaltal.",
-      "invalidEnumValue": "Den angivne værdi er ikke en tilladt mulighed.",
+      "appliedDefaultValue": "Standardværdi anvendt.",
+      "invalidEnumValue": "Ikke en tilladt værdi.",
       "invalidNoun": "Ugyldig eller fejlbehæftet: {noun}.",
-      "invalidStateContentEntry": "En eller flere poster i tilstandsindholdet er ugyldige.",
-      "invalidTheme": "Det angivne tema er ukendt. Standardtema anvendes.",
+      "invalidTheme": "Ukendt tema.",
       "invalidType": "Forventet type: {type}.",
-      "invalidUnionType": "Værdien matcher ingen af de tilladte typer.",
-      "missingActionKey": "En påkrævet nøgle mangler i handlingsobjektet.",
-      "missingRequiredProperty": "En påkrævet egenskab mangler.",
+      "missingRequiredProperty": "Påkrævet egenskab mangler.",
       "notFound": "Ikke fundet i HA: {noun}.",
       "words": {
         "nouns": {
@@ -24,6 +20,7 @@
           "array": "array-",
           "boolean": "boolesk ",
           "number": "numerisk ",
+          "positiveinteger": "positivt heltal",
           "object": "objekt",
           "string": "streng"
         }
@@ -44,24 +41,20 @@
       "add_entity": "Tilføj enhed",
       "add_zone": "Tilføj zone",
       "alert_when": {
-        "above": "Alarm over",
+        "above": "Over",
         "animation": "Animation",
-        "below": "Alarm under",
-        "color": "Alarmfarve",
+        "below": "Under",
         "highlight": "Fremhævning",
         "label": "Mærkat",
         "above_mode": "Kilde til øvre alarm",
         "below_mode": "Kilde til nedre alarm"
       },
-      "attribute": "Attribut",
       "badge": {
         "toggle": "Badge",
-        "color_toggle": "Uafhængig badge-farve"
+        "color_toggle": "Uafhængig farve"
       },
-      "bar_color": "Farve",
       "bar_color_mode": "Farvetilstand",
       "bar_effect_mode": "Effekt på bjælken",
-      "bar_group": "Bjælke",
       "bar_max_width_toggle": "Maks. bjælkebredde",
       "bar_orientation": "Retning",
       "bar_scale": "Skala",
@@ -74,51 +67,39 @@
       "center_zero": "Center nul",
       "center_zero_growth_percent": "Vækstprocent",
       "center_zero_value": "Centerværdi",
-      "color": "Farve",
       "custom_info": "Tilpasset sekundær info",
       "custom_theme": "Tilpassede temazoner",
-      "decimal": "Visningspræcision",
+      "decimal": "Præcision",
       "density": "Tæthed",
-      "entity": "Enhed",
-      "fast_refresh": "Hurtig opdatering (hvert sekund)",
-      "force_circular_background_mode": "Cirkulær baggrund for ikon",
+      "fast_refresh": "Hurtig opdatering",
+      "force_circular_background_mode": "Cirkulær baggrund",
       "frameless": "Uden ramme",
       "height": "Højde",
       "height_custom_toggle": "Automatisk højde",
       "hide_mode": "Skjul",
       "icon": "Ikon",
-      "icon_group": "Ikon",
       "icon_animation": "Ikonanimation",
       "interpolate": "Interpoler farver",
       "layout": "Indholdslayout",
       "marginless": "Uden margen",
-      "mark_color": "Farve",
-      "max_value": "Maksimal værdi",
-      "max_value_mode": "Kilde til maksimumsværdi",
       "migrate_config": "Migrer konfiguration",
-      "min_value": "Minimumsværdi",
-      "min_value_mode": "Kilde til minimumsværdi",
       "min_width": "Min. bredde",
       "multiline": "Flerlinjet",
       "name": "Navn",
       "name_info": "Tilpasset navneinfo",
       "opacity": "Uigennemsigtighed",
       "peak_marker": {
-        "min_toggle": "Vis minimum",
-        "max_toggle": "Vis maksimum",
-        "average_toggle": "Vis gennemsnit",
-        "range_toggle": "Vis interval"
+        "average_toggle": "Gennemsnit",
+        "range_toggle": "Interval"
       },
-      "peak_marker_unsupported": "Topmarkeringer kræver en sensor- eller number-enhed uden attribut-overskrivning, som ikke er en timer eller counter — ikke tilgængelig for denne enhed.",
+      "peak_marker_unsupported": "Ikke tilgængelig: kræver en sensor- eller number-enhed uden attribut.",
       "percent": "Procent",
-      "position": "Position",
       "reverse": "Omvendt timer",
       "reverse_secondary_info_row": "Skift bjælke og tekst",
       "secondary": "Sekundær info",
       "state_content": "Indhold af tilstand",
       "status_label": {
         "color_source": "Farvekilde",
-        "position": "Mærkatplacering",
         "toggle": "Statusmærkat"
       },
       "text_shadow": "Tilføj tekstskygge",
@@ -141,18 +122,14 @@
       "value_compact": "Kompakt værdi (1.2k)",
       "value_sign": "Vis fortegn (+/-)",
       "watermark": {
-        "high_toggle": "Vis høj",
-        "low_toggle": "Vis lav",
-        "high": "Høj",
-        "low": "Lav",
-        "low_mode": "Kilde til nedre markør",
-        "high_mode": "Kilde til øvre markør"
+        "high_toggle": "Øvre grænse",
+        "low_toggle": "Nedre grænse"
       },
       "window": "Tidsvindue",
       "entities": "Entiteter",
       "rows": "Rækker",
       "line_size": "Linjetykkelse",
-      "mark_defaults": "Fælles standardværdier"
+      "mark_defaults": "Standardværdier"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -194,18 +171,18 @@
         "shimmer_reverse": "Omvendt glans"
       },
       "bar_orientation": {
-        "ltr": "Venstre til højre",
-        "rtl": "Højre til venstre",
-        "up": "Opad"
+        "ltr": "LTR",
+        "rtl": "RTL",
+        "up": "UP"
       },
       "bar_position": {
         "background": "Kortbaggrund",
-        "below": "Bjælken under indhold",
-        "bottom": "Bjælken nederst",
-        "compact_below": "Kompakt bjælke nedenunder (navn/værdi på én linje)",
+        "below": "Under indhold",
+        "bottom": "Nederst",
+        "compact_below": "Kompakt nedenunder",
         "default": "Standard",
-        "overlay": "Bjælken over indhold (overlay)",
-        "top": "Bjælken øverst"
+        "overlay": "Over indhold",
+        "top": "Øverst"
       },
       "bar_scale": {
         "linear": "Lineær",
@@ -245,9 +222,7 @@
       "hide": {
         "icon": "Ikon",
         "name": "Navn",
-        "progress_bar": "Bjælke",
         "secondary_info": "Sekundær info",
-        "shape": "Cirkulær baggrund for ikonet",
         "unit": "Enhed",
         "value": "Værdi"
       },
@@ -263,7 +238,7 @@
       },
       "icon_animation_mode": {
         "auto": "Automatisk",
-        "template": "Skabelon"
+        "template": "Jinja"
       },
       "label_position": {
         "left": "Venstre",
@@ -278,15 +253,14 @@
         "simple": "Enkel"
       },
       "status_label_color_source": {
-        "bar": "Statuslinje",
         "icon": "Ikon"
       },
       "theme": {
         "battery_adaptive": "Batteri (tilpasser sig opladningstilstand)",
-        "critical_when_extreme": "Kritisk ved ekstrem værdi (tankniveau, afvigelse...)",
+        "critical_when_extreme": "Kritisk ved ekstrem værdi",
         "critical_when_extreme_center": "Kritisk ved ekstrem værdi, centreret (center_zero)",
-        "critical_when_high": "Kritisk ved høj værdi (CPU, RAM, diskforbrug...)",
-        "critical_when_low": "Kritisk ved lav værdi (batteri...)",
+        "critical_when_high": "Kritisk ved høj værdi",
+        "critical_when_low": "Kritisk ved lav værdi",
         "humidity": "Fugtighed",
         "light": "Lys",
         "optimal_when_high": "Optimal når højt",
@@ -314,8 +288,7 @@
         "space": "Mellemrum"
       },
       "value_source_mode": {
-        "entity": "Enhed",
-        "jinja": "Skabelon",
+        "jinja": "Jinja",
         "standard": "Fast værdi"
       },
       "watermark_as": {
@@ -340,6 +313,15 @@
       "peak_marker": "Topmarkører",
       "indicators": "Indikatorer og etiketter",
       "alerts": "Advarsler"
+    },
+    "shared": {
+      "col": "Farve",
+      "pos": "Position",
+      "attr": "Attribut",
+      "min": "Minimum",
+      "max": "Maksimum",
+      "bar": "Bjælke",
+      "ent": "Enhed"
     }
   }
 }

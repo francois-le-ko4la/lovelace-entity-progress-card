@@ -115,6 +115,10 @@ const HA_SELECTOR_TAG = 'ha-selector';
 const HA_SVG_ICON_TAG = 'ha-svg-icon';
 const HA_ACTION_HANDLER_TAG = 'action-handler';
 const EDITOR_FIELD_NS = 'editor.field';
+// Labels several fields answer to (see EditorBase#labelFor): their own group, so
+// that editing one in translations/ is visibly editing every field using it.
+const SHARED_LABEL_NS = 'editor.shared';
+const SHARED_LABEL_PREFIX = 'shared.';
 const EDITOR_FIELD_HELPER_NS = 'editor.field_helper';
 const MIN_VALUE_ENTITY_PATH = 'min_value.entity';
 const MAX_VALUE_ENTITY_PATH = 'max_value.entity';
@@ -151,7 +155,7 @@ export { VALUE_CHANGED_EVENT };
 export { HA_SELECTOR_TAG };
 export { HA_SVG_ICON_TAG };
 export { HA_ACTION_HANDLER_TAG };
-export { EDITOR_FIELD_NS };
+export { EDITOR_FIELD_NS, SHARED_LABEL_NS, SHARED_LABEL_PREFIX };
 export { EDITOR_FIELD_HELPER_NS };
 export { MIN_VALUE_ENTITY_PATH };
 export { MAX_VALUE_ENTITY_PATH };

@@ -1,15 +1,11 @@
 {
   "card": {
     "msg": {
-      "appliedDefaultValue": "एक डिफ़ॉल्ट मान स्वचालित रूप से लागू किया गया है।",
-      "invalidDecimal": "मान एक वैध दशमलव संख्या होना चाहिए।",
-      "invalidEnumValue": "प्रदान किया गया मान अनुमतित विकल्पों में से एक नहीं है।",
+      "appliedDefaultValue": "डिफ़ॉल्ट मान लागू किया गया।",
+      "invalidEnumValue": "अनुमत मान नहीं।",
       "invalidNoun": "अमान्य या गलत तरीके से बना: {noun}।",
-      "invalidStateContentEntry": "स्थिति सामग्री में एक या अधिक प्रविष्टियां अमान्य हैं।",
-      "invalidTheme": "निर्दिष्ट थीम अज्ञात है। डिफ़ॉल्ट थीम का उपयोग किया जाएगा।",
+      "invalidTheme": "थीम अज्ञात।",
       "invalidType": "अपेक्षित प्रकार: {type}।",
-      "invalidUnionType": "मान अनुमतित प्रकारों में से किसी से मेल नहीं खाता।",
-      "missingActionKey": "एक्शन ऑब्जेक्ट में एक आवश्यक कुंजी गायब है।",
       "missingRequiredProperty": "आवश्यक गुण गायब है।",
       "notFound": "HA में नहीं मिला: {noun}।",
       "words": {
@@ -24,6 +20,7 @@
           "array": "एरे",
           "boolean": "बूलियन",
           "number": "संख्या",
+          "positiveinteger": "धनात्मक पूर्णांक",
           "object": "ऑब्जेक्ट",
           "string": "स्ट्रिंग"
         }
@@ -44,24 +41,20 @@
       "add_entity": "एंटिटी जोड़ें",
       "add_zone": "ज़ोन जोड़ें",
       "alert_when": {
-        "above": "इससे ऊपर अलर्ट",
+        "above": "इससे ऊपर",
         "animation": "एनिमेशन",
-        "below": "इससे नीचे अलर्ट",
-        "color": "अलर्ट रंग",
+        "below": "इससे नीचे",
         "highlight": "हाइलाइट",
         "label": "लेबल",
         "above_mode": "ऊपरी अलर्ट स्रोत",
         "below_mode": "निचला अलर्ट स्रोत"
       },
-      "attribute": "एट्रिब्यूट",
       "badge": {
         "toggle": "बैज",
-        "color_toggle": "स्वतंत्र बैज रंग"
+        "color_toggle": "स्वतंत्र रंग"
       },
-      "bar_color": "रंग",
       "bar_color_mode": "रंग मोड",
       "bar_effect_mode": "बार पर प्रभाव",
-      "bar_group": "बार",
       "bar_max_width_toggle": "बार की अधिकतम चौड़ाई",
       "bar_orientation": "अभिविन्यास",
       "bar_scale": "स्केल",
@@ -74,51 +67,39 @@
       "center_zero": "शून्य केंद्र में",
       "center_zero_growth_percent": "वृद्धि प्रतिशत",
       "center_zero_value": "केंद्र मान",
-      "color": "रंग",
       "custom_info": "कस्टम द्वितीयक जानकारी",
       "custom_theme": "कस्टम थीम ज़ोन",
-      "decimal": "Display precision",
+      "decimal": "सटीकता",
       "density": "घनत्व",
-      "entity": "एंटिटी",
-      "fast_refresh": "तेज़ रिफ्रेश (प्रति सेकंड)",
-      "force_circular_background_mode": "आइकन का गोलाकार पृष्ठभूमि",
+      "fast_refresh": "तेज़ रिफ्रेश",
+      "force_circular_background_mode": "गोलाकार पृष्ठभूमि",
       "frameless": "फ्रेमरहित",
       "height": "ऊँचाई",
       "height_custom_toggle": "स्वतः ऊँचाई",
       "hide_mode": "छिपाएँ",
       "icon": "आइकन",
-      "icon_group": "आइकन",
       "icon_animation": "आइकन एनिमेशन",
       "interpolate": "रंग इंटरपोलेशन",
       "layout": "सामग्री लेआउट",
       "marginless": "मार्जिनरहित",
-      "mark_color": "रंग",
-      "max_value": "अधिकतम मान",
-      "max_value_mode": "अधिकतम मान स्रोत",
       "migrate_config": "कॉन्फ़िगरेशन माइग्रेट करें",
-      "min_value": "न्यूनतम मान",
-      "min_value_mode": "न्यूनतम मान स्रोत",
       "min_width": "न्यूनतम चौड़ाई",
       "multiline": "मल्टीलाइन",
       "name": "नाम",
       "name_info": "कस्टम नाम जानकारी",
       "opacity": "अपारदर्शिता",
       "peak_marker": {
-        "min_toggle": "न्यूनतम दिखाएं",
-        "max_toggle": "अधिकतम दिखाएं",
-        "average_toggle": "औसत दिखाएं",
-        "range_toggle": "रेंज दिखाएं"
+        "average_toggle": "औसत",
+        "range_toggle": "रेंज"
       },
-      "peak_marker_unsupported": "पीक मार्कर के लिए sensor या number एंटिटी चाहिए, बिना एट्रिब्यूट ओवरराइड के, जो timer या counter न हो — इस एंटिटी के लिए उपलब्ध नहीं है।",
+      "peak_marker_unsupported": "उपलब्ध नहीं: बिना एट्रिब्यूट के sensor या number एंटिटी चाहिए।",
       "percent": "प्रतिशत",
-      "position": "स्थिति",
       "reverse": "टाइमर उलटें",
       "reverse_secondary_info_row": "बार और टेक्स्ट बदलें",
       "secondary": "सहायक जानकारी",
       "state_content": "स्थिति की सामग्री",
       "status_label": {
         "color_source": "रंग स्रोत",
-        "position": "लेबल की स्थिति",
         "toggle": "स्थिति लेबल"
       },
       "text_shadow": "टेक्स्ट में छाया जोड़ें",
@@ -141,18 +122,14 @@
       "value_compact": "संक्षिप्त मान (1.2k)",
       "value_sign": "चिह्न दिखाएं (+/-)",
       "watermark": {
-        "high_toggle": "उच्च दिखाएं",
-        "low_toggle": "निम्न दिखाएं",
-        "high": "उच्च",
-        "low": "निम्न",
-        "low_mode": "निम्न मार्कर स्रोत",
-        "high_mode": "उच्च मार्कर स्रोत"
+        "high_toggle": "उच्च सीमा",
+        "low_toggle": "निम्न सीमा"
       },
       "window": "समय विंडो",
       "entities": "एंटिटी",
       "rows": "पंक्तियाँ",
       "line_size": "रेखा की मोटाई",
-      "mark_defaults": "साझा डिफ़ॉल्ट"
+      "mark_defaults": "डिफ़ॉल्ट"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -194,18 +171,18 @@
         "shimmer_reverse": "उल्टी चमक"
       },
       "bar_orientation": {
-        "ltr": "बाएं से दाएं",
-        "rtl": "दाएं से बाएं",
-        "up": "ऊपर की ओर"
+        "ltr": "LTR",
+        "rtl": "RTL",
+        "up": "UP"
       },
       "bar_position": {
         "background": "कार्ड पृष्ठभूमि",
-        "below": "सामग्री के नीचे बार",
-        "bottom": "नीचे बार",
-        "compact_below": "कॉम्पैक्ट बार नीचे (नाम/मान एक पंक्ति में)",
+        "below": "सामग्री के नीचे",
+        "bottom": "नीचे",
+        "compact_below": "कॉम्पैक्ट नीचे",
         "default": "डिफ़ॉल्ट",
-        "overlay": "सामग्री पर ओवरले बार",
-        "top": "ऊपर बार"
+        "overlay": "सामग्री पर ओवरले",
+        "top": "ऊपर"
       },
       "bar_scale": {
         "linear": "रैखिक",
@@ -245,9 +222,7 @@
       "hide": {
         "icon": "आइकन",
         "name": "नाम",
-        "progress_bar": "बार",
         "secondary_info": "सहायक जानकारी",
-        "shape": "आइकन की गोलाकार पृष्ठभूमि",
         "unit": "इकाई",
         "value": "मूल्य"
       },
@@ -263,7 +238,7 @@
       },
       "icon_animation_mode": {
         "auto": "स्वचालित",
-        "template": "टेम्पलेट"
+        "template": "Jinja"
       },
       "label_position": {
         "left": "बाएं",
@@ -278,15 +253,14 @@
         "simple": "सरल"
       },
       "status_label_color_source": {
-        "bar": "प्रगति बार",
         "icon": "आइकन"
       },
       "theme": {
         "battery_adaptive": "बैटरी (चार्जिंग स्थिति के अनुसार अनुकूलित)",
-        "critical_when_extreme": "चरम पर गंभीर (टैंक स्तर, विचलन...)",
+        "critical_when_extreme": "चरम पर गंभीर",
         "critical_when_extreme_center": "चरम पर गंभीर, केंद्रित (center_zero)",
-        "critical_when_high": "अधिक होने पर गंभीर (CPU, RAM, डिस्क उपयोग...)",
-        "critical_when_low": "कम होने पर गंभीर (बैटरी...)",
+        "critical_when_high": "अधिक होने पर गंभीर",
+        "critical_when_low": "कम होने पर गंभीर",
         "humidity": "आर्द्रता",
         "light": "प्रकाश",
         "optimal_when_high": "उच्च होने पर इष्टतम",
@@ -314,8 +288,7 @@
         "space": "स्पेस"
       },
       "value_source_mode": {
-        "entity": "एंटिटी",
-        "jinja": "टेम्पलेट",
+        "jinja": "Jinja",
         "standard": "निश्चित मान"
       },
       "watermark_as": {
@@ -340,6 +313,15 @@
       "peak_marker": "पीक चिह्न",
       "indicators": "संकेतक और लेबल",
       "alerts": "अलर्ट"
+    },
+    "shared": {
+      "col": "रंग",
+      "pos": "स्थिति",
+      "attr": "एट्रिब्यूट",
+      "min": "न्यूनतम",
+      "max": "अधिकतम",
+      "bar": "बार",
+      "ent": "एंटिटी"
     }
   }
 }

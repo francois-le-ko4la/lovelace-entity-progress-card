@@ -1,15 +1,11 @@
 {
   "card": {
     "msg": {
-      "appliedDefaultValue": "Значение по умолчанию было применено автоматически.",
-      "invalidDecimal": "Значение должно быть действительным десятичным числом.",
-      "invalidEnumValue": "Предоставленное значение не является одним из разрешённых вариантов.",
+      "appliedDefaultValue": "Применено значение по умолчанию.",
+      "invalidEnumValue": "Недопустимое значение.",
       "invalidNoun": "Недействительно или повреждено: {noun}.",
-      "invalidStateContentEntry": "Одна или несколько записей в содержимом состояния недействительны.",
-      "invalidTheme": "Указанная тема неизвестна. Будет использована тема по умолчанию.",
+      "invalidTheme": "Неизвестная тема.",
       "invalidType": "Ожидаемый тип: {type}.",
-      "invalidUnionType": "Значение не соответствует ни одному из разрешённых типов.",
-      "missingActionKey": "В объекте действия отсутствует обязательный ключ.",
       "missingRequiredProperty": "Отсутствует обязательное свойство.",
       "notFound": "Не найдено в HA: {noun}.",
       "words": {
@@ -24,6 +20,7 @@
           "array": "массив",
           "boolean": "логическое",
           "number": "число",
+          "positiveinteger": "положительное целое число",
           "object": "объект",
           "string": "строка"
         }
@@ -44,24 +41,20 @@
       "add_entity": "Добавить сущность",
       "add_zone": "Добавить зону",
       "alert_when": {
-        "above": "Оповещение выше",
+        "above": "Выше",
         "animation": "Анимация",
-        "below": "Оповещение ниже",
-        "color": "Цвет оповещения",
+        "below": "Ниже",
         "highlight": "Выделение",
         "label": "Метка",
         "above_mode": "Источник верхнего оповещения",
         "below_mode": "Источник нижнего оповещения"
       },
-      "attribute": "Атрибут",
       "badge": {
         "toggle": "Значок",
-        "color_toggle": "Независимый цвет значка"
+        "color_toggle": "Независимый цвет"
       },
-      "bar_color": "Цвет",
       "bar_color_mode": "Режим цвета",
       "bar_effect_mode": "Эффект на полосе",
-      "bar_group": "Полоса",
       "bar_max_width_toggle": "Макс. ширина полосы",
       "bar_orientation": "Ориентация",
       "bar_scale": "Масштаб",
@@ -74,51 +67,39 @@
       "center_zero": "Ноль по центру",
       "center_zero_growth_percent": "Процент роста",
       "center_zero_value": "Центральное значение",
-      "color": "Цвет",
       "custom_info": "Дополнительная информация",
       "custom_theme": "Зоны пользовательской темы",
-      "decimal": "Округление значений",
+      "decimal": "Округление",
       "density": "Плотность",
-      "entity": "Сущность",
-      "fast_refresh": "Быстрое обновление (каждую секунду)",
-      "force_circular_background_mode": "Круглый фон значка",
+      "fast_refresh": "Быстрое обновление",
+      "force_circular_background_mode": "Круглый фон",
       "frameless": "Без рамки",
       "height": "Высота",
       "height_custom_toggle": "Автоматическая высота",
       "hide_mode": "Скрыть",
       "icon": "Иконка",
-      "icon_group": "Иконка",
       "icon_animation": "Анимация значка",
       "interpolate": "Интерполяция цветов",
       "layout": "Расположение содержимого",
       "marginless": "Без отступа",
-      "mark_color": "Цвет",
-      "max_value": "Максимальное значение",
-      "max_value_mode": "Источник максимального значения",
       "migrate_config": "Перенести конфигурацию",
-      "min_value": "Минимальное значение",
-      "min_value_mode": "Источник минимального значения",
       "min_width": "Мин. ширина",
       "multiline": "Многострочный",
       "name": "Название",
       "name_info": "Доп. информация (имя)",
       "opacity": "Непрозрачность",
       "peak_marker": {
-        "min_toggle": "Показать минимум",
-        "max_toggle": "Показать максимум",
-        "average_toggle": "Показать среднее",
-        "range_toggle": "Показать диапазон"
+        "average_toggle": "Среднее",
+        "range_toggle": "Диапазон"
       },
-      "peak_marker_unsupported": "Маркерам пиков нужна сущность sensor или number без переопределения атрибута, не являющаяся timer или counter — недоступно для этой сущности.",
+      "peak_marker_unsupported": "Недоступно: нужна сущность sensor или number без атрибута.",
       "percent": "Процент",
-      "position": "Позиция",
       "reverse": "Обратный таймер",
       "reverse_secondary_info_row": "Поменять местами панель и текст",
       "secondary": "Дополнительная информация",
       "state_content": "Содержимое состояния",
       "status_label": {
         "color_source": "Источник цвета",
-        "position": "Положение метки",
         "toggle": "Метка состояния"
       },
       "text_shadow": "Добавить тень к тексту",
@@ -141,18 +122,14 @@
       "value_compact": "Компактное значение (1.2k)",
       "value_sign": "Показывать знак (+/-)",
       "watermark": {
-        "high_toggle": "Показать верхний",
-        "low_toggle": "Показать нижний",
-        "high": "Верхний",
-        "low": "Нижний",
-        "low_mode": "Источник нижнего маркера",
-        "high_mode": "Источник верхнего маркера"
+        "high_toggle": "Верхний порог",
+        "low_toggle": "Нижний порог"
       },
       "window": "Временное окно",
       "entities": "Объекты",
       "rows": "Строки",
       "line_size": "Толщина линии",
-      "mark_defaults": "Общие значения по умолчанию"
+      "mark_defaults": "Значения по умолчанию"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -194,18 +171,18 @@
         "shimmer_reverse": "Обратное мерцание"
       },
       "bar_orientation": {
-        "ltr": "Слева направо",
-        "rtl": "Справа налево",
-        "up": "Вверх"
+        "ltr": "LTR",
+        "rtl": "RTL",
+        "up": "UP"
       },
       "bar_position": {
         "background": "Фон карточки",
-        "below": "Полоса под содержимым",
-        "bottom": "Полоса внизу",
-        "compact_below": "Компактная полоса снизу (имя/значение в одной строке)",
+        "below": "Под содержимым",
+        "bottom": "Внизу",
+        "compact_below": "Компактная снизу",
         "default": "По умолчанию",
-        "overlay": "Полоса поверх содержимого (overlay)",
-        "top": "Полоса вверху"
+        "overlay": "Поверх содержимого",
+        "top": "Вверху"
       },
       "bar_scale": {
         "linear": "Линейная",
@@ -245,9 +222,7 @@
       "hide": {
         "icon": "Иконка",
         "name": "Имя",
-        "progress_bar": "Полоса",
         "secondary_info": "Доп. информация",
-        "shape": "Круглый фон значка",
         "unit": "Единица",
         "value": "Значение"
       },
@@ -263,7 +238,7 @@
       },
       "icon_animation_mode": {
         "auto": "Автоматически",
-        "template": "Шаблон"
+        "template": "Jinja"
       },
       "label_position": {
         "left": "Слева",
@@ -278,15 +253,14 @@
         "simple": "Простой"
       },
       "status_label_color_source": {
-        "bar": "Полоса прогресса",
         "icon": "Значок"
       },
       "theme": {
         "battery_adaptive": "Батарея (адаптируется к состоянию зарядки)",
-        "critical_when_extreme": "Критично при экстремальном значении (уровень бака, отклонение...)",
+        "critical_when_extreme": "Критично при экстремальном значении",
         "critical_when_extreme_center": "Критично при экстремальном значении, по центру (center_zero)",
-        "critical_when_high": "Критично при высоком значении (CPU, RAM, использование диска...)",
-        "critical_when_low": "Критично при низком значении (батарея...)",
+        "critical_when_high": "Критично при высоком значении",
+        "critical_when_low": "Критично при низком значении",
         "humidity": "Влажность",
         "light": "Освещение",
         "optimal_when_high": "Оптимально при высоких значениях",
@@ -314,8 +288,7 @@
         "space": "Пробел"
       },
       "value_source_mode": {
-        "entity": "Сущность",
-        "jinja": "Шаблон",
+        "jinja": "Jinja",
         "standard": "Фиксированное значение"
       },
       "watermark_as": {
@@ -340,6 +313,15 @@
       "peak_marker": "Метки пиков",
       "indicators": "Индикаторы и метки",
       "alerts": "Оповещения"
+    },
+    "shared": {
+      "col": "Цвет",
+      "pos": "Позиция",
+      "attr": "Атрибут",
+      "min": "Минимум",
+      "max": "Максимум",
+      "bar": "Полоса",
+      "ent": "Сущность"
     }
   }
 }

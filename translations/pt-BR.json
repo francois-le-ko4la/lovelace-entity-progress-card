@@ -1,16 +1,12 @@
 {
   "card": {
     "msg": {
-      "appliedDefaultValue": "Um valor padrão foi aplicado automaticamente.",
-      "invalidDecimal": "O valor deve ser um número inteiro positivo.",
-      "invalidEnumValue": "O valor fornecido não faz parte das opções permitidas.",
+      "appliedDefaultValue": "Valor padrão aplicado.",
+      "invalidEnumValue": "Valor não permitido.",
       "invalidNoun": "Inválido ou mal formado: {noun}.",
-      "invalidStateContentEntry": "Uma ou mais entradas do conteúdo do estado são inválidas.",
-      "invalidTheme": "O tema especificado é desconhecido. O tema padrão será usado.",
+      "invalidTheme": "Tema desconhecido.",
       "invalidType": "Tipo esperado: {type}.",
-      "invalidUnionType": "O valor não corresponde a nenhum dos tipos permitidos.",
-      "missingActionKey": "Uma chave obrigatória está ausente no objeto de ação.",
-      "missingRequiredProperty": "Uma propriedade obrigatória está ausente.",
+      "missingRequiredProperty": "Propriedade obrigatória ausente.",
       "notFound": "Não encontrado no HA: {noun}.",
       "words": {
         "nouns": {
@@ -24,6 +20,7 @@
           "array": "array",
           "boolean": "booleano",
           "number": "número",
+          "positiveinteger": "número inteiro positivo",
           "object": "objeto",
           "string": "string"
         }
@@ -44,24 +41,20 @@
       "add_entity": "Adicionar entidade",
       "add_zone": "Adicionar zona",
       "alert_when": {
-        "above": "Alerta acima",
+        "above": "Acima de",
         "animation": "Animação",
-        "below": "Alerta abaixo",
-        "color": "Cor do alerta",
+        "below": "Abaixo de",
         "highlight": "Destaque",
         "label": "Rótulo",
         "above_mode": "Origem do alerta superior",
         "below_mode": "Origem do alerta inferior"
       },
-      "attribute": "Atributo",
       "badge": {
         "toggle": "Emblema",
-        "color_toggle": "Cor do emblema independente"
+        "color_toggle": "Cor independente"
       },
-      "bar_color": "Cor",
       "bar_color_mode": "Modo de cor",
       "bar_effect_mode": "Efeito na barra",
-      "bar_group": "Barra",
       "bar_max_width_toggle": "Largura máx. da barra",
       "bar_orientation": "Orientação",
       "bar_scale": "Escala",
@@ -74,51 +67,39 @@
       "center_zero": "Zero ao centro",
       "center_zero_growth_percent": "Percentual de crescimento",
       "center_zero_value": "Valor central",
-      "color": "Cor",
       "custom_info": "Informação secundária personalizada",
       "custom_theme": "Zonas de tema personalizado",
-      "decimal": "Precisão de exibição",
+      "decimal": "Precisão",
       "density": "Densidade",
-      "entity": "Entidade",
-      "fast_refresh": "Atualização rápida (a cada segundo)",
-      "force_circular_background_mode": "Fundo circular do ícone",
+      "fast_refresh": "Atualização rápida",
+      "force_circular_background_mode": "Fundo circular",
       "frameless": "Sem moldura",
       "height": "Altura",
       "height_custom_toggle": "Altura automática",
       "hide_mode": "Ocultar",
       "icon": "Ícone",
-      "icon_group": "Ícone",
       "icon_animation": "Animação do ícone",
       "interpolate": "Interpolar cores",
       "layout": "Layout do conteúdo",
       "marginless": "Sem margem",
-      "mark_color": "Cor",
-      "max_value": "Valor máximo",
-      "max_value_mode": "Origem do valor máximo",
       "migrate_config": "Migrar configuração",
-      "min_value": "Valor mínimo",
-      "min_value_mode": "Origem do valor mínimo",
       "min_width": "Largura mín.",
       "multiline": "Multilinha",
       "name": "Nome",
       "name_info": "Informação de nome personalizada",
       "opacity": "Opacidade",
       "peak_marker": {
-        "min_toggle": "Mostrar mínimo",
-        "max_toggle": "Mostrar máximo",
-        "average_toggle": "Mostrar média",
-        "range_toggle": "Mostrar intervalo"
+        "average_toggle": "Média",
+        "range_toggle": "Intervalo"
       },
-      "peak_marker_unsupported": "Os marcadores de pico precisam de uma entidade sensor ou number, sem substituição de atributo, e que não seja um timer nem um counter — não disponível para esta entidade.",
+      "peak_marker_unsupported": "Não disponível: requer uma entidade sensor ou number sem atributo.",
       "percent": "Porcentagem",
-      "position": "Posição",
       "reverse": "Temporizador inverso",
       "reverse_secondary_info_row": "Trocar barra e texto",
       "secondary": "Informação secundária",
       "state_content": "Conteúdo do estado",
       "status_label": {
         "color_source": "Origem da cor",
-        "position": "Posição do rótulo",
         "toggle": "Rótulo de status"
       },
       "text_shadow": "Adicionar sombra ao texto",
@@ -141,18 +122,14 @@
       "value_compact": "Valor compacto (1.2k)",
       "value_sign": "Mostrar sinal (+/-)",
       "watermark": {
-        "high_toggle": "Mostrar alto",
-        "low_toggle": "Mostrar baixo",
-        "high": "Alto",
-        "low": "Baixo",
-        "low_mode": "Origem do marcador baixo",
-        "high_mode": "Origem do marcador alto"
+        "high_toggle": "Limite superior",
+        "low_toggle": "Limite inferior"
       },
       "window": "Janela de tempo",
       "entities": "Entidades",
       "rows": "Linhas",
       "line_size": "Espessura da linha",
-      "mark_defaults": "Padrões compartilhados"
+      "mark_defaults": "Padrões"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -194,18 +171,18 @@
         "shimmer_reverse": "Brilho inverso"
       },
       "bar_orientation": {
-        "ltr": "Esquerda para direita",
-        "rtl": "Direita para esquerda",
-        "up": "Para cima"
+        "ltr": "LTR",
+        "rtl": "RTL",
+        "up": "UP"
       },
       "bar_position": {
         "background": "Fundo do cartão",
-        "below": "Barra abaixo do conteúdo",
-        "bottom": "Barra abaixo",
-        "compact_below": "Barra compacta abaixo (nome/valor em uma linha)",
+        "below": "Abaixo do conteúdo",
+        "bottom": "Abaixo",
+        "compact_below": "Compacta abaixo",
         "default": "Padrão",
-        "overlay": "Barra sobre o conteúdo (overlay)",
-        "top": "Barra acima"
+        "overlay": "Sobre o conteúdo",
+        "top": "Acima"
       },
       "bar_scale": {
         "linear": "Linear",
@@ -245,9 +222,7 @@
       "hide": {
         "icon": "Ícone",
         "name": "Nome",
-        "progress_bar": "Barra",
         "secondary_info": "Info secundária",
-        "shape": "Fundo circular do ícone",
         "unit": "Unidade",
         "value": "Valor"
       },
@@ -263,7 +238,7 @@
       },
       "icon_animation_mode": {
         "auto": "Automático",
-        "template": "Modelo"
+        "template": "Jinja"
       },
       "label_position": {
         "left": "Esquerda",
@@ -278,15 +253,14 @@
         "simple": "Simples"
       },
       "status_label_color_source": {
-        "bar": "Barra de progresso",
         "icon": "Ícone"
       },
       "theme": {
         "battery_adaptive": "Bateria (se adapta ao estado de carga)",
-        "critical_when_extreme": "Crítico quando extremo (nível do reservatório, desvio...)",
+        "critical_when_extreme": "Crítico quando extremo",
         "critical_when_extreme_center": "Crítico quando extremo, centralizado (center_zero)",
-        "critical_when_high": "Crítico quando alto (CPU, RAM, uso de disco...)",
-        "critical_when_low": "Crítico quando baixo (bateria...)",
+        "critical_when_high": "Crítico quando alto",
+        "critical_when_low": "Crítico quando baixo",
         "humidity": "Umidade",
         "light": "Claro",
         "optimal_when_high": "Ideal quando alto",
@@ -314,8 +288,7 @@
         "space": "Espaço"
       },
       "value_source_mode": {
-        "entity": "Entidade",
-        "jinja": "Modelo",
+        "jinja": "Jinja",
         "standard": "Valor fixo"
       },
       "watermark_as": {
@@ -340,6 +313,15 @@
       "peak_marker": "Marcadores de pico",
       "indicators": "Indicadores e rótulos",
       "alerts": "Alertas"
+    },
+    "shared": {
+      "col": "Cor",
+      "pos": "Posição",
+      "attr": "Atributo",
+      "min": "Mínimo",
+      "max": "Máximo",
+      "bar": "Barra",
+      "ent": "Entidade"
     }
   }
 }

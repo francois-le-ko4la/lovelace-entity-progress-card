@@ -1,15 +1,11 @@
 {
   "card": {
     "msg": {
-      "appliedDefaultValue": "Zastosowano domyślną wartość automatycznie.",
-      "invalidDecimal": "Wartość musi być poprawną liczbą dziesiętną.",
-      "invalidEnumValue": "Podana wartość nie jest jedną z dozwolonych opcji.",
+      "appliedDefaultValue": "Zastosowano wartość domyślną.",
+      "invalidEnumValue": "Niedozwolona wartość.",
       "invalidNoun": "Nieprawidłowe lub uszkodzone: {noun}.",
-      "invalidStateContentEntry": "Jedna lub więcej pozycji zawartości stanu jest nieprawidłowa.",
-      "invalidTheme": "Podany motyw jest nieznany. Zostanie użyty domyślny motyw.",
+      "invalidTheme": "Nieznany motyw.",
       "invalidType": "Oczekiwany typ: {type}.",
-      "invalidUnionType": "Wartość nie pasuje do żadnego z dozwolonych typów.",
-      "missingActionKey": "W obiekcie akcji brakuje wymaganej właściwości.",
       "missingRequiredProperty": "Brakuje wymaganej właściwości.",
       "notFound": "Nie znaleziono w HA: {noun}.",
       "words": {
@@ -24,6 +20,7 @@
           "array": "tablica",
           "boolean": "boolean",
           "number": "liczba",
+          "positiveinteger": "dodatnia liczba całkowita",
           "object": "obiekt",
           "string": "string"
         }
@@ -44,24 +41,20 @@
       "add_entity": "Dodaj encję",
       "add_zone": "Dodaj strefę",
       "alert_when": {
-        "above": "Alarm powyżej",
+        "above": "Powyżej",
         "animation": "Animacja",
-        "below": "Alarm poniżej",
-        "color": "Kolor alarmu",
+        "below": "Poniżej",
         "highlight": "Wyróżnienie",
         "label": "Etykieta",
         "above_mode": "Źródło alertu górnego",
         "below_mode": "Źródło alertu dolnego"
       },
-      "attribute": "Atrybut",
       "badge": {
         "toggle": "Odznaka",
-        "color_toggle": "Niezależny kolor odznaki"
+        "color_toggle": "Niezależny kolor"
       },
-      "bar_color": "Kolor",
       "bar_color_mode": "Tryb koloru",
       "bar_effect_mode": "Efekt na pasku",
-      "bar_group": "Pasek",
       "bar_max_width_toggle": "Maks. szerokość paska",
       "bar_orientation": "Orientacja",
       "bar_scale": "Skala",
@@ -74,51 +67,39 @@
       "center_zero": "Zero na środku",
       "center_zero_growth_percent": "Procent wzrostu",
       "center_zero_value": "Wartość środkowa",
-      "color": "Kolor",
       "custom_info": "Niestandardowa info pomocnicza",
       "custom_theme": "Strefy niestandardowego motywu",
       "decimal": "Precyzja",
       "density": "Gęstość",
-      "entity": "Encja",
-      "fast_refresh": "Szybkie odświeżanie (co sekundę)",
-      "force_circular_background_mode": "Okrągłe tło ikony",
+      "fast_refresh": "Szybkie odświeżanie",
+      "force_circular_background_mode": "Okrągłe tło",
       "frameless": "Bez ramki",
       "height": "Wysokość",
       "height_custom_toggle": "Automatyczna wysokość",
       "hide_mode": "Ukryj",
       "icon": "Ikona",
-      "icon_group": "Ikona",
       "icon_animation": "Animacja ikony",
       "interpolate": "Interpolacja kolorów",
       "layout": "Układ treści",
       "marginless": "Bez marginesu",
-      "mark_color": "Kolor",
-      "max_value": "Wartość maksymalna",
-      "max_value_mode": "Źródło wartości maksymalnej",
       "migrate_config": "Migruj konfigurację",
-      "min_value": "Wartość minimalna",
-      "min_value_mode": "Źródło wartości minimalnej",
       "min_width": "Min. szerokość",
       "multiline": "Wielowierszowy",
       "name": "Nazwa",
       "name_info": "Niestandardowa info nazwy",
       "opacity": "Krycie",
       "peak_marker": {
-        "min_toggle": "Pokaż minimum",
-        "max_toggle": "Pokaż maksimum",
-        "average_toggle": "Pokaż średnią",
-        "range_toggle": "Pokaż zakres"
+        "average_toggle": "Średnia",
+        "range_toggle": "Zakres"
       },
-      "peak_marker_unsupported": "Znaczniki szczytowe wymagają encji sensor lub number bez nadpisania atrybutu, która nie jest timerem ani counterem — niedostępne dla tej encji.",
+      "peak_marker_unsupported": "Niedostępne: wymaga encji sensor lub number bez atrybutu.",
       "percent": "Procent",
-      "position": "Pozycja",
       "reverse": "Odwróć licznik",
       "reverse_secondary_info_row": "Zamień pasek i tekst",
       "secondary": "Informacja dodatkowa",
       "state_content": "Zawartość stanu",
       "status_label": {
         "color_source": "Źródło koloru",
-        "position": "Pozycja etykiety",
         "toggle": "Etykieta stanu"
       },
       "text_shadow": "Dodaj cień tekstu",
@@ -141,18 +122,14 @@
       "value_compact": "Kompaktowa wartość (1.2k)",
       "value_sign": "Pokaż znak (+/-)",
       "watermark": {
-        "high_toggle": "Pokaż górny",
-        "low_toggle": "Pokaż dolny",
-        "high": "Górny",
-        "low": "Dolny",
-        "low_mode": "Źródło dolnego znacznika",
-        "high_mode": "Źródło górnego znacznika"
+        "high_toggle": "Górny próg",
+        "low_toggle": "Dolny próg"
       },
       "window": "Okno czasowe",
       "entities": "Encje",
       "rows": "Wiersze",
       "line_size": "Grubość linii",
-      "mark_defaults": "Wspólne wartości domyślne"
+      "mark_defaults": "Wartości domyślne"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -194,18 +171,18 @@
         "shimmer_reverse": "Odwrócony połysk"
       },
       "bar_orientation": {
-        "ltr": "Od lewej do prawej",
-        "rtl": "Od prawej do lewej",
-        "up": "W górę"
+        "ltr": "LTR",
+        "rtl": "RTL",
+        "up": "UP"
       },
       "bar_position": {
         "background": "Tło karty",
-        "below": "Pasek pod zawartością",
-        "bottom": "Pasek na dole",
-        "compact_below": "Kompaktowy pasek poniżej (nazwa/wartość w jednym wierszu)",
+        "below": "Pod zawartością",
+        "bottom": "Na dole",
+        "compact_below": "Kompaktowy poniżej",
         "default": "Domyślnie",
-        "overlay": "Pasek nałożony na zawartość (overlay)",
-        "top": "Pasek na górze"
+        "overlay": "Nałożony na zawartość",
+        "top": "Na górze"
       },
       "bar_scale": {
         "linear": "Liniowa",
@@ -245,9 +222,7 @@
       "hide": {
         "icon": "Ikona",
         "name": "Nazwa",
-        "progress_bar": "Pasek",
         "secondary_info": "Info dodatkowe",
-        "shape": "Okrągłe tło ikony",
         "unit": "Jednostka",
         "value": "Wartość"
       },
@@ -263,7 +238,7 @@
       },
       "icon_animation_mode": {
         "auto": "Automatyczny",
-        "template": "Szablon"
+        "template": "Jinja"
       },
       "label_position": {
         "left": "Lewo",
@@ -278,15 +253,14 @@
         "simple": "Prosty"
       },
       "status_label_color_source": {
-        "bar": "Pasek postępu",
         "icon": "Ikona"
       },
       "theme": {
         "battery_adaptive": "Bateria (dostosowuje się do stanu ładowania)",
-        "critical_when_extreme": "Krytyczne przy wartości ekstremalnej (poziom zbiornika, odchylenie...)",
+        "critical_when_extreme": "Krytyczne przy wartości ekstremalnej",
         "critical_when_extreme_center": "Krytyczne przy wartości ekstremalnej, wyśrodkowane (center_zero)",
-        "critical_when_high": "Krytyczne przy wysokiej wartości (CPU, RAM, użycie dysku...)",
-        "critical_when_low": "Krytyczne przy niskiej wartości (bateria...)",
+        "critical_when_high": "Krytyczne przy wysokiej wartości",
+        "critical_when_low": "Krytyczne przy niskiej wartości",
         "humidity": "Wilgotność",
         "light": "Światło",
         "optimal_when_high": "Optymalny, gdy wysokie",
@@ -314,8 +288,7 @@
         "space": "Odstęp"
       },
       "value_source_mode": {
-        "entity": "Encja",
-        "jinja": "Szablon",
+        "jinja": "Jinja",
         "standard": "Wartość stała"
       },
       "watermark_as": {
@@ -340,6 +313,15 @@
       "peak_marker": "Znaczniki szczytów",
       "indicators": "Wskaźniki i etykiety",
       "alerts": "Alerty"
+    },
+    "shared": {
+      "col": "Kolor",
+      "pos": "Pozycja",
+      "attr": "Atrybut",
+      "min": "Minimum",
+      "max": "Maksimum",
+      "bar": "Pasek",
+      "ent": "Encja"
     }
   }
 }

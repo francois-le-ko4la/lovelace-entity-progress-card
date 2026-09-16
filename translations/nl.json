@@ -1,15 +1,11 @@
 {
   "card": {
     "msg": {
-      "appliedDefaultValue": "Een standaardwaarde is automatisch toegepast.",
-      "invalidDecimal": "De waarde moet een geldig decimaal getal zijn.",
-      "invalidEnumValue": "De opgegeven waarde is geen geldige optie.",
+      "appliedDefaultValue": "Standaardwaarde toegepast.",
+      "invalidEnumValue": "Waarde niet toegestaan.",
       "invalidNoun": "Ongeldig of foutief geformatteerd: {noun}.",
-      "invalidStateContentEntry": "Een of meer onderdelen van de statusinhoud zijn ongeldig.",
-      "invalidTheme": "Het opgegeven thema is onbekend. Het standaardthema wordt gebruikt.",
+      "invalidTheme": "Onbekend thema.",
       "invalidType": "Verwacht type: {type}.",
-      "invalidUnionType": "De waarde komt niet overeen met toegestane types.",
-      "missingActionKey": "Er ontbreekt een verplichte sleutel in het actieobject.",
       "missingRequiredProperty": "Vereiste eigenschap ontbreekt.",
       "notFound": "Niet gevonden in HA: {noun}.",
       "words": {
@@ -24,6 +20,7 @@
           "array": "array",
           "boolean": "boolean",
           "number": "nummer",
+          "positiveinteger": "positief geheel getal",
           "object": "object",
           "string": "string"
         }
@@ -44,24 +41,20 @@
       "add_entity": "Entiteit toevoegen",
       "add_zone": "Zone toevoegen",
       "alert_when": {
-        "above": "Alarm boven",
+        "above": "Boven",
         "animation": "Animatie",
-        "below": "Alarm onder",
-        "color": "Alarmkleur",
+        "below": "Onder",
         "highlight": "Markering",
         "label": "Label",
         "above_mode": "Bron van bovengrens-alarm",
         "below_mode": "Bron van ondergrens-alarm"
       },
-      "attribute": "Attribuut",
       "badge": {
         "toggle": "Badge",
-        "color_toggle": "Onafhankelijke badgekleur"
+        "color_toggle": "Onafhankelijke kleur"
       },
-      "bar_color": "Kleur",
-      "bar_color_mode": "Balkkleurmodus",
+      "bar_color_mode": "Kleurmodus",
       "bar_effect_mode": "Effect op de balk",
-      "bar_group": "Balk",
       "bar_max_width_toggle": "Max. balkbreedte",
       "bar_orientation": "Oriëntatie",
       "bar_scale": "Schaal",
@@ -74,51 +67,39 @@
       "center_zero": "Nul in het midden",
       "center_zero_growth_percent": "Groeipercentage",
       "center_zero_value": "Centrumwaarde",
-      "color": "Kleur",
       "custom_info": "Aangepaste secundaire info",
       "custom_theme": "Aangepaste themazones",
-      "decimal": "Precisie weergeven",
+      "decimal": "Precisie",
       "density": "Dichtheid",
-      "entity": "Entiteit",
-      "fast_refresh": "Snel vernieuwen (elke seconde)",
-      "force_circular_background_mode": "Cirkelvormige pictogramachtergrond",
+      "fast_refresh": "Snel vernieuwen",
+      "force_circular_background_mode": "Cirkelvormige achtergrond",
       "frameless": "Zonder kader",
       "height": "Hoogte",
       "height_custom_toggle": "Automatische hoogte",
       "hide_mode": "Verbergen",
       "icon": "Pictogram",
-      "icon_group": "Pictogram",
       "icon_animation": "Pictogramanimatie",
       "interpolate": "Kleuren interpoleren",
       "layout": "Inhoudsindeling",
       "marginless": "Zonder marge",
-      "mark_color": "Kleur",
-      "max_value": "Maximale waarde",
-      "max_value_mode": "Bron van maximumwaarde",
       "migrate_config": "Configuratie migreren",
-      "min_value": "Minimale waarde",
-      "min_value_mode": "Bron van minimumwaarde",
       "min_width": "Min. breedte",
       "multiline": "Meerdere regels",
       "name": "Naam",
       "name_info": "Aangepaste naaminfo",
       "opacity": "Dekking",
       "peak_marker": {
-        "min_toggle": "Minimum tonen",
-        "max_toggle": "Maximum tonen",
-        "average_toggle": "Gemiddelde tonen",
-        "range_toggle": "Bereik tonen"
+        "average_toggle": "Gemiddelde",
+        "range_toggle": "Bereik"
       },
-      "peak_marker_unsupported": "Piekmarkeringen vereisen een sensor- of number-entiteit zonder attribuut-override, en geen timer of counter — niet beschikbaar voor deze entiteit.",
+      "peak_marker_unsupported": "Niet beschikbaar: vereist een sensor- of number-entiteit zonder attribuut.",
       "percent": "Percentage",
-      "position": "Positie",
       "reverse": "Timer omdraaien",
       "reverse_secondary_info_row": "Balk en tekst omwisselen",
       "secondary": "Secundaire informatie",
       "state_content": "Inhoud van de status",
       "status_label": {
         "color_source": "Bron van kleur",
-        "position": "Positie van label",
         "toggle": "Statuslabel"
       },
       "text_shadow": "Tekstschaduw toevoegen",
@@ -141,18 +122,14 @@
       "value_compact": "Compacte waarde (1.2k)",
       "value_sign": "Teken tonen (+/-)",
       "watermark": {
-        "high_toggle": "Hoog tonen",
-        "low_toggle": "Laag tonen",
-        "high": "Hoge waarde",
-        "low": "Lage waarde",
-        "low_mode": "Bron van lage markering",
-        "high_mode": "Bron van hoge markering"
+        "high_toggle": "Bovengrens",
+        "low_toggle": "Ondergrens"
       },
       "window": "Tijdvenster",
       "entities": "Entiteiten",
       "rows": "Rijen",
       "line_size": "Lijndikte",
-      "mark_defaults": "Gedeelde standaardwaarden"
+      "mark_defaults": "Standaardwaarden"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -194,18 +171,18 @@
         "shimmer_reverse": "Omgekeerde glinstering"
       },
       "bar_orientation": {
-        "ltr": "Links naar rechts",
-        "rtl": "Rechts naar links",
-        "up": "Omhoog"
+        "ltr": "LTR",
+        "rtl": "RTL",
+        "up": "UP"
       },
       "bar_position": {
         "background": "Kaartachtergrond",
-        "below": "Balk onder de inhoud",
-        "bottom": "Balk onderaan",
-        "compact_below": "Compacte balk onderaan (naam/waarde op één regel)",
+        "below": "Onder de inhoud",
+        "bottom": "Onderaan",
+        "compact_below": "Compact onderaan",
         "default": "Standaard",
-        "overlay": "Balk over de inhoud (overlay)",
-        "top": "Balk bovenaan"
+        "overlay": "Over de inhoud",
+        "top": "Bovenaan"
       },
       "bar_scale": {
         "linear": "Lineair",
@@ -245,9 +222,7 @@
       "hide": {
         "icon": "Pictogram",
         "name": "Naam",
-        "progress_bar": "Balk",
         "secondary_info": "Secundaire info",
-        "shape": "Cirkelvormige achtergrond van het pictogram",
         "unit": "Eenheid",
         "value": "Waarde"
       },
@@ -263,7 +238,7 @@
       },
       "icon_animation_mode": {
         "auto": "Automatisch",
-        "template": "Sjabloon"
+        "template": "Jinja"
       },
       "label_position": {
         "left": "Links",
@@ -278,15 +253,14 @@
         "simple": "Eenvoudig"
       },
       "status_label_color_source": {
-        "bar": "Voortgangsbalk",
         "icon": "Pictogram"
       },
       "theme": {
         "battery_adaptive": "Batterij (past zich aan de laadstatus aan)",
-        "critical_when_extreme": "Kritiek bij extreem (tankniveau, afwijking...)",
+        "critical_when_extreme": "Kritiek bij extreem",
         "critical_when_extreme_center": "Kritiek bij extreem, gecentreerd (center_zero)",
-        "critical_when_high": "Kritiek bij hoog (CPU, RAM, schijfgebruik...)",
-        "critical_when_low": "Kritiek bij laag (batterij...)",
+        "critical_when_high": "Kritiek bij hoog",
+        "critical_when_low": "Kritiek bij laag",
         "humidity": "Vochtigheid",
         "light": "Licht",
         "optimal_when_high": "Optimaal wanneer hoog",
@@ -314,8 +288,7 @@
         "space": "Spatie"
       },
       "value_source_mode": {
-        "entity": "Entiteit",
-        "jinja": "Sjabloon",
+        "jinja": "Jinja",
         "standard": "Vaste waarde"
       },
       "watermark_as": {
@@ -340,6 +313,15 @@
       "peak_marker": "Piekmarkeringen",
       "indicators": "Indicatoren & labels",
       "alerts": "Waarschuwingen"
+    },
+    "shared": {
+      "col": "Kleur",
+      "pos": "Positie",
+      "attr": "Attribuut",
+      "min": "Minimum",
+      "max": "Maximum",
+      "bar": "Balk",
+      "ent": "Entiteit"
     }
   }
 }

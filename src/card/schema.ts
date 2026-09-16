@@ -217,14 +217,13 @@ const ERROR_CODES = {
   invalidTypeArray: { code: 'invalidTypeArray', severity: SEV.error },
   invalidTypeObject: { code: 'invalidTypeObject', severity: SEV.error },
   invalidEnumValue: { code: 'invalidEnumValue', severity: SEV.error },
-  invalidUnionType: { code: 'invalidUnionType', severity: SEV.error },
   invalidEntityId: { code: 'invalidEntityId', severity: SEV.error },
-  invalidDecimal: { code: 'invalidDecimal', severity: SEV.error },
+  // Read through invalidType's own template (see HassProviderSingleton#getMessage):
+  // the suffix names the word under card.msg.words.types.
+  invalidTypePositiveInteger: { code: 'invalidTypePositiveInteger', severity: SEV.error },
   invalidActionObject: { code: 'invalidActionObject', severity: SEV.error },
-  missingActionKey: { code: 'missingActionKey', severity: SEV.error },
   invalidTheme: { code: 'invalidTheme', severity: SEV.info },
   invalidStateContent: { code: 'invalidStateContent', severity: SEV.error },
-  invalidStateContentEntry: { code: 'invalidStateContentEntry', severity: SEV.error },
   appliedDefaultValue: { code: 'appliedDefaultValue', severity: SEV.info },
 };
 
@@ -442,7 +441,9 @@ const types = {
         }
       }
 
-      throw invalid(path, ERROR_CODES.invalidUnionType);
+      // Same sentence as an enum refusal, and the user cannot tell the two
+      // apart anyway: the value is not one of those this key accepts.
+      throw invalid(path, ERROR_CODES.invalidEnumValue);
     };
     // First branch that carries a list wins: an enum|jinja union's options are
     // the enum branch's, the jinja branch has none of its own.
@@ -676,7 +677,7 @@ const types = {
 
   decimal: ((value: unknown, path: Path = []) => {
     if (is.nullish(value)) return SKIP_PROPERTY;
-    if (!is.unsignedInteger(value)) throw invalid(path, ERROR_CODES.invalidDecimal);
+    if (!is.unsignedInteger(value)) throw invalid(path, ERROR_CODES.invalidTypePositiveInteger);
 
     return value;
   }) as Validator<number>,
@@ -690,7 +691,7 @@ const types = {
       throw invalid(path, ERROR_CODES.invalidActionObject);
     }
     if (!is.string(value.action)) {
-      throw invalid([...path, 'action'], ERROR_CODES.missingActionKey);
+      throw invalid([...path, 'action'], ERROR_CODES.missingRequiredProperty);
     }
 
     return value;
@@ -748,7 +749,7 @@ const types = {
     if (is.array(value)) {
       const invalidIndex = value.findIndex((v: unknown) => !is.string(v));
       if (invalidIndex !== -1) {
-        throw invalid([...path, invalidIndex], ERROR_CODES.invalidStateContentEntry);
+        throw invalid([...path, invalidIndex], ERROR_CODES.invalidStateContent);
       }
       return value;
     }

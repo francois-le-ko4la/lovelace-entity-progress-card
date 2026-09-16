@@ -1,15 +1,11 @@
 {
   "card": {
     "msg": {
-      "appliedDefaultValue": "A fost aplicată automat o valoare implicită.",
-      "invalidDecimal": "Valoarea trebuie să fie un număr zecimal valid.",
-      "invalidEnumValue": "Valoarea furnizată nu este una dintre opțiunile permise.",
+      "appliedDefaultValue": "Valoare implicită aplicată.",
+      "invalidEnumValue": "Valoare nepermisă.",
       "invalidNoun": "Invalid sau formatat greșit: {noun}.",
-      "invalidStateContentEntry": "Una sau mai multe intrări în conținutul stării sunt invalide.",
-      "invalidTheme": "Tema specificată este necunoscută. Va fi utilizată tema implicită.",
+      "invalidTheme": "Temă necunoscută.",
       "invalidType": "Tip așteptat: {type}.",
-      "invalidUnionType": "Valoarea nu se potrivește niciunui tip permis.",
-      "missingActionKey": "Lipsește o cheie necesară în obiectul acțiune.",
       "missingRequiredProperty": "Lipsește o proprietate necesară.",
       "notFound": "Nu a fost găsit în HA: {noun}.",
       "words": {
@@ -24,6 +20,7 @@
           "array": "array",
           "boolean": "boolean",
           "number": "număr",
+          "positiveinteger": "număr întreg pozitiv",
           "object": "obiect",
           "string": "șir"
         }
@@ -44,24 +41,20 @@
       "add_entity": "Adaugă entitate",
       "add_zone": "Adaugă zonă",
       "alert_when": {
-        "above": "Alertă peste",
+        "above": "Peste",
         "animation": "Animație",
-        "below": "Alertă sub",
-        "color": "Culoare alertă",
+        "below": "Sub",
         "highlight": "Evidențiere",
         "label": "Etichetă",
         "above_mode": "Sursa alertei superioare",
         "below_mode": "Sursa alertei inferioare"
       },
-      "attribute": "Atribut",
       "badge": {
         "toggle": "Insignă",
-        "color_toggle": "Culoare insignă independentă"
+        "color_toggle": "Culoare independentă"
       },
-      "bar_color": "Culoare",
       "bar_color_mode": "Mod culoare",
       "bar_effect_mode": "Efect pe bară",
-      "bar_group": "Bară",
       "bar_max_width_toggle": "Lățime max. a barei",
       "bar_orientation": "Orientare",
       "bar_scale": "Scară",
@@ -74,51 +67,39 @@
       "center_zero": "Zero la centru",
       "center_zero_growth_percent": "Procent de creștere",
       "center_zero_value": "Valoare centrală",
-      "color": "Culoare",
       "custom_info": "Info secundară personalizată",
       "custom_theme": "Zone temă personalizată",
       "decimal": "Precizie",
       "density": "Densitate",
-      "entity": "Entitate",
-      "fast_refresh": "Reîmprospătare rapidă (la fiecare secundă)",
-      "force_circular_background_mode": "Fundal circular al pictogramei",
+      "fast_refresh": "Reîmprospătare rapidă",
+      "force_circular_background_mode": "Fundal circular",
       "frameless": "Fără cadru",
       "height": "Înălțime",
       "height_custom_toggle": "Înălțime automată",
       "hide_mode": "Ascunde",
       "icon": "Pictogramă",
-      "icon_group": "Pictogramă",
       "icon_animation": "Animația pictogramei",
       "interpolate": "Interpolare culori",
       "layout": "Aspect conținut",
       "marginless": "Fără margine",
-      "mark_color": "Culoare",
-      "max_value": "Valoare maximă",
-      "max_value_mode": "Sursa valorii maxime",
       "migrate_config": "Migrează configurația",
-      "min_value": "Valoare minimă",
-      "min_value_mode": "Sursa valorii minime",
       "min_width": "Lățime min.",
       "multiline": "Multilinie",
       "name": "Nume",
       "name_info": "Info nume personalizată",
       "opacity": "Opacitate",
       "peak_marker": {
-        "min_toggle": "Afișează minimul",
-        "max_toggle": "Afișează maximul",
-        "average_toggle": "Afișează media",
-        "range_toggle": "Afișează intervalul"
+        "average_toggle": "Medie",
+        "range_toggle": "Interval"
       },
-      "peak_marker_unsupported": "Marcatorii de vârf necesită o entitate sensor sau number, fără suprascriere de atribut, și care nu este un timer sau un counter — indisponibil pentru această entitate.",
+      "peak_marker_unsupported": "Indisponibil: necesită o entitate sensor sau number fără atribut.",
       "percent": "Procent",
-      "position": "Poziție",
       "reverse": "Cronometru inverso",
       "reverse_secondary_info_row": "Schimbați bara și textul",
       "secondary": "Informație secundară",
       "state_content": "Conținutul stării",
       "status_label": {
         "color_source": "Sursa culorii",
-        "position": "Poziția etichetei",
         "toggle": "Etichetă de stare"
       },
       "text_shadow": "Adaugă umbră textului",
@@ -141,18 +122,14 @@
       "value_compact": "Valoare compactă (1.2k)",
       "value_sign": "Afișează semnul (+/-)",
       "watermark": {
-        "high_toggle": "Afișează ridicat",
-        "low_toggle": "Afișează scăzut",
-        "high": "Ridicat",
-        "low": "Scăzut",
-        "low_mode": "Sursa marcatorului inferior",
-        "high_mode": "Sursa marcatorului superior"
+        "high_toggle": "Prag superior",
+        "low_toggle": "Prag inferior"
       },
       "window": "Fereastră de timp",
       "entities": "Entități",
       "rows": "Rânduri",
       "line_size": "Grosimea liniei",
-      "mark_defaults": "Valori implicite comune"
+      "mark_defaults": "Valori implicite"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -194,18 +171,18 @@
         "shimmer_reverse": "Luciu inversat"
       },
       "bar_orientation": {
-        "ltr": "De la stânga la dreapta",
-        "rtl": "De la dreapta la stânga",
-        "up": "În sus"
+        "ltr": "LTR",
+        "rtl": "RTL",
+        "up": "UP"
       },
       "bar_position": {
         "background": "Fundal card",
-        "below": "Bară sub conținut",
-        "bottom": "Bară jos",
-        "compact_below": "Bară compactă dedesubt (nume/valoare pe un rând)",
+        "below": "Sub conținut",
+        "bottom": "Jos",
+        "compact_below": "Compactă dedesubt",
         "default": "Implicit",
-        "overlay": "Bară suprapusă peste conținut (overlay)",
-        "top": "Bară sus"
+        "overlay": "Suprapusă peste conținut",
+        "top": "Sus"
       },
       "bar_scale": {
         "linear": "Liniar",
@@ -245,9 +222,7 @@
       "hide": {
         "icon": "Pictogramă",
         "name": "Nume",
-        "progress_bar": "Bară",
         "secondary_info": "Info secundară",
-        "shape": "Fundal circular al pictogramei",
         "unit": "Unitate",
         "value": "Valoare"
       },
@@ -263,7 +238,7 @@
       },
       "icon_animation_mode": {
         "auto": "Automat",
-        "template": "Șablon"
+        "template": "Jinja"
       },
       "label_position": {
         "left": "Stânga",
@@ -278,15 +253,14 @@
         "simple": "Simplu"
       },
       "status_label_color_source": {
-        "bar": "Bară de progres",
         "icon": "Pictogramă"
       },
       "theme": {
         "battery_adaptive": "Baterie (se adaptează la starea de încărcare)",
-        "critical_when_extreme": "Critic la valoare extremă (nivel rezervor, deviație...)",
+        "critical_when_extreme": "Critic la valoare extremă",
         "critical_when_extreme_center": "Critic la valoare extremă, centrat (center_zero)",
-        "critical_when_high": "Critic la valoare mare (CPU, RAM, utilizare disc...)",
-        "critical_when_low": "Critic la valoare mică (baterie...)",
+        "critical_when_high": "Critic la valoare mare",
+        "critical_when_low": "Critic la valoare mică",
         "humidity": "Umiditate",
         "light": "Luminozitate",
         "optimal_when_high": "Optim când este ridicat",
@@ -314,8 +288,7 @@
         "space": "Spațiu"
       },
       "value_source_mode": {
-        "entity": "Entitate",
-        "jinja": "Șablon",
+        "jinja": "Jinja",
         "standard": "Valoare fixă"
       },
       "watermark_as": {
@@ -340,6 +313,15 @@
       "peak_marker": "Marcaje de vârf",
       "indicators": "Indicatori și etichete",
       "alerts": "Alerte"
+    },
+    "shared": {
+      "col": "Culoare",
+      "pos": "Poziție",
+      "attr": "Atribut",
+      "min": "Minim",
+      "max": "Maxim",
+      "bar": "Bară",
+      "ent": "Entitate"
     }
   }
 }

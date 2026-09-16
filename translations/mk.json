@@ -1,15 +1,11 @@
 {
   "card": {
     "msg": {
-      "appliedDefaultValue": "Автоматски е применета стандардна вредност.",
-      "invalidDecimal": "Вредноста мора да биде валиден децимален број.",
-      "invalidEnumValue": "Дадената вредност не е дозволена опција.",
+      "appliedDefaultValue": "Применета стандардна вредност.",
+      "invalidEnumValue": "Недозволена вредност.",
       "invalidNoun": "Невалидно или лошо форматирано: {noun}.",
-      "invalidStateContentEntry": "Еден или повеќе елементи во состојбата се невалидни.",
-      "invalidTheme": "Темата е непозната. Ќе се користи стандардна тема.",
+      "invalidTheme": "Непозната тема.",
       "invalidType": "Очекуван тип: {type}.",
-      "invalidUnionType": "Вредноста не одговара на дозволените типови.",
-      "missingActionKey": "Недостасува потребен клуч во објектот за акција.",
       "missingRequiredProperty": "Недостасува потребно својство.",
       "notFound": "Не е пронајдено во HA: {noun}.",
       "words": {
@@ -24,6 +20,7 @@
           "array": "низа",
           "boolean": "boolean",
           "number": "број",
+          "positiveinteger": "позитивен цел број",
           "object": "објект",
           "string": "string"
         }
@@ -44,24 +41,20 @@
       "add_entity": "Додај ентитет",
       "add_zone": "Додај зона",
       "alert_when": {
-        "above": "Аларм над",
+        "above": "Над",
         "animation": "Анимација",
-        "below": "Аларм под",
-        "color": "Боја на аларм",
+        "below": "Под",
         "highlight": "Истакнување",
         "label": "Ознака",
         "above_mode": "Извор на горно предупредување",
         "below_mode": "Извор на долно предупредување"
       },
-      "attribute": "Атрибут",
       "badge": {
         "toggle": "Ознака",
-        "color_toggle": "Независна боја на значка"
+        "color_toggle": "Независна боја"
       },
-      "bar_color": "Боја",
       "bar_color_mode": "Режим на боја",
       "bar_effect_mode": "Ефект на лентата",
-      "bar_group": "Лента",
       "bar_max_width_toggle": "Макс. ширина на лентата",
       "bar_orientation": "Ориентација",
       "bar_scale": "Скала",
@@ -74,51 +67,39 @@
       "center_zero": "Нула во центарот",
       "center_zero_growth_percent": "Процент на растеж",
       "center_zero_value": "Централна вредност",
-      "color": "Боја",
       "custom_info": "Прилагодена секундарна информација",
       "custom_theme": "Зони на прилагодена тема",
-      "decimal": "Прецизност на прикажување",
+      "decimal": "Прецизност",
       "density": "Густина",
-      "entity": "Ентитет",
-      "fast_refresh": "Брзо освежување (секоја секунда)",
-      "force_circular_background_mode": "Кружна позадина на иконата",
+      "fast_refresh": "Брзо освежување",
+      "force_circular_background_mode": "Кружна позадина",
       "frameless": "Без рамка",
       "height": "Висина",
       "height_custom_toggle": "Автоматска висина",
       "hide_mode": "Сокриј",
       "icon": "Икона",
-      "icon_group": "Икона",
       "icon_animation": "Анимација на иконата",
       "interpolate": "Интерполација на бои",
       "layout": "Распоред на содржината",
       "marginless": "Без маргина",
-      "mark_color": "Боја",
-      "max_value": "Максимална вредност",
-      "max_value_mode": "Извор на максимална вредност",
       "migrate_config": "Мигрирај конфигурација",
-      "min_value": "Минимална вредност",
-      "min_value_mode": "Извор на минимална вредност",
       "min_width": "Мин. ширина",
       "multiline": "Повеќередно",
       "name": "Име",
       "name_info": "Прилагодена информација за имиња",
       "opacity": "Непроѕирност",
       "peak_marker": {
-        "min_toggle": "Прикажи минимум",
-        "max_toggle": "Прикажи максимум",
-        "average_toggle": "Прикажи просек",
-        "range_toggle": "Прикажи опсег"
+        "average_toggle": "Просек",
+        "range_toggle": "Опсег"
       },
-      "peak_marker_unsupported": "Ознаките на врвови бараат sensor или number ентитет без преклопување на атрибут, кој не е timer ниту counter — не е достапно за овој ентитет.",
+      "peak_marker_unsupported": "Не е достапно: бара sensor или number ентитет без атрибут.",
       "percent": "Процент",
-      "position": "Позиција",
       "reverse": "Обратен тајмер",
       "reverse_secondary_info_row": "Сменете ги лентата и текстот",
       "secondary": "Секундарни информации",
       "state_content": "Содржина на состојба",
       "status_label": {
         "color_source": "Извор на бојата",
-        "position": "Позиција на ознаката",
         "toggle": "Ознака на статус"
       },
       "text_shadow": "Додај сенка на текст",
@@ -141,18 +122,14 @@
       "value_compact": "Компактна вредност (1.2k)",
       "value_sign": "Прикажи знак (+/-)",
       "watermark": {
-        "high_toggle": "Прикажи горен",
-        "low_toggle": "Прикажи долен",
-        "high": "Горен",
-        "low": "Долен",
-        "low_mode": "Извор на долен маркер",
-        "high_mode": "Извор на горен маркер"
+        "high_toggle": "Горен праг",
+        "low_toggle": "Долен праг"
       },
       "window": "Временски прозорец",
       "entities": "Ентитети",
       "rows": "Редови",
       "line_size": "Дебелина на линијата",
-      "mark_defaults": "Заеднички стандардни вредности"
+      "mark_defaults": "Стандардни вредности"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -194,18 +171,18 @@
         "shimmer_reverse": "Обратен сјај"
       },
       "bar_orientation": {
-        "ltr": "Лево кон десно",
-        "rtl": "Десно кон лево",
-        "up": "Нагоре"
+        "ltr": "LTR",
+        "rtl": "RTL",
+        "up": "UP"
       },
       "bar_position": {
         "background": "Позадина на картичката",
-        "below": "Лента под содржината",
-        "bottom": "Лента на дното",
-        "compact_below": "Компактна лента подолу (име/вредност во еден ред)",
+        "below": "Под содржината",
+        "bottom": "На дното",
+        "compact_below": "Компактна подолу",
         "default": "Стандардно",
-        "overlay": "Лента преку содржината (overlay)",
-        "top": "Лента на врвот"
+        "overlay": "Преку содржината",
+        "top": "На врвот"
       },
       "bar_scale": {
         "linear": "Линеарна",
@@ -245,9 +222,7 @@
       "hide": {
         "icon": "Икона",
         "name": "Име",
-        "progress_bar": "Лента",
         "secondary_info": "Секундарно инфо",
-        "shape": "Кружна позадина на иконата",
         "unit": "Единица",
         "value": "Вредност"
       },
@@ -263,7 +238,7 @@
       },
       "icon_animation_mode": {
         "auto": "Автоматски",
-        "template": "Шаблон"
+        "template": "Jinja"
       },
       "label_position": {
         "left": "Лево",
@@ -278,15 +253,14 @@
         "simple": "Едноставно"
       },
       "status_label_color_source": {
-        "bar": "Лента за напредок",
         "icon": "Икона"
       },
       "theme": {
         "battery_adaptive": "Батерија (се прилагодува на статусот на полнење)",
-        "critical_when_extreme": "Критично при екстремна вредност (ниво на резервоар, отстапување...)",
+        "critical_when_extreme": "Критично при екстремна вредност",
         "critical_when_extreme_center": "Критично при екстремна вредност, центрирано (center_zero)",
-        "critical_when_high": "Критично при висока вредност (CPU, RAM, употреба на диск...)",
-        "critical_when_low": "Критично при ниска вредност (батерија...)",
+        "critical_when_high": "Критично при висока вредност",
+        "critical_when_low": "Критично при ниска вредност",
         "humidity": "Влажност",
         "light": "Светлина",
         "optimal_when_high": "Оптимално кога е високо",
@@ -314,8 +288,7 @@
         "space": "Празно место"
       },
       "value_source_mode": {
-        "entity": "Ентитет",
-        "jinja": "Шаблон",
+        "jinja": "Jinja",
         "standard": "Фиксна вредност"
       },
       "watermark_as": {
@@ -340,6 +313,15 @@
       "peak_marker": "Ознаки на врв",
       "indicators": "Индикатори и ознаки",
       "alerts": "Предупредувања"
+    },
+    "shared": {
+      "col": "Боја",
+      "pos": "Позиција",
+      "attr": "Атрибут",
+      "min": "Минимум",
+      "max": "Максимум",
+      "bar": "Лента",
+      "ent": "Ентитет"
     }
   }
 }

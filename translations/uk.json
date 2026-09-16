@@ -1,15 +1,11 @@
 {
   "card": {
     "msg": {
-      "appliedDefaultValue": "Значення за замовчуванням було застосовано автоматично.",
-      "invalidDecimal": "Значення повинно бути дійсним десятковим числом.",
-      "invalidEnumValue": "Надане значення не є одним з дозволених варіантів.",
+      "appliedDefaultValue": "Застосовано значення за замовчуванням.",
+      "invalidEnumValue": "Неприпустиме значення.",
       "invalidNoun": "Недійсне або пошкоджене: {noun}.",
-      "invalidStateContentEntry": "Один або кілька записів у вмісті стану недійсні.",
-      "invalidTheme": "Зазначена тема невідома. Буде використана тема за замовчуванням.",
+      "invalidTheme": "Невідома тема.",
       "invalidType": "Очікуваний тип: {type}.",
-      "invalidUnionType": "Значення не відповідає жодному з дозволених типів.",
-      "missingActionKey": "Відсутній обов'язковий ключ в об'єкті дії.",
       "missingRequiredProperty": "Відсутня обов'язкова властивість.",
       "notFound": "Не знайдено в HA: {noun}.",
       "words": {
@@ -24,6 +20,7 @@
           "array": "масив",
           "boolean": "булевий",
           "number": "число",
+          "positiveinteger": "додатне ціле число",
           "object": "об'єкт",
           "string": "рядок"
         }
@@ -44,24 +41,20 @@
       "add_entity": "Додати сутність",
       "add_zone": "Додати зону",
       "alert_when": {
-        "above": "Сповіщення вище",
+        "above": "Вище",
         "animation": "Анімація",
-        "below": "Сповіщення нижче",
-        "color": "Колір сповіщення",
+        "below": "Нижче",
         "highlight": "Виділення",
         "label": "Мітка",
         "above_mode": "Джерело верхнього сповіщення",
         "below_mode": "Джерело нижнього сповіщення"
       },
-      "attribute": "Атрибут",
       "badge": {
         "toggle": "Значок",
-        "color_toggle": "Незалежний колір значка"
+        "color_toggle": "Незалежний колір"
       },
-      "bar_color": "Колір",
       "bar_color_mode": "Режим кольору",
       "bar_effect_mode": "Ефект на смузі",
-      "bar_group": "Смуга",
       "bar_max_width_toggle": "Макс. ширина смуги",
       "bar_orientation": "Орієнтація",
       "bar_scale": "Масштаб",
@@ -74,51 +67,39 @@
       "center_zero": "Không ở giữa",
       "center_zero_growth_percent": "Відсоток зростання",
       "center_zero_value": "Центральне значення",
-      "color": "Колір",
       "custom_info": "Додаткова вторинна інформація",
       "custom_theme": "Зони власної теми",
       "decimal": "Точність",
       "density": "Щільність",
-      "entity": "Сутність",
-      "fast_refresh": "Швидке оновлення (щосекунди)",
-      "force_circular_background_mode": "Кругле тло значка",
+      "fast_refresh": "Швидке оновлення",
+      "force_circular_background_mode": "Кругле тло",
       "frameless": "Без рамки",
       "height": "Висота",
       "height_custom_toggle": "Автоматична висота",
       "hide_mode": "Приховати",
       "icon": "Іконка",
-      "icon_group": "Іконка",
       "icon_animation": "Анімація значка",
       "interpolate": "Інтерполяція кольорів",
       "layout": "Розташування вмісту",
       "marginless": "Без відступу",
-      "mark_color": "Колір",
-      "max_value": "Максимальне значення",
-      "max_value_mode": "Джерело максимального значення",
       "migrate_config": "Перенести конфігурацію",
-      "min_value": "Мінімальне значення",
-      "min_value_mode": "Джерело мінімального значення",
       "min_width": "Мін. ширина",
       "multiline": "Багаторядковий",
       "name": "Назва",
       "name_info": "Додаткова інформація (назва)",
       "opacity": "Непрозорість",
       "peak_marker": {
-        "min_toggle": "Показати мінімум",
-        "max_toggle": "Показати максимум",
-        "average_toggle": "Показати середнє",
-        "range_toggle": "Показати діапазон"
+        "average_toggle": "Середнє",
+        "range_toggle": "Діапазон"
       },
-      "peak_marker_unsupported": "Маркерам піків потрібна сутність sensor або number без перевизначення атрибута, яка не є timer чи counter — недоступно для цієї сутності.",
+      "peak_marker_unsupported": "Недоступно: потрібна сутність sensor або number без атрибута.",
       "percent": "Відсоток",
-      "position": "Позиція",
       "reverse": "Зворотній таймер",
       "reverse_secondary_info_row": "Поміняти місцями панель і текст",
       "secondary": "Додаткова інформація",
       "state_content": "Вміст стану",
       "status_label": {
         "color_source": "Джерело кольору",
-        "position": "Розташування мітки",
         "toggle": "Мітка стану"
       },
       "text_shadow": "Додати тінь до тексту",
@@ -141,18 +122,14 @@
       "value_compact": "Компактне значення (1.2k)",
       "value_sign": "Показувати знак (+/-)",
       "watermark": {
-        "high_toggle": "Показати верхній",
-        "low_toggle": "Показати нижній",
-        "high": "Верхній",
-        "low": "Нижній",
-        "low_mode": "Джерело нижнього маркера",
-        "high_mode": "Джерело верхнього маркера"
+        "high_toggle": "Верхній поріг",
+        "low_toggle": "Нижній поріг"
       },
       "window": "Часове вікно",
       "entities": "Об'єкти",
       "rows": "Рядки",
       "line_size": "Товщина лінії",
-      "mark_defaults": "Спільні значення за замовчуванням"
+      "mark_defaults": "Значення за замовчуванням"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -194,18 +171,18 @@
         "shimmer_reverse": "Зворотнє мерехтіння"
       },
       "bar_orientation": {
-        "ltr": "Зліва направо",
-        "rtl": "Справа наліво",
-        "up": "Вгору"
+        "ltr": "LTR",
+        "rtl": "RTL",
+        "up": "UP"
       },
       "bar_position": {
         "background": "Фон картки",
-        "below": "Смуга під вмістом",
-        "bottom": "Смуга знизу",
-        "compact_below": "Компактна смуга знизу (назва/значення в одному рядку)",
+        "below": "Під вмістом",
+        "bottom": "Знизу",
+        "compact_below": "Компактна знизу",
         "default": "За замовчуванням",
-        "overlay": "Смуга поверх вмісту (overlay)",
-        "top": "Смуга зверху"
+        "overlay": "Поверх вмісту",
+        "top": "Зверху"
       },
       "bar_scale": {
         "linear": "Лінійна",
@@ -245,9 +222,7 @@
       "hide": {
         "icon": "Іконка",
         "name": "Ім'я",
-        "progress_bar": "Смуга",
         "secondary_info": "Дод. інформація",
-        "shape": "Кругле тло значка",
         "unit": "Одиниця",
         "value": "Значення"
       },
@@ -263,7 +238,7 @@
       },
       "icon_animation_mode": {
         "auto": "Автоматично",
-        "template": "Шаблон"
+        "template": "Jinja"
       },
       "label_position": {
         "left": "Ліворуч",
@@ -278,15 +253,14 @@
         "simple": "Простий"
       },
       "status_label_color_source": {
-        "bar": "Смуга прогресу",
         "icon": "Значок"
       },
       "theme": {
         "battery_adaptive": "Батарея (адаптується до стану заряджання)",
-        "critical_when_extreme": "Критично при екстремальному значенні (рівень бака, відхилення...)",
+        "critical_when_extreme": "Критично при екстремальному значенні",
         "critical_when_extreme_center": "Критично при екстремальному значенні, по центру (center_zero)",
-        "critical_when_high": "Критично при високому значенні (CPU, RAM, використання диска...)",
-        "critical_when_low": "Критично при низькому значенні (батарея...)",
+        "critical_when_high": "Критично при високому значенні",
+        "critical_when_low": "Критично при низькому значенні",
         "humidity": "Вологість",
         "light": "Світло",
         "optimal_when_high": "Оптимально при високих значеннях",
@@ -314,8 +288,7 @@
         "space": "Пробіл"
       },
       "value_source_mode": {
-        "entity": "Сутність",
-        "jinja": "Шаблон",
+        "jinja": "Jinja",
         "standard": "Фіксоване значення"
       },
       "watermark_as": {
@@ -340,6 +313,15 @@
       "peak_marker": "Мітки піків",
       "indicators": "Індикатори та мітки",
       "alerts": "Сповіщення"
+    },
+    "shared": {
+      "col": "Колір",
+      "pos": "Позиція",
+      "attr": "Атрибут",
+      "min": "Мінімум",
+      "max": "Максимум",
+      "bar": "Смуга",
+      "ent": "Сутність"
     }
   }
 }

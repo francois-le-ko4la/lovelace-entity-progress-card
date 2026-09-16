@@ -1,16 +1,12 @@
 {
   "card": {
     "msg": {
-      "appliedDefaultValue": "Varsayılan değer otomatik olarak uygulandı.",
-      "invalidDecimal": "Değer geçerli bir ondalık sayı olmalıdır.",
-      "invalidEnumValue": "Sağlanan değer izin verilen seçeneklerden biri değil.",
+      "appliedDefaultValue": "Varsayılan değer uygulandı.",
+      "invalidEnumValue": "İzin verilmeyen değer.",
       "invalidNoun": "Geçersiz veya hatalı biçimlendirilmiş: {noun}.",
-      "invalidStateContentEntry": "Durum içeriğindeki bir veya daha fazla giriş geçersiz.",
-      "invalidTheme": "Belirtilen tema bilinmiyor. Varsayılan tema kullanılacak.",
+      "invalidTheme": "Bilinmeyen tema.",
       "invalidType": "Beklenen tür: {type}.",
-      "invalidUnionType": "Değer izin verilen türlerden hiçbirine uymuyor.",
-      "missingActionKey": "Eylem nesnesinde gerekli bir anahtar eksik.",
-      "missingRequiredProperty": "Gerekli bir özellik eksik.",
+      "missingRequiredProperty": "Gerekli özellik eksik.",
       "notFound": "HA'da bulunamadı: {noun}.",
       "words": {
         "nouns": {
@@ -24,6 +20,7 @@
           "array": "Dizi",
           "boolean": "Boolean",
           "number": "Sayı",
+          "positiveinteger": "pozitif tam sayı",
           "object": "Nesne",
           "string": "Dize"
         }
@@ -44,24 +41,20 @@
       "add_entity": "Varlık ekle",
       "add_zone": "Bölge ekle",
       "alert_when": {
-        "above": "Üzerinde uyarı",
+        "above": "Üzerinde",
         "animation": "Animasyon",
-        "below": "Altında uyarı",
-        "color": "Uyarı rengi",
+        "below": "Altında",
         "highlight": "Vurgu",
         "label": "Etiket",
         "above_mode": "Üst uyarı kaynağı",
         "below_mode": "Alt uyarı kaynağı"
       },
-      "attribute": "Öznitelik",
       "badge": {
         "toggle": "Rozet",
-        "color_toggle": "Bağımsız rozet rengi"
+        "color_toggle": "Bağımsız renk"
       },
-      "bar_color": "Renk",
       "bar_color_mode": "Renk modu",
       "bar_effect_mode": "Çubuk efekti",
-      "bar_group": "Çubuk",
       "bar_max_width_toggle": "Maks. çubuk genişliği",
       "bar_orientation": "Yön",
       "bar_scale": "Ölçek",
@@ -74,51 +67,39 @@
       "center_zero": "Нуль по центру",
       "center_zero_growth_percent": "Büyüme yüzdesi",
       "center_zero_value": "Merkez değeri",
-      "color": "Renk",
       "custom_info": "Özel ikincil bilgi",
       "custom_theme": "Özel tema bölgeleri",
-      "decimal": "Ekran hassasiyeti",
+      "decimal": "Hassasiyet",
       "density": "Yoğunluk",
-      "entity": "Varlık",
-      "fast_refresh": "Hızlı yenileme (saniyede bir)",
-      "force_circular_background_mode": "Simge dairesel arka planı",
+      "fast_refresh": "Hızlı yenileme",
+      "force_circular_background_mode": "Dairesel arka plan",
       "frameless": "Çerçevesiz",
       "height": "Yükseklik",
       "height_custom_toggle": "Otomatik yükseklik",
       "hide_mode": "Gizle",
       "icon": "Simge",
-      "icon_group": "Simge",
       "icon_animation": "Simge animasyonu",
       "interpolate": "Renk interpolasyonu",
       "layout": "İçerik düzeni",
       "marginless": "Kenar boşluksuz",
-      "mark_color": "Renk",
-      "max_value": "Maksimum değer",
-      "max_value_mode": "Maksimum değer kaynağı",
       "migrate_config": "Yapılandırmayı taşı",
-      "min_value": "Minimum değer",
-      "min_value_mode": "Minimum değer kaynağı",
       "min_width": "Min. genişlik",
       "multiline": "Çok satırlı",
       "name": "Ad",
       "name_info": "Özel ad bilgisi",
       "opacity": "Opaklık",
       "peak_marker": {
-        "min_toggle": "Minimumu göster",
-        "max_toggle": "Maksimumu göster",
-        "average_toggle": "Ortalamayı göster",
-        "range_toggle": "Aralığı göster"
+        "average_toggle": "Ortalama",
+        "range_toggle": "Aralık"
       },
-      "peak_marker_unsupported": "Tepe işaretleri, öznitelik geçersiz kılma olmayan ve timer veya counter olmayan bir sensor ya da number varlığı gerektirir — bu varlık için kullanılamaz.",
+      "peak_marker_unsupported": "Kullanılamaz: özniteliksiz bir sensor veya number varlığı gerekir.",
       "percent": "Yüzde",
-      "position": "Konum",
       "reverse": "Zamanlayıcıyı tersine çevir",
       "reverse_secondary_info_row": "Çubuğu ve metni değiştir",
       "secondary": "İkincil bilgi",
       "state_content": "Durum içeriği",
       "status_label": {
         "color_source": "Renk kaynağı",
-        "position": "Etiket konumu",
         "toggle": "Durum etiketi"
       },
       "text_shadow": "Metne gölge ekle",
@@ -141,18 +122,14 @@
       "value_compact": "Kompakt değer (1.2k)",
       "value_sign": "İşareti göster (+/-)",
       "watermark": {
-        "high_toggle": "Yükseği göster",
-        "low_toggle": "Düşüğü göster",
-        "high": "Yüksek",
-        "low": "Düşük",
-        "low_mode": "Düşük işaretçi kaynağı",
-        "high_mode": "Yüksek işaretçi kaynağı"
+        "high_toggle": "Üst eşik",
+        "low_toggle": "Alt eşik"
       },
       "window": "Zaman penceresi",
       "entities": "Varlıklar",
       "rows": "Satırlar",
       "line_size": "Çizgi kalınlığı",
-      "mark_defaults": "Ortak varsayılanlar"
+      "mark_defaults": "Varsayılanlar"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -194,18 +171,18 @@
         "shimmer_reverse": "Ters parıltı"
       },
       "bar_orientation": {
-        "ltr": "Soldan sağa",
-        "rtl": "Sağdan sola",
-        "up": "Yukarı"
+        "ltr": "LTR",
+        "rtl": "RTL",
+        "up": "UP"
       },
       "bar_position": {
         "background": "Kart arka planı",
-        "below": "İçeriğin altında çubuk",
-        "bottom": "Altta çubuk",
-        "compact_below": "Altta kompakt çubuk (ad/değer tek satırda)",
+        "below": "İçeriğin altında",
+        "bottom": "Altta",
+        "compact_below": "Altta kompakt",
         "default": "Varsayılan",
-        "overlay": "İçeriğin üzerine bindirme (overlay)",
-        "top": "Üstte çubuk"
+        "overlay": "İçeriğin üzerine bindirme",
+        "top": "Üstte"
       },
       "bar_scale": {
         "linear": "Doğrusal",
@@ -245,9 +222,7 @@
       "hide": {
         "icon": "Simge",
         "name": "Ad",
-        "progress_bar": "Çubuk",
         "secondary_info": "İkincil bilgi",
-        "shape": "Simgenin dairesel arka planı",
         "unit": "Birim",
         "value": "Değer"
       },
@@ -263,7 +238,7 @@
       },
       "icon_animation_mode": {
         "auto": "Otomatik",
-        "template": "Şablon"
+        "template": "Jinja"
       },
       "label_position": {
         "left": "Sol",
@@ -278,15 +253,14 @@
         "simple": "Basit"
       },
       "status_label_color_source": {
-        "bar": "İlerleme çubuğu",
         "icon": "Simge"
       },
       "theme": {
         "battery_adaptive": "Pil (şarj durumuna uyum sağlar)",
-        "critical_when_extreme": "Uç değerde kritik (tank seviyesi, sapma...)",
+        "critical_when_extreme": "Uç değerde kritik",
         "critical_when_extreme_center": "Uç değerde kritik, ortalanmış (center_zero)",
-        "critical_when_high": "Yüksekken kritik (CPU, RAM, disk kullanımı...)",
-        "critical_when_low": "Düşükken kritik (pil...)",
+        "critical_when_high": "Yüksekken kritik",
+        "critical_when_low": "Düşükken kritik",
         "humidity": "Nem",
         "light": "Işık",
         "optimal_when_high": "Yüksekken en iyi",
@@ -314,8 +288,7 @@
         "space": "Boşluk"
       },
       "value_source_mode": {
-        "entity": "Varlık",
-        "jinja": "Şablon",
+        "jinja": "Jinja",
         "standard": "Sabit değer"
       },
       "watermark_as": {
@@ -340,6 +313,15 @@
       "peak_marker": "Tepe işaretleri",
       "indicators": "Göstergeler ve etiketler",
       "alerts": "Uyarılar"
+    },
+    "shared": {
+      "col": "Renk",
+      "pos": "Konum",
+      "attr": "Öznitelik",
+      "min": "Minimum",
+      "max": "Maksimum",
+      "bar": "Çubuk",
+      "ent": "Varlık"
     }
   }
 }

@@ -1,15 +1,11 @@
 {
   "card": {
     "msg": {
-      "appliedDefaultValue": "已自動套用預設值。",
-      "invalidDecimal": "數值必須是正整數。",
-      "invalidEnumValue": "提供的值不在允許的選項中。",
+      "appliedDefaultValue": "已套用預設值。",
+      "invalidEnumValue": "值不被允許。",
       "invalidNoun": "無效或格式錯誤：{noun}",
-      "invalidStateContentEntry": "一個或多個狀態內容項目無效。",
-      "invalidTheme": "指定的主題未知，將使用預設主題。",
+      "invalidTheme": "主題未知。",
       "invalidType": "預期的類型：{type}",
-      "invalidUnionType": "值不符合任何允許的類型。",
-      "missingActionKey": "動作物件中缺少必要鍵。",
       "missingRequiredProperty": "缺少必要屬性。",
       "notFound": "在 HA 中找不到：{noun}",
       "words": {
@@ -24,6 +20,7 @@
           "array": "陣列",
           "boolean": "布林值",
           "number": "數字",
+          "positiveinteger": "正整數",
           "object": "物件",
           "string": "字串"
         }
@@ -44,24 +41,20 @@
       "add_entity": "新增實體",
       "add_zone": "新增區域",
       "alert_when": {
-        "above": "高於時警示",
+        "above": "高於時",
         "animation": "動畫",
-        "below": "低於時警示",
-        "color": "警示顏色",
+        "below": "低於時",
         "highlight": "醒目提示",
         "label": "標籤",
         "above_mode": "上限警示來源",
         "below_mode": "下限警示來源"
       },
-      "attribute": "屬性",
       "badge": {
         "toggle": "徽章",
-        "color_toggle": "獨立徽章顏色"
+        "color_toggle": "獨立顏色"
       },
-      "bar_color": "顏色",
       "bar_color_mode": "顏色模式",
       "bar_effect_mode": "進度條效果",
-      "bar_group": "進度條",
       "bar_max_width_toggle": "長條最大寬度",
       "bar_orientation": "方向",
       "bar_scale": "比例",
@@ -74,51 +67,39 @@
       "center_zero": "中心為零",
       "center_zero_growth_percent": "增長百分比",
       "center_zero_value": "中心值",
-      "color": "顏色",
       "custom_info": "自訂次要資訊",
       "custom_theme": "自訂主題區域",
-      "decimal": "顯示準確度",
+      "decimal": "準確度",
       "density": "密度",
-      "entity": "實體",
-      "fast_refresh": "快速重新整理（每秒）",
-      "force_circular_background_mode": "圖示圓形背景",
+      "fast_refresh": "快速重新整理",
+      "force_circular_background_mode": "圓形背景",
       "frameless": "無邊框",
       "height": "高度",
       "height_custom_toggle": "自動高度",
       "hide_mode": "隱藏",
       "icon": "圖示",
-      "icon_group": "圖示",
       "icon_animation": "圖示動畫",
       "interpolate": "顏色插值",
       "layout": "內容佈局",
       "marginless": "無邊距",
-      "mark_color": "顏色",
-      "max_value": "最大值",
-      "max_value_mode": "最大值來源",
       "migrate_config": "遷移設定",
-      "min_value": "最小值",
-      "min_value_mode": "最小值來源",
       "min_width": "最小寬度",
       "multiline": "多行",
       "name": "名稱",
       "name_info": "自訂名稱資訊",
       "opacity": "不透明度",
       "peak_marker": {
-        "min_toggle": "顯示最小值",
-        "max_toggle": "顯示最大值",
-        "average_toggle": "顯示平均值",
-        "range_toggle": "顯示範圍"
+        "average_toggle": "平均值",
+        "range_toggle": "範圍"
       },
-      "peak_marker_unsupported": "峰值標記需要一個沒有屬性覆寫的 sensor 或 number 實體，且不能是 timer 或 counter — 此實體不可用。",
+      "peak_marker_unsupported": "不可用：需要沒有屬性的 sensor 或 number 實體。",
       "percent": "百分比",
-      "position": "位置",
       "reverse": "反轉計時器",
       "reverse_secondary_info_row": "交換進度條和文字",
       "secondary": "次要資訊",
       "state_content": "狀態內容",
       "status_label": {
         "color_source": "顏色來源",
-        "position": "標籤位置",
         "toggle": "狀態標籤"
       },
       "text_shadow": "文字陰影",
@@ -141,18 +122,14 @@
       "value_compact": "精簡數值 (1.2k)",
       "value_sign": "顯示符號 (+/-)",
       "watermark": {
-        "high_toggle": "顯示上限",
-        "low_toggle": "顯示下限",
-        "high": "上限",
-        "low": "下限",
-        "low_mode": "低標記來源",
-        "high_mode": "高標記來源"
+        "high_toggle": "上限",
+        "low_toggle": "下限"
       },
       "window": "時間窗口",
       "entities": "實體",
       "rows": "行數",
       "line_size": "線條粗細",
-      "mark_defaults": "共用預設值"
+      "mark_defaults": "預設值"
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -194,15 +171,15 @@
         "shimmer_reverse": "反向微光"
       },
       "bar_orientation": {
-        "ltr": "由左到右",
-        "rtl": "由右到左",
-        "up": "向上"
+        "ltr": "LTR",
+        "rtl": "RTL",
+        "up": "UP"
       },
       "bar_position": {
         "background": "卡片背景",
         "below": "內容下方",
         "bottom": "下方",
-        "compact_below": "下方精簡長條（名稱/數值同一行）",
+        "compact_below": "下方精簡",
         "default": "預設",
         "overlay": "疊加在內容上",
         "top": "上方"
@@ -245,9 +222,7 @@
       "hide": {
         "icon": "圖示",
         "name": "名稱",
-        "progress_bar": "進度條",
         "secondary_info": "次要資訊",
-        "shape": "圖示的圓形背景",
         "unit": "單位",
         "value": "數值"
       },
@@ -263,7 +238,7 @@
       },
       "icon_animation_mode": {
         "auto": "自動",
-        "template": "範本"
+        "template": "Jinja"
       },
       "label_position": {
         "left": "左",
@@ -278,15 +253,14 @@
         "simple": "簡單"
       },
       "status_label_color_source": {
-        "bar": "進度條",
         "icon": "圖示"
       },
       "theme": {
         "battery_adaptive": "電池（依充電狀態自動調整）",
-        "critical_when_extreme": "極端時嚴重（水箱液位、偏差...）",
+        "critical_when_extreme": "極端時嚴重",
         "critical_when_extreme_center": "極端時嚴重，置中（center_zero）",
-        "critical_when_high": "偏高時嚴重（CPU、RAM、磁碟使用率...）",
-        "critical_when_low": "偏低時嚴重（電池...）",
+        "critical_when_high": "偏高時嚴重",
+        "critical_when_low": "偏低時嚴重",
         "humidity": "濕度",
         "light": "明亮",
         "optimal_when_high": "數值高時最佳",
@@ -314,8 +288,7 @@
         "space": "空格"
       },
       "value_source_mode": {
-        "entity": "實體",
-        "jinja": "範本",
+        "jinja": "Jinja",
         "standard": "固定值"
       },
       "watermark_as": {
@@ -340,6 +313,15 @@
       "peak_marker": "峰值標記",
       "indicators": "指示器與標籤",
       "alerts": "警示"
+    },
+    "shared": {
+      "col": "顏色",
+      "pos": "位置",
+      "attr": "屬性",
+      "min": "最小值",
+      "max": "最大值",
+      "bar": "進度條",
+      "ent": "實體"
     }
   }
 }
