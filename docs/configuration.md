@@ -2151,6 +2151,10 @@ reverse: true
 This option forces a **circular background** to be displayed behind the icon
 shown on the card.
 
+It also comes out on its own under [`bar_position: background`](#bar_position),
+where the bar fills the whole card: the disc protects the icon from a fill that
+usually carries the icon's own color.
+
 HA 2025.3 brings a lot of improvements and changes the circular background
 strategy: <https://www.home-assistant.io/blog/2025/03/05/release-20253/>
 

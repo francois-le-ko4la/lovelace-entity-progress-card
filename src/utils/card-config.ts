@@ -375,6 +375,9 @@ const style = {
     // On the mark itself (like its wm-* shape class), not a card-level relay.
     markShown: 'shown',
     clickable: { card: 'clickable-card', icon: 'clickable-icon' },
+    // The disc bar_position: background adds on its own - a disc that was asked
+    // for keeps its usual tint, see ViewCore#hasBackgroundOnlyShape.
+    backgroundShape: 'background-shape',
     hiddenComponent: {
       icon: { label: 'icon', class: 'hide-icon' },
       shape: { label: 'shape', class: 'hide-shape' },

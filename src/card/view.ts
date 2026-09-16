@@ -520,11 +520,19 @@ class ViewCore {
     );
   }
 
-  // The shape signals a clickable icon, nothing else: which domains get an
-  // icon action by default is decided once, in schema.ts's own
-  // applyIconTapActionDefaultRule (toggleDomain), not re-derived here.
+  // The shape signals a clickable icon - which domains get one by default is
+  // decided in schema.ts's applyIconTapActionDefaultRule, not re-derived here -
+  // or, under bar_position: background, keeps the icon out of the fill.
   get hasVisibleShape(): boolean {
-    return this.config.force_circular_background || this._hasInteractiveShape;
+    return this.config.force_circular_background || this._hasInteractiveShape || this.hasBackgroundOnlyShape;
+  }
+
+  // The disc nobody asked for: the fill covers the whole card and the icon
+  // carries its color, so the disc is what keeps the two apart.
+  get hasBackgroundOnlyShape(): boolean {
+    return (
+      this.config.bar_position === 'background' && !this.config.force_circular_background && !this._hasInteractiveShape
+    );
   }
 
   get _hasInteractiveShape(): boolean {

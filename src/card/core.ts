@@ -1858,6 +1858,11 @@ class HABase extends HACore {
   _manageShape() {
     this._dom.toggleClass(
       CARD.htmlStructure.card.element,
+      CARD.style.dynamic.backgroundShape,
+      this._cardView.hasBackgroundOnlyShape,
+    );
+    this._dom.toggleClass(
+      CARD.htmlStructure.card.element,
       CARD.style.dynamic.hiddenComponent.shape.class,
       !this._cardView.hasVisibleShape ||
         this.hasDisabledIconTap ||

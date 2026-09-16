@@ -42,10 +42,15 @@ describe('frameless - nothing of the card is left behind', () => {
   }
 });
 
-test('a decoration no variable can reach is dropped too', () => {
-  // A glass theme paints ha-card::before, out of reach of every --ha-card-*
-  // above; our sheet is adopted, so it cascades after card_mod's own <style>.
-  assert.match(CARD_CSS, /\.frameless::before[^{]*\{\s*content:\s*none;/);
+describe('a decoration no variable can reach is dropped too', () => {
+  // A glass theme paints ha-card::before and ::after, out of reach of every
+  // --ha-card-* above; our sheet is adopted, so it cascades after card_mod's
+  // own <style> - and !important, because those rules carry it too.
+  for (const pseudo of ['before', 'after']) {
+    test(`::${pseudo} is dropped`, () => {
+      assert.match(CARD_CSS, new RegExp(`\\.frameless\\)?::${pseudo}[^{]*\\{\\s*content:\\s*none !important;`));
+    });
+  }
 });
 
 describe('a Multi row is frameless, whichever aggregator builds it', () => {

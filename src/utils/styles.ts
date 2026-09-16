@@ -240,13 +240,12 @@ ${CARD.htmlStructure.card.element} {
 }
 
 /* The same frost, painted where no variable can reach it: a glass theme
-   (card_mod) decorates ha-card::before, so a nested card inherits chrome meant
-   for a top-level one. Our sheet is adopted, hence cascades after the <style>
-   card_mod injects into this same shadow root - an !important there still wins. */
-.type-entities::before,
-.type-custom-vertical-stack-in-card::before,
-.${CARD.style.dynamic.frameless}::before {
-  content: none;
+   (card_mod) decorates ha-card::before and ::after, so a nested card inherits
+   chrome meant for a top-level one. !important because those rules carry it too,
+   and our adopted sheet cascades after the <style> injected in this same root. */
+:is(.type-entities, .type-custom-vertical-stack-in-card, .${CARD.style.dynamic.frameless})::before,
+:is(.type-entities, .type-custom-vertical-stack-in-card, .${CARD.style.dynamic.frameless})::after {
+  content: none !important;
 }
 
 /* Embedded-context input only - the base ha-card rule is the single place the
@@ -462,6 +461,14 @@ ha-card.background {
   z-index: 1;
 }
 
+/* The bar is appended after everything (see wrapWithBarPosition) and .container
+   is positioned here, so both painted over the card ripple and swallowed the
+   hover feedback. Above both, which is where every other position has it: there
+   .container is unpositioned, hence below the ripple to begin with. */
+.background .${CARD.htmlStructure.sections.rippleZone.class} {
+  z-index: 2;
+}
+
 :is(.background-container)
   :is(.${CARD.htmlStructure.elements.progressBar.bar.class},
     .${CARD.htmlStructure.elements.progressBar.inner.class}) {
@@ -634,8 +641,16 @@ ha-card.label-left .status-label {
   /* --shape-background-color: a project-namespaced override slot rather than a
      context redefining background-color directly - a bare property name is a
      far easier accidental collision target (a user's card_mod included). */
-  background-color: var(--shape-hover-color, var(--shape-background-color, var(--epb-icon-shape-color, var(--epb-icon-and-shape-color, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default})))));
+  background-color: var(--shape-hover-color, var(--shape-background-color, var(--epb-icon-shape-color, var(--shape-fallback-color, var(--epb-icon-and-shape-color, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}))))));
   opacity: var(--epb-icon-shape-opacity, var(--shape-opacity));
+}
+
+/* A tinted disc drawn at 20% over a bar that covers the whole card just shows
+   the fill through and vanishes into it. An opaque layer under the tint (the
+   glyph is a descendant, see structure.ts) composites to the same thing a
+   color-mix() would, and needs no @supports of its own (issue #128). */
+ha-card.background:not(.type-entities) .${CARD.htmlStructure.elements.shape.class} {
+  background-color: var(--card-background-color);
 }
 
 /* CSS-only click feedback (ha-tile-icon's technique) instead of a second
@@ -660,6 +675,13 @@ ha-card.label-left .status-label {
 
 .type-entities .${CARD.htmlStructure.elements.shape.class}::before {
   --shape-background-color: transparent;
+}
+
+/* The fill covers the whole card here and the icon carries its very color. The
+   disc takes the card back, opaque, so the icon reads against it as usual. */
+ha-card.${CARD.style.dynamic.backgroundShape} .${CARD.htmlStructure.elements.shape.class} {
+  --shape-fallback-color: var(--ha-card-background, var(--card-background-color));
+  --shape-opacity: 100%;
 }
 
 .${CARD.htmlStructure.elements.icon.class},

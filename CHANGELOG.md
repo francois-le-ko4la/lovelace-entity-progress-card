@@ -147,6 +147,9 @@ shows the value that mark inherits rather than a built-in default.
 - **[`peak_marker`][peak_marker]**: hiding a mark in the editor leaves nothing
   behind in the YAML — the redundant `min: false` it used to write is gone.
   Existing ones keep working.
+- **[`bar_position`][bar_position]** `background`: the icon no longer drowns in
+  a fill that carries its own color — the circular background comes out to
+  protect it. `--epb-icon-shape-color` still wins.
 
 #### Rows that fill, and Home Assistant's own spacing
 
@@ -158,6 +161,17 @@ a panel.
 
 ### 🐛 Fixes
 
+- **[`bar_position`][bar_position]** `background`: the card's hover and ripple
+  feedback was painted under the bar and never showed. It covers the whole card
+  again, icon included.
+- **[`bar_position`][bar_position]** `background`: a circular background you
+  asked for — [`force_circular_background`][force_circular_background] or an
+  icon action — was drawn see-through and vanished into the fill. It sits on the
+  card's own color now and stays visible.
+- **[`frameless`][frameless]** and cards embedded in an entities or
+  vertical-stack card: a glass theme's `::after` decoration still painted over
+  them. Both pseudo-elements are neutralized now, and a theme's `!important` no
+  longer wins.
 - Segmented bars ([`bar_segments`][bar_segments]) drew opaque strips between the
   cells on a translucent card, and no visible gaps at all on a frameless one.
   The gaps let the card through now.
@@ -240,9 +254,22 @@ We'd rather know than have you go looking for a workaround on your own.
 - **[`peak_marker`][peak_marker]**: turning a mark off writes the key away
   instead of `min: false`; a `watermark` side keeps its `false`, which is the
   only thing that hides it.
+- **[`bar_position`][bar_position]** `background`: the circular background is
+  shown by default here, opaque and in the card's own color, so the icon reads
+  against it; `--epb-icon-shape-color`/`--epb-icon-shape-opacity` still win.
 
 ### 🐛 Fixes
 
+- **[`bar_position`][bar_position]** `background`: the ripple zone sat below
+  both the bar and the content, so hover and press feedback never appeared. It
+  paints above them, where every other position already had it.
+- **[`bar_position`][bar_position]** `background`: a shape shown on purpose
+  ([`force_circular_background`][force_circular_background] or an icon action)
+  kept its 20% opacity and disappeared into a fill of the same color. It reads
+  against the card's color now, at full opacity.
+- **[`frameless`][frameless]** and the entities/vertical-stack embeds: only
+  `ha-card::before` was neutralized against a glass theme's chrome. `::after` is
+  now too, both with `!important`.
 - **[`reverse_secondary_info_row`][reverse_secondary_info_row]** had no effect
   on a Multi row: it was reset on every save. It applies now, on the row's own
   horizontal layout.
@@ -6718,6 +6745,8 @@ experience:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_segments
 [frameless]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#frameless
+[force_circular_background]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#force_circular_background
 [height]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#height
 [icon_animation]:
