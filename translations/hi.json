@@ -29,21 +29,9 @@
   },
   "editor": {
     "field": {
-      "action": {
-        "double_tap": "डबल टैप पर क्रिया",
-        "hold": "लंबे प्रेस पर क्रिया",
-        "icon_double_tap": "आइकन पर डबल टैप की क्रिया",
-        "icon_hold": "आइकन पर लंबे प्रेस की क्रिया",
-        "icon_tap": "आइकन पर टैप करने की क्रिया",
-        "tap": "टैप पर क्रिया"
-      },
-      "action_picker": "इंटरैक्शन जोड़ें",
-      "add_entity": "एंटिटी जोड़ें",
       "add_zone": "ज़ोन जोड़ें",
       "alert_when": {
-        "above": "इससे ऊपर",
         "animation": "एनिमेशन",
-        "below": "इससे नीचे",
         "highlight": "हाइलाइट",
         "label": "लेबल",
         "above_mode": "ऊपरी अलर्ट स्रोत",
@@ -69,23 +57,18 @@
       "center_zero_value": "केंद्र मान",
       "custom_info": "कस्टम द्वितीयक जानकारी",
       "custom_theme": "कस्टम थीम ज़ोन",
-      "decimal": "सटीकता",
       "density": "घनत्व",
       "fast_refresh": "तेज़ रिफ्रेश",
       "force_circular_background_mode": "गोलाकार पृष्ठभूमि",
       "frameless": "फ्रेमरहित",
       "height": "ऊँचाई",
       "height_custom_toggle": "स्वतः ऊँचाई",
-      "hide_mode": "छिपाएँ",
-      "icon": "आइकन",
       "icon_animation": "आइकन एनिमेशन",
       "interpolate": "रंग इंटरपोलेशन",
-      "layout": "सामग्री लेआउट",
       "marginless": "मार्जिनरहित",
       "migrate_config": "कॉन्फ़िगरेशन माइग्रेट करें",
       "min_width": "न्यूनतम चौड़ाई",
       "multiline": "मल्टीलाइन",
-      "name": "नाम",
       "name_info": "कस्टम नाम जानकारी",
       "opacity": "अपारदर्शिता",
       "peak_marker": {
@@ -97,13 +80,11 @@
       "reverse": "टाइमर उलटें",
       "reverse_secondary_info_row": "बार और टेक्स्ट बदलें",
       "secondary": "सहायक जानकारी",
-      "state_content": "स्थिति की सामग्री",
       "status_label": {
         "color_source": "रंग स्रोत",
         "toggle": "स्थिति लेबल"
       },
       "text_shadow": "टेक्स्ट में छाया जोड़ें",
-      "theme": "थीम",
       "trend_indicator": {
         "window_toggle": "समय विंडो का उपयोग करें",
         "basis": "तुलना आधार",
@@ -117,7 +98,6 @@
       },
       "trigger": "ट्रिगर",
       "type": "प्रकार",
-      "unit": "इकाई",
       "unit_spacing": "रिक्ति",
       "value_compact": "संक्षिप्त मान (1.2k)",
       "value_sign": "चिह्न दिखाएं (+/-)",
@@ -126,9 +106,8 @@
         "low_toggle": "निम्न सीमा"
       },
       "window": "समय विंडो",
-      "entities": "एंटिटी",
       "rows": "पंक्तियाँ",
-      "line_size": "रेखा की मोटाई",
+      "line_size": "मोटाई",
       "mark_defaults": "डिफ़ॉल्ट"
     },
     "field_helper": {
@@ -180,7 +159,6 @@
         "below": "सामग्री के नीचे",
         "bottom": "नीचे",
         "compact_below": "कॉम्पैक्ट नीचे",
-        "default": "डिफ़ॉल्ट",
         "overlay": "सामग्री पर ओवरले",
         "top": "ऊपर"
       },
@@ -201,15 +179,8 @@
         "stacked": "स्टैक्ड"
       },
       "density": {
-        "default": "डिफ़ॉल्ट",
         "compact": "कॉम्पैक्ट",
         "single_line": "एक पंक्ति"
-      },
-      "duration_unit": {
-        "s": "सेकंड",
-        "min": "मिनट",
-        "h": "घंटे",
-        "d": "दिन"
       },
       "enabled_disabled_mode": {
         "disabled": "अक्षम",
@@ -220,10 +191,7 @@
         "forced": "बलपूर्वक"
       },
       "hide": {
-        "icon": "आइकन",
-        "name": "नाम",
         "secondary_info": "सहायक जानकारी",
-        "unit": "इकाई",
         "value": "मूल्य"
       },
       "icon_animation": {
@@ -244,16 +212,9 @@
         "left": "बाएं",
         "right": "दाएं"
       },
-      "layout": {
-        "horizontal": "क्षैतिज",
-        "vertical": "लंबवत"
-      },
       "simple_advanced_mode": {
         "advanced": "उन्नत",
         "simple": "सरल"
-      },
-      "status_label_color_source": {
-        "icon": "आइकन"
       },
       "theme": {
         "battery_adaptive": "बैटरी (चार्जिंग स्थिति के अनुसार अनुकूलित)",
@@ -305,8 +266,6 @@
       }
     },
     "title": {
-      "content": "सामग्री",
-      "interaction": "बातचीत",
       "layout": "लेआउट और आकार",
       "theme": "रूप और अनुभव",
       "watermark": "स्तर चिह्न",
@@ -315,13 +274,7 @@
       "alerts": "अलर्ट"
     },
     "shared": {
-      "col": "रंग",
-      "pos": "स्थिति",
-      "attr": "एट्रिब्यूट",
-      "min": "न्यूनतम",
-      "max": "अधिकतम",
-      "bar": "बार",
-      "ent": "एंटिटी"
+      "bar": "बार"
     }
   }
 }

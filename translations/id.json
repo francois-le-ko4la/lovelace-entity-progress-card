@@ -29,21 +29,9 @@
   },
   "editor": {
     "field": {
-      "action": {
-        "double_tap": "Perilaku ketuk ganda",
-        "hold": "Perilaku tahan",
-        "icon_double_tap": "Perilaku ketuk ganda ikon",
-        "icon_hold": "Perilaku ketuk-tahan ikon",
-        "icon_tap": "Perilaku ketuk ikon",
-        "tap": "Perilaku ketuk"
-      },
-      "action_picker": "Tambahkan interaksi",
-      "add_entity": "Tambahkan entitas",
       "add_zone": "Tambahkan zona",
       "alert_when": {
-        "above": "Di atas",
         "animation": "Animasi",
-        "below": "Di bawah",
         "highlight": "Sorotan",
         "label": "Label",
         "above_mode": "Sumber peringatan atas",
@@ -69,23 +57,18 @@
       "center_zero_value": "Nilai tengah",
       "custom_info": "Info sekunder kustom",
       "custom_theme": "Zona tema khusus",
-      "decimal": "Presisi",
       "density": "Kepadatan",
       "fast_refresh": "Penyegaran cepat",
       "force_circular_background_mode": "Latar belakang bulat",
       "frameless": "Tanpa bingkai",
       "height": "Tinggi",
       "height_custom_toggle": "Tinggi otomatis",
-      "hide_mode": "Sembunyikan",
-      "icon": "Ikon",
       "icon_animation": "Animasi ikon",
       "interpolate": "Interpolasi warna",
-      "layout": "Tata letak konten",
       "marginless": "Tanpa margin",
       "migrate_config": "Migrasikan konfigurasi",
       "min_width": "Lebar min.",
       "multiline": "Multibaris",
-      "name": "Nama",
       "name_info": "Info nama kustom",
       "opacity": "Opasitas",
       "peak_marker": {
@@ -97,13 +80,11 @@
       "reverse": "Timer terbalik",
       "reverse_secondary_info_row": "Tukar bilah dan teks",
       "secondary": "Informasi sekunder",
-      "state_content": "Konten status",
       "status_label": {
         "color_source": "Sumber warna",
         "toggle": "Label status"
       },
       "text_shadow": "Tambahkan bayangan teks",
-      "theme": "Tema",
       "trend_indicator": {
         "window_toggle": "Gunakan jendela waktu",
         "basis": "Dasar perbandingan",
@@ -117,7 +98,6 @@
       },
       "trigger": "Pemicu",
       "type": "Tipe",
-      "unit": "Satuan",
       "unit_spacing": "Jarak",
       "value_compact": "Nilai ringkas (1.2k)",
       "value_sign": "Tampilkan tanda (+/-)",
@@ -126,9 +106,8 @@
         "low_toggle": "Ambang bawah"
       },
       "window": "Jendela waktu",
-      "entities": "Entitas",
       "rows": "Baris",
-      "line_size": "Ketebalan garis",
+      "line_size": "Ketebalan",
       "mark_defaults": "Nilai default"
     },
     "field_helper": {
@@ -180,7 +159,6 @@
         "below": "Di bawah konten",
         "bottom": "Di bawah",
         "compact_below": "Ringkas di bawah",
-        "default": "Bawaan",
         "overlay": "Ditumpangkan pada konten",
         "top": "Di atas"
       },
@@ -201,15 +179,8 @@
         "stacked": "Ditumpuk"
       },
       "density": {
-        "default": "Bawaan",
         "compact": "Ringkas",
         "single_line": "Satu baris"
-      },
-      "duration_unit": {
-        "s": "Detik",
-        "min": "Menit",
-        "h": "Jam",
-        "d": "Hari"
       },
       "enabled_disabled_mode": {
         "disabled": "Nonaktif",
@@ -220,10 +191,7 @@
         "forced": "Dipaksa"
       },
       "hide": {
-        "icon": "Ikon",
-        "name": "Nama",
         "secondary_info": "Info sekunder",
-        "unit": "Satuan",
         "value": "Nilai"
       },
       "icon_animation": {
@@ -244,16 +212,9 @@
         "left": "Kiri",
         "right": "Kanan"
       },
-      "layout": {
-        "horizontal": "Horizontal",
-        "vertical": "Vertikal"
-      },
       "simple_advanced_mode": {
         "advanced": "Lanjutan",
         "simple": "Sederhana"
-      },
-      "status_label_color_source": {
-        "icon": "Ikon"
       },
       "theme": {
         "battery_adaptive": "Baterai (menyesuaikan status pengisian daya)",
@@ -305,8 +266,6 @@
       }
     },
     "title": {
-      "content": "Konten",
-      "interaction": "Interaksi",
       "layout": "Tata Letak & Ukuran",
       "theme": "Tampilan & Nuansa",
       "watermark": "Penanda ambang",
@@ -315,13 +274,7 @@
       "alerts": "Peringatan"
     },
     "shared": {
-      "col": "Warna",
-      "pos": "Posisi",
-      "attr": "Atribut",
-      "min": "Minimum",
-      "max": "Maksimum",
-      "bar": "Bilah",
-      "ent": "Entitas"
+      "bar": "Bilah"
     }
   }
 }

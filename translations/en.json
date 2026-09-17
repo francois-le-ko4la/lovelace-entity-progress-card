@@ -29,21 +29,9 @@
   },
   "editor": {
     "field": {
-      "action": {
-        "double_tap": "Double tap behavior",
-        "hold": "Hold behavior",
-        "icon_double_tap": "Icon double tap behavior",
-        "icon_hold": "Icon hold behavior",
-        "icon_tap": "Icon tap behavior",
-        "tap": "Tap behavior"
-      },
-      "action_picker": "Add interaction",
-      "add_entity": "Add entity",
       "add_zone": "Add zone",
       "alert_when": {
-        "above": "Above",
         "animation": "Animation",
-        "below": "Below",
         "highlight": "Highlight",
         "label": "Label",
         "above_mode": "Above alert source",
@@ -69,23 +57,18 @@
       "center_zero_value": "Center value",
       "custom_info": "Custom secondary info",
       "custom_theme": "Custom theme zones",
-      "decimal": "Precision",
       "density": "Density",
       "fast_refresh": "Fast refresh",
       "force_circular_background_mode": "Circular background",
       "frameless": "Frameless",
       "height": "Height",
       "height_custom_toggle": "Auto height",
-      "hide_mode": "Hide",
-      "icon": "Icon",
       "icon_animation": "Icon animation",
       "interpolate": "Interpolate colors",
-      "layout": "Content layout",
       "marginless": "Marginless",
       "migrate_config": "Migrate config",
       "min_width": "Min width",
       "multiline": "Multiline",
-      "name": "Name",
       "name_info": "Custom name info",
       "opacity": "Opacity",
       "peak_marker": {
@@ -97,13 +80,11 @@
       "reverse": "Reverse timer",
       "reverse_secondary_info_row": "Swap bar and text",
       "secondary": "Secondary info",
-      "state_content": "State content",
       "status_label": {
         "color_source": "Color source",
         "toggle": "Status label"
       },
       "text_shadow": "Add text shadow",
-      "theme": "Theme",
       "trend_indicator": {
         "window_toggle": "Use a time window",
         "basis": "Comparison basis",
@@ -117,7 +98,6 @@
       },
       "trigger": "Trigger",
       "type": "Type",
-      "unit": "Unit",
       "unit_spacing": "Spacing",
       "value_compact": "Compact value (1.2k)",
       "value_sign": "Show sign (+/-)",
@@ -126,9 +106,8 @@
         "low_toggle": "Low threshold"
       },
       "window": "Time window",
-      "entities": "Entities",
       "rows": "Rows",
-      "line_size": "Line thickness",
+      "line_size": "Thickness",
       "mark_defaults": "Defaults"
     },
     "field_helper": {
@@ -180,7 +159,6 @@
         "below": "Below content",
         "bottom": "On bottom",
         "compact_below": "Compact below",
-        "default": "Default",
         "overlay": "Overlay on content",
         "top": "On top"
       },
@@ -201,15 +179,8 @@
         "stacked": "Stacked"
       },
       "density": {
-        "default": "Default",
         "compact": "Compact",
         "single_line": "Single line"
-      },
-      "duration_unit": {
-        "s": "Seconds",
-        "min": "Minutes",
-        "h": "Hours",
-        "d": "Days"
       },
       "enabled_disabled_mode": {
         "disabled": "Disabled",
@@ -220,10 +191,7 @@
         "forced": "Forced"
       },
       "hide": {
-        "icon": "Icon",
-        "name": "Name",
         "secondary_info": "Secondary info",
-        "unit": "Unit",
         "value": "Value"
       },
       "icon_animation": {
@@ -244,16 +212,9 @@
         "left": "Left",
         "right": "Right"
       },
-      "layout": {
-        "horizontal": "Horizontal",
-        "vertical": "Vertical"
-      },
       "simple_advanced_mode": {
         "advanced": "Advanced",
         "simple": "Simple"
-      },
-      "status_label_color_source": {
-        "icon": "Icon"
       },
       "theme": {
         "battery_adaptive": "Battery (adapts to charging state)",
@@ -305,8 +266,6 @@
       }
     },
     "title": {
-      "content": "Content",
-      "interaction": "Interactions",
       "layout": "Layout & Sizing",
       "theme": "Look & Feel",
       "watermark": "Watermarks",
@@ -315,13 +274,7 @@
       "alerts": "Alerts"
     },
     "shared": {
-      "col": "Color",
-      "pos": "Position",
-      "attr": "Attribute",
-      "min": "Minimum",
-      "max": "Maximum",
-      "bar": "Bar",
-      "ent": "Entity"
+      "bar": "Bar"
     }
   }
 }

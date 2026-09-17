@@ -81,6 +81,25 @@ marks themselves — a band alone is enough.
 
 ### 🔧 Improvements
 
+#### The editor borrows Home Assistant's own words
+
+About thirty labels — Entity, Attribute, Icon, Name, Theme, Unit, Minimum,
+Maximum, Color, the tap/hold/double tap behaviors, Position — are read from Home
+Assistant's own translation catalog instead of a copy shipped inside the card.
+They read exactly like the rest of your interface, in every language HA speaks,
+and they follow HA's own rewordings from then on without an update here. The
+card carries that much less: the translation table lost a fifth of its weight.
+
+On a Home Assistant older than the one that introduced a given label, that whole
+group falls back to English rather than showing half of it translated — every
+other label stays in your language.
+
+- **Editor wording**: labels dropped what their own panel already said — "Show
+  minimum" became "Minimum", "Bar below content" became "Below content" — in all
+  39 languages.
+- **Duration units** now show each language's own abbreviation, from the
+  browser: `j` in French, `gg` in Italian, `天` in Chinese.
+
 #### A Multi row is a whole card
 
 It used to be a bare bar, with the aggregator printing a value beside it. Every
@@ -161,6 +180,21 @@ a panel.
 
 ### 🐛 Fixes
 
+- **[`peak_marker`][peak_marker]**: the shared **Thickness** was hidden while no
+  mark was shown, though the default type it applies to is `line`.
+- **Number+unit rows**: the unit dropdown sat higher than its slider, on every
+  couple — height, min width, bar max width, window.
+- **`window` sliders**: seconds offered 604 800 positions, minutes 10 080. Each
+  unit now stops where it stops meaning anything.
+- **Card size**: unchecking it discarded `min_width` and `height` instead of
+  handing them back. It opens on the card's own height now.
+- **[`text_shadow`][text_shadow]**: half width under `bar_position: background`,
+  where it is alone on its row.
+- **Invalid config**: the path shown on the card used commas
+  (`watermark,low,value`) where the console used dots.
+- **Validation messages**: a refused decimal announced "a valid decimal number"
+  while the rule is a positive integer; four codes saying the same thing to a
+  user became one.
 - **[`bar_position`][bar_position]** `background`: the card's hover and ripple
   feedback was painted under the bar and never showed. It covers the whole card
   again, icon included.
@@ -245,10 +279,32 @@ slipped through. You don't need to be a developer to notice it. If something
 feels off, that's reason enough. Open a [GitHub issue]. Or say hi on [Discord].
 We'd rather know than have you go looking for a workaround on your own.
 
+- Smaller than 1.6.2 despite everything this release adds: 648 → 573 KB, and 155
+  → 142 KB compressed. The translation table now accounts for 37% of the shipped
+  file, where it used to be nearly half of it.
+
 ## What's new (1.6.3-rc3)
 
 ### 🔧 Improvements
 
+#### The editor borrows Home Assistant's own words
+
+About thirty labels — Entity, Attribute, Icon, Name, Theme, Unit, Minimum,
+Maximum, Color, the tap/hold/double tap behaviors, Position — are read from Home
+Assistant's own translation catalog instead of a copy shipped inside the card.
+They read exactly like the rest of your interface, in every language HA speaks,
+and they follow HA's own rewordings from then on without an update here. The
+card carries that much less: the translation table lost a fifth of its weight.
+
+On a Home Assistant older than the one that introduced a given label, that whole
+group falls back to English rather than showing half of it translated — every
+other label stays in your language.
+
+- **Editor wording**: labels dropped what their own panel already said — "Show
+  minimum" became "Minimum", "Bar below content" became "Below content" — in all
+  39 languages.
+- **Duration units** now show each language's own abbreviation, from the
+  browser: `j` in French, `gg` in Italian, `天` in Chinese.
 - **Multi editor**: with a single row, what you set on it becomes the card's
   shared default - the rows you add next inherit it instead of starting bare.
 - **[`peak_marker`][peak_marker]**: turning a mark off writes the key away
@@ -260,6 +316,21 @@ We'd rather know than have you go looking for a workaround on your own.
 
 ### 🐛 Fixes
 
+- **[`peak_marker`][peak_marker]**: the shared **Thickness** was hidden while no
+  mark was shown, though the default type it applies to is `line`.
+- **Number+unit rows**: the unit dropdown sat higher than its slider, on every
+  couple — height, min width, bar max width, window.
+- **`window` sliders**: seconds offered 604 800 positions, minutes 10 080. Each
+  unit now stops where it stops meaning anything.
+- **Card size**: unchecking it discarded `min_width` and `height` instead of
+  handing them back. It opens on the card's own height now.
+- **[`text_shadow`][text_shadow]**: half width under `bar_position: background`,
+  where it is alone on its row.
+- **Invalid config**: the path shown on the card used commas
+  (`watermark,low,value`) where the console used dots.
+- **Validation messages**: a refused decimal announced "a valid decimal number"
+  while the rule is a positive integer; four codes saying the same thing to a
+  user became one.
 - **[`bar_position`][bar_position]** `background`: the ripple zone sat below
   both the bar and the content, so hover and press feedback never appeared. It
   paints above them, where every other position already had it.
@@ -286,6 +357,23 @@ We'd rather know than have you go looking for a workaround on your own.
 - The editor's dropdown table moved to its own module and `status_label`'s two
   enums are read off the live schema, so every select now offers exactly what
   the schema accepts - asserted per dropdown.
+
+- The shipped file, measured on the published assets:
+
+  | Version    | Raw    | Gzipped | Translations |
+  | ---------- | ------ | ------- | ------------ |
+  | 1.6.2      | 648 KB | 155 KB  | 48%          |
+  | 1.6.3-rc2  | 678 KB | 162 KB  | 47%          |
+  | this build | 573 KB | 142 KB  | 37%          |
+
+  253 → 194 translation keys along the way. Worth noting what the first two rows
+  say: this cycle had grown the file well past 1.6.2 while adding the Multi
+  editors, the peak markers and `density: single_line` - it now ships smaller
+  than the release it follows, features included.
+
+- Labels several fields share moved to an `editor.shared` group; option values
+  naming something the field list already names borrow it instead of storing a
+  second copy.
 
 ## What's new (1.6.3-rc2)
 

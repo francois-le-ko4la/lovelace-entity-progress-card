@@ -29,21 +29,9 @@
   },
   "editor": {
     "field": {
-      "action": {
-        "double_tap": "双击行为",
-        "hold": "长按行为",
-        "icon_double_tap": "图标双击行为",
-        "icon_hold": "图标按住行为",
-        "icon_tap": "图标点击行为",
-        "tap": "点击行为"
-      },
-      "action_picker": "添加交互",
-      "add_entity": "添加实体",
       "add_zone": "添加区域",
       "alert_when": {
-        "above": "高于时",
         "animation": "动画",
-        "below": "低于时",
         "highlight": "高亮显示",
         "label": "标签",
         "above_mode": "上限警报来源",
@@ -69,23 +57,18 @@
       "center_zero_value": "中心值",
       "custom_info": "自定义次要信息",
       "custom_theme": "自定义主题区域",
-      "decimal": "精度",
       "density": "密度",
       "fast_refresh": "快速刷新",
       "force_circular_background_mode": "圆形背景",
       "frameless": "无边框",
       "height": "高度",
       "height_custom_toggle": "自动高度",
-      "hide_mode": "隐藏",
-      "icon": "图标",
       "icon_animation": "图标动画",
       "interpolate": "颜色插值",
-      "layout": "内容布局",
       "marginless": "无边距",
       "migrate_config": "迁移配置",
       "min_width": "最小宽度",
       "multiline": "多行",
-      "name": "名称",
       "name_info": "自定义名称信息",
       "opacity": "不透明度",
       "peak_marker": {
@@ -97,13 +80,11 @@
       "reverse": "反转计时器",
       "reverse_secondary_info_row": "交换进度条和文本",
       "secondary": "次要信息",
-      "state_content": "状态内容",
       "status_label": {
         "color_source": "颜色来源",
         "toggle": "状态标签"
       },
       "text_shadow": "添加文本阴影",
-      "theme": "主题",
       "trend_indicator": {
         "window_toggle": "使用时间窗口",
         "basis": "比较基准",
@@ -117,7 +98,6 @@
       },
       "trigger": "触发器",
       "type": "类型",
-      "unit": "单位",
       "unit_spacing": "间距",
       "value_compact": "紧凑数值 (1.2k)",
       "value_sign": "显示符号 (+/-)",
@@ -126,9 +106,8 @@
         "low_toggle": "下限"
       },
       "window": "时间窗口",
-      "entities": "实体",
       "rows": "行数",
-      "line_size": "线条粗细",
+      "line_size": "粗细",
       "mark_defaults": "默认值"
     },
     "field_helper": {
@@ -180,7 +159,6 @@
         "below": "内容下方",
         "bottom": "底部",
         "compact_below": "下方紧凑",
-        "default": "默认",
         "overlay": "覆盖内容",
         "top": "顶部"
       },
@@ -201,15 +179,8 @@
         "stacked": "堆叠"
       },
       "density": {
-        "default": "默认",
         "compact": "紧凑",
         "single_line": "单行"
-      },
-      "duration_unit": {
-        "s": "秒",
-        "min": "分钟",
-        "h": "小时",
-        "d": "天"
       },
       "enabled_disabled_mode": {
         "disabled": "已禁用",
@@ -220,10 +191,7 @@
         "forced": "强制"
       },
       "hide": {
-        "icon": "图标",
-        "name": "名称",
         "secondary_info": "次要信息",
-        "unit": "单位",
         "value": "数值"
       },
       "icon_animation": {
@@ -244,16 +212,9 @@
         "left": "左",
         "right": "右"
       },
-      "layout": {
-        "horizontal": "水平",
-        "vertical": "垂直"
-      },
       "simple_advanced_mode": {
         "advanced": "高级",
         "simple": "简单"
-      },
-      "status_label_color_source": {
-        "icon": "图标"
       },
       "theme": {
         "battery_adaptive": "电池（根据充电状态自适应）",
@@ -305,8 +266,6 @@
       }
     },
     "title": {
-      "content": "内容",
-      "interaction": "交互",
       "layout": "布局与尺寸",
       "theme": "外观与体验",
       "watermark": "阈值标记",
@@ -315,13 +274,7 @@
       "alerts": "警报"
     },
     "shared": {
-      "col": "颜色",
-      "pos": "位置",
-      "attr": "属性",
-      "min": "最小值",
-      "max": "最大值",
-      "bar": "进度条",
-      "ent": "实体"
+      "bar": "进度条"
     }
   }
 }

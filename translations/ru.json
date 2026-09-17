@@ -29,21 +29,9 @@
   },
   "editor": {
     "field": {
-      "action": {
-        "double_tap": "При двойном нажатии",
-        "hold": "При длительном нажатии",
-        "icon_double_tap": "При двойном нажатии на иконку",
-        "icon_hold": "При длительном нажатии на иконку",
-        "icon_tap": "При нажатии на иконку",
-        "tap": "При нажатии"
-      },
-      "action_picker": "Добавить взаимодействие",
-      "add_entity": "Добавить сущность",
       "add_zone": "Добавить зону",
       "alert_when": {
-        "above": "Выше",
         "animation": "Анимация",
-        "below": "Ниже",
         "highlight": "Выделение",
         "label": "Метка",
         "above_mode": "Источник верхнего оповещения",
@@ -69,23 +57,18 @@
       "center_zero_value": "Центральное значение",
       "custom_info": "Дополнительная информация",
       "custom_theme": "Зоны пользовательской темы",
-      "decimal": "Округление",
       "density": "Плотность",
       "fast_refresh": "Быстрое обновление",
       "force_circular_background_mode": "Круглый фон",
       "frameless": "Без рамки",
       "height": "Высота",
       "height_custom_toggle": "Автоматическая высота",
-      "hide_mode": "Скрыть",
-      "icon": "Иконка",
       "icon_animation": "Анимация значка",
       "interpolate": "Интерполяция цветов",
-      "layout": "Расположение содержимого",
       "marginless": "Без отступа",
       "migrate_config": "Перенести конфигурацию",
       "min_width": "Мин. ширина",
       "multiline": "Многострочный",
-      "name": "Название",
       "name_info": "Доп. информация (имя)",
       "opacity": "Непрозрачность",
       "peak_marker": {
@@ -97,13 +80,11 @@
       "reverse": "Обратный таймер",
       "reverse_secondary_info_row": "Поменять местами панель и текст",
       "secondary": "Дополнительная информация",
-      "state_content": "Содержимое состояния",
       "status_label": {
         "color_source": "Источник цвета",
         "toggle": "Метка состояния"
       },
       "text_shadow": "Добавить тень к тексту",
-      "theme": "Тема",
       "trend_indicator": {
         "window_toggle": "Использовать временное окно",
         "basis": "Основа сравнения",
@@ -117,7 +98,6 @@
       },
       "trigger": "Триггер",
       "type": "Тип",
-      "unit": "Единица измерения",
       "unit_spacing": "Интервал",
       "value_compact": "Компактное значение (1.2k)",
       "value_sign": "Показывать знак (+/-)",
@@ -126,9 +106,8 @@
         "low_toggle": "Нижний порог"
       },
       "window": "Временное окно",
-      "entities": "Объекты",
       "rows": "Строки",
-      "line_size": "Толщина линии",
+      "line_size": "Толщина",
       "mark_defaults": "Значения по умолчанию"
     },
     "field_helper": {
@@ -180,7 +159,6 @@
         "below": "Под содержимым",
         "bottom": "Внизу",
         "compact_below": "Компактная снизу",
-        "default": "По умолчанию",
         "overlay": "Поверх содержимого",
         "top": "Вверху"
       },
@@ -201,15 +179,8 @@
         "stacked": "Стек"
       },
       "density": {
-        "default": "По умолчанию",
         "compact": "Компактно",
         "single_line": "Одна строка"
-      },
-      "duration_unit": {
-        "s": "Секунды",
-        "min": "Минуты",
-        "h": "Часы",
-        "d": "Дни"
       },
       "enabled_disabled_mode": {
         "disabled": "Отключено",
@@ -220,10 +191,7 @@
         "forced": "Принудительно"
       },
       "hide": {
-        "icon": "Иконка",
-        "name": "Имя",
         "secondary_info": "Доп. информация",
-        "unit": "Единица",
         "value": "Значение"
       },
       "icon_animation": {
@@ -244,16 +212,9 @@
         "left": "Слева",
         "right": "Справа"
       },
-      "layout": {
-        "horizontal": "Горизонтальный",
-        "vertical": "Вертикальный"
-      },
       "simple_advanced_mode": {
         "advanced": "Расширенный",
         "simple": "Простой"
-      },
-      "status_label_color_source": {
-        "icon": "Значок"
       },
       "theme": {
         "battery_adaptive": "Батарея (адаптируется к состоянию зарядки)",
@@ -305,8 +266,6 @@
       }
     },
     "title": {
-      "content": "Содержимое",
-      "interaction": "Взаимодействия",
       "layout": "Макет и размер",
       "theme": "Внешний вид",
       "watermark": "Метки уровня",
@@ -315,13 +274,7 @@
       "alerts": "Оповещения"
     },
     "shared": {
-      "col": "Цвет",
-      "pos": "Позиция",
-      "attr": "Атрибут",
-      "min": "Минимум",
-      "max": "Максимум",
-      "bar": "Полоса",
-      "ent": "Сущность"
+      "bar": "Полоса"
     }
   }
 }

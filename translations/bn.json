@@ -29,21 +29,9 @@
   },
   "editor": {
     "field": {
-      "action": {
-        "double_tap": "ডাবল ট্যাপে অ্যাকশন",
-        "hold": "দীর্ঘ চাপে অ্যাকশন",
-        "icon_double_tap": "আইকনে ডাবল ট্যাপের অ্যাকশন",
-        "icon_hold": "আইকনে দীর্ঘ চাপের অ্যাকশন",
-        "icon_tap": "আইকনে ট্যাপ করার অ্যাকশন",
-        "tap": "ট্যাপে অ্যাকশন"
-      },
-      "action_picker": "ইন্টারঅ্যাকশন যোগ করুন",
-      "add_entity": "সত্তা যোগ করুন",
       "add_zone": "জোন যোগ করুন",
       "alert_when": {
-        "above": "এর উপরে",
         "animation": "অ্যানিমেশন",
-        "below": "এর নিচে",
         "highlight": "হাইলাইট",
         "label": "লেবেল",
         "above_mode": "ঊর্ধ্ব অ্যালার্টের উৎস",
@@ -69,23 +57,18 @@
       "center_zero_value": "কেন্দ্রীয় মান",
       "custom_info": "কাস্টম সেকেন্ডারি তথ্য",
       "custom_theme": "কাস্টম থিম জোন",
-      "decimal": "নির্ভুলতা",
       "density": "ঘনত্ব",
       "fast_refresh": "দ্রুত রিফ্রেশ",
       "force_circular_background_mode": "বৃত্তাকার পটভূমি",
       "frameless": "ফ্রেমহীন",
       "height": "উচ্চতা",
       "height_custom_toggle": "স্বয়ংক্রিয় উচ্চতা",
-      "hide_mode": "লুকান",
-      "icon": "আইকন",
       "icon_animation": "আইকন অ্যানিমেশন",
       "interpolate": "রঙ ইন্টারপোলেশন",
-      "layout": "বিষয়বস্তুর বিন্যাস",
       "marginless": "মার্জিনহীন",
       "migrate_config": "কনফিগারেশন মাইগ্রেট করুন",
       "min_width": "সর্বনিম্ন প্রস্থ",
       "multiline": "মাল্টিলাইন",
-      "name": "নাম",
       "name_info": "কাস্টম নাম তথ্য",
       "opacity": "অস্বচ্ছতা",
       "peak_marker": {
@@ -97,13 +80,11 @@
       "reverse": "টাইমার উল্টানো",
       "reverse_secondary_info_row": "বার এবং টেক্সট অদলবদল করুন",
       "secondary": "দ্বিতীয় তথ্য",
-      "state_content": "স্টেটের বিষয়বস্তু",
       "status_label": {
         "color_source": "রঙের উৎস",
         "toggle": "স্ট্যাটাস লেবেল"
       },
       "text_shadow": "টেক্সটে ছায়া যোগ করুন",
-      "theme": "থিম",
       "trend_indicator": {
         "window_toggle": "সময় উইন্ডো ব্যবহার করুন",
         "basis": "তুলনার ভিত্তি",
@@ -117,7 +98,6 @@
       },
       "trigger": "ট্রিগার",
       "type": "ধরন",
-      "unit": "একক",
       "unit_spacing": "ব্যবধান",
       "value_compact": "সংক্ষিপ্ত মান (1.2k)",
       "value_sign": "চিহ্ন দেখান (+/-)",
@@ -126,9 +106,8 @@
         "low_toggle": "নিম্ন সীমা"
       },
       "window": "সময় উইন্ডো",
-      "entities": "এনটিটি",
       "rows": "সারি",
-      "line_size": "রেখার পুরুত্ব",
+      "line_size": "পুরুত্ব",
       "mark_defaults": "ডিফল্ট মান"
     },
     "field_helper": {
@@ -180,7 +159,6 @@
         "below": "বিষয়বস্তুর নিচে",
         "bottom": "নিচের দিকে",
         "compact_below": "কমপ্যাক্ট নিচে",
-        "default": "ডিফল্ট",
         "overlay": "বিষয়বস্তুর ওপর",
         "top": "উপরের দিকে"
       },
@@ -201,15 +179,8 @@
         "stacked": "স্ট্যাকড"
       },
       "density": {
-        "default": "ডিফল্ট",
         "compact": "কমপ্যাক্ট",
         "single_line": "এক লাইনে"
-      },
-      "duration_unit": {
-        "s": "সেকেন্ড",
-        "min": "মিনিট",
-        "h": "ঘণ্টা",
-        "d": "দিন"
       },
       "enabled_disabled_mode": {
         "disabled": "নিষ্ক্রিয়",
@@ -220,10 +191,7 @@
         "forced": "বাধ্যতামূলক"
       },
       "hide": {
-        "icon": "আইকন",
-        "name": "নাম",
         "secondary_info": "দ্বিতীয় তথ্য",
-        "unit": "একক",
         "value": "মান"
       },
       "icon_animation": {
@@ -244,16 +212,9 @@
         "left": "বামে",
         "right": "ডানে"
       },
-      "layout": {
-        "horizontal": "অনুভূমিক",
-        "vertical": "উল্লম্ব"
-      },
       "simple_advanced_mode": {
         "advanced": "উন্নত",
         "simple": "সাধারণ"
-      },
-      "status_label_color_source": {
-        "icon": "আইকন"
       },
       "theme": {
         "battery_adaptive": "ব্যাটারি (চার্জিং অবস্থার সাথে খাপ খায়)",
@@ -305,8 +266,6 @@
       }
     },
     "title": {
-      "content": "বিষয়বস্তু",
-      "interaction": "মিথস্ক্রিয়া",
       "layout": "লেআউট ও আকার",
       "theme": "চেহারা এবং অনুভূতি",
       "watermark": "ওয়াটারমার্ক",
@@ -315,13 +274,7 @@
       "alerts": "সতর্কতা"
     },
     "shared": {
-      "col": "রং",
-      "pos": "অবস্থান",
-      "attr": "বৈশিষ্ট্য",
-      "min": "সর্বনিম্ন",
-      "max": "সর্বোচ্চ",
-      "bar": "বার",
-      "ent": "সত্তা"
+      "bar": "বার"
     }
   }
 }

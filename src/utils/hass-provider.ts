@@ -5,7 +5,7 @@
  * holding its own reference.
  */
 
-import { CARD_CONTEXT, HA_CONTEXT, CARD, SEV } from './parameters.js';
+import { CARD_CONTEXT, HA_CONTEXT, CARD, SEV, HA_LABEL_FAMILIES } from './parameters.js';
 import { TRANSLATION_KEYS, TRANSLATIONS_FLAT } from './translations.js';
 import { is, has } from './common-checks.js';
 import { Logger, type LoggerInstance } from './log.js';
@@ -45,6 +45,9 @@ type HomeAssistant = {
   devices: Record<string, DeviceRegistryEntry>;
   areas: Record<string, AreaRegistryEntry>;
   floors: Record<string, FloorRegistryEntry>;
+  // Optional on purpose: HA always provides it, but a key it cannot resolve
+  // returns '' (their localize.ts), which is what haLabel() below leans on.
+  localize?: (key: string, ...args: unknown[]) => string;
   formatEntityState?: (stateObj: EntityState) => string;
   formatEntityAttributeValue?: (stateObj: EntityState | null, attribute: string) => string;
 } & Record<string, unknown>;
@@ -226,6 +229,45 @@ class HassProviderSingleton {
   get hasNewShapeStrategy(): boolean {
     const [year, month] = (this.version ?? '0.0').split('.').map(Number);
     return year > 2025 || (year === 2025 && month >= 3);
+  }
+
+  // Flattened once: which family a borrowable path belongs to, and the HA key
+  // it reads. See HA_LABEL_FAMILIES for why families exist at all.
+  static #HA_PATHS: Map<string, { family: string; haKey: string; fallback: string }> = new Map(
+    Object.entries(HA_LABEL_FAMILIES).flatMap(([family, entries]) =>
+      Object.entries(entries).map(([path, [haKey, fallback]]) => [path, { family, haKey, fallback }] as const),
+    ),
+  );
+  // Per language: a family is usable only if HA resolves every key in it.
+  // Their localize() returns '' for anything it doesn't know (verified in
+  // frontend's localize.ts), which is the whole detection mechanism.
+  #haFamilies = new Map<string, boolean>();
+
+  #haFamilyUsable(family: string): boolean {
+    const cacheKey = `${this.language}:${family}`;
+    const cached = this.#haFamilies.get(cacheKey);
+    if (cached !== undefined) return cached;
+    const localize = this.#hass?.localize;
+    const usable =
+      typeof localize === 'function' &&
+      Object.values(HA_LABEL_FAMILIES[family]).every(([haKey]) => is.nonEmptyString(localize(haKey)));
+    this.#haFamilies.set(cacheKey, usable);
+    return usable;
+  }
+
+  /**
+   * Home Assistant's own label for a path this card borrows, or undefined -
+   * in which case the caller falls back to our own table (English there, see
+   * HA_LABEL_FAMILIES). Editor paths only: a dashboard has no guarantee the
+   * lovelace translation fragment is loaded.
+   */
+  haLabel(path: string): string | undefined {
+    const entry = HassProviderSingleton.#HA_PATHS.get(path);
+    if (!entry) return undefined;
+    // The fallback, not undefined: these labels left translations/ entirely, so
+    // nothing behind this would answer for them.
+    if (!this.#haFamilyUsable(entry.family)) return entry.fallback;
+    return this.#hass?.localize?.(entry.haKey) || entry.fallback;
   }
 
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────

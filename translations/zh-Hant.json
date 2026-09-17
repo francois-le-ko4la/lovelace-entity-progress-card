@@ -29,21 +29,9 @@
   },
   "editor": {
     "field": {
-      "action": {
-        "double_tap": "雙擊作用",
-        "hold": "按住作用",
-        "icon_double_tap": "雙擊圖示作用",
-        "icon_hold": "按住圖示作用",
-        "icon_tap": "點擊圖示作用",
-        "tap": "點擊作用"
-      },
-      "action_picker": "新增互動",
-      "add_entity": "新增實體",
       "add_zone": "新增區域",
       "alert_when": {
-        "above": "高於時",
         "animation": "動畫",
-        "below": "低於時",
         "highlight": "醒目提示",
         "label": "標籤",
         "above_mode": "上限警示來源",
@@ -69,23 +57,18 @@
       "center_zero_value": "中心值",
       "custom_info": "自訂次要資訊",
       "custom_theme": "自訂主題區域",
-      "decimal": "準確度",
       "density": "密度",
       "fast_refresh": "快速重新整理",
       "force_circular_background_mode": "圓形背景",
       "frameless": "無邊框",
       "height": "高度",
       "height_custom_toggle": "自動高度",
-      "hide_mode": "隱藏",
-      "icon": "圖示",
       "icon_animation": "圖示動畫",
       "interpolate": "顏色插值",
-      "layout": "內容佈局",
       "marginless": "無邊距",
       "migrate_config": "遷移設定",
       "min_width": "最小寬度",
       "multiline": "多行",
-      "name": "名稱",
       "name_info": "自訂名稱資訊",
       "opacity": "不透明度",
       "peak_marker": {
@@ -97,13 +80,11 @@
       "reverse": "反轉計時器",
       "reverse_secondary_info_row": "交換進度條和文字",
       "secondary": "次要資訊",
-      "state_content": "狀態內容",
       "status_label": {
         "color_source": "顏色來源",
         "toggle": "狀態標籤"
       },
       "text_shadow": "文字陰影",
-      "theme": "主題",
       "trend_indicator": {
         "window_toggle": "使用時間窗口",
         "basis": "比較基準",
@@ -117,7 +98,6 @@
       },
       "trigger": "觸發器",
       "type": "類型",
-      "unit": "單位",
       "unit_spacing": "間距",
       "value_compact": "精簡數值 (1.2k)",
       "value_sign": "顯示符號 (+/-)",
@@ -126,9 +106,8 @@
         "low_toggle": "下限"
       },
       "window": "時間窗口",
-      "entities": "實體",
       "rows": "行數",
-      "line_size": "線條粗細",
+      "line_size": "粗細",
       "mark_defaults": "預設值"
     },
     "field_helper": {
@@ -180,7 +159,6 @@
         "below": "內容下方",
         "bottom": "下方",
         "compact_below": "下方精簡",
-        "default": "預設",
         "overlay": "疊加在內容上",
         "top": "上方"
       },
@@ -201,15 +179,8 @@
         "stacked": "堆疊"
       },
       "density": {
-        "default": "預設",
         "compact": "精簡",
         "single_line": "單行"
-      },
-      "duration_unit": {
-        "s": "秒",
-        "min": "分鐘",
-        "h": "小時",
-        "d": "天"
       },
       "enabled_disabled_mode": {
         "disabled": "已停用",
@@ -220,10 +191,7 @@
         "forced": "強制"
       },
       "hide": {
-        "icon": "圖示",
-        "name": "名稱",
         "secondary_info": "次要資訊",
-        "unit": "單位",
         "value": "數值"
       },
       "icon_animation": {
@@ -244,16 +212,9 @@
         "left": "左",
         "right": "右"
       },
-      "layout": {
-        "horizontal": "水平",
-        "vertical": "垂直"
-      },
       "simple_advanced_mode": {
         "advanced": "進階",
         "simple": "簡單"
-      },
-      "status_label_color_source": {
-        "icon": "圖示"
       },
       "theme": {
         "battery_adaptive": "電池（依充電狀態自動調整）",
@@ -305,8 +266,6 @@
       }
     },
     "title": {
-      "content": "內容",
-      "interaction": "互動",
       "layout": "版面與尺寸",
       "theme": "外觀與主題",
       "watermark": "閾值標記",
@@ -315,13 +274,7 @@
       "alerts": "警示"
     },
     "shared": {
-      "col": "顏色",
-      "pos": "位置",
-      "attr": "屬性",
-      "min": "最小值",
-      "max": "最大值",
-      "bar": "進度條",
-      "ent": "實體"
+      "bar": "進度條"
     }
   }
 }

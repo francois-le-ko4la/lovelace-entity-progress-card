@@ -29,21 +29,9 @@
   },
   "editor": {
     "field": {
-      "action": {
-        "double_tap": "Ponašanje dvostrukog dodira",
-        "hold": "Ponašanje hold",
-        "icon_double_tap": "Radnja pri dvostrukom dodiru ikone",
-        "icon_hold": "Radnja pri dugom pritisku ikone",
-        "icon_tap": "Ponašanje dodira ikone",
-        "tap": "Ponašanje dodira"
-      },
-      "action_picker": "Dodaj interakciju",
-      "add_entity": "Dodaj entitet",
       "add_zone": "Dodaj zonu",
       "alert_when": {
-        "above": "Iznad",
         "animation": "Animacija",
-        "below": "Ispod",
         "highlight": "Isticanje",
         "label": "Oznaka",
         "above_mode": "Izvor gornjeg upozorenja",
@@ -69,23 +57,18 @@
       "center_zero_value": "Vrijednost sredine",
       "custom_info": "Prilagođena sekundarna informacija",
       "custom_theme": "Zone prilagođene teme",
-      "decimal": "Preciznost",
       "density": "Gustoća",
       "fast_refresh": "Brzo osvježavanje",
       "force_circular_background_mode": "Kružna pozadina",
       "frameless": "Bez okvira",
       "height": "Visina",
       "height_custom_toggle": "Automatska visina",
-      "hide_mode": "Sakrij",
-      "icon": "Ikona",
       "icon_animation": "Animacija ikone",
       "interpolate": "Interpolacija boja",
-      "layout": "Raspored sadržaja",
       "marginless": "Bez margine",
       "migrate_config": "Migriraj konfiguraciju",
       "min_width": "Min. širina",
       "multiline": "Višelinijski",
-      "name": "Ime",
       "name_info": "Prilagođena informacija naziva",
       "opacity": "Neprozirnost",
       "peak_marker": {
@@ -97,13 +80,11 @@
       "reverse": "Obrnuti tajmer",
       "reverse_secondary_info_row": "Zamijeni traku i tekst",
       "secondary": "Sekundarne informacije",
-      "state_content": "Sadržaj stanja",
       "status_label": {
         "color_source": "Izvor boje",
         "toggle": "Oznaka statusa"
       },
       "text_shadow": "Dodaj sjenu tekstu",
-      "theme": "Tema",
       "trend_indicator": {
         "window_toggle": "Koristi vremenski prozor",
         "basis": "Osnova usporedbe",
@@ -117,7 +98,6 @@
       },
       "trigger": "Okidač",
       "type": "Vrsta",
-      "unit": "Jedinica",
       "unit_spacing": "Razmak",
       "value_compact": "Kompaktna vrijednost (1.2k)",
       "value_sign": "Prikaži predznak (+/-)",
@@ -126,9 +106,8 @@
         "low_toggle": "Donji prag"
       },
       "window": "Vremenski prozor",
-      "entities": "Entiteti",
       "rows": "Redovi",
-      "line_size": "Debljina linije",
+      "line_size": "Debljina",
       "mark_defaults": "Zadane vrijednosti"
     },
     "field_helper": {
@@ -180,7 +159,6 @@
         "below": "Ispod sadržaja",
         "bottom": "Na dnu",
         "compact_below": "Kompaktna ispod",
-        "default": "Zadano",
         "overlay": "Preklopljena na sadržaj",
         "top": "Na vrhu"
       },
@@ -201,15 +179,8 @@
         "stacked": "Naslagano"
       },
       "density": {
-        "default": "Zadano",
         "compact": "Kompaktno",
         "single_line": "Jedan redak"
-      },
-      "duration_unit": {
-        "s": "Sekunde",
-        "min": "Minute",
-        "h": "Sati",
-        "d": "Dani"
       },
       "enabled_disabled_mode": {
         "disabled": "Onemogućeno",
@@ -220,10 +191,7 @@
         "forced": "Prisilno"
       },
       "hide": {
-        "icon": "Ikona",
-        "name": "Ime",
         "secondary_info": "Sekundarni info",
-        "unit": "Jedinica",
         "value": "Vrijednost"
       },
       "icon_animation": {
@@ -244,16 +212,9 @@
         "left": "Lijevo",
         "right": "Desno"
       },
-      "layout": {
-        "horizontal": "Horizontalno",
-        "vertical": "Vertikalno"
-      },
       "simple_advanced_mode": {
         "advanced": "Napredno",
         "simple": "Jednostavno"
-      },
-      "status_label_color_source": {
-        "icon": "Ikona"
       },
       "theme": {
         "battery_adaptive": "Baterija (prilagođava se stanju punjenja)",
@@ -305,8 +266,6 @@
       }
     },
     "title": {
-      "content": "Sadržaj",
-      "interaction": "Interakcije",
       "layout": "Izgled i veličina",
       "theme": "Izgled i funkcionalnost",
       "watermark": "Oznake razine",
@@ -315,13 +274,7 @@
       "alerts": "Upozorenja"
     },
     "shared": {
-      "col": "Boja",
-      "pos": "Položaj",
-      "attr": "Atribut",
-      "min": "Minimum",
-      "max": "Maksimum",
-      "bar": "Traka",
-      "ent": "Entitet"
+      "bar": "Traka"
     }
   }
 }

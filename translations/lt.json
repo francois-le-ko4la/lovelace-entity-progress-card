@@ -29,21 +29,9 @@
   },
   "editor": {
     "field": {
-      "action": {
-        "double_tap": "Dukart bakstelėjimas",
-        "hold": "Sulaikymo elgesys",
-        "icon_double_tap": "Ikonos dvigubo bakstelėjimo elgsena",
-        "icon_hold": "Ikonos laikymo elgsena",
-        "icon_tap": "Piktogramos paspaudimo elgsena",
-        "tap": "Bakstelėjimo elgesys"
-      },
-      "action_picker": "Pridėti sąveiką",
-      "add_entity": "Pridėti esybę",
       "add_zone": "Pridėti zoną",
       "alert_when": {
-        "above": "Virš",
         "animation": "Animacija",
-        "below": "Žemiau",
         "highlight": "Paryškinimas",
         "label": "Etiketė",
         "above_mode": "Viršutinio įspėjimo šaltinis",
@@ -69,23 +57,18 @@
       "center_zero_value": "Centro reikšmė",
       "custom_info": "Pasirinktinė papildoma informacija",
       "custom_theme": "Pasirinktinės temos zonos",
-      "decimal": "Tikslumas",
       "density": "Tankis",
       "fast_refresh": "Greitas atnaujinimas",
       "force_circular_background_mode": "Apvalus fonas",
       "frameless": "Be rėmelio",
       "height": "Aukštis",
       "height_custom_toggle": "Automatinis aukštis",
-      "hide_mode": "Slėpti",
-      "icon": "Ikona",
       "icon_animation": "Piktogramos animacija",
       "interpolate": "Spalvų interpoliavimas",
-      "layout": "Turinio išdėstymas",
       "marginless": "Be paraščių",
       "migrate_config": "Perkelti konfigūraciją",
       "min_width": "Min. plotis",
       "multiline": "Kelių eilučių",
-      "name": "Pavadinimas",
       "name_info": "Pasirinktinė pavadinimo informacija",
       "opacity": "Nepermatomumas",
       "peak_marker": {
@@ -97,13 +80,11 @@
       "reverse": "Atvirkštinis laikmatis",
       "reverse_secondary_info_row": "Sukeisti juostą ir tekstą",
       "secondary": "Papildoma informacija",
-      "state_content": "Būsenos turinys",
       "status_label": {
         "color_source": "Spalvos šaltinis",
         "toggle": "Būsenos etiketė"
       },
       "text_shadow": "Pridėti teksto šešėlį",
-      "theme": "Tema",
       "trend_indicator": {
         "window_toggle": "Naudoti laiko langą",
         "basis": "Palyginimo pagrindas",
@@ -117,7 +98,6 @@
       },
       "trigger": "Suveikiklis",
       "type": "Tipas",
-      "unit": "Vienetas",
       "unit_spacing": "Tarpas",
       "value_compact": "Kompaktiška reikšmė (1.2k)",
       "value_sign": "Rodyti ženklą (+/-)",
@@ -126,9 +106,8 @@
         "low_toggle": "Apatinė riba"
       },
       "window": "Laiko langas",
-      "entities": "Objektai",
       "rows": "Eilutės",
-      "line_size": "Linijos storis",
+      "line_size": "Storis",
       "mark_defaults": "Numatytosios reikšmės"
     },
     "field_helper": {
@@ -180,7 +159,6 @@
         "below": "Po turiniu",
         "bottom": "Apačioje",
         "compact_below": "Kompaktiška apačioje",
-        "default": "Numatyta",
         "overlay": "Ant turinio",
         "top": "Viršuje"
       },
@@ -201,15 +179,8 @@
         "stacked": "Sukrautas"
       },
       "density": {
-        "default": "Numatyta",
         "compact": "Kompaktiškas",
         "single_line": "Viena eilutė"
-      },
-      "duration_unit": {
-        "s": "Sekundės",
-        "min": "Minutės",
-        "h": "Valandos",
-        "d": "Dienos"
       },
       "enabled_disabled_mode": {
         "disabled": "Išjungta",
@@ -220,10 +191,7 @@
         "forced": "Priverstinis"
       },
       "hide": {
-        "icon": "Piktograma",
-        "name": "Pavadinimas",
         "secondary_info": "Papildoma info",
-        "unit": "Vienetas",
         "value": "Reikšmė"
       },
       "icon_animation": {
@@ -244,16 +212,9 @@
         "left": "Kairė",
         "right": "Dešinė"
       },
-      "layout": {
-        "horizontal": "Horizontalus",
-        "vertical": "Vertikalus"
-      },
       "simple_advanced_mode": {
         "advanced": "Išplėstinis",
         "simple": "Paprastas"
-      },
-      "status_label_color_source": {
-        "icon": "Piktograma"
       },
       "theme": {
         "battery_adaptive": "Baterija (prisitaiko prie įkrovimo būsenos)",
@@ -305,8 +266,6 @@
       }
     },
     "title": {
-      "content": "Turinys",
-      "interaction": "Sąveikos",
       "layout": "Išdėstymas ir dydis",
       "theme": "Išvaizda ir naudojamumas",
       "watermark": "Lygio žymos",
@@ -315,13 +274,7 @@
       "alerts": "Įspėjimai"
     },
     "shared": {
-      "col": "Spalva",
-      "pos": "Padėtis",
-      "attr": "Atributas",
-      "min": "Minimumas",
-      "max": "Maksimumas",
-      "bar": "Juosta",
-      "ent": "Esybė"
+      "bar": "Juosta"
     }
   }
 }

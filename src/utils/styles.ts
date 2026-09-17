@@ -3048,7 +3048,10 @@ const EDITOR_BASE_STYLE = css`
      (see --ha-input-padding-bottom on .editor): with it on, a number selector
      sat 8px lower than the selects beside it and the whole panel read as
      over-spaced. */
-  .panel-body { display: flex; flex-direction: row; gap: 24px 8px; flex-wrap: wrap; align-content: flex-start; padding: 12px; }
+  /* align-items: flex-end - two fields on one row don't share a height (a
+     slider carries its label above it, a select doesn't); centered, they drift
+     apart. On the container rather than on each child. */
+  .panel-body { display: flex; flex-direction: row; gap: 24px 8px; flex-wrap: wrap; align-items: flex-end; align-content: flex-start; padding: 12px; }
   /* min-width: auto (flex default) lets a narrow field wrap its label to
      2 lines instead of eliding - throws its row height off from siblings. */
   .panel-body > * { min-width: 0; }
@@ -3066,7 +3069,6 @@ const EDITOR_BASE_STYLE = css`
   /* A unit select and nothing else - its own px width, never stretched. */
   .panel-body > .field-fixed { flex: 0 0 auto; }
   .panel-body ha-selector.field-toggle { margin-block: -18px; }
-  .panel-body ha-selector.length-unit { align-self: flex-end; margin-block-end: 8px; }
   .section-label {
     display: block;
     font-size: 1rem;

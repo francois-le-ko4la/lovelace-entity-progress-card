@@ -29,21 +29,9 @@
   },
   "editor": {
     "field": {
-      "action": {
-        "double_tap": "Gedrag bij dubbeltikken",
-        "hold": "Gedrag vasthouden",
-        "icon_double_tap": "Dubbeltikgedrag icoon",
-        "icon_hold": "Icoon-vasthoudgedrag",
-        "icon_tap": "Icoon tikgedrag",
-        "tap": "Tik gedrag"
-      },
-      "action_picker": "Interactie toevoegen",
-      "add_entity": "Entiteit toevoegen",
       "add_zone": "Zone toevoegen",
       "alert_when": {
-        "above": "Boven",
         "animation": "Animatie",
-        "below": "Onder",
         "highlight": "Markering",
         "label": "Label",
         "above_mode": "Bron van bovengrens-alarm",
@@ -69,23 +57,18 @@
       "center_zero_value": "Centrumwaarde",
       "custom_info": "Aangepaste secundaire info",
       "custom_theme": "Aangepaste themazones",
-      "decimal": "Precisie",
       "density": "Dichtheid",
       "fast_refresh": "Snel vernieuwen",
       "force_circular_background_mode": "Cirkelvormige achtergrond",
       "frameless": "Zonder kader",
       "height": "Hoogte",
       "height_custom_toggle": "Automatische hoogte",
-      "hide_mode": "Verbergen",
-      "icon": "Pictogram",
       "icon_animation": "Pictogramanimatie",
       "interpolate": "Kleuren interpoleren",
-      "layout": "Inhoudsindeling",
       "marginless": "Zonder marge",
       "migrate_config": "Configuratie migreren",
       "min_width": "Min. breedte",
       "multiline": "Meerdere regels",
-      "name": "Naam",
       "name_info": "Aangepaste naaminfo",
       "opacity": "Dekking",
       "peak_marker": {
@@ -97,13 +80,11 @@
       "reverse": "Timer omdraaien",
       "reverse_secondary_info_row": "Balk en tekst omwisselen",
       "secondary": "Secundaire informatie",
-      "state_content": "Inhoud van de status",
       "status_label": {
         "color_source": "Bron van kleur",
         "toggle": "Statuslabel"
       },
       "text_shadow": "Tekstschaduw toevoegen",
-      "theme": "Thema",
       "trend_indicator": {
         "window_toggle": "Tijdvenster gebruiken",
         "basis": "Vergelijkingsbasis",
@@ -117,7 +98,6 @@
       },
       "trigger": "Trigger",
       "type": "Type",
-      "unit": "Eenheid",
       "unit_spacing": "Afstand",
       "value_compact": "Compacte waarde (1.2k)",
       "value_sign": "Teken tonen (+/-)",
@@ -126,9 +106,8 @@
         "low_toggle": "Ondergrens"
       },
       "window": "Tijdvenster",
-      "entities": "Entiteiten",
       "rows": "Rijen",
-      "line_size": "Lijndikte",
+      "line_size": "Dikte",
       "mark_defaults": "Standaardwaarden"
     },
     "field_helper": {
@@ -180,7 +159,6 @@
         "below": "Onder de inhoud",
         "bottom": "Onderaan",
         "compact_below": "Compact onderaan",
-        "default": "Standaard",
         "overlay": "Over de inhoud",
         "top": "Bovenaan"
       },
@@ -201,15 +179,8 @@
         "stacked": "Gestapeld"
       },
       "density": {
-        "default": "Standaard",
         "compact": "Compact",
         "single_line": "Eén regel"
-      },
-      "duration_unit": {
-        "s": "Seconden",
-        "min": "Minuten",
-        "h": "Uren",
-        "d": "Dagen"
       },
       "enabled_disabled_mode": {
         "disabled": "Uitgeschakeld",
@@ -220,10 +191,7 @@
         "forced": "Geforceerd"
       },
       "hide": {
-        "icon": "Pictogram",
-        "name": "Naam",
         "secondary_info": "Secundaire info",
-        "unit": "Eenheid",
         "value": "Waarde"
       },
       "icon_animation": {
@@ -244,16 +212,9 @@
         "left": "Links",
         "right": "Rechts"
       },
-      "layout": {
-        "horizontal": "Horizontaal",
-        "vertical": "Verticaal"
-      },
       "simple_advanced_mode": {
         "advanced": "Geavanceerd",
         "simple": "Eenvoudig"
-      },
-      "status_label_color_source": {
-        "icon": "Pictogram"
       },
       "theme": {
         "battery_adaptive": "Batterij (past zich aan de laadstatus aan)",
@@ -305,8 +266,6 @@
       }
     },
     "title": {
-      "content": "Inhoud",
-      "interaction": "Interactie",
       "layout": "Layout & grootte",
       "theme": "Uiterlijk en gebruiksgemak",
       "watermark": "Niveaumarkeringen",
@@ -315,13 +274,7 @@
       "alerts": "Waarschuwingen"
     },
     "shared": {
-      "col": "Kleur",
-      "pos": "Positie",
-      "attr": "Attribuut",
-      "min": "Minimum",
-      "max": "Maximum",
-      "bar": "Balk",
-      "ent": "Entiteit"
+      "bar": "Balk"
     }
   }
 }

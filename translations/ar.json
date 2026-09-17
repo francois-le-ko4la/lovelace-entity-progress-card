@@ -29,21 +29,9 @@
   },
   "editor": {
     "field": {
-      "action": {
-        "double_tap": "سلوك النقر المزدوج",
-        "hold": "سلوك النقر المطول",
-        "icon_double_tap": "سلوك النقر المزدوج للأيقونة",
-        "icon_hold": "سلوك النقر المطول للأيقونة",
-        "icon_tap": "سلوك النقر على الأيقونة",
-        "tap": "سلوك النقر"
-      },
-      "action_picker": "إضافة تفاعل",
-      "add_entity": "إضافة كيان",
       "add_zone": "إضافة منطقة",
       "alert_when": {
-        "above": "أعلى من",
         "animation": "حركة",
-        "below": "أقل من",
         "highlight": "التمييز",
         "label": "تسمية",
         "above_mode": "مصدر تنبيه الحد الأعلى",
@@ -69,23 +57,18 @@
       "center_zero_value": "قيمة المركز",
       "custom_info": "معلومات إضافية (ثانوية)",
       "custom_theme": "مناطق السمة المخصصة",
-      "decimal": "دقة",
       "density": "الكثافة",
       "fast_refresh": "تحديث سريع",
       "force_circular_background_mode": "خلفية دائرية",
       "frameless": "بدون إطار",
       "height": "الارتفاع",
       "height_custom_toggle": "ارتفاع تلقائي",
-      "hide_mode": "إخفاء",
-      "icon": "أيقونة",
       "icon_animation": "حركة الأيقونة",
       "interpolate": "تدرج الألوان",
-      "layout": "تخطيط المحتوى",
       "marginless": "بدون هامش",
       "migrate_config": "ترحيل الإعداد",
       "min_width": "أدنى عرض",
       "multiline": "متعدد الأسطر",
-      "name": "الاسم",
       "name_info": "معلومات إضافية (الاسم)",
       "opacity": "العتامة",
       "peak_marker": {
@@ -97,13 +80,11 @@
       "reverse": "عكس المؤقت",
       "reverse_secondary_info_row": "تبديل الشريط والنص",
       "secondary": "معلومات ثانوية",
-      "state_content": "محتوى الحالة",
       "status_label": {
         "color_source": "مصدر اللون",
         "toggle": "تسمية الحالة"
       },
       "text_shadow": "إضافة ظل للنص",
-      "theme": "السمة",
       "trend_indicator": {
         "window_toggle": "استخدام نافذة زمنية",
         "basis": "أساس المقارنة",
@@ -117,7 +98,6 @@
       },
       "trigger": "المشغل",
       "type": "النوع",
-      "unit": "الوحدة",
       "unit_spacing": "التباعد",
       "value_compact": "قيمة مختصرة (1.2k)",
       "value_sign": "إظهار الإشارة (+/-)",
@@ -126,9 +106,8 @@
         "low_toggle": "العتبة الدنيا"
       },
       "window": "النافذة الزمنية",
-      "entities": "الكيانات",
       "rows": "الصفوف",
-      "line_size": "سُمك الخط",
+      "line_size": "السُمك",
       "mark_defaults": "الإعدادات الافتراضية"
     },
     "field_helper": {
@@ -180,7 +159,6 @@
         "below": "تحت المحتوى",
         "bottom": "في الأسفل",
         "compact_below": "مضغوط في الأسفل",
-        "default": "افتراضي",
         "overlay": "فوق المحتوى",
         "top": "في الأعلى"
       },
@@ -201,15 +179,8 @@
         "stacked": "مكدس"
       },
       "density": {
-        "default": "افتراضي",
         "compact": "مضغوط",
         "single_line": "سطر واحد"
-      },
-      "duration_unit": {
-        "s": "ثوانٍ",
-        "min": "دقائق",
-        "h": "ساعات",
-        "d": "أيام"
       },
       "enabled_disabled_mode": {
         "disabled": "معطل",
@@ -220,10 +191,7 @@
         "forced": "مفروض"
       },
       "hide": {
-        "icon": "أيقونة",
-        "name": "الاسم",
         "secondary_info": "معلومات ثانوية",
-        "unit": "الوحدة",
         "value": "القيمة"
       },
       "icon_animation": {
@@ -244,16 +212,9 @@
         "left": "يسار",
         "right": "يمين"
       },
-      "layout": {
-        "horizontal": "أفقي",
-        "vertical": "رأسي"
-      },
       "simple_advanced_mode": {
         "advanced": "متقدم",
         "simple": "بسيط"
-      },
-      "status_label_color_source": {
-        "icon": "أيقونة"
       },
       "theme": {
         "battery_adaptive": "بطارية (تتكيف مع حالة الشحن)",
@@ -305,8 +266,6 @@
       }
     },
     "title": {
-      "content": "المحتوى",
-      "interaction": "التفاعلات",
       "layout": "التخطيط والحجم",
       "theme": "المظهر",
       "watermark": "علامات الحد",
@@ -315,13 +274,7 @@
       "alerts": "التنبيهات"
     },
     "shared": {
-      "col": "اللون",
-      "pos": "الموضع",
-      "attr": "السمة",
-      "min": "الحد الأدنى",
-      "max": "الحد الأقصى",
-      "bar": "الشريط",
-      "ent": "الكيان"
+      "bar": "الشريط"
     }
   }
 }

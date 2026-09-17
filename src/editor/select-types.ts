@@ -11,9 +11,50 @@ const from = (variant: SchemaVariant, field: string): SchemaLookup => ({ variant
 // silently retranslate it. Here rather than in base.ts so the dropdown test
 // reads the same table the editor does.
 const BORROWED_OPTION_LABELS: Record<string, Record<string, string>> = {
-  hide: { progress_bar: 'shared.bar', shape: 'force_circular_background_mode' },
-  status_label_color_source: { bar: 'shared.bar' },
+  hide: {
+    progress_bar: 'shared.bar',
+    shape: 'force_circular_background_mode',
+    icon: 'icon',
+    name: 'name',
+    unit: 'unit',
+  },
+  status_label_color_source: { bar: 'shared.bar', icon: 'icon' },
   value_source_mode: { entity: 'shared.ent' },
+  layout: { horizontal: 'layout.horizontal', vertical: 'layout.vertical' },
+  bar_position: { default: 'bar_position.default' },
+  density: { default: 'density.default' },
+};
+
+// Labels no one should translate: the browser already knows each locale's own
+// abbreviation for a duration (CLDR - 'j' in French, 'gg' in Italian, '天' in
+// Chinese), and our units are the SI symbols the YAML itself uses. Memoised per
+// language: the getter that reads this runs on every field build.
+const INTL_UNIT: Record<string, string> = { s: 'second', min: 'minute', h: 'hour', d: 'day' };
+const unitLabels = new Map<string, Record<string, string>>();
+const durationUnitLabels = (language: string): Record<string, string> => {
+  const cached = unitLabels.get(language);
+  if (cached) return cached;
+  const labels = Object.fromEntries(
+    Object.entries(INTL_UNIT).map(([key, unit]) => {
+      try {
+        const parts = new Intl.NumberFormat(language, { style: 'unit', unit, unitDisplay: 'narrow' }).formatToParts(2);
+        const narrow = parts
+          .filter((part) => part.type === 'unit')
+          .map((part) => part.value)
+          .join('');
+        return [key, narrow || key];
+      } catch {
+        // Unknown locale or no ICU unit data: the SI symbol is a fine answer.
+        return [key, key];
+      }
+    }),
+  );
+  unitLabels.set(language, labels);
+  return labels;
+};
+
+const COMPUTED_OPTION_LABELS: Record<string, (language: string) => Record<string, string>> = {
+  duration_unit: durationUnitLabels,
 };
 
 // A bare string names the translation group and offers all of it; a pair adds
@@ -49,5 +90,5 @@ const SELECT_TYPES: Record<string, string | [group: string, keys: readonly strin
   trend_indicator_basis: 'trend_indicator_basis',
 };
 
-export { SELECT_TYPES, BORROWED_OPTION_LABELS };
+export { SELECT_TYPES, BORROWED_OPTION_LABELS, COMPUTED_OPTION_LABELS };
 export type { SchemaLookup };

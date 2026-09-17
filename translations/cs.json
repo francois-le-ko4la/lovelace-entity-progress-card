@@ -29,21 +29,9 @@
   },
   "editor": {
     "field": {
-      "action": {
-        "double_tap": "Chování při dvojitém poklepání",
-        "hold": "Chování při podržení",
-        "icon_double_tap": "Chování při dvojitém poklepání na ikonu",
-        "icon_hold": "Chování při podržení ikony",
-        "icon_tap": "Chování při klepnutí na ikonu",
-        "tap": "Chování při klepnutí"
-      },
-      "action_picker": "Přidat interakci",
-      "add_entity": "Přidat entitu",
       "add_zone": "Přidat zónu",
       "alert_when": {
-        "above": "Nad",
         "animation": "Animace",
-        "below": "Pod",
         "highlight": "Zvýraznění",
         "label": "Popisek",
         "above_mode": "Zdroj horního upozornění",
@@ -69,23 +57,18 @@
       "center_zero_value": "Hodnota středu",
       "custom_info": "Vlastní sekundární info",
       "custom_theme": "Zóny vlastního motivu",
-      "decimal": "Přesnost",
       "density": "Hustota",
       "fast_refresh": "Rychlé obnovení",
       "force_circular_background_mode": "Kruhové pozadí",
       "frameless": "Bez rámečku",
       "height": "Výška",
       "height_custom_toggle": "Automatická výška",
-      "hide_mode": "Skrýt",
-      "icon": "Ikona",
       "icon_animation": "Animace ikony",
       "interpolate": "Interpolace barev",
-      "layout": "Rozložení obsahu",
       "marginless": "Bez okrajů",
       "migrate_config": "Migrovat konfiguraci",
       "min_width": "Min. šířka",
       "multiline": "Víceřádkové",
-      "name": "Název",
       "name_info": "Vlastní info názvu",
       "opacity": "Krytí",
       "peak_marker": {
@@ -97,13 +80,11 @@
       "reverse": "Obrátit časovač",
       "reverse_secondary_info_row": "Zaměnit lištu a text",
       "secondary": "Sekundární informace",
-      "state_content": "Obsah stavu",
       "status_label": {
         "color_source": "Zdroj barvy",
         "toggle": "Popisek stavu"
       },
       "text_shadow": "Přidat stín textu",
-      "theme": "Motiv",
       "trend_indicator": {
         "window_toggle": "Použít časové okno",
         "basis": "Základ porovnání",
@@ -117,7 +98,6 @@
       },
       "trigger": "Spouštěč",
       "type": "Typ",
-      "unit": "Jednotka",
       "unit_spacing": "Mezery",
       "value_compact": "Kompaktní hodnota (1.2k)",
       "value_sign": "Zobrazit znaménko (+/-)",
@@ -126,9 +106,8 @@
         "low_toggle": "Dolní práh"
       },
       "window": "Časové okno",
-      "entities": "Entity",
       "rows": "Řádky",
-      "line_size": "Tloušťka čáry",
+      "line_size": "Tloušťka",
       "mark_defaults": "Výchozí hodnoty"
     },
     "field_helper": {
@@ -180,7 +159,6 @@
         "below": "Pod obsahem",
         "bottom": "Dole",
         "compact_below": "Kompaktní dole",
-        "default": "Výchozí",
         "overlay": "Přes obsah",
         "top": "Nahoře"
       },
@@ -201,15 +179,8 @@
         "stacked": "Skládaný"
       },
       "density": {
-        "default": "Výchozí",
         "compact": "Kompaktní",
         "single_line": "Jeden řádek"
-      },
-      "duration_unit": {
-        "s": "Sekundy",
-        "min": "Minuty",
-        "h": "Hodiny",
-        "d": "Dny"
       },
       "enabled_disabled_mode": {
         "disabled": "Vypnuto",
@@ -220,10 +191,7 @@
         "forced": "Vynucený"
       },
       "hide": {
-        "icon": "Ikona",
-        "name": "Název",
         "secondary_info": "Sekundární info",
-        "unit": "Jednotka",
         "value": "Hodnota"
       },
       "icon_animation": {
@@ -244,16 +212,9 @@
         "left": "Vlevo",
         "right": "Vpravo"
       },
-      "layout": {
-        "horizontal": "Horizontální",
-        "vertical": "Vertikální"
-      },
       "simple_advanced_mode": {
         "advanced": "Pokročilý",
         "simple": "Jednoduchý"
-      },
-      "status_label_color_source": {
-        "icon": "Ikona"
       },
       "theme": {
         "battery_adaptive": "Baterie (přizpůsobí se stavu nabíjení)",
@@ -305,8 +266,6 @@
       }
     },
     "title": {
-      "content": "Obsah",
-      "interaction": "Interakce",
       "layout": "Rozvržení a velikost",
       "theme": "Vzhled a pocit",
       "watermark": "Značky úrovně",
@@ -315,13 +274,7 @@
       "alerts": "Upozornění"
     },
     "shared": {
-      "col": "Barva",
-      "pos": "Pozice",
-      "attr": "Atribut",
-      "min": "Minimum",
-      "max": "Maximum",
-      "bar": "Lišta",
-      "ent": "Entita"
+      "bar": "Lišta"
     }
   }
 }

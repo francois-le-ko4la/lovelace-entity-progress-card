@@ -29,21 +29,9 @@
   },
   "editor": {
     "field": {
-      "action": {
-        "double_tap": "Kaksoisnapautus käyttäytyminen",
-        "hold": "Pitkään painamisen käyttäytyminen",
-        "icon_double_tap": "Kuvakkeen kaksoisnapautus käyttäytyminen",
-        "icon_hold": "Kuvakkeen pito käyttäytyminen",
-        "icon_tap": "Kuvakkeen napauttamisen käyttäytyminen",
-        "tap": "Napautuksen käyttäytyminen"
-      },
-      "action_picker": "Lisää vuorovaikutus",
-      "add_entity": "Lisää entiteetti",
       "add_zone": "Lisää vyöhyke",
       "alert_when": {
-        "above": "Yli",
         "animation": "Animaatio",
-        "below": "Alle",
         "highlight": "Korostus",
         "label": "Merkintä",
         "above_mode": "Ylähälytyksen lähde",
@@ -69,23 +57,18 @@
       "center_zero_value": "Keskiarvo",
       "custom_info": "Mukautettu toissijainen tieto",
       "custom_theme": "Mukautetun teeman vyöhykkeet",
-      "decimal": "Tarkkuus",
       "density": "Tiheys",
       "fast_refresh": "Nopea päivitys",
       "force_circular_background_mode": "Pyöreä tausta",
       "frameless": "Kehyksetön",
       "height": "Korkeus",
       "height_custom_toggle": "Automaattinen korkeus",
-      "hide_mode": "Piilota",
-      "icon": "Ikoni",
       "icon_animation": "Kuvakkeen animaatio",
       "interpolate": "Interpoloi värit",
-      "layout": "Sisällön asettelu",
       "marginless": "Marginaaliton",
       "migrate_config": "Siirrä asetukset",
       "min_width": "Vähimmäisleveys",
       "multiline": "Monirivinen",
-      "name": "Nimi",
       "name_info": "Mukautettu nimitieto",
       "opacity": "Peittävyys",
       "peak_marker": {
@@ -97,13 +80,11 @@
       "reverse": "Käänteinen ajastin",
       "reverse_secondary_info_row": "Vaihda palkki ja teksti",
       "secondary": "Lisätiedot",
-      "state_content": "Tilan sisältö",
       "status_label": {
         "color_source": "Värin lähde",
         "toggle": "Tilamerkintä"
       },
       "text_shadow": "Lisää tekstivarjo",
-      "theme": "Teema",
       "trend_indicator": {
         "window_toggle": "Käytä aikaikkunaa",
         "basis": "Vertailuperuste",
@@ -117,7 +98,6 @@
       },
       "trigger": "Laukaisin",
       "type": "Tyyppi",
-      "unit": "Yksikkö",
       "unit_spacing": "Väli",
       "value_compact": "Tiivistetty arvo (1.2k)",
       "value_sign": "Näytä etumerkki (+/-)",
@@ -126,9 +106,8 @@
         "low_toggle": "Alaraja"
       },
       "window": "Aikaikkuna",
-      "entities": "Entiteetit",
       "rows": "Rivit",
-      "line_size": "Viivan paksuus",
+      "line_size": "Paksuus",
       "mark_defaults": "Oletusarvot"
     },
     "field_helper": {
@@ -180,7 +159,6 @@
         "below": "Sisällön alla",
         "bottom": "Alhaalla",
         "compact_below": "Kompakti alla",
-        "default": "Oletus",
         "overlay": "Sisällön päällä",
         "top": "Ylhäällä"
       },
@@ -201,15 +179,8 @@
         "stacked": "Pinottu"
       },
       "density": {
-        "default": "Oletus",
         "compact": "Kompakti",
         "single_line": "Yksi rivi"
-      },
-      "duration_unit": {
-        "s": "Sekuntia",
-        "min": "Minuuttia",
-        "h": "Tuntia",
-        "d": "Päivää"
       },
       "enabled_disabled_mode": {
         "disabled": "Poistettu käytöstä",
@@ -220,10 +191,7 @@
         "forced": "Pakotettu"
       },
       "hide": {
-        "icon": "Kuvake",
-        "name": "Nimi",
         "secondary_info": "Lisätiedot",
-        "unit": "Yksikkö",
         "value": "Arvo"
       },
       "icon_animation": {
@@ -244,16 +212,9 @@
         "left": "Vasen",
         "right": "Oikea"
       },
-      "layout": {
-        "horizontal": "Vaakasuora",
-        "vertical": "Pystysuora"
-      },
       "simple_advanced_mode": {
         "advanced": "Lisäasetukset",
         "simple": "Yksinkertainen"
-      },
-      "status_label_color_source": {
-        "icon": "Kuvake"
       },
       "theme": {
         "battery_adaptive": "Akku (mukautuu latauksen tilaan)",
@@ -305,8 +266,6 @@
       }
     },
     "title": {
-      "content": "Sisältö",
-      "interaction": "Vuorovaikutukset",
       "layout": "Asettelu ja koko",
       "theme": "Ulkoasu",
       "watermark": "Tasomerkit",
@@ -315,13 +274,7 @@
       "alerts": "Hälytykset"
     },
     "shared": {
-      "col": "Väri",
-      "pos": "Sijainti",
-      "attr": "Attribuutti",
-      "min": "Minimi",
-      "max": "Maksimi",
-      "bar": "Palkki",
-      "ent": "Entiteetti"
+      "bar": "Palkki"
     }
   }
 }

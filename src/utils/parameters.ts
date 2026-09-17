@@ -115,10 +115,92 @@ const HA_SELECTOR_TAG = 'ha-selector';
 const HA_SVG_ICON_TAG = 'ha-svg-icon';
 const HA_ACTION_HANDLER_TAG = 'action-handler';
 const EDITOR_FIELD_NS = 'editor.field';
-// Labels several fields answer to (see EditorBase#labelFor): their own group, so
-// that editing one in translations/ is visibly editing every field using it.
+// Labels several fields answer to (see EditorBase#labelFor): their own
+// group, so editing one in translations/ visibly edits every field using it.
 const SHARED_LABEL_NS = 'editor.shared';
 const SHARED_LABEL_PREFIX = 'shared.';
+
+// Labels Home Assistant already names, borrowed from its own catalog so the
+// editor speaks the vocabulary the user reads elsewhere - and follows
+// its rewordings ('Tap Action' -> 'Tap behavior') for free. Grouped by family:
+// a family resolves only if every key in it does, so an older HA that lacks
+// one never shows half a panel in HA's words and half in ours. Our own table
+// keeps the English value as the fallback (2 bytes per language once folded).
+// Editor-only: on a dashboard the lovelace fragment may not be loaded.
+const HA_EDITOR_NS = 'ui.panel.lovelace.editor.card.';
+const HA_DEFAULT_KEY = 'ui.panel.lovelace.editor.action-editor.actions.default_action';
+const HA_COND_NS = 'ui.panel.lovelace.editor.condition-editor.condition.numeric_state.';
+// [HA key, English fallback]. The fallback lives here rather than in
+// translations/: a string identical in all 39 languages is not a translation.
+const HA_LABEL_FAMILIES: Record<string, Record<string, readonly [haKey: string, fallback: string]>> = {
+  value: {
+    'shared.ent': [`${HA_EDITOR_NS}generic.entity`, 'Entity'],
+    'shared.attr': [`${HA_EDITOR_NS}generic.attribute`, 'Attribute'],
+    'shared.min': [`${HA_EDITOR_NS}generic.minimum`, 'Minimum'],
+    'shared.max': [`${HA_EDITOR_NS}generic.maximum`, 'Maximum'],
+  },
+  identity: {
+    icon: [`${HA_EDITOR_NS}generic.icon`, 'Icon'],
+    name: [`${HA_EDITOR_NS}generic.name`, 'Name'],
+    theme: [`${HA_EDITOR_NS}generic.theme`, 'Theme'],
+    unit: [`${HA_EDITOR_NS}generic.unit`, 'Unit'],
+    entities: [`${HA_EDITOR_NS}generic.entities`, 'Entities'],
+    hide_mode: ['ui.common.hide', 'Hide'],
+  },
+  cardActions: {
+    'action.tap': [`${HA_EDITOR_NS}generic.tap_action`, 'Tap behavior'],
+    'action.hold': [`${HA_EDITOR_NS}generic.hold_action`, 'Hold behavior'],
+    'action.double_tap': [`${HA_EDITOR_NS}generic.double_tap_action`, 'Double tap behavior'],
+  },
+  iconActions: {
+    'action.icon_tap': [`${HA_EDITOR_NS}tile.icon_tap_action`, 'Icon tap behavior'],
+    'action.icon_hold': [`${HA_EDITOR_NS}tile.icon_hold_action`, 'Icon hold behavior'],
+    'action.icon_double_tap': [`${HA_EDITOR_NS}tile.icon_double_tap_action`, 'Icon double tap behavior'],
+  },
+  layout: {
+    layout: [`${HA_EDITOR_NS}tile.content_layout`, 'Content layout'],
+    // The selector's two values share its label's family: they are borrowed
+    // together or not at all (see BORROWED_OPTION_LABELS).
+    'layout.horizontal': [`${HA_EDITOR_NS}tile.content_layout_options.horizontal`, 'Horizontal'],
+    'layout.vertical': [`${HA_EDITOR_NS}tile.content_layout_options.vertical`, 'Vertical'],
+  },
+  // Alone in its family: six fields read it (bar_color, the icon color, the
+  // mark colors, alert_when.color) - if HA stops resolving it, only those
+  // fall back.
+  color: {
+    'shared.col': [`${HA_EDITOR_NS}tile.color`, 'Color'],
+  },
+  // HA names this word only in their secondary-info editor - an unrelated
+  // corner of their catalog, but the same word this field needs.
+  position: {
+    'shared.pos': [`${HA_EDITOR_NS}entities.secondary_info_values.position`, 'Position'],
+  },
+  // One HA key for both selectors: they say the same word.
+  defaults: {
+    'bar_position.default': [HA_DEFAULT_KEY, 'Default'],
+    'density.default': [HA_DEFAULT_KEY, 'Default'],
+  },
+  // Their numeric-condition editor: same semantics as alert_when.above/below,
+  // word for word.
+  thresholds: {
+    'alert_when.above': [`${HA_COND_NS}above`, 'Above'],
+    'alert_when.below': [`${HA_COND_NS}below`, 'Below'],
+  },
+  precision: {
+    decimal: ['ui.dialogs.entity_registry.editor.precision', 'Display precision'],
+  },
+  stateContent: {
+    state_content: [`${HA_EDITOR_NS}heading.entity_config.state_content`, 'State content'],
+  },
+  lists: {
+    add_entity: ['ui.panel.lovelace.editor.entities.add', 'Add entity'],
+    action_picker: ['ui.components.form-optional-actions.add', 'Add interaction'],
+  },
+  titles: {
+    'title.content': [`${HA_EDITOR_NS}generic.content`, 'Content'],
+    'title.interaction': [`${HA_EDITOR_NS}generic.interactions`, 'Interactions'],
+  },
+};
 const EDITOR_FIELD_HELPER_NS = 'editor.field_helper';
 const MIN_VALUE_ENTITY_PATH = 'min_value.entity';
 const MAX_VALUE_ENTITY_PATH = 'max_value.entity';
@@ -155,7 +237,7 @@ export { VALUE_CHANGED_EVENT };
 export { HA_SELECTOR_TAG };
 export { HA_SVG_ICON_TAG };
 export { HA_ACTION_HANDLER_TAG };
-export { EDITOR_FIELD_NS, SHARED_LABEL_NS, SHARED_LABEL_PREFIX };
+export { EDITOR_FIELD_NS, SHARED_LABEL_NS, SHARED_LABEL_PREFIX, HA_LABEL_FAMILIES };
 export { EDITOR_FIELD_HELPER_NS };
 export { MIN_VALUE_ENTITY_PATH };
 export { MAX_VALUE_ENTITY_PATH };

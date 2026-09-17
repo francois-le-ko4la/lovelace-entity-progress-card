@@ -29,21 +29,9 @@
   },
   "editor": {
     "field": {
-      "action": {
-        "double_tap": "Comportament del doble clic",
-        "hold": "Comportament en mantenir",
-        "icon_double_tap": "Comportament del doble clic d'icona",
-        "icon_hold": "Comportament en mantenir la icona premuda",
-        "icon_tap": "Comportament en tocar la icona",
-        "tap": "Comportament en clicar"
-      },
-      "action_picker": "Afegeix interacció",
-      "add_entity": "Afegeix entitat",
       "add_zone": "Afegeix zona",
       "alert_when": {
-        "above": "Per sobre de",
         "animation": "Animació",
-        "below": "Per sota de",
         "highlight": "Ressaltat",
         "label": "Etiqueta",
         "above_mode": "Font de l'alerta superior",
@@ -69,23 +57,18 @@
       "center_zero_value": "Valor de centratge",
       "custom_info": "Informació addicional (secundària)",
       "custom_theme": "Zones de tema personalitzat",
-      "decimal": "Precisió",
       "density": "Densitat",
       "fast_refresh": "Actualització ràpida",
       "force_circular_background_mode": "Fons circular",
       "frameless": "Sense marc",
       "height": "Alçada",
       "height_custom_toggle": "Alçada automàtica",
-      "hide_mode": "Amaga",
-      "icon": "Icona",
       "icon_animation": "Animació de la icona",
       "interpolate": "Interpolar colors",
-      "layout": "Disposició del contingut",
       "marginless": "Sense marge",
       "migrate_config": "Migra la configuració",
       "min_width": "Amplada mínima",
       "multiline": "Multilínia",
-      "name": "Nom",
       "name_info": "Informació addicional (nom)",
       "opacity": "Opacitat",
       "peak_marker": {
@@ -97,13 +80,11 @@
       "reverse": "Temporitzador invers",
       "reverse_secondary_info_row": "Intercanvia barra i text",
       "secondary": "Informació secundària",
-      "state_content": "Contingut de l'estat",
       "status_label": {
         "color_source": "Font del color",
         "toggle": "Etiqueta d'estat"
       },
       "text_shadow": "Afegir ombra al text",
-      "theme": "Tema",
       "trend_indicator": {
         "window_toggle": "Utilitza una finestra de temps",
         "basis": "Base de comparació",
@@ -117,7 +98,6 @@
       },
       "trigger": "Disparador",
       "type": "Tipus",
-      "unit": "Unitat",
       "unit_spacing": "Espaiat",
       "value_compact": "Valor compacte (1.2k)",
       "value_sign": "Mostra el signe (+/-)",
@@ -126,9 +106,8 @@
         "low_toggle": "Llindar baix"
       },
       "window": "Finestra de temps",
-      "entities": "Entitats",
       "rows": "Files",
-      "line_size": "Gruix de la línia",
+      "line_size": "Gruix",
       "mark_defaults": "Valors per defecte"
     },
     "field_helper": {
@@ -180,7 +159,6 @@
         "below": "Sota el contingut",
         "bottom": "A sota",
         "compact_below": "Compacta a sota",
-        "default": "Predeterminada",
         "overlay": "Superposada al contingut",
         "top": "A sobre"
       },
@@ -201,15 +179,8 @@
         "stacked": "Apilat"
       },
       "density": {
-        "default": "Predeterminada",
         "compact": "Compacte",
         "single_line": "Una línia"
-      },
-      "duration_unit": {
-        "s": "Segons",
-        "min": "Minuts",
-        "h": "Hores",
-        "d": "Dies"
       },
       "enabled_disabled_mode": {
         "disabled": "Desactivat",
@@ -220,10 +191,7 @@
         "forced": "Forçat"
       },
       "hide": {
-        "icon": "Icona",
-        "name": "Nom",
         "secondary_info": "Info secundària",
-        "unit": "Unitat",
         "value": "Valor"
       },
       "icon_animation": {
@@ -244,16 +212,9 @@
         "left": "Esquerra",
         "right": "Dreta"
       },
-      "layout": {
-        "horizontal": "Horitzontal",
-        "vertical": "Vertical"
-      },
       "simple_advanced_mode": {
         "advanced": "Avançat",
         "simple": "Simple"
-      },
-      "status_label_color_source": {
-        "icon": "Icona"
       },
       "theme": {
         "battery_adaptive": "Bateria (s'adapta a l'estat de càrrega)",
@@ -305,8 +266,6 @@
       }
     },
     "title": {
-      "content": "Contingut",
-      "interaction": "Interacció",
       "layout": "Disposició i mida",
       "theme": "Aparença i tema",
       "watermark": "Marques de nivell",
@@ -315,13 +274,7 @@
       "alerts": "Alertes"
     },
     "shared": {
-      "col": "Color",
-      "pos": "Posició",
-      "attr": "Atribut",
-      "min": "Mínim",
-      "max": "Màxim",
-      "bar": "Barra",
-      "ent": "Entitat"
+      "bar": "Barra"
     }
   }
 }

@@ -29,21 +29,9 @@
   },
   "editor": {
     "field": {
-      "action": {
-        "double_tap": "더블 탭 동작",
-        "hold": "홀드 동작",
-        "icon_double_tap": "아이콘 더블탭 동작",
-        "icon_hold": "아이콘 홀드 동작",
-        "icon_tap": "아이콘 탭 동작",
-        "tap": "탭 동작"
-      },
-      "action_picker": "상호작용 추가",
-      "add_entity": "엔티티 추가",
       "add_zone": "구간 추가",
       "alert_when": {
-        "above": "이상일 때",
         "animation": "애니메이션",
-        "below": "이하일 때",
         "highlight": "강조 표시",
         "label": "레이블",
         "above_mode": "상한 알림 소스",
@@ -69,23 +57,18 @@
       "center_zero_value": "중앙값",
       "custom_info": "사용자 정의 보조 정보",
       "custom_theme": "사용자 지정 테마 구간",
-      "decimal": "정밀도",
       "density": "밀도",
       "fast_refresh": "빠른 새로고침",
       "force_circular_background_mode": "원형 배경",
       "frameless": "테두리 없음",
       "height": "높이",
       "height_custom_toggle": "자동 높이",
-      "hide_mode": "숨기기",
-      "icon": "아이콘",
       "icon_animation": "아이콘 애니메이션",
       "interpolate": "색상 보간",
-      "layout": "콘텐츠 레이아웃",
       "marginless": "여백 없음",
       "migrate_config": "구성 마이그레이션",
       "min_width": "최소 너비",
       "multiline": "여러 줄",
-      "name": "이름",
       "name_info": "사용자 정의 이름 정보",
       "opacity": "불투명도",
       "peak_marker": {
@@ -97,13 +80,11 @@
       "reverse": "타이머 역방향",
       "reverse_secondary_info_row": "막대와 텍스트 교체",
       "secondary": "보조 정보",
-      "state_content": "상태 콘텐츠",
       "status_label": {
         "color_source": "색상 소스",
         "toggle": "상태 레이블"
       },
       "text_shadow": "텍스트 그림자 추가",
-      "theme": "테마",
       "trend_indicator": {
         "window_toggle": "시간 창 사용",
         "basis": "비교 기준",
@@ -117,7 +98,6 @@
       },
       "trigger": "트리거",
       "type": "유형",
-      "unit": "단위",
       "unit_spacing": "간격",
       "value_compact": "컴팩트 값 (1.2k)",
       "value_sign": "부호 표시 (+/-)",
@@ -126,9 +106,8 @@
         "low_toggle": "하한"
       },
       "window": "시간 창",
-      "entities": "엔터티",
       "rows": "행 수",
-      "line_size": "선 두께",
+      "line_size": "두께",
       "mark_defaults": "기본값"
     },
     "field_helper": {
@@ -180,7 +159,6 @@
         "below": "콘텐츠 아래",
         "bottom": "하단",
         "compact_below": "아래에 컴팩트",
-        "default": "기본",
         "overlay": "콘텐츠 위에",
         "top": "상단"
       },
@@ -201,15 +179,8 @@
         "stacked": "누적"
       },
       "density": {
-        "default": "기본",
         "compact": "컴팩트",
         "single_line": "한 줄 표시"
-      },
-      "duration_unit": {
-        "s": "초",
-        "min": "분",
-        "h": "시간",
-        "d": "일"
       },
       "enabled_disabled_mode": {
         "disabled": "비활성화",
@@ -220,10 +191,7 @@
         "forced": "강제"
       },
       "hide": {
-        "icon": "아이콘",
-        "name": "이름",
         "secondary_info": "보조 정보",
-        "unit": "단위",
         "value": "값"
       },
       "icon_animation": {
@@ -244,16 +212,9 @@
         "left": "왼쪽",
         "right": "오른쪽"
       },
-      "layout": {
-        "horizontal": "수평",
-        "vertical": "수직"
-      },
       "simple_advanced_mode": {
         "advanced": "고급",
         "simple": "간단"
-      },
-      "status_label_color_source": {
-        "icon": "아이콘"
       },
       "theme": {
         "battery_adaptive": "배터리 (충전 상태에 따라 적응)",
@@ -305,8 +266,6 @@
       }
     },
     "title": {
-      "content": "콘텐츠",
-      "interaction": "상호작용",
       "layout": "레이아웃 및 크기",
       "theme": "테마 및 스타일",
       "watermark": "기준선 마커",
@@ -315,13 +274,7 @@
       "alerts": "알림"
     },
     "shared": {
-      "col": "색상",
-      "pos": "위치",
-      "attr": "속성",
-      "min": "최솟값",
-      "max": "최댓값",
-      "bar": "바",
-      "ent": "엔티티"
+      "bar": "바"
     }
   }
 }

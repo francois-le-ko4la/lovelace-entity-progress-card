@@ -29,21 +29,9 @@
   },
   "editor": {
     "field": {
-      "action": {
-        "double_tap": "Поведінка при подвійному натисканні",
-        "hold": "Поведінка при утримуванні",
-        "icon_double_tap": "Поведінка при подвійному натисканні на значок",
-        "icon_hold": "Поведінка при утримуванні значка",
-        "icon_tap": "Поведінка при натисканні на значок",
-        "tap": "Поведінка при натисканні"
-      },
-      "action_picker": "Додати взаємодію",
-      "add_entity": "Додати сутність",
       "add_zone": "Додати зону",
       "alert_when": {
-        "above": "Вище",
         "animation": "Анімація",
-        "below": "Нижче",
         "highlight": "Виділення",
         "label": "Мітка",
         "above_mode": "Джерело верхнього сповіщення",
@@ -69,23 +57,18 @@
       "center_zero_value": "Центральне значення",
       "custom_info": "Додаткова вторинна інформація",
       "custom_theme": "Зони власної теми",
-      "decimal": "Точність",
       "density": "Щільність",
       "fast_refresh": "Швидке оновлення",
       "force_circular_background_mode": "Кругле тло",
       "frameless": "Без рамки",
       "height": "Висота",
       "height_custom_toggle": "Автоматична висота",
-      "hide_mode": "Приховати",
-      "icon": "Іконка",
       "icon_animation": "Анімація значка",
       "interpolate": "Інтерполяція кольорів",
-      "layout": "Розташування вмісту",
       "marginless": "Без відступу",
       "migrate_config": "Перенести конфігурацію",
       "min_width": "Мін. ширина",
       "multiline": "Багаторядковий",
-      "name": "Назва",
       "name_info": "Додаткова інформація (назва)",
       "opacity": "Непрозорість",
       "peak_marker": {
@@ -97,13 +80,11 @@
       "reverse": "Зворотній таймер",
       "reverse_secondary_info_row": "Поміняти місцями панель і текст",
       "secondary": "Додаткова інформація",
-      "state_content": "Вміст стану",
       "status_label": {
         "color_source": "Джерело кольору",
         "toggle": "Мітка стану"
       },
       "text_shadow": "Додати тінь до тексту",
-      "theme": "Тема",
       "trend_indicator": {
         "window_toggle": "Використати часове вікно",
         "basis": "Основа порівняння",
@@ -117,7 +98,6 @@
       },
       "trigger": "Тригер",
       "type": "Тип",
-      "unit": "Одиниця",
       "unit_spacing": "Інтервал",
       "value_compact": "Компактне значення (1.2k)",
       "value_sign": "Показувати знак (+/-)",
@@ -126,9 +106,8 @@
         "low_toggle": "Нижній поріг"
       },
       "window": "Часове вікно",
-      "entities": "Об'єкти",
       "rows": "Рядки",
-      "line_size": "Товщина лінії",
+      "line_size": "Товщина",
       "mark_defaults": "Значення за замовчуванням"
     },
     "field_helper": {
@@ -180,7 +159,6 @@
         "below": "Під вмістом",
         "bottom": "Знизу",
         "compact_below": "Компактна знизу",
-        "default": "За замовчуванням",
         "overlay": "Поверх вмісту",
         "top": "Зверху"
       },
@@ -201,15 +179,8 @@
         "stacked": "Стек"
       },
       "density": {
-        "default": "За замовчуванням",
         "compact": "Компактно",
         "single_line": "Один рядок"
-      },
-      "duration_unit": {
-        "s": "Секунди",
-        "min": "Хвилини",
-        "h": "Години",
-        "d": "Дні"
       },
       "enabled_disabled_mode": {
         "disabled": "Вимкнено",
@@ -220,10 +191,7 @@
         "forced": "Примусово"
       },
       "hide": {
-        "icon": "Іконка",
-        "name": "Ім'я",
         "secondary_info": "Дод. інформація",
-        "unit": "Одиниця",
         "value": "Значення"
       },
       "icon_animation": {
@@ -244,16 +212,9 @@
         "left": "Ліворуч",
         "right": "Праворуч"
       },
-      "layout": {
-        "horizontal": "Горизонтальний",
-        "vertical": "Вертикальний"
-      },
       "simple_advanced_mode": {
         "advanced": "Розширений",
         "simple": "Простий"
-      },
-      "status_label_color_source": {
-        "icon": "Значок"
       },
       "theme": {
         "battery_adaptive": "Батарея (адаптується до стану заряджання)",
@@ -305,8 +266,6 @@
       }
     },
     "title": {
-      "content": "Вміст",
-      "interaction": "Взаємодії",
       "layout": "Розташування і розмір",
       "theme": "Вигляд та відчуття",
       "watermark": "Мітки рівня",
@@ -315,13 +274,7 @@
       "alerts": "Сповіщення"
     },
     "shared": {
-      "col": "Колір",
-      "pos": "Позиція",
-      "attr": "Атрибут",
-      "min": "Мінімум",
-      "max": "Максимум",
-      "bar": "Смуга",
-      "ent": "Сутність"
+      "bar": "Смуга"
     }
   }
 }

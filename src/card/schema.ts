@@ -218,7 +218,7 @@ const ERROR_CODES = {
   invalidTypeObject: { code: 'invalidTypeObject', severity: SEV.error },
   invalidEnumValue: { code: 'invalidEnumValue', severity: SEV.error },
   invalidEntityId: { code: 'invalidEntityId', severity: SEV.error },
-  // Read through invalidType's own template (see HassProviderSingleton#getMessage):
+  // Read through invalidType's template (HassProviderSingleton#getMessage):
   // the suffix names the word under card.msg.words.types.
   invalidTypePositiveInteger: { code: 'invalidTypePositiveInteger', severity: SEV.error },
   invalidActionObject: { code: 'invalidActionObject', severity: SEV.error },

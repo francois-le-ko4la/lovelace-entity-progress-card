@@ -29,21 +29,9 @@
   },
   "editor": {
     "field": {
-      "action": {
-        "double_tap": "Hành vi nhấn đúp",
-        "hold": "Hành vi nhấn giữ",
-        "icon_double_tap": "Hành vi nhấn đúp biểu tượng",
-        "icon_hold": "Hành vi giữ biểu tượng",
-        "icon_tap": "Hành vi nhấn vào biểu tượng",
-        "tap": "Hành vi nhấn"
-      },
-      "action_picker": "Thêm tương tác",
-      "add_entity": "Thêm thực thể",
       "add_zone": "Thêm vùng",
       "alert_when": {
-        "above": "Khi trên",
         "animation": "Hoạt ảnh",
-        "below": "Khi dưới",
         "highlight": "Làm nổi bật",
         "label": "Nhãn",
         "above_mode": "Nguồn cảnh báo giới hạn trên",
@@ -69,23 +57,18 @@
       "center_zero_value": "Giá trị tâm",
       "custom_info": "Thông tin phụ tùy chỉnh",
       "custom_theme": "Vùng chủ đề tùy chỉnh",
-      "decimal": "Độ chính xác",
       "density": "Mật độ",
       "fast_refresh": "Làm mới nhanh",
       "force_circular_background_mode": "Nền hình tròn",
       "frameless": "Không viền",
       "height": "Chiều cao",
       "height_custom_toggle": "Chiều cao tự động",
-      "hide_mode": "Ẩn",
-      "icon": "Biểu tượng",
       "icon_animation": "Hoạt ảnh biểu tượng",
       "interpolate": "Nội suy màu sắc",
-      "layout": "Bố cục nội dung",
       "marginless": "Không lề",
       "migrate_config": "Di chuyển cấu hình",
       "min_width": "Chiều rộng tối thiểu",
       "multiline": "Nhiều dòng",
-      "name": "Tên",
       "name_info": "Thông tin tên tùy chỉnh",
       "opacity": "Độ mờ đục",
       "peak_marker": {
@@ -97,13 +80,11 @@
       "reverse": "Đảo ngược bộ đếm thời gian",
       "reverse_secondary_info_row": "Hoán đổi thanh và văn bản",
       "secondary": "Thông tin phụ",
-      "state_content": "Nội dung trạng thái",
       "status_label": {
         "color_source": "Nguồn màu",
         "toggle": "Nhãn trạng thái"
       },
       "text_shadow": "Thêm bóng cho văn bản",
-      "theme": "Chủ đề",
       "trend_indicator": {
         "window_toggle": "Dùng cửa sổ thời gian",
         "basis": "Cơ sở so sánh",
@@ -117,7 +98,6 @@
       },
       "trigger": "Kích hoạt",
       "type": "Loại",
-      "unit": "Đơn vị",
       "unit_spacing": "Khoảng cách",
       "value_compact": "Giá trị rút gọn (1.2k)",
       "value_sign": "Hiển thị dấu (+/-)",
@@ -126,9 +106,8 @@
         "low_toggle": "Ngưỡng dưới"
       },
       "window": "Cửa sổ thời gian",
-      "entities": "Thực thể",
       "rows": "Số hàng",
-      "line_size": "Độ dày đường",
+      "line_size": "Độ dày",
       "mark_defaults": "Giá trị mặc định"
     },
     "field_helper": {
@@ -180,7 +159,6 @@
         "below": "Bên dưới nội dung",
         "bottom": "Ở dưới cùng",
         "compact_below": "Gọn bên dưới",
-        "default": "Mặc định",
         "overlay": "Phủ lên nội dung",
         "top": "Ở trên cùng"
       },
@@ -201,15 +179,8 @@
         "stacked": "Xếp chồng"
       },
       "density": {
-        "default": "Mặc định",
         "compact": "Gọn",
         "single_line": "Một dòng"
-      },
-      "duration_unit": {
-        "s": "Giây",
-        "min": "Phút",
-        "h": "Giờ",
-        "d": "Ngày"
       },
       "enabled_disabled_mode": {
         "disabled": "Đã tắt",
@@ -220,10 +191,7 @@
         "forced": "Bắt buộc"
       },
       "hide": {
-        "icon": "Biểu tượng",
-        "name": "Tên",
         "secondary_info": "Thông tin phụ",
-        "unit": "Đơn vị",
         "value": "Giá trị"
       },
       "icon_animation": {
@@ -244,16 +212,9 @@
         "left": "Trái",
         "right": "Phải"
       },
-      "layout": {
-        "horizontal": "Ngang",
-        "vertical": "Dọc"
-      },
       "simple_advanced_mode": {
         "advanced": "Nâng cao",
         "simple": "Đơn giản"
-      },
-      "status_label_color_source": {
-        "icon": "Biểu tượng"
       },
       "theme": {
         "battery_adaptive": "Pin (thích ứng theo trạng thái sạc)",
@@ -305,8 +266,6 @@
       }
     },
     "title": {
-      "content": "Nội dung",
-      "interaction": "Tương tác",
       "layout": "Bố cục & kích thước",
       "theme": "Giao diện & Trải nghiệm",
       "watermark": "Dấu ngưỡng",
@@ -315,13 +274,7 @@
       "alerts": "Cảnh báo"
     },
     "shared": {
-      "col": "Màu",
-      "pos": "Vị trí",
-      "attr": "Thuộc tính",
-      "min": "Nhỏ nhất",
-      "max": "Lớn nhất",
-      "bar": "Thanh",
-      "ent": "Thực thể"
+      "bar": "Thanh"
     }
   }
 }

@@ -11,7 +11,12 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { BORROWED_OPTION_LABELS, SELECT_TYPES, type SchemaLookup } from '../../src/editor/select-types.js';
+import {
+  BORROWED_OPTION_LABELS,
+  COMPUTED_OPTION_LABELS,
+  SELECT_TYPES,
+  type SchemaLookup,
+} from '../../src/editor/select-types.js';
 import { schemaOptions } from '../../src/card/schema.js';
 import { TRANSLATION_KEYS } from '../../src/utils/translations.js';
 
@@ -24,7 +29,8 @@ const labelled = (group: string): string[] => {
     .map((key) => key.slice(prefix.length));
   // A value can name its label instead of carrying one (EditorBase#localizedOptions
   // merges them in), so the group alone no longer answers "is this one labelled".
-  return [...own, ...Object.keys(BORROWED_OPTION_LABELS[group] ?? {})];
+  const computed = COMPUTED_OPTION_LABELS[group]?.('en') ?? {};
+  return [...own, ...Object.keys(BORROWED_OPTION_LABELS[group] ?? {}), ...Object.keys(computed)];
 };
 
 const isLookup = (source: unknown): source is SchemaLookup =>

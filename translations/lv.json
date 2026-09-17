@@ -29,21 +29,9 @@
   },
   "editor": {
     "field": {
-      "action": {
-        "double_tap": "Darbība veicot dubultskārienu",
-        "hold": "Darbība turot piespiestu",
-        "icon_double_tap": "Ikonas dubultskāriena darbība",
-        "icon_hold": "Ikonu noturēšanas darbība",
-        "icon_tap": "Darbība pieskaroties ikonai",
-        "tap": "Darbība pieskaroties"
-      },
-      "action_picker": "Pievienot mijiedarbību",
-      "add_entity": "Pievienot entītiju",
       "add_zone": "Pievienot zonu",
       "alert_when": {
-        "above": "Virs",
         "animation": "Animācija",
-        "below": "Zem",
         "highlight": "Izcēlums",
         "label": "Etiķete",
         "above_mode": "Augšējā brīdinājuma avots",
@@ -69,23 +57,18 @@
       "center_zero_value": "Centra vērtība",
       "custom_info": "Pielāgota sekundārā informācija",
       "custom_theme": "Pielāgotas tēmas zonas",
-      "decimal": "Noapaļošana",
       "density": "Blīvums",
       "fast_refresh": "Ātra atsvaidze",
       "force_circular_background_mode": "Apaļais fons",
       "frameless": "Bez rāmja",
       "height": "Augstums",
       "height_custom_toggle": "Automātisks augstums",
-      "hide_mode": "Slēpt",
-      "icon": "Ikona",
       "icon_animation": "Ikonas animācija",
       "interpolate": "Krāsu interpolācija",
-      "layout": "Satura izkārtojums",
       "marginless": "Bez malas",
       "migrate_config": "Migrēt konfigurāciju",
       "min_width": "Min. platums",
       "multiline": "Vairākrindu",
-      "name": "Nosaukums",
       "name_info": "Pielāgota nosaukuma informācija",
       "opacity": "Necaurspīdīgums",
       "peak_marker": {
@@ -97,13 +80,11 @@
       "reverse": "Apgriezts taimeris",
       "reverse_secondary_info_row": "Mainīt joslu un tekstu",
       "secondary": "Papildu informācija",
-      "state_content": "Stāvokļa saturs",
       "status_label": {
         "color_source": "Krāsas avots",
         "toggle": "Statusa etiķete"
       },
       "text_shadow": "Pievienot teksta ēnu",
-      "theme": "Tēma",
       "trend_indicator": {
         "window_toggle": "Izmantot laika logu",
         "basis": "Salīdzinājuma pamats",
@@ -117,7 +98,6 @@
       },
       "trigger": "Aktivizētājs",
       "type": "Tips",
-      "unit": "Vienība",
       "unit_spacing": "Atstarpe",
       "value_compact": "Kompakta vērtība (1.2k)",
       "value_sign": "Rādīt zīmi (+/-)",
@@ -126,9 +106,8 @@
         "low_toggle": "Apakšējā robeža"
       },
       "window": "Laika logs",
-      "entities": "Entītijas",
       "rows": "Rindas",
-      "line_size": "Līnijas biezums",
+      "line_size": "Biezums",
       "mark_defaults": "Noklusējuma vērtības"
     },
     "field_helper": {
@@ -180,7 +159,6 @@
         "below": "Zem satura",
         "bottom": "Apakšā",
         "compact_below": "Kompakta apakšā",
-        "default": "Noklusētais",
         "overlay": "Virs satura",
         "top": "Augšā"
       },
@@ -201,15 +179,8 @@
         "stacked": "Sakrauts"
       },
       "density": {
-        "default": "Noklusētais",
         "compact": "Kompakts",
         "single_line": "Viena rinda"
-      },
-      "duration_unit": {
-        "s": "Sekundes",
-        "min": "Minūtes",
-        "h": "Stundas",
-        "d": "Dienas"
       },
       "enabled_disabled_mode": {
         "disabled": "Izslēgts",
@@ -220,10 +191,7 @@
         "forced": "Piespiedu"
       },
       "hide": {
-        "icon": "Ikona",
-        "name": "Nosaukums",
         "secondary_info": "Papildu info",
-        "unit": "Vienība",
         "value": "Vērtība"
       },
       "icon_animation": {
@@ -244,16 +212,9 @@
         "left": "Kreisā",
         "right": "Labā"
       },
-      "layout": {
-        "horizontal": "Horizontāls",
-        "vertical": "Vertikāls"
-      },
       "simple_advanced_mode": {
         "advanced": "Papildu",
         "simple": "Vienkāršs"
-      },
-      "status_label_color_source": {
-        "icon": "Ikona"
       },
       "theme": {
         "battery_adaptive": "Baterija (pielāgojas uzlādes stāvoklim)",
@@ -305,8 +266,6 @@
       }
     },
     "title": {
-      "content": "Saturs",
-      "interaction": "Saskarsme",
       "layout": "Izkārtojums un izmērs",
       "theme": "Izskats un lietojamība",
       "watermark": "Līmeņa atzīmes",
@@ -315,13 +274,7 @@
       "alerts": "Brīdinājumi"
     },
     "shared": {
-      "col": "Krāsa",
-      "pos": "Pozīcija",
-      "attr": "Atribūts",
-      "min": "Minimums",
-      "max": "Maksimums",
-      "bar": "Josla",
-      "ent": "Entītija"
+      "bar": "Josla"
     }
   }
 }

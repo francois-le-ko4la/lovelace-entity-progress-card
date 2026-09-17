@@ -29,21 +29,9 @@
   },
   "editor": {
     "field": {
-      "action": {
-        "double_tap": "Atferd ved dobbelttrykk",
-        "hold": "Atferd ved hold",
-        "icon_double_tap": "Dobbelttrykkatferd for ikon",
-        "icon_hold": "Holdeatferd for ikon",
-        "icon_tap": "Atferd ved trykk på ikonet",
-        "tap": "Atferd ved trykk"
-      },
-      "action_picker": "Legg til interaksjon",
-      "add_entity": "Legg til enhet",
       "add_zone": "Legg til sone",
       "alert_when": {
-        "above": "Over",
         "animation": "Animasjon",
-        "below": "Under",
         "highlight": "Fremheving",
         "label": "Merkelapp",
         "above_mode": "Kilde til øvre varsel",
@@ -69,23 +57,18 @@
       "center_zero_value": "Senterverdi",
       "custom_info": "Egendefinert sekundær info",
       "custom_theme": "Tilpassede temasoner",
-      "decimal": "Presisjon",
       "density": "Tetthet",
       "fast_refresh": "Rask oppdatering",
       "force_circular_background_mode": "Sirkulær bakgrunn",
       "frameless": "Uten ramme",
       "height": "Høyde",
       "height_custom_toggle": "Automatisk høyde",
-      "hide_mode": "Skjul",
-      "icon": "Ikon",
       "icon_animation": "Ikonanimasjon",
       "interpolate": "Interpoler farger",
-      "layout": "Innholdslayout",
       "marginless": "Uten marg",
       "migrate_config": "Migrer konfigurasjon",
       "min_width": "Min. bredde",
       "multiline": "Flerlinjet",
-      "name": "Navn",
       "name_info": "Egendefinert navneinfo",
       "opacity": "Ugjennomsiktighet",
       "peak_marker": {
@@ -97,13 +80,11 @@
       "reverse": "Omvendt tidtaker",
       "reverse_secondary_info_row": "Bytt linje og tekst",
       "secondary": "Sekundær informasjon",
-      "state_content": "Innhold i tilstand",
       "status_label": {
         "color_source": "Fargekilde",
         "toggle": "Statusmerkelapp"
       },
       "text_shadow": "Legg til tekstskygge",
-      "theme": "Tema",
       "trend_indicator": {
         "window_toggle": "Bruk et tidsvindu",
         "basis": "Sammenligningsgrunnlag",
@@ -117,7 +98,6 @@
       },
       "trigger": "Utløser",
       "type": "Type",
-      "unit": "Enhet",
       "unit_spacing": "Avstand",
       "value_compact": "Kompakt verdi (1.2k)",
       "value_sign": "Vis fortegn (+/-)",
@@ -126,9 +106,8 @@
         "low_toggle": "Nedre grense"
       },
       "window": "Tidsvindu",
-      "entities": "Entiteter",
       "rows": "Rader",
-      "line_size": "Linjetykkelse",
+      "line_size": "Tykkelse",
       "mark_defaults": "Standardverdier"
     },
     "field_helper": {
@@ -180,7 +159,6 @@
         "below": "Under innholdet",
         "bottom": "Nederst",
         "compact_below": "Kompakt under",
-        "default": "Standard",
         "overlay": "Over innholdet",
         "top": "Øverst"
       },
@@ -201,15 +179,8 @@
         "stacked": "Stablet"
       },
       "density": {
-        "default": "Standard",
         "compact": "Kompakt",
         "single_line": "Én linje"
-      },
-      "duration_unit": {
-        "s": "Sekunder",
-        "min": "Minutter",
-        "h": "Timer",
-        "d": "Dager"
       },
       "enabled_disabled_mode": {
         "disabled": "Deaktivert",
@@ -220,10 +191,7 @@
         "forced": "Tvunget"
       },
       "hide": {
-        "icon": "Ikon",
-        "name": "Navn",
         "secondary_info": "Sekundær info",
-        "unit": "Enhet",
         "value": "Verdi"
       },
       "icon_animation": {
@@ -244,16 +212,9 @@
         "left": "Venstre",
         "right": "Høyre"
       },
-      "layout": {
-        "horizontal": "Horisontal",
-        "vertical": "Vertikal"
-      },
       "simple_advanced_mode": {
         "advanced": "Avansert",
         "simple": "Enkel"
-      },
-      "status_label_color_source": {
-        "icon": "Ikon"
       },
       "theme": {
         "battery_adaptive": "Batteri (tilpasser seg ladetilstand)",
@@ -305,8 +266,6 @@
       }
     },
     "title": {
-      "content": "Innhold",
-      "interaction": "Interaksjoner",
       "layout": "Layout og størrelse",
       "theme": "Utseende og funksjonalitet",
       "watermark": "Nivåmarkører",
@@ -315,13 +274,7 @@
       "alerts": "Varsler"
     },
     "shared": {
-      "col": "Farge",
-      "pos": "Posisjon",
-      "attr": "Attributt",
-      "min": "Minimum",
-      "max": "Maksimum",
-      "bar": "Stolpe",
-      "ent": "Enhet"
+      "bar": "Stolpe"
     }
   }
 }

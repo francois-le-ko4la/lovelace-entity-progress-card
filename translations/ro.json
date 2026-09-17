@@ -29,21 +29,9 @@
   },
   "editor": {
     "field": {
-      "action": {
-        "double_tap": "Comportamentul atingerii de două ori",
-        "hold": "Acțiune la menținere",
-        "icon_double_tap": "Comportament la dubla atingere a pictogramei",
-        "icon_hold": "Comportament la menținere a pictogramei",
-        "icon_tap": "Acțiune la atingerea iconiței",
-        "tap": "Acțiune la atingere"
-      },
-      "action_picker": "Adaugă interacțiune",
-      "add_entity": "Adaugă entitate",
       "add_zone": "Adaugă zonă",
       "alert_when": {
-        "above": "Peste",
         "animation": "Animație",
-        "below": "Sub",
         "highlight": "Evidențiere",
         "label": "Etichetă",
         "above_mode": "Sursa alertei superioare",
@@ -69,23 +57,18 @@
       "center_zero_value": "Valoare centrală",
       "custom_info": "Info secundară personalizată",
       "custom_theme": "Zone temă personalizată",
-      "decimal": "Precizie",
       "density": "Densitate",
       "fast_refresh": "Reîmprospătare rapidă",
       "force_circular_background_mode": "Fundal circular",
       "frameless": "Fără cadru",
       "height": "Înălțime",
       "height_custom_toggle": "Înălțime automată",
-      "hide_mode": "Ascunde",
-      "icon": "Pictogramă",
       "icon_animation": "Animația pictogramei",
       "interpolate": "Interpolare culori",
-      "layout": "Aspect conținut",
       "marginless": "Fără margine",
       "migrate_config": "Migrează configurația",
       "min_width": "Lățime min.",
       "multiline": "Multilinie",
-      "name": "Nume",
       "name_info": "Info nume personalizată",
       "opacity": "Opacitate",
       "peak_marker": {
@@ -97,13 +80,11 @@
       "reverse": "Cronometru inverso",
       "reverse_secondary_info_row": "Schimbați bara și textul",
       "secondary": "Informație secundară",
-      "state_content": "Conținutul stării",
       "status_label": {
         "color_source": "Sursa culorii",
         "toggle": "Etichetă de stare"
       },
       "text_shadow": "Adaugă umbră textului",
-      "theme": "Temă",
       "trend_indicator": {
         "window_toggle": "Folosește o fereastră de timp",
         "basis": "Bază de comparație",
@@ -117,7 +98,6 @@
       },
       "trigger": "Declanșator",
       "type": "Tip",
-      "unit": "Unitate",
       "unit_spacing": "Spațiere",
       "value_compact": "Valoare compactă (1.2k)",
       "value_sign": "Afișează semnul (+/-)",
@@ -126,9 +106,8 @@
         "low_toggle": "Prag inferior"
       },
       "window": "Fereastră de timp",
-      "entities": "Entități",
       "rows": "Rânduri",
-      "line_size": "Grosimea liniei",
+      "line_size": "Grosime",
       "mark_defaults": "Valori implicite"
     },
     "field_helper": {
@@ -180,7 +159,6 @@
         "below": "Sub conținut",
         "bottom": "Jos",
         "compact_below": "Compactă dedesubt",
-        "default": "Implicit",
         "overlay": "Suprapusă peste conținut",
         "top": "Sus"
       },
@@ -201,15 +179,8 @@
         "stacked": "Stivuit"
       },
       "density": {
-        "default": "Implicit",
         "compact": "Compact",
         "single_line": "Un rând"
-      },
-      "duration_unit": {
-        "s": "Secunde",
-        "min": "Minute",
-        "h": "Ore",
-        "d": "Zile"
       },
       "enabled_disabled_mode": {
         "disabled": "Dezactivat",
@@ -220,10 +191,7 @@
         "forced": "Forțat"
       },
       "hide": {
-        "icon": "Pictogramă",
-        "name": "Nume",
         "secondary_info": "Info secundară",
-        "unit": "Unitate",
         "value": "Valoare"
       },
       "icon_animation": {
@@ -244,16 +212,9 @@
         "left": "Stânga",
         "right": "Dreapta"
       },
-      "layout": {
-        "horizontal": "Orizontal",
-        "vertical": "Vertical"
-      },
       "simple_advanced_mode": {
         "advanced": "Avansat",
         "simple": "Simplu"
-      },
-      "status_label_color_source": {
-        "icon": "Pictogramă"
       },
       "theme": {
         "battery_adaptive": "Baterie (se adaptează la starea de încărcare)",
@@ -305,8 +266,6 @@
       }
     },
     "title": {
-      "content": "Conținut",
-      "interaction": "Interacțiuni",
       "layout": "Aspect și dimensiune",
       "theme": "Aspect & Stil",
       "watermark": "Marcaje de prag",
@@ -315,13 +274,7 @@
       "alerts": "Alerte"
     },
     "shared": {
-      "col": "Culoare",
-      "pos": "Poziție",
-      "attr": "Atribut",
-      "min": "Minim",
-      "max": "Maxim",
-      "bar": "Bară",
-      "ent": "Entitate"
+      "bar": "Bară"
     }
   }
 }

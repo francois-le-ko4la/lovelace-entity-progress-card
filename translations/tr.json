@@ -29,21 +29,9 @@
   },
   "editor": {
     "field": {
-      "action": {
-        "double_tap": "Çift dokunma davranışı",
-        "hold": "Tutma davranışı",
-        "icon_double_tap": "Simge çift dokunma davranışı",
-        "icon_hold": "Simge tutma davranışı",
-        "icon_tap": "Simgeye dokunma davranışı",
-        "tap": "Dokunma davranışı"
-      },
-      "action_picker": "Etkileşim ekle",
-      "add_entity": "Varlık ekle",
       "add_zone": "Bölge ekle",
       "alert_when": {
-        "above": "Üzerinde",
         "animation": "Animasyon",
-        "below": "Altında",
         "highlight": "Vurgu",
         "label": "Etiket",
         "above_mode": "Üst uyarı kaynağı",
@@ -69,23 +57,18 @@
       "center_zero_value": "Merkez değeri",
       "custom_info": "Özel ikincil bilgi",
       "custom_theme": "Özel tema bölgeleri",
-      "decimal": "Hassasiyet",
       "density": "Yoğunluk",
       "fast_refresh": "Hızlı yenileme",
       "force_circular_background_mode": "Dairesel arka plan",
       "frameless": "Çerçevesiz",
       "height": "Yükseklik",
       "height_custom_toggle": "Otomatik yükseklik",
-      "hide_mode": "Gizle",
-      "icon": "Simge",
       "icon_animation": "Simge animasyonu",
       "interpolate": "Renk interpolasyonu",
-      "layout": "İçerik düzeni",
       "marginless": "Kenar boşluksuz",
       "migrate_config": "Yapılandırmayı taşı",
       "min_width": "Min. genişlik",
       "multiline": "Çok satırlı",
-      "name": "Ad",
       "name_info": "Özel ad bilgisi",
       "opacity": "Opaklık",
       "peak_marker": {
@@ -97,13 +80,11 @@
       "reverse": "Zamanlayıcıyı tersine çevir",
       "reverse_secondary_info_row": "Çubuğu ve metni değiştir",
       "secondary": "İkincil bilgi",
-      "state_content": "Durum içeriği",
       "status_label": {
         "color_source": "Renk kaynağı",
         "toggle": "Durum etiketi"
       },
       "text_shadow": "Metne gölge ekle",
-      "theme": "Tema",
       "trend_indicator": {
         "window_toggle": "Zaman penceresi kullan",
         "basis": "Karşılaştırma temeli",
@@ -117,7 +98,6 @@
       },
       "trigger": "Tetikleyici",
       "type": "Tür",
-      "unit": "Birim",
       "unit_spacing": "Boşluk",
       "value_compact": "Kompakt değer (1.2k)",
       "value_sign": "İşareti göster (+/-)",
@@ -126,9 +106,8 @@
         "low_toggle": "Alt eşik"
       },
       "window": "Zaman penceresi",
-      "entities": "Varlıklar",
       "rows": "Satırlar",
-      "line_size": "Çizgi kalınlığı",
+      "line_size": "Kalınlık",
       "mark_defaults": "Varsayılanlar"
     },
     "field_helper": {
@@ -180,7 +159,6 @@
         "below": "İçeriğin altında",
         "bottom": "Altta",
         "compact_below": "Altta kompakt",
-        "default": "Varsayılan",
         "overlay": "İçeriğin üzerine bindirme",
         "top": "Üstte"
       },
@@ -201,15 +179,8 @@
         "stacked": "Yığılmış"
       },
       "density": {
-        "default": "Varsayılan",
         "compact": "Kompakt",
         "single_line": "Tek satır"
-      },
-      "duration_unit": {
-        "s": "Saniye",
-        "min": "Dakika",
-        "h": "Saat",
-        "d": "Gün"
       },
       "enabled_disabled_mode": {
         "disabled": "Devre dışı",
@@ -220,10 +191,7 @@
         "forced": "Zorunlu"
       },
       "hide": {
-        "icon": "Simge",
-        "name": "Ad",
         "secondary_info": "İkincil bilgi",
-        "unit": "Birim",
         "value": "Değer"
       },
       "icon_animation": {
@@ -244,16 +212,9 @@
         "left": "Sol",
         "right": "Sağ"
       },
-      "layout": {
-        "horizontal": "Yatay",
-        "vertical": "Dikey"
-      },
       "simple_advanced_mode": {
         "advanced": "Gelişmiş",
         "simple": "Basit"
-      },
-      "status_label_color_source": {
-        "icon": "Simge"
       },
       "theme": {
         "battery_adaptive": "Pil (şarj durumuna uyum sağlar)",
@@ -305,8 +266,6 @@
       }
     },
     "title": {
-      "content": "İçerik",
-      "interaction": "Etkileşimler",
       "layout": "Düzen ve boyut",
       "theme": "Görünüm",
       "watermark": "Seviye işaretleri",
@@ -315,13 +274,7 @@
       "alerts": "Uyarılar"
     },
     "shared": {
-      "col": "Renk",
-      "pos": "Konum",
-      "attr": "Öznitelik",
-      "min": "Minimum",
-      "max": "Maksimum",
-      "bar": "Çubuk",
-      "ent": "Varlık"
+      "bar": "Çubuk"
     }
   }
 }

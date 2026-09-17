@@ -29,21 +29,9 @@
   },
   "editor": {
     "field": {
-      "action": {
-        "double_tap": "Dupla koppintási viselkedés",
-        "hold": "Tartási viselkedés",
-        "icon_double_tap": "Ikon dupla koppintásának viselkedése",
-        "icon_hold": "Ikon hosszan nyomásának viselkedése",
-        "icon_tap": "Ikonérintési viselkedés",
-        "tap": "Koppintási viselkedés"
-      },
-      "action_picker": "Interakció hozzáadása",
-      "add_entity": "Entitás hozzáadása",
       "add_zone": "Zóna hozzáadása",
       "alert_when": {
-        "above": "Felett",
         "animation": "Animáció",
-        "below": "Alatt",
         "highlight": "Kiemelés",
         "label": "Címke",
         "above_mode": "Felső riasztás forrása",
@@ -69,23 +57,18 @@
       "center_zero_value": "Középérték",
       "custom_info": "Egyéni másodlagos info",
       "custom_theme": "Egyéni téma zónák",
-      "decimal": "Pontosság",
       "density": "Sűrűség",
       "fast_refresh": "Gyors frissítés",
       "force_circular_background_mode": "Kör alakú háttér",
       "frameless": "Keret nélküli",
       "height": "Magasság",
       "height_custom_toggle": "Automatikus magasság",
-      "hide_mode": "Elrejtés",
-      "icon": "Ikon",
       "icon_animation": "Ikon animáció",
       "interpolate": "Színinterpoláció",
-      "layout": "Tartalom elrendezése",
       "marginless": "Margó nélküli",
       "migrate_config": "Konfiguráció migrálása",
       "min_width": "Min. szélesség",
       "multiline": "Többsoros",
-      "name": "Név",
       "name_info": "Egyéni névinfo",
       "opacity": "Átlátszatlanság",
       "peak_marker": {
@@ -97,13 +80,11 @@
       "reverse": "Fordított időzítő",
       "reverse_secondary_info_row": "Cserélje fel a sávot és a szöveget",
       "secondary": "Másodlagos információ",
-      "state_content": "Állapot tartalma",
       "status_label": {
         "color_source": "Szín forrása",
         "toggle": "Állapotcímke"
       },
       "text_shadow": "Szöveg árnyék hozzáadása",
-      "theme": "Téma",
       "trend_indicator": {
         "window_toggle": "Időablak használata",
         "basis": "Összehasonlítási alap",
@@ -117,7 +98,6 @@
       },
       "trigger": "Kiváltó",
       "type": "Típus",
-      "unit": "Mértékegység",
       "unit_spacing": "Térköz",
       "value_compact": "Kompakt érték (1.2k)",
       "value_sign": "Előjel megjelenítése (+/-)",
@@ -126,9 +106,8 @@
         "low_toggle": "Alsó küszöb"
       },
       "window": "Időablak",
-      "entities": "Entitások",
       "rows": "Sorok",
-      "line_size": "Vonalvastagság",
+      "line_size": "Vastagság",
       "mark_defaults": "Alapértelmezések"
     },
     "field_helper": {
@@ -180,7 +159,6 @@
         "below": "A tartalom alatt",
         "bottom": "Lent",
         "compact_below": "Kompakt alul",
-        "default": "Alapértelmezett",
         "overlay": "A tartalmon",
         "top": "Fent"
       },
@@ -201,15 +179,8 @@
         "stacked": "Halmozott"
       },
       "density": {
-        "default": "Alapértelmezett",
         "compact": "Kompakt",
         "single_line": "Egy sor"
-      },
-      "duration_unit": {
-        "s": "Másodperc",
-        "min": "Perc",
-        "h": "Óra",
-        "d": "Nap"
       },
       "enabled_disabled_mode": {
         "disabled": "Letiltva",
@@ -220,10 +191,7 @@
         "forced": "Kényszerített"
       },
       "hide": {
-        "icon": "Ikon",
-        "name": "Név",
         "secondary_info": "Másodlagos info",
-        "unit": "Egység",
         "value": "Érték"
       },
       "icon_animation": {
@@ -244,16 +212,9 @@
         "left": "Bal",
         "right": "Jobb"
       },
-      "layout": {
-        "horizontal": "Vízszintes",
-        "vertical": "Függőleges"
-      },
       "simple_advanced_mode": {
         "advanced": "Speciális",
         "simple": "Egyszerű"
-      },
-      "status_label_color_source": {
-        "icon": "Ikon"
       },
       "theme": {
         "battery_adaptive": "Akkumulátor (alkalmazkodik a töltési állapothoz)",
@@ -305,8 +266,6 @@
       }
     },
     "title": {
-      "content": "Tartalom",
-      "interaction": "Interakciók",
       "layout": "Elrendezés és méret",
       "theme": "Megjelenés és használhatóság",
       "watermark": "Szintjelölők",
@@ -315,13 +274,7 @@
       "alerts": "Riasztások"
     },
     "shared": {
-      "col": "Szín",
-      "pos": "Pozíció",
-      "attr": "Attribútum",
-      "min": "Minimum",
-      "max": "Maximum",
-      "bar": "Sáv",
-      "ent": "Entitás"
+      "bar": "Sáv"
     }
   }
 }

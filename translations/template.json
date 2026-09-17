@@ -29,21 +29,9 @@
   },
   "editor": {
     "field": {
-      "action": {
-        "double_tap": "",
-        "hold": "",
-        "icon_double_tap": "",
-        "icon_hold": "",
-        "icon_tap": "",
-        "tap": ""
-      },
-      "action_picker": "",
-      "add_entity": "",
       "add_zone": "",
       "alert_when": {
-        "above": "Above",
         "animation": "",
-        "below": "Below",
         "highlight": "",
         "label": "",
         "above_mode": "",
@@ -69,23 +57,18 @@
       "center_zero_value": "",
       "custom_info": "",
       "custom_theme": "",
-      "decimal": "Precision",
       "density": "",
       "fast_refresh": "",
       "force_circular_background_mode": "Circular background",
       "frameless": "",
       "height": "",
       "height_custom_toggle": "",
-      "hide_mode": "",
-      "icon": "",
       "icon_animation": "",
       "interpolate": "",
-      "layout": "",
       "marginless": "",
       "migrate_config": "",
       "min_width": "",
       "multiline": "",
-      "name": "",
       "name_info": "",
       "opacity": "",
       "peak_marker": {
@@ -97,13 +80,11 @@
       "reverse": "",
       "reverse_secondary_info_row": "",
       "secondary": "",
-      "state_content": "",
       "status_label": {
         "color_source": "",
         "toggle": ""
       },
       "text_shadow": "",
-      "theme": "",
       "trend_indicator": {
         "window_toggle": "",
         "basis": "",
@@ -117,7 +98,6 @@
       },
       "trigger": "",
       "type": "",
-      "unit": "",
       "unit_spacing": "",
       "value_compact": "",
       "value_sign": "",
@@ -126,9 +106,8 @@
         "low_toggle": "Low threshold"
       },
       "window": "",
-      "entities": "",
       "rows": "",
-      "line_size": "",
+      "line_size": "Thickness",
       "mark_defaults": "Defaults"
     },
     "field_helper": {
@@ -180,7 +159,6 @@
         "below": "Below content",
         "bottom": "On bottom",
         "compact_below": "Compact below",
-        "default": "",
         "overlay": "Overlay on content",
         "top": "On top"
       },
@@ -201,15 +179,8 @@
         "stacked": ""
       },
       "density": {
-        "default": "",
         "compact": "",
         "single_line": ""
-      },
-      "duration_unit": {
-        "s": "",
-        "min": "",
-        "h": "",
-        "d": ""
       },
       "enabled_disabled_mode": {
         "disabled": "",
@@ -220,10 +191,7 @@
         "forced": ""
       },
       "hide": {
-        "icon": "",
-        "name": "",
         "secondary_info": "",
-        "unit": "",
         "value": ""
       },
       "icon_animation": {
@@ -244,16 +212,9 @@
         "left": "",
         "right": ""
       },
-      "layout": {
-        "horizontal": "",
-        "vertical": ""
-      },
       "simple_advanced_mode": {
         "advanced": "",
         "simple": ""
-      },
-      "status_label_color_source": {
-        "icon": ""
       },
       "theme": {
         "battery_adaptive": "",
@@ -305,8 +266,6 @@
       }
     },
     "title": {
-      "content": "",
-      "interaction": "",
       "layout": "",
       "theme": "",
       "watermark": "",
@@ -315,13 +274,7 @@
       "alerts": ""
     },
     "shared": {
-      "col": "",
-      "pos": "",
-      "attr": "",
-      "min": "Minimum",
-      "max": "Maximum",
-      "bar": "",
-      "ent": ""
+      "bar": ""
     }
   }
 }

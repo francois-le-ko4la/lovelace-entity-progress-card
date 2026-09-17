@@ -29,21 +29,9 @@
   },
   "editor": {
     "field": {
-      "action": {
-        "double_tap": "ダブルタップの動作",
-        "hold": "ホールド動作",
-        "icon_double_tap": "アイコンのダブルタップ動作",
-        "icon_hold": "アイコンホールド動作",
-        "icon_tap": "アイコンタップの動作",
-        "tap": "タップ動作"
-      },
-      "action_picker": "インタラクションを追加",
-      "add_entity": "エンティティを追加",
       "add_zone": "ゾーンを追加",
       "alert_when": {
-        "above": "上回ったら",
         "animation": "アニメーション",
-        "below": "下回ったら",
         "highlight": "強調表示",
         "label": "ラベル",
         "above_mode": "上限アラートのソース",
@@ -69,23 +57,18 @@
       "center_zero_value": "中心値",
       "custom_info": "カスタム補助情報",
       "custom_theme": "カスタムテーマゾーン",
-      "decimal": "精度",
       "density": "密度",
       "fast_refresh": "高速更新",
       "force_circular_background_mode": "円形背景",
       "frameless": "枠なし",
       "height": "高さ",
       "height_custom_toggle": "高さ自動",
-      "hide_mode": "非表示",
-      "icon": "アイコン",
       "icon_animation": "アイコンアニメーション",
       "interpolate": "色の補間",
-      "layout": "コンテンツのレイアウト",
       "marginless": "余白なし",
       "migrate_config": "設定を移行",
       "min_width": "最小幅",
       "multiline": "複数行",
-      "name": "名前",
       "name_info": "カスタム名前情報",
       "opacity": "不透明度",
       "peak_marker": {
@@ -97,13 +80,11 @@
       "reverse": "タイマーを逆にする",
       "reverse_secondary_info_row": "バーとテキストを入れ替える",
       "secondary": "補足情報",
-      "state_content": "状態の内容",
       "status_label": {
         "color_source": "色のソース",
         "toggle": "ステータスラベル"
       },
       "text_shadow": "テキストに影を追加",
-      "theme": "テーマ",
       "trend_indicator": {
         "window_toggle": "時間ウィンドウを使用",
         "basis": "比較基準",
@@ -117,7 +98,6 @@
       },
       "trigger": "トリガー",
       "type": "タイプ",
-      "unit": "単位",
       "unit_spacing": "間隔",
       "value_compact": "コンパクトな値 (1.2k)",
       "value_sign": "符号を表示 (+/-)",
@@ -126,9 +106,8 @@
         "low_toggle": "下限"
       },
       "window": "時間ウィンドウ",
-      "entities": "エンティティ",
       "rows": "行数",
-      "line_size": "線の太さ",
+      "line_size": "太さ",
       "mark_defaults": "既定値"
     },
     "field_helper": {
@@ -180,7 +159,6 @@
         "below": "コンテンツの下",
         "bottom": "下部",
         "compact_below": "下にコンパクト",
-        "default": "デフォルト",
         "overlay": "コンテンツに重ねる",
         "top": "上部"
       },
@@ -201,15 +179,8 @@
         "stacked": "積み上げ"
       },
       "density": {
-        "default": "デフォルト",
         "compact": "コンパクト",
         "single_line": "1行表示"
-      },
-      "duration_unit": {
-        "s": "秒",
-        "min": "分",
-        "h": "時間",
-        "d": "日"
       },
       "enabled_disabled_mode": {
         "disabled": "無効",
@@ -220,10 +191,7 @@
         "forced": "強制"
       },
       "hide": {
-        "icon": "アイコン",
-        "name": "名前",
         "secondary_info": "補足情報",
-        "unit": "単位",
         "value": "値"
       },
       "icon_animation": {
@@ -244,16 +212,9 @@
         "left": "左",
         "right": "右"
       },
-      "layout": {
-        "horizontal": "水平",
-        "vertical": "垂直"
-      },
       "simple_advanced_mode": {
         "advanced": "詳細設定",
         "simple": "シンプル"
-      },
-      "status_label_color_source": {
-        "icon": "アイコン"
       },
       "theme": {
         "battery_adaptive": "バッテリー（充電状態に応じて変化）",
@@ -305,8 +266,6 @@
       }
     },
     "title": {
-      "content": "コンテンツ",
-      "interaction": "インタラクション",
       "layout": "レイアウトとサイズ",
       "theme": "外観",
       "watermark": "しきい値マーカー",
@@ -315,13 +274,7 @@
       "alerts": "アラート"
     },
     "shared": {
-      "col": "色",
-      "pos": "位置",
-      "attr": "属性",
-      "min": "最小値",
-      "max": "最大値",
-      "bar": "バー",
-      "ent": "エンティティ"
+      "bar": "バー"
     }
   }
 }

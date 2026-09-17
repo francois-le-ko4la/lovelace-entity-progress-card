@@ -306,6 +306,11 @@ const valueModeField = (
 // of virtual ones.
 // min_value/max_value read the shared Minimum/Maximum label - the same words
 // the peak marks use (see PEAK_SHARED_LABEL).
+// The shared labels this file points at most (see editor.shared in the
+// translations): named once rather than repeated at every field.
+const LABEL_COLOR = 'shared.col';
+const LABEL_POSITION = 'shared.pos';
+
 const SHARED_VALUE_LABEL = { min_value: 'shared.min', max_value: 'shared.max' } as const;
 
 const valueField = (
@@ -572,12 +577,16 @@ const factorizeGlobalOverride = <K extends string>(
 const inheritedHint = (value: unknown): string => (value === undefined ? '' : String(value));
 
 // What a mark is drawn as, its own override and the family's global value
-// resolved in that order - `null` asks the family itself, which answers for
-// whichever of its shown marks draws a line.
+// resolved in that order. `null` asks the family: its own type counts, not just
+// its shown marks - with none shown the family default is exactly what the
+// thickness applies to, and hiding the field there left a hole in the defaults.
 const drawsLine = <K extends string>(adapter: OverrideCascadeAdapter<K>, key: K | null) => {
   const typeOf = (c: LovelaceConfig, k: K) => adapter.effective(c, k, 'type') ?? adapter.defaults.type;
+  const familyType = (c: LovelaceConfig) => c[adapter.parentKey]?.type ?? adapter.defaults.type;
   return (c: LovelaceConfig) =>
-    key === null ? activeKeys(adapter, c).some((k) => typeOf(c, k) === 'line') : typeOf(c, key) === 'line';
+    key === null
+      ? familyType(c) === 'line' || activeKeys(adapter, c).some((k) => typeOf(c, k) === 'line')
+      : typeOf(c, key) === 'line';
 };
 
 // The look (or value) fields a single mark can override, each cascading to the
@@ -646,7 +655,7 @@ const SHARED_CASCADE = (selectType: string): CascadeSpec[] => [
   {
     field: 'color',
     build: (name, opts) => EditorFieldsType.templateOrType(name, false, 'color', opts),
-    labelKey: 'shared.col',
+    labelKey: LABEL_COLOR,
   },
 ];
 
@@ -868,7 +877,7 @@ const PEAK_RANGE_CASCADE: OverrideCascadeAdapter<'range'> = {
     {
       field: 'color',
       build: (name, opts) => EditorFieldsType.templateOrType(name, false, 'color', opts),
-      labelKey: 'shared.col',
+      labelKey: LABEL_COLOR,
     },
   ],
 };
@@ -1193,7 +1202,7 @@ const EditorFactory = {
                 }),
                 unit_position: EditorFieldsType.select('unit_position', {
                   type: 'unit_position',
-                  labelKey: 'shared.pos',
+                  labelKey: LABEL_POSITION,
                   width: 'half',
                   showIf: unitSpacingShown,
                 }),
@@ -1573,7 +1582,7 @@ const EditorFactory = {
                 : c.layout === 'vertical'
                   ? 'bar_position_no_compact_below'
                   : 'bar_position',
-            labelKey: 'shared.pos',
+            labelKey: LABEL_POSITION,
             width: 'half',
             showIf: (c: LovelaceConfig) => c.density !== 'single_line',
             onChange: (_value: unknown, config: LovelaceConfig) =>
@@ -1591,8 +1600,8 @@ const EditorFactory = {
       ? {}
       : {
           // Both full width (the default): text_shadow shows alone under
-          // 'background', where bar_single_line does not, and a half-width toggle
-          // left alone on its row only reads as a hole beside a long label.
+          // 'background', where bar_single_line does not - and a half-width
+          // toggle alone on its row only reads as a hole beside a long label.
           bar_single_line: EditorFieldsType.toggle('bar_single_line', {
             showIf: (c: LovelaceConfig) => c.bar_position === 'overlay',
           }),
@@ -1843,7 +1852,7 @@ const EditorFactory = {
           }),
           'alert_when.color': EditorFieldsType.select('alert_when.color', {
             type: 'color',
-            labelKey: 'shared.col',
+            labelKey: LABEL_COLOR,
             showIf: (c: LovelaceConfig) => Boolean(c.alert_when),
           }),
           'alert_when.highlight': EditorFieldsType.select('alert_when.highlight', {
@@ -1887,6 +1896,11 @@ const EditorFactory = {
   // `_visible_actions`. Also reads as on when a value already exists.
   cardSizeFields: (badge: boolean) => {
     const shown = (c: LovelaceConfig) => Boolean(c._show_size || c.min_width || c.height);
+    // Both lengths parked together while the section is off - same draft
+    // precedent as every other toggle here, and closing the section used to
+    // discard them outright.
+    const draftKey = '_card_size_draft';
+    const draftOf = (c: LovelaceConfig) => (is.plainObject(c[draftKey]) ? (c[draftKey] as object) : null);
     return {
       card_size_toggle: {
         name: 'card_size_toggle',
@@ -1895,8 +1909,21 @@ const EditorFactory = {
         resolveVirtual: shown,
         onVirtualChange: (value: boolean, config: LovelaceConfig) =>
           value
-            ? { ...config, _show_size: true }
-            : { ...config, _show_size: undefined, min_width: undefined, height: undefined },
+            ? {
+                ...config,
+                _show_size: true,
+                // Nothing parked: open on the height the card already has, so
+                // one opts into fixing it rather than inheriting a number.
+                ...(draftOf(config) ?? (badge ? {} : { height: 'auto' })),
+                [draftKey]: undefined,
+              }
+            : {
+                ...config,
+                _show_size: undefined,
+                min_width: undefined,
+                height: undefined,
+                [draftKey]: { min_width: config.min_width, height: config.height },
+              },
       },
       ...EditorFactory.lengthField(
         'min_width',
@@ -2077,7 +2104,7 @@ const EditorFactory = {
       bar_color: EditorFieldsType.templateOrType('bar_color', template, 'color_state_default', {
         // One 'Color' label for every color field: the panel it sits in says
         // which color it is, the field name would only repeat it.
-        labelKey: 'shared.col',
+        labelKey: LABEL_COLOR,
         showIf: (c: LovelaceConfig) => !themeActive(c),
         // Full-width once bar_size (its row partner) hides for the same
         // bar_position values.
@@ -2137,7 +2164,7 @@ const EditorFactory = {
               }),
         }),
         color: EditorFieldsType.templateOrType('color', template, 'color_state_default', {
-          labelKey: 'shared.col',
+          labelKey: LABEL_COLOR,
           showIf: (c: LovelaceConfig) => is.nullish(c.theme) && !is.array(c.custom_theme),
           ...(template ? { helper: true } : { width: 'half' }),
         }),
@@ -2226,7 +2253,7 @@ const EditorFactory = {
       type: 'label_position',
       virtual: true,
       // Same word as the badge's own position field, one key for both.
-      labelKey: 'shared.pos',
+      labelKey: LABEL_POSITION,
       width: 'half',
       showIf: (c: LovelaceConfig) => Boolean(c.status_label),
       resolveVirtual: (c: LovelaceConfig) => statusLabelObj(c.status_label).position ?? 'right',
@@ -2427,7 +2454,7 @@ const EditorFactory = {
           ...EditorFactory.themeModeFields(false),
           ...EditorFactory.themeColorModeFields(false),
           bar_color: EditorFieldsType.templateOrType('bar_color', false, 'color_state_default', {
-            labelKey: 'shared.col',
+            labelKey: LABEL_COLOR,
             showIf: (c: LovelaceConfig) => !EditorFactory.themeActive(c),
             width: 'half',
           }),
@@ -2438,7 +2465,7 @@ const EditorFactory = {
           bar_size: EditorFieldsType.select('bar_size', { width: 'half', showIf: barSizeAllowed }),
           bar_position: EditorFieldsType.select('bar_position', {
             type: 'bar_position_feature',
-            labelKey: 'shared.pos',
+            labelKey: LABEL_POSITION,
             width: 'half',
             onChange: (_value: unknown, config: LovelaceConfig) => EditorFactory.resetBarSizeIfInvalid(config),
           }),

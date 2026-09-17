@@ -29,21 +29,9 @@
   },
   "editor": {
     "field": {
-      "action": {
-        "double_tap": "Beteende vid dubbeltryck",
-        "hold": "Beteende vid långtryck",
-        "icon_double_tap": "Beteende för dubbeltryck på ikonen",
-        "icon_hold": "Beteende för hållning på ikonen",
-        "icon_tap": "Beteende vid tryck på ikonen",
-        "tap": "Beteende vid tryck"
-      },
-      "action_picker": "Lägg till interaktion",
-      "add_entity": "Lägg till entitet",
       "add_zone": "Lägg till zon",
       "alert_when": {
-        "above": "Över",
         "animation": "Animering",
-        "below": "Under",
         "highlight": "Markering",
         "label": "Etikett",
         "above_mode": "Källa för övre larm",
@@ -69,23 +57,18 @@
       "center_zero_value": "Centervärde",
       "custom_info": "Anpassad sekundär info",
       "custom_theme": "Anpassade temazoner",
-      "decimal": "Precision",
       "density": "Täthet",
       "fast_refresh": "Snabb uppdatering",
       "force_circular_background_mode": "Cirkulär bakgrund",
       "frameless": "Utan ram",
       "height": "Höjd",
       "height_custom_toggle": "Automatisk höjd",
-      "hide_mode": "Dölj",
-      "icon": "Ikon",
       "icon_animation": "Ikonanimering",
       "interpolate": "Interpolera färger",
-      "layout": "Innehållslayout",
       "marginless": "Utan marginal",
       "migrate_config": "Migrera konfiguration",
       "min_width": "Min bredd",
       "multiline": "Flerradig",
-      "name": "Namn",
       "name_info": "Anpassad namninfo",
       "opacity": "Opacitet",
       "peak_marker": {
@@ -97,13 +80,11 @@
       "reverse": "Omvänd timer",
       "reverse_secondary_info_row": "Byt ut stapel och text",
       "secondary": "Sekundär information",
-      "state_content": "Statusinnehåll",
       "status_label": {
         "color_source": "Färgkälla",
         "toggle": "Statusetikett"
       },
       "text_shadow": "Lägg till textskugga",
-      "theme": "Tema",
       "trend_indicator": {
         "window_toggle": "Använd ett tidsfönster",
         "basis": "Jämförelsebas",
@@ -117,7 +98,6 @@
       },
       "trigger": "Utlösare",
       "type": "Typ",
-      "unit": "Enhet",
       "unit_spacing": "Avstånd",
       "value_compact": "Kompakt värde (1.2k)",
       "value_sign": "Visa tecken (+/-)",
@@ -126,9 +106,8 @@
         "low_toggle": "Undre gräns"
       },
       "window": "Tidsfönster",
-      "entities": "Entiteter",
       "rows": "Rader",
-      "line_size": "Linjetjocklek",
+      "line_size": "Tjocklek",
       "mark_defaults": "Standardvärden"
     },
     "field_helper": {
@@ -180,7 +159,6 @@
         "below": "Under innehållet",
         "bottom": "Längst ned",
         "compact_below": "Kompakt under",
-        "default": "Standard",
         "overlay": "Överlagrad på innehållet",
         "top": "Längst upp"
       },
@@ -201,15 +179,8 @@
         "stacked": "Staplad"
       },
       "density": {
-        "default": "Standard",
         "compact": "Kompakt",
         "single_line": "En rad"
-      },
-      "duration_unit": {
-        "s": "Sekunder",
-        "min": "Minuter",
-        "h": "Timmar",
-        "d": "Dagar"
       },
       "enabled_disabled_mode": {
         "disabled": "Inaktiverad",
@@ -220,10 +191,7 @@
         "forced": "Tvingad"
       },
       "hide": {
-        "icon": "Ikon",
-        "name": "Namn",
         "secondary_info": "Sekundär info",
-        "unit": "Enhet",
         "value": "Värde"
       },
       "icon_animation": {
@@ -244,16 +212,9 @@
         "left": "Vänster",
         "right": "Höger"
       },
-      "layout": {
-        "horizontal": "Horisontell",
-        "vertical": "Vertikal"
-      },
       "simple_advanced_mode": {
         "advanced": "Avancerat",
         "simple": "Enkel"
-      },
-      "status_label_color_source": {
-        "icon": "Ikon"
       },
       "theme": {
         "battery_adaptive": "Batteri (anpassar sig till laddningsstatus)",
@@ -305,8 +266,6 @@
       }
     },
     "title": {
-      "content": "Innehåll",
-      "interaction": "Interaktioner",
       "layout": "Layout & storlek",
       "theme": "Utseende och funktionalitet",
       "watermark": "Nivåmarkörer",
@@ -315,13 +274,7 @@
       "alerts": "Varningar"
     },
     "shared": {
-      "col": "Färg",
-      "pos": "Position",
-      "attr": "Attribut",
-      "min": "Minimum",
-      "max": "Maximum",
-      "bar": "Stapel",
-      "ent": "Entitet"
+      "bar": "Stapel"
     }
   }
 }

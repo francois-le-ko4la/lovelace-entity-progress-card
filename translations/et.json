@@ -29,21 +29,9 @@
   },
   "editor": {
     "field": {
-      "action": {
-        "double_tap": "Topeltpuudutuse käitumine",
-        "hold": "Pika vajutuse käitumine",
-        "icon_double_tap": "Ikooni topeltpuudutuse käitumine",
-        "icon_hold": "Ikooni pika vajutuse käitumine",
-        "icon_tap": "Ikoonipuudutuse käitumine",
-        "tap": "Puudutuse käitumine"
-      },
-      "action_picker": "Lisa interaktsioon",
-      "add_entity": "Lisa olem",
       "add_zone": "Lisa tsoon",
       "alert_when": {
-        "above": "Üle",
         "animation": "Animatsioon",
-        "below": "Alla",
         "highlight": "Esiletõst",
         "label": "Silt",
         "above_mode": "Ülemise hoiatuse allikas",
@@ -69,23 +57,18 @@
       "center_zero_value": "Keskväärtus",
       "custom_info": "Kohandatud sekundaarne teave",
       "custom_theme": "Kohandatud teema tsoonid",
-      "decimal": "Täpsus",
       "density": "Tihedus",
       "fast_refresh": "Kiire värskendus",
       "force_circular_background_mode": "Ümmargune taust",
       "frameless": "Raamita",
       "height": "Kõrgus",
       "height_custom_toggle": "Automaatne kõrgus",
-      "hide_mode": "Peida",
-      "icon": "Ikoon",
       "icon_animation": "Ikooni animatsioon",
       "interpolate": "Värvide interpoleerimine",
-      "layout": "Sisu paigutus",
       "marginless": "Ilma veeriseta",
       "migrate_config": "Migreeri seadistus",
       "min_width": "Min laius",
       "multiline": "Mitmerealine",
-      "name": "Nimi",
       "name_info": "Kohandatud nime teave",
       "opacity": "Läbipaistmatus",
       "peak_marker": {
@@ -97,13 +80,11 @@
       "reverse": "Pööratud taimer",
       "reverse_secondary_info_row": "Vaheta riba ja tekst",
       "secondary": "Täiendav info",
-      "state_content": "Oleku sisu",
       "status_label": {
         "color_source": "Värvi allikas",
         "toggle": "Oleku silt"
       },
       "text_shadow": "Lisa teksti vari",
-      "theme": "Teema",
       "trend_indicator": {
         "window_toggle": "Kasuta ajaakent",
         "basis": "Võrdlusalus",
@@ -117,7 +98,6 @@
       },
       "trigger": "Käivitaja",
       "type": "Tüüp",
-      "unit": "Ühik",
       "unit_spacing": "Vahe",
       "value_compact": "Kompaktne väärtus (1.2k)",
       "value_sign": "Näita märki (+/-)",
@@ -126,9 +106,8 @@
         "low_toggle": "Alumine lävi"
       },
       "window": "Ajaaken",
-      "entities": "Olemid",
       "rows": "Read",
-      "line_size": "Joone paksus",
+      "line_size": "Paksus",
       "mark_defaults": "Vaikeväärtused"
     },
     "field_helper": {
@@ -180,7 +159,6 @@
         "below": "Sisu all",
         "bottom": "All",
         "compact_below": "Kompaktne all",
-        "default": "Vaikimisi",
         "overlay": "Sisu kohal",
         "top": "Üleval"
       },
@@ -201,15 +179,8 @@
         "stacked": "Virnastatud"
       },
       "density": {
-        "default": "Vaikimisi",
         "compact": "Kompaktne",
         "single_line": "Üherealine"
-      },
-      "duration_unit": {
-        "s": "Sekundid",
-        "min": "Minutid",
-        "h": "Tunnid",
-        "d": "Päevad"
       },
       "enabled_disabled_mode": {
         "disabled": "Väljas",
@@ -220,10 +191,7 @@
         "forced": "Sundatud"
       },
       "hide": {
-        "icon": "Ikoon",
-        "name": "Nimi",
         "secondary_info": "Lisainfo",
-        "unit": "Ühik",
         "value": "Väärtus"
       },
       "icon_animation": {
@@ -244,16 +212,9 @@
         "left": "Vasak",
         "right": "Parem"
       },
-      "layout": {
-        "horizontal": "Horisontaalne",
-        "vertical": "Vertikaalne"
-      },
       "simple_advanced_mode": {
         "advanced": "Täpsem",
         "simple": "Lihtne"
-      },
-      "status_label_color_source": {
-        "icon": "Ikoon"
       },
       "theme": {
         "battery_adaptive": "Aku (kohandub laadimisolekuga)",
@@ -305,8 +266,6 @@
       }
     },
     "title": {
-      "content": "Sisu",
-      "interaction": "Interaktsioonid",
       "layout": "Paigutus ja suurus",
       "theme": "Välimus ja kasutatavus",
       "watermark": "Tasememärgised",
@@ -315,13 +274,7 @@
       "alerts": "Hoiatused"
     },
     "shared": {
-      "col": "Värv",
-      "pos": "Asukoht",
-      "attr": "Atribuut",
-      "min": "Miinimum",
-      "max": "Maksimum",
-      "bar": "Riba",
-      "ent": "Olem"
+      "bar": "Riba"
     }
   }
 }

@@ -29,21 +29,9 @@
   },
   "editor": {
     "field": {
-      "action": {
-        "double_tap": "Zachowanie po podwójnym kliknięciu",
-        "hold": "Zachowanie po przytrzymaniu",
-        "icon_double_tap": "Zachowanie po dwukrotnym kliknięciu ikony",
-        "icon_hold": "Zachowanie po przytrzymaniu ikony",
-        "icon_tap": "Zachowanie po kliknięciu ikony",
-        "tap": "Zachowanie po kliknięciu"
-      },
-      "action_picker": "Dodaj interakcję",
-      "add_entity": "Dodaj encję",
       "add_zone": "Dodaj strefę",
       "alert_when": {
-        "above": "Powyżej",
         "animation": "Animacja",
-        "below": "Poniżej",
         "highlight": "Wyróżnienie",
         "label": "Etykieta",
         "above_mode": "Źródło alertu górnego",
@@ -69,23 +57,18 @@
       "center_zero_value": "Wartość środkowa",
       "custom_info": "Niestandardowa info pomocnicza",
       "custom_theme": "Strefy niestandardowego motywu",
-      "decimal": "Precyzja",
       "density": "Gęstość",
       "fast_refresh": "Szybkie odświeżanie",
       "force_circular_background_mode": "Okrągłe tło",
       "frameless": "Bez ramki",
       "height": "Wysokość",
       "height_custom_toggle": "Automatyczna wysokość",
-      "hide_mode": "Ukryj",
-      "icon": "Ikona",
       "icon_animation": "Animacja ikony",
       "interpolate": "Interpolacja kolorów",
-      "layout": "Układ treści",
       "marginless": "Bez marginesu",
       "migrate_config": "Migruj konfigurację",
       "min_width": "Min. szerokość",
       "multiline": "Wielowierszowy",
-      "name": "Nazwa",
       "name_info": "Niestandardowa info nazwy",
       "opacity": "Krycie",
       "peak_marker": {
@@ -97,13 +80,11 @@
       "reverse": "Odwróć licznik",
       "reverse_secondary_info_row": "Zamień pasek i tekst",
       "secondary": "Informacja dodatkowa",
-      "state_content": "Zawartość stanu",
       "status_label": {
         "color_source": "Źródło koloru",
         "toggle": "Etykieta stanu"
       },
       "text_shadow": "Dodaj cień tekstu",
-      "theme": "Motyw",
       "trend_indicator": {
         "window_toggle": "Użyj okna czasowego",
         "basis": "Podstawa porównania",
@@ -117,7 +98,6 @@
       },
       "trigger": "Wyzwalacz",
       "type": "Typ",
-      "unit": "Jednostka",
       "unit_spacing": "Odstęp",
       "value_compact": "Kompaktowa wartość (1.2k)",
       "value_sign": "Pokaż znak (+/-)",
@@ -126,9 +106,8 @@
         "low_toggle": "Dolny próg"
       },
       "window": "Okno czasowe",
-      "entities": "Encje",
       "rows": "Wiersze",
-      "line_size": "Grubość linii",
+      "line_size": "Grubość",
       "mark_defaults": "Wartości domyślne"
     },
     "field_helper": {
@@ -180,7 +159,6 @@
         "below": "Pod zawartością",
         "bottom": "Na dole",
         "compact_below": "Kompaktowy poniżej",
-        "default": "Domyślnie",
         "overlay": "Nałożony na zawartość",
         "top": "Na górze"
       },
@@ -201,15 +179,8 @@
         "stacked": "Ułożony"
       },
       "density": {
-        "default": "Domyślnie",
         "compact": "Kompaktowy",
         "single_line": "Jedna linia"
-      },
-      "duration_unit": {
-        "s": "Sekundy",
-        "min": "Minuty",
-        "h": "Godziny",
-        "d": "Dni"
       },
       "enabled_disabled_mode": {
         "disabled": "Wyłączone",
@@ -220,10 +191,7 @@
         "forced": "Wymuszony"
       },
       "hide": {
-        "icon": "Ikona",
-        "name": "Nazwa",
         "secondary_info": "Info dodatkowe",
-        "unit": "Jednostka",
         "value": "Wartość"
       },
       "icon_animation": {
@@ -244,16 +212,9 @@
         "left": "Lewo",
         "right": "Prawo"
       },
-      "layout": {
-        "horizontal": "Poziomo",
-        "vertical": "Pionowy"
-      },
       "simple_advanced_mode": {
         "advanced": "Zaawansowany",
         "simple": "Prosty"
-      },
-      "status_label_color_source": {
-        "icon": "Ikona"
       },
       "theme": {
         "battery_adaptive": "Bateria (dostosowuje się do stanu ładowania)",
@@ -305,8 +266,6 @@
       }
     },
     "title": {
-      "content": "Zawartość",
-      "interaction": "Interakcje",
       "layout": "Układ i rozmiar",
       "theme": "Wygląd i funkcjonalność",
       "watermark": "Znaczniki progu",
@@ -315,13 +274,7 @@
       "alerts": "Alerty"
     },
     "shared": {
-      "col": "Kolor",
-      "pos": "Pozycja",
-      "attr": "Atrybut",
-      "min": "Minimum",
-      "max": "Maksimum",
-      "bar": "Pasek",
-      "ent": "Encja"
+      "bar": "Pasek"
     }
   }
 }

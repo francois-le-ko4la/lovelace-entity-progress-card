@@ -29,21 +29,9 @@
   },
   "editor": {
     "field": {
-      "action": {
-        "double_tap": "Verhalten bei Doppeltippen",
-        "hold": "Verhalten bei Festhalten",
-        "icon_double_tap": "Verhalten bei Doppeltippen des Symbols",
-        "icon_hold": "Verhalten bei Festhalten des Symbols",
-        "icon_tap": "Verhalten bei Antippen des Symbols",
-        "tap": "Verhalten bei Antippen"
-      },
-      "action_picker": "Interaktion hinzufügen",
-      "add_entity": "Entität hinzufügen",
       "add_zone": "Zone hinzufügen",
       "alert_when": {
-        "above": "Über",
         "animation": "Animation",
-        "below": "Unter",
         "highlight": "Hervorhebung",
         "label": "Beschriftung",
         "above_mode": "Quelle des oberen Alarms",
@@ -69,23 +57,18 @@
       "center_zero_value": "Zentrumswert",
       "custom_info": "Zusatzinfo (sekundär)",
       "custom_theme": "Benutzerdefinierte Themenzonen",
-      "decimal": "Genauigkeit",
       "density": "Dichte",
       "fast_refresh": "Schnelle Aktualisierung",
       "force_circular_background_mode": "Kreisförmiger Hintergrund",
       "frameless": "Rahmenlos",
       "height": "Höhe",
       "height_custom_toggle": "Automatische Höhe",
-      "hide_mode": "Ausblenden",
-      "icon": "Symbol",
       "icon_animation": "Symbolanimation",
       "interpolate": "Farben interpolieren",
-      "layout": "Inhaltslayout",
       "marginless": "Randlos",
       "migrate_config": "Konfiguration migrieren",
       "min_width": "Mindestbreite",
       "multiline": "Mehrzeilig",
-      "name": "Name",
       "name_info": "Zusatzinfo (Name)",
       "opacity": "Deckkraft",
       "peak_marker": {
@@ -97,13 +80,11 @@
       "reverse": "Timer umkehren",
       "reverse_secondary_info_row": "Barra und Text tauschen",
       "secondary": "Sekundäre Informationen",
-      "state_content": "Statusinhalt",
       "status_label": {
         "color_source": "Farbquelle",
         "toggle": "Statusbeschriftung"
       },
       "text_shadow": "Textschatten hinzufügen",
-      "theme": "Thema",
       "trend_indicator": {
         "window_toggle": "Zeitfenster verwenden",
         "basis": "Vergleichsbasis",
@@ -117,7 +98,6 @@
       },
       "trigger": "Auslöser",
       "type": "Typ",
-      "unit": "Einheit",
       "unit_spacing": "Abstand",
       "value_compact": "Kompakter Wert (1.2k)",
       "value_sign": "Vorzeichen anzeigen (+/-)",
@@ -126,9 +106,8 @@
         "low_toggle": "Unterer Schwellenwert"
       },
       "window": "Zeitfenster",
-      "entities": "Entitäten",
       "rows": "Zeilen",
-      "line_size": "Linienstärke",
+      "line_size": "Stärke",
       "mark_defaults": "Standardwerte"
     },
     "field_helper": {
@@ -180,7 +159,6 @@
         "below": "Unter dem Inhalt",
         "bottom": "Unten",
         "compact_below": "Kompakt unten",
-        "default": "Standard",
         "overlay": "Über dem Inhalt",
         "top": "Oben"
       },
@@ -201,15 +179,8 @@
         "stacked": "Gestapelt"
       },
       "density": {
-        "default": "Standard",
         "compact": "Kompakt",
         "single_line": "Einzeilig"
-      },
-      "duration_unit": {
-        "s": "Sekunden",
-        "min": "Minuten",
-        "h": "Stunden",
-        "d": "Tage"
       },
       "enabled_disabled_mode": {
         "disabled": "Deaktiviert",
@@ -220,10 +191,7 @@
         "forced": "Erzwungen"
       },
       "hide": {
-        "icon": "Symbol",
-        "name": "Name",
         "secondary_info": "Sekundärinfo",
-        "unit": "Einheit",
         "value": "Wert"
       },
       "icon_animation": {
@@ -244,16 +212,9 @@
         "left": "Links",
         "right": "Rechts"
       },
-      "layout": {
-        "horizontal": "Horizontal",
-        "vertical": "Vertikal"
-      },
       "simple_advanced_mode": {
         "advanced": "Erweitert",
         "simple": "Einfach"
-      },
-      "status_label_color_source": {
-        "icon": "Symbol"
       },
       "theme": {
         "battery_adaptive": "Akku (passt sich dem Ladezustand an)",
@@ -305,8 +266,6 @@
       }
     },
     "title": {
-      "content": "Inhalt",
-      "interaction": "Interaktionen",
       "layout": "Layout & Größe",
       "theme": "Aussehen und Bedienung",
       "watermark": "Niveaumarkierungen",
@@ -315,13 +274,7 @@
       "alerts": "Warnungen"
     },
     "shared": {
-      "col": "Farbe",
-      "pos": "Position",
-      "attr": "Attribut",
-      "min": "Minimum",
-      "max": "Maximum",
-      "bar": "Balken",
-      "ent": "Entität"
+      "bar": "Balken"
     }
   }
 }

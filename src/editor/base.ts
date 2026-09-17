@@ -32,7 +32,7 @@ import {
 import { lengthSliderSelector, lengthUnitSelector } from '../utils/length.js';
 import { durationSliderSelector } from '../utils/duration.js';
 import { isMarkOverride, THEME_ALIASES, schemaOptions, ACTION_FIELDS, type WatermarkMark } from '../card/schema.js';
-import { BORROWED_OPTION_LABELS, SELECT_TYPES, type SchemaLookup } from './select-types.js';
+import { BORROWED_OPTION_LABELS, COMPUTED_OPTION_LABELS, SELECT_TYPES, type SchemaLookup } from './select-types.js';
 
 // Every dynamic editor field element built below (ha-selector, the chip
 // custom elements from chips.ts, the list editors from list-editors.ts)
@@ -245,11 +245,22 @@ class EditorBase extends HTMLElement {
       Object.fromEntries(
         Object.entries(BORROWED_OPTION_LABELS[group]).map(([value, key]) => [value, this.#labelFor(key) ?? value]),
       );
+    // Union, not a walk of the tree: a group whose every value is borrowed has
+    // no entry left in the translations, and iterating the tree alone would drop
+    // it - leaving that dropdown unlabelled.
+    const computed = (group: string) => COMPUTED_OPTION_LABELS[group](this.#hassProvider.language);
+    const groups = new Set([
+      ...Object.keys(tree),
+      ...Object.keys(BORROWED_OPTION_LABELS),
+      ...Object.keys(COMPUTED_OPTION_LABELS),
+    ]);
     return Object.fromEntries(
-      Object.entries(tree).map(([group, values]) => [
-        group,
-        group in BORROWED_OPTION_LABELS ? { ...borrow(group), ...values } : values,
-      ]),
+      [...groups].map((group) => {
+        // Stored labels win: a group can borrow or compute what it does not carry.
+        const own = tree[group] ?? {};
+        if (group in COMPUTED_OPTION_LABELS) return [group, { ...computed(group), ...own }];
+        return [group, group in BORROWED_OPTION_LABELS ? { ...borrow(group), ...own } : tree[group]];
+      }),
     );
   }
 
@@ -398,7 +409,8 @@ class EditorBase extends HTMLElement {
     }
 
     const panel = document.createElement('ha-expansion-panel') as HaExpansionPanel;
-    panel.header = this.#hassProvider.localize(def.title ?? '');
+    const title = def.title ?? '';
+    panel.header = this.#hassProvider.haLabel(title.replace(/^editor\./, '')) ?? this.#hassProvider.localize(title);
     panel.outlined = true;
     // Fields in a collapsed panel are skipped by updateAll (see
     // EditorDOMHelper) - refresh them the moment the panel opens, so a change
@@ -528,10 +540,14 @@ class EditorBase extends HTMLElement {
     return { parentKey, childKey };
   }
 
-  // A label path is relative to EDITOR_FIELD_NS ('editor.option' holds only what
-  // a select offers), except the shared group - a word several fields answer to,
-  // named apart so editing it there is visibly editing all of them.
+  // A label path is relative to EDITOR_FIELD_NS ('editor.option' holds only
+  // what a select offers), except the shared group - a word several fields
+  // answer to, named apart so editing it is visibly editing all of them.
   #labelFor(path: string): string | undefined {
+    // HA first: it names these concepts everywhere else in the interface, and
+    // keeps naming them when it rewords them. Ours is the fallback (English).
+    const borrowed = this.#hassProvider.haLabel(path);
+    if (borrowed) return borrowed;
     const shared = path.startsWith(SHARED_LABEL_PREFIX);
     const root = this.#hassProvider.localizeGroup(shared ? SHARED_LABEL_NS : EDITOR_FIELD_NS);
     const walk = (node: unknown, segment: string) => (node as Record<string, unknown> | undefined)?.[segment];

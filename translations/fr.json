@@ -29,21 +29,9 @@
   },
   "editor": {
     "field": {
-      "action": {
-        "double_tap": "Action au double appui",
-        "hold": "Action à l'appui long",
-        "icon_double_tap": "Action au double appui sur l'icône",
-        "icon_hold": "Action à l'appui long sur l'icône",
-        "icon_tap": "Action à l'appui sur l'icône",
-        "tap": "Action à l'appui"
-      },
-      "action_picker": "Ajouter une interaction",
-      "add_entity": "Ajouter une entité",
       "add_zone": "Ajouter une zone",
       "alert_when": {
-        "above": "Au-dessus de",
         "animation": "Animation",
-        "below": "En dessous de",
         "highlight": "Mise en évidence",
         "label": "Étiquette",
         "above_mode": "Source de l'alerte haute",
@@ -69,23 +57,18 @@
       "center_zero_value": "Valeur de centrage",
       "custom_info": "Info secondaire personnalisée",
       "custom_theme": "Zones de thème personnalisé",
-      "decimal": "Précision",
       "density": "Densité",
       "fast_refresh": "Rafraîchissement rapide",
       "force_circular_background_mode": "Fond circulaire",
       "frameless": "Sans cadre",
       "height": "Hauteur",
       "height_custom_toggle": "Hauteur automatique",
-      "hide_mode": "Masquer",
-      "icon": "Icône",
       "icon_animation": "Animation de l'icône",
       "interpolate": "Interpoler",
-      "layout": "Disposition du contenu",
       "marginless": "Sans marge",
       "migrate_config": "Migrer la config",
       "min_width": "Largeur min",
       "multiline": "Multiligne",
-      "name": "Nom",
       "name_info": "Info nom personnalisée",
       "opacity": "Opacité",
       "peak_marker": {
@@ -97,13 +80,11 @@
       "reverse": "Inverser le minuteur",
       "reverse_secondary_info_row": "Intervertir barre et texte",
       "secondary": "Information secondaire",
-      "state_content": "Contenu de l’état",
       "status_label": {
         "color_source": "Source de la couleur",
         "toggle": "Étiquette de statut"
       },
       "text_shadow": "Ajouter une ombre au texte",
-      "theme": "Thème",
       "trend_indicator": {
         "window_toggle": "Utiliser une fenêtre temporelle",
         "basis": "Base de comparaison",
@@ -117,7 +98,6 @@
       },
       "trigger": "Déclencheur",
       "type": "Type",
-      "unit": "Unité",
       "unit_spacing": "Espacement",
       "value_compact": "Valeur compacte (1.2k)",
       "value_sign": "Afficher le signe (+/-)",
@@ -126,9 +106,8 @@
         "low_toggle": "Seuil bas"
       },
       "window": "Fenêtre temporelle",
-      "entities": "Entités",
       "rows": "Lignes",
-      "line_size": "Épaisseur du trait",
+      "line_size": "Épaisseur",
       "mark_defaults": "Valeurs par défaut"
     },
     "field_helper": {
@@ -180,7 +159,6 @@
         "below": "En dessous du contenu",
         "bottom": "En bas",
         "compact_below": "Compacte en dessous",
-        "default": "Défaut",
         "overlay": "Superposée au contenu",
         "top": "En haut"
       },
@@ -201,15 +179,8 @@
         "stacked": "Empilé"
       },
       "density": {
-        "default": "Défaut",
         "compact": "Compact",
         "single_line": "Une ligne"
-      },
-      "duration_unit": {
-        "s": "Secondes",
-        "min": "Minutes",
-        "h": "Heures",
-        "d": "Jours"
       },
       "enabled_disabled_mode": {
         "disabled": "Désactivé",
@@ -220,10 +191,7 @@
         "forced": "Forcé"
       },
       "hide": {
-        "icon": "Icône",
-        "name": "Nom",
         "secondary_info": "Info secondaire",
-        "unit": "Unité",
         "value": "Valeur"
       },
       "icon_animation": {
@@ -244,16 +212,9 @@
         "left": "Gauche",
         "right": "Droite"
       },
-      "layout": {
-        "horizontal": "Horizontal",
-        "vertical": "Vertical"
-      },
       "simple_advanced_mode": {
         "advanced": "Avancé",
         "simple": "Simple"
-      },
-      "status_label_color_source": {
-        "icon": "Icône"
       },
       "theme": {
         "battery_adaptive": "Batterie (s'adapte à l'état de charge)",
@@ -305,8 +266,6 @@
       }
     },
     "title": {
-      "content": "Contenu",
-      "interaction": "Interactions",
       "layout": "Mise en page et taille",
       "theme": "Aspect visuel et convivialité",
       "watermark": "Marqueurs de seuil",
@@ -315,13 +274,7 @@
       "alerts": "Alertes"
     },
     "shared": {
-      "col": "Couleur",
-      "pos": "Position",
-      "attr": "Attribut",
-      "min": "Minimum",
-      "max": "Maximum",
-      "bar": "Barre",
-      "ent": "Entité"
+      "bar": "Barre"
     }
   }
 }

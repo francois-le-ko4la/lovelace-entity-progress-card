@@ -29,21 +29,9 @@
   },
   "editor": {
     "field": {
-      "action": {
-        "double_tap": "การกระทำเมื่อแตะสองครั้ง",
-        "hold": "การกระทำเมื่อกดค้าง",
-        "icon_double_tap": "การกระทำเมื่อแตะไอคอนสองครั้ง",
-        "icon_hold": "การกระทำเมื่อกดค้างที่ไอคอน",
-        "icon_tap": "การกระทำเมื่อแตะไอคอน",
-        "tap": "การกระทำเมื่อแตะ"
-      },
-      "action_picker": "เพิ่มการโต้ตอบ",
-      "add_entity": "เพิ่มเอนทิตี",
       "add_zone": "เพิ่มโซน",
       "alert_when": {
-        "above": "เมื่อสูงกว่า",
         "animation": "แอนิเมชัน",
-        "below": "เมื่อต่ำกว่า",
         "highlight": "ไฮไลต์",
         "label": "ป้ายกำกับ",
         "above_mode": "แหล่งการแจ้งเตือนขอบบน",
@@ -69,23 +57,18 @@
       "center_zero_value": "ค่ากึ่งกลาง",
       "custom_info": "ข้อมูลรองที่กำหนดเอง",
       "custom_theme": "โซนธีมกำหนดเอง",
-      "decimal": "ความแม่นยำ",
       "density": "ความหนาแน่น",
       "fast_refresh": "รีเฟรชเร็ว",
       "force_circular_background_mode": "พื้นหลังวงกลม",
       "frameless": "ไม่มีกรอบ",
       "height": "ความสูง",
       "height_custom_toggle": "ความสูงอัตโนมัติ",
-      "hide_mode": "ซ่อน",
-      "icon": "ไอคอน",
       "icon_animation": "แอนิเมชันไอคอน",
       "interpolate": "การสอดแทรกสี",
-      "layout": "รูปแบบเนื้อหา",
       "marginless": "ไม่มีระยะขอบ",
       "migrate_config": "ย้ายการตั้งค่า",
       "min_width": "ความกว้างต่ำสุด",
       "multiline": "หลายบรรทัด",
-      "name": "ชื่อ",
       "name_info": "ข้อมูลชื่อที่กำหนดเอง",
       "opacity": "ความทึบ",
       "peak_marker": {
@@ -97,13 +80,11 @@
       "reverse": "กลับเวลานับถอยหลัง",
       "reverse_secondary_info_row": "แถบและข้อความสลับกัน",
       "secondary": "ข้อมูลรอง",
-      "state_content": "เนื้อหาของสถานะ",
       "status_label": {
         "color_source": "แหล่งสี",
         "toggle": "ป้ายสถานะ"
       },
       "text_shadow": "เพิ่มเงาให้ข้อความ",
-      "theme": "ธีม",
       "trend_indicator": {
         "window_toggle": "ใช้ช่วงเวลา",
         "basis": "พื้นฐานการเปรียบเทียบ",
@@ -117,7 +98,6 @@
       },
       "trigger": "ทริกเกอร์",
       "type": "ประเภท",
-      "unit": "หน่วย",
       "unit_spacing": "ระยะห่าง",
       "value_compact": "ค่าแบบย่อ (1.2k)",
       "value_sign": "แสดงเครื่องหมาย (+/-)",
@@ -126,9 +106,8 @@
         "low_toggle": "เกณฑ์ต่ำ"
       },
       "window": "ช่วงเวลา",
-      "entities": "เอนทิตี",
       "rows": "จำนวนแถว",
-      "line_size": "ความหนาของเส้น",
+      "line_size": "ความหนา",
       "mark_defaults": "ค่าเริ่มต้น"
     },
     "field_helper": {
@@ -180,7 +159,6 @@
         "below": "ใต้เนื้อหา",
         "bottom": "ด้านล่าง",
         "compact_below": "กะทัดรัดด้านล่าง",
-        "default": "ค่าเริ่มต้น",
         "overlay": "ซ้อนทับเนื้อหา",
         "top": "ด้านบน"
       },
@@ -201,15 +179,8 @@
         "stacked": "ซ้อนกัน"
       },
       "density": {
-        "default": "ค่าเริ่มต้น",
         "compact": "กะทัดรัด",
         "single_line": "บรรทัดเดียว"
-      },
-      "duration_unit": {
-        "s": "วินาที",
-        "min": "นาที",
-        "h": "ชั่วโมง",
-        "d": "วัน"
       },
       "enabled_disabled_mode": {
         "disabled": "ปิดใช้งาน",
@@ -220,10 +191,7 @@
         "forced": "บังคับ"
       },
       "hide": {
-        "icon": "ไอคอน",
-        "name": "ชื่อ",
         "secondary_info": "ข้อมูลรอง",
-        "unit": "หน่วย",
         "value": "ค่า"
       },
       "icon_animation": {
@@ -244,16 +212,9 @@
         "left": "ซ้าย",
         "right": "ขวา"
       },
-      "layout": {
-        "horizontal": "แนวนอน",
-        "vertical": "แนวตั้ง"
-      },
       "simple_advanced_mode": {
         "advanced": "ขั้นสูง",
         "simple": "ธรรมดา"
-      },
-      "status_label_color_source": {
-        "icon": "ไอคอน"
       },
       "theme": {
         "battery_adaptive": "แบตเตอรี่ (ปรับตามสถานะการชาร์จ)",
@@ -305,8 +266,6 @@
       }
     },
     "title": {
-      "content": "เนื้อหา",
-      "interaction": "การโต้ตอบ",
       "layout": "เค้าโครงและขนาด",
       "theme": "รูปลักษณ์และความรู้สึก",
       "watermark": "เครื่องหมายระดับ",
@@ -315,13 +274,7 @@
       "alerts": "การแจ้งเตือน"
     },
     "shared": {
-      "col": "สี",
-      "pos": "ตำแหน่ง",
-      "attr": "แอตทริบิวต์",
-      "min": "ค่าต่ำสุด",
-      "max": "ค่าสูงสุด",
-      "bar": "แถบ",
-      "ent": "เอนทิตี"
+      "bar": "แถบ"
     }
   }
 }
