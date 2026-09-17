@@ -25,12 +25,16 @@ declare const __EPB_DEV_BUILD__: boolean;
 // ES-module load (the common HACS "JavaScript Module" type) - the Resource
 // Timing API covers that instead, matched by this exact build's own filename
 // so a dev+prod pair loaded side by side never cross-match.
+// This build's own basename, without extension - the bundle and the editor
+// translation files shipped beside it share it (see scripts/build.js).
+const BUNDLE_STEM = `entity-progress-card${__EPB_DEV_BUILD__ ? '_dev' : ''}`;
 const MODULE_URL = (() => {
   try {
     const scriptSrc = (document.currentScript as HTMLScriptElement | null)?.src;
     if (scriptSrc) return scriptSrc;
-    const filename = `entity-progress-card${__EPB_DEV_BUILD__ ? '_dev' : ''}.js`;
-    return performance.getEntriesByType('resource').find((entry) => entry.name.includes(filename))?.name ?? '';
+    return (
+      performance.getEntriesByType('resource').find((entry) => entry.name.includes(`${BUNDLE_STEM}.js`))?.name ?? ''
+    );
   } catch {
     return '';
   }
@@ -94,6 +98,10 @@ const CARD_CONTEXT = {
   // the mere act of loading the bundle. URL-derived only, off unless asked.
   noRegistration: MODULE_PARAMS.has('noRegistration'),
   debug: resolvedDebug,
+  // Where this bundle was served from, and under which name: the editor
+  // translation files sit next to it (see editorDictionaryUrl).
+  moduleUrl: MODULE_URL,
+  bundleStem: BUNDLE_STEM,
 };
 
 const devName = (name: string): string => `${name}${CARD_CONTEXT.dev ? '-dev' : ''}`;

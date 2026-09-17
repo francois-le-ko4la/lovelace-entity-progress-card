@@ -20,6 +20,7 @@ const path = require('path');
 const esbuild = require('esbuild');
 const { resolveCssBlocks } = require('./lib/inline-css.js');
 const { forceCleanCardContext } = require('./lib/release-flags.js');
+const { JS_FILE, parseJsBlock } = require('./lib/i18n-block.js');
 
 const ENTRY = 'src/index.ts';
 const OUTDIR = 'dist';
@@ -28,8 +29,29 @@ const OUTDIR = 'dist';
 // flag, "test" build): CARD_CONTEXT is left exactly as committed.
 const isProd = process.argv.includes('--prod');
 // Filename suffix keeps a stray test build from ever being mistaken for (or
-// overwriting) the shipped prod one in dist/.
-const OUTFILE = isProd ? 'entity-progress-card.js' : 'entity-progress-card_dev.js';
+// overwriting) the shipped prod one in dist/ - and lets a dev and a prod file
+// loaded side by side each find their own translation files.
+const STEM = isProd ? 'entity-progress-card' : 'entity-progress-card_dev';
+const OUTFILE = `${STEM}.js`;
+
+// The editor's translations ship beside the bundle rather than inside it: one
+// positional array per language, indexed on TRANSLATION_KEYS from
+// EDITOR_KEY_START on, fetched when an editor opens (see
+// HassProviderSingleton#ensureEditorTranslations). English stays in the bundle
+// as the fallback dictionary, so it gets no file here.
+function writeEditorTranslations() {
+  const { editor } = parseJsBlock(fs.readFileSync(JS_FILE, 'utf8'));
+  for (const stale of fs.readdirSync(OUTDIR)) {
+    if (stale.startsWith(`${STEM}-`) && stale.endsWith('.json')) fs.unlinkSync(path.join(OUTDIR, stale));
+  }
+  let bytes = 0;
+  for (const [lang, values] of Object.entries(editor)) {
+    const body = JSON.stringify(values);
+    bytes += body.length;
+    fs.writeFileSync(path.join(OUTDIR, `${STEM}-${lang}.json`), body);
+  }
+  return { count: Object.keys(editor).length, bytes };
+}
 
 function main() {
   let bundled = esbuild.buildSync({
@@ -67,10 +89,14 @@ function main() {
 
   fs.mkdirSync(OUTDIR, { recursive: true });
   fs.writeFileSync(path.join(OUTDIR, OUTFILE), result.code);
+  const editorTranslations = writeEditorTranslations();
 
   const cssVerb = isProd ? 'minified' : 'resolved';
   console.log(
     `✅ Built ${path.join(OUTDIR, OUTFILE)} from ${ENTRY} [${isProd ? 'prod' : 'test'}] (${minifiedCount} CSS block(s) ${cssVerb}, bundled source ${bundled.length} → ${src.length} bytes pre-JS-minify).`,
+  );
+  console.log(
+    `✅ Wrote ${editorTranslations.count} editor translation file(s) ${path.join(OUTDIR, `${STEM}-<lang>.json`)} (${editorTranslations.bytes} bytes total).`,
   );
 }
 

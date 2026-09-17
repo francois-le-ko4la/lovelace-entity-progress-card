@@ -988,6 +988,74 @@ This only helps for strings that overlap HA's own vocabulary — most of this
 project's option-specific wording (`bar_effect`, `watermark`, …) has no HA
 equivalent to check against, so still needs translating from scratch.
 
+### The translation table is cut in two
+
+Roughly 89% of the translated text is editor-only — measured on
+`translations/*.json`, `editor.*` weighs 114 KB across the 39 languages against
+16 KB for `card.*`. A dashboard that is merely displayed never reads a single
+one of those keys, so they do not ship inside the bundle.
+
+The cut is positional. `TRANSLATION_KEYS` lists every key once;
+`EDITOR_KEY_START` is the index of the first `editor.*` one, and
+`scripts/translations.js`'s `editorStartOf` refuses to generate anything if a
+`card.*` key ever lands after it — the whole scheme is one `slice()` on both
+sides, so the two groups have to stay contiguous.
+
+What the generated `src/utils/translations.js` exports, and who reads it:
+
+| binding                  | ships in the bundle | read by            |
+| ------------------------ | ------------------- | ------------------ |
+| `TRANSLATION_KEYS`       | yes                 | `hass-provider.ts` |
+| `EDITOR_KEY_START`       | yes                 | `hass-provider.ts` |
+| `TRANSLATIONS_CARD`      | yes, 39 languages   | `hass-provider.ts` |
+| `TRANSLATIONS_EDITOR_EN` | yes, English only   | `hass-provider.ts` |
+| `TRANSLATIONS_EDITOR`    | **no**              | `scripts/build.js` |
+
+Nothing under `src/` imports `TRANSLATIONS_EDITOR`, so esbuild drops it.
+`scripts/build.js` writes it out instead as one file per language,
+`dist/entity-progress-card-<lang>.json`, a positional array carrying the same
+`0` sentinels as the bundled half — 1 to 2 KB gzipped each. English has no file:
+it stays in the bundle as the fallback dictionary every other language resolves
+its sentinels against, which is also what a failed fetch falls back to.
+
+`knip.json` excludes the generated file from `lint:unused` for that same reason:
+`TRANSLATIONS_EDITOR` is an unused export on purpose, and knip has no way to
+know it.
+
+That "nothing imports it" is an assumption no type checker can hold, and
+breaking it silently adds ~110 KB to every install, so
+`scripts/check-i18n-split.js` asserts it against the built bundle — the shipped
+file must not contain a non-English editor label, and every language's file must
+sit beside it with the expected length. `check:github` runs it after
+`build:prod`, `check:push` again after the dev build.
+
+### Loading the editor half
+
+`HACore.getConfigElement` is `async` and awaits
+`HassProviderSingleton.ensureEditorTranslations()`. Home Assistant awaits
+`getConfigElement()` on all three element families — see
+`hui-card-element-editor.ts` and its badge/feature twins in
+`home-assistant/frontend` — so the editor element is only created once the
+dictionary is in. Nothing is ever rendered in English and swapped afterwards.
+
+The file is fetched from the directory the bundle itself was served from:
+`CARD_CONTEXT.moduleUrl` (`document.currentScript?.src`, or the Resource Timing
+entry matching `CARD_CONTEXT.bundleStem` for a module load — never
+`import.meta`, see issue #108), falling back to
+`/hacsfiles/lovelace-entity-progress-card/`. A `?v=<VERSION>` query defeats the
+browser cache after an update: HACS cache-busts the JS resource it installs,
+never its sibling files.
+
+Failure is not an error state. A 404, a timeout (4 s), a payload of the wrong
+length — any of these resolve the promise with the editor in English rather than
+blocking it. The promise itself is the lock, cached per language, so seven
+element types opened in a row share one request.
+
+Release-side, `.github/workflows/release.yaml` uploads
+`dist/entity-progress-card[.-]*` as a glob — the pattern deliberately excludes
+the `_dev` build. HACS downloads every asset attached to the release, which is
+what puts the JSON files next to the bundle in the install directory.
+
 ## Adding a new option
 
 ### Naming rules

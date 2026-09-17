@@ -32,7 +32,11 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          # Named, not a glob - the shipped bundle, explicitly.
-          file: dist/entity-progress-card.js
+          # The bundle plus the per-language editor translation files built
+          # beside it (scripts/build.js) - the card fetches them from the
+          # install directory, so HACS has to bring them down too. The pattern
+          # excludes the *_dev* build, which check:github never produces.
+          file: dist/entity-progress-card[.-]*
+          file_glob: true
           tag: ${{ github.event.release.tag_name }}
           overwrite: true

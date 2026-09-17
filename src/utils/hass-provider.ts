@@ -5,8 +5,8 @@
  * holding its own reference.
  */
 
-import { CARD_CONTEXT, HA_CONTEXT, CARD, SEV, HA_LABEL_FAMILIES } from './parameters.js';
-import { TRANSLATION_KEYS, TRANSLATIONS_FLAT } from './translations.js';
+import { CARD_CONTEXT, HA_CONTEXT, CARD, SEV, HA_LABEL_FAMILIES, VERSION } from './parameters.js';
+import { TRANSLATION_KEYS, EDITOR_KEY_START, TRANSLATIONS_CARD, TRANSLATIONS_EDITOR_EN } from './translations.js';
 import { is, has } from './common-checks.js';
 import { Logger, type LoggerInstance } from './log.js';
 
@@ -71,22 +71,78 @@ type EntityState = {
   attributes: Record<string, unknown>;
 } & Record<string, unknown>;
 
+// One language's editor half, as shipped beside the bundle: the same
+// positional array the card half uses, sentinels included.
+type EditorRow = readonly (string | 0)[];
+
 // 0 is the "same as English" sentinel (see translations.js). Cached per
 // language - base.ts's hass-not-loaded-yet fallback can call this per field.
+// The entry is replaced, not mutated, once a language's editor file arrives,
+// so a tree already handed out keeps showing what it was built with until its
+// holder asks again.
 const translationTreeCache = new Map<string, Record<string, unknown>>();
 
-function buildTranslationTree(lang: string): Record<string, unknown> {
-  const cached = translationTreeCache.get(lang);
-  if (cached) return cached;
-  const values = TRANSLATIONS_FLAT[lang as keyof typeof TRANSLATIONS_FLAT];
-  const enValues = TRANSLATIONS_FLAT.en;
+// English is the fallback dictionary for both halves: the card half ships in
+// every language, the editor half only in English (see translations.js).
+function buildTranslationTree(lang: string, editorValues?: EditorRow): Record<string, unknown> {
+  const cardValues = TRANSLATIONS_CARD[lang as keyof typeof TRANSLATIONS_CARD];
   const tree: Record<string, unknown> = {};
   TRANSLATION_KEYS.forEach((key, i) => {
+    const isEditorKey = i >= EDITOR_KEY_START;
+    const index = isEditorKey ? i - EDITOR_KEY_START : i;
+    const value = isEditorKey ? editorValues?.[index] : cardValues[index];
+    const english = isEditorKey ? TRANSLATIONS_EDITOR_EN[index] : TRANSLATIONS_CARD.en[index];
     const segments = key.split('.');
     let node = tree;
     for (let s = 0; s < segments.length - 1; s++) node = (node[segments[s]] ??= {}) as Record<string, unknown>;
-    node[segments[segments.length - 1]] = values[i] === 0 ? enValues[i] : values[i];
+    node[segments[segments.length - 1]] = value === 0 || value === undefined ? english : value;
   });
+  return tree;
+}
+
+// Languages whose cached tree already carries its fetched editor half.
+const treesWithEditor = new Set<string>();
+
+// Last resort when the bundle's own URL can't be read: HACS installs this card
+// under its repository name.
+const HACS_DIRECTORY = '/hacsfiles/lovelace-entity-progress-card/';
+// An editor that has to wait is worse than an editor in English.
+const EDITOR_FETCH_TIMEOUT_MS = 4000;
+
+// The language file sits in the directory the bundle itself was served from.
+function editorDictionaryUrl(lang: string): string {
+  // HACS cache-busts the JS resource it installs, never a sibling file.
+  const file = `${CARD_CONTEXT.bundleStem}-${lang}.json?v=${encodeURIComponent(VERSION)}`;
+  const base = CARD_CONTEXT.moduleUrl;
+  if (!base) return `${HACS_DIRECTORY}${file}`;
+  try {
+    return new URL(file, base).href;
+  } catch {
+    return `${HACS_DIRECTORY}${file}`;
+  }
+}
+
+async function fetchEditorRow(lang: string): Promise<EditorRow | null> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), EDITOR_FETCH_TIMEOUT_MS);
+  try {
+    const response = await fetch(editorDictionaryUrl(lang), { signal: controller.signal });
+    if (!response.ok) return null;
+    const row: unknown = await response.json();
+    // A file left over from another version would shift every label by one.
+    if (!is.array(row) || row.length !== TRANSLATION_KEYS.length - EDITOR_KEY_START) return null;
+    return row as EditorRow;
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function cachedTranslationTree(lang: string, editorValues?: EditorRow): Record<string, unknown> {
+  const cached = translationTreeCache.get(lang);
+  if (cached) return cached;
+  const tree = buildTranslationTree(lang, editorValues);
   translationTreeCache.set(lang, tree);
   return tree;
 }
@@ -166,7 +222,7 @@ class HassProviderSingleton {
 
   get language(): string {
     const lang = this.#hass?.language;
-    return lang && lang in TRANSLATIONS_FLAT ? lang : CARD.config.language;
+    return lang && lang in TRANSLATIONS_CARD ? lang : CARD.config.language;
   }
 
   // Codes sharing a template+noun pair instead of a full sentence each -
@@ -268,6 +324,35 @@ class HassProviderSingleton {
     // nothing behind this would answer for them.
     if (!this.#haFamilyUsable(entry.family)) return entry.fallback;
     return this.#hass?.localize?.(entry.haKey) || entry.fallback;
+  }
+
+  // The editor's labels are not in the bundle: one JSON per language sits
+  // beside it (scripts/build.js), fetched the first time an editor opens. The
+  // promise is the lock - seven element types opening in a row share one
+  // request, and the browser cache answers the next page load.
+  static #editorRows = new Map<string, Promise<EditorRow | null>>();
+
+  /**
+   * Resolves once the active language's editor labels are available. English
+   * needs nothing - it ships in the bundle - and a failed or timed-out fetch
+   * resolves all the same, leaving that language's editor in English rather
+   * than blocking it. Awaited by HACore.getConfigElement, which Home Assistant
+   * awaits in turn, so no editor is ever built against a half-loaded tree.
+   */
+  async ensureEditorTranslations(): Promise<void> {
+    const lang = this.language;
+    if (lang === CARD.config.language || treesWithEditor.has(lang)) return;
+    let pending = HassProviderSingleton.#editorRows.get(lang);
+    if (!pending) {
+      pending = fetchEditorRow(lang);
+      HassProviderSingleton.#editorRows.set(lang, pending);
+    }
+    const row = await pending;
+    this.#log?.debug(`editor translations for ${lang}: ${row ? 'loaded' : 'unavailable, staying in English'}`);
+    if (!row || treesWithEditor.has(lang)) return;
+    translationTreeCache.set(lang, buildTranslationTree(lang, row));
+    treesWithEditor.add(lang);
+    if (this.language === lang) this.#loadTranslations(lang);
   }
 
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
@@ -441,8 +526,8 @@ class HassProviderSingleton {
   }
 
   #loadTranslations(lang: string) {
-    const curLanguage = has.own(TRANSLATIONS_FLAT, lang) ? lang : CARD.config.language;
-    this.#translations = buildTranslationTree(curLanguage);
+    const curLanguage = has.own(TRANSLATIONS_CARD, lang) ? lang : CARD.config.language;
+    this.#translations = cachedTranslationTree(curLanguage);
   }
 
   #getRelativeTimeFormat(): Intl.RelativeTimeFormat {

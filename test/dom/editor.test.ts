@@ -27,12 +27,14 @@ describe('every card hands back an editor that builds its fields', () => {
     // contract, not as an exemption for a specific pair.
     if (!editor) continue;
 
-    test(`${key} -> ${editor}`, () => {
+    // getConfigElement is async (it waits for the editor's translations, which
+    // ship beside the bundle) - Home Assistant awaits it the same way.
+    test(`${key} -> ${editor}`, async () => {
       const cardCtor = customElements.get(typeName) as
-        (CustomElementConstructor & { getConfigElement?: () => HTMLElement | null }) | undefined;
+        (CustomElementConstructor & { getConfigElement?: () => Promise<HTMLElement | null> }) | undefined;
       assert.ok(cardCtor, `${typeName} is not registered`);
 
-      const el = cardCtor.getConfigElement?.() as EditorEl | null;
+      const el = (await cardCtor.getConfigElement?.()) as EditorEl | null;
       assert.ok(el, `${typeName}.getConfigElement() returned nothing`);
       assert.equal(el.tagName.toLowerCase(), editor);
 

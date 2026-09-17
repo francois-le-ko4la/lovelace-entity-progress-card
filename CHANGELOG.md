@@ -94,6 +94,15 @@ On a Home Assistant older than the one that introduced a given label, that whole
 group falls back to English rather than showing half of it translated — every
 other label stays in your language.
 
+#### The editor's words ship beside the card, not inside it
+
+Editor labels are only needed when you actually open an editor, so they no
+longer travel inside the card: they sit next to it as one small file per
+language, fetched on demand. The card itself, error messages included, stays
+fully translated and works offline exactly as before. Installed through HACS
+there is nothing to do; installed by hand, copy the
+`entity-progress-card-<lang>.json` files next to `entity-progress-card.js`.
+
 - **Editor wording**: labels dropped what their own panel already said — "Show
   minimum" became "Minimum", "Bar below content" became "Below content" — in all
   39 languages.
@@ -274,14 +283,53 @@ a panel.
 - The card's default attribute per domain and the entity picker's own
   suggestions come from one shared table instead of two that had drifted.
 
+- A third smaller than 1.6.2, despite everything this release adds: 648 → 399
+  KB, and 155 → 102 KB compressed. The translation table used to be nearly half
+  the shipped file; what stays in it now is 4%.
+
 We care about getting the details right — but even so, something here might have
 slipped through. You don't need to be a developer to notice it. If something
 feels off, that's reason enough. Open a [GitHub issue]. Or say hi on [Discord].
 We'd rather know than have you go looking for a workaround on your own.
 
-- Smaller than 1.6.2 despite everything this release adds: 648 → 573 KB, and 155
-  → 142 KB compressed. The translation table now accounts for 37% of the shipped
-  file, where it used to be nearly half of it.
+## What's new (1.6.3-rc4)
+
+### 🔧 Improvements
+
+#### The editor's words ship beside the card, not inside it
+
+A dashboard that is only being looked at never reads an editor label, yet every
+install downloaded all 39 languages of them. They now sit next to the card as
+one file per language — 1 to 2 KB over the wire — fetched the first time an
+editor is opened, and cached by the browser from then on. The card itself, error
+messages included, stays fully translated inside the bundle and works offline
+exactly as before.
+
+Installed through HACS there is nothing to do: the files come down with the
+card. Installed by hand, copy the `entity-progress-card-<lang>.json` files next
+to `entity-progress-card.js` — without them the editor falls back to English,
+while the card stays in your language.
+
+### 🧹 Under the hood
+
+- The shipped file, measured on the published assets:
+
+  | Version    | Raw    | Gzipped |
+  | ---------- | ------ | ------- |
+  | 1.6.2      | 648 KB | 155 KB  |
+  | 1.6.3-rc3  | 573 KB | 142 KB  |
+  | this build | 399 KB | 102 KB  |
+
+  89% of the translation table was editor-only and has left the bundle. What
+  stays is the 18 keys a card renders on its own, 4% of the file.
+
+- `getConfigElement` is async: Home Assistant awaits it, so an editor is built
+  only once its language file is in — never rendered in English and corrected
+  afterwards. A failed fetch or a timeout leaves it in English rather than
+  blocking it.
+
+- `scripts/check-i18n-split.js` fails the build if a single non-English editor
+  label ever reappears in the shipped file.
 
 ## What's new (1.6.3-rc3)
 

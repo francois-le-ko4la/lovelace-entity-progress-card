@@ -176,10 +176,15 @@ class HACore extends HTMLElement {
     this._shadow = this.attachShadow({ mode: CARD.config.shadowMode as 'open' | 'closed' });
   }
 
-  static getConfigElement(): HTMLElement | null {
+  // Async on purpose: Home Assistant awaits this (hui-card-element-editor and
+  // its badge/feature twins), which is where the editor's translations get
+  // loaded - they ship beside the bundle, not inside it.
+  static async getConfigElement(): Promise<HTMLElement | null> {
     const metaType = Object.values(META.types).find((t) => t.typeName === this._baseClass) as
       { editor?: string } | undefined;
-    return metaType?.editor ? document.createElement(devName(metaType.editor)) : null;
+    if (!metaType?.editor) return null;
+    await HassProviderSingleton.getInstance().ensureEditorTranslations();
+    return document.createElement(devName(metaType.editor));
   }
 
   connectedCallback() {
