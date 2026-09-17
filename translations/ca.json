@@ -35,7 +35,9 @@
         "highlight": "Ressaltat",
         "label": "Etiqueta",
         "above_mode": "Font de l'alerta superior",
-        "below_mode": "Font de l'alerta inferior"
+        "below_mode": "Font de l'alerta inferior",
+        "above": "@ui.panel.lovelace.editor.condition-editor.condition.numeric_state.above|Above",
+        "below": "@ui.panel.lovelace.editor.condition-editor.condition.numeric_state.below|Below"
       },
       "badge": {
         "toggle": "Insígnia",
@@ -108,7 +110,26 @@
       "window": "Finestra de temps",
       "rows": "Files",
       "line_size": "Gruix",
-      "mark_defaults": "Valors per defecte"
+      "mark_defaults": "Valors per defecte",
+      "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
+      "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
+      "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
+      "unit": "@ui.panel.lovelace.editor.card.generic.unit|Unit",
+      "entities": "@ui.panel.lovelace.editor.card.generic.entities|Entities",
+      "hide_mode": "@ui.common.hide|Hide",
+      "layout": "@ui.panel.lovelace.editor.card.tile.content_layout|Content layout",
+      "decimal": "@ui.dialogs.entity_registry.editor.precision|Display precision",
+      "state_content": "@ui.panel.lovelace.editor.card.heading.entity_config.state_content|State content",
+      "add_entity": "@ui.panel.lovelace.editor.entities.add|Add entity",
+      "action_picker": "@ui.components.form-optional-actions.add|Add interaction",
+      "action": {
+        "tap": "@ui.panel.lovelace.editor.card.generic.tap_action|Tap behavior",
+        "hold": "@ui.panel.lovelace.editor.card.generic.hold_action|Hold behavior",
+        "double_tap": "@ui.panel.lovelace.editor.card.generic.double_tap_action|Double tap behavior",
+        "icon_tap": "@ui.panel.lovelace.editor.card.tile.icon_tap_action|Icon tap behavior",
+        "icon_hold": "@ui.panel.lovelace.editor.card.tile.icon_hold_action|Icon hold behavior",
+        "icon_double_tap": "@ui.panel.lovelace.editor.card.tile.icon_double_tap_action|Icon double tap behavior"
+      }
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -160,7 +181,8 @@
         "bottom": "A sota",
         "compact_below": "Compacta a sota",
         "overlay": "Superposada al contingut",
-        "top": "A sobre"
+        "top": "A sobre",
+        "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
       },
       "bar_scale": {
         "linear": "Lineal",
@@ -180,7 +202,8 @@
       },
       "density": {
         "compact": "Compacte",
-        "single_line": "Una línia"
+        "single_line": "Una línia",
+        "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
       },
       "enabled_disabled_mode": {
         "disabled": "Desactivat",
@@ -263,6 +286,10 @@
         "round": "Rodó",
         "striped": "Ratllat",
         "triangle": "Triangle"
+      },
+      "layout": {
+        "horizontal": "@ui.panel.lovelace.editor.card.tile.content_layout_options.horizontal|Horizontal",
+        "vertical": "@ui.panel.lovelace.editor.card.tile.content_layout_options.vertical|Vertical"
       }
     },
     "title": {
@@ -271,10 +298,18 @@
       "watermark": "Marques de nivell",
       "peak_marker": "Marcadors de pic",
       "indicators": "Indicadors i etiquetes",
-      "alerts": "Alertes"
+      "alerts": "Alertes",
+      "content": "@ui.panel.lovelace.editor.card.generic.content|Content",
+      "interaction": "@ui.panel.lovelace.editor.card.generic.interactions|Interactions"
     },
     "shared": {
-      "bar": "Barra"
+      "bar": "Barra",
+      "ent": "@ui.panel.lovelace.editor.card.generic.entity|Entity",
+      "attr": "@ui.panel.lovelace.editor.card.generic.attribute|Attribute",
+      "min": "@ui.panel.lovelace.editor.card.generic.minimum|Minimum",
+      "max": "@ui.panel.lovelace.editor.card.generic.maximum|Maximum",
+      "col": "@ui.panel.lovelace.editor.card.tile.color|Color",
+      "pos": "@ui.panel.lovelace.editor.card.entities.secondary_info_values.position|Position"
     }
   }
 }

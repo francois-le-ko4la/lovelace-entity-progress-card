@@ -35,7 +35,9 @@
         "highlight": "Επισήμανση",
         "label": "Ετικέτα",
         "above_mode": "Πηγή ειδοποίησης άνω ορίου",
-        "below_mode": "Πηγή ειδοποίησης κάτω ορίου"
+        "below_mode": "Πηγή ειδοποίησης κάτω ορίου",
+        "above": "@ui.panel.lovelace.editor.condition-editor.condition.numeric_state.above|Above",
+        "below": "@ui.panel.lovelace.editor.condition-editor.condition.numeric_state.below|Below"
       },
       "badge": {
         "toggle": "Σήμα",
@@ -108,7 +110,26 @@
       "window": "Χρονικό παράθυρο",
       "rows": "Γραμμές",
       "line_size": "Πάχος",
-      "mark_defaults": "Προεπιλογές"
+      "mark_defaults": "Προεπιλογές",
+      "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
+      "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
+      "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
+      "unit": "@ui.panel.lovelace.editor.card.generic.unit|Unit",
+      "entities": "@ui.panel.lovelace.editor.card.generic.entities|Entities",
+      "hide_mode": "@ui.common.hide|Hide",
+      "layout": "@ui.panel.lovelace.editor.card.tile.content_layout|Content layout",
+      "decimal": "@ui.dialogs.entity_registry.editor.precision|Display precision",
+      "state_content": "@ui.panel.lovelace.editor.card.heading.entity_config.state_content|State content",
+      "add_entity": "@ui.panel.lovelace.editor.entities.add|Add entity",
+      "action_picker": "@ui.components.form-optional-actions.add|Add interaction",
+      "action": {
+        "tap": "@ui.panel.lovelace.editor.card.generic.tap_action|Tap behavior",
+        "hold": "@ui.panel.lovelace.editor.card.generic.hold_action|Hold behavior",
+        "double_tap": "@ui.panel.lovelace.editor.card.generic.double_tap_action|Double tap behavior",
+        "icon_tap": "@ui.panel.lovelace.editor.card.tile.icon_tap_action|Icon tap behavior",
+        "icon_hold": "@ui.panel.lovelace.editor.card.tile.icon_hold_action|Icon hold behavior",
+        "icon_double_tap": "@ui.panel.lovelace.editor.card.tile.icon_double_tap_action|Icon double tap behavior"
+      }
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -160,7 +181,8 @@
         "bottom": "Κάτω",
         "compact_below": "Συμπαγής από κάτω",
         "overlay": "Πάνω από το περιεχόμενο",
-        "top": "Πάνω"
+        "top": "Πάνω",
+        "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
       },
       "bar_scale": {
         "linear": "Γραμμική",
@@ -180,7 +202,8 @@
       },
       "density": {
         "compact": "Συμπαγές",
-        "single_line": "Μία γραμμή"
+        "single_line": "Μία γραμμή",
+        "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
       },
       "enabled_disabled_mode": {
         "disabled": "Απενεργοποιημένο",
@@ -263,6 +286,10 @@
         "round": "Στρογγυλό",
         "striped": "Ριγέ",
         "triangle": "Τρίγωνο"
+      },
+      "layout": {
+        "horizontal": "@ui.panel.lovelace.editor.card.tile.content_layout_options.horizontal|Horizontal",
+        "vertical": "@ui.panel.lovelace.editor.card.tile.content_layout_options.vertical|Vertical"
       }
     },
     "title": {
@@ -271,10 +298,18 @@
       "watermark": "Δείκτες ορίου",
       "peak_marker": "Δείκτες αιχμής",
       "indicators": "Δείκτες και ετικέτες",
-      "alerts": "Ειδοποιήσεις"
+      "alerts": "Ειδοποιήσεις",
+      "content": "@ui.panel.lovelace.editor.card.generic.content|Content",
+      "interaction": "@ui.panel.lovelace.editor.card.generic.interactions|Interactions"
     },
     "shared": {
-      "bar": "Γραμμή"
+      "bar": "Γραμμή",
+      "ent": "@ui.panel.lovelace.editor.card.generic.entity|Entity",
+      "attr": "@ui.panel.lovelace.editor.card.generic.attribute|Attribute",
+      "min": "@ui.panel.lovelace.editor.card.generic.minimum|Minimum",
+      "max": "@ui.panel.lovelace.editor.card.generic.maximum|Maximum",
+      "col": "@ui.panel.lovelace.editor.card.tile.color|Color",
+      "pos": "@ui.panel.lovelace.editor.card.entities.secondary_info_values.position|Position"
     }
   }
 }

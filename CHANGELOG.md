@@ -310,7 +310,20 @@ card. Installed by hand, copy the `entity-progress-card-<lang>.json` files next
 to `entity-progress-card.js` — without them the editor falls back to English,
 while the card stays in your language.
 
+### 🐛 Fixes
+
+- **Editor labels**: the **Add entity** button of the stack and Multi lists, the
+  Multi list's own label, and the interaction picker's button and action names
+  showed English — or their raw key — in every language. They read Home
+  Assistant's own wording now, like the rest of the editor.
+
 ### 🧹 Under the hood
+
+- A label borrowed from Home Assistant is now stored as an
+  `@<HA key>|<English fallback>` marker at its own place in the translations,
+  resolved once when the translation tree is built. The separate table it used
+  to live in is gone, and with it the possibility of a label site reading past
+  it.
 
 - The shipped file, measured on the published assets:
 

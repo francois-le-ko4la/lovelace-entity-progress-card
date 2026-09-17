@@ -35,7 +35,9 @@
         "highlight": "হাইলাইট",
         "label": "লেবেল",
         "above_mode": "ঊর্ধ্ব অ্যালার্টের উৎস",
-        "below_mode": "নিম্ন অ্যালার্টের উৎস"
+        "below_mode": "নিম্ন অ্যালার্টের উৎস",
+        "above": "@ui.panel.lovelace.editor.condition-editor.condition.numeric_state.above|Above",
+        "below": "@ui.panel.lovelace.editor.condition-editor.condition.numeric_state.below|Below"
       },
       "badge": {
         "toggle": "ব্যাজ",
@@ -108,7 +110,26 @@
       "window": "সময় উইন্ডো",
       "rows": "সারি",
       "line_size": "পুরুত্ব",
-      "mark_defaults": "ডিফল্ট মান"
+      "mark_defaults": "ডিফল্ট মান",
+      "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
+      "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
+      "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
+      "unit": "@ui.panel.lovelace.editor.card.generic.unit|Unit",
+      "entities": "@ui.panel.lovelace.editor.card.generic.entities|Entities",
+      "hide_mode": "@ui.common.hide|Hide",
+      "layout": "@ui.panel.lovelace.editor.card.tile.content_layout|Content layout",
+      "decimal": "@ui.dialogs.entity_registry.editor.precision|Display precision",
+      "state_content": "@ui.panel.lovelace.editor.card.heading.entity_config.state_content|State content",
+      "add_entity": "@ui.panel.lovelace.editor.entities.add|Add entity",
+      "action_picker": "@ui.components.form-optional-actions.add|Add interaction",
+      "action": {
+        "tap": "@ui.panel.lovelace.editor.card.generic.tap_action|Tap behavior",
+        "hold": "@ui.panel.lovelace.editor.card.generic.hold_action|Hold behavior",
+        "double_tap": "@ui.panel.lovelace.editor.card.generic.double_tap_action|Double tap behavior",
+        "icon_tap": "@ui.panel.lovelace.editor.card.tile.icon_tap_action|Icon tap behavior",
+        "icon_hold": "@ui.panel.lovelace.editor.card.tile.icon_hold_action|Icon hold behavior",
+        "icon_double_tap": "@ui.panel.lovelace.editor.card.tile.icon_double_tap_action|Icon double tap behavior"
+      }
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -160,7 +181,8 @@
         "bottom": "নিচের দিকে",
         "compact_below": "কমপ্যাক্ট নিচে",
         "overlay": "বিষয়বস্তুর ওপর",
-        "top": "উপরের দিকে"
+        "top": "উপরের দিকে",
+        "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
       },
       "bar_scale": {
         "linear": "রৈখিক",
@@ -180,7 +202,8 @@
       },
       "density": {
         "compact": "কমপ্যাক্ট",
-        "single_line": "এক লাইনে"
+        "single_line": "এক লাইনে",
+        "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
       },
       "enabled_disabled_mode": {
         "disabled": "নিষ্ক্রিয়",
@@ -263,6 +286,10 @@
         "round": "গোলাকার",
         "striped": "ডোরাকাটা",
         "triangle": "ত্রিভুজ"
+      },
+      "layout": {
+        "horizontal": "@ui.panel.lovelace.editor.card.tile.content_layout_options.horizontal|Horizontal",
+        "vertical": "@ui.panel.lovelace.editor.card.tile.content_layout_options.vertical|Vertical"
       }
     },
     "title": {
@@ -271,10 +298,18 @@
       "watermark": "ওয়াটারমার্ক",
       "peak_marker": "পিক মার্কার",
       "indicators": "সূচক ও লেবেল",
-      "alerts": "সতর্কতা"
+      "alerts": "সতর্কতা",
+      "content": "@ui.panel.lovelace.editor.card.generic.content|Content",
+      "interaction": "@ui.panel.lovelace.editor.card.generic.interactions|Interactions"
     },
     "shared": {
-      "bar": "বার"
+      "bar": "বার",
+      "ent": "@ui.panel.lovelace.editor.card.generic.entity|Entity",
+      "attr": "@ui.panel.lovelace.editor.card.generic.attribute|Attribute",
+      "min": "@ui.panel.lovelace.editor.card.generic.minimum|Minimum",
+      "max": "@ui.panel.lovelace.editor.card.generic.maximum|Maximum",
+      "col": "@ui.panel.lovelace.editor.card.tile.color|Color",
+      "pos": "@ui.panel.lovelace.editor.card.entities.secondary_info_values.position|Position"
     }
   }
 }

@@ -12,7 +12,7 @@ import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 
 import {
-  BORROWED_OPTION_LABELS,
+  REUSED_OPTION_LABELS,
   COMPUTED_OPTION_LABELS,
   SELECT_TYPES,
   type SchemaLookup,
@@ -30,7 +30,7 @@ const labelled = (group: string): string[] => {
   // A value can name its label instead of carrying one (EditorBase#localizedOptions
   // merges them in), so the group alone no longer answers "is this one labelled".
   const computed = COMPUTED_OPTION_LABELS[group]?.('en') ?? {};
-  return [...own, ...Object.keys(BORROWED_OPTION_LABELS[group] ?? {}), ...Object.keys(computed)];
+  return [...own, ...Object.keys(REUSED_OPTION_LABELS[group] ?? {}), ...Object.keys(computed)];
 };
 
 const isLookup = (source: unknown): source is SchemaLookup =>

@@ -32,7 +32,7 @@ import {
 import { lengthSliderSelector, lengthUnitSelector } from '../utils/length.js';
 import { durationSliderSelector } from '../utils/duration.js';
 import { isMarkOverride, THEME_ALIASES, schemaOptions, ACTION_FIELDS, type WatermarkMark } from '../card/schema.js';
-import { BORROWED_OPTION_LABELS, COMPUTED_OPTION_LABELS, SELECT_TYPES, type SchemaLookup } from './select-types.js';
+import { REUSED_OPTION_LABELS, COMPUTED_OPTION_LABELS, SELECT_TYPES, type SchemaLookup } from './select-types.js';
 
 // Every dynamic editor field element built below (ha-selector, the chip
 // custom elements from chips.ts, the list editors from list-editors.ts)
@@ -241,25 +241,25 @@ class EditorBase extends HTMLElement {
       string,
       Record<string, string>
     >;
-    const borrow = (group: string) =>
+    const reuse = (group: string) =>
       Object.fromEntries(
-        Object.entries(BORROWED_OPTION_LABELS[group]).map(([value, key]) => [value, this.#labelFor(key) ?? value]),
+        Object.entries(REUSED_OPTION_LABELS[group]).map(([value, key]) => [value, this.#labelFor(key) ?? value]),
       );
-    // Union, not a walk of the tree: a group whose every value is borrowed has
-    // no entry left in the translations, and iterating the tree alone would drop
-    // it - leaving that dropdown unlabelled.
+    // Union, not a walk of the tree: a group whose every value is reused or
+    // computed has no entry of its own in the translations, and iterating the
+    // tree alone would drop it - leaving that dropdown unlabelled.
     const computed = (group: string) => COMPUTED_OPTION_LABELS[group](this.#hassProvider.language);
     const groups = new Set([
       ...Object.keys(tree),
-      ...Object.keys(BORROWED_OPTION_LABELS),
+      ...Object.keys(REUSED_OPTION_LABELS),
       ...Object.keys(COMPUTED_OPTION_LABELS),
     ]);
     return Object.fromEntries(
       [...groups].map((group) => {
-        // Stored labels win: a group can borrow or compute what it does not carry.
+        // Stored labels win: a group can reuse or compute what it does not carry.
         const own = tree[group] ?? {};
         if (group in COMPUTED_OPTION_LABELS) return [group, { ...computed(group), ...own }];
-        return [group, group in BORROWED_OPTION_LABELS ? { ...borrow(group), ...own } : tree[group]];
+        return [group, group in REUSED_OPTION_LABELS ? { ...reuse(group), ...own } : tree[group]];
       }),
     );
   }
@@ -410,7 +410,7 @@ class EditorBase extends HTMLElement {
 
     const panel = document.createElement('ha-expansion-panel') as HaExpansionPanel;
     const title = def.title ?? '';
-    panel.header = this.#hassProvider.haLabel(title.replace(/^editor\./, '')) ?? this.#hassProvider.localize(title);
+    panel.header = this.#hassProvider.localize(title);
     panel.outlined = true;
     // Fields in a collapsed panel are skipped by updateAll (see
     // EditorDOMHelper) - refresh them the moment the panel opens, so a change
@@ -544,10 +544,9 @@ class EditorBase extends HTMLElement {
   // what a select offers), except the shared group - a word several fields
   // answer to, named apart so editing it is visibly editing all of them.
   #labelFor(path: string): string | undefined {
-    // HA first: it names these concepts everywhere else in the interface, and
-    // keeps naming them when it rewords them. Ours is the fallback (English).
-    const borrowed = this.#hassProvider.haLabel(path);
-    if (borrowed) return borrowed;
+    // Labels Home Assistant already names carry an "@<HA key>|<English>"
+    // marker in translations/, resolved when the tree is built - nothing to
+    // do here beyond walking it (see HassProviderSingleton's resolveLabel).
     const shared = path.startsWith(SHARED_LABEL_PREFIX);
     const root = this.#hassProvider.localizeGroup(shared ? SHARED_LABEL_NS : EDITOR_FIELD_NS);
     const walk = (node: unknown, segment: string) => (node as Record<string, unknown> | undefined)?.[segment];
@@ -655,9 +654,10 @@ class EditorBase extends HTMLElement {
   }): EditorFieldElement {
     const { field, tagName, labelKey, rows, addLabelKey, addLabelDefault } = opts;
     const el = createFieldEl(field, tagName);
-    const fieldLabels = this.#hassProvider.localizeGroup(EDITOR_FIELD_NS);
-    el.label = fieldLabels?.[labelKey] ?? labelKey;
-    el.setAddLabel?.(fieldLabels?.[addLabelKey] ?? addLabelDefault);
+    // #labelFor, not a raw group read: it also resolves the shared.* namespace,
+    // which several of these keys live in.
+    el.label = this.#labelFor(labelKey) ?? labelKey;
+    el.setAddLabel?.(this.#labelFor(addLabelKey) ?? addLabelDefault);
     el.hass = this.hass;
     el.value = is.array(rows) ? rows : [];
     return this.#registerFieldEl(field, el);
@@ -667,11 +667,9 @@ class EditorBase extends HTMLElement {
   // labelKey convention ('hold_action' -> action.hold).
   #buildActionPickerField(field: FieldDef): EditorFieldElement {
     const el = createFieldEl(field, EntityProgressActionPicker.ELEMENT_NAME);
-    const fieldLabels = this.#hassProvider.localizeGroup(EDITOR_FIELD_NS);
-    const actionLabels = fieldLabels?.action as unknown as Record<string, string> | undefined;
-    el.buttonLabel = fieldLabels?.action_picker ?? 'Add interaction';
+    el.buttonLabel = this.#labelFor('action_picker') ?? 'Add interaction';
     el.actionLabels = Object.fromEntries(
-      (field.items ?? []).map((k: string) => [k, actionLabels?.[k.replace(/_action$/, '')] ?? k]),
+      (field.items ?? []).map((k: string) => [k, this.#labelFor(`action.${k.replace(/_action$/, '')}`) ?? k]),
     );
     el.value = this.#resolveFieldMeta(field).value;
     return this.#registerFieldEl(field, el);

@@ -5,7 +5,7 @@
  * holding its own reference.
  */
 
-import { CARD_CONTEXT, HA_CONTEXT, CARD, SEV, HA_LABEL_FAMILIES, VERSION } from './parameters.js';
+import { CARD_CONTEXT, HA_CONTEXT, CARD, SEV, VERSION } from './parameters.js';
 import { TRANSLATION_KEYS, EDITOR_KEY_START, TRANSLATIONS_CARD, TRANSLATIONS_EDITOR_EN } from './translations.js';
 import { is, has } from './common-checks.js';
 import { Logger, type LoggerInstance } from './log.js';
@@ -46,7 +46,7 @@ type HomeAssistant = {
   areas: Record<string, AreaRegistryEntry>;
   floors: Record<string, FloorRegistryEntry>;
   // Optional on purpose: HA always provides it, but a key it cannot resolve
-  // returns '' (their localize.ts), which is what haLabel() below leans on.
+  // returns '' (their localize.ts), which is what resolveLabel above leans on.
   localize?: (key: string, ...args: unknown[]) => string;
   formatEntityState?: (stateObj: EntityState) => string;
   formatEntityAttributeValue?: (stateObj: EntityState | null, attribute: string) => string;
@@ -82,9 +82,29 @@ type EditorRow = readonly (string | 0)[];
 // holder asks again.
 const translationTreeCache = new Map<string, Record<string, unknown>>();
 
+// A value shaped "@<HA key>|<English fallback>" is a label Home Assistant
+// already names everywhere else in the interface: translations/ stores the
+// pointer, not a copy, so the editor speaks HA's vocabulary in every language
+// it supports and follows its rewordings without an update here. Their
+// localize() returns '' for a key it doesn't know (their localize.ts), which
+// is exactly what makes the fallback fire.
+const HA_LABEL_MARKER = '@';
+type Localize = (key: string) => string;
+
+function resolveLabel(value: string | number, localize?: Localize): string | number {
+  if (!is.string(value) || value[0] !== HA_LABEL_MARKER) return value;
+  const separator = value.indexOf('|');
+  const haKey = separator === -1 ? value.slice(1) : value.slice(1, separator);
+  const fallback = separator === -1 ? haKey : value.slice(separator + 1);
+  return localize?.(haKey) || fallback;
+}
+
 // English is the fallback dictionary for both halves: the card half ships in
 // every language, the editor half only in English (see translations.js).
-function buildTranslationTree(lang: string, editorValues?: EditorRow): Record<string, unknown> {
+// Markers are resolved here rather than at each read, so no caller can reach
+// a label without them - the editor half is only ever built from
+// ensureEditorTranslations, with HA's lovelace fragment loaded.
+function buildTranslationTree(lang: string, editorValues?: EditorRow, localize?: Localize): Record<string, unknown> {
   const cardValues = TRANSLATIONS_CARD[lang as keyof typeof TRANSLATIONS_CARD];
   const tree: Record<string, unknown> = {};
   TRANSLATION_KEYS.forEach((key, i) => {
@@ -95,13 +115,15 @@ function buildTranslationTree(lang: string, editorValues?: EditorRow): Record<st
     const segments = key.split('.');
     let node = tree;
     for (let s = 0; s < segments.length - 1; s++) node = (node[segments[s]] ??= {}) as Record<string, unknown>;
-    node[segments[segments.length - 1]] = value === 0 || value === undefined ? english : value;
+    node[segments[segments.length - 1]] = resolveLabel(value === 0 || value === undefined ? english : value, localize);
   });
   return tree;
 }
 
-// Languages whose cached tree already carries its fetched editor half.
-const treesWithEditor = new Set<string>();
+// Languages whose cached tree carries an editor half built with an editor
+// open - the only moment HA's lovelace translation fragment is guaranteed
+// loaded, and therefore the only moment its labels resolve.
+const editorReady = new Set<string>();
 
 // Last resort when the bundle's own URL can't be read: HACS installs this card
 // under its repository name.
@@ -139,10 +161,10 @@ async function fetchEditorRow(lang: string): Promise<EditorRow | null> {
   }
 }
 
-function cachedTranslationTree(lang: string, editorValues?: EditorRow): Record<string, unknown> {
+function cachedTranslationTree(lang: string, localize?: Localize): Record<string, unknown> {
   const cached = translationTreeCache.get(lang);
   if (cached) return cached;
-  const tree = buildTranslationTree(lang, editorValues);
+  const tree = buildTranslationTree(lang, undefined, localize);
   translationTreeCache.set(lang, tree);
   return tree;
 }
@@ -287,45 +309,6 @@ class HassProviderSingleton {
     return year > 2025 || (year === 2025 && month >= 3);
   }
 
-  // Flattened once: which family a borrowable path belongs to, and the HA key
-  // it reads. See HA_LABEL_FAMILIES for why families exist at all.
-  static #HA_PATHS: Map<string, { family: string; haKey: string; fallback: string }> = new Map(
-    Object.entries(HA_LABEL_FAMILIES).flatMap(([family, entries]) =>
-      Object.entries(entries).map(([path, [haKey, fallback]]) => [path, { family, haKey, fallback }] as const),
-    ),
-  );
-  // Per language: a family is usable only if HA resolves every key in it.
-  // Their localize() returns '' for anything it doesn't know (verified in
-  // frontend's localize.ts), which is the whole detection mechanism.
-  #haFamilies = new Map<string, boolean>();
-
-  #haFamilyUsable(family: string): boolean {
-    const cacheKey = `${this.language}:${family}`;
-    const cached = this.#haFamilies.get(cacheKey);
-    if (cached !== undefined) return cached;
-    const localize = this.#hass?.localize;
-    const usable =
-      typeof localize === 'function' &&
-      Object.values(HA_LABEL_FAMILIES[family]).every(([haKey]) => is.nonEmptyString(localize(haKey)));
-    this.#haFamilies.set(cacheKey, usable);
-    return usable;
-  }
-
-  /**
-   * Home Assistant's own label for a path this card borrows, or undefined -
-   * in which case the caller falls back to our own table (English there, see
-   * HA_LABEL_FAMILIES). Editor paths only: a dashboard has no guarantee the
-   * lovelace translation fragment is loaded.
-   */
-  haLabel(path: string): string | undefined {
-    const entry = HassProviderSingleton.#HA_PATHS.get(path);
-    if (!entry) return undefined;
-    // The fallback, not undefined: these labels left translations/ entirely, so
-    // nothing behind this would answer for them.
-    if (!this.#haFamilyUsable(entry.family)) return entry.fallback;
-    return this.#hass?.localize?.(entry.haKey) || entry.fallback;
-  }
-
   // The editor's labels are not in the bundle: one JSON per language sits
   // beside it (scripts/build.js), fetched the first time an editor opens. The
   // promise is the lock - seven element types opening in a row share one
@@ -341,17 +324,22 @@ class HassProviderSingleton {
    */
   async ensureEditorTranslations(): Promise<void> {
     const lang = this.language;
-    if (lang === CARD.config.language || treesWithEditor.has(lang)) return;
-    let pending = HassProviderSingleton.#editorRows.get(lang);
-    if (!pending) {
-      pending = fetchEditorRow(lang);
-      HassProviderSingleton.#editorRows.set(lang, pending);
+    if (editorReady.has(lang)) return;
+    let row: EditorRow | null = TRANSLATIONS_EDITOR_EN;
+    if (lang !== CARD.config.language) {
+      let pending = HassProviderSingleton.#editorRows.get(lang);
+      if (!pending) {
+        pending = fetchEditorRow(lang);
+        HassProviderSingleton.#editorRows.set(lang, pending);
+      }
+      row = await pending;
+      this.#log?.debug(`editor translations for ${lang}: ${row ? 'loaded' : 'unavailable, staying in English'}`);
     }
-    const row = await pending;
-    this.#log?.debug(`editor translations for ${lang}: ${row ? 'loaded' : 'unavailable, staying in English'}`);
-    if (!row || treesWithEditor.has(lang)) return;
-    translationTreeCache.set(lang, buildTranslationTree(lang, row));
-    treesWithEditor.add(lang);
+    if (editorReady.has(lang)) return;
+    editorReady.add(lang);
+    // Rebuilt even when the fetch failed, and even for English: what changes
+    // here is that HA's own labels finally resolve.
+    translationTreeCache.set(lang, buildTranslationTree(lang, row ?? undefined, this.#hass?.localize));
     if (this.language === lang) this.#loadTranslations(lang);
   }
 
@@ -527,7 +515,7 @@ class HassProviderSingleton {
 
   #loadTranslations(lang: string) {
     const curLanguage = has.own(TRANSLATIONS_CARD, lang) ? lang : CARD.config.language;
-    this.#translations = cachedTranslationTree(curLanguage);
+    this.#translations = cachedTranslationTree(curLanguage, this.#hass?.localize);
   }
 
   #getRelativeTimeFormat(): Intl.RelativeTimeFormat {

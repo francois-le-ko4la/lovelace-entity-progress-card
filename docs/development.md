@@ -988,6 +988,34 @@ This only helps for strings that overlap HA's own vocabulary — most of this
 project's option-specific wording (`bar_effect`, `watermark`, …) has no HA
 equivalent to check against, so still needs translating from scratch.
 
+### Borrowing a label from Home Assistant
+
+A key whose concept HA already names stores a pointer rather than a copy, at its
+own place in `translations/*.json`:
+
+```json
+"add_entity": "@ui.panel.lovelace.editor.entities.add|Add entity"
+```
+
+The same marker goes in every language file — it is not a translation, so it
+folds to the `0` sentinel everywhere but English and costs nothing per language.
+`HassProviderSingleton`'s `resolveLabel` expands it when the translation tree is
+built, never at read time: every reader — `localize`, `localizeGroup`,
+`EditorBase#labelFor` — receives a finished string, and no call site can reach a
+label without the resolution. That property is the point; resolving at each read
+is how four label sites once quietly shipped English.
+
+Timing is what makes `ui.panel.lovelace.editor.*` keys work at all: they live in
+HA's lovelace translation fragment, which is absent on a plain dashboard. The
+editor half of the tree is only ever built from `ensureEditorTranslations()`,
+called from `getConfigElement` — with an editor opening, so with the fragment
+loaded.
+
+When HA doesn't know a key — an older version, a fragment that never loads — its
+`localize()` returns `''` and the English text after the `|` is used, for that
+key alone. See the section above for how to find a key and check it is really
+translated in the language you expect.
+
 ### The translation table is cut in two
 
 Roughly 89% of the translated text is editor-only — measured on

@@ -35,7 +35,9 @@
         "highlight": "醒目提示",
         "label": "標籤",
         "above_mode": "上限警示來源",
-        "below_mode": "下限警示來源"
+        "below_mode": "下限警示來源",
+        "above": "@ui.panel.lovelace.editor.condition-editor.condition.numeric_state.above|Above",
+        "below": "@ui.panel.lovelace.editor.condition-editor.condition.numeric_state.below|Below"
       },
       "badge": {
         "toggle": "徽章",
@@ -108,7 +110,26 @@
       "window": "時間窗口",
       "rows": "行數",
       "line_size": "粗細",
-      "mark_defaults": "預設值"
+      "mark_defaults": "預設值",
+      "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
+      "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
+      "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
+      "unit": "@ui.panel.lovelace.editor.card.generic.unit|Unit",
+      "entities": "@ui.panel.lovelace.editor.card.generic.entities|Entities",
+      "hide_mode": "@ui.common.hide|Hide",
+      "layout": "@ui.panel.lovelace.editor.card.tile.content_layout|Content layout",
+      "decimal": "@ui.dialogs.entity_registry.editor.precision|Display precision",
+      "state_content": "@ui.panel.lovelace.editor.card.heading.entity_config.state_content|State content",
+      "add_entity": "@ui.panel.lovelace.editor.entities.add|Add entity",
+      "action_picker": "@ui.components.form-optional-actions.add|Add interaction",
+      "action": {
+        "tap": "@ui.panel.lovelace.editor.card.generic.tap_action|Tap behavior",
+        "hold": "@ui.panel.lovelace.editor.card.generic.hold_action|Hold behavior",
+        "double_tap": "@ui.panel.lovelace.editor.card.generic.double_tap_action|Double tap behavior",
+        "icon_tap": "@ui.panel.lovelace.editor.card.tile.icon_tap_action|Icon tap behavior",
+        "icon_hold": "@ui.panel.lovelace.editor.card.tile.icon_hold_action|Icon hold behavior",
+        "icon_double_tap": "@ui.panel.lovelace.editor.card.tile.icon_double_tap_action|Icon double tap behavior"
+      }
     },
     "field_helper": {
       "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
@@ -160,7 +181,8 @@
         "bottom": "下方",
         "compact_below": "下方精簡",
         "overlay": "疊加在內容上",
-        "top": "上方"
+        "top": "上方",
+        "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
       },
       "bar_scale": {
         "linear": "線性",
@@ -180,7 +202,8 @@
       },
       "density": {
         "compact": "精簡",
-        "single_line": "單行"
+        "single_line": "單行",
+        "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
       },
       "enabled_disabled_mode": {
         "disabled": "已停用",
@@ -263,6 +286,10 @@
         "round": "圓形",
         "striped": "條紋",
         "triangle": "三角形"
+      },
+      "layout": {
+        "horizontal": "@ui.panel.lovelace.editor.card.tile.content_layout_options.horizontal|Horizontal",
+        "vertical": "@ui.panel.lovelace.editor.card.tile.content_layout_options.vertical|Vertical"
       }
     },
     "title": {
@@ -271,10 +298,18 @@
       "watermark": "閾值標記",
       "peak_marker": "峰值標記",
       "indicators": "指示器與標籤",
-      "alerts": "警示"
+      "alerts": "警示",
+      "content": "@ui.panel.lovelace.editor.card.generic.content|Content",
+      "interaction": "@ui.panel.lovelace.editor.card.generic.interactions|Interactions"
     },
     "shared": {
-      "bar": "進度條"
+      "bar": "進度條",
+      "ent": "@ui.panel.lovelace.editor.card.generic.entity|Entity",
+      "attr": "@ui.panel.lovelace.editor.card.generic.attribute|Attribute",
+      "min": "@ui.panel.lovelace.editor.card.generic.minimum|Minimum",
+      "max": "@ui.panel.lovelace.editor.card.generic.maximum|Maximum",
+      "col": "@ui.panel.lovelace.editor.card.tile.color|Color",
+      "pos": "@ui.panel.lovelace.editor.card.entities.secondary_info_values.position|Position"
     }
   }
 }

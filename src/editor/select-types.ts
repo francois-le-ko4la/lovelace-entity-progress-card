@@ -6,11 +6,11 @@ type SchemaLookup = { variant: SchemaVariant; field: string };
 const from = (variant: SchemaVariant, field: string): SchemaLookup => ({ variant, field });
 
 // Option values naming something the field list already names: the label is
-// borrowed instead of stored a second time (see EditorBase#localizedOptions).
+// reused instead of stored a second time (see EditorBase#localizedOptions).
 // Only where every language agreed on the very same string - a near-match would
 // silently retranslate it. Here rather than in base.ts so the dropdown test
 // reads the same table the editor does.
-const BORROWED_OPTION_LABELS: Record<string, Record<string, string>> = {
+const REUSED_OPTION_LABELS: Record<string, Record<string, string>> = {
   hide: {
     progress_bar: 'shared.bar',
     shape: 'force_circular_background_mode',
@@ -20,9 +20,6 @@ const BORROWED_OPTION_LABELS: Record<string, Record<string, string>> = {
   },
   status_label_color_source: { bar: 'shared.bar', icon: 'icon' },
   value_source_mode: { entity: 'shared.ent' },
-  layout: { horizontal: 'layout.horizontal', vertical: 'layout.vertical' },
-  bar_position: { default: 'bar_position.default' },
-  density: { default: 'density.default' },
 };
 
 // Labels no one should translate: the browser already knows each locale's own
@@ -90,5 +87,5 @@ const SELECT_TYPES: Record<string, string | [group: string, keys: readonly strin
   trend_indicator_basis: 'trend_indicator_basis',
 };
 
-export { SELECT_TYPES, BORROWED_OPTION_LABELS, COMPUTED_OPTION_LABELS };
+export { SELECT_TYPES, REUSED_OPTION_LABELS, COMPUTED_OPTION_LABELS };
 export type { SchemaLookup };
