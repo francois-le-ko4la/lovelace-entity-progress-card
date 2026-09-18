@@ -105,7 +105,7 @@ const NumberFormatter = {
     // Own property only: `unit` comes from an integration's own
     // unit_of_measurement, and a prototype key ('constructor') would otherwise
     // resolve to a function and turn the result into NaN instead of null.
-    const factor = Object.hasOwn(CARD.config.duration.secondsPerUnit, unit)
+    const factor = has.own(CARD.config.duration.secondsPerUnit, unit)
       ? CARD.config.duration.secondsPerUnit[unit]
       : undefined;
     // CF5 - issue (critical) resolved - unknown/missing unit threw and crashed

@@ -292,6 +292,27 @@ slipped through. You don't need to be a developer to notice it. If something
 feels off, that's reason enough. Open a [GitHub issue]. Or say hi on [Discord].
 We'd rather know than have you go looking for a workaround on your own.
 
+## What's new (1.6.3-rc5)
+
+### 🐛 Fixes
+
+- **Chrome 92 and other pre-2022 engines**: the card stopped loading at all
+  since 1.6.3-rc2 — a `peak_marker` default called `Object.hasOwn` while the
+  schema was being built, and that method does not exist below Chrome 93. It
+  goes through the card's own fallback again, like every other modern API it
+  uses.
+- **Frameless cards** drew a border again whenever `--epb-card-border-width` was
+  set on a parent: the variable leads `ha-card`'s own border chain, and it
+  inherits. The property is set directly now, so a Multi row, a card embedded in
+  `type: entities` and one in a vertical stack never draw one.
+
+### 🧹 Under the hood
+
+- `npm run check:chrome92` re-runs `eslint-plugin-compat` against `Chrome >= 92`
+  instead of the promised matrix, with the two modules that encapsulate a
+  post-Chrome-92 API exempted, so a direct call anywhere else fails the pre-push
+  gate.
+
 ## What's new (1.6.3-rc4)
 
 ### 🔧 Improvements

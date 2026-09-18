@@ -66,7 +66,7 @@ Three gates, each named for when you run it. Each one contains the previous:
 | -------------- | ------------------------------ | ------------------------------------------------------------------------------------- |
 | `check:code`   | while you code                 | syntax, format, lint, types, i18n structure, logic tests                              |
 | `check:github` | every push **and** the release | release flags, knip, full i18n sync, markdown, `test:dom`, `build:prod`, es2021 floor |
-| `check:push`   | before pushing                 | the dev bundle (`build:test` + `node --check`)                                        |
+| `check:push`   | before pushing                 | `check:chrome92`, the dev bundle (`build:test` + `node --check`) and its split guard  |
 
 `check:github` deliberately never builds the dev bundle - it bakes in
 `__EPB_DEV_BUILD__: true` and has no business on a release runner.
@@ -471,6 +471,22 @@ where the browser allows it.
   problem earlier, before it'd otherwise only surface in `check:es-target` on
   the built output. See [Release process](#release-process) for exactly where
   the build-time check runs.
+- **Runtime APIs** (does the method exist at all) are neither syntax nor CSS, so
+  neither mechanism catches them: esbuild's target rewrites syntax and leaves
+  `Object.hasOwn` exactly as written, and `es-check` only parses. Two modules
+  encapsulate the ones this card uses — `common-checks.ts`'s `has.own` and
+  `browser-support.ts`'s `deepClone` — each picking the modern API or a fallback
+  on `IN_SUPPORTED_MATRIX`; every other module goes through them.
+  `npm run check:chrome92` (in `check:push`, local only — Chrome 92 is best
+  effort, not something a release runner should block on) re-runs
+  `eslint-plugin-compat` against `Chrome >= 92` with those two files exempted,
+  so a direct call anywhere else is a finding. It reads source rather than the
+  bundle, and sees globals and static methods but not prototype methods on an
+  untyped receiver — a pass is encouraging, not proof. The worked example:
+  `Object.hasOwn` sat unguarded in `formatting.ts` for months, harmless because
+  nothing on a load-time path reached it, until a `peak_marker` schema default
+  began calling it _while the schema was being built_ — taking the whole card
+  down on Chrome 92, on every dashboard.
 - **Visual/CSS degradation** is a separate, manual mechanism — there's no build
   target or linter for "does this gradient look right on Safari 15.4". Effects
   that use a modern CSS feature (`color-mix()`, `round()`, Constructable

@@ -20,12 +20,16 @@ import { CARD_CSS } from '../../src/utils/styles.js';
 import '../../src/index.js';
 
 // Every property ha-card's own :host block paints with, and what it must be
-// given for the card to disappear (home-assistant/frontend, ha-card.ts).
+// given for the card to disappear (home-assistant/frontend, ha-card.ts) - plus
+// border-width as a real property, which the variable alone cannot guarantee:
+// --epb-card-border-width leads ha-card's own chain and inherits, so a parent
+// setting it used to put a border back on every nested frameless card.
 const NEUTRALISED = {
   '--ha-card-background': 'transparent',
   '--ha-card-border-width': '0',
   '--ha-card-box-shadow': 'none',
   '--ha-card-backdrop-filter': 'none',
+  'border-width': '0',
 };
 
 const framelessRule = () => {
@@ -37,7 +41,7 @@ const framelessRule = () => {
 describe('frameless - nothing of the card is left behind', () => {
   for (const [property, value] of Object.entries(NEUTRALISED)) {
     test(`${property} is neutralised`, () => {
-      assert.match(framelessRule(), new RegExp(`${property}:\\s*${value}\\s*;`));
+      assert.match(framelessRule(), new RegExp(`(?<![-\\w])${property}:\\s*${value}\\s*;`));
     });
   }
 });

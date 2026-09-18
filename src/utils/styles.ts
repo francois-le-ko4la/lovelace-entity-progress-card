@@ -237,6 +237,11 @@ ${CARD.htmlStructure.card.element} {
      background does not stop a filter: a glass theme sets this globally, and a
      nested frameless card kept frosting whatever it sat on. */
   --ha-card-backdrop-filter: none;
+  /* A real property, not a variable: --epb-card-border-width leads ha-card's
+     own border-width chain and it inherits, so a card_mod setting it on a
+     parent reinstated a border on every frameless card nested inside - Multi
+     rows included, which force frameless precisely so no frame is drawn. */
+  border-width: 0;
 }
 
 /* The same frost, painted where no variable can reach it: a glass theme
