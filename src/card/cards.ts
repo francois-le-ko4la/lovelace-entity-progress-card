@@ -22,6 +22,12 @@ import type { DivergingGradients } from './core.js';
 import type { HomeAssistant } from '../utils/hass-provider.js';
 import type { LovelaceConfig, Config } from '../utils/types.js';
 import { jinjaOf } from './schema.js';
+import { ProgressMath } from './progress-math.js';
+
+// The three HA asks a full card for and never a badge or a feature. Shared
+// because Card and TemplateCard have no common ancestor below HABase, so
+// nothing else keeps the two lists in step.
+const CARD_LAYOUT_METHODS = ['getCardSize', 'getLayoutOptions', 'getGridOptions'] as const;
 
 /**
  * Represents the base class for all standard cards:
@@ -54,29 +60,12 @@ class EntityProgressCardBase extends HABase {
   }
 
   // trend_indicator.window seeds from HA's own history - Card/Template only
-  // (peak_marker's own seeding lives on HACore, see its own comment there).
-  #trendSeedSignature: string | null = null;
-
+  // (peak_marker's own seeding lives on HACore, which also owns the shared
+  // once-per-signature contract both go through).
   _seedTrendHistoryOnce() {
-    const config = this._cardView.config.trend_indicator;
-    const signature = this._seedSignature(is.plainObject(config) ? config.window : undefined);
-    if (signature === null || signature === this.#trendSeedSignature) return;
-    this.#trendSeedSignature = signature;
-    this._seedTrendHistory().catch(() => {
-      // best-effort: live sampling alone still works from here
-    });
-  }
-
-  async _seedTrendHistory() {
-    const config = this._cardView.config.trend_indicator;
-    if (!is.plainObject(config) || !is.number(config.window)) return;
-    const signature = this._seedSignature(config.window);
-
-    const points = await this._fetchHistory(config.window);
-    // A newer entity/config swap may have started its own seed while this
-    // fetch was in flight - only the still-current signature applies.
-    if (!points.length || signature !== this.#trendSeedSignature) return;
-    this._cardView.seedTrend(points.map((p) => ({ t: p.t, percent: this._cardView.percentForRawValue(p.value) })));
+    this._seedFromHistory('trend_indicator', this._cardView.config.trend_indicator, (points) =>
+      this._cardView.seedTrend(points.map((p) => ({ t: p.t, percent: this._cardView.percentForRawValue(p.value) }))),
+    );
   }
 
   // Adds the value text on top of HACore's default tick (refresh + bar CSS,
@@ -182,7 +171,7 @@ class EntityProgressCard extends EntityProgressCardBase {
   // ─── STATIC METHODS ───────────────────────────────────────────────────────
 
   static get _loggedMethods() {
-    return [...super._loggedMethods, 'getCardSize', 'getLayoutOptions', 'getGridOptions'];
+    return [...super._loggedMethods, ...CARD_LAYOUT_METHODS];
   }
 }
 
@@ -249,7 +238,7 @@ class EntityProgressFeatures extends HACore {
     if (!this.#rawConfig || this.#rawConfig.entity) return;
     const merged = { ...this.#rawConfig, entity: entityId };
     this._cardView.config = merged;
-    this._registerWatchedEntities(merged);
+    this._registerWatchedEntities();
     if (this.hass) this._handleHassUpdate();
   }
 
@@ -543,13 +532,10 @@ class EntityProgressTemplateBase extends HABase {
     const value = parsed ?? 0;
 
     // CF5 - issue (major) resolved - a Jinja `percent` isn't bounded the way
-    // ProgressCalc's own min/max division is (see ViewCore.get percent(),
-    // which clamps for exactly this reason). The CSS fill is
-    // translateX-based (GPU, not width-based), so it doesn't self-clamp
-    // above 100%/below -100% - it overshoots past the container edge and
-    // the bar renders with an empty gap on one side instead of full.
+    // a min/max division is, so it goes through the same rule (see
+    // ProgressMath.clampPercent for why the bar needs one at all).
     const isCenterZero = Boolean(this._cardView.config.center_zero);
-    const clamped = isCenterZero ? Math.max(-100, Math.min(100, value)) : Math.max(0, Math.min(100, value));
+    const clamped = ProgressMath.clampPercent(value, isCenterZero);
 
     // theme (percent: true only) re-derives icon/bar color (and, with
     // bar_color_mode set, the gradient) from this same push - see
@@ -614,7 +600,7 @@ class EntityProgressTemplateCard extends EntityProgressTemplateBase {
   static _baseClass: string = META.types.template.typeName;
 
   static get _loggedMethods() {
-    return [...super._loggedMethods, 'getCardSize', 'getLayoutOptions', 'getGridOptions'];
+    return [...super._loggedMethods, ...CARD_LAYOUT_METHODS];
   }
 }
 

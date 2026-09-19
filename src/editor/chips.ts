@@ -156,11 +156,14 @@ abstract class MultiSelectChipsBase extends ChipsBase {
  */
 class EntityProgressEffectChips extends MultiSelectChipsBase {
   static ELEMENT_NAME = devName('entity-progress-effect-chips');
+  // Three effects paint the fill themselves, so they only exist while nothing
+  // else is painting it - one rule, not three copies to keep in agreement.
+  static #AUTO_COLOR_ONLY = (c: LovelaceConfig) => c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode);
   static #EFFECTS: { value: string; showIf?: (c: LovelaceConfig) => boolean }[] = [
     { value: 'radius' },
-    { value: 'glass', showIf: (c) => c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode) },
-    { value: 'gradient', showIf: (c) => c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode) },
-    { value: 'gradient_reverse', showIf: (c) => c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode) },
+    { value: 'glass', showIf: EntityProgressEffectChips.#AUTO_COLOR_ONLY },
+    { value: 'gradient', showIf: EntityProgressEffectChips.#AUTO_COLOR_ONLY },
+    { value: 'gradient_reverse', showIf: EntityProgressEffectChips.#AUTO_COLOR_ONLY },
     { value: 'shimmer' },
     { value: 'shimmer_reverse' },
   ];

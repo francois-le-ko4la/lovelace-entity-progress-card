@@ -2148,10 +2148,7 @@ ha-card.info-multiline {
 .vertical-bar:is(
   .${CARD.style.dynamic.progressBar.effect.gradient.class},
   .${CARD.style.dynamic.progressBar.effect.gradientReverse.class}
-) .${CARD.htmlStructure.elements.progressBar.inner.class}.positive {
-  --inner-background: var(--epb-progress-bar-color, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default}));
-}
-
+) .${CARD.htmlStructure.elements.progressBar.inner.class}.positive,
 .horizontal-bar.center-zero:is(
   .${CARD.style.dynamic.progressBar.effect.gradient.class},
   .${CARD.style.dynamic.progressBar.effect.gradientReverse.class}

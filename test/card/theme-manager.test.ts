@@ -117,3 +117,25 @@ describe('ThemeManager - invalid/unset theme', () => {
     assert.equal(theme.barColor, null);
   });
 });
+
+describe('switching between a custom theme and a built-in one', () => {
+  // The instance is created once per view and reconfigured on every config
+  // edit, so each setter has to clear what the other one set - a page reload
+  // would hide this, a live editor session does not.
+  test('a built-in theme clears the custom-theme flag a previous config set', () => {
+    const theme = new ThemeManager();
+    theme.configure({ theme: undefined, customTheme: [{ min: 0, max: 50, color: 'red' }], interpolate: false });
+    assert.equal(theme.isCustomTheme, true);
+
+    theme.configure({ theme: 'temperature', customTheme: undefined, interpolate: false });
+    assert.equal(theme.isCustomTheme, false);
+    assert.equal(theme.theme, 'temperature');
+  });
+
+  test('a custom theme still wins after a built-in one', () => {
+    const theme = new ThemeManager();
+    theme.configure({ theme: 'temperature', customTheme: undefined, interpolate: false });
+    theme.configure({ theme: undefined, customTheme: [{ min: 0, max: 50, color: 'red' }], interpolate: false });
+    assert.equal(theme.isCustomTheme, true);
+  });
+});

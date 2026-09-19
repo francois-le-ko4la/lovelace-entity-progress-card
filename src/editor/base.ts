@@ -31,7 +31,7 @@ import {
 } from './list-editors.js';
 import { lengthSliderSelector, lengthUnitSelector } from '../utils/length.js';
 import { durationSliderSelector } from '../utils/duration.js';
-import { isMarkOverride, THEME_ALIASES, schemaOptions, ACTION_FIELDS, type WatermarkMark } from '../card/schema.js';
+import { markInner, THEME_ALIASES, schemaOptions, ACTION_FIELDS, type WatermarkMark } from '../card/schema.js';
 import { REUSED_OPTION_LABELS, COMPUTED_OPTION_LABELS, SELECT_TYPES, type SchemaLookup } from './select-types.js';
 
 // Every dynamic editor field element built below (ha-selector, the chip
@@ -352,7 +352,7 @@ class EditorBase extends HTMLElement {
   // deeper ({value: {entity,...}, as, type, opacity, color}) - unwrap before
   // reading .entity, same shape as types.watermarkMark elsewhere.
   static #watermarkEntity(mark: unknown): string {
-    const value = isMarkOverride(mark as WatermarkMark) ? (mark as { value?: unknown }).value : mark;
+    const value = markInner(mark as WatermarkMark);
     return is.plainObject(value) && is.nonEmptyString(value.entity) ? value.entity : '';
   }
 
@@ -808,7 +808,7 @@ class EditorBase extends HTMLElement {
   // accepted here.
   static #fallback(def: FieldDef, config: LovelaceConfig | Config, empty: unknown): unknown {
     if (def.default === undefined) return empty;
-    return typeof def.default === 'function' ? def.default(config) : def.default;
+    return is.func(def.default) ? def.default(config) : def.default;
   }
 
   static #resolveValue(def: FieldDef, rawConfig: LovelaceConfig, negotiated: Config | null = null): unknown {
@@ -830,11 +830,7 @@ class EditorBase extends HTMLElement {
     const key = def.target ?? def.name;
     const fallback = EditorBase.#fallback(def, config, empty);
 
-    if (childKey !== null) {
-      const val = config[parentKey]?.[childKey];
-      return val !== undefined ? val : fallback;
-    }
-    const val = config[key];
+    const val = childKey !== null ? config[parentKey]?.[childKey] : config[key];
     return val !== undefined ? val : fallback;
   }
 

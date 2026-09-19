@@ -2,6 +2,7 @@
 // types.duration) - same split as length.ts, minus the calc()/custom fallback.
 
 import { CARD } from './parameters.js';
+import { is } from './common-checks.js';
 
 type DurationUnit = 's' | 'min' | 'h' | 'd';
 type ParsedDuration = { value: number; unit: DurationUnit };
@@ -22,7 +23,7 @@ const DURATION_RANGE: Record<DurationUnit, { min: number; max: number }> = {
 const DURATION_RE = /^(\d+(?:\.\d+)?)(s|min|h|d)$/;
 
 const parseDuration = (raw: unknown): ParsedDuration => {
-  const match = typeof raw === 'string' ? raw.match(DURATION_RE) : null;
+  const match = is.string(raw) ? raw.match(DURATION_RE) : null;
   return match ? { value: parseFloat(match[1]), unit: match[2] as DurationUnit } : { value: 2, unit: 'h' };
 };
 

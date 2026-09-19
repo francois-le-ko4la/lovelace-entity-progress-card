@@ -343,6 +343,14 @@ class EntityProgressMultiBase extends HACore {
     return (this.constructor as typeof EntityProgressMultiBase)._forcedHide;
   }
 
+  // One stub for both aggregators: each subclass already names itself in
+  // _baseClass, and `this` in a static method is the subclass being asked
+  // (same mechanism as HABase.getStubConfig).
+  // skipcq: JS-0116 -- async matches the custom-card-helpers contract
+  static async getStubConfig(): Promise<LovelaceConfig> {
+    return { type: `custom:${devName(this._baseClass)}`, entities: [] } as unknown as LovelaceConfig;
+  }
+
   // Rows the aggregator occupies: explicit `rows`, else one per entity.
   get _rows(): number {
     const config = this.#config;
@@ -388,11 +396,6 @@ class EntityProgressMultiCard extends EntityProgressMultiBase {
     this._resourceManager?.remove('multiDivideHeight');
     this._resourceManager?.add(() => observer.disconnect(), 'multiDivideHeight');
   }
-
-  // skipcq: JS-0116 -- async matches the custom-card-helpers contract
-  static async getStubConfig(): Promise<LovelaceConfig> {
-    return { type: `custom:${devName(META.types.multiCard.typeName)}`, entities: [] } as unknown as LovelaceConfig;
-  }
 }
 
 // No --row-size handling needed here (unlike EntityProgressFeatures'
@@ -409,11 +412,6 @@ class EntityProgressMultiFeature extends EntityProgressMultiBase {
   static _forcedHide: string[] = ['shape'];
   static _iconSize = bareIconSize;
   _configHelper = new MultiFeatureConfigHelper();
-
-  // skipcq: JS-0116 -- async matches the custom-card-helpers contract
-  static async getStubConfig(): Promise<LovelaceConfig> {
-    return { type: `custom:${devName(META.types.multiFeature.typeName)}`, entities: [] } as unknown as LovelaceConfig;
-  }
 }
 
 export { EntityProgressMultiCard, EntityProgressMultiFeature };

@@ -1,6 +1,7 @@
 /*
- * ProgressCalc / PercentHelper: min/max/value → percent math (center-zero,
- * scale, reverse) and the formatted value/unit string.
+ * ProgressCalc assembles what the math needs and holds nothing derived;
+ * ProgressMath (progress-math.ts) does the arithmetic. PercentHelper adds the
+ * unit/timer formatting on top.
  */
 
 import { CARD, CARD_CONTEXT } from '../utils/parameters.js';
@@ -8,14 +9,20 @@ import { assertDefined, is } from '../utils/common-checks.js';
 import { traceInstance } from '../utils/log.js';
 import { HassProviderSingleton } from '../utils/hass-provider.js';
 import { NumberFormatter } from './formatting.js';
+import { ProgressMath, type ProgressInput } from './progress-math.js';
 import { DecimalHelper, UnitHelper, ValueHelper } from './value-primitives.js';
+
+// current/min/max stay unknown on purpose: they come from entity state
+// through EntityOrValue and are validated at runtime by ValueHelper. The
+// config flags above them are guaranteed by the schema, so they are typed.
+type ResolvedValues = { current: unknown; min: unknown; max: unknown; reversed?: boolean };
+type ResolvedDisplay = { unit: string; decimal: number; isTimer: boolean };
 
 class ProgressCalc {
   #min = new ValueHelper(CARD.config.value.min);
   #max = new ValueHelper(CARD.config.value.max);
   #current = new ValueHelper(0);
   #decimal = new DecimalHelper(CARD.config.decimal.percentage);
-  #percent = 0;
   #isReversed = false;
   #isCenterZero = false;
   #zeroValue = 0;
@@ -28,8 +35,8 @@ class ProgressCalc {
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
-  set isReversed(newValue: unknown) {
-    this.#isReversed = is.boolean(newValue) ? newValue : CARD.config.reverse;
+  set isReversed(newValue: boolean | undefined) {
+    this.#isReversed = newValue ?? CARD.config.reverse;
   }
 
   get isReversed(): boolean {
@@ -73,31 +80,31 @@ class ProgressCalc {
     return assertDefined(this.#decimal.value, 'ProgressCalc.decimal read with no valid value or default');
   }
 
-  set isCenterZero(newValue: unknown) {
-    this.#isCenterZero = is.boolean(newValue) ? newValue : false;
+  set isCenterZero(newValue: boolean | undefined) {
+    this.#isCenterZero = newValue ?? false;
   }
 
   get isCenterZero(): boolean {
     return this.#isCenterZero;
   }
 
-  set zeroValue(newValue: unknown) {
-    this.#zeroValue = is.number(newValue) ? newValue : 0;
+  set zeroValue(newValue: number | undefined) {
+    this.#zeroValue = newValue ?? 0;
   }
 
   get zeroValue(): number {
     return this.#zeroValue;
   }
 
-  set growthPercent(newValue: unknown) {
-    this.#growthPercent = is.boolean(newValue) ? newValue : false;
+  set growthPercent(newValue: boolean | undefined) {
+    this.#growthPercent = newValue ?? false;
   }
 
   get growthPercent(): boolean {
     return this.#growthPercent;
   }
 
-  set scale(newValue: unknown) {
+  set scale(newValue: string | undefined) {
     this.#scale = newValue === 'log' ? 'log' : 'linear';
   }
 
@@ -105,16 +112,32 @@ class ProgressCalc {
     return this.#scale;
   }
 
-  // log scale requires a well-formed positive range (log(0) or log(negative) is
-  // undefined) — center_zero's own zeroValue/min/max split has no meaningful
-  // log equivalent either, so both silently fall back to plain linear math in
-  // #percentForValue rather than producing NaN.
+  // Everything below is ProgressMath's answer to the inputs this class
+  // assembles - no formula lives here any more. Rebuilt per read rather than
+  // cached: nine setters would each have to invalidate it, and one missed
+  // setter is stale math, the exact failure this split removes.
+  get #math(): ProgressMath {
+    return new ProgressMath(this.#input);
+  }
+
+  get #input(): ProgressInput {
+    return {
+      min: this.min,
+      max: this.max,
+      current: this.current,
+      decimal: this.decimal,
+      reversed: this.#isReversed,
+      scale: this.#scale,
+      centerZero: this.#isCenterZero ? { zeroValue: this.#zeroValue, growthPercent: this.#growthPercent } : null,
+    };
+  }
+
   get isLogScale(): boolean {
-    return this.#scale === 'log' && !this.isCenterZero && this.min > 0 && this.max > this.min;
+    return this.#math.isLogScale;
   }
 
   get actual(): number {
-    return this.#isReversed ? this.max - this.current : this.current;
+    return this.#math.actual;
   }
 
   get isValid(): boolean {
@@ -122,56 +145,39 @@ class ProgressCalc {
   }
 
   get range(): number {
-    if (!this.isCenterZero) return this.max - this.min;
-    return this.current >= this.#zeroValue ? this.max - this.#zeroValue : this.#zeroValue - this.min;
+    return this.#math.range;
   }
 
   get correctedValue(): number {
-    return this.isCenterZero ? this.current - this.#zeroValue : this.actual - this.min;
+    return this.#math.correctedValue;
   }
 
   get percent(): number | null {
-    return this.isValid ? this.#percent : null;
+    return this.#math.percent;
   }
 
-  // zeroValue === 0 would make the ratio mathematically undefined - falls
-  // back to percent instead of NaN.
+  // A zero point of 0 makes the growth ratio undefined - the bar percentage
+  // stands in, which is also what ProgressMath does with the same case.
   get growthPercentValue(): number | null {
     if (!this.isValid) return null;
     if (this.#zeroValue === 0) return this.percent;
-    return Number((((this.current - this.#zeroValue) / this.#zeroValue) * 100).toFixed(this.decimal));
+    return this.#math.growthPercent;
   }
 
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
-  refresh() {
-    const currentValue = this.isCenterZero ? this.current : this.actual;
-    this.#percent = this.isValid ? Number(this.#percentForValue(currentValue).toFixed(this.decimal)) : 0;
+  // The values a refresh re-resolves. A typed literal rather than
+  // Object.assign on the instance: that spelling let a mistyped key create a
+  // dead own property in silence.
+  updateValues({ current, min, max, reversed }: ResolvedValues) {
+    this.current = current;
+    this.min = min;
+    this.max = max;
+    if (reversed !== undefined) this.isReversed = reversed;
   }
 
   calcWatermark(value: number | { current: number } | null | undefined): number {
-    const numericValue = is.number(value) ? value : (value?.current ?? 0);
-    const percent = this.#percentForValue(numericValue);
-    return this.isCenterZero ? 50 + percent / 2 : percent;
-  }
-
-  // ─── PRIVATE METHODS ──────────────────────────────────────────────────────
-
-  #percentForValue(value: number): number {
-    if (this.isCenterZero) {
-      const corrected = value - this.#zeroValue;
-      const halfRange = corrected >= 0 ? this.max - this.#zeroValue : this.#zeroValue - this.min;
-      return halfRange === 0 ? 0 : (corrected / halfRange) * 100;
-    }
-    if (this.isLogScale) {
-      // Clamp below-range values to min before taking the log: value <= 0 would
-      // otherwise produce NaN/-Infinity instead of the same "0%, let CSS clamp
-      // it" behavior linear gets for a below-range value.
-      const clamped = Math.max(value, this.min);
-      return ((Math.log(clamped) - Math.log(this.min)) / (Math.log(this.max) - Math.log(this.min))) * 100;
-    }
-    const fullRange = this.max - this.min;
-    return fullRange === 0 ? 0 : ((value - this.min) / fullRange) * 100;
+    return this.#math.watermarkFor(is.number(value) ? value : (value?.current ?? 0));
   }
 }
 
@@ -186,8 +192,8 @@ class PercentHelper extends ProgressCalc {
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
 
-  set isTimer(newValue: unknown) {
-    this.#isTimer = is.boolean(newValue) ? newValue : false;
+  set isTimer(newValue: boolean | undefined) {
+    this.#isTimer = newValue ?? false;
   }
 
   get isTimer(): boolean {
@@ -221,6 +227,17 @@ class PercentHelper extends ProgressCalc {
 
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
+  // Everything a refresh re-resolves, values and display in one call. unit
+  // and decimal belong here and not in configure(): each blends a config key
+  // with live entity state (resolveDisplayUnit/resolveDisplayDecimal), and
+  // that second half moves.
+  updateResolved(values: ResolvedValues, display: ResolvedDisplay) {
+    this.updateValues(values);
+    this.isTimer = display.isTimer;
+    this.unit = display.unit;
+    this.decimal = display.decimal;
+  }
+
   configure({
     unitSpacing,
     hasDisabledUnit,
@@ -233,13 +250,13 @@ class PercentHelper extends ProgressCalc {
     unitPosition,
   }: {
     unitSpacing: string;
-    hasDisabledUnit: unknown;
-    isCenterZero: unknown;
-    zeroValue: unknown;
-    growthPercent: unknown;
-    scale: unknown;
-    compact: unknown;
-    sign: unknown;
+    hasDisabledUnit: boolean | undefined;
+    isCenterZero: boolean;
+    zeroValue: number;
+    growthPercent: boolean;
+    scale: string | undefined;
+    compact: boolean | undefined;
+    sign: boolean | undefined;
     unitPosition: string;
   }) {
     this.#unitSpacing = unitSpacing;
@@ -248,8 +265,8 @@ class PercentHelper extends ProgressCalc {
     this.zeroValue = zeroValue;
     this.growthPercent = growthPercent;
     this.scale = scale;
-    this.#compact = is.boolean(compact) ? compact : false;
-    this.#sign = is.boolean(sign) ? sign : false;
+    this.#compact = compact ?? false;
+    this.#sign = sign ?? false;
     this.#unitPosition = unitPosition;
   }
 

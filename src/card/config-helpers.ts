@@ -253,6 +253,20 @@ class BaseConfigHelper {
     return { ...config, icon_animation: undefined };
   }
 
+  // Both migrations below rewrite an option that was settable on the card and
+  // on each of its rows, so each applies its own transform to both levels.
+  static _atBothLevels(
+    config: LovelaceConfig,
+    transform: (level: Record<string, unknown>) => Record<string, unknown>,
+  ): LovelaceConfig {
+    const migrated = transform(config) as LovelaceConfig;
+    if (!is.array(migrated.entities)) return migrated;
+    return {
+      ...migrated,
+      entities: migrated.entities.map((row: unknown) => (is.plainObject(row) ? transform(row) : row)),
+    };
+  }
+
   // A Multi used to draw bare bars: no icon, no name, and a value only where
   // show_value asked for one - it could not have printed the rest. A row is a
   // whole card now, so keeping that look is a hide list rather than the
@@ -260,22 +274,16 @@ class BaseConfigHelper {
   // Applied at both levels, since it was settable on either.
   static _migrateValuePosition(config: LovelaceConfig): LovelaceConfig {
     if (!DEPRECATED_OPTIONS.value_position(config)) return config;
-    const swap = (level: Record<string, unknown>) => {
+    return BaseConfigHelper._atBothLevels(config, (level) => {
       const { value_position: position, ...rest } = level;
       if (position === undefined) return rest;
       return { ...rest, reverse_secondary_info_row: position === 'right' };
-    };
-    const migrated = swap(config) as LovelaceConfig;
-    if (!is.array(migrated.entities)) return migrated;
-    return {
-      ...migrated,
-      entities: migrated.entities.map((row: unknown) => (is.plainObject(row) ? swap(row) : row)),
-    };
+    });
   }
 
   static _migrateShowValue(config: LovelaceConfig): LovelaceConfig {
     if (!DEPRECATED_OPTIONS.show_value(config)) return config;
-    const drop = (level: Record<string, unknown>) => {
+    return BaseConfigHelper._atBothLevels(config, (level) => {
       const { show_value: showValue, ...rest } = level;
       // Absent at this level: it says nothing about this level's look, so
       // nothing is decided here - the other one may still speak for it.
@@ -283,13 +291,7 @@ class BaseConfigHelper {
       const hide = new Set([...(is.array(rest.hide) ? (rest.hide as string[]) : []), ...LEGACY_BARE_ROW]);
       if (showValue === false) hide.add('secondary_info');
       return { ...rest, hide: [...hide] };
-    };
-    const migrated = drop(config) as LovelaceConfig;
-    if (!is.array(migrated.entities)) return migrated;
-    return {
-      ...migrated,
-      entities: migrated.entities.map((row: unknown) => (is.plainObject(row) ? drop(row) : row)),
-    };
+    });
   }
 
   // watermark.low/high: two legacy layers, folded per side in one pass -
@@ -437,21 +439,20 @@ class BaseConfigHelper {
 
   get action(): { card: ActionBag; icon: ActionBag } {
     if (!this.#actionsReady) {
-      this.#actions = {
-        card: {
-          tap: this.#getAction('tap_action'),
-          doubleTap: this.#getAction('double_tap_action'),
-          hold: this.#getAction('hold_action'),
-        },
-        icon: {
-          tap: this.#getAction('icon_tap_action'),
-          doubleTap: this.#getAction('icon_double_tap_action'),
-          hold: this.#getAction('icon_hold_action'),
-        },
-      };
+      this.#actions = { card: this.#actionBag(''), icon: this.#actionBag('icon_') };
       this.#actionsReady = true;
     }
     return this.#actions;
+  }
+
+  // The card's three gestures and the icon's are the same three, one prefix
+  // apart - a fourth one HA adds tomorrow can't land on one side only.
+  #actionBag(prefix: '' | 'icon_'): ActionBag {
+    return {
+      tap: this.#getAction(`${prefix}tap_action`),
+      doubleTap: this.#getAction(`${prefix}double_tap_action`),
+      hold: this.#getAction(`${prefix}hold_action`),
+    };
   }
 
   #getAction(action: string): string | null {

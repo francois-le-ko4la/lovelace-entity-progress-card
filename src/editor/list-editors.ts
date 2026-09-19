@@ -241,6 +241,19 @@ abstract class ListEditorBase extends HTMLElement {
     );
   }
 
+  // The entity picker a row leads with. Shared because the reset it carries
+  // is a rule, not a detail: picking another entity drops the attribute that
+  // belonged to the previous one.
+  _entityField(item: Record<string, unknown>, index: number): HaSelectorElement {
+    return this._buildSelectorField({
+      selector: { entity: {} },
+      value: (item.entity as string) ?? '',
+      required: false,
+      fullWidth: true,
+      onChange: (value) => this._updateItem(index, { entity: (value as string) || undefined, attribute: undefined }),
+    });
+  }
+
   // One `ui-color` row writing `key` back - both editors build several.
   _colorField(index: number, key: string, label: string, current: unknown): HaSelectorElement {
     return this._buildSelectorField({
@@ -306,16 +319,6 @@ class EntityProgressBarStackEditor extends ListEditorBase {
     this._dispatchRows((item) => Boolean(item.entity));
   }
 
-  #entityField(item: BarStackRow, index: number): HaSelectorElement {
-    return this._buildSelectorField({
-      selector: { entity: {} },
-      value: item.entity ?? '',
-      required: false,
-      fullWidth: true,
-      onChange: (value) => this._updateItem(index, { entity: (value as string) || undefined, attribute: undefined }),
-    });
-  }
-
   #attributeField(item: BarStackRow, index: number): HaSelectorElement {
     return this._buildSelectorField({
       selector: { attribute: { entity_id: item.entity ?? '' } },
@@ -346,7 +349,7 @@ class EntityProgressBarStackEditor extends ListEditorBase {
   _buildRow(item: Record<string, unknown>, index: number): Node[] {
     return [
       this._buildRowHeader('row-header', 'row-title', `#${index + 1}`, index),
-      this.#entityField(item, index),
+      this._entityField(item, index),
       // Nothing to pick an attribute on until an entity is chosen.
       ...(item.entity ? [this.#attributeField(item, index)] : []),
       this._colorField(index, 'color', 'Color', item.color),
@@ -388,15 +391,7 @@ class EntityProgressMultiRowEditor extends ListEditorBase {
   _buildRow(item: Record<string, unknown>, index: number): Node[] {
     const main = document.createElement('div');
     main.className = 'row-main';
-    main.appendChild(
-      this._buildSelectorField({
-        selector: { entity: {} },
-        value: item.entity ?? '',
-        required: false,
-        fullWidth: true,
-        onChange: (value) => this._updateItem(index, { entity: (value as string) || undefined, attribute: undefined }),
-      }),
-    );
+    main.appendChild(this._entityField(item, index));
     return [
       main,
       buildIconButton(EDIT_ICON_PATH, 'Edit', () => this.#requestEdit(index)),

@@ -12,17 +12,21 @@ import { ObjStructure, ThemeManager, ChangeTracker } from './value-helpers.js';
 import { HassProviderSingleton, type HomeAssistant, type EntityState } from '../utils/hass-provider.js';
 import { type ViewCore, type ViewBase, type ResolvedWatermark } from './view.js';
 import {
-  isMarkOverride,
+  markInner,
   type WatermarkMark,
   statusLabelObj,
   jinjaOf,
   markValue,
+  entityOf,
+  type ValueConfig,
   SCHEMA_DEFAULTS,
   BAR_POSITIONS,
   BAR_SIZES,
   MARK_TYPES,
   MARK_ZONE_TYPES,
   PEAK_RANGE_TYPE_DEFAULT,
+  ICON_ANIMATIONS,
+  OWN_TRIGGER_ANIMATIONS,
 } from './schema.js';
 import { ResourceManager, DOMHelper, ActionHelper } from './dom-helpers.js';
 import type { CacheValue } from './dom-helpers.js';
@@ -161,7 +165,7 @@ class HACore extends HTMLElement {
       '_startAutoRefresh',
       '_stopAutoRefresh',
       '_seedPeakMarkerHistoryOnce',
-      '_seedPeakMarkerHistory',
+      '_seedFromHistory',
       '_fetchHistory',
       // abstract
       '_handleHassUpdate',
@@ -249,29 +253,43 @@ class HACore extends HTMLElement {
     if (!config) throw new Error('setConfig: invalid config');
 
     this._cardView.config = { ...config };
-    this._registerWatchedEntities(config);
+    this._registerWatchedEntities();
     if (this.isRendered) this.reset(); // Card/Badge editor
     this.render(); // re-build the card
     if (this.hass) this._handleHassUpdate(); // Card/Badge editor
   }
 
-  _registerWatchedEntities(config: LovelaceConfig) {
+  // Reads the negotiated config, not the raw one: both call sites assign
+  // _cardView.config first, and negotiation is what turns every legacy shape
+  // into the { entity, attribute } one entityOf understands.
+  _registerWatchedEntities() {
     // CF5 - issue (minor) resolved - the watched set was only ever appended to:
     // entities removed from the config (editor changes) stayed watched and kept
     // triggering refreshes until reload. Rebuilt from scratch on every
     // setConfig.
     this._changeTracker.resetWatchedEntities();
-    if (is.string(config.entity)) this._changeTracker.watchEntity(config.entity);
-    if (is.nonEmptyString(config.max_value?.entity)) this._changeTracker.watchEntity(config.max_value.entity);
-    if (is.nonEmptyString(config.min_value?.entity)) this._changeTracker.watchEntity(config.min_value.entity);
-    if (is.string(config?.watermark?.low)) this._changeTracker.watchEntity(config.watermark.low);
-    if (is.string(config?.watermark?.high)) this._changeTracker.watchEntity(config.watermark.high);
+    const config = this._cardView.config;
+    const watch = (entityId: unknown) => {
+      if (is.nonEmptyString(entityId)) this._changeTracker.watchEntity(entityId);
+    };
+    watch(config.entity);
+    // The value-shape family (min/max, the two watermarks, the two alert
+    // thresholds) read through entityOf rather than by hand: matched as a bare
+    // string, watermark only ever caught its pre-1.6 spelling and alert_when
+    // was missed entirely, so a threshold driven by an entity never refreshed
+    // when that entity moved.
+    for (const value of [config.min_value, config.max_value, config.alert_when?.above, config.alert_when?.below]) {
+      watch(entityOf(value as ValueConfig));
+    }
+    for (const side of ['low', 'high'] as const) {
+      watch(entityOf(markValue(config.watermark?.[side], SCHEMA_DEFAULTS.watermark[side]) as ValueConfig));
+    }
     // CF5 - issue (major) resolved - additions entities were not watched: when
     // one of them changed state (main entity unchanged), the ChangeTracker
     // reported no change and the displayed total stayed stale
     if (is.array(config.bar_stack?.entities)) {
       for (const item of config.bar_stack.entities) {
-        if (is.plainObject(item) && is.string(item.entity)) this._changeTracker.watchEntity(item.entity);
+        if (is.plainObject(item)) watch(item.entity);
       }
     }
   }
@@ -363,9 +381,9 @@ class HACore extends HTMLElement {
     }
   }
 
-  // Shared by EntityProgressCardBase and EntityProgressFeatures - unlike
-  // trend_indicator's own seeding, which stays Card/Template-only (cards.js).
-  #peakMarkerSeedSignature: string | null = null;
+  // One entry per history-backed feature (peak_marker here, trend_indicator
+  // on EntityProgressCardBase) - see _seedFromHistory.
+  #seedSignatures = new Map<string, string>();
 
   // null when `window` or `entity` is absent/invalid (nothing to seed yet -
   // Feature's own entity can still be pending its parent Tile's context).
@@ -375,18 +393,45 @@ class HACore extends HTMLElement {
     return `${config.entity} ${config.attribute ?? ''} ${window}`;
   }
 
+  /**
+   * The seeding contract every history-backed feature shares: run once per
+   * (entity, attribute, window), and drop a reply whose signature moved while
+   * the fetch was in flight. Only what to do with the points is the feature's
+   * own - written once here so the race guard can't be right in one place and
+   * wrong in the other.
+   */
+  _seedFromHistory(
+    key: string,
+    config: unknown,
+    apply: (points: { t: number; value: number }[]) => void,
+    onStart?: () => void,
+  ) {
+    const window = is.plainObject(config) ? config.window : undefined;
+    const signature = this._seedSignature(window);
+    if (signature === null || signature === this.#seedSignatures.get(key)) return;
+    this.#seedSignatures.set(key, signature);
+    onStart?.();
+    this._fetchHistory(window as number)
+      .then((points) => {
+        if (points.length && signature === this.#seedSignatures.get(key)) apply(points);
+      })
+      .catch(() => {
+        // best-effort: the feature simply goes unseeded, the card is unaffected
+      });
+  }
+
   _seedPeakMarkerHistoryOnce() {
-    const config = this._cardView.config.peak_marker;
-    const signature = this._seedSignature(is.plainObject(config) ? config.window : undefined);
-    if (signature === null || signature === this.#peakMarkerSeedSignature) return;
-    this.#peakMarkerSeedSignature = signature;
-    // Clears the previous entity's marks before the fetch resolves - unlike
-    // trend's TrendTracker, nothing else self-corrects in between.
-    (this._cardView as ViewBase).setPeakMarker(null);
-    this._updateCSS();
-    this._seedPeakMarkerHistory().catch(() => {
-      // best-effort: no min/max/average marks without history, card unaffected
-    });
+    this._seedFromHistory(
+      'peak_marker',
+      this._cardView.config.peak_marker,
+      (points) => this.#applyPeakMarkerHistory(points),
+      () => {
+        // Clears the previous entity's marks before the fetch resolves - unlike
+        // trend's TrendTracker, nothing else self-corrects in between.
+        (this._cardView as ViewBase).setPeakMarker(null);
+        this._updateCSS();
+      },
+    );
   }
 
   // Shares one in-flight WS call when trend/peak_marker share a window.
@@ -448,22 +493,7 @@ class HACore extends HTMLElement {
     return points;
   }
 
-  async _seedPeakMarkerHistory() {
-    const config = this._cardView.config.peak_marker;
-    if (!is.plainObject(config) || !is.number(config.window)) {
-      this._log?.debug('_seedPeakMarkerHistory: no eligible peak_marker config', config);
-      return;
-    }
-    const signature = this._seedSignature(config.window);
-
-    const points = await this._fetchHistory(config.window);
-    if (!points.length) {
-      this._log?.debug('_seedPeakMarkerHistory: no history points, skipping');
-      return;
-    }
-    // A newer entity/config swap may have started its own seed while this
-    // fetch was in flight - only the still-current signature applies.
-    if (signature !== this.#peakMarkerSeedSignature) return;
+  #applyPeakMarkerHistory(points: { t: number; value: number }[]) {
     const values = points.map((p) => p.value);
     const cardView = this._cardView as ViewBase;
     const marker = {
@@ -471,7 +501,7 @@ class HACore extends HTMLElement {
       max: cardView.percentForRawValue(Math.max(...values)),
       average: cardView.percentForRawValue(values.reduce((sum, v) => sum + v, 0) / values.length),
     };
-    this._log?.debug('_seedPeakMarkerHistory: setPeakMarker', marker);
+    this._log?.debug('peak_marker seeded from history', marker);
     cardView.setPeakMarker(marker);
     this._updateCSS();
   }
@@ -530,10 +560,16 @@ class HACore extends HTMLElement {
     };
   }
 
+  // What counts as a badge type, in one place: three separate rules below
+  // (no icon action, no inner badge, its own min_width model) all hang off it.
+  get _isBadge(): boolean {
+    return this.baseClass.includes('badge');
+  }
+
   // Badges only ever have a card-level action, never the icon's own - same
   // condition as _addBaseClasses's own 'progress-badge' class.
   get hasDisabledIconTap(): boolean {
-    return this.baseClass.includes('badge');
+    return this._isBadge;
   }
 
   _createCardElements(): { style: HTMLStyleElement | null; card: HTMLElement } {
@@ -956,7 +992,7 @@ class HACore extends HTMLElement {
     // Most Jinja-capable options are flat strings, but some (min_value,
     // watermark.low/.high) use an explicit { jinja: "..." } map instead of
     // sniffing a bare string - extract accordingly. watermark.low/.high can
-    // wrap that map one level deeper (types.watermarkMark) - isMarkOverride
+    // wrap that map one level deeper (types.watermarkMark) - markInner
     // unwraps it, same as markValue elsewhere; every other key passes through.
     // status_label's own shorthand (a bare string for { jinja: string })
     // means the walk can hit a string before reaching the last segment -
@@ -970,7 +1006,7 @@ class HACore extends HTMLElement {
               this._cardView.config,
             )
         : this._cardView.config[key];
-      const unwrapped = isMarkOverride(raw as WatermarkMark) ? (raw as { value?: unknown }).value : raw;
+      const unwrapped = markInner(raw as WatermarkMark);
       return is.plainObject(unwrapped) ? (unwrapped.jinja ?? '') : unwrapped || '';
     };
     const handlers = this._getJinjaHandlers();
@@ -1501,7 +1537,7 @@ class HABase extends HACore {
     const config = this._cardView.config;
     return new Map([
       ...super._baseClassStyle,
-      ['progress-badge', this.baseClass.includes('badge')],
+      ['progress-badge', this._isBadge],
       // Badge/Badge Template have no such field, so they match none of them.
       ...BAR_POSITIONS.map((position): [string, boolean] => [position, config.bar_position === position]),
       ['row-reverse', this._cardView.hasReversedSecondaryInfoRow],
@@ -1525,7 +1561,7 @@ class HABase extends HACore {
     // width (var(--ha-badge-size, 130px)), not the CSS % (% of the parent,
     // which overflows past 100% - see issue #124). Cards/templates keep the
     // standard CSS %, and any non-% value passes through unchanged.
-    const isBadge = this.baseClass.includes('badge');
+    const isBadge = this._isBadge;
     const minWidth =
       isBadge && typeof config.min_width === 'string' && /^\s*-?[\d.]+%\s*$/.test(config.min_width)
         ? `calc(${parseFloat(config.min_width) / 100} * var(--ha-badge-size, 130px))`
@@ -1580,13 +1616,14 @@ class HABase extends HACore {
     const override = this._cardView.jinjaIconAnimationActive;
     const active = (autoDetect: () => boolean): boolean =>
       this._cardView.hasJinjaIconAnimation ? (override ?? false) : autoDetect();
-    return new Map([
-      ['icon-anim-spin', effect === 'spin' && active(() => this._cardView.isEntityActive)],
-      ['icon-anim-pulse', effect === 'pulse' && active(() => this._cardView.isEntityActive)],
-      ['icon-anim-bounce', effect === 'bounce' && active(() => this._cardView.isEntityActive)],
-      ['icon-anim-shake', effect === 'shake' && active(() => this._cardView.isEntityActive)],
-      ['icon-anim-ping', effect === 'ping' && active(() => this._cardView.isEntityActive)],
-      ['icon-anim-reveal', effect === 'reveal' && active(() => this._cardView.isEntityActive)],
+    return new Map<string, boolean>([
+      // Derived from the schema's own list rather than restated: an animation
+      // added there and forgotten here used to be accepted by the config and
+      // then never paint its class.
+      ...ICON_ANIMATIONS.filter((name) => !OWN_TRIGGER_ANIMATIONS.includes(name)).map((name): [string, boolean] => [
+        `icon-anim-${name}`,
+        effect === name && active(() => this._cardView.isEntityActive),
+      ]),
       [
         // Not isEntityActive alone: appliance integrations (Home Connect,
         // Miele) report the running program as a plain `sensor`, which
@@ -1880,7 +1917,7 @@ class HABase extends HACore {
   // A Badge can't show an inner badge-icon overlay of its own - same
   // condition as hasDisabledIconTap above.
   get hasDisabledBadge(): boolean {
-    return this.baseClass.includes('badge');
+    return this._isBadge;
   }
 
   _showBadge() {

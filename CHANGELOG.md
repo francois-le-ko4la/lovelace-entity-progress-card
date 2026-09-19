@@ -282,7 +282,11 @@ a panel.
 - Three dead exports and one orphan translation key removed.
 - The card's default attribute per domain and the entity picker's own
   suggestions come from one shared table instead of two that had drifted.
-
+- The percentage math now lives in a class of its own, behind 48 new tests.
+- A deduplication sweep across the card, the editor and the shared utilities:
+  close to thirty blocks that existed in two copies now have a single
+  definition, and a few values the card recomputed on every render only to
+  discard them are gone.
 - A third smaller than 1.6.2, despite everything this release adds: 648 → 399
   KB, and 155 → 102 KB compressed. The translation table used to be nearly half
   the shipped file; what stays in it now is 4%.
@@ -291,6 +295,35 @@ We care about getting the details right — but even so, something here might ha
 slipped through. You don't need to be a developer to notice it. If something
 feels off, that's reason enough. Open a [GitHub issue]. Or say hi on [Discord].
 We'd rather know than have you go looking for a workaround on your own.
+
+## What's new (1.6.3-rc6)
+
+### 🐛 Fixes
+
+- **Entity-driven thresholds**: a [`watermark`][watermark] side, or an
+  [`alert_when`][alert_when] bound, whose value comes from another entity did
+  not refresh the card when that entity moved - the mark stayed where some
+  unrelated update had last left it. Both are watched now, in every shape they
+  accept.
+- **[`theme`][theme]**: picking a built-in theme right after a custom one left
+  the card comparing the raw value instead of the converted one, so the icon and
+  the bar could take a colour from the wrong zone until a reload.
+
+### 🧹 Under the hood
+
+- The percentage math moved into a class of its own, immutable and built from
+  one complete input; `ProgressCalc` keeps nothing derived and takes its values
+  through two entry points named for when they run. 48 tests went in first, and
+  not one of them changed.
+- Duplicated blocks folded across the card, the editor and the shared utilities:
+  the appearance every marker family shares, the entity picker two list editors
+  each declared, the positional bar container, the Multi's stub config, the icon
+  animations now derived from the schema's own list, and the object-valued field
+  cache the editor kept in two copies.
+- Vocabulary put back where it belongs: unwrapping a watermark mark, reading the
+  entity registry, and the shared `is.*` predicates were each spelled out by
+  hand in modules that already import the one definition.
+- `defaultColor` computed six colours on every read to use one.
 
 ## What's new (1.6.3-rc5)
 
@@ -433,6 +466,11 @@ other label stays in your language.
 - **[`height`][height]**: switching the field into its custom mode overwrote the
   length that was set, and leaving the mode cleared it. The value is put aside
   and handed back instead, like every other toggle in the editor.
+- **Entity-driven thresholds**: a watermark or an alert bound whose value comes
+  from another entity now refreshes the card as soon as that entity moves,
+  instead of waiting for an unrelated update.
+- **Themes**: picking a built-in theme right after a custom one could leave the
+  card colouring against the wrong value until a reload.
 
 ### 🧹 Under the hood
 

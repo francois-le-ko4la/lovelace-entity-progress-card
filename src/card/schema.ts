@@ -68,6 +68,10 @@ const nestValueShapeUnderValue = (mark: unknown): unknown => {
   return { ...rest, value: { ...(entity !== undefined ? { entity, attribute } : { jinja }) } };
 };
 const markShown = (mark: WatermarkMark): boolean => mark !== false;
+// What a mark holds, wrapper or not. markValue below adds the default and the
+// boolean branch on top; callers that only need the unwrap use this, rather
+// than spelling the ternary out again in their own module.
+const markInner = (mark: Mark): unknown => (isMarkOverride(mark) ? mark.value : mark);
 const markValue = (mark: WatermarkMark, defaultValue: number): ValueConfig =>
   isMarkOverride(mark)
     ? ((mark.value as ValueConfig) ?? defaultValue)
@@ -208,6 +212,12 @@ const MARK_ZONE_TYPES = ['area', 'blended', 'striped'];
 const ALERT_HIGHLIGHTS = ['border', 'background', 'label'];
 const ALERT_ANIMATIONS = ['static', 'blink', 'ping'];
 const ICON_ANIMATIONS = ['spin', 'pulse', 'bounce', 'shake', 'ping', 'reveal', 'washing_machine', 'battery_charging'];
+// Every other animation above plays while the entity is simply active, and
+// core.ts derives its class from this very list. These two answer to their own
+// condition instead (a running program reported as a plain sensor, a charging
+// attribute) - see HABase._iconAnimationStyle. An animation added above with
+// no entry here is wired to the active-entity trigger by default.
+const OWN_TRIGGER_ANIMATIONS = ['washing_machine', 'battery_charging'];
 
 const ERROR_CODES = {
   missingRequiredProperty: { code: 'missingRequiredProperty', severity: SEV.error },
@@ -1418,6 +1428,16 @@ const badgeOverrides = <T extends readonly string[]>(hideTargets: T) => ({
  * ConfigHelper's `_yamlSchema` (see config-helpers.js) to validate and
  * normalize a raw config.
  */
+// A row schema turned into the stack's own: drop the four fields that
+// identify one row rather than describing the stack - a name or an icon
+// common to every row is a coincidence, never a default, see the editor's own
+// NEVER_SHARED (multi-cascade.ts) - and add the entity list multi.ts spreads
+// back into each child.
+const asAggregator = (rowSchema: ReturnType<typeof struct>) =>
+  rowSchema.delete([...ROW_IDENTITY_FIELDS]).extend({
+    entities: types.optional(types.array(multiRowEntry)),
+  });
+
 const YamlSchemaFactory = {
   // Derived from card, not written out: 15 of its 20 fields were byte-identical
   // copies, so a new card option had to be mirrored here by hand or silently
@@ -1802,15 +1822,8 @@ const YamlSchemaFactory = {
       });
   },
 
-  // What both aggregators share: the row options minus the four that identify
-  // one row rather than describing the stack. A name or an icon common to
-  // every row is a coincidence, never a default - see the editor's own
-  // NEVER_SHARED (multi-cascade.ts), which keeps them off this level too.
-  // Plus the entity list itself, which multi.ts spreads into each child.
   get multiAggregator() {
-    return YamlSchemaFactory.multiRow.delete([...ROW_IDENTITY_FIELDS]).extend({
-      entities: types.optional(types.array(multiRowEntry)),
-    });
+    return asAggregator(YamlSchemaFactory.multiRow);
   },
 
   get multiCard() {
@@ -1824,9 +1837,7 @@ const YamlSchemaFactory = {
   // never more (see EntityProgressMultiFeature._applySizing). Everything else
   // it drops, it drops because its rows do (multiFeatureRow above).
   get multiFeature() {
-    return YamlSchemaFactory.multiFeatureRow.delete([...ROW_IDENTITY_FIELDS]).extend({
-      entities: types.optional(types.array(multiRowEntry)),
-    });
+    return asAggregator(YamlSchemaFactory.multiFeatureRow);
   },
 
   // Same badge shape as .badge above, applied to .template instead of .card -
@@ -1841,7 +1852,18 @@ const YamlSchemaFactory = {
 export type { Infer };
 export type { ValueConfig };
 export { entityOf, attributeOf, jinjaOf };
-export { markShown, markValue, markAs, markType, markOpacity, markColor, markLineSize, peakMarkShown, isMarkOverride };
+export {
+  markInner,
+  markShown,
+  markValue,
+  markAs,
+  markType,
+  markOpacity,
+  markColor,
+  markLineSize,
+  peakMarkShown,
+  isMarkOverride,
+};
 export { statusLabelObj, rewrapStatusLabel };
 export { THEME_ALIASES };
 // Each YamlSchemaFactory getter rebuilds its whole schema on access - cached
@@ -1873,6 +1895,7 @@ export { schemaOptions, type SchemaVariant };
 // (core.ts). The editor reads its dropdown lists off the schema itself, via
 // struct().fieldOptions - see SELECT_TYPES.
 export { BAR_SIZES, BAR_POSITIONS, MARK_TYPES, MARK_ZONE_TYPES, DENSITY_COMPACT_BAR_POSITIONS };
+export { ICON_ANIMATIONS, OWN_TRIGGER_ANIMATIONS };
 export { ACTION_FIELDS };
 export { DENSITY_MODES };
 export { ROW_IDENTITY_FIELDS };

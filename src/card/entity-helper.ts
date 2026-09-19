@@ -239,47 +239,51 @@ class EntityHelper {
     return this.#entityTypeFlags;
   }
 
+  // The domain first, then the device_class - read only if the domain said
+  // nothing, so a matched domain never costs a registry lookup. A switch and
+  // not a lookup table: the table computed all six colors on every read, five
+  // of them to be thrown away, and this getter is read five times per render.
   get defaultColor(): string | null {
-    const colorMap: Record<string, string> = {
-      [HA_CONTEXT.entity.type.timer]:
-        this.value?.state === HA_CONTEXT.entity.state.active ? CARD.style.color.active : CARD.style.color.inactive,
-      [HA_CONTEXT.entity.type.cover]: this.value > 0 ? CARD.style.color.coverActive : CARD.style.color.inactive,
-      [HA_CONTEXT.entity.type.light]: this.value > 0 ? CARD.style.color.lightActive : CARD.style.color.inactive,
-      // state, not value: a fan on a dynamic preset (e.g. "auto") is genuinely
-      // on but its percentage attribute can legitimately read 0 - the fan
-      // decides its own speed rather than reporting a fixed one.
-      [HA_CONTEXT.entity.type.fan]:
-        this.state === HA_CONTEXT.entity.state.on ? CARD.style.color.fanActive : CARD.style.color.inactive,
-      [HA_CONTEXT.entity.type.climate]: this.#getClimateColor(),
-      [HA_CONTEXT.entity.class.battery]: this.#getBatteryColor(),
-    };
-
     return (
-      colorMap[this.#domain as string] ??
-      colorMap[this.#hassProvider.getEntityProp<string>(this.#entity, 'device_class')] ??
+      this.#colorFor(this.#domain) ??
+      this.#colorFor(this.#hassProvider.getEntityProp<string>(this.#entity, 'device_class')) ??
       null
     );
   }
 
-  get stateContentToString(): string {
-    const results: string[] = [];
-
-    for (const attr of this.#stateContent) {
-      switch (attr) {
-        case 'state':
-          results.push(this.#hassProvider.getEntityProp(this.#entity, 'state', true));
-          break;
-        case 'device_name':
-          results.push(this.#hassProvider.getEntityDevice(this.#entity) ?? '');
-          break;
-        case 'area_name':
-          results.push(this.#hassProvider.getEntityArea(this.#entity) ?? '');
-          break;
-        default:
-          results.push(this.#hassProvider.getEntityProp(this.#entity, attr, true));
-          break;
-      }
+  #colorFor(key: string | null): string | null {
+    switch (key) {
+      case HA_CONTEXT.entity.type.timer:
+        return this.value?.state === HA_CONTEXT.entity.state.active
+          ? CARD.style.color.active
+          : CARD.style.color.inactive;
+      case HA_CONTEXT.entity.type.cover:
+        return this.value > 0 ? CARD.style.color.coverActive : CARD.style.color.inactive;
+      case HA_CONTEXT.entity.type.light:
+        return this.value > 0 ? CARD.style.color.lightActive : CARD.style.color.inactive;
+      // state, not value: a fan on a dynamic preset (e.g. "auto") is genuinely
+      // on but its percentage attribute can legitimately read 0 - the fan
+      // decides its own speed rather than reporting a fixed one.
+      case HA_CONTEXT.entity.type.fan:
+        return this.state === HA_CONTEXT.entity.state.on ? CARD.style.color.fanActive : CARD.style.color.inactive;
+      case HA_CONTEXT.entity.type.climate:
+        return this.#getClimateColor();
+      case HA_CONTEXT.entity.class.battery:
+        return this.#getBatteryColor();
+      default:
+        return null;
     }
+  }
+
+  get stateContentToString(): string {
+    // Two exceptions, and everything else - 'state' included - read as a
+    // plain property. The registry lookups are the only ones that can answer
+    // null and need a blank of their own.
+    const results = this.#stateContent.map((attr) => {
+      if (attr === 'device_name') return this.#hassProvider.getEntityDevice(this.#entity) ?? '';
+      if (attr === 'area_name') return this.#hassProvider.getEntityArea(this.#entity) ?? '';
+      return this.#hassProvider.getEntityProp(this.#entity, attr, true);
+    });
 
     return results.length !== 0 ? results.join(CARD.config.separator) : '';
   }

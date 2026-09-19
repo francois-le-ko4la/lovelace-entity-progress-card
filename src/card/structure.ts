@@ -67,6 +67,11 @@ const infoLine = (extraEl: StructureElementSpec, showMain: boolean, extraClass =
     ),
   );
 
+// A positional container holding nothing but the bar: the slot swap is the
+// same for every position, only which container differs.
+const barContainer = (container: () => string, options: StructureOptions) =>
+  container().replace(CONTENT_SLOT, StructureElements.progressBar(options));
+
 const StructureElements = {
   ripple: () => '<ha-ripple></ha-ripple>',
   // The card-level ripple lives in its own sibling div (see
@@ -279,13 +284,11 @@ const StructureElements = {
 
   wrapWithBarPosition: (content: string, options: StructureOptions) => {
     const { barPosition = '' } = options;
-    const bar = () => StructureElements.progressBar(options);
-
     const wrap: Record<string, () => { before: string; after: string }> = {
-      top: () => ({ before: StructureElements.topContainer().replace(CONTENT_SLOT, bar()), after: '' }),
-      bottom: () => ({ before: '', after: StructureElements.bottomContainer().replace(CONTENT_SLOT, bar()) }),
-      below: () => ({ before: '', after: StructureElements.belowContainer().replace(CONTENT_SLOT, bar()) }),
-      background: () => ({ before: '', after: StructureElements.backgroundContainer().replace(CONTENT_SLOT, bar()) }),
+      top: () => ({ before: barContainer(StructureElements.topContainer, options), after: '' }),
+      bottom: () => ({ before: '', after: barContainer(StructureElements.bottomContainer, options) }),
+      below: () => ({ before: '', after: barContainer(StructureElements.belowContainer, options) }),
+      background: () => ({ before: '', after: barContainer(StructureElements.backgroundContainer, options) }),
     };
 
     const { before = '', after = '' } = wrap[barPosition]?.() ?? {};
@@ -321,14 +324,12 @@ const StructureTemplates = {
   template: (options: StructureOptions = {}) => buildCardLike(options, StructureElements.contentMini),
   feature: (options: StructureOptions = {}) => {
     const { barPosition = '' } = options;
-    const bar = () => StructureElements.progressBar(options);
-
     const containers: Record<string, () => string> = {
-      top: () => StructureElements.topContainer().replace(CONTENT_SLOT, bar()),
-      bottom: () => StructureElements.bottomContainer().replace(CONTENT_SLOT, bar()),
+      top: () => barContainer(StructureElements.topContainer, options),
+      bottom: () => barContainer(StructureElements.bottomContainer, options),
     };
 
-    return containers[barPosition]?.() ?? bar();
+    return containers[barPosition]?.() ?? StructureElements.progressBar(options);
   },
 };
 

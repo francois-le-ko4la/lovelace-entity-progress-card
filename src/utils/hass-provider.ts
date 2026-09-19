@@ -379,7 +379,7 @@ class HassProviderSingleton {
     const resolvers: Record<string, () => unknown> = {
       attribute: () => this.getEntityAttribute(entityId, prop),
       state: () => this.getEntityStateObj(entityId)?.[prop] ?? null,
-      entity: () => this.#hass?.entities?.[entityId]?.[prop] ?? null,
+      entity: () => this.#entityEntry(entityId)?.[prop] ?? null,
     };
 
     return resolvers[mapping.source]?.() ?? null;
@@ -414,17 +414,22 @@ class HassProviderSingleton {
     return (attribute in attributes ? attributes[attribute] : null) as T;
   }
 
+  // CF5 - issue (critical) resolved - an entity without a unique_id is
+  // absent from hass.entities entirely, so every read of the registry has to
+  // tolerate the miss; going through here states that once instead of at each
+  // of the seven call sites.
+  #entityEntry(entityId: string): Record<string, unknown> | undefined {
+    return this.#hass?.entities?.[entityId];
+  }
+
   getEntityName(entityId: string): string | null {
-    // CF5 - issue (critical) resolved - entities without unique_id are absent
-    // from hass.entities; missing optional chaining crashed name tokens (type:
-    // entity)
-    return this.#hass?.entities?.[entityId]?.name ?? null;
+    return (this.#entityEntry(entityId)?.name as string) ?? null;
   }
 
   getEntityDevice(entityId: string): string | null {
-    const deviceId = this.#hass?.entities?.[entityId]?.device_id;
+    const deviceId = this.#entityEntry(entityId)?.device_id;
     if (!deviceId) return null;
-    const device = this.#hass?.devices?.[deviceId];
+    const device = this.#hass?.devices?.[deviceId as string];
     // CF5 - issue (medium) resolved - only `.name` (the integration-assigned
     // default) was read, ignoring `.name_by_user` (set when the user renames
     // the device in Settings). HA's own computeDeviceNameDisplay prioritizes
@@ -441,20 +446,20 @@ class HassProviderSingleton {
   // its charging-status sensor battery_state, not anything containing
   // "charg".
   getSameDeviceEntities(entityId: string): string[] {
-    const deviceId = this.#hass?.entities?.[entityId]?.device_id;
+    const deviceId = this.#entityEntry(entityId)?.device_id;
     if (!deviceId) return [];
     return Object.keys(this.#hass?.entities ?? {}).filter(
-      (id) => id !== entityId && this.#hass?.entities?.[id]?.device_id === deviceId,
+      (id) => id !== entityId && this.#entityEntry(id)?.device_id === deviceId,
     );
   }
 
   // Shared by getEntityArea/getEntityFloor below - an entity's own area_id,
   // falling back to its device's.
   #resolveAreaId(entityId: string): string | null {
-    const entityAreaId = this.#hass?.entities?.[entityId]?.area_id;
-    if (entityAreaId) return entityAreaId;
-    const deviceId = this.#hass?.entities?.[entityId]?.device_id;
-    return deviceId ? (this.#hass?.devices?.[deviceId]?.area_id ?? null) : null;
+    const entityAreaId = this.#entityEntry(entityId)?.area_id;
+    if (entityAreaId) return entityAreaId as string;
+    const deviceId = this.#entityEntry(entityId)?.device_id;
+    return deviceId ? (this.#hass?.devices?.[deviceId as string]?.area_id ?? null) : null;
   }
 
   getEntityArea(entityId: string): string | null {

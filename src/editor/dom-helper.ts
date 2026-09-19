@@ -141,24 +141,33 @@ class EditorDOMHelper extends DOMHelper {
   // ─── Dynamic selector ─────────────────────────────────────────────────────
 
   /**
+   * _cachedUpdate's counterpart for an object-valued property: the base one
+   * compares by identity, which never matches when each pass builds a fresh
+   * object - so every #updateFields() pass (every keystroke anywhere in the
+   * form, for every field with such a property) reassigned it and forced the
+   * child ha-selector to re-render. Compared on its serialised form instead.
+   */
+  // skipcq: JS-0323 -- el is whatever _domElements stores (see DOMHelper)
+  #cachedObjectUpdate(name: string, suffix: string, value: unknown, apply: (el: any, value: unknown) => void) {
+    const cacheKey = `${name}:${suffix}`;
+    const serialized = JSON.stringify(value);
+    if (this._appliedValues.get(cacheKey) === serialized) return;
+
+    this.enqueue(name, suffix, () => {
+      const el = this._domElements.get(name);
+      if (!el) return;
+      apply(el, value);
+      this._appliedValues.set(cacheKey, serialized);
+    });
+  }
+
+  /**
    * Updates the selector of a ha-selector field. Used for fields whose options
    * depend on another field (e.g. attribute → entity).
    */
   updateSelector(name: string, selector: unknown) {
-    // Was reassigned unconditionally on every #updateFields() pass (i.e. every
-    // editor keystroke, for every field with selectorOf — not just the one
-    // being edited), forcing the child ha-selector's attribute picker to fully
-    // re-render each time regardless of whether the referenced entity actually
-    // changed. Value-cached like the other setters.
-    const cacheKey = `${name}:selector`;
-    const serialized = JSON.stringify(selector);
-    if (this._appliedValues.get(cacheKey) === serialized) return;
-
-    this.enqueue(name, 'selector', () => {
-      const el = this._domElements.get(name);
-      if (!el) return;
-      el.selector = selector;
-      this._appliedValues.set(cacheKey, serialized);
+    this.#cachedObjectUpdate(name, 'selector', selector, (el, value) => {
+      el.selector = value;
     });
   }
 
@@ -169,23 +178,11 @@ class EditorDOMHelper extends DOMHelper {
    * and dynamic selector updates based on the current config.
    */
   _applyContext(name: string, contextDef: Record<string, string>, config: LovelaceConfig) {
-    // Same class of bug as updateSelector: reassigned a brand-new object on
-    // every #updateFields() pass (i.e. on every keystroke anywhere in the form,
-    // not just in this field), forcing the child selector (e.g. state_content's
-    // entity/attribute picker) to fully re-render every time regardless of
-    // whether anything changed.
-    const cacheKey = `${name}:context`;
     const resolved = Object.fromEntries(
       Object.entries(contextDef).map(([key, configKey]) => [key, config[configKey] ?? '']),
     );
-    const serialized = JSON.stringify(resolved);
-    if (this._appliedValues.get(cacheKey) === serialized) return;
-
-    this.enqueue(name, 'context', () => {
-      const target = this._domElements.get(name);
-      if (!target) return;
-      target.context = resolved;
-      this._appliedValues.set(cacheKey, serialized);
+    this.#cachedObjectUpdate(name, 'context', resolved, (el, value) => {
+      el.context = value;
     });
   }
 

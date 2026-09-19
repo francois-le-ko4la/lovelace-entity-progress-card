@@ -23,6 +23,7 @@ import {
   statusLabelObj,
   rewrapStatusLabel,
   isMarkOverride,
+  markInner,
   SCHEMA_DEFAULTS,
   schemaOptions,
   DENSITY_COMPACT_BAR_POSITIONS,
@@ -377,14 +378,14 @@ const nestedValueField = (
   // as/opacity/color siblings, see types.watermarkMark), a short-form value
   // (no wrapper) still reads fine, but every write settles into the wrapped
   // form from then on, preserving whatever siblings already exist.
-  // isMarkOverride (not a bare nestedUnder-in-raw check): the only real
-  // caller here is watermark, and an override object with no `value` set
+  // markInner/isMarkOverride (not a bare nestedUnder-in-raw check): the only
+  // real caller here is watermark, and an override object with no `value` set
   // yet (type/color touched first) must still read/write as one - see
   // schema.ts's own isMarkOverride comment for why the naive check broke it.
   const readValue = (c: LovelaceConfig): unknown => {
     const raw = c[parentKey]?.[key];
     if (!nestedUnder) return raw;
-    return isMarkOverride(raw as WatermarkMark) ? (raw as Record<string, unknown>)[nestedUnder] : raw;
+    return markInner(raw as WatermarkMark);
   };
   const writeValue = (c: LovelaceConfig, newValue: unknown) => {
     if (!nestedUnder) return { ...c[parentKey], [key]: newValue };
@@ -644,6 +645,17 @@ const overrideCascadeFields = <K extends string>(
   );
 };
 
+// What every mark looks like, whatever kind it is - the band included, which
+// is why this stands on its own rather than inside SHARED_CASCADE below.
+const MARK_APPEARANCE: CascadeSpec[] = [
+  { field: 'opacity', build: EditorFieldsType.decimal, opts: { type: 'opacity' } },
+  {
+    field: 'color',
+    build: (name, opts) => EditorFieldsType.templateOrType(name, false, 'color', opts),
+    labelKey: LABEL_COLOR,
+  },
+];
+
 // The trio every mark family shares, spelled once. Each adapter appends its
 // own extras rather than restating these.
 const SHARED_CASCADE = (selectType: string): CascadeSpec[] => [
@@ -651,12 +663,7 @@ const SHARED_CASCADE = (selectType: string): CascadeSpec[] => [
   // Only exists for a mark drawn as a line; the row it shares with type closes
   // itself when it goes (see EDITOR_BASE_STYLE).
   { field: 'line_size', build: EditorFieldsType.text, gate: drawsLine },
-  { field: 'opacity', build: EditorFieldsType.decimal, opts: { type: 'opacity' } },
-  {
-    field: 'color',
-    build: (name, opts) => EditorFieldsType.templateOrType(name, false, 'color', opts),
-    labelKey: LABEL_COLOR,
-  },
+  ...MARK_APPEARANCE,
 ];
 
 // Per-mark show/hide toggle: the hidden value is parked in an ephemeral draft
@@ -865,6 +872,8 @@ const PEAK_RANGE_CASCADE: OverrideCascadeAdapter<'range'> = {
   },
   defaults: { ...SCHEMA_DEFAULTS.peakMarker, type: SCHEMA_DEFAULTS.peakMarker.rangeType },
   optIn: true,
+  // No line_size: a band is not a line. Its own type, and the appearance
+  // every mark shares.
   cascade: [
     {
       field: 'type',
@@ -873,12 +882,7 @@ const PEAK_RANGE_CASCADE: OverrideCascadeAdapter<'range'> = {
       showsDefault: true,
       inherits: false,
     },
-    { field: 'opacity', build: EditorFieldsType.decimal, opts: { type: 'opacity' } },
-    {
-      field: 'color',
-      build: (name, opts) => EditorFieldsType.templateOrType(name, false, 'color', opts),
-      labelKey: LABEL_COLOR,
-    },
+    ...MARK_APPEARANCE,
   ],
 };
 
@@ -1032,6 +1036,35 @@ const circularBackgroundField = () => ({
 
 // center_zero: boolean | {value, growth_percent} - shared by theme() and
 // Feature's own build below, no template/badge distinction needed.
+// Badge and badgeTemplate opt out (see YamlSchemaFactory's own
+// .delete(['multiline'])): the row is too small for a second line there.
+// density: compact/single_line clear it too (see schema.ts's applyDensityRule).
+// The bar's two marker panels. Shared because buildFeature() below composes
+// its own section list and would otherwise carry a second copy of their title
+// and icon - the only thing that legitimately differs is what peak_marker has
+// to show.
+const markerPanels = (peakFields: Record<string, unknown>) => ({
+  watermark: {
+    title: TITLE.watermark,
+    icon: HA_CONTEXT.icons.radar,
+    fields: EditorFactory.themeWatermarkFields(),
+  },
+  peak_marker: {
+    title: TITLE.peakMarker,
+    icon: HA_CONTEXT.icons.chartBellCurve,
+    fields: peakFields,
+  },
+});
+
+const multilineField = (badge: boolean) =>
+  badge
+    ? {}
+    : {
+        multiline: EditorFieldsType.toggle('multiline', {
+          showIf: (c: LovelaceConfig) => !DENSITY_SINGLE_ROW.includes(c.density as string),
+        }),
+      };
+
 const centerZeroFields = () => ({
   center_zero: EditorFieldsType.toggle('center_zero', {
     virtual: true,
@@ -1167,17 +1200,7 @@ const EditorFactory = {
       ...(template
         ? {
             secondary: EditorFieldsType.tpl('secondary'),
-            // Badge/badgeTemplate opt out (see YamlSchemaFactory's own
-            // .delete(['multiline'])): the row is too small for a second line
-            // there. density: compact/single_line clear it too (see
-            // schema.ts's applyDensityRule).
-            ...(!badge
-              ? {
-                  multiline: EditorFieldsType.toggle('multiline', {
-                    showIf: (c: LovelaceConfig) => !DENSITY_SINGLE_ROW.includes(c.density as string),
-                  }),
-                }
-              : {}),
+            ...multilineField(badge),
             percent: EditorFieldsType.tpl('percent'),
           }
         : {
@@ -1229,17 +1252,7 @@ const EditorFactory = {
             custom_info: EditorFieldsType.tpl('custom_info', {
               helper: true,
             }),
-            // Badge opts out (see YamlSchemaFactory's own
-            // .delete(['multiline'])): the row is too small for a second line
-            // there. density: compact/single_line clear it too (see
-            // schema.ts's applyDensityRule).
-            ...(!badge
-              ? {
-                  multiline: EditorFieldsType.toggle('multiline', {
-                    showIf: (c: LovelaceConfig) => !DENSITY_SINGLE_ROW.includes(c.density as string),
-                  }),
-                }
-              : {}),
+            ...multilineField(badge),
             reverse: EditorFieldsType.toggle('reverse', {
               showIf: (c: LovelaceConfig) =>
                 Boolean(c.entity) && HassProviderSingleton.getEntityDomain(c.entity) === 'timer',
@@ -1666,7 +1679,7 @@ const EditorFactory = {
   },
 
   // peak_marker: min/max/average from HA history (Card only, cards.ts's
-  // _seedPeakMarkerHistory) - toggle + window + the family's own global
+  // _seedPeakMarkerHistoryOnce) - toggle + window + the family's own global
   // cascade, then the 3 marks (peakMark).
   peakMarkerFields: () => {
     const showIf = (c: LovelaceConfig) => peakMarkerEligible(c) && Boolean(c.peak_marker);
@@ -2287,18 +2300,9 @@ const EditorFactory = {
   // keystroke.
   markers: (template: boolean, badge: boolean) =>
     nonEmptySections({
-      watermark: {
-        title: TITLE.watermark,
-        icon: HA_CONTEXT.icons.radar,
-        fields: EditorFactory.themeWatermarkFields(),
-      },
-      peak_marker: {
-        title: TITLE.peakMarker,
-        icon: HA_CONTEXT.icons.chartBellCurve,
-        // Card only (cards.ts's _seedPeakMarkerHistory, schema.ts's peakMarker
-        // comment) - Badge/Template have no history-seeding pipeline.
-        fields: !template && !badge ? EditorFactory.peakMarkerFields() : {},
-      },
+      // Card only (core.ts's _seedPeakMarkerHistoryOnce, schema.ts's peakMarker
+      // comment) - Badge/Template have no history-seeding pipeline.
+      ...markerPanels(!template && !badge ? EditorFactory.peakMarkerFields() : {}),
       // Three small families that annotate the card rather than mark the bar.
       // status_label sits before alert_when (next panel) on purpose:
       // alert_when.highlight: 'label' reuses this very pill.
@@ -2357,7 +2361,7 @@ const EditorFactory = {
     const isActive = (key: string) => (_: LovelaceConfig, n: Config) =>
       Boolean(n?.[key]?.action) && n[key].action !== 'none';
     const isRevealed = (key: string) => (c: LovelaceConfig) =>
-      Array.isArray(c._visible_actions) && c._visible_actions.includes(key);
+      is.array(c._visible_actions) && c._visible_actions.includes(key);
     const orRevealed =
       (key: string, pred: (c: LovelaceConfig, n: Config) => boolean) => (c: LovelaceConfig, n: Config) =>
         isRevealed(key)(c) || pred(c, n);
@@ -2401,7 +2405,7 @@ const EditorFactory = {
           items: optionalKeys,
           showIf: (c: LovelaceConfig, n: Config) => hiddenKeys(c, n).length > 0,
           resolveVirtual: (c: LovelaceConfig) => ({
-            visible: Array.isArray(c._visible_actions) ? c._visible_actions : [],
+            visible: is.array(c._visible_actions) ? c._visible_actions : [],
             hidden: hiddenKeys(c),
           }),
           onVirtualChange: (value: string[], config: LovelaceConfig) => ({ ...config, _visible_actions: value }),
@@ -2482,16 +2486,7 @@ const EditorFactory = {
           ...EditorFactory.barEffectFields(),
         },
       },
-      watermark: {
-        title: TITLE.watermark,
-        icon: HA_CONTEXT.icons.radar,
-        fields: EditorFactory.themeWatermarkFields(),
-      },
-      peak_marker: {
-        title: TITLE.peakMarker,
-        icon: HA_CONTEXT.icons.chartBellCurve,
-        fields: EditorFactory.peakMarkerFields(),
-      },
+      ...markerPanels(EditorFactory.peakMarkerFields()),
     };
   },
 

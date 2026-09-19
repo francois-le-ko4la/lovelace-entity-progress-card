@@ -26,6 +26,7 @@ import {
 } from './schema.js';
 import { cloneValue } from '../utils/browser-support.js';
 import { traceInstance } from '../utils/log.js';
+import { ProgressMath } from './progress-math.js';
 import { PercentHelper, ThemeManager, EntityCollectionHelper, EntityOrValue } from './value-helpers.js';
 import { TrendTracker, type TrendBasis } from './trend-tracker.js';
 import { HassProviderSingleton, type HomeAssistant } from '../utils/hass-provider.js';
@@ -335,7 +336,7 @@ class ViewCore {
   get iconAnimationEffect(): string | null {
     const raw = this.config?.icon_animation;
     if (is.plainObject(raw)) return (raw as { effect?: string }).effect ?? null;
-    return typeof raw === 'string' ? raw : null;
+    return is.string(raw) ? raw : null;
   }
 
   // Whether { effect, jinja } mode is configured at all, regardless of
@@ -710,8 +711,20 @@ class ViewCore {
   // binary_sensor with device_class: battery_charging (BYD's "is_charging",
   // 'on' means charging). The device_class check keeps a bare 'on' from
   // matching any unrelated on/off entity.
+  // The card's own entity first - a same-device sibling must never shadow a
+  // signal already present on it - then every entity of that device. Shared
+  // by the charging and washing probes, which differ only in the question
+  // they ask; availability is the strategy's business, not theirs.
+  static #entityOrSameDevice(
+    entity: string,
+    probe: (hassProvider: HassProviderSingleton, entityId: string) => boolean,
+  ): boolean {
+    const hassProvider = HassProviderSingleton.getInstance();
+    const ask = (id: string) => hassProvider.isEntityAvailable(id) && probe(hassProvider, id);
+    return ask(entity) || hassProvider.getSameDeviceEntities(entity).some(ask);
+  }
+
   static #entityReportsCharging(hassProvider: HassProviderSingleton, entityId: string): boolean {
-    if (!hassProvider.isEntityAvailable(entityId)) return false;
     const state = String(hassProvider.getEntityProp(entityId, 'state') ?? '').toLowerCase();
     if (ViewCore.#CHARGING_STATES.has(state)) return true;
     if (state === 'on' && hassProvider.getEntityProp(entityId, 'device_class') === 'battery_charging') return true;
@@ -728,9 +741,7 @@ class ViewCore {
   // App is the case that forced this - its charging entity is named
   // battery_state, no "charg" substring, but state is plain 'charging'.
   static #computeIsBatteryCharging(entity: string): boolean {
-    const hassProvider = HassProviderSingleton.getInstance();
-    if (ViewCore.#entityReportsCharging(hassProvider, entity)) return true;
-    return hassProvider.getSameDeviceEntities(entity).some((id) => ViewCore.#entityReportsCharging(hassProvider, id));
+    return ViewCore.#entityOrSameDevice(entity, ViewCore.#entityReportsCharging);
   }
 
   #isBatteryChargingCache = false;
@@ -858,7 +869,6 @@ class ViewCore {
   static #WASHING_ACTIVE_STATES = new Set(['run', 'in_use']);
 
   static #sensorReportsWashing(hassProvider: HassProviderSingleton, entityId: string): boolean {
-    if (!hassProvider.isEntityAvailable(entityId)) return false;
     if (HassProviderSingleton.getEntityDomain(entityId) !== 'sensor') return false;
     const state = String(hassProvider.getEntityProp(entityId, 'state') ?? '').toLowerCase();
     return ViewCore.#WASHING_ACTIVE_STATES.has(state);
@@ -870,27 +880,23 @@ class ViewCore {
   // the same device. No shared entity_id keyword across brands to filter on,
   // so the fallback checks every same-device sensor's state, not its name.
   get isWashingMachineActive(): boolean {
-    if (this.isEntityActive) return true;
-    const hassProvider = HassProviderSingleton.getInstance();
-    const entity = this.entity as string;
-    if (ViewCore.#sensorReportsWashing(hassProvider, entity)) return true;
-    return hassProvider.getSameDeviceEntities(entity).some((id) => ViewCore.#sensorReportsWashing(hassProvider, id));
+    return this.isEntityActive || ViewCore.#entityOrSameDevice(this.entity as string, ViewCore.#sensorReportsWashing);
   }
 
   get jinjaAlertAbove(): number | null {
     return this.#jinjaAlertAbove;
   }
 
-  set jinjaAlertAbove(value: unknown) {
-    this.#jinjaAlertAbove = is.number(value) ? value : null;
+  set jinjaAlertAbove(value: number | null) {
+    this.#jinjaAlertAbove = value;
   }
 
   get jinjaAlertBelow(): number | null {
     return this.#jinjaAlertBelow;
   }
 
-  set jinjaAlertBelow(value: unknown) {
-    this.#jinjaAlertBelow = is.number(value) ? value : null;
+  set jinjaAlertBelow(value: number | null) {
+    this.#jinjaAlertBelow = value;
   }
 
   get hasJinjaAlertWhen(): boolean {
@@ -909,16 +915,16 @@ class ViewCore {
     return this.#jinjaWatermarkLow;
   }
 
-  set jinjaWatermarkLow(value: unknown) {
-    this.#jinjaWatermarkLow = is.number(value) ? value : null;
+  set jinjaWatermarkLow(value: number | null) {
+    this.#jinjaWatermarkLow = value;
   }
 
   get jinjaWatermarkHigh(): number | null {
     return this.#jinjaWatermarkHigh;
   }
 
-  set jinjaWatermarkHigh(value: unknown) {
-    this.#jinjaWatermarkHigh = is.number(value) ? value : null;
+  set jinjaWatermarkHigh(value: number | null) {
+    this.#jinjaWatermarkHigh = value;
   }
 
   /**
@@ -1373,9 +1379,7 @@ class ViewBase extends ViewCore {
 
   get percent(): number {
     if (!this.isAvailable) return 0;
-    return this.#percentHelper.isCenterZero
-      ? Math.max(-100, Math.min(100, this.#percentHelper.percent ?? 0))
-      : Math.max(0, Math.min(100, this.#percentHelper.percent ?? 0));
+    return ProgressMath.clampPercent(this.#percentHelper.percent ?? 0, this.#percentHelper.isCenterZero);
   }
 
   getTrend(): string {
@@ -1390,7 +1394,7 @@ class ViewBase extends ViewCore {
   }
 
   // peak_marker's own history-derived positions (Card only, see HACore's
-  // _seedPeakMarkerHistory) - percents already resolved at fetch time, set
+  // _seedPeakMarkerHistoryOnce) - percents already resolved at fetch time, set
   // once per window fetch rather than recomputed on every repaint.
   #peakMarker: { min: number; max: number; average: number } | null = null;
 
@@ -1551,42 +1555,44 @@ class ViewBase extends ViewCore {
   // ─── PRIVATE METHODS ──────────────────────────────────────────────────────
 
   #updatePercentHelper() {
-    // update
-    this.#percentHelper.isTimer = this._currentValue.entityType.isTimer || this._currentValue.entityType.isDuration;
     const currentUnit = this.#getCurrentUnit();
-    this.#percentHelper.unit = currentUnit;
-    this.#percentHelper.decimal = this.#getCurrentDecimal(currentUnit);
-
-    if (this._currentValue.entityType.isTimer) {
-      this.#setTimerValues();
-    } else if (this._currentValue.entityType.isCounter || this._currentValue.entityType.isNumber) {
-      this.#setCounterValues();
-    } else {
-      this.#setStdValues();
-    }
-    this.#percentHelper.refresh();
-  }
-
-  #setTimerValues() {
-    Object.assign(this.#percentHelper, {
-      isReversed: this.timerIsReversed,
-      current: this._currentValue.value.current,
-      min: this._currentValue.value.min,
-      max: this._currentValue.value.max,
+    this.#percentHelper.updateResolved(this.#resolvedValues(), {
+      unit: currentUnit,
+      decimal: this.#getCurrentDecimal(currentUnit),
+      isTimer: this._currentValue.entityType.isTimer || this._currentValue.entityType.isDuration,
     });
   }
 
-  #setCounterValues() {
-    Object.assign(this.#percentHelper, {
+  // Which value/min/max the bar runs on, by entity kind. Returned rather than
+  // written into the helper: one caller assembles, one call applies.
+  #resolvedValues(): { current: unknown; min: unknown; max: unknown; reversed?: boolean } {
+    if (this._currentValue.entityType.isTimer) return this.#timerValues();
+    if (this._currentValue.entityType.isCounter || this._currentValue.entityType.isNumber) {
+      return this.#counterValues();
+    }
+    return this.#stdValues();
+  }
+
+  #timerValues() {
+    return {
+      reversed: this.timerIsReversed,
+      current: this._currentValue.value.current,
+      min: this._currentValue.value.min,
+      max: this._currentValue.value.max,
+    };
+  }
+
+  #counterValues() {
+    return {
       current: this._currentValue.value.current,
       min: this._currentValue.value.min,
       max: this.#maxValue.isEntity
         ? (this.#maxValue.value?.current ?? this.#maxValue.value)
         : this._currentValue.value.max,
-    });
+    };
   }
 
-  #setStdValues() {
+  #stdValues() {
     // 'net' mode always wants the algebraic total. 'stacked'/'proportional'
     // switch to it too once center_zero splits them into two arms - a single
     // flat percentage doesn't mean anything once the bar itself shows two
@@ -1601,27 +1607,27 @@ class ViewBase extends ViewCore {
         ? this.#entityCollection.getNetValue()
         : this.#entityCollection.getTotalValue()
       : this._currentValue.value;
-    Object.assign(this.#percentHelper, {
+    return {
       current: currentValue,
       min: this.#jinjaMinValue ?? this.#minValue.value?.current ?? this.#minValue.value,
       max: this.#jinjaMaxValue ?? this.#maxValue.value?.current ?? this.#maxValue.value,
-    });
+    };
   }
 
   get jinjaMinValue(): number | null {
     return this.#jinjaMinValue;
   }
 
-  set jinjaMinValue(value: unknown) {
-    this.#jinjaMinValue = is.number(value) ? value : null;
+  set jinjaMinValue(value: number | null) {
+    this.#jinjaMinValue = value;
   }
 
   get jinjaMaxValue(): number | null {
     return this.#jinjaMaxValue;
   }
 
-  set jinjaMaxValue(value: unknown) {
-    this.#jinjaMaxValue = is.number(value) ? value : null;
+  set jinjaMaxValue(value: number | null) {
+    this.#jinjaMaxValue = value;
   }
 
   // Overrides ViewCore's own (template-only, fast_refresh-gated): standard

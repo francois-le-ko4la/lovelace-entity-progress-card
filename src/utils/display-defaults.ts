@@ -50,9 +50,10 @@ const resolveDisplayDecimal = (
   if (entityType.isCounter) return CARD.config.decimal.counter;
   if (entityType.isDuration) return CARD.config.decimal.duration;
   if (DURATION_UNITS.includes(entityUnit as string)) return CARD.config.decimal.duration;
-  if (configUnit)
-    return configUnit === CARD.config.unit.default ? CARD.config.decimal.percentage : CARD.config.decimal.other;
-  return resolvedUnit === CARD.config.unit.default ? CARD.config.decimal.percentage : CARD.config.decimal.other;
+  // ||, never ??: the disable unit is the empty string, and an explicit
+  // `unit: ''` has always fallen through to the resolved one.
+  const unit = configUnit || resolvedUnit;
+  return unit === CARD.config.unit.default ? CARD.config.decimal.percentage : CARD.config.decimal.other;
 };
 
 export { resolveDisplayUnit, resolveDisplayDecimal };
