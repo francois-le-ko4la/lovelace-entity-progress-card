@@ -67,13 +67,12 @@ const infoLine = (extraEl: StructureElementSpec, showMain: boolean, extraClass =
     ),
   );
 
-// A positional container holding nothing but the bar: the slot swap is the
-// same for every position, only which container differs.
-const barContainer = (container: () => string, options: StructureOptions) =>
-  container().replace(CONTENT_SLOT, StructureElements.progressBar(options));
-
 const StructureElements = {
   ripple: () => '<ha-ripple></ha-ripple>',
+  // A positional container holding nothing but the bar: the slot swap is the
+  // same for every position, only which container differs.
+  barContainer: (container: () => string, options: StructureOptions) =>
+    container().replace(CONTENT_SLOT, StructureElements.progressBar(options)),
   // The card-level ripple lives in its own sibling div (see
   // CARD.htmlStructure.sections.rippleZone) rather than as a bare direct
   // child of .container - see that token's own comment for why.
@@ -285,10 +284,13 @@ const StructureElements = {
   wrapWithBarPosition: (content: string, options: StructureOptions) => {
     const { barPosition = '' } = options;
     const wrap: Record<string, () => { before: string; after: string }> = {
-      top: () => ({ before: barContainer(StructureElements.topContainer, options), after: '' }),
-      bottom: () => ({ before: '', after: barContainer(StructureElements.bottomContainer, options) }),
-      below: () => ({ before: '', after: barContainer(StructureElements.belowContainer, options) }),
-      background: () => ({ before: '', after: barContainer(StructureElements.backgroundContainer, options) }),
+      top: () => ({ before: StructureElements.barContainer(StructureElements.topContainer, options), after: '' }),
+      bottom: () => ({ before: '', after: StructureElements.barContainer(StructureElements.bottomContainer, options) }),
+      below: () => ({ before: '', after: StructureElements.barContainer(StructureElements.belowContainer, options) }),
+      background: () => ({
+        before: '',
+        after: StructureElements.barContainer(StructureElements.backgroundContainer, options),
+      }),
     };
 
     const { before = '', after = '' } = wrap[barPosition]?.() ?? {};
@@ -325,8 +327,8 @@ const StructureTemplates = {
   feature: (options: StructureOptions = {}) => {
     const { barPosition = '' } = options;
     const containers: Record<string, () => string> = {
-      top: () => barContainer(StructureElements.topContainer, options),
-      bottom: () => barContainer(StructureElements.bottomContainer, options),
+      top: () => StructureElements.barContainer(StructureElements.topContainer, options),
+      bottom: () => StructureElements.barContainer(StructureElements.bottomContainer, options),
     };
 
     return containers[barPosition]?.() ?? StructureElements.progressBar(options);

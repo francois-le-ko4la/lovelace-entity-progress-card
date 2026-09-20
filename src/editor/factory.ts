@@ -1039,23 +1039,6 @@ const circularBackgroundField = () => ({
 // Badge and badgeTemplate opt out (see YamlSchemaFactory's own
 // .delete(['multiline'])): the row is too small for a second line there.
 // density: compact/single_line clear it too (see schema.ts's applyDensityRule).
-// The bar's two marker panels. Shared because buildFeature() below composes
-// its own section list and would otherwise carry a second copy of their title
-// and icon - the only thing that legitimately differs is what peak_marker has
-// to show.
-const markerPanels = (peakFields: Record<string, unknown>) => ({
-  watermark: {
-    title: TITLE.watermark,
-    icon: HA_CONTEXT.icons.radar,
-    fields: EditorFactory.themeWatermarkFields(),
-  },
-  peak_marker: {
-    title: TITLE.peakMarker,
-    icon: HA_CONTEXT.icons.chartBellCurve,
-    fields: peakFields,
-  },
-});
-
 const multilineField = (badge: boolean) =>
   badge
     ? {}
@@ -2298,11 +2281,27 @@ const EditorFactory = {
   // scrolling, a collapsed panel is skipped by EditorDOMHelper.updateAll -
   // editing a watermark no longer re-evaluates every alert field on each
   // keystroke.
+  // The bar's two marker panels. Shared because buildFeature() below composes
+  // its own section list and would otherwise carry a second copy of their
+  // title and icon - only what peak_marker has to show legitimately differs.
+  markerPanels: (peakFields: Record<string, unknown>) => ({
+    watermark: {
+      title: TITLE.watermark,
+      icon: HA_CONTEXT.icons.radar,
+      fields: EditorFactory.themeWatermarkFields(),
+    },
+    peak_marker: {
+      title: TITLE.peakMarker,
+      icon: HA_CONTEXT.icons.chartBellCurve,
+      fields: peakFields,
+    },
+  }),
+
   markers: (template: boolean, badge: boolean) =>
     nonEmptySections({
       // Card only (core.ts's _seedPeakMarkerHistoryOnce, schema.ts's peakMarker
       // comment) - Badge/Template have no history-seeding pipeline.
-      ...markerPanels(!template && !badge ? EditorFactory.peakMarkerFields() : {}),
+      ...EditorFactory.markerPanels(!template && !badge ? EditorFactory.peakMarkerFields() : {}),
       // Three small families that annotate the card rather than mark the bar.
       // status_label sits before alert_when (next panel) on purpose:
       // alert_when.highlight: 'label' reuses this very pill.
@@ -2486,7 +2485,7 @@ const EditorFactory = {
           ...EditorFactory.barEffectFields(),
         },
       },
-      ...markerPanels(EditorFactory.peakMarkerFields()),
+      ...EditorFactory.markerPanels(EditorFactory.peakMarkerFields()),
     };
   },
 

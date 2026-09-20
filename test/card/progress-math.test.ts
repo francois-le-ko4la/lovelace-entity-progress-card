@@ -8,8 +8,6 @@ import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import { ProgressMath, type ProgressInput } from '../../src/card/progress-math.js';
 
-const math = (overrides: Partial<ProgressInput> = {}) => new ProgressMath(input(overrides));
-
 const input = (overrides: Partial<ProgressInput> = {}): ProgressInput => ({
   min: 0,
   max: 100,
@@ -20,6 +18,8 @@ const input = (overrides: Partial<ProgressInput> = {}): ProgressInput => ({
   centerZero: null,
   ...overrides,
 });
+
+const math = (overrides: Partial<ProgressInput> = {}) => new ProgressMath(input(overrides));
 
 describe('ProgressMath - every derived value off one input', () => {
   test('a plain range answers for all of them at once', () => {

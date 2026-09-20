@@ -169,7 +169,7 @@ describe('decimal - how the percent is rounded', () => {
   test('a refused decimal reverts to the construction default, not the last good value', () => {
     const helper = new PercentHelper();
     helper.decimal = 2;
-    helper.decimal = -1;
+    helper.decimal = -1; // skipcq: JS-W1032 - the pair IS the test
     assert.equal(helper.decimal, 0);
   });
 });
@@ -412,8 +412,9 @@ describe('calcWatermark - the shapes a threshold can arrive in', () => {
     const helper = new PercentHelper();
     helper.min = 0;
     helper.max = 100;
+    const absent: { threshold?: number } = {};
     assert.equal(helper.calcWatermark(null), 0);
-    assert.equal(helper.calcWatermark(undefined), 0);
+    assert.equal(helper.calcWatermark(absent.threshold), 0);
   });
 
   test('a threshold is projected on its own arm, not on the current valueticks', () => {
