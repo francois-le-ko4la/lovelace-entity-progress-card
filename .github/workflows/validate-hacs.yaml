@@ -7,6 +7,10 @@ on:
 
 jobs:
   validate-hacs:
+    # hacs/action validates the repository, not the diff: a fork has neither a
+    # release nor a committed dist/, so it never finds the file hacs.json names
+    # and every outside contribution would carry a red check (#142).
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: "ubuntu-latest"
     steps:
       - uses: actions/checkout@v7

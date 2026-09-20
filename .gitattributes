@@ -1,0 +1,15 @@
+# Git for Windows checks LF out as CRLF by default (core.autocrlf=true). That
+# breaks scripts/lib/i18n-block.js, whose pattern joins its five lines with a
+# bare \n, so `npm run build:prod` fails before compiling anything (#142).
+# Pin the working tree to LF on every platform instead of depending on each
+# contributor's own setting.
+* text=auto eol=lf
+
+# text=auto detects these already; spelled out so a diff or a merge driver
+# never treats one as text on a misconfigured client.
+*.png  binary
+*.gif  binary
+*.jpg  binary
+*.ico  binary
+*.woff binary
+*.woff2 binary

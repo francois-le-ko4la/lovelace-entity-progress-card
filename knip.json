@@ -1,4 +1,11 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
-  "ignore": ["src/utils/translations.js"]
+  "entry": [
+    "src/index-light.ts",
+    "scripts/**/*.js",
+    "test/**/*.test.ts"
+  ],
+  "ignore": [
+    "src/utils/translations.js"
+  ]
 }

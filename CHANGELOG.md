@@ -79,7 +79,27 @@ maximum over its window, filled on the bar. The bar says where the value is now;
 the band says how far it has swung. It doesn't need the minimum and maximum
 marks themselves — a band alone is enough.
 
+#### 🪶 A second bundle, without the visual editor
+
+`entity-progress-card-light.js` ships beside the usual one: the same seven card,
+badge and feature types, minus the editor. Home Assistant offers its own YAML
+editor for them instead, and every card renders identically. 311 KB instead of
+400, and about a quarter less parsing and compiling for the browser.
+
+HACS brings it down with everything else; point your dashboard resource at it to
+switch. In storage mode HACS may put that resource back on the full file when it
+updates the card — re-point it, or keep a copy in `www/`.  
+➡️ Most of the bundle is translations for languages nobody uses (~300 KB) #141
+(@davidcoulson)
+
 ### 🔧 Improvements
+
+#### `value_compact` moves the scale into the unit
+
+A sensor reading 25 W in the morning and 1500 W at night no longer forces you to
+pick one unit and live with it: it shows `25 W`, then `1.5 kW`, then `1.5 MW`,
+and `500 mW` below the unit. Units that have no SI prefix — `%`, `°C`, `m³` —
+are left untouched.
 
 #### The editor borrows Home Assistant's own words
 
@@ -261,6 +281,16 @@ a panel.
 - **[`trend_indicator`][trend_indicator]** with a `window`: the arrow only
   appeared at the entity's next state change, which on a slow sensor is minutes
   away. It shows as soon as its history loads — since 1.6.2.
+- **[`value_compact`][value_compact]** with a unit put the magnitude beside it
+  instead of in it — `1.6K W` rather than `1.6 kW`.
+- **[`value_compact`][value_compact]** rounded the abbreviated value to the raw
+  value's own precision, so `1234` showed as `1K`. It carries three significant
+  digits now — `1.23K`, `1.65 kW`.
+- **[`unit_spacing`][unit_spacing]** `auto`: the space before `%` followed the
+  number format instead of the language, so `42%` showed for anyone who had not
+  changed that setting. Sixteen languages get their space back.
+- **[`unit_spacing`][unit_spacing]** `auto`: `s` took a space where `ms` and
+  `μs` did not.
 
 ### 📚 Documentation
 
@@ -296,6 +326,9 @@ a panel.
 - [`trend_indicator`][trend_indicator]'s sample buffer no longer holds one
   object per reading: a week-long window on a fast-reporting entity costs 710 KB
   where it cost 3.7 MB.
+- The i18n tooling reads the generated block on a CRLF checkout, and
+  `.gitattributes` pins the working tree to LF.  
+  ➡️ fix: support CRLF checkouts in i18n tooling #142 (@dajiaohuang)
 - A third smaller than 1.6.2, despite everything this release adds: 648 → 399
   KB, and 155 → 102 KB compressed. The translation table used to be nearly half
   the shipped file; what stays in it now is 4%.
@@ -304,6 +337,61 @@ We care about getting the details right — but even so, something here might ha
 slipped through. You don't need to be a developer to notice it. If something
 feels off, that's reason enough. Open a [GitHub issue]. Or say hi on [Discord].
 We'd rather know than have you go looking for a workaround on your own.
+
+## What's new (1.6.3-rc8)
+
+### ✨ New
+
+#### 🪶 A second bundle, without the visual editor
+
+`entity-progress-card-light.js` now ships beside the usual one: the same seven
+card, badge and feature types, minus the editor. Home Assistant offers its own
+YAML editor for them instead, and every card renders identically. 311 KB instead
+of 400, and about a quarter less parsing and compiling for the browser — for
+panels and kiosks where that is what costs.
+
+HACS brings it down with everything else; point your dashboard resource at it to
+switch. One caveat in storage mode: HACS may put that resource back on the full
+file when it updates the card, so re-point it, or keep a copy in `www/`.  
+➡️ Most of the bundle is translations for languages nobody uses (~300 KB) #141
+(@davidcoulson)
+
+### 🔧 Improvements
+
+#### `value_compact` moves the scale into the unit
+
+A sensor reading 25 W in the morning and 1500 W at night no longer forces you to
+pick one unit and live with it. With a unit that takes an SI prefix — `W`, `Wh`,
+`VA`, `var`, `J`, `Hz`, `B`, `bit`, `A`, `V`, `Ω`, `Pa` — the scale moves into
+the unit and the number stays plain: `25 W`, `1.5 kW`, `1.5 MW`, and `500 mW`
+below the unit. A prefix already on the unit is carried rather than doubled, so
+an entity reading `1500 kW` shows `1.5 MW`. Units that cannot take one — `%`,
+`°C`, `m³`, `ppm`, `hPa` — are left untouched, number included.
+
+### 🐛 Fixes
+
+- **[`value_compact`][value_compact]** with a unit put the magnitude beside it
+  instead of in it: `1.6K W` in English, `1,6 тыс. W` in Russian, where the
+  suffix is the word for "thousand".
+- **[`value_compact`][value_compact]** rounded the abbreviated value to the raw
+  value's own precision, so `1234` showed as `1K`. A compacted value carries
+  three significant digits now — `1.23K`, `1.65 kW`, `12.3 kW` — and an explicit
+  [`decimal`][decimal] still wins when it asks for more.
+- **[`unit_spacing`][unit_spacing]** `auto`: the space before `%` followed the
+  number format instead of the language, so `42%` showed for anyone who had not
+  changed that setting. It follows the interface language now — a space in
+  sixteen of them, Czech, French, German, Romanian, Russian and Spanish
+  included.
+- **[`unit_spacing`][unit_spacing]** `auto`: `s` took a space where `ms` and
+  `μs` did not. Every duration sticks to its value now (`45s`).
+
+### 🧹 Under the hood
+
+- The i18n tooling reads the generated block on a CRLF checkout, and
+  `.gitattributes` pins the working tree to LF, so a build no longer depends on
+  a contributor's `core.autocrlf`. HACS validation is skipped for pull requests
+  from forks, where it can never pass.  
+  ➡️ fix: support CRLF checkouts in i18n tooling #142 (@dajiaohuang)
 
 ## What's new (1.6.3-rc7)
 
@@ -7009,6 +7097,8 @@ experience:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#text_shadow
 [interpolate]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#interpolate
+[unit_spacing]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#unit_spacing
 [value_compact]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#value_compact
 [unit_position]:

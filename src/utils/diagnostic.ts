@@ -5,7 +5,7 @@
  * index.ts (installDiagnostic). See docs/troubleshooting.md.
  */
 
-import { VERSION, CARD_CONTEXT, HA_SELECTOR_TAG, HA_ACTION_HANDLER_TAG } from './parameters.js';
+import { VERSION, LIGHT_BUILD, CARD_CONTEXT, HA_SELECTOR_TAG, HA_ACTION_HANDLER_TAG } from './parameters.js';
 import { CONSTRUCTED_SHEETS, CONSTRUCTIBLE_STYLESHEETS } from './styles.js';
 import { HassProviderSingleton } from './hass-provider.js';
 
@@ -57,7 +57,7 @@ function installDiagnostic(): void {
           : 'supported, none built yet';
       const report = [
         '=== Entity Progress Card — diagnostic ===',
-        `card version   : ${VERSION}${CARD_CONTEXT.dev ? ' (dev mode)' : ''}`,
+        `card version   : ${VERSION}${LIGHT_BUILD ? ' light' : ''}${CARD_CONTEXT.dev ? ' (dev mode)' : ''}`,
         `HA core        : ${hass?.config?.version ?? 'unknown (no hass yet)'}`,
         `language       : ${hass?.locale?.language ?? navigator.language}`,
         `browser        : ${navigator.userAgent}`,

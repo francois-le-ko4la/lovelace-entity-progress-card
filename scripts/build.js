@@ -22,8 +22,12 @@ const { resolveCssBlocks } = require('./lib/inline-css.js');
 const { forceCleanCardContext } = require('./lib/release-flags.js');
 const { JS_FILE, parseJsBlock } = require('./lib/i18n-block.js');
 
-const ENTRY = 'src/index.ts';
 const OUTDIR = 'dist';
+// --light: the editor-free variant. A separate entry point, not a define:
+// editors.ts/chips.ts/list-editors.ts call defineElement() at module level, so
+// no tree-shaker may drop them however dead the registration branch is.
+const isLight = process.argv.includes('--light');
+const ENTRY = isLight ? 'src/index-light.ts' : 'src/index.ts';
 // --prod: force dev:false + all debug flags false regardless of the
 // committed source state (see scripts/lib/release-flags.js). Default (no
 // flag, "test" build): CARD_CONTEXT is left exactly as committed.
@@ -31,7 +35,7 @@ const isProd = process.argv.includes('--prod');
 // Filename suffix keeps a stray test build from ever being mistaken for (or
 // overwriting) the shipped prod one in dist/ - and lets a dev and a prod file
 // loaded side by side each find their own translation files.
-const STEM = isProd ? 'entity-progress-card' : 'entity-progress-card_dev';
+const STEM = `entity-progress-card${isLight ? '-light' : ''}${isProd ? '' : '_dev'}`;
 const OUTFILE = `${STEM}.js`;
 
 // The editor's translations ship beside the bundle rather than inside it: one
@@ -64,7 +68,7 @@ function main() {
     // URL can't be read when the bundle is loaded as an ES module (no
     // document.currentScript), so a filename/?dev=true signal alone would miss
     // it. ?dev=true still works as a runtime override on the prod file.
-    define: { __EPB_DEV_BUILD__: isProd ? 'false' : 'true' },
+    define: { __EPB_DEV_BUILD__: isProd ? 'false' : 'true', __EPB_LIGHT_BUILD__: isLight ? 'true' : 'false' },
     // Preserve original class/function names through bundling: esbuild
     // otherwise prefixes some cross-module classes (e.g. _ThemeManager,
     // _EntityHelper) to avoid collisions, which would surface in every
@@ -89,12 +93,15 @@ function main() {
 
   fs.mkdirSync(OUTDIR, { recursive: true });
   fs.writeFileSync(path.join(OUTDIR, OUTFILE), result.code);
-  const editorTranslations = writeEditorTranslations();
-
   const cssVerb = isProd ? 'minified' : 'resolved';
+  const variant = `${isProd ? 'prod' : 'test'}${isLight ? ', light' : ''}`;
   console.log(
-    `✅ Built ${path.join(OUTDIR, OUTFILE)} from ${ENTRY} [${isProd ? 'prod' : 'test'}] (${minifiedCount} CSS block(s) ${cssVerb}, bundled source ${bundled.length} → ${src.length} bytes pre-JS-minify).`,
+    `✅ Built ${path.join(OUTDIR, OUTFILE)} from ${ENTRY} [${variant}] (${minifiedCount} CSS block(s) ${cssVerb}, bundled source ${bundled.length} → ${src.length} bytes pre-JS-minify).`,
   );
+
+  // No editor, nothing to fetch: a light build ships no translation sidecar.
+  if (isLight) return;
+  const editorTranslations = writeEditorTranslations();
   console.log(
     `✅ Wrote ${editorTranslations.count} editor translation file(s) ${path.join(OUTDIR, `${STEM}-<lang>.json`)} (${editorTranslations.bytes} bytes total).`,
   );

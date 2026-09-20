@@ -140,16 +140,58 @@ Use this link to directly go to the repository in HACS
 <details>
 <summary><strong>Manual Installation (click to expand)</strong></summary>
 
-- Download the file `entity-progress-card.js` (from the last version) to the
-  `/config/www/` directory in your Home Assistant setup.
-- Add `/local/entity-progress-card.js` to your Lovelace resources:
-  - Go to **Settings** ➡️ **Dashboards** ➡️ **Resources** ➡️ **`⋮`** ➡️ **Add
-    Resource**
-  - Set:
-    - URL: `/local/www/entity-progress-card.js`
-    - Type: `JavaScript Module`
-  - Save
-  - reload the browser cache (**`CTRL`** + **`F5`** or clear cache).
+Download `entity-progress-card.js` from the latest release into `/config/www/`,
+then declare it as a resource:
+
+- Go to **Settings** ➡️ **Dashboards** ➡️ **Resources** ➡️ **`⋮`** ➡️ **Add
+  Resource**
+- URL: `/local/entity-progress-card.js`
+- Type: `JavaScript Module`
+- Save, then reload the browser cache (**`CTRL`** + **`F5`** or clear cache)
+
+> [!NOTE]
+>
+> The release also carries one `entity-progress-card-<lang>.json` file per
+> language. Copy the one matching your language — or all of them — next to the
+> `.js` file, or the visual editor falls back to English. The cards themselves
+> stay translated either way, and HACS brings these files down for you.
+
+</details>
+
+<details>
+<summary><strong>Lighter bundle, without the visual editor (click to expand)</strong></summary>
+
+`entity-progress-card-light.js` ships in every release beside the usual file. It
+registers the same seven card, badge and feature types and renders them
+identically — it simply carries no visual editor, so Home Assistant offers its
+own YAML editor for these cards instead.
+
+It is a smaller file, and asks the browser for noticeably less parsing and
+compiling. That is worth having on a wall panel or a kiosk device; on a desktop
+or a phone you will not notice it, and the visual editor is worth more than the
+saving.
+
+HACS downloads it along with everything else, so there is nothing extra to
+fetch. To switch, point your dashboard resource at it:
+
+- Go to **Settings** ➡️ **Dashboards** ➡️ **Resources** and edit the card's
+  entry
+- In the URL, change **only the file name** and keep the `?hacstag=…` that is
+  already there — it is what tells the browser to fetch the new file rather than
+  serve the cached one:
+  `/hacsfiles/lovelace-entity-progress-card/entity-progress-card-light.js?hacstag=123456789`
+- Leave the type on `JavaScript Module`
+- Save, then reload the browser cache (**`CTRL`** + **`F5`**)
+
+> [!IMPORTANT]
+>
+> Unless your dashboards are in YAML mode, HACS points that resource back at the
+> full file whenever it updates the card, with a fresh `hacstag`. Nothing breaks
+> — you lose the light bundle, not your cards — but you have to set the file
+> name again after each update, keeping the new tag HACS just wrote. To avoid
+> that, copy the file into `/config/www/` and use
+> `/local/entity-progress-card-light.js` instead: HACS never touches that one,
+> at the cost of updating it yourself.
 
 </details>
 

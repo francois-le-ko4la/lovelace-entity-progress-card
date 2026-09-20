@@ -1176,11 +1176,11 @@ aggregator only stacks them and divides the available height.
 <details>
 <summary>Show options</summary>
 
-| **Option**       | **Type**           | **Default**        | **Description**                                            | **Link**                             |
-| :--------------- | :----------------- | :----------------- | :--------------------------------------------------------- | :----------------------------------- |
-| `entities`       | list (required)    | —                  | List of row configs, at minimum an `entity` each           | [Config Ref.][config-entities]       |
-| `value_position` | string (optional)  | `left`             | Which side of the bar the text sits on                     | [Config Ref.][config-value_position] |
-| `rows`           | integer (optional) | one row per entity | `entity-progress-multi-card` only — Sections grid row span | [Config Ref.][config-rows]           |
+| **Option**                   | **Type**           | **Default**        | **Description**                                            | **Link**                                         |
+| :--------------------------- | :----------------- | :----------------- | :--------------------------------------------------------- | :----------------------------------------------- |
+| `entities`                   | list (required)    | —                  | List of row configs, at minimum an `entity` each           | [Config Ref.][config-entities]                   |
+| `reverse_secondary_info_row` | boolean (optional) | `false`            | Puts the bar before the text instead of after it           | [Config Ref.][config-reverse_secondary_info_row] |
+| `rows`                       | integer (optional) | one row per entity | `entity-progress-multi-card` only — Sections grid row span | [Config Ref.][config-rows]                       |
 
 </details>
 <br />
@@ -1192,7 +1192,20 @@ shared default; a row can override it individually. `bar_size` defaults to
 Each row is a whole [`entity-progress-card`](configuration.md#standard) in
 [`density: single_line`](configuration.md#density), so it shows its value by
 default and takes the card's own options. Use `hide: ['value']` to turn the
-value off.
+value off, and `hide: ['icon', 'name']` for bars and values alone.
+
+**Lining the bars up.** Every row sizes its own text, so `9%` and `78%` leave
+their bars starting at a different x. Two options fix that, from either side —
+take whichever suits you:
+
+- [`bar_max_width`](configuration.md#bar_max_width) pins the **bar**, and the
+  text takes what is left. One option, nothing else needed.
+- `--epb-multi-value-width` pins the **text column** instead, through
+  [card_mod](https://github.com/thomasloven/lovelace-card-mod). That is what the
+  screenshots below use.
+
+Set either at the top level so every row gets it: a row left to itself falls
+back to its own width.
 
 See [Full Configuration Reference][FCR].
 
@@ -1215,6 +1228,9 @@ See [Full Configuration Reference][FCR].
 type: custom:entity-progress-multi-card
 bar_size: small
 decimal: 0
+hide:
+  - icon
+  - name
 entities:
   - entity: sensor.printer_black_cartridge
     bar_color: black
@@ -1224,6 +1240,11 @@ entities:
     bar_color: magenta
   - entity: sensor.printer_yellow_cartridge
     bar_color: yellow
+card_mod:
+  style: |
+    :host {
+      --epb-multi-value-width: 40px;
+    }
 ```
 
 </details>
@@ -1241,9 +1262,14 @@ entities:
 ```yaml
 type: tile
 entity: sensor.printer
+name: Printer
 features:
   - type: custom:entity-progress-multi-feature
     bar_size: xsmall
+    hide:
+      - icon
+      - name
+      - secondary_info
     entities:
       - entity: sensor.printer_black_cartridge
         bar_color: black
@@ -1253,6 +1279,9 @@ features:
         bar_color: magenta
       - entity: sensor.printer_yellow_cartridge
         bar_color: yellow
+grid_options:
+  columns: 4
+  rows: 1
 ```
 
 </details>
@@ -2194,13 +2223,14 @@ features:
   - type: custom:entity-progress-multi-feature
     bar_size: medium
     decimal: 0
+    hide:
+      - icon
+      - name
     entities:
       - entity: sensor.grid_consumption
-        name: Consumption
         bar_color: blue
         max_value: 3000
       - entity: sensor.solar_production
-        name: Production
         bar_color: green
         max_value: 3000
   - type: custom:entity-progress-feature
@@ -2216,6 +2246,11 @@ features:
         - entity: sensor.grid_consumption
           subtract: true
           color: blue
+card_mod:
+  style: |
+    :host {
+      --epb-multi-value-width: 45px;
+    }
 ```
 
 </details>
@@ -2226,8 +2261,9 @@ One native HA `tile` card, two of our features stacked inside it: an
 by side with their values, and a second
 [`entity-progress-feature`](#tile-feature) below it renders the same data as one
 [`bar_stack: net`](configuration.md#bar_stack) balance, `center_zero` centered.
-Each Multi row prints its own value, so nothing else is needed to read the
-watts.
+Each Multi row prints its own value, and the `--epb-multi-value-width` hook
+holds those values in one column so the two bars start at the same x whatever
+the reading — `900 W` and `1600 W` are not the same width.
 
 [🔼 Back to top]
 
@@ -2906,8 +2942,6 @@ track solar cycles from your dashboard.
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#xyz_action
 [config-entities]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#multi-entities
-[config-value_position]:
-  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#multi-value
 [config-rows]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#multi-rows
 [name-jinja]:

@@ -7,7 +7,7 @@
  */
 
 import { HA_CONTEXT } from './ha-context.js';
-import { META, VERSION } from './meta.js';
+import { META, VERSION, LIGHT_BUILD } from './meta.js';
 
 // Shared by every purely decorative element below (progress bar internals,
 // marks, icon/badge wrappers) - hidden from the accessibility tree.
@@ -443,7 +443,7 @@ const network = {
 };
 
 const consoleInfo = {
-  message: `%c✨${META.types.card.typeName.toUpperCase()} ${VERSION} IS INSTALLED.`,
+  message: `%c✨${META.types.card.typeName.toUpperCase()} ${VERSION}${LIGHT_BUILD ? ' (LIGHT — no visual editor)' : ''} IS INSTALLED.`,
   css: 'color:orange; background-color:black; font-weight: bold;',
   link: `      For more details, check the README: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/tree/${VERSION}`,
   // Emitted after the banner (see index.ts) only when the URL-derived dev/

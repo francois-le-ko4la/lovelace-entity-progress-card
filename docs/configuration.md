@@ -2810,15 +2810,23 @@ reverse_secondary_info_row: true
 > **`unit_spacing`** [String] ➡️ {`auto`|`space`|`no-space`} _(optional,
 > default: `auto`)_
 
-Defines whether a space should appear between numeric values and units, either
-following locale rules or overriding them explicitly.
+Whether a space appears between the value and its unit, following the language's
+own convention or overriding it.
 
-- `auto`: Uses locale-specific formatting rules (e.g., France → space, US → no
-  space)
-- `space`: Forces a space between number and unit (e.g., 80 %), regardless of
-  locale
-- `no-space`: Forces no space between number and unit (e.g., 80%), regardless of
-  locale
+- `auto`: follows the interface language, the same rule Home Assistant applies
+  to a native tile. Three cases: a duration sticks to its value (`45min`, `2h`),
+  the degree sign does too (`45°`), and everything else takes a space (`42 kWh`,
+  `22 °C`). The percent sign is the one that varies — `42 %` in Catalan, Czech,
+  Danish, Finnish, French, German, Croatian, Lithuanian, Macedonian, Norwegian,
+  Romanian, Russian, Slovak, Slovenian, Spanish and Swedish, `42%` elsewhere.
+- `space`: always a space (`80 %`), whatever the language
+- `no-space`: never a space (`80%`), whatever the language
+
+> [!NOTE]
+>
+> The compact duration is this card's one deliberate departure: SI, and Home
+> Assistant, would write `45 min`. A bar has less room than a sentence, and
+> `1h23min` reads better on one.
 
 [🔼 Back to top]
 
@@ -2848,17 +2856,49 @@ unit_spacing: no-space
 
 > **`value_compact`** [Boolean] _(optional, default: `false`)_
 
-Abbreviates large values using locale-aware suffixes instead of the full
-number - `1200` becomes `1.2k`, `1500000` becomes `1.5M`. `decimal` still caps
-how many fraction digits can show, but trailing zeros are trimmed (`1.2k`, not
-`1.20k`).
+Keeps a value readable whatever its magnitude, so a sensor that swings across
+the day doesn't force you to pick one unit and live with it. What it does
+depends on whether there is a unit:
+
+**With a unit that takes an SI prefix** — `W`, `Wh`, `VA`, `var`, `J`, `Hz`,
+`B`, `bit`, `A`, `V`, `Ω`, `Pa` — the scale moves into the unit and the number
+stays plain:
+
+| value       | shown as |
+| ----------- | -------- |
+| `25 W`      | `25 W`   |
+| `1500 W`    | `1.5 kW` |
+| `1500000 W` | `1.5 MW` |
+| `0.5 W`     | `500 mW` |
+
+A prefix already on the unit is carried rather than doubled: an entity reading
+`1500 kW` shows `1.5 MW`. SI prefixes are spelled the same in every language, so
+this reads identically in all 39.
+
+**Without a unit**, the number itself is abbreviated with your locale's own
+suffix: `1200` becomes `1.2K` in English, `1,2 k` in French, `1,2 тыс.` in
+Russian.
+
+**With any other unit** — `%`, `°C`, `m³`, `ppm`, `hPa` — nothing changes.
+Prefixing them would be wrong (`km³` is 10⁹ m³, not 10³) or meaningless, and
+abbreviating the number alone would strand it from its unit.
+
+`decimal` caps how many fraction digits can show, and trailing zeros are
+trimmed: `1.5 kW`, never `1.50 kW`.
 
 ```yaml
 type: custom:entity-progress-card
-entity: sensor.total_energy
-max_value: 5000
+entity: sensor.washing_machine_power
+max_value: 2500
 value_compact: true
 ```
+
+> [!TIP]
+>
+> If a sensor sits in a stable range, Home Assistant can convert it once and for
+> all instead: open the entity's settings and pick the unit you want. That is
+> the better answer for a meter that always reads in kilowatts. `value_compact`
+> is for the ones that move.
 
 [🔼 Back to top]
 

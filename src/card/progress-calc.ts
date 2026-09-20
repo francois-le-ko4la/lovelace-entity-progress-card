@@ -284,11 +284,13 @@ class PercentHelper extends ProgressCalc {
     if (this.hasTimerOrFlexTimerUnit)
       return NumberFormatter.formatTiming(this.actual, this.decimal, {
         locale: this.#hassProvider.numberFormat,
+        language: this.#hassProvider.language,
         flex: this.hasFlexTimerUnit,
         unitSpacing: this.#unitSpacing,
       });
     return NumberFormatter.formatValueAndUnit(this.processedValue, this.decimal, this.unit, {
       locale: this.#hassProvider.numberFormat,
+      language: this.#hassProvider.language,
       unitSpacing: this.#unitSpacing,
       compact: this.#compact,
       sign: this.#sign,

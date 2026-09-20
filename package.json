@@ -19,10 +19,11 @@
     "i18n:validate:structure": "node scripts/translations.js validate --structure-only",
     "i18n:sync": "node scripts/translations.js synchronize --to-js",
     "check:code": "npm run check:syntax && npm run format:js:check && npm run lint && npm run type-check && npm run type-check:test && npm run i18n:validate:structure && npm test",
-    "check:github": "npm run check:release-flags && npm run check:code && npm run lint:unused && npm run i18n:validate && npm run lint:md && npm run build:prod && node --check dist/entity-progress-card.js && npm run check:es-target && npm run check:i18n-split && npm run test:dom",
+    "check:github": "npm run check:release-flags && npm run check:code && npm run lint:unused && npm run i18n:validate && npm run lint:md && npm run build:prod && node --check dist/entity-progress-card.js && npm run check:es-target && npm run build:light && node --check dist/entity-progress-card-light.js && npm run check:es-target:light && npm run check:i18n-split && npm run test:dom",
     "check:push": "npm run check:github && npm run check:chrome92 && npm run build:test && node --check dist/entity-progress-card_dev.js && node scripts/check-i18n-split.js entity-progress-card_dev",
     "check:release-flags": "node scripts/check-release-flags.js",
     "check:es-target": "es-check es2021 dist/entity-progress-card.js",
+    "check:es-target:light": "es-check es2021 dist/entity-progress-card-light.js",
     "check:i18n-split": "node scripts/check-i18n-split.js",
     "check:chrome92": "eslint --config eslint.chrome92.config.mjs \"src/**/*.{js,ts}\"",
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\"",
@@ -36,6 +37,8 @@
     "build": "node scripts/build.js",
     "build:test": "node scripts/build.js",
     "build:prod": "node scripts/build.js --prod",
+    "build:light": "node scripts/build.js --prod --light",
+    "build:light:test": "node scripts/build.js --light",
     "prepare": "husky"
   },
   "repository": {

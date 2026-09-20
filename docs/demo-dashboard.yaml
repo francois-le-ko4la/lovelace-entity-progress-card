@@ -333,7 +333,9 @@ views:
             name: Printer
             features:
               - type: custom:entity-progress-multi-feature
-                show_value: true
+                hide:
+                  - icon
+                  - name
                 decimal: 0
                 bar_size: xsmall
                 entities:
@@ -464,16 +466,16 @@ views:
             name: Energy (consumption vs production)
             features:
               - type: custom:entity-progress-multi-feature
+                hide:
+                  - icon
+                  - name
                 bar_size: medium
-                show_value: true
                 decimal: 0
                 entities:
                   - entity: input_number.epb_demo_grid_consumption
-                    name: Consumption
                     bar_color: blue
                     max_value: 3000
                   - entity: input_number.epb_demo_solar_production
-                    name: Production
                     bar_color: green
                     max_value: 3000
               - type: custom:entity-progress-feature
@@ -3703,9 +3705,13 @@ views:
               columns: 6
               rows: 2
             entity: input_boolean.epb_demo_printer
-            name: 'Printer ink levels - without show_value'
+            name: 'Printer ink levels - bar only'
             features:
               - type: custom:entity-progress-multi-feature
+                hide:
+                  - icon
+                  - name
+                  - value
                 bar_size: xsmall
                 entities:
                   - entity: input_number.epb_demo_printer_ink_black
@@ -3722,11 +3728,13 @@ views:
               columns: 6
               rows: 2
             entity: input_boolean.epb_demo_printer
-            name: 'Printer ink levels - with show_value'
+            name: 'Printer ink levels - bar + value'
             features:
               - type: custom:entity-progress-multi-feature
+                hide:
+                  - icon
+                  - name
                 bar_size: xsmall
-                show_value: true
                 entities:
                   - entity: input_number.epb_demo_printer_ink_black
                     bar_color: black
@@ -3747,8 +3755,10 @@ views:
             grid_options:
               columns: full
           - type: custom:entity-progress-multi-card
+            hide:
+              - icon
+              - name
             bar_size: xsmall
-            show_value: true
             entities:
               - entity: input_number.epb_demo_printer_ink_black
                 bar_color: black
@@ -3769,17 +3779,19 @@ views:
               rows: 2
             entity: sensor.epb_demo_energy_net
             icon: mdi:transmission-tower
-            name: 'Energy - without show_value'
+            name: 'Energy - bar only'
             features:
               - type: custom:entity-progress-multi-feature
+                hide:
+                  - icon
+                  - name
+                  - value
                 bar_size: medium
                 entities:
                   - entity: input_number.epb_demo_grid_consumption
-                    name: Consumption
                     bar_color: blue
                     max_value: 3000
                   - entity: input_number.epb_demo_solar_production
-                    name: Production
                     bar_color: green
                     max_value: 3000
           - type: tile
@@ -3788,16 +3800,16 @@ views:
             name: Energy (consumption vs production)
             features:
               - type: custom:entity-progress-multi-feature
+                hide:
+                  - icon
+                  - name
                 bar_size: medium
-                show_value: true
                 decimal: 0
                 entities:
                   - entity: input_number.epb_demo_grid_consumption
-                    name: Consumption
                     bar_color: blue
                     max_value: 3000
                   - entity: input_number.epb_demo_solar_production
-                    name: Production
                     bar_color: green
                     max_value: 3000
               - type: custom:entity-progress-feature
@@ -5854,8 +5866,10 @@ views:
               columns: 12
               rows: 1
           - type: custom:entity-progress-multi-card
+            hide:
+              - icon
+              - name
             bar_size: small
-            show_value: true
             decimal: 0
             entities:
               - entity: input_number.epb_demo_printer_ink_black
@@ -5890,6 +5904,10 @@ views:
             entity: input_boolean.epb_demo_printer
             features:
               - type: custom:entity-progress-multi-feature
+                hide:
+                  - icon
+                  - name
+                  - value
                 bar_size: xsmall
                 entities:
                   - entity: input_number.epb_demo_printer_ink_black
@@ -6439,16 +6457,16 @@ views:
             name: Energy (consumption vs production)
             features:
               - type: custom:entity-progress-multi-feature
+                hide:
+                  - icon
+                  - name
                 bar_size: medium
-                show_value: true
                 decimal: 0
                 entities:
                   - entity: input_number.epb_demo_grid_consumption
-                    name: Consumption
                     bar_color: blue
                     max_value: 3000
                   - entity: input_number.epb_demo_solar_production
-                    name: Production
                     bar_color: green
                     max_value: 3000
               - type: custom:entity-progress-feature
@@ -6585,6 +6603,10 @@ views:
               entity: input_boolean.epb_demo_printer
               features:
                 - type: custom:entity-progress-multi-feature
+                  hide:
+                    - icon
+                    - name
+                    - value
                   entities:
                     - entity: input_number.epb_demo_printer_ink_black
                       bar_color: black
@@ -6606,6 +6628,10 @@ views:
             name: 'Multi-feature use case: printer ink levels'
             features:
               - type: custom:entity-progress-multi-feature
+                hide:
+                  - icon
+                  - name
+                  - value
                 bar_size: xsmall
                 entities:
                   - entity: input_number.epb_demo_printer_ink_black
@@ -6958,15 +6984,17 @@ views:
                 }
             features:
               - type: custom:entity-progress-multi-feature
+                hide:
+                  - icon
+                  - name
+                  - value
                 bar_size: medium
                 bar_effect: shimmer
                 entities:
                   - entity: input_number.epb_demo_grid_consumption
-                    name: GRID IN
                     bar_color: '#ff2d78'
                     max_value: 3000
                   - entity: input_number.epb_demo_solar_production
-                    name: SOLAR
                     bar_color: '#00ffc8'
                     max_value: 3000
               - type: custom:entity-progress-feature
@@ -7164,19 +7192,20 @@ views:
                 }
             features:
               - type: custom:entity-progress-multi-feature
+                hide:
+                  - icon
+                  - name
+                  - value
                 bar_size: xsmall
                 bar_effect: shimmer
                 entities:
                   - entity: input_number.epb_demo_battery
-                    name: SpO2
                     bar_color: '#39ff14'
                   - entity: input_number.epb_demo_temperature
-                    name: TEMP
                     bar_color: '#ff2d78'
                     min_value: 30
                     max_value: 42
                   - entity: input_number.epb_demo_power
-                    name: BPM
                     bar_color: '#00e5ff'
                     min_value: -3000
                     max_value: 3000

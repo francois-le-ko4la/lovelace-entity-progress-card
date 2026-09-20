@@ -55,7 +55,7 @@ function main() {
       // Deterministic for tests regardless of committed CARD_CONTEXT state -
       // same reasoning as build.js's own --prod define, dev flags aren't
       // what's under test here.
-      define: { __EPB_DEV_BUILD__: 'false' },
+      define: { __EPB_DEV_BUILD__: 'false', __EPB_LIGHT_BUILD__: 'false' },
       // src/ has no runtime dependency, so this only ever leaves the test-only
       // ones (happy-dom) to Node's own resolver instead of inlining a whole
       // DOM implementation into every test bundle.

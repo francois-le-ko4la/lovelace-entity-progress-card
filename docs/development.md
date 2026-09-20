@@ -37,9 +37,11 @@ npm install          # Node 24 (see .nvmrc / package.json's engines); also
 npm run build:test   # → dist/entity-progress-card_dev.js (readable, not minified)
 ```
 
-`src/index.ts` is where execution actually starts: it registers the card/badge/
-feature custom elements and prints the console banner — everything else in
-`src/` is reached from there, directly or transitively.
+`src/bootstrap.ts` is where execution actually settles: it registers the card/
+badge/feature custom elements and prints the console banner — everything else in
+`src/` is reached from there, directly or transitively. Two entry points call
+it: `src/index.ts` hands it the seven visual editors, `src/index-light.ts` hands
+it `null` (see [Release process](#release-process)).
 
 Tests come in two layers, run by two different gates:
 
@@ -62,11 +64,11 @@ the [Contributing Guide](contributing.md#contribution-guidelines).
 
 Three gates, each named for when you run it. Each one contains the previous:
 
-|                | when                           | adds                                                                                  |
-| -------------- | ------------------------------ | ------------------------------------------------------------------------------------- |
-| `check:code`   | while you code                 | syntax, format, lint, types, i18n structure, logic tests                              |
-| `check:github` | every push **and** the release | release flags, knip, full i18n sync, markdown, `test:dom`, `build:prod`, es2021 floor |
-| `check:push`   | before pushing                 | `check:chrome92`, the dev bundle (`build:test` + `node --check`) and its split guard  |
+|                | when                           | adds                                                                                                          |
+| -------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| `check:code`   | while you code                 | syntax, format, lint, types, i18n structure, logic tests                                                      |
+| `check:github` | every push **and** the release | release flags, knip, full i18n sync, markdown, `test:dom`, `build:prod` + `build:light`, es2021 floor on both |
+| `check:push`   | before pushing                 | `check:chrome92`, the dev bundle (`build:test` + `node --check`) and its split guard                          |
 
 `check:github` deliberately never builds the dev bundle - it bakes in
 `__EPB_DEV_BUILD__: true` and has no business on a release runner.
@@ -316,7 +318,7 @@ elapsed time from `finishes_at`.
 
 ### Registration
 
-At module load, in `src/index.ts` (the bundle entry point):
+At module load, in `src/bootstrap.ts` (reached from either entry point):
 
 ```js
 RegistrationHelper.registerCard(META.types.card, EntityProgressCard, EntityProgressCardEditor);
@@ -1321,14 +1323,25 @@ reasoning survives a maintainer handoff instead of living only in chat history.
     syntax newer than the language floor that `node --check` alone can't -
     Node's own parser is newer than the target, see issue #128). The uploaded
     file is named explicitly, never a `dist/*` glob. HACS serves that asset.
-- **Two build modes** (`scripts/build.js`, bundling `src/index.ts` via esbuild
-  with `keepNames: true`): `build:test` → `entity-progress-card_dev.js` (debug
-  baseline left as committed) and `build:prod` (`--prod`) →
-  `entity-progress-card.js` (minified, `DEBUG_DEFAULTS` re-forced all-`false`,
-  see `scripts/lib/release-flags.js`). `dev` mode isn't baked into either — it
-  follows the served filename/URL at runtime (see
-  [Logging & debugging](#logging--debugging)). Only `build:prod` is minified and
-  safe to ship.
+- **Three build modes** (`scripts/build.js`, esbuild with `keepNames: true`):
+  `build:test` → `entity-progress-card_dev.js` (debug baseline left as
+  committed), `build:prod` (`--prod`) → `entity-progress-card.js` (minified,
+  `DEBUG_DEFAULTS` re-forced all-`false`, see `scripts/lib/release-flags.js`),
+  and `build:light` (`--prod --light`) → `entity-progress-card-light.js`. `dev`
+  mode isn't baked into any of them — it follows the served filename/URL at
+  runtime (see [Logging & debugging](#logging--debugging)). Only `build:prod`
+  and `build:light` are minified and safe to ship.
+- **The light build drops the editor through a separate entry point, not a
+  flag.** `--light` switches the entry to `src/index-light.ts` and defines
+  `__EPB_LIGHT_BUILD__: true`. The entry point is what actually removes the
+  editor: `editors.ts`, `chips.ts` and `list-editors.ts` each call
+  `defineElement()` at module top level, and no tree-shaker may drop a side
+  effect — importing them behind a dead `if` saves 0.4 KB, never importing them
+  saves 88 KB. The define does the rest: `META.types.*.editor` becomes
+  `undefined` (meta.ts), so `HACore.getConfigElement` returns `null` and Home
+  Assistant falls back to its own YAML editor; `BUNDLE_STEM` gains the `-light`
+  suffix; the banner and `EPB_DIAG.dump()` say which build is running. A light
+  build writes no `-<lang>.json` sidecar — with no editor, nothing fetches them.
 - **Language floor**: the esbuild target is `es2021` — private fields, `??=` and
   optional chaining are fine, but syntax newer than es2021 (e.g. class
   `static {}` blocks - esbuild's own `keepNames` technique for those on some
