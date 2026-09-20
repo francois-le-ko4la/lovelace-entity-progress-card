@@ -494,12 +494,21 @@ class HACore extends HTMLElement {
   }
 
   #applyPeakMarkerHistory(points: { t: number; value: number }[]) {
-    const values = points.map((p) => p.value);
     const cardView = this._cardView as ViewBase;
+    // One pass, and no Math.min(...values): a spread throws RangeError past
+    // ~125k arguments, which a 7-day window on a fast sensor does reach.
+    let min = Infinity;
+    let max = -Infinity;
+    let sum = 0;
+    for (const { value } of points) {
+      if (value < min) min = value;
+      if (value > max) max = value;
+      sum += value;
+    }
     const marker = {
-      min: cardView.percentForRawValue(Math.min(...values)),
-      max: cardView.percentForRawValue(Math.max(...values)),
-      average: cardView.percentForRawValue(values.reduce((sum, v) => sum + v, 0) / values.length),
+      min: cardView.percentForRawValue(min),
+      max: cardView.percentForRawValue(max),
+      average: cardView.percentForRawValue(sum / points.length),
     };
     this._log?.debug('peak_marker seeded from history', marker);
     cardView.setPeakMarker(marker);

@@ -255,6 +255,12 @@ a panel.
 - A light added through Home Assistant's own entity-first card picker filled its
   bar to about 39% at full brightness. It reads the real brightness now, and the
   setting behind it is swept the next time you edit the card — since 1.6.1.
+- **[`peak_marker`][peak_marker]**: a long window on an entity reporting every
+  few seconds drew no marks at all. Any number of recorded points works now —
+  since 1.6.2.
+- **[`trend_indicator`][trend_indicator]** with a `window`: the arrow only
+  appeared at the entity's next state change, which on a slow sensor is minutes
+  away. It shows as soon as its history loads — since 1.6.2.
 
 ### 📚 Documentation
 
@@ -287,6 +293,9 @@ a panel.
   close to thirty blocks that existed in two copies now have a single
   definition, and a few values the card recomputed on every render only to
   discard them are gone.
+- [`trend_indicator`][trend_indicator]'s sample buffer no longer holds one
+  object per reading: a week-long window on a fast-reporting entity costs 710 KB
+  where it cost 3.7 MB.
 - A third smaller than 1.6.2, despite everything this release adds: 648 → 399
   KB, and 155 → 102 KB compressed. The translation table used to be nearly half
   the shipped file; what stays in it now is 4%.
@@ -295,6 +304,25 @@ We care about getting the details right — but even so, something here might ha
 slipped through. You don't need to be a developer to notice it. If something
 feels off, that's reason enough. Open a [GitHub issue]. Or say hi on [Discord].
 We'd rather know than have you go looking for a workaround on your own.
+
+## What's new (1.6.3-rc7)
+
+### 🐛 Fixes
+
+- **[`peak_marker`][peak_marker]**: a window covering more than ~125 000
+  recorded points threw `RangeError: Maximum call stack size exceeded` instead
+  of drawing the marks. The min/max/average reduction reads the points in one
+  pass rather than spreading them into `Math.min`/`Math.max`.
+- **[`trend_indicator`][trend_indicator]** with a `window`: the arrow stayed on
+  its cold-start value until the entity's next state change — leaving the tab
+  and coming back was enough to reveal the real one. It shows the seeded
+  direction as soon as the history lands.
+
+### 🧹 Under the hood
+
+- `TrendTracker` holds its samples in two typed arrays instead of one object
+  each: a 7-day window on an entity reporting every 10s takes 710 KB where it
+  took 3.7 MB, and eviction no longer re-copies the buffer.
 
 ## What's new (1.6.3-rc6)
 

@@ -63,9 +63,12 @@ class EntityProgressCardBase extends HABase {
   // (peak_marker's own seeding lives on HACore, which also owns the shared
   // once-per-signature contract both go through).
   _seedTrendHistoryOnce() {
-    this._seedFromHistory('trend_indicator', this._cardView.config.trend_indicator, (points) =>
-      this._cardView.seedTrend(points.map((p) => ({ t: p.t, percent: this._cardView.percentForRawValue(p.value) }))),
-    );
+    this._seedFromHistory('trend_indicator', this._cardView.config.trend_indicator, (points) => {
+      this._cardView.seedTrend(points.map((p) => ({ t: p.t, percent: this._cardView.percentForRawValue(p.value) })));
+      // Same repaint peak_marker's own seeding does: nothing else runs between
+      // here and the entity's next state change.
+      this._updateTrend();
+    });
   }
 
   // Adds the value text on top of HACore's default tick (refresh + bar CSS,
