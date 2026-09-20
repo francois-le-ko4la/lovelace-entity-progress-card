@@ -227,7 +227,7 @@ describe('unit spacing - every shipped language, against CLDR', () => {
       try {
         const parts = new Intl.NumberFormat(language, { style: 'unit', unit: id, unitDisplay }).formatToParts(1);
         if (parts.some((part) => part.type === 'unit' && part.value.length > 2)) continue;
-        votes.push(parts.some((part) => part.type === 'literal' && /[\s\u00a0\u202f]/.test(part.value)));
+        votes.push(parts.some((part) => part.type === 'literal' && /[\s\u00a0\u202f]/u.test(part.value)));
       } catch {
         return null;
       }
