@@ -4,6 +4,7 @@
   "singleQuote": true,
   "trailingComma": "all",
   "semi": true,
+  "endOfLine": "auto",
   "embeddedLanguageFormatting": "off",
   "overrides": [
     {
