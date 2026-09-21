@@ -1459,7 +1459,8 @@ Other aids:
 
 - The console banner printed at load confirms which version is actually running
   (cache issues are the #1 support topic). `window.EPB_DIAG.dump()` prints an
-  anonymized environment/registration report.
+  anonymized environment/registration report - `EPB_DIAG_DEV` in a dev build, so
+  two bundles loaded side by side each keep their own.
 - `?debug=instances` counting relies on `constructor.name`; the esbuild build
   runs with `keepNames: true` so cross-module class names survive
   bundling/minification (otherwise `_ThemeManager` &c would surface in the

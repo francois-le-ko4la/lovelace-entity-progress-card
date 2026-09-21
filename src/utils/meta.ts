@@ -15,7 +15,7 @@ declare const __EPB_LIGHT_BUILD__: boolean;
 // editor tag names at all.
 const LIGHT_BUILD = __EPB_LIGHT_BUILD__;
 
-const VERSION = '1.6.3-rc8';
+const VERSION = '1.6.3-rc9';
 
 const CARD_DESCRIPTION = 'A cool custom card to show current entity status with a progress bar.';
 const BADGE_DESCRIPTION = 'A cool custom badge to show current entity status with a progress bar.';

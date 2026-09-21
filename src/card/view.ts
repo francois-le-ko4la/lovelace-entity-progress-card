@@ -1582,12 +1582,18 @@ class ViewBase extends ViewCore {
     };
   }
 
+  // A counter and a number carry their own min/max, and those are the right
+  // default - but only a default: an explicit min_value/max_value used to be
+  // dropped here, leaving no way to scale such an entity at all (#143).
   #counterValues() {
+    const wasSet = (key: string) => this._configHelper.wasSetByUser(key);
     return {
       current: this._currentValue.value.current,
-      min: this._currentValue.value.min,
-      max: this.#maxValue.isEntity
-        ? (this.#maxValue.value?.current ?? this.#maxValue.value)
+      min: wasSet('min_value')
+        ? (this.#jinjaMinValue ?? this.#minValue.value?.current ?? this.#minValue.value)
+        : this._currentValue.value.min,
+      max: wasSet('max_value')
+        ? (this.#jinjaMaxValue ?? this.#maxValue.value?.current ?? this.#maxValue.value)
         : this._currentValue.value.max,
     };
   }

@@ -100,6 +100,9 @@ const resolveEntry = (component: Component, targetKey: string) =>
         type: component.typeName,
         name: component.name,
         supported: () => true,
+        // Ignored by HA, read by EPB_DIAG.dump(): without it a feature reports
+        // no version, and a dump cannot show two bundles disagreeing.
+        version: VERSION,
         // HA's own edit-pencil-vs-trash-only decision (hui-card-features-
         // editor.ts) reads this field directly - without it, a feature with
         // a real editor still only ever shows the remove icon.

@@ -200,3 +200,42 @@ describe('CardConfigHelper._customizeConfig - end to end, a fully deprecated con
     assert.ok(staleKeysCleared(customized.watermark));
   });
 });
+
+// The negotiated config cannot answer this on its own: max_value carries a
+// schema default, so a defaulted field and a written one parse identically.
+// A counter/number reads its own min/max otherwise, and used to read nothing
+// else at all (#143).
+describe('BaseConfigHelper.wasSetByUser - telling a written option from a defaulted one', () => {
+  const helperFor = (raw: Record<string, unknown>) => {
+    const helper = new CardConfigHelper();
+    helper.config = asConfig(raw);
+    return helper;
+  };
+
+  test('an option the user wrote is reported as theirs', () => {
+    const helper = helperFor({ entity: TEST_ENTITY, min_value: 0, max_value: 1000 });
+    assert.equal(helper.wasSetByUser('min_value'), true);
+    assert.equal(helper.wasSetByUser('max_value'), true);
+  });
+
+  test('an option only the schema filled in is not', () => {
+    const helper = helperFor({ entity: TEST_ENTITY });
+    assert.equal(helper.wasSetByUser('min_value'), false);
+    // max_value still resolves to the schema's own 100 …
+    assert.equal(helper.config.max_value, 100);
+    // … which is exactly what this has to stay blind to.
+    assert.equal(helper.wasSetByUser('max_value'), false);
+  });
+
+  test('a max_value repeating a native scale is dropped, so it is not theirs either', () => {
+    // EntityHelper already normalises brightness to 0-100; honouring the 255
+    // would divide the fill a second time.
+    const helper = helperFor({ entity: 'light.kitchen', attribute: 'brightness', max_value: 255 });
+    assert.equal(helper.wasSetByUser('max_value'), false);
+  });
+
+  test('the legacy bare-entity form is migrated, and still counts as written', () => {
+    const helper = helperFor({ entity: TEST_ENTITY, max_value: CAPACITY_ENTITY });
+    assert.equal(helper.wasSetByUser('max_value'), true);
+  });
+});

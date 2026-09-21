@@ -1,5 +1,6 @@
 /*
- * The `window.EPB_DIAG.dump()` diagnostic helper: run in the browser console
+ * The `window.EPB_DIAG.dump()` diagnostic helper - `EPB_DIAG_DEV` in a dev
+ * build: run in the browser console
  * on a dashboard that has the card, it prints an anonymized environment/
  * registration report to paste into a bug report. Installed once at load by
  * index.ts (installDiagnostic). See docs/troubleshooting.md.
@@ -14,12 +15,17 @@ interface RegisteredEntry {
   version?: string;
 }
 
+type Diagnostic = { version: string; dump: () => string };
+
+// One global per build, mirroring devName()'s own -dev suffix on the element
+// names: a dev bundle loaded beside the shipped one used to lose the race and
+// leave the console answering for the other file.
+const DIAG_GLOBAL = CARD_CONTEXT.dev ? 'EPB_DIAG_DEV' : 'EPB_DIAG';
+
 declare global {
   interface Window {
-    EPB_DIAG?: {
-      version: string;
-      dump: () => string;
-    };
+    EPB_DIAG?: Diagnostic;
+    EPB_DIAG_DEV?: Diagnostic;
     customCards?: RegisteredEntry[];
     customBadges?: RegisteredEntry[];
     customCardFeatures?: RegisteredEntry[];
@@ -27,8 +33,8 @@ declare global {
 }
 
 function installDiagnostic(): void {
-  if (window.EPB_DIAG) return;
-  window.EPB_DIAG = Object.freeze({
+  if (window[DIAG_GLOBAL]) return;
+  window[DIAG_GLOBAL] = Object.freeze({
     version: VERSION,
     dump() {
       const hass = HassProviderSingleton.getInstance().hass;
@@ -59,7 +65,9 @@ function installDiagnostic(): void {
         '=== Entity Progress Card — diagnostic ===',
         `card version   : ${VERSION}${LIGHT_BUILD ? ' light' : ''}${CARD_CONTEXT.dev ? ' (dev mode)' : ''}`,
         `HA core        : ${hass?.config?.version ?? 'unknown (no hass yet)'}`,
-        `language       : ${hass?.locale?.language ?? navigator.language}`,
+        // Two different sources under one label otherwise: a dump taken
+        // before any card holds hass reports the browser, not Home Assistant.
+        `language       : ${hass?.locale?.language ?? `${navigator.language} (browser, no hass yet)`}`,
         `browser        : ${navigator.userAgent}`,
         `dark mode      : ${window.matchMedia?.('(prefers-color-scheme: dark)')?.matches ?? 'n/a'}`,
         `reduced motion : ${window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? 'n/a'}`,

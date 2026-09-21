@@ -87,7 +87,7 @@ function bootstrap(editors: EditorSet | null): void {
   // noRegistration renders nothing, so the EPB_DIAG.dump() cue never reaches
   // the reporter - emit the report automatically right after the banner (#108).
   if (CARD_CONTEXT.noRegistration) {
-    window.EPB_DIAG?.dump();
+    (window.EPB_DIAG_DEV ?? window.EPB_DIAG)?.dump();
   }
 }
 

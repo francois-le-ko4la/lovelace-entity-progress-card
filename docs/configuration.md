@@ -778,6 +778,11 @@ switch between the three modes.
 > The Jinja mode is available on the Card and the Badge. On the Tile Feature,
 > only the fixed value and entity modes apply.
 
+> [!NOTE]
+>
+> A `counter` or a `number` carries its own range, which the card uses when you
+> set no bounds — see [`counter` and `number` entities](#counter-number-range).
+
 _Fixed value example_:
 
 ```yaml
@@ -841,6 +846,34 @@ switch between the three modes.
 >
 > The Jinja mode is available on the Card and the Badge. On the Tile Feature,
 > only the fixed value and entity modes apply.
+
+<a id="counter-number-range"></a>
+
+##### `counter` and `number` entities bring their own range
+
+A [`counter`](https://www.home-assistant.io/integrations/counter/) carries
+`minimum`/`maximum`, and a
+[`number`](https://www.home-assistant.io/integrations/number/) carries
+`min`/`max`. The card reads those attributes and scales the bar on them, so such
+an entity needs no bounds at all to render correctly.
+
+Write `min_value` or `max_value` yourself and **yours wins** — fixed value,
+entity or Jinja alike. The entity's own range is a default, not a ceiling you
+are stuck with.
+
+That distinction matters because a native range is often a **device limit**
+rather than a display range: an inverter's power limit stops at the hardware's
+rated output. Reading against a manufacturer's maximum is rarely what a
+dashboard is for.
+
+```yaml
+type: custom:entity-progress-card
+entity: number.inverter_limit_absolute
+# The entity reports its own max - the inverter's rating. The bar reads
+# against 1000 instead.
+max_value: 1000
+min_value: 0
+```
 
 > [!IMPORTANT]
 >

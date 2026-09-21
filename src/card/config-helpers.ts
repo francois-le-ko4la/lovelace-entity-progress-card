@@ -146,6 +146,9 @@ class BaseConfigHelper {
   // Reused across #resolveDisplayDefaults calls (one per hass update in the
   // editor) instead of a fresh one each time.
   #entity: EntityHelper | null = null;
+  // What the user actually wrote, once the legacy shapes are migrated and the
+  // known-bad ones dropped - see wasSetByUser.
+  #userKeys: ReadonlySet<string> = new Set();
 
   constructor() {
     this.#log = initLogger(this, false);
@@ -157,6 +160,15 @@ class BaseConfigHelper {
     return this._configResolved;
   }
 
+  /**
+   * Whether `key` came from the user's own YAML rather than from a schema
+   * default. The negotiated config cannot say: a defaulted field and an
+   * explicitly written one look identical once parsed.
+   */
+  wasSetByUser(key: string): boolean {
+    return this.#userKeys.has(key);
+  }
+
   set config(config: LovelaceConfig) {
     this.#actionsReady = false;
     this._isDefined = true;
@@ -165,7 +177,18 @@ class BaseConfigHelper {
       this._yamlSchema,
       `${this.constructor.name}: set config called with no _yamlSchema (only concrete subclasses define one)`,
     );
-    this._configParsed = yamlSchema.parse((this.constructor as typeof BaseConfigHelper)._customizeConfig(config));
+    const customized = (this.constructor as typeof BaseConfigHelper)._customizeConfig(config);
+    // Captured here because this is the last point where it exists: the schema
+    // fills an absent max_value with its own default (types.fallbackTo), and
+    // the raw config is not kept. Values, not keys - _customizeConfig drops a
+    // max_value repeating a native scale by setting it to undefined, and that
+    // one is precisely not a user request to honour.
+    this.#userKeys = new Set(
+      Object.entries(customized)
+        .filter(([, value]) => value !== undefined)
+        .map(([key]) => key),
+    );
+    this._configParsed = yamlSchema.parse(customized);
     this._configResolved = BaseConfigHelper.#resolveConfig(this._configParsed?.config);
     this.#resolveDisplayDefaults();
 

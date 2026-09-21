@@ -245,6 +245,11 @@ the card, and run:
 EPB_DIAG.dump();
 ```
 
+> [!NOTE]
+>
+> On a development build the helper answers to `EPB_DIAG_DEV` instead, so a dev
+> bundle loaded beside the shipped one keeps its own.
+
 It prints an anonymized report — card and Home Assistant versions, browser, dark
 mode / reduced motion status, registered card types, and whether the required HA
 components (`ha-card`, `ha-selector`, `action-handler`) are present — ready to

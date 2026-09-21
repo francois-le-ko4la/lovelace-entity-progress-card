@@ -291,6 +291,15 @@ a panel.
   changed that setting. Sixteen languages get their space back.
 - **[`unit_spacing`][unit_spacing]** `auto`: `s` took a space where `ms` and
   `μs` did not.
+- **[`min_value`][min_value] / [`max_value`][max_value]** on a `counter` or a
+  `number`: an explicit bound was ignored, the bar always scaling on the
+  entity's own range — often a device limit rather than a display one. Yours
+  wins now, as a fixed value, an entity or a Jinja template; the entity's range
+  stays the default when you set none.  
+  ➡️ [Bug]: number sensors not supported #143 (@mathieucarbou)
+- **`EPB_DIAG.dump()`** answered for whichever bundle loaded first; a dev build
+  installs itself as `EPB_DIAG_DEV` now. It also reported no version for the two
+  tile features.
 
 ### 📚 Documentation
 
@@ -310,6 +319,9 @@ a panel.
   options that silently did nothing — a missing `peak_marker` window, a
   `secondary_info` key that was never one, `badge_icon` on a badge that no
   longer takes it — are fixed.
+- [`max_value`][max_value] says what a `counter` and a `number` bring with them
+  — their own range, used when you set no bounds — and that an explicit bound
+  overrides it.
 
 ### 🧹 Under the hood
 
@@ -337,6 +349,30 @@ We care about getting the details right — but even so, something here might ha
 slipped through. You don't need to be a developer to notice it. If something
 feels off, that's reason enough. Open a [GitHub issue]. Or say hi on [Discord].
 We'd rather know than have you go looking for a workaround on your own.
+
+## What's new (1.6.3-rc9)
+
+### 🐛 Fixes
+
+- **[`min_value`][min_value] / [`max_value`][max_value]** on a `counter` or a
+  `number`: an explicit bound was ignored, the bar always scaling on the
+  entity's own range — often a device limit rather than a display one, so an
+  inverter capped at its rated power drew a lower reading than it should. Yours
+  wins now, as a fixed value, an entity or a Jinja template; the entity's range
+  stays the default when you set none.  
+  ➡️ [Bug]: number sensors not supported #143 (@mathieucarbou)
+- **`EPB_DIAG.dump()`** answered for whichever bundle loaded first, so a
+  development build next to the shipped one could not be questioned on its own.
+  A dev build installs itself as `EPB_DIAG_DEV` now.
+- **`EPB_DIAG.dump()`** reported no version for the two tile features, and
+  labelled the browser's own language as Home Assistant's when no card had
+  received `hass` yet.
+
+### 📚 Documentation
+
+- [`max_value`][max_value] says what a `counter` and a `number` bring with them
+  — their own range, used when you set no bounds — and that an explicit bound
+  overrides it.
 
 ## What's new (1.6.3-rc8)
 
