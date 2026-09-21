@@ -160,15 +160,6 @@ class BaseConfigHelper {
     return this._configResolved;
   }
 
-  /**
-   * Whether `key` came from the user's own YAML rather than from a schema
-   * default. The negotiated config cannot say: a defaulted field and an
-   * explicitly written one look identical once parsed.
-   */
-  wasSetByUser(key: string): boolean {
-    return this.#userKeys.has(key);
-  }
-
   set config(config: LovelaceConfig) {
     this.#actionsReady = false;
     this._isDefined = true;
@@ -193,6 +184,15 @@ class BaseConfigHelper {
     this.#resolveDisplayDefaults();
 
     this.#lastMsgConsole = null;
+  }
+
+  /**
+   * Whether `key` came from the user's own YAML rather than from a schema
+   * default. The negotiated config cannot say: a defaulted field and an
+   * explicitly written one look identical once parsed.
+   */
+  wasSetByUser(key: string): boolean {
+    return this.#userKeys.has(key);
   }
 
   // resolvedUnit/resolvedDecimal: the effective unit/decimal a card shows
