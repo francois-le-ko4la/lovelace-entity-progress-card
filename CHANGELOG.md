@@ -6,15 +6,17 @@ candidate safely before it becomes stable.
 
 ## 1.6.3
 
-**Your Multi cards just stopped being a stack of bare bars.**
+**Richer on screen. Quieter underneath.**
 
-Every row of an [`entity-progress-multi-card`][multi] and
-[`entity-progress-multi-feature`][multi] is now a real progress card in its own
-right — icon, name, value and bar on one line — which means it finally takes the
-options a card takes. Both of them also get a visual editor, with a pencil on
-each row that opens that row's whole configuration. And the row format behind
-all this, [`density: single_line`][density], is available on any card. A couple
-of Multi options changed name along the way, fully backward-compatible — see
+The transformation that began with 1.6.0 goes deeper. Every card does only the
+work that matters, in a fraction of the time, and ships lighter — built for the
+oldest wall tablet as much as the newest phone. More of it is tested
+automatically, on every change. Then comes the rest: a Multi card where every
+row is a real card, an editor that speaks Home Assistant's own language, and a
+long run of refinements and fixes.
+
+A couple of Multi options changed name along the way, fully backward-compatible,
+and a Multi row that never said what to show now shows more — see
 [Breaking Changes](#️-breaking-changes) below.
 
 ### ⚠️ Breaking Changes
@@ -36,6 +38,16 @@ so an option both of them have has to be spelled the same way in both. Keeping
 the Multi's names would have meant two keys for one behaviour, free to drift
 apart at the first change to either.
 
+#### 🎨 A Multi row shows its icon, name and value by default
+
+A row that set neither `show_value` nor [`hide`][hide] drew a bare bar; it is a
+whole card now, and shows what a card shows — icon, name and value on an
+`entity-progress-multi-card`, the value on an `entity-progress-multi-feature`.
+No migration can decide this one for you: to keep the bare bars, add
+`hide: [icon, name, secondary_info]` to the Multi or to its rows.
+`EPB_DIAG.cardAudit()`, in the browser console, lists every Multi concerned, on
+every dashboard.
+
 ### ✨ New
 
 #### 📏 `density: single_line`: the whole card on one line
@@ -46,7 +58,8 @@ The row reads as one sentence — the name takes the secondary info's own type,
 the two are joined by the same `·` separator that already joins infos, and the
 line truncates once at its end rather than each field cutting off inside its own
 box. [`reverse_secondary_info_row`][reverse_secondary_info_row] flips the whole
-row here: bar first, text after.
+row here: bar first, text after. It is the line every Multi row is drawn as, and
+any card can use it.
 
 #### 🧩 Both Multi cards get a visual editor
 
@@ -64,7 +77,7 @@ YAML stays as short as it can be.
 [`watermark`][watermark] and [`peak_marker`][peak_marker] take `line_size` at
 three levels now — the whole family, one side (`low`/`high`), or a single mark —
 each falling back to the one above it. `watermark`'s `as` follows the same three
-levels, and `peak_marker` gains a `line_size` of its own.
+levels, and `peak_marker` gains a `line_size` of its own, 1px unless you set it.
 
 ```yaml
 watermark:
@@ -83,8 +96,8 @@ marks themselves — a band alone is enough.
 
 `entity-progress-card-light.js` ships beside the usual one: the same seven card,
 badge and feature types, minus the editor. Home Assistant offers its own YAML
-editor for them instead, and every card renders identically. 311 KB instead of
-400, and about a quarter less parsing and compiling for the browser.
+editor for them instead, and every card renders identically. 299 KB instead of
+375, and about a quarter less parsing and compiling for the browser.
 
 HACS brings it down with everything else; point your dashboard resource at it to
 switch. In storage mode HACS may put that resource back on the full file when it
@@ -92,16 +105,112 @@ updates the card — re-point it, or keep a copy in `www/`.
 ➡️ Most of the bundle is translations for languages nobody uses (~300 KB) #141
 (@davidcoulson)
 
+#### 🐞 An issue report in one click
+
+The bug icon at the top left of the card editor copies everything an issue
+needs: your environment — card, Home Assistant and browser versions — then the
+card's YAML, each deprecated option and option without effect marked. Paste it
+into a [GitHub issue] as it is.
+
+- **`EPB_DIAG.cardAudit()`**, in the browser console, lists every card on every
+  dashboard — views you never open included — carrying a deprecated option or an
+  option without effect, and every Multi whose rows now show more by default.
+- **`EPB_DIAG.dump()`** gives the browser's exact version and operating system
+  on Chrome, Edge and Opera over HTTPS.
+
 ### 🔧 Improvements
+
+#### A Multi row is a whole card
+
+It used to be a bare bar, with the aggregator printing a value beside it. Every
+row of an [`entity-progress-multi-card`][multi] and
+[`entity-progress-multi-feature`][multi] is now a real progress card in its own
+right — icon, name, value and bar on one line — and accepts what a card accepts:
+[`hide`][hide], [`unit`][unit], [`decimal`][decimal], [`watermark`][watermark],
+[`alert_when`][alert_when], per-row Jinja, tap actions — the lot.
+`entity-progress-multi-feature` keeps its rows tight (it still fits a single
+42px tile row): everything scales with the row height, and its rows start with
+`hide: [icon, name]`, which you can lift with an explicit `hide: []`. A slice of
+a 42px row has no corner to annotate and no frame to light up, so it also leaves
+out [`trend_indicator`][trend_indicator], [`status_label`][status_label], the
+icon badge and [`alert_when`][alert_when].
+
+- **[`bar_max_width`][bar_max_width]** reaches a Multi row, and in
+  [`density: single_line`][density] it pins the bar rather than only capping it:
+  every row's bar starts at the same x whatever its text, and the text ellipses
+  first on a card too narrow for both. The `--epb-multi-value-width` CSS hook
+  does the same from the text side.
+
+#### `hide`, all the way
+
+A [`hide`][hide] list (not a Jinja one) is settled before the card renders, so
+what it hides is no longer built and then covered up — it simply isn't there.
+Its settings leave the editor with it, on **every** card, not just the Multi:
+`[icon]` takes the icon's color, its animation, its circular background and its
+badge; `[progress_bar]` takes the bar's own appearance and its watermark/peak
+marks; `[name]`, `[value]`, `[unit]` and `[secondary_info]` each take theirs. A
+Jinja `hide` does neither — its result can flip on any state push, so the part
+is only hidden and its fields stay reachable.
 
 #### `value_compact` moves the scale into the unit
 
 A sensor reading 25 W in the morning and 1500 W at night no longer forces you to
 pick one unit and live with it: it shows `25 W`, then `1.5 kW`, then `1.5 MW`,
 and `500 mW` below the unit. Units that have no SI prefix — `%`, `°C`, `m³` —
-are left untouched.
+are left untouched. Three significant digits are kept — `1.23K`, `1.65 kW` —
+where the raw value's precision gave `1K`.
 
-#### The editor borrows Home Assistant's own words
+#### `counter` and `number`: your range, not the device's
+
+A `counter` or a `number` drew its bar on its own range — often a limit set by
+the device's maker that your readings never come near, like an inverter rated
+far above what it ever produces. [`min_value`][min_value] and
+[`max_value`][max_value] now override it, as a fixed value, an entity or a Jinja
+template, so the bar speaks to your everyday use. The entity's range stays the
+default when you set none.  
+➡️ [Bug]: number sensors not supported #143 (@mathieucarbou)
+
+#### More entities find their own value
+
+A `valve`, a `humidifier`, a `water_heater` and a `media_player` now read their
+position, humidity, temperature and volume without the [`attribute`][attribute]
+option spelled out, and Home Assistant's entity-first card picker offers them
+too.
+
+#### Moving with time
+
+- **[`state_content`][state_content]**: `last_changed` / `last_updated` count
+  live — they change the moment their text does, not only on a state change.
+- **Running `timer`** in `%`, `min`, `h` or `d`: it moves at each percent in `%`
+  and each second otherwise, on the timer's own second, where it moved once a
+  minute — a 5-minute timer in `%` jumped 20% at a time.
+
+#### `peak_marker`
+
+- **Shapes**: a mark takes the same six as a [`watermark`][watermark] now —
+  `area`, `blended` and `striped` fill a region besides `line`, `round` and
+  `triangle`. A filled `min` covers everything below it, a filled `max`
+  everything above: the zones the value never reached.
+- **`average`** weighs each value by how long it held, as Home Assistant's own
+  statistics do.
+
+#### `bar_position: background`, polished
+
+The bar fills the whole card, and the rest of the card keeps working around it:
+
+- **Hover and ripple**: the feedback covers the whole card, icon included — it
+  was painted under the bar and never showed.
+- **Circular background**: one you asked for —
+  [`force_circular_background`][force_circular_background] or an icon action —
+  sits on the card's own color and stays visible, where it vanished into the
+  fill.
+- **Icon**: it no longer drowns in a fill that carries its own color — the
+  circular background comes out to protect it. `--epb-icon-shape-color` still
+  wins.
+
+#### The visual editor
+
+##### Home Assistant's own words, fetched when needed
 
 About thirty labels — Entity, Attribute, Icon, Name, Theme, Unit, Minimum,
 Maximum, Color, the tap/hold/double tap behaviors, Position — are read from Home
@@ -114,50 +223,20 @@ On a Home Assistant older than the one that introduced a given label, that whole
 group falls back to English rather than showing half of it translated — every
 other label stays in your language.
 
-#### The editor's words ship beside the card, not inside it
-
-Editor labels are only needed when you actually open an editor, so they no
-longer travel inside the card: they sit next to it as one small file per
+The editor's own labels are only needed when you actually open an editor, so
+they no longer travel inside the card: they sit next to it as one small file per
 language, fetched on demand. The card itself, error messages included, stays
 fully translated and works offline exactly as before. Installed through HACS
 there is nothing to do; installed by hand, copy the
 `entity-progress-card-<lang>.json` files next to `entity-progress-card.js`.
 
-- **Editor wording**: labels dropped what their own panel already said — "Show
-  minimum" became "Minimum", "Bar below content" became "Below content" — in all
-  39 languages.
-- **Duration units** now show each language's own abbreviation, from the
-  browser: `j` in French, `gg` in Italian, `天` in Chinese.
+- **Wording**: labels dropped what their own panel already said — "Show minimum"
+  became "Minimum", "Bar below content" became "Below content" — in all 39
+  languages.
+- **Duration units** show each language's own abbreviation, from the browser:
+  `j` in French, `gg` in Italian, `天` in Chinese.
 
-#### A Multi row is a whole card
-
-It used to be a bare bar, with the aggregator printing a value beside it. Every
-row now shows its own icon, name and value, and accepts what a card accepts:
-[`hide`][hide], [`unit`][unit], [`decimal`][decimal], [`watermark`][watermark],
-[`alert_when`][alert_when], per-row Jinja, tap actions — the lot.
-`entity-progress-multi-feature` keeps its rows tight (it still fits a single
-42px tile row): everything scales with the row height, and its rows start with
-`hide: [icon, name]`, which you can lift with an explicit `hide: []`. A slice of
-a 42px row has no corner to annotate and no frame to light up, so it also leaves
-out [`trend_indicator`][trend_indicator], [`status_label`][status_label], the
-icon badge and [`alert_when`][alert_when].
-
-#### Hiding a component now hides its settings too
-
-Across **every** card, not just the Multi: [`hide`][hide]`: [icon]` also takes
-the icon's color, its animation, its circular background and its badge out of
-the editor; `[progress_bar]` takes the bar's own appearance and its
-watermark/peak marks; `[name]`, `[value]`, `[unit]` and `[secondary_info]` each
-take theirs. A Jinja `hide` changes nothing — its result can flip on any state
-push, so those fields stay reachable.
-
-#### A statically hidden component leaves the page entirely
-
-A `hide` list (not a Jinja one) is settled before the card renders, so what it
-hides is no longer built and then covered up — it simply isn't there. A bar-only
-card went from 31 DOM nodes to 15.
-
-#### The marker editor, in four panels
+##### Laid out like Home Assistant's own editors
 
 One "Markers & Alerts" panel held a hundred options; there are four now —
 Watermarks, Peak markers, Indicators & Labels, Alerts — and a card only gets the
@@ -166,140 +245,141 @@ thickness only shows for a mark drawn as a line and sits next to its type, the
 watermark's reading mode sits with the threshold it reads, and every greyed hint
 shows the value that mark inherits rather than a built-in default.
 
-- **The editor's panels**: `Layout & Sizing` comes last on every card now, and
-  reads top to bottom as shape (`layout`, `density`), then size, then frame
-  (`frameless`/`marginless`).
-- **[`trend_indicator`][trend_indicator]**: switching it to Advanced now arrives
-  with a `window` already set — the one setting that changes what the indicator
-  measures. Turn it off there to keep the point-to-point comparison.
-- **[`bar_max_width`][bar_max_width]** reaches a Multi row, and in
-  [`density: single_line`][density] it pins the bar rather than only capping it:
-  every row's bar starts at the same x whatever its text, and the text ellipses
-  first on a card too narrow for both. The `--epb-multi-value-width` CSS hook
-  does the same from the text side.
-- **[`color`][color]** and **[`bar_color`][bar_color]**: their picker names the
-  default instead of leaving the box empty — "State (Default)", the entity's own
-  state color, which is what the card draws while neither is set. Picking that
-  entry writes nothing into your YAML.
-- **More entities find their own value**: a `valve`, a `humidifier`, a
-  `water_heater` and a `media_player` now read their position, humidity,
-  temperature and volume without the [`attribute`][attribute] option spelled
-  out, and Home Assistant's entity-first card picker offers them too.
-- **[`peak_marker`][peak_marker]**: a mark takes the same six shapes as a
-  [`watermark`][watermark] now — `area`, `blended` and `striped` fill a region
-  besides `line`, `round` and `triangle`. A filled `min` covers everything below
-  it, a filled `max` everything above: the zones the value never reached.
-- **The editor's rows**: the decimal count sits beside the unit, the trend's up
-  and down colors share a row, and an **Icon** heading separates the icon fields
-  from the theme ones.
-- **[`peak_marker`][peak_marker]**: hiding a mark in the editor leaves nothing
-  behind in the YAML — the redundant `min: false` it used to write is gone.
-  Existing ones keep working.
-- **[`bar_position`][bar_position]** `background`: the icon no longer drowns in
-  a fill that carries its own color — the circular background comes out to
-  protect it. `--epb-icon-shape-color` still wins.
-
-#### Rows that fill, and Home Assistant's own spacing
-
 A field left alone on its row takes the whole width now instead of leaving a
 hole beside it — whatever the card, the layout, and whichever options your
 config happens to hide. The editor's spacing follows Home Assistant's own card
 editors too: 24px between rows, 8px between two fields sharing one, 12px inside
 a panel.
 
+- **Panels**: `Layout & Sizing` comes last on every card now, and reads top to
+  bottom as shape (`layout`, `density`), then size, then frame
+  (`frameless`/`marginless`).
+- **Rows**: the decimal count sits beside the unit, the trend's up and down
+  colors share a row, and an **Icon** heading separates the icon fields from the
+  theme ones.
+
+##### Only what works, and nothing forgotten
+
+- **Inert options** leave the YAML: a setting a change leaves without effect —
+  [`text_shadow`][text_shadow] off `overlay`, a color mode once the theme is
+  gone, `multiline` in `compact`, a bar size — is set aside for the session and
+  comes back as it was if you undo the change. **Migrate config** shows for one
+  already in your YAML, and sets it aside the same way.
+- **Deprecated options**: written next to its replacement, an old option is only
+  removed now — the new one wins, on the card and through **Migrate config**
+  (`additions` beside [`bar_stack`][bar_stack], a legacy watermark key beside
+  its override object).
+- **Emptied fields** leave the YAML: clearing one removes its option instead of
+  writing `''`.
+- **[`trend_indicator`][trend_indicator]** is no longer offered next to a
+  [`status_label`][status_label] template, which takes its corner. Switched to
+  Advanced, it arrives with a `window` already set — the one setting that
+  changes what it measures; turn it off there to keep the point-to-point
+  comparison.
+- **`window` sliders**: each unit stops where it stops meaning anything —
+  seconds offered 604 800 positions, minutes 10 080.
+- **Card size**: unchecking it hands `min_width` and `height` back instead of
+  discarding them, and it opens on the card's own height.
+- **[`height`][height]**: its custom mode and back keeps the height you had.
+- **[`peak_marker`][peak_marker]**: hiding a mark leaves nothing behind in the
+  YAML — the redundant `min: false` it used to write is gone. Existing ones keep
+  working.
+- **[`color`][color]** and **[`bar_color`][bar_color]**: their picker names the
+  default instead of leaving the box empty — "State (Default)", the entity's own
+  state color, which is what the card draws while neither is set. Picking that
+  entry writes nothing into your YAML.
+
 ### 🐛 Fixes
 
-- **[`peak_marker`][peak_marker]**: the shared **Thickness** was hidden while no
-  mark was shown, though the default type it applies to is `line`.
-- **Number+unit rows**: the unit dropdown sat higher than its slider, on every
-  couple — height, min width, bar max width, window.
-- **`window` sliders**: seconds offered 604 800 positions, minutes 10 080. Each
-  unit now stops where it stops meaning anything.
-- **Card size**: unchecking it discarded `min_width` and `height` instead of
-  handing them back. It opens on the card's own height now.
-- **[`text_shadow`][text_shadow]**: half width under `bar_position: background`,
-  where it is alone on its row.
-- **Invalid config**: the path shown on the card used commas
-  (`watermark,low,value`) where the console used dots.
-- **Validation messages**: a refused decimal announced "a valid decimal number"
-  while the rule is a positive integer; four codes saying the same thing to a
-  user became one.
-- **[`bar_position`][bar_position]** `background`: the card's hover and ripple
-  feedback was painted under the bar and never showed. It covers the whole card
-  again, icon included.
-- **[`bar_position`][bar_position]** `background`: a circular background you
-  asked for — [`force_circular_background`][force_circular_background] or an
-  icon action — was drawn see-through and vanished into the fill. It sits on the
-  card's own color now and stays visible.
-- **[`frameless`][frameless]** and cards embedded in an entities or
-  vertical-stack card: a glass theme's `::after` decoration still painted over
-  them. Both pseudo-elements are neutralized now, and a theme's `!important` no
-  longer wins.
-- Segmented bars ([`bar_segments`][bar_segments]) drew opaque strips between the
-  cells on a translucent card, and no visible gaps at all on a frameless one.
-  The gaps let the card through now.
-- A Multi row could still draw a card frame of its own on a themed dashboard
-  instead of disappearing into the card holding it.  
-  ➡️ Discord @mooseBringer
-- Setting a card's [`height`][height] to its custom mode lost the height you
-  had. It comes back when you switch out of it.
+#### Refreshes
+
+- **Every state change**: a card refreshed on every state change anywhere in
+  Home Assistant whenever its entity had no display precision — most entities.
+  It refreshes only when one of its own entities changes now.
+- **Same-device status**: [`icon_animation`][icon_animation] `washing_machine` /
+  `battery_charging` and [`theme`][theme] `battery_adaptive` could lag behind
+  the status entity on the same device; they follow it at once now.
+- **Running `timer`**: an [`alert_when`][alert_when] threshold crossed while the
+  timer ran stayed dark until its end, and so did
+  [`status_label`][status_label]'s color. Both follow the bar now.
+- **Back and forth**: a text or color that changed and changed straight back
+  could stay on the in-between value until its next change.
+
+#### Values and units
+
+- **Lights**: one added through Home Assistant's own entity-first card picker
+  filled its bar to about 39% at full brightness. It reads the real brightness
+  now, and the setting behind it is swept the next time you edit the card —
+  since 1.6.1.
+- **[`unit_spacing`][unit_spacing]** `auto`: the space before `%` followed the
+  number format instead of the language, so `42%` showed for anyone who had not
+  changed that setting — sixteen languages get their space back. And `s` took a
+  space where `ms` and `μs` did not.
+- **[`state_content`][state_content]**: `last_changed` / `last_updated` read a
+  second older than they were.
+
+#### Watermarks and peak marks
+
 - **`watermark.line_size`**: the line-thickness slider had no effect — the
   editor saved the value in a place the card never reads, so the line stayed at
   its default. It lands in the right place now, and a leftover key from before
   is swept the next time you edit the card. See [`watermark`][watermark].  
   ➡️ Teams Benjamin D
-- A custom icon size (`--epb-icon-size`, or any theme setting it) resized the
-  icon's box but not the icon itself, which stayed at Home Assistant's own 24px.
-  Both follow now.
-- [`alert_when`][alert_when] with `highlight: label` showed the label but left
-  it on its grey fallback color instead of the alert's, on any card rendered
-  before Home Assistant inserted it.
-- A [`peak_marker`][peak_marker] mark drawn as a line took its thickness from
-  [`watermark`][watermark]'s `line_size`. It has its own now, 1px unless you set
-  it.
-- The editor left a mark's **Type** empty whenever it followed its family's
-  value instead of carrying its own, and showed nothing at all for a bare
-  `watermark: {}`.
-- A value set the same way on every visible [`peak_marker`][peak_marker] mark
-  never moved up to the shared level, and editing one mark could switch a hidden
-  one back on.
-- **[`trend_indicator`][trend_indicator]** with `threshold: 0` — the object
-  form's own default — showed a downward arrow on a value that had not moved at
-  all. It reads stable now.
-- A card in `layout: vertical` cut the top off its icon badge
-  ([`badge_icon`][badge_icon]) for every [`bar_position`][bar_position] but
-  `default` — since 1.6.1.  
+- **Type**: the editor left a mark's type empty whenever it followed its
+  family's value instead of carrying its own, and showed nothing at all for a
+  bare `watermark: {}`.
+- **Shared level**: a value set the same way on every visible
+  [`peak_marker`][peak_marker] mark never moved up to it, and editing one mark
+  could switch a hidden one back on.
+- **No `window`**: a [`peak_marker`][peak_marker] written without one drew
+  nothing at all. It falls back to `2h` now instead of dropping the whole block.
+- **Long windows**: on an entity reporting every few seconds,
+  [`peak_marker`][peak_marker] drew no marks at all. Any number of recorded
+  points works now — since 1.6.2.
+- **Live marks**: [`peak_marker`][peak_marker]'s marks were worked out once,
+  from the history loaded with the card — later readings never counted, old ones
+  never left the window. They follow the live value and slide with the window
+  now — since 1.6.2.
+
+#### `trend_indicator`
+
+- **`threshold: 0`**, the object form's own default, showed a downward arrow on
+  a value that had not moved at all. It reads stable now.
+- **Plain arrow**: it fell back to flat at the next state change anywhere in
+  Home Assistant; it holds until the entity moves again.
+- **`window`, first arrow**: it only appeared at the entity's next state change,
+  which on a slow sensor is minutes away. It shows as soon as its history loads
+  — since 1.6.2.
+- **`window`, back to flat**: the arrow never went back to flat once the value
+  stopped moving, and the same reading could count over and over. The window
+  slides with time now, not only with new readings.
+
+#### Rendering
+
+- **[`frameless`][frameless]** and cards embedded in an entities or
+  vertical-stack card: a glass theme's `::after` decoration still painted over
+  them. Both pseudo-elements are neutralized now, and a theme's `!important` no
+  longer wins.
+- **[`bar_segments`][bar_segments]**: segmented bars drew opaque strips between
+  the cells on a translucent card, and no visible gaps at all on a frameless
+  one. The gaps let the card through now.
+- **Icon size**: a custom one (`--epb-icon-size`, or any theme setting it)
+  resized the icon's box but not the icon itself, which stayed at Home
+  Assistant's own 24px. Both follow now.
+- **[`alert_when`][alert_when]** `highlight: label`: the label stayed on its
+  grey fallback color instead of the alert's, on any card rendered before Home
+  Assistant inserted it.
+- **Icon badge**: in `layout: vertical`, [`badge_icon`][badge_icon] lost its top
+  for every [`bar_position`][bar_position] but `default` — since 1.6.1.  
   ➡️ Discord @mooseBringer
-- A [`peak_marker`][peak_marker] written without a `window` drew nothing at all.
-  It falls back to `2h` now instead of dropping the whole block.
-- A light added through Home Assistant's own entity-first card picker filled its
-  bar to about 39% at full brightness. It reads the real brightness now, and the
-  setting behind it is swept the next time you edit the card — since 1.6.1.
-- **[`peak_marker`][peak_marker]**: a long window on an entity reporting every
-  few seconds drew no marks at all. Any number of recorded points works now —
-  since 1.6.2.
-- **[`trend_indicator`][trend_indicator]** with a `window`: the arrow only
-  appeared at the entity's next state change, which on a slow sensor is minutes
-  away. It shows as soon as its history loads — since 1.6.2.
-- **[`value_compact`][value_compact]** with a unit put the magnitude beside it
-  instead of in it — `1.6K W` rather than `1.6 kW`.
-- **[`value_compact`][value_compact]** rounded the abbreviated value to the raw
-  value's own precision, so `1234` showed as `1K`. It carries three significant
-  digits now — `1.23K`, `1.65 kW`.
-- **[`unit_spacing`][unit_spacing]** `auto`: the space before `%` followed the
-  number format instead of the language, so `42%` showed for anyone who had not
-  changed that setting. Sixteen languages get their space back.
-- **[`unit_spacing`][unit_spacing]** `auto`: `s` took a space where `ms` and
-  `μs` did not.
-- **[`min_value`][min_value] / [`max_value`][max_value]** on a `counter` or a
-  `number`: an explicit bound was ignored, the bar always scaling on the
-  entity's own range — often a device limit rather than a display one. Yours
-  wins now, as a fixed value, an entity or a Jinja template; the entity's range
-  stays the default when you set none.  
-  ➡️ [Bug]: number sensors not supported #143 (@mathieucarbou)
-- **`EPB_DIAG.dump()`** answered for whichever bundle loaded first; a dev build
-  installs itself as `EPB_DIAG_DEV` now. It also reported no version for the two
-  tile features.
+
+#### Configuration
+
+- **Invalid config**: the path shown on the card used commas
+  (`watermark,low,value`) where the console used dots.
+- **Validation**: a refused decimal announced "a valid decimal number" while the
+  rule is a positive integer; four codes saying the same thing to a user became
+  one.
 
 ### 📚 Documentation
 
@@ -311,44 +391,287 @@ a panel.
 - The Multi section says what a row actually accepts, announces both visual
   editors, and `show_value`/`value_position` join the deprecated-options table
   with what replaces them.
+- [`max_value`][max_value] says what a `counter` and a `number` bring with them
+  — their own range, used when you set no bounds — that an explicit bound
+  overrides it, and which minimum [`center_zero`][center_zero] keeps there.
+
+#### Demo dashboards
+
 - The demo dashboard splits in two: `demo-dashboard.yaml` is the showroom,
   `demo-dashboard-dev.yaml` keeps it plus the regression and deprecated-option
   benches.
+- Every card of [`demo-dashboard-dev.yaml`][demo-dashboard-dev.yaml] targets the
+  development build — a badge and three cards still used the released one.
 - The demo dashboards are checked against the real schema now: every card must
   survive the card's own validation without losing an option it declared. Six
   options that silently did nothing — a missing `peak_marker` window, a
   `secondary_info` key that was never one, `badge_icon` on a badge that no
   longer takes it — are fixed.
-- [`max_value`][max_value] says what a `counter` and a `number` bring with them
-  — their own range, used when you set no bounds — and that an explicit bound
-  overrides it.
+- The demo helpers gain a real `number` entity, from `-50` to `10`.
+- The showroom carries no deprecated option or option without effect anymore,
+  and a test keeps it that way.
+
+#### Washing machines
+
+- The cookbook's washing-machine recipes build a complete card for each brand,
+  with [`icon_animation`][icon_animation]`: washing_machine` on all three — no
+  configuration needed, SmartThings included.
+- **[`icon_animation`][icon_animation]** lists Samsung SmartThings among the
+  integrations it recognizes as running.
 
 ### 🧹 Under the hood
 
+#### ⚡ What a card costs, 1.6.2 → 1.6.3
+
+**About these numbers**: they come from a lab, not from a dashboard — 20 cards
+on a 3,000-entity instance, rendered in a virtual DOM (happy-dom) because it
+makes the bench simple to run, median of 200 runs per row. The script is public,
+`scripts/compare-hass-updates.js`, so anyone can rerun it. Read them as a trend,
+not as a speed-up you will see or feel as such: the gain shows as less load on
+constrained devices — a wall tablet, an NSPanel — more than as a snappier card
+on a desktop.
+
+| Per card, median (µs)         | 1.6.2 | 1.6.3 | Gain |
+| ----------------------------- | ----: | ----: | ---: |
+| Another entity changes        | 1,098 |    12 |  ÷90 |
+| Its own entity changes        | 1,088 |   578 | ÷1.9 |
+| One tick of a running `timer` |   694 |   237 |   ÷3 |
+
+- The refresh tick re-reads only what time moves, and fires when what it shows
+  changes rather than on a fixed cadence: an hour-old `last_changed` ticks once
+  an hour, not every minute.
+- A tile feature at the top or bottom of its tile no longer forces a style
+  recalculation each time Home Assistant redraws the tile.
+
+#### Lighter to load
+
+| Bundle                          |  1.6.2 |  1.6.3 |
+| ------------------------------- | -----: | -----: |
+| `entity-progress-card.js`       | 648 KB | 375 KB |
+| … compressed                    | 156 KB |  99 KB |
+| `entity-progress-card-light.js` |      — | 299 KB |
+| … compressed                    |      — |  78 KB |
+
+Over 40% smaller, despite everything this release adds.
+
+#### Lighter in memory
+
+- **Translations**: the translation table used to be nearly half the shipped
+  file; what stays in it now is 4%. The editor's labels come from Home Assistant
+  or from a small per-language file, loaded only when an editor opens.
+- **History samples**: [`trend_indicator`][trend_indicator] and
+  [`peak_marker`][peak_marker] keep theirs in one circular buffer, trimmed to
+  their window, instead of one object per reading. The longest window allowed, 7
+  days, on an entity reporting every 10 s (worst case scenario) takes 710 KB
+  where it took 3.7 MB.
+
+#### Code and tooling
+
 - The Multi cards are validated by a real schema at last, like every other card
   type — an unknown option is dropped instead of quietly reaching the DOM.
-- Three dead exports and one orphan translation key removed.
 - The card's default attribute per domain and the entity picker's own
   suggestions come from one shared table instead of two that had drifted.
 - The percentage math now lives in a class of its own, behind 48 new tests.
 - A deduplication sweep across the card, the editor and the shared utilities:
   close to thirty blocks that existed in two copies now have a single
   definition, and a few values the card recomputed on every render only to
-  discard them are gone.
-- [`trend_indicator`][trend_indicator]'s sample buffer no longer holds one
-  object per reading: a week-long window on a fast-reporting entity costs 710 KB
-  where it cost 3.7 MB.
+  discard them are gone. Where each option has any effect, what it falls back to
+  without one and what a density imposes are now one rule each, shared by the
+  card's validation and its editor.
+- Debug logs name a card by its element tag rather than its class.
+- The release build rejects class `static {}` blocks on their own, the one newer
+  syntax Chrome 92 lacks.
 - The i18n tooling reads the generated block on a CRLF checkout, and
   `.gitattributes` pins the working tree to LF.  
   ➡️ fix: support CRLF checkouts in i18n tooling #142 (@dajiaohuang)
-- A third smaller than 1.6.2, despite everything this release adds: 648 → 399
-  KB, and 155 → 102 KB compressed. The translation table used to be nearly half
-  the shipped file; what stays in it now is 4%.
+- The test suite checks what the editors show and write, the refresh tick, Jinja
+  subscriptions, history requests and the light bundle, and can no longer hang
+  on a card left mounted.
+- 593 automated tests run before every push: 429 on the card's logic, 164
+  mounting real cards and editors in a virtual DOM.
+- `scripts/compare-hass-updates.js` measures what a hass update and a tick cost
+  per card, between two bundles.
+- `EPB_DIAG.dump()` answers for the bundle it came from — a dev build installs
+  itself as `EPB_DIAG_DEV` — and reports the two tile features' version.
 
 We care about getting the details right — but even so, something here might have
 slipped through. You don't need to be a developer to notice it. If something
 feels off, that's reason enough. Open a [GitHub issue]. Or say hi on [Discord].
 We'd rather know than have you go looking for a workaround on your own.
+
+## What's new (1.6.3-rc10)
+
+### ✨ New
+
+#### 🐞 An issue report in one click
+
+The bug icon at the top left of the card editor copies a report ready to paste
+into a GitHub issue: the `EPB_DIAG.dump()` diagnostic, then the YAML Home
+Assistant holds for the card, with `# deprecated` / `# no effect` beside each
+option concerned. A Multi row has none: its Multi's icon copies the whole card.
+
+- **`EPB_DIAG.cardAudit()`** reads every dashboard's config — views never opened
+  included — and lists each card carrying a deprecated option or an option
+  without effect, and each Multi whose rows took the 1.6.3 look because no level
+  sets `hide` or `show_value`.
+- **`EPB_DIAG.dump()`**: the browser's exact version and OS from User-Agent
+  Client Hints (Chrome, Edge, Opera, over HTTPS; Chrome 90-97 included), and the
+  User-Agent on a line of its own.
+
+### 🔧 Improvements
+
+- **[`state_content`][state_content]**: `last_changed` / `last_updated` count
+  live — they change the moment their text does: each second, then as the
+  minute, hour or day turns.
+- **[`peak_marker`][peak_marker]**: `average` is time-weighted, as Home
+  Assistant's own statistics mean.
+- **Running `timer`** in `%`, `min`, `h` or `d`: it moves at each percent in `%`
+  and each second otherwise, where it moved once a minute; every countdown turns
+  on the timer's own second (from `finishes_at`), not the wall clock's.
+- **Editor**: an option a change leaves without effect —
+  [`text_shadow`][text_shadow], [`bar_single_line`][bar_single_line],
+  [`bar_max_width`][bar_max_width], [`bar_segments`][bar_segments],
+  [`reverse_secondary_info_row`][reverse_secondary_info_row], a theme's color
+  mode, `bar_size`, [`multiline`][multiline] under `compact` — leaves the YAML
+  for `_<key>_inert_draft` and comes back once it has an effect again. Some used
+  to stay in the YAML, others were dropped for good.
+- **Migrate config** also shows for an option already without effect when the
+  editor opens, `bar_size` included, and its click moves it to
+  `_<key>_inert_draft` the same way.
+- **Deprecated options**: written next to its replacement, an old option is only
+  removed now — the new one wins, on the card and through Migrate config:
+  `additions` beside `bar_stack`, `value_position` beside
+  `reverse_secondary_info_row`, `show_value` beside `hide`, a legacy watermark
+  key beside its override object.
+- **Editor**: an emptied field leaves the saved YAML instead of staying as `''`
+  (`name: ''`, `alert_when: { label: '' }`).
+- **Editor**: [`trend_indicator`][trend_indicator] is no longer offered next to
+  a [`status_label`][status_label] template, which takes its corner.
+
+### 🐛 Fixes
+
+- **Refreshes**: a card refreshed on every state change anywhere in Home
+  Assistant whenever its entity had no display precision — any entity outside
+  the `sensor` domain, and most sensors. It refreshes only when one of its own
+  entities changes now.
+- **[`icon_animation`][icon_animation]** `washing_machine` / `battery_charging`
+  and **[`theme`][theme]** `battery_adaptive` could lag behind the status entity
+  on the same device until the card's own entity changed; they follow it at once
+  now.
+- **[`state_content`][state_content]**: `last_changed` / `last_updated` read a
+  second older than they were (`1.2s` showed `2 seconds ago`).
+- **[`trend_indicator`][trend_indicator]**: the plain arrow fell back to flat at
+  the next state change anywhere in Home Assistant; it holds until the entity
+  moves again. With a `window`, live samples are taken once per change, like the
+  ones seeded from history.
+- **[`peak_marker`][peak_marker]**: the marks were worked out once, from the
+  history loaded with the card — later readings never counted, old ones never
+  left the window. They follow the live value and slide with the window now.
+- **[`center_zero`][center_zero]** on a `number` or a `counter` with no
+  [`min_value`][min_value]: since rc9 the negative arm ran to `-100` instead of
+  the entity's own minimum. That minimum is kept when it reaches below the zero
+  point; otherwise the maximum is mirrored.
+- **Multi row editor**: with [`center_zero`][center_zero], `min_value` showed
+  `-100` where the row draws from `-max_value` or its theme's bottom. It shows
+  what the row's card uses now.
+- **[`hide`][hide]** written as Jinja on an `entity-progress-multi-feature` row
+  was replaced by `[shape]` and never applied. It applies now, and the row still
+  draws no shape.
+- **Migrate config** on a Multi, and on one of its rows, left `show_value`,
+  `value_position`, `disable_unit`, `additions` and a bare-entity `max_value`
+  untouched, and stayed on screen. It migrates them now.
+- **Editor**: the Attribute picker, and the Feature's Entity picker, had lost
+  their label since rc3.
+- **[`alert_when`][alert_when]** on a running `timer`: a threshold crossed while
+  the timer ran stayed dark until its end, and so did
+  [`status_label`][status_label]'s color. Both follow the bar now.
+- **[`trend_indicator`][trend_indicator]** with a `window`: the arrow never went
+  back to flat once the value stopped moving. The window slides with time now,
+  not only with new readings.
+- **`DOMHelper`**: a value that changed and changed straight back within one
+  frame stayed on the in-between one until its next change.
+
+### 📚 Documentation
+
+- The cookbook's washing-machine recipe builds a complete card for each brand —
+  name, icon, a larger bar, the end of the cycle next to the name — and all
+  three turn on [`icon_animation`][icon_animation]`: washing_machine`, which
+  needs no configuration on any of them. SmartThings gets its animation without
+  a helper; only its progress bar still needs one.
+- **[`icon_animation`][icon_animation]** lists Samsung SmartThings among the
+  integrations recognized as running (`machine_state` at `run`).
+- [`max_value`][max_value] says which minimum [`center_zero`][center_zero] keeps
+  on a `counter` or a `number`.
+- The demo helpers gain a real `number` entity, `number.epb_demo_number`, from
+  `-50` to `10`.
+- [`demo-dashboard-dev.yaml`][demo-dashboard-dev.yaml]: the showcase's cover
+  badge and three cards (Aggregation & card_mod, CSS hooks) used the released
+  types instead of their `-dev` ones.
+- [`demo-dashboard.yaml`][demo-dashboard.yaml] carries no deprecated option or
+  option without effect anymore: the #123 and #140 regression cards and a
+  deprecated watermark move to the dev bench, and four cards lose an option that
+  did nothing there (a `bar_color_mode` without a theme, three `bar_size` under
+  `overlay`).
+- `docs/troubleshooting.md`: the editor's bug icon, `EPB_DIAG.cardAudit()`, and
+  what Migrate config does with an option without effect.
+
+### 🧹 Under the hood
+
+#### ⚡ What a card costs, rc9 → rc10
+
+20 cards on a 3,000-entity registry, median of 200 runs per row, measured with
+`scripts/compare-hass-updates.js` in Node + happy-dom: the ratios carry over to
+a browser, the microseconds don't.
+
+| Per card, median (µs)                      |   rc9 | rc10 | Gain |
+| ------------------------------------------ | ----: | ---: | ---: |
+| Another entity changes, plain card         | 1,110 |   12 |  ÷90 |
+| Its own entity changes, plain card         | 1,125 |  573 | -49% |
+| Another entity changes, `washing_machine`  | 3,325 |   16 | ÷210 |
+| Its own entity changes, `washing_machine`  | 3,336 |  624 | -81% |
+| Another entity changes, `battery_adaptive` | 3,122 |   15 | ÷208 |
+| Its own entity changes, `battery_adaptive` | 3,086 |  651 | -79% |
+| One tick, running `timer`                  |   668 |  240 | -64% |
+| One tick, running `timer` in `%`           |   897 |  254 | -72% |
+| One tick, `last_changed`                   |   996 |  284 | -71% |
+
+rc9 never ticked `last_changed`: its row is what one tick would have cost.
+
+- Classes keep their private members native instead of emulating them through
+  `WeakMap` helpers, and class names are no longer preserved in the shipped
+  file. Debug logs name a card by its element tag (`[entity-progress-card]`)
+  rather than its class.
+- Shipped size, rc9 → rc10: 401 → 375 KB (102 → 99 KB compressed), 313 → 299 KB
+  for the light build — the issue report and `cardAudit()` included.
+- `check:es-target` checks the es2022 syntax level and rejects class `static {}`
+  blocks separately — the one es2022 feature Chrome 92 lacks (#128).
+- Number formatting reuses its `Intl.NumberFormat` instances and the resolved
+  locale instead of rebuilding them on every refresh.
+- The same-device lookup behind `washing_machine` / `battery_charging` reads a
+  `device_id` index instead of scanning the whole entity registry.
+- `peak_marker` keeps its samples in the same typed-array buffer as
+  `trend_indicator` (`SampleRing`), trimmed to its window.
+- A second deduplication pass: where each option has any effect (`HAS_EFFECT`),
+  what it falls back to once it has none (`INERT_OPTIONS`) and what a density
+  imposes (`densityOverrides`) are one rule each, shared by the schema and the
+  editor.
+- `test:dom` can no longer hang on a card left mounted, and covers the editors'
+  values, the hot path, Jinja subscriptions, the refresh tick, history requests
+  and the light bundle. A literal `undefined` argument (JS-W1042) fails lint.
+- The local tick re-reads only what time moves (`refreshClock()`: no config
+  check, no unchanged text rewritten), and fires at `nextTickAt`, when what it
+  shows changes, instead of on a 1s/1min cadence.
+- A `top`/`bottom` tile feature reads the tile's `--row-size` from its inline
+  style, not `getComputedStyle`: no forced style recalculation on each of Home
+  Assistant's re-renders.
+- `ResourceManager.setTimeout` drops its entry once the timer fires: no
+  `clearTimeout` on a spent timer, and `has()` answers truly.
+- `ChangeTracker` watches `hass.config` too.
+- A test runs the audit behind `cardAudit()` over both demo dashboards: outside
+  the regression and deprecated-option views, no card may carry anything to
+  clean.
+- `OPTIONS_WITHOUT_EFFECT` (`INERT_OPTIONS` plus `bar_size`) is the one list the
+  editor parks and the audit reports.
 
 ## What's new (1.6.3-rc9)
 
@@ -7103,6 +7426,8 @@ experience:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#badge_icon
 [bar_segments]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_segments
+[bar_single_line]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_single_line
 [frameless]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#frameless
 [force_circular_background]:
@@ -7111,6 +7436,8 @@ experience:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#height
 [icon_animation]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#icon_animation
+[state_content]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#state_content
 [alert_when]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#alert_when
 [status_label]:

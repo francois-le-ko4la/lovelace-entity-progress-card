@@ -67,6 +67,8 @@
       "height_custom_toggle": "高さ自動",
       "icon_animation": "アイコンアニメーション",
       "interpolate": "色の補間",
+      "issue_report": "@ui.components.yaml-editor.copy_to_clipboard|Copy to clipboard",
+      "issue_report_copied": "@ui.common.copied_clipboard|Copied to clipboard",
       "marginless": "余白なし",
       "migrate_config": "設定を移行",
       "min_width": "最小幅",

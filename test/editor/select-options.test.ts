@@ -27,8 +27,9 @@ const labelled = (group: string): string[] => {
   const own = (TRANSLATION_KEYS as readonly string[])
     .filter((key) => key.startsWith(prefix))
     .map((key) => key.slice(prefix.length));
-  // A value can name its label instead of carrying one (EditorBase#localizedOptions
-  // merges them in), so the group alone no longer answers "is this one labelled".
+  // A value can name its label instead of carrying one (merged in by
+  // EditorBase#localizedOptions), so the group alone no longer answers "is
+  // this one labelled".
   const computed = COMPUTED_OPTION_LABELS[group]?.('en') ?? {};
   return [...own, ...Object.keys(REUSED_OPTION_LABELS[group] ?? {}), ...Object.keys(computed)];
 };

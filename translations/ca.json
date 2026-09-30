@@ -67,6 +67,8 @@
       "height_custom_toggle": "Alçada automàtica",
       "icon_animation": "Animació de la icona",
       "interpolate": "Interpolar colors",
+      "issue_report": "@ui.components.yaml-editor.copy_to_clipboard|Copy to clipboard",
+      "issue_report_copied": "@ui.common.copied_clipboard|Copied to clipboard",
       "marginless": "Sense marge",
       "migrate_config": "Migra la configuració",
       "min_width": "Amplada mínima",

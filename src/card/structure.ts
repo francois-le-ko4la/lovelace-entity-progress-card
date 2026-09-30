@@ -355,7 +355,7 @@ class ObjStructure {
 
   constructor(cardType: string) {
     this._cardType = cardType;
-    traceInstance(this, CARD_CONTEXT.debug.instances);
+    traceInstance('ObjStructure', CARD_CONTEXT.debug.instances);
   }
 
   // One instance per cardType, built the first time that shape is actually

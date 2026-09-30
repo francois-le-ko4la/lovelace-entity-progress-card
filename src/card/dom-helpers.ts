@@ -18,7 +18,7 @@ class ResourceManager {
   #throttles = new Map<string, { lastCall: number }>();
 
   constructor() {
-    this.#log = initLogger(this, this.#debug, ['add', 'remove', 'cleanup']);
+    this.#log = initLogger(this, 'ResourceManager', this.#debug, ['add', 'remove', 'cleanup']);
   }
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
@@ -67,9 +67,14 @@ class ResourceManager {
 
   setTimeout(handler: () => void, timeout: number, id?: string): string {
     this.#log?.debug('Starting timeout with id:', id);
-    const timerId = setTimeout(handler, timeout);
+    const finalId = id || this.#generateUniqueId();
+    // Dropped before the handler runs, which may re-arm the same id.
+    const timerId = setTimeout(() => {
+      this.#resources.delete(finalId);
+      handler();
+    }, timeout);
     this.#log?.debug('Timeout started with timerId:', timerId);
-    return this.add(() => clearTimeout(timerId), id);
+    return this.add(() => clearTimeout(timerId), finalId);
   }
 
   addEventListener(
@@ -233,7 +238,7 @@ class DOMHelper {
   _rafScheduled: boolean;
 
   constructor() {
-    this.#log = initLogger(this, this.#debug, ['register', 'unregister', 'destroy']);
+    this.#log = initLogger(this, 'DOMHelper', this.#debug, ['register', 'unregister', 'destroy']);
     this._domElements = new Map(); // key → HTMLElement
     this._appliedValues = new Map(); // "key:prop" → last applied value
     this._pendingUpdates = new Map(); // "key:prop" → pending update function
@@ -288,7 +293,11 @@ class DOMHelper {
   _cachedUpdate(key: string, cacheSuffix: string, value: CacheValue, apply: (el: any, value: CacheValue) => void) {
     if (is.nullish(value)) return;
     const cacheKey = `${key}:${cacheSuffix}`;
-    if (this._appliedValues.get(cacheKey) === value) return;
+    if (this._appliedValues.get(cacheKey) === value) {
+      // Back to what is shown: a write still queued since would undo that.
+      this._pendingUpdates.delete(cacheKey);
+      return;
+    }
 
     const el = this._domElements.get(key);
     if (!el) return;
@@ -299,14 +308,24 @@ class DOMHelper {
     });
   }
 
-  // Sync counterpart to #cachedUpdate, for the *Now methods below - no RAF,
-  // no cache-skip, just an immediate write and cache record.
-  #applyNow(key: string, cacheSuffix: string, value: CacheValue, apply: (el: HTMLElement, value: CacheValue) => void) {
+  // Sync counterpart to #cachedUpdate, for the *Now methods below - no RAF. A
+  // write still queued for the same key is older: dropped, or the next frame
+  // would put it back.
+  #applyNow(
+    key: string,
+    cacheSuffix: string,
+    value: CacheValue,
+    apply: (el: HTMLElement, value: CacheValue) => void,
+    skipUnchanged: boolean,
+  ) {
     if (is.nullish(value)) return;
+    const cacheKey = `${key}:${cacheSuffix}`;
+    this._pendingUpdates.delete(cacheKey);
+    if (skipUnchanged && this._appliedValues.get(cacheKey) === value) return;
     const el = this._domElements.get(key);
     if (!el) return;
     apply(el, value);
-    this._appliedValues.set(`${key}:${cacheSuffix}`, value);
+    this._appliedValues.set(cacheKey, value);
   }
 
   /**
@@ -338,11 +357,22 @@ class DOMHelper {
   }
 
   /**
+   * setStyle, or removeStyle when the value is empty (nullish or '') - for a
+   * property that must not outlive the render that set it.
+   */
+  setOrRemoveStyle(key: string, prop: string, value: CacheValue) {
+    if (is.nullish(value) || value === '') this.removeStyle(key, prop);
+    else this.setStyle(key, prop, value);
+  }
+
+  /**
    * Sets a CSS custom property synchronously — no RAF, no cache check, no
-   * queue. Use when immediate DOM update is required.
+   * queue. Use when immediate DOM update is required. Never skipped: it
+   * writes on Home Assistant's own elements, which HA restyles behind the
+   * cache.
    */
   setStyleNow(key: string, prop: string, value: CacheValue) {
-    this.#applyNow(key, `style:${prop}`, value, applyStyle(prop));
+    this.#applyNow(key, `style:${prop}`, value, applyStyle(prop), false);
   }
 
   /**
@@ -354,11 +384,11 @@ class DOMHelper {
   }
 
   /**
-   * Sets the text content synchronously — no RAF, no cache check, no queue.
-   * Use when immediate DOM update is required (mirrors setStyleNow).
+   * Sets the text content synchronously — no RAF, no queue. Skipped if the
+   * value matches the cache, like setText.
    */
   setTextNow(key: string, value: CacheValue) {
-    this.#applyNow(key, 'text', value, applyText);
+    this.#applyNow(key, 'text', value, applyText, true);
   }
 
   // CF5 - issue (security) resolved - Jinja results are injected via innerHTML
@@ -452,16 +482,7 @@ class DOMHelper {
    */
   toggleClass(key: string, className: string | undefined, force: boolean) {
     if (!className) return;
-    const cacheKey = `${key}:class:${className}`;
-    if (this._appliedValues.get(cacheKey) === force) return;
-
-    const el = this._domElements.get(key);
-    if (!el) return;
-
-    this.enqueue(key, `class:${className}`, () => {
-      el.classList.toggle(className, force);
-      this._appliedValues.set(cacheKey, force);
-    });
+    this._cachedUpdate(key, `class:${className}`, force, (el, value) => el.classList.toggle(className, Boolean(value)));
   }
 
   /**
@@ -527,7 +548,7 @@ class ActionHelper {
 
   constructor(target: HTMLElement | null) {
     this.#target = target;
-    this.#log = initLogger(this, this.#debug, ['init']);
+    this.#log = initLogger(this, 'ActionHelper', this.#debug, ['init']);
   }
 
   // CF5 - issue (major) resolved - the HA frontend creates <action-handler>

@@ -3,6 +3,8 @@
  * through the constructor, so no formula here can read what it was not given.
  */
 
+import { is } from '../utils/common-checks.js';
+
 // Grouped, not three flat fields: a null centerZero makes zeroValue and
 // growthPercent unrepresentable rather than merely ignored.
 type CenterZero = { zeroValue: number; growthPercent: boolean };
@@ -76,8 +78,9 @@ class ProgressMath {
       return halfRange === 0 ? 0 : ((value - centerZero.zeroValue) / halfRange) * 100;
     }
     if (this.isLogScale) {
-      // Clamped to min before the log: a below-range value would otherwise give
-      // NaN/-Infinity instead of the "0%, let CSS clamp it" a linear scale gives.
+      // Clamped to min before the log: a below-range value would otherwise
+      // give NaN/-Infinity instead of the "0%, let CSS clamp it" a linear
+      // scale gives.
       const clamped = Math.max(value, min);
       return ((Math.log(clamped) - Math.log(min)) / (Math.log(max) - Math.log(min))) * 100;
     }
@@ -91,6 +94,13 @@ class ProgressMath {
   // past the bounds it overshoots the container and the bar draws a gap.
   static clampPercent(percent: number, centerZero: boolean): number {
     return centerZero ? Math.max(-100, Math.min(100, percent)) : Math.max(0, Math.min(100, percent));
+  }
+
+  // A counter/number's own min, unless center_zero needs a negative half that
+  // min doesn't reach - then the max mirrored, as for any other entity.
+  static ownRangeMin(ownMin: unknown, max: unknown, centerZero: { enabled: boolean; zeroValue: number }): unknown {
+    if (!centerZero.enabled || !is.number(max)) return ownMin;
+    return is.number(ownMin) && ownMin < centerZero.zeroValue ? ownMin : -max;
   }
 
   // A threshold on the bar's own 0-100 scale: center_zero's percent runs

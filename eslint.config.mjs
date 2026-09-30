@@ -54,6 +54,15 @@ const sharedRules = {
     },
   ],
   eqeqeq: ['error', 'smart'],
+  // DeepSource JS-W1042, caught before the push rather than after it: at any
+  // argument position, where eslint-plugin-unicorn only sees the last one.
+  'no-restricted-syntax': [
+    'error',
+    {
+      selector: ':matches(CallExpression, NewExpression) > Identifier.arguments[name="undefined"]',
+      message: 'No literal undefined as an argument (JS-W1042): omit it, or read the absent value off an object.',
+    },
+  ],
   // console.log is banned (the usual accidental-debug-leftover offender);
   // everything else here has a deliberate, structured use (Logger,
   // EPB_DIAG, the startup banner, warnings/errors) - see one inline

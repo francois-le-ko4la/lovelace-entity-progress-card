@@ -1,6 +1,6 @@
 // Which dropdown reads which enum. Its own module, DOM-free unlike base.ts.
 
-import { DENSITY_COMPACT_BAR_POSITIONS, type SchemaVariant } from '../card/schema.js';
+import { BAR_POSITIONS, DENSITY_COMPACT_BAR_POSITIONS, type SchemaVariant } from '../card/schema.js';
 
 type SchemaLookup = { variant: SchemaVariant; field: string };
 const from = (variant: SchemaVariant, field: string): SchemaLookup => ({ variant, field });
@@ -62,7 +62,7 @@ const SELECT_TYPES: Record<string, string | [group: string, keys: readonly strin
   bar_orientation: ['bar_orientation', from('card', 'bar_orientation')],
   bar_orientation_no_up: ['bar_orientation', from('badge', 'bar_orientation')],
   bar_position: ['bar_position', from('card', 'bar_position')],
-  bar_position_no_compact_below: ['bar_position', ['default', 'below', 'top', 'bottom', 'overlay', 'background']],
+  bar_position_no_compact_below: ['bar_position', BAR_POSITIONS.filter((position) => position !== 'compact_below')],
   bar_position_density_compact: ['bar_position', DENSITY_COMPACT_BAR_POSITIONS],
   bar_position_feature: ['bar_position', from('feature', 'bar_position')],
   bar_color_mode: ['bar_color_mode', from('card', 'bar_color_mode')],

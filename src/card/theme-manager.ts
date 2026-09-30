@@ -36,7 +36,7 @@ class ThemeManager {
   #interpolate = false;
 
   constructor() {
-    traceInstance(this, CARD_CONTEXT.debug.instances);
+    traceInstance('ThemeManager', CARD_CONTEXT.debug.instances);
   }
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
@@ -48,10 +48,11 @@ class ThemeManager {
     }
     this.#isValid = true;
     this.#theme = newTheme;
-    this.#currentStyle = THEME[newTheme as keyof typeof THEME].style;
-    this.#isLinear = THEME[newTheme as keyof typeof THEME].linear;
-    this.#isBasedOnPercentage = THEME[newTheme as keyof typeof THEME].percent;
-    this.#isSigned = THEME[newTheme as keyof typeof THEME].signed;
+    const preset = THEME[newTheme as keyof typeof THEME];
+    this.#currentStyle = preset.style;
+    this.#isLinear = preset.linear;
+    this.#isBasedOnPercentage = preset.percent;
+    this.#isSigned = preset.signed;
     // The instance outlives a config edit (view.ts holds one per view), so a
     // built-in theme has to clear what a previous custom_theme set - the
     // customTheme setter below returns early when there is nothing to apply.

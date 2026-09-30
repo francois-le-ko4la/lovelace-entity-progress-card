@@ -67,6 +67,8 @@
       "height_custom_toggle": "ارتفاع تلقائي",
       "icon_animation": "حركة الأيقونة",
       "interpolate": "تدرج الألوان",
+      "issue_report": "@ui.components.yaml-editor.copy_to_clipboard|Copy to clipboard",
+      "issue_report_copied": "@ui.common.copied_clipboard|Copied to clipboard",
       "marginless": "بدون هامش",
       "migrate_config": "ترحيل الإعداد",
       "min_width": "أدنى عرض",

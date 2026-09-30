@@ -14,6 +14,7 @@ import {
   SHARED_LABEL_PREFIX,
   EDITOR_FIELD_HELPER_NS,
   CONFIG_CHANGED_EVENT,
+  HASS_NOTIFICATION_EVENT,
 } from '../utils/parameters.js';
 import { EDITOR_BASE_STYLE } from '../utils/styles.js';
 import { is } from '../utils/common-checks.js';
@@ -28,10 +29,21 @@ import {
   EntityProgressMultiRowEditor,
   EntityProgressCustomThemeEditor,
   EntityProgressActionPicker,
+  buildIconButton,
 } from './list-editors.js';
+import { BUG_ICON_PATH, issueReport, copyText } from './issue-report.js';
 import { lengthSliderSelector, lengthUnitSelector } from '../utils/length.js';
 import { durationSliderSelector } from '../utils/duration.js';
-import { markInner, THEME_ALIASES, schemaOptions, ACTION_FIELDS, type WatermarkMark } from '../card/schema.js';
+import {
+  markInner,
+  entityOf,
+  THEME_ALIASES,
+  schemaOptions,
+  ACTION_FIELDS,
+  OPTIONS_WITHOUT_EFFECT,
+  type WatermarkMark,
+  type ValueConfig,
+} from '../card/schema.js';
 import { REUSED_OPTION_LABELS, COMPUTED_OPTION_LABELS, SELECT_TYPES, type SchemaLookup } from './select-types.js';
 
 // Every dynamic editor field element built below (ha-selector, the chip
@@ -107,6 +119,40 @@ const createFieldEl = (field: FieldDef, tagName: string): EditorFieldElement => 
 // resolves `this.value ?? this.defaultColor`, so an empty string is a value to
 // it - the "State (Default)" entry would never be the selected one.
 const EMPTY_IS_UNDEFINED = new Set(['toggle', 'number', 'decimal', 'color_state_default']);
+
+const isInert = (config: LovelaceConfig, { key, hasEffect }: (typeof OPTIONS_WITHOUT_EFFECT)[number]) =>
+  !is.nullish(config[key]) && !hasEffect(config);
+
+// An option with no effect leaves the YAML for an _inert_draft, and comes back
+// once it has one again - unless set anew in between.
+const parkInertOptions = (config: LovelaceConfig): LovelaceConfig => {
+  const next = { ...config };
+  for (const option of OPTIONS_WITHOUT_EFFECT) {
+    const { key, hasEffect, fallback } = option;
+    const draftKey = `_${key}_inert_draft`;
+    const value = next[key];
+    const draft = next[draftKey];
+    if (!is.nullish(value)) {
+      if (!isInert(next, option)) {
+        Reflect.deleteProperty(next, draftKey);
+        continue;
+      }
+      if (value !== fallback) next[draftKey] = value;
+      Reflect.deleteProperty(next, key);
+    } else if (!is.nullish(draft) && hasEffect({ ...next, [key]: draft })) {
+      next[key] = draft;
+      Reflect.deleteProperty(next, draftKey);
+    }
+  }
+  return next;
+};
+
+const assignOrUnset = <T extends object>(target: T, key: string, value: unknown): T => {
+  const next = { ...target };
+  if (is.nullishOrEmptyString(value)) Reflect.deleteProperty(next, key);
+  else (next as Record<string, unknown>)[key] = value;
+  return next;
+};
 
 /**
  * Shared base for every per-card-type visual editor. Builds the
@@ -256,7 +302,7 @@ class EditorBase extends HTMLElement {
     ]);
     return Object.fromEntries(
       [...groups].map((group) => {
-        // Stored labels win: a group can reuse or compute what it does not carry.
+        // Stored labels win: a group reuses or computes what it lacks.
         const own = tree[group] ?? {};
         if (group in COMPUTED_OPTION_LABELS) return [group, { ...computed(group), ...own }];
         return [group, group in REUSED_OPTION_LABELS ? { ...reuse(group), ...own } : tree[group]];
@@ -269,7 +315,7 @@ class EditorBase extends HTMLElement {
   constructor() {
     super();
     this.#shadow = this.attachShadow({ mode: 'open' });
-    this.#log = initLogger(this, this.#debug, ['setConfig']);
+    this.#log = initLogger(this, this.localName, this.#debug, ['setConfig']);
   }
 
   connectedCallback() {
@@ -339,7 +385,7 @@ class EditorBase extends HTMLElement {
     const container = document.createElement('div');
     container.className = 'editor';
 
-    container.appendChild(this.#buildMigrateHeader());
+    container.appendChild(this.#buildHeader());
 
     for (const [section, def] of Object.entries((this.constructor as typeof EditorBase)._fields)) {
       container.appendChild(this.#buildExpansionPanel(section, def));
@@ -352,19 +398,15 @@ class EditorBase extends HTMLElement {
   // deeper ({value: {entity,...}, as, type, opacity, color}) - unwrap before
   // reading .entity, same shape as types.watermarkMark elsewhere.
   static #watermarkEntity(mark: unknown): string {
-    const value = markInner(mark as WatermarkMark);
-    return is.plainObject(value) && is.nonEmptyString(value.entity) ? value.entity : '';
+    const entity = entityOf(markInner(mark as WatermarkMark) as ValueConfig);
+    return is.nonEmptyString(entity) ? entity : '';
   }
 
-  // Rewrites deprecated syntax to its modern equivalent only — never the
-  // unrelated defaults _customizeConfig also applies, so the button only
-  // changes what it documents. `navigate_to`/`show_more_info` are deleted
-  // rather than converted: both have been fully inert since v1.2.0, so
-  // reconstructing a tap_action from a value that hasn't run in years would
-  // be a guess. max_value/disable_unit/additions are delegated to the
-  // active config helper's own _migrateLegacyOptions.
+  // The active helper's own migrations (_customizeConfig adds no defaults), so
+  // a Multi or one of its rows migrates everything its own button flags.
+  // navigate_to/show_more_info are dropped, not converted: inert since v1.2.0.
   static #migrateDeprecatedConfig(config: LovelaceConfig, configHelper: BaseConfigHelper): LovelaceConfig {
-    let migrated = (configHelper.constructor as typeof BaseConfigHelper)._migrateLegacyOptions(config);
+    let migrated = (configHelper.constructor as typeof BaseConfigHelper)._customizeConfig(config);
     const themeAlias = THEME_ALIASES[migrated.theme];
     if (themeAlias) migrated = { ...migrated, theme: themeAlias };
     if (migrated.navigate_to !== undefined) migrated = { ...migrated, navigate_to: undefined };
@@ -372,10 +414,29 @@ class EditorBase extends HTMLElement {
     return migrated;
   }
 
-  #buildMigrateHeader(): HTMLElement {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'migrate-header';
+  #buildHeader(): HTMLElement {
+    const header = document.createElement('div');
+    header.className = 'editor-header';
+    if ((this.constructor as typeof EditorBase)._offersIssueReport) header.appendChild(this.#buildIssueReportButton());
+    header.appendChild(this.#buildMigrateButton());
+    return header;
+  }
 
+  #buildIssueReportButton(): HTMLElement {
+    const label = this.#hassProvider.localizeGroup(EDITOR_FIELD_NS)?.issue_report ?? 'Copy to clipboard';
+    return buildIconButton(BUG_ICON_PATH, label, () => this.#copyIssueReport());
+  }
+
+  // What Home Assistant holds, not the form's state: the YAML the user has.
+  async #copyIssueReport() {
+    if (!(await copyText(issueReport(this.#lastConfig), this.#shadow))) return;
+    const message = this.#hassProvider.localizeGroup(EDITOR_FIELD_NS)?.issue_report_copied ?? 'Copied to clipboard';
+    this.dispatchEvent(
+      new CustomEvent(HASS_NOTIFICATION_EVENT, { detail: { message }, bubbles: true, composed: true }),
+    );
+  }
+
+  #buildMigrateButton(): HTMLElement {
     const button = document.createElement('ha-button');
     const fieldName = '_migrate_config';
     button.id = fieldName;
@@ -389,14 +450,16 @@ class EditorBase extends HTMLElement {
     const field = {
       name: fieldName,
       virtual: true,
-      showIf: (config: LovelaceConfig) => hasDeprecatedOptions(config),
+      // Also for options without effect: the click's own write parks them.
+      showIf: (config: LovelaceConfig) =>
+        hasDeprecatedOptions(config) ||
+        ((this.constructor as typeof EditorBase)._parksInertOptions &&
+          OPTIONS_WITHOUT_EFFECT.some((option) => isInert(config, option))),
       onVirtualChange: (_value: unknown, config: LovelaceConfig) =>
         EditorBase.#migrateDeprecatedConfig(config, this._configHelper),
     } as unknown as FieldDef;
     this.#dom.registerField(fieldName, button, field);
-
-    wrapper.appendChild(button);
-    return wrapper;
+    return button;
   }
 
   #buildExpansionPanel(section: string, def: SectionDef): DocumentFragment | HTMLElement {
@@ -479,8 +542,8 @@ class EditorBase extends HTMLElement {
       entity_name: () => ({ entity_name: {} }),
       state_content: () => ({ ui_state_content: { allow_context: true } }),
       attribute: () => ({ attribute: { entity_id: this.#config.entity ?? '' } }),
-      maxValueAttribute: () => ({ attribute: { entity_id: this.#config.max_value?.entity ?? '' } }),
-      minValueAttribute: () => ({ attribute: { entity_id: this.#config.min_value?.entity ?? '' } }),
+      maxValueAttribute: () => ({ attribute: { entity_id: entityOf(this.#config.max_value) ?? '' } }),
+      minValueAttribute: () => ({ attribute: { entity_id: entityOf(this.#config.min_value) ?? '' } }),
       number: () => ({ number: {} }),
       decimal: () => ({ number: { min: 0, max: 10, mode: 'box' } }),
       opacity: () => ({ number: { min: 0, max: 1, step: 0.05, mode: 'box' } }),
@@ -940,23 +1003,17 @@ class EditorBase extends HTMLElement {
     }
   }
 
+  // The parent stays even once emptied: its presence is what turns the section
+  // on - its toggle reads it, and a bare `watermark: {}` draws both marks.
   #handleNestedField(parentKey: string, childKey: string, value: unknown) {
-    this.#config = {
-      ...this.#config,
-      [parentKey]: { ...this.#config[parentKey], [childKey]: value },
-    };
+    this.#config = { ...this.#config, [parentKey]: assignOrUnset(this.#config[parentKey], childKey, value) };
     this.#sendConfig(this.#config);
   }
 
   #handleStdField(def: FieldDef | undefined, key: string, value: unknown) {
-    const targetKey = def?.target ?? key;
-    if (!value && def?.onClear) {
-      this.#config = def.onClear({ ...this.#config });
-      this.#sendConfig(this.#config);
-      return;
-    }
-    const newConfig = { ...this.#config, [targetKey]: value };
-    this.#config = def?.onChange ? def.onChange(value, newConfig, this.#config) : newConfig;
+    const newConfig = assignOrUnset(this.#config, def?.target ?? key, value);
+    if (is.nullishOrEmptyString(value) && def?.onClear) this.#config = def.onClear(newConfig);
+    else this.#config = def?.onChange ? def.onChange(value, newConfig, this.#config) : newConfig;
     this.#sendConfig(this.#config);
   }
 
@@ -975,12 +1032,11 @@ class EditorBase extends HTMLElement {
     }
 
     const isInverted = target?.isInverted ?? false;
-    const isNested = key.includes('.');
-    const [parentKey, childKey] = isNested ? key.split('.') : [];
+    const { parentKey, childKey } = EditorBase.#splitFieldName(key);
 
     if (isInverted) value = !value;
 
-    if (isNested) this.#handleNestedField(parentKey, childKey, value);
+    if (childKey !== null) this.#handleNestedField(parentKey, childKey, value);
     else this.#handleStdField(def, key, value);
   }
 
@@ -997,10 +1053,15 @@ class EditorBase extends HTMLElement {
   // latest config — each individual input event now only does O(1) work (store
   // + maybe schedule), so the browser can no longer fall behind regardless of
   // how fast native events fire. The 1-frame delay (~16ms) is not perceptible.
-  // Last word on a config before it leaves, for a subclass whose shape has to
-  // settle whatever caused the write - the Multi's shared level (editors.ts).
+  // Whether the config is whole enough to tell where an option works: the
+  // Multi's shared level isn't, and settles its own way (editors.ts).
+  static _parksInertOptions = true;
+  // A Multi row's report would hold one row: the whole card's is on the Multi.
+  static _offersIssueReport = true;
+
+  // Last word on a config before it leaves: options without effect are parked.
   _settle(config: LovelaceConfig): LovelaceConfig {
-    return config;
+    return parkInertOptions(config);
   }
 
   #sendConfig(rawConfig: LovelaceConfig) {

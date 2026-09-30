@@ -67,6 +67,8 @@
       "height_custom_toggle": "자동 높이",
       "icon_animation": "아이콘 애니메이션",
       "interpolate": "색상 보간",
+      "issue_report": "@ui.components.yaml-editor.copy_to_clipboard|Copy to clipboard",
+      "issue_report_copied": "@ui.common.copied_clipboard|Copied to clipboard",
       "marginless": "여백 없음",
       "migrate_config": "구성 마이그레이션",
       "min_width": "최소 너비",

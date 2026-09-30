@@ -22,7 +22,7 @@ class TypedValueHelper<T = unknown> {
 
   constructor(newValue: unknown = null) {
     if (this._validate(newValue)) this.#defaultValue = newValue;
-    traceInstance(this, CARD_CONTEXT.debug.instances);
+    traceInstance('TypedValueHelper', CARD_CONTEXT.debug.instances);
   }
 
   set value(newValue: unknown) {
@@ -60,7 +60,7 @@ class UnitHelper {
   #isDisabled = false;
 
   constructor() {
-    traceInstance(this, CARD_CONTEXT.debug.instances);
+    traceInstance('UnitHelper', CARD_CONTEXT.debug.instances);
   }
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────

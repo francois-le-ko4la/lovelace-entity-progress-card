@@ -163,3 +163,31 @@ describe('an inverted range is a supported way to mirror the scale', () => {
     assert.equal(ProgressMath.clampPercent(inverted(120).percent ?? 0, false), 0);
   });
 });
+
+describe('ProgressMath.ownRangeMin - a counter or number under center_zero', () => {
+  const centered = { enabled: true, zeroValue: 0 };
+
+  test('without center_zero the entity keeps its own min', () => {
+    assert.equal(ProgressMath.ownRangeMin(0, 10, { enabled: false, zeroValue: 0 }), 0);
+  });
+
+  test('a min with no room below the zero point mirrors the max', () => {
+    assert.equal(ProgressMath.ownRangeMin(0, 10, centered), -10);
+  });
+
+  test('a min already below the zero point is kept', () => {
+    assert.equal(ProgressMath.ownRangeMin(-50, 10, centered), -50);
+  });
+
+  test('the zero point decides, not 0', () => {
+    assert.equal(ProgressMath.ownRangeMin(0, 10, { enabled: true, zeroValue: 5 }), 0);
+  });
+
+  test('a missing min mirrors the max', () => {
+    assert.equal(ProgressMath.ownRangeMin(null, 10, centered), -10);
+  });
+
+  test('a max that is no number leaves the own min alone', () => {
+    assert.equal(ProgressMath.ownRangeMin(0, null, centered), 0);
+  });
+});

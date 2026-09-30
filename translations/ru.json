@@ -67,6 +67,8 @@
       "height_custom_toggle": "Автоматическая высота",
       "icon_animation": "Анимация значка",
       "interpolate": "Интерполяция цветов",
+      "issue_report": "@ui.components.yaml-editor.copy_to_clipboard|Copy to clipboard",
+      "issue_report_copied": "@ui.common.copied_clipboard|Copied to clipboard",
       "marginless": "Без отступа",
       "migrate_config": "Перенести конфигурацию",
       "min_width": "Мин. ширина",

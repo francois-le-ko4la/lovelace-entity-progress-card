@@ -5,12 +5,11 @@
  */
 
 import { is } from '../utils/common-checks.js';
-import { ROW_IDENTITY_FIELDS } from '../card/schema.js';
+import { AGGREGATOR_FIELDS, ROW_IDENTITY_FIELDS } from '../card/schema.js';
 import type { LovelaceConfig } from '../utils/types.js';
 
-// The aggregator's own keys: never a row's, so never factorised up or down.
-// _-prefixed keys are ephemeral editor state and go the same way.
-const AGGREGATOR_KEYS = new Set(['entities', 'rows', 'type']);
+// Never factorised up or down, like the _-prefixed (editor state) keys.
+const AGGREGATOR_KEYS = new Set<string>(AGGREGATOR_FIELDS);
 const isRowOption = (key: string) => !AGGREGATOR_KEYS.has(key) && !key.startsWith('_');
 
 // The same four the aggregator schemas refuse (ROW_IDENTITY_FIELDS): a value

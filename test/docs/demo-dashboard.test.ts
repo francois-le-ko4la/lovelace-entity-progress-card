@@ -26,10 +26,16 @@ import {
   MultiFeatureConfigHelper,
   type BaseConfigHelper,
 } from '../../src/card/config-helpers.js';
+import { auditDashboard } from '../../src/card/card-audit.js';
 import { META } from '../../src/utils/meta.js';
 import type { LovelaceConfig } from '../../src/utils/types.js';
 
 const FILES = ['docs/demo-dashboard.yaml', 'docs/demo-dashboard-dev.yaml'];
+const DASHBOARDS = new Map(FILES.map((file) => [file, loadYaml(fs.readFileSync(file, 'utf8'))]));
+
+// Built to hold what a user shouldn't write: past issues' shapes, and the
+// deprecated ones Migrate config rewrites.
+const AUDIT_EXEMPT_VIEWS = new Set(['EP Demo - Regression tests (past issues)', 'EP Demo - Deprecated options']);
 
 const HELPERS: Record<string, typeof BaseConfigHelper> = {
   card: CardConfigHelper,
@@ -83,7 +89,7 @@ const collect = (file: string): Card[] => {
     }
     Object.values(record).forEach(walk);
   };
-  walk(loadYaml(fs.readFileSync(file, 'utf8')));
+  walk(DASHBOARDS.get(file));
   return found;
 };
 
@@ -123,4 +129,17 @@ describe('the demo dashboards are configs the card actually accepts', () => {
     }
     assert.deepEqual(lost, [], `\n${lost.join('\n')}\n`);
   });
+});
+
+describe('the demo dashboards show nothing a user would have to clean up', () => {
+  for (const file of FILES) {
+    test(file, () => {
+      const { views } = DASHBOARDS.get(file) as { views: { title?: string }[] };
+      const shown = views.filter((view) => !AUDIT_EXEMPT_VIEWS.has(view.title ?? ''));
+      const findings = auditDashboard({ views: shown }, file).map(
+        ({ where, notes }) => `${where}: ${notes.join('; ')}`,
+      );
+      assert.deepEqual(findings, [], `\n${findings.join('\n')}\n`);
+    });
+  }
 });

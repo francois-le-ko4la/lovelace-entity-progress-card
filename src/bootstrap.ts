@@ -5,6 +5,7 @@ import { META, CARD_CONTEXT, CARD } from './utils/parameters.js';
 import { RegistrationHelper } from './utils/register.js';
 import { resolveEntitySuggestion } from './utils/entity-suggestions.js';
 import { installDiagnostic } from './utils/diagnostic.js';
+import { cardAudit } from './card/card-audit.js';
 import {
   EntityProgressCard,
   EntityProgressBadge,
@@ -81,7 +82,7 @@ function announce(): void {
 
 function bootstrap(editors: EditorSet | null): void {
   registerComponents(editors);
-  installDiagnostic();
+  installDiagnostic(cardAudit);
   announce();
 
   // noRegistration renders nothing, so the EPB_DIAG.dump() cue never reaches

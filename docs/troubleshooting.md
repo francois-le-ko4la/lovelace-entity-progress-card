@@ -94,7 +94,24 @@ You don't have to rewrite anything by hand:
 When you open the visual editor on a card that still uses a legacy option, a
 **Migrate config** button appears in the top-right corner. One click rewrites
 your YAML to the current syntax — the rendered card doesn't change, only how
-it's written.
+it's written. If you already wrote the new option next to the old one, the new
+one is what counts: the old one is simply removed.
+
+The same button shows up for an option that has no effect where it is set —
+`text_shadow` on a bar that isn't `overlay` or `background`, a `bar_color_mode`
+without a theme. The click takes it out of your YAML; undo the change that made
+it pointless while the editor is still open, and it comes back as it was.
+
+To find every card that needs it, on every dashboard — views you never open
+included — run this in the browser console (F12) on any dashboard:
+
+```js
+EPB_DIAG.cardAudit();
+```
+
+It lists each card with its deprecated options and those without effect, and
+Multi cards whose rows switched to the 1.6.3 look (icon, name and value) because
+their config never said otherwise.
 
 As with any edit: check that the card still looks right, and that the values it
 displays match what you expect, before saving the dashboard.
@@ -234,6 +251,14 @@ Some issues aren't a bug — the browser is simply below the supported version.
 - YAML configuration snippets (if relevant)
 - Any visible error messages (from the console or logs)
 
+#### 🐞 Copy the issue report from the card editor
+
+The quickest way: open the card in the visual editor and click the bug icon in
+its top-left corner. It copies a report ready to paste into your issue — the
+diagnostic below, then the card's YAML with its deprecated options and options
+without effect marked. On a Multi card, use the icon on the card itself, not on
+one of its rows.
+
 #### 🩺 Run the built-in diagnostic
 
 The card ships with a small diagnostic helper that collects most of the
@@ -253,7 +278,8 @@ EPB_DIAG.dump();
 It prints an anonymized report — card and Home Assistant versions, browser, dark
 mode / reduced motion status, registered card types, and whether the required HA
 components (`ha-card`, `ha-selector`, `action-handler`) are present — ready to
-copy/paste into your issue.
+copy/paste into your issue. Chrome, Edge and Opera only give their exact version
+and operating system over HTTPS; elsewhere, the user agent line is all there is.
 
 It also flags a **duplicate resource load** on its own
 (`duplicate load: ⚠️ YES`) — a common, hard-to-diagnose cause of erratic

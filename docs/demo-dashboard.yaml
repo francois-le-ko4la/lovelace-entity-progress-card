@@ -885,7 +885,6 @@ views:
             name: 'bar_position: overlay + bar_single_line'
             bar_position: overlay
             bar_single_line: true
-            bar_size: large
       - type: grid
         cards:
           - type: heading
@@ -1958,15 +1957,6 @@ views:
               color: orange
               low: 20
               high: 80
-          - type: custom:entity-progress-card-template
-            entity: input_number.epb_demo_battery
-            name: 'Template: watermark.high as entity (regression #140)'
-            percent: '{{ states(entity) }}'
-            watermark:
-              high: input_number.epb_demo_battery_reserved
-              high_as: percent
-              high_color: '#c6a445'
-              type: line
       - type: grid
         cards:
           - type: heading
@@ -2775,14 +2765,6 @@ views:
               growth_percent: true
             min_value: -3000
             max_value: 3000
-          - type: custom:entity-progress-card
-            entity: input_number.epb_demo_battery
-            name: 'watermark: disable_low + disable_high'
-            watermark:
-              low: 20
-              high: 80
-              disable_low: true
-              disable_high: false
     show_icon_and_title: true
     cards: []
   - title: EP Demo - Layout & bar_position
@@ -2841,7 +2823,6 @@ views:
             name: overlay
             layout: horizontal
             bar_position: overlay
-            bar_size: large
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
             name: background
@@ -2880,14 +2861,6 @@ views:
             name: below
             layout: vertical
             bar_position: below
-            grid_options:
-              columns: 4
-              rows: 2
-          - type: custom:entity-progress-card
-            entity: input_number.epb_demo_battery
-            name: 'compact_below → default (#123)'
-            layout: vertical
-            bar_position: compact_below
             grid_options:
               columns: 4
               rows: 2
@@ -7219,7 +7192,6 @@ views:
               growth_percent: true
             min_value: -3000
             max_value: 3000
-            bar_color_mode: rainbow
             bar_effect:
               - shimmer
             force_circular_background: true
@@ -7247,7 +7219,6 @@ views:
             entity: input_number.epb_demo_temperature
             name: ☢️ CORE TEMP
             unit: °C
-            bar_size: xlarge
             bar_position: overlay
             bar_single_line: true
             text_shadow: true

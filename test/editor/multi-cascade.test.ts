@@ -8,6 +8,7 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 
+import { assertUndefined } from '../helpers.js';
 import { cascade } from '../../src/editor/multi-cascade.js';
 
 type Cfg = Record<string, unknown>;
@@ -64,8 +65,8 @@ describe('the Multi row cascade', () => {
         { entity: CYAN, name: SHARED_NAME, icon: SHARED_ICON },
       ],
     });
-    assert.equal(out.name, undefined, 'name identifies a row, it is never a default');
-    assert.equal(out.icon, undefined, 'same for the icon');
+    assertUndefined(out.name, 'name identifies a row, it is never a default');
+    assertUndefined(out.icon, 'same for the icon');
     assert.deepEqual(out.entities, [
       { entity: BLACK, name: SHARED_NAME, icon: SHARED_ICON },
       { entity: CYAN, name: SHARED_NAME, icon: SHARED_ICON },
@@ -137,7 +138,7 @@ describe('the Multi row cascade - the election', () => {
         { entity: CYAN, bar_color: 'cyan' },
       ],
     });
-    assert.equal(out.bar_color, undefined, 'a single copy of each is nobody agreeing');
+    assertUndefined(out.bar_color, 'a single copy of each is nobody agreeing');
     assert.deepEqual(out.entities, [
       { entity: BLACK, bar_color: 'black' },
       { entity: CYAN, bar_color: 'cyan' },

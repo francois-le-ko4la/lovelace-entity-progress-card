@@ -67,6 +67,8 @@
       "height_custom_toggle": "Automatische Höhe",
       "icon_animation": "Symbolanimation",
       "interpolate": "Farben interpolieren",
+      "issue_report": "@ui.components.yaml-editor.copy_to_clipboard|Copy to clipboard",
+      "issue_report_copied": "@ui.common.copied_clipboard|Copied to clipboard",
       "marginless": "Randlos",
       "migrate_config": "Konfiguration migrieren",
       "min_width": "Mindestbreite",

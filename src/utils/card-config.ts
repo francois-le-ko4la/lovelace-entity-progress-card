@@ -110,9 +110,9 @@ const htmlStructure = {
       icon: { element: 'ha-icon', class: 'trend-icon' },
     },
     // GitHub-label-style status pill (status_label option) - same corner as
-    // trendIndicator, mutually exclusive with it (see schema.ts's
-    // applyLabelRule). Not aria-hidden: unlike trendIndicator's bare arrow
-    // icon, this is real status text (e.g. "hot") worth announcing.
+    // trendIndicator, mutually exclusive with it (HAS_EFFECT.trendIndicator).
+    // Not aria-hidden: unlike trendIndicator's bare arrow icon, this is real
+    // status text (e.g. "hot") worth announcing.
     label: { element: 'div', class: 'status-label' },
     secondaryInfo: { element: 'div', class: 'secondary-info' },
     secondaryInfoWrapper: { element: 'div', class: 'secondary-info-wrapper' },
@@ -180,6 +180,14 @@ const htmlStructure = {
 // is a compile error wherever it isn't wired.
 const HIDE_TARGETS = ['icon', 'name', 'value', 'unit', 'secondary_info', 'progress_bar', 'shape'] as const;
 type HideTarget = (typeof HIDE_TARGETS)[number];
+
+// Every mark's CSS variables follow one naming scheme.
+const markVars = (prefix: string, color: string) => ({
+  value: { var: `--${prefix}-value` },
+  color: { var: `--${prefix}-color`, default: color },
+  opacity: { var: `--${prefix}-opacity-value` },
+  lineSize: { var: `--${prefix}-line-size` },
+});
 
 const style = {
   element: 'style',
@@ -320,18 +328,8 @@ const style = {
       centerZero: 'center-zero',
     },
     watermark: {
-      low: {
-        value: { var: '--low-watermark-value', default: 20 },
-        color: { var: '--low-watermark-color', default: HA_CONTEXT.colors.red },
-        opacity: { var: '--low-watermark-opacity-value' },
-        lineSize: { var: '--low-watermark-line-size' },
-      },
-      high: {
-        value: { var: '--high-watermark-value', default: 80 },
-        color: { var: '--high-watermark-color', default: HA_CONTEXT.colors.red },
-        opacity: { var: '--high-watermark-opacity-value' },
-        lineSize: { var: '--high-watermark-line-size' },
-      },
+      low: markVars('low-watermark', HA_CONTEXT.colors.red),
+      high: markVars('high-watermark', HA_CONTEXT.colors.red),
       // Still written, still the fallback each side reads when it has no
       // line_size of its own - it is no longer the only value there is.
       lineSize: { var: '--watermark-line-size' },
@@ -340,24 +338,9 @@ const style = {
       opacity: { var: '--watermark-opacity-value' },
     },
     peakMarker: {
-      min: {
-        value: { var: '--peak-min-value' },
-        color: { var: '--peak-min-color', default: HA_CONTEXT.colors.stateIcon },
-        opacity: { var: '--peak-min-opacity-value' },
-        lineSize: { var: '--peak-min-line-size' },
-      },
-      max: {
-        value: { var: '--peak-max-value' },
-        color: { var: '--peak-max-color', default: HA_CONTEXT.colors.stateIcon },
-        opacity: { var: '--peak-max-opacity-value' },
-        lineSize: { var: '--peak-max-line-size' },
-      },
-      average: {
-        value: { var: '--peak-average-value' },
-        color: { var: '--peak-average-color', default: HA_CONTEXT.colors.stateIcon },
-        opacity: { var: '--peak-average-opacity-value' },
-        lineSize: { var: '--peak-average-line-size' },
-      },
+      min: markVars('peak-min', HA_CONTEXT.colors.stateIcon),
+      max: markVars('peak-max', HA_CONTEXT.colors.stateIcon),
+      average: markVars('peak-average', HA_CONTEXT.colors.stateIcon),
       // No value/lineSize: the band spans --peak-min-value to --peak-max-value
       // (set for all three marks whether they are drawn or not), and a zone has
       // no line to size.
@@ -442,18 +425,22 @@ const network = {
   disconnected: 'ws-disconnected',
 };
 
+const CONSOLE_TAG = META.types.card.typeName.toUpperCase();
+const WARNING_PREFIX = `%c⚠️ ${CONSOLE_TAG} ${VERSION} — `;
+
 const consoleInfo = {
-  message: `%c✨${META.types.card.typeName.toUpperCase()} ${VERSION}${LIGHT_BUILD ? ' (LIGHT — no visual editor)' : ''} IS INSTALLED.`,
+  tag: CONSOLE_TAG,
+  message: `%c✨${CONSOLE_TAG} ${VERSION}${LIGHT_BUILD ? ' (LIGHT — no visual editor)' : ''} IS INSTALLED.`,
   css: 'color:orange; background-color:black; font-weight: bold;',
-  link: `      For more details, check the README: https://github.com/francois-le-ko4la/lovelace-entity-progress-card/tree/${VERSION}`,
+  link: `      For more details, check the README: ${META.documentation}`,
   // Emitted after the banner (see index.ts) only when the URL-derived dev/
   // debug modes are active, so a non-shipped configuration is never silent.
   warnCss: 'color:black; background-color:orange; font-weight:bold;',
-  devWarning: `%c⚠️ ${META.types.card.typeName.toUpperCase()} ${VERSION} — DEV MODE: elements registered under "…-dev" type names, diagnostic under EPB_DIAG_DEV. Not for production dashboards. (this is the _dev.js build, or ?dev=true is set)`,
-  debugWarning: `%c⚠️ ${META.types.card.typeName.toUpperCase()} ${VERSION} — DEBUG logging ON for: `,
+  devWarning: `${WARNING_PREFIX}DEV MODE: elements registered under "…-dev" type names, diagnostic under EPB_DIAG_DEV. Not for production dashboards. (this is the _dev.js build, or ?dev=true is set)`,
+  debugWarning: `${WARNING_PREFIX}DEBUG logging ON for: `,
   debugWarningHint: ' — drop the ?debug query param to silence it.',
-  noRegistrationWarning: `%c⚠️ ${META.types.card.typeName.toUpperCase()} ${VERSION} — NO-REGISTRATION MODE: no custom element defined, cards of this type will NOT render. Diagnostic only (issue #108). Drop the ?noRegistration query param to restore.`,
-  classicResourceWarning: `%c⚠️ ${META.types.card.typeName.toUpperCase()} ${VERSION} — this resource is registered as a classic "JavaScript" type, deprecated by Home Assistant. Switch it to "JavaScript Module" (Settings → Dashboards → Resources): the classic type can freeze pop-ups such as browser_mod and is being phased out. See the troubleshooting guide.`,
+  noRegistrationWarning: `${WARNING_PREFIX}NO-REGISTRATION MODE: no custom element defined, cards of this type will NOT render. Diagnostic only (issue #108). Drop the ?noRegistration query param to restore.`,
+  classicResourceWarning: `${WARNING_PREFIX}this resource is registered as a classic "JavaScript" type, deprecated by Home Assistant. Switch it to "JavaScript Module" (Settings → Dashboards → Resources): the classic type can freeze pop-ups such as browser_mod and is being phased out. See the troubleshooting guide.`,
 };
 
 // Assembled last so every sub-object above (already fully resolved local

@@ -510,7 +510,7 @@ ha-card.background {
    ============================================================================= */
 
 /* GitHub-label-style pill, mutually exclusive with .trend-indicator
-   (schema.ts's applyLabelRule). Same recipe as Primer's own dark-theme issue
+   (schema.ts's HAS_EFFECT.trendIndicator). Same recipe as Primer's own dark-theme issue
    labels (@primer/react IssueLabelToken.module.css): a translucent tint for the
    background, border/text the same hue lightened just enough to stay legible.
    --epb-label-color/-background-color/-border-color override each separately. */
@@ -1086,7 +1086,7 @@ ha-card:is(.vertical, .xlarge, .below, .bottom, .top, .overlay, .background) .${
 /* bar_position: compact_below (#123) is a real, separate DOM shape, not a CSS
    rearrangement (StructureElements.createContentBody): .name and
    .secondary-info share a wrapper row, the bar is a sibling row below.
-   Horizontal-only (schema.ts's applyCompactBelowRule) - vertical already
+   Horizontal-only (schema.ts's INERT_OPTIONS) - vertical already
    stacks the three narrowly, with no shared row to switch to. */
 ha-card.horizontal.compact_below .${CARD.htmlStructure.sections.content.class} {
   --current-content-height: calc(
@@ -3078,7 +3078,9 @@ const EDITOR_BASE_STYLE = css`
     line-height: 1.5;
     color: var(--primary-text-color);
   }
-  .migrate-header { display: flex; justify-content: flex-end; }
+  .editor-header { display: flex; align-items: center; }
+  .editor-header > ha-button { margin-inline-start: auto; }
+  ${ROW_DELETE_STYLE}
 `;
 
 /**

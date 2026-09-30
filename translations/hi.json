@@ -67,6 +67,8 @@
       "height_custom_toggle": "स्वतः ऊँचाई",
       "icon_animation": "आइकन एनिमेशन",
       "interpolate": "रंग इंटरपोलेशन",
+      "issue_report": "@ui.components.yaml-editor.copy_to_clipboard|Copy to clipboard",
+      "issue_report_copied": "@ui.common.copied_clipboard|Copied to clipboard",
       "marginless": "मार्जिनरहित",
       "migrate_config": "कॉन्फ़िगरेशन माइग्रेट करें",
       "min_width": "न्यूनतम चौड़ाई",

@@ -2,7 +2,7 @@
   "$schema": "https://unpkg.com/knip@5/schema.json",
   "entry": [
     "src/index-light.ts",
-    "scripts/**/*.js",
+    "scripts/**/*.{js,mjs}",
     "test/**/*.test.ts"
   ],
   "ignore": [

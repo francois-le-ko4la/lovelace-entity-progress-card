@@ -55,7 +55,7 @@ class EntityHelper {
   ]);
 
   constructor() {
-    traceInstance(this, CARD_CONTEXT.debug.instances);
+    traceInstance('EntityHelper', CARD_CONTEXT.debug.instances);
   }
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
@@ -162,8 +162,12 @@ class EntityHelper {
     return this.#isValid && Object.keys(this.attributes).length > 0;
   }
 
+  get #attributeMapping() {
+    return HA_CONTEXT.attributeMapping[this.#domain as string];
+  }
+
   get defaultAttribute(): string | null {
-    return HA_CONTEXT.attributeMapping[this.#domain as string]?.attribute ?? null;
+    return this.#attributeMapping?.attribute ?? null;
   }
 
   get name(): string {
@@ -214,7 +218,7 @@ class EntityHelper {
     if (this.entityType.isCounter) return CARD.config.unit.disable;
     // Neither carries unit_of_measurement: climate uses the global unit
     // system, weather its own per-attribute `<attr>_unit` key.
-    const mapping = HA_CONTEXT.attributeMapping[this.#domain as string];
+    const mapping = this.#attributeMapping;
     if (mapping?.unit === 'system_temperature') return this.#hassProvider.temperatureUnit;
     if (mapping?.unit === 'attribute_suffix') {
       const attr = this.#attribute || mapping.attribute;
@@ -329,7 +333,7 @@ class EntityHelper {
   // ─── PRIVATE METHODS ──────────────────────────────────────────────────────
 
   _manageStdEntity() {
-    const mapping = HA_CONTEXT.attributeMapping[this.#domain as string];
+    const mapping = this.#attributeMapping;
     this.#attribute = this.#attribute || (mapping?.attribute ?? null);
     if (!this.#attribute) {
       this.#value = parseFloat(this.#state as string) || 0;
@@ -354,6 +358,7 @@ class EntityHelper {
   _manageTimerEntity() {
     let duration: number;
     let elapsed: number;
+    let startedAt: number | null = null;
     switch (this.#state) {
       case HA_CONTEXT.entity.state.idle: {
         // elapsed/duration aren't real millisecond durations here (no timer
@@ -369,9 +374,8 @@ class EntityHelper {
       case HA_CONTEXT.entity.state.active: {
         const finished_at = new Date(this.#hassProvider.getEntityProp(this.#entity, 'finishes_at')).getTime();
         duration = NumberFormatter.convertDuration(this.#hassProvider.getEntityProp(this.#entity, 'duration'));
-        const started_at = finished_at - duration;
-        const now = new Date().getTime();
-        elapsed = now - started_at;
+        startedAt = finished_at - duration;
+        elapsed = Date.now() - startedAt;
         break;
       }
       case HA_CONTEXT.entity.state.paused: {
@@ -388,6 +392,7 @@ class EntityHelper {
       min: CARD.config.value.min,
       max: duration / CARD.config.msFactor,
       state: this.#state,
+      startedAt,
     };
   }
 

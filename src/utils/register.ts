@@ -3,7 +3,7 @@
  * with Home Assistant via customCards/customBadges/customCardFeatures.
  */
 
-import { VERSION, META, CARD_CONTEXT, SEV } from './parameters.js';
+import { VERSION, META, CARD_CONTEXT, SEV, devName } from './parameters.js';
 import { Logger } from './log.js';
 import type { HomeAssistant } from './hass-provider.js';
 import type { EntitySuggestion } from './entity-suggestions.js';
@@ -70,9 +70,9 @@ const resolveComponent = (component: Component): Component => {
   if (!DEV_MODE) return component;
   return {
     ...component,
-    typeName: `${component.typeName}-dev`,
+    typeName: devName(component.typeName),
     name: `${component.name} (dev)`,
-    editor: component.editor ? `${component.editor}-dev` : undefined,
+    editor: component.editor ? devName(component.editor) : undefined,
   };
 };
 
@@ -156,22 +156,15 @@ const registerComponent = (
   setTimeout(registerUI, 1000);
 };
 
+const registerAs =
+  (targetKey: string) =>
+  (component: Component, elementClass: CustomElementConstructor, editorClass?: CustomElementConstructor) =>
+    registerComponent(resolveComponent(component), targetKey, elementClass, editorClass);
+
 const RegistrationHelper = {
-  registerCard(card: Component, elementClass: CustomElementConstructor, editorClass?: CustomElementConstructor) {
-    registerComponent(resolveComponent(card), TARGET_KEY.customCards, elementClass, editorClass);
-  },
-
-  registerBadge(badge: Component, elementClass: CustomElementConstructor, editorClass?: CustomElementConstructor) {
-    registerComponent(resolveComponent(badge), TARGET_KEY.customBadges, elementClass, editorClass);
-  },
-
-  registerCardFeature(
-    cardFeature: Component,
-    elementClass: CustomElementConstructor,
-    editorClass?: CustomElementConstructor,
-  ) {
-    registerComponent(resolveComponent(cardFeature), TARGET_KEY.customCardFeatures, elementClass, editorClass);
-  },
+  registerCard: registerAs(TARGET_KEY.customCards),
+  registerBadge: registerAs(TARGET_KEY.customBadges),
+  registerCardFeature: registerAs(TARGET_KEY.customCardFeatures),
 };
 
 export { RegistrationHelper, defineElement };

@@ -634,10 +634,10 @@ _Unit selection_:
 
 > [!NOTE]
 >
-> While an active `timer` entity counts down, the card refreshes its display
-> every second when `unit` shows seconds (`s`, `timer`, `flextimer`), or once a
-> minute otherwise (`min`, `h`, `d`, or Home Assistant's own natural duration
-> format) — no extra config needed, this follows `unit` automatically.
+> While an active `timer` entity counts down, the card refreshes its display the
+> moment the value shown changes: every second, or with `unit: '%'` at each new
+> percentage step (never more than once a second) — no extra config needed, this
+> follows `unit` and `decimal` automatically.
 
 > [!WARNING]
 >
@@ -860,6 +860,11 @@ an entity needs no bounds at all to render correctly.
 Write `min_value` or `max_value` yourself and **yours wins** — fixed value,
 entity or Jinja alike. The entity's own range is a default, not a ceiling you
 are stuck with.
+
+With [`center_zero`](#center_zero) and no `min_value`, the entity's own minimum
+stays when it already reaches below the zero point (a `number` from `-50` to
+`10`). Otherwise the card mirrors the maximum, as for any other entity: a
+`counter` from `0` to `10` runs from `-10` to `10`.
 
 That distinction matters because a native range is often a **device limit**
 rather than a display range: an inverter's power limit stops at the hardware's
@@ -1454,6 +1459,7 @@ Verified against these appliance integrations:
 | ------------------------------------------------ | ---------------------------------------------------------------------- | --------------------- |
 | Home Connect, Bosch/Siemens ([official HA core]) | `sensor.<appliance>_operation_state` (`device_class: enum`)            | state `run`           |
 | Miele ([official HA core])                       | `sensor.<appliance>_status` (`device_class: enum`, key `state_status`) | state `in_use`        |
+| Samsung SmartThings ([official HA core])         | `sensor.<appliance>_machine_state` (`device_class: enum`)              | state `run`           |
 
 `battery_charging` has no active/inactive concept to key off at all, so it
 instead considers the entity charging when either is true:
@@ -2322,6 +2328,11 @@ directly on the bar — reads at a glance where the current value sits relative 
 its own recent history. `range` paints the band between the minimum and the
 maximum instead: the span the value actually travelled. All four are absent by
 default (no mark shown) — set one to opt it in.
+
+The window slides: a new reading moves the marks at once, and a value that ages
+out of the window stops counting within a minute. The average weighs each value
+by how long it held — the same time-weighted mean as Home Assistant's own
+statistics — so an hour of rapid changes doesn't outweigh a day at one value.
 
 | Property    | Type                    | Default | Description                                                                      |
 | ----------- | ----------------------- | ------- | -------------------------------------------------------------------------------- |

@@ -187,6 +187,85 @@ const FEATURE_BAR_POSITIONS = ['default', 'top', 'bottom'];
 // deriving one.
 const DENSITY_COMPACT_BAR_POSITIONS = ['top', 'bottom', 'background'];
 
+type ConfigLike = Record<string, unknown>;
+const HORIZONTAL = CARD.layout.orientations.horizontal.label;
+const hasTheme = (c: ConfigLike) => !is.nullish(c.theme) || is.nonEmptyArray(c.custom_theme);
+const hasStack = (c: ConfigLike) => is.nonEmptyArray((c.bar_stack as { entities?: unknown } | undefined)?.entities);
+// Badge and Multi rows carry no layout/bar_position key at all, and render as
+// exactly this row.
+const isDefaultRow = (c: ConfigLike) =>
+  (c.layout ?? HORIZONTAL) === HORIZONTAL && (c.bar_position ?? 'default') === 'default';
+
+// Where each option has any effect: postProcess resets it everywhere else, the
+// editor hides its field there. Reads a raw config as well as a negotiated one.
+const HAS_EFFECT = {
+  // Only these two lay the bar out vertically (HACore#_addBaseClasses).
+  barOrientationUp: (c: ConfigLike) =>
+    (c.layout === CARD.layout.orientations.vertical.label && c.bar_position === 'overlay') ||
+    c.bar_position === 'background',
+  // These positions set the bar's thickness in CSS, whatever bar_size says.
+  barSize: (c: ConfigLike) => !['top', 'bottom', 'overlay', 'background'].includes(c.bar_position as string),
+  // Only .horizontal.small/.medium/.large honour it.
+  barMaxWidth: (c: ConfigLike) => isDefaultRow(c) && c.bar_size !== CARD.style.bar.sizeOptions.xlarge,
+  // layout: vertical forces the secondary-info row into a column.
+  reverseSecondaryInfoRow: isDefaultRow,
+  barSingleLine: (c: ConfigLike) => c.bar_position === 'overlay',
+  textShadow: (c: ConfigLike) => c.bar_position === 'overlay' || c.bar_position === 'background',
+  // Vertical already stacks name/secondary_info narrowly.
+  compactBelow: (c: ConfigLike) => (c.layout ?? HORIZONTAL) === HORIZONTAL,
+  // center_zero included: themeDivergingGradient reprojects the zones per arm.
+  barColorMode: hasTheme,
+  interpolate: (c: ConfigLike) => hasTheme(c) && (is.nullish(c.bar_color_mode) || c.bar_color_mode === 'auto'),
+  // Neither has a single fill fraction for cells to cut into.
+  barSegments: (c: ConfigLike) => c.bar_color_mode !== 'rainbow_full' && !hasStack(c),
+  // Both take the top-right corner: a whole Jinja template outranks a toggle.
+  trendIndicator: (c: ConfigLike) => !is.nonEmptyString(statusLabelObj(c.status_label).jinja),
+};
+
+// What a density forces, whatever the options say: single_line has one shape,
+// a horizontal row holding the bar; compact keeps the bar off the text row.
+const densityOverrides = (c: ConfigLike): ConfigLike => {
+  if (c.density === 'single_line') return { layout: HORIZONTAL, bar_position: 'default', multiline: false };
+  if (c.density !== 'compact') return {};
+  return {
+    ...(DENSITY_COMPACT_BAR_POSITIONS.includes(c.bar_position as string) ? {} : { bar_position: 'top' }),
+    multiline: false,
+  };
+};
+
+// An option set where it has no effect: postProcess puts its fallback, the
+// schema's default, back; the editor parks the value until it has one again.
+type InertOption = { key: string; hasEffect: (c: ConfigLike) => boolean; fallback: unknown };
+const INERT_OPTIONS: InertOption[] = [
+  // 'default', not 'below': the two only look the same in horizontal.
+  {
+    key: 'bar_position',
+    hasEffect: (c) => c.bar_position !== 'compact_below' || HAS_EFFECT.compactBelow(c),
+    fallback: 'default',
+  },
+  { key: 'trend_indicator', hasEffect: HAS_EFFECT.trendIndicator, fallback: false },
+  { key: 'bar_single_line', hasEffect: HAS_EFFECT.barSingleLine, fallback: false },
+  { key: 'bar_max_width', hasEffect: HAS_EFFECT.barMaxWidth, fallback: undefined },
+  {
+    key: 'bar_orientation',
+    hasEffect: (c) => c.bar_orientation !== 'up' || HAS_EFFECT.barOrientationUp(c),
+    fallback: 'ltr',
+  },
+  { key: 'text_shadow', hasEffect: HAS_EFFECT.textShadow, fallback: false },
+  // Before interpolate, which reads the colour mode it settles.
+  { key: 'bar_color_mode', hasEffect: HAS_EFFECT.barColorMode, fallback: 'auto' },
+  { key: 'bar_segments', hasEffect: HAS_EFFECT.barSegments, fallback: undefined },
+  { key: 'interpolate', hasEffect: HAS_EFFECT.interpolate, fallback: false },
+  { key: 'reverse_secondary_info_row', hasEffect: HAS_EFFECT.reverseSecondaryInfoRow, fallback: false },
+];
+
+// What the editor parks and the audit reports: bar_size too, which the schema
+// forces to the thickness top/bottom draw at rather than resetting it.
+const OPTIONS_WITHOUT_EFFECT: InertOption[] = [
+  ...INERT_OPTIONS,
+  { key: 'bar_size', hasEffect: HAS_EFFECT.barSize, fallback: undefined },
+];
+
 // 'single_line' lays icon, name, secondary and bar out as four siblings on one
 // row - a shape only 'horizontal' has, hence the forcing in applyDensityRule.
 const DENSITY_MODES = ['default', 'compact', 'single_line'];
@@ -218,6 +297,22 @@ const ICON_ANIMATIONS = ['spin', 'pulse', 'bounce', 'shake', 'ping', 'reveal', '
 // attribute) - see HABase._iconAnimationStyle. An animation added above with
 // no entry here is wired to the active-entity trigger by default.
 const OWN_TRIGGER_ANIMATIONS = ['washing_machine', 'battery_charging'];
+
+// A raw-value theme's own scale (temperature's -50..100°C): its lowest and
+// highest zone bounds. null for a percent theme, whose zones carry none.
+const rawThemeRange = (themeName: unknown): { min: number | null; max: number | null } | null => {
+  const theme = THEME[themeName as keyof typeof THEME];
+  if (!theme || theme.percent !== false || !is.nonEmptyArray(theme.style)) return null;
+  // Cast: percent === false rules out the zone-less `light` shape at runtime,
+  // but TS still unions every theme's zones - the key isn't known statically.
+  const zones = theme.style as { min?: unknown; max?: unknown }[];
+  const mins = zones.map((zone) => zone.min).filter(is.number);
+  const maxes = zones.map((zone) => zone.max).filter(is.number);
+  return { min: mins.length ? Math.min(...mins) : null, max: maxes.length ? Math.max(...maxes) : null };
+};
+
+// Every hide target but those a variant has nothing to hide for.
+const hideTargetsWithout = (...absent: string[]) => HIDE_TARGETS.filter((target) => !absent.includes(target));
 
 const ERROR_CODES = {
   missingRequiredProperty: { code: 'missingRequiredProperty', severity: SEV.error },
@@ -608,10 +703,7 @@ const types = {
           types.object({
             value: types.optional(types.numericEntityOrJinja()),
             as: types.optional(types.enums(['auto', 'percent'])),
-            type: types.optional(types.enums(MARK_TYPES)),
-            opacity: types.optionalNumber(),
-            color: types.optionalString(),
-            line_size: types.optionalString(),
+            ...types.markAppearance(),
           }),
         )(nestValueShapeUnderValue(value), path)) as Validator<WatermarkMark>,
       defaultValue,
@@ -620,17 +712,16 @@ const types = {
   // peak_marker.min/.max/.average: absent (hidden) | true (shown, inherits
   // the top-level type/opacity) | a color string (shorthand) | { type,
   // opacity, color, line_size } to override just that mark.
-  peakMark: () =>
-    types.union(
-      types.boolean,
-      types.string,
-      types.object({
-        type: types.optional(types.enums(MARK_TYPES)),
-        opacity: types.optionalNumber(),
-        color: types.optionalString(),
-        line_size: types.optionalString(),
-      }),
-    ),
+  peakMark: () => types.union(types.boolean, types.string, types.object(types.markAppearance())),
+
+  // What a mark can look like, whichever family it belongs to - the fields a
+  // watermark override and a peak mark override share.
+  markAppearance: () => ({
+    type: types.optional(types.enums(MARK_TYPES)),
+    opacity: types.optionalNumber(),
+    color: types.optionalString(),
+    line_size: types.optionalString(),
+  }),
 
   // peak_marker.range: the band between min and max - the span the value
   // actually travelled over the window. A point shape would mean nothing for
@@ -834,6 +925,11 @@ const nameValidator = types.array(nameItem);
 // Reads a field's real default off the live validator instead of a
 // hand-maintained table - undefined where none exists by design (e.g.
 // watermark's shared opacity/type/color, see watermarkSchema's own comment).
+const isToggleDomainEntity = (entityId: string): boolean => {
+  const domain = HassProviderSingleton.getEntityDomain(entityId);
+  return domain !== null && HA_CONTEXT.actions.toggleDomain.includes(domain);
+};
+
 function getSchemaDefault(
   validator: Validator<unknown> & { _schema?: Record<string, Validator<unknown>>; defaultValue?: unknown },
 ): unknown {
@@ -895,9 +991,7 @@ function struct<T>(
 
   const applyIconTapActionDefaultRule = (result: Record<string, unknown>) => {
     if (!is.nullish(result.icon_tap_action) || !is.string(result.entity)) return;
-    const domain = HassProviderSingleton.getEntityDomain(result.entity);
-    const shouldPatch = domain !== null && HA_CONTEXT.actions.toggleDomain.includes(domain);
-    if (shouldPatch) result.icon_tap_action = HA_CONTEXT.actions.toggle;
+    if (isToggleDomainEntity(result.entity)) result.icon_tap_action = HA_CONTEXT.actions.toggle;
   };
 
   // top/bottom force the bar to xsmall's thickness in CSS, but rainbow_full's
@@ -906,10 +1000,10 @@ function struct<T>(
   // is already hardcoded regardless of bar_size (styles.ts's
   // .vertical.up-orientation.overlay rule), so it's simply dropped there.
   const applyBarSizeConflictRule = (result: Record<string, unknown>) => {
-    const position = String(result.bar_position);
-    if (position === 'top' || position === 'bottom') {
+    if (HAS_EFFECT.barSize(result)) return;
+    if (result.bar_position === 'top' || result.bar_position === 'bottom') {
       result.bar_size = CARD.style.bar.sizeOptions.xsmall;
-    } else if (position === 'overlay' || position === 'background') {
+    } else {
       delete result.bar_size;
     }
   };
@@ -921,14 +1015,8 @@ function struct<T>(
   // signal there).
   const applyThemeMaxValueDefaultRule = (result: Record<string, unknown>) => {
     if (!is.nullish(result.max_value)) return;
-    const theme = THEME[result.theme as keyof typeof THEME];
-    if (!theme || theme.percent !== false || !is.nonEmptyArray(theme.style)) return;
-    // Cast: percent === false already rules out themes like `light`
-    // (linear, no min/max per zone - split by index instead) at runtime,
-    // but TS still unions every theme's own zone shape here since the
-    // theme key isn't statically known.
-    const maxes = (theme.style as { max?: unknown }[]).map((zone) => zone.max).filter(is.number);
-    if (maxes.length) result.max_value = Math.max(...maxes);
+    const top = rawThemeRange(result.theme)?.max;
+    if (!is.nullish(top)) result.max_value = top;
   };
 
   const preProcess = (data: Record<string, unknown>) => {
@@ -960,20 +1048,6 @@ function struct<T>(
       result.bar_position = 'below';
   };
 
-  // compact_below only has a distinct effect on layout: horizontal - vertical
-  // already stacks name/secondary_info narrowly. Falls back to 'default', not
-  // 'below': the two are different bar placements that only look the same in
-  // horizontal - defaulting to 'below' would swap in a placement never chosen.
-  const applyCompactBelowRule = (result: Record<string, unknown>) => {
-    if (result.bar_position === 'compact_below' && result.layout !== CARD.layout.orientations.horizontal.label) {
-      result.bar_position = 'default';
-    }
-  };
-
-  // status_label and trend_indicator both render in the same top-right
-  // corner - status_label wins, since setting a whole Jinja template is a
-  // more deliberate choice than a boolean toggle left over from before
-  // status_label was configured.
   // The color picker offers "State" as the name of the unset state (see
   // base.ts's color_state_default), and HA writes that name down when it is
   // picked. Nothing reads it: the fallback is EntityHelper.defaultColor, which
@@ -983,137 +1057,24 @@ function struct<T>(
     for (const key of ['color', 'bar_color']) if (result[key] === 'state') result[key] = undefined;
   };
 
-  const applyLabelRule = (result: Record<string, unknown>) => {
-    const jinja = statusLabelObj(result.status_label).jinja;
-    if (is.nonEmptyString(jinja) && result.trend_indicator) result.trend_indicator = false;
-  };
-
-  const applyBarSingleLineRule = (result: Record<string, unknown>) => {
-    if (result.bar_position !== 'overlay' && result.bar_single_line) result.bar_single_line = false;
-  };
-
-  // bar_max_width only affects .horizontal.small/.medium/.large - the other
-  // bar_position values render through a separate container (never
-  // .progress-container), and .horizontal.xlarge has no matching rule
-  // either. By this point layout/bar_position/bar_size are already resolved
-  // to final values, so this check can't be fooled by an unset field.
-  const applyBarMaxWidthRule = (result: Record<string, unknown>) => {
-    // `??`: a Multi row has no layout/bar_position key at all (multiRow deletes
-    // both - its shape settles them, see #toRowConfig forcing single_line),
-    // where a bare `=== 'horizontal'` read as "not allowed" and wiped a width
-    // the row does honor. Every other variant always carries both, so the
-    // fallbacks only ever apply where the key is genuinely gone.
-    const barMaxWidthAllowed =
-      (result.layout ?? CARD.layout.orientations.horizontal.label) === CARD.layout.orientations.horizontal.label &&
-      (result.bar_position ?? 'default') === 'default' &&
-      result.bar_size !== CARD.style.bar.sizeOptions.xlarge;
-    if (result.bar_max_width && !barMaxWidthAllowed) result.bar_max_width = undefined;
-  };
-
-  // 'up' only has a visible effect in two combinations (see
-  // HACore#_addBaseClasses's vertical-bar/horizontal-bar decision, and the
-  // editor's own upAllowed/resetUpIfInvalid) - mirrored here so a raw
-  // YAML/Jinja config that bypasses the editor doesn't keep a stored 'up'
-  // that silently does nothing.
-  const applyBarOrientationUpRule = (result: Record<string, unknown>) => {
-    const upAllowed =
-      (result.layout === CARD.layout.orientations.vertical.label && result.bar_position === 'overlay') ||
-      result.bar_position === 'background';
-    if (result.bar_orientation === 'up' && !upAllowed) result.bar_orientation = 'ltr';
-  };
-
-  // text_shadow only applies via .overlay or .background (see the CSS rule on
-  // :is(.overlay, .background).text-shadow) - same reasoning as
-  // bar_single_line above, just a different pair of valid positions.
-  const applyTextShadowRule = (result: Record<string, unknown>) => {
-    if (result.bar_position !== 'overlay' && result.bar_position !== 'background' && result.text_shadow) {
-      result.text_shadow = false;
-    }
-  };
-
-  // bar_color_mode (segment/rainbow) only has an effect with a theme or
-  // custom_theme active (see ViewBase.colorGradient/themeDivergingGradient,
-  // both of which return null without one regardless of mode) - mirrors the
-  // editor's own bar_color_mode showIf. center_zero no longer disables it:
-  // themeDivergingGradient reprojects the theme's zones onto each arm's own
-  // slice of the min_value/max_value scale instead of the single-arm math
-  // colorGradient uses.
-  const applyBarColorModeRule = (result: Record<string, unknown>, hasTheme: boolean) => {
-    if (result.bar_color_mode && result.bar_color_mode !== 'auto' && !hasTheme) {
-      result.bar_color_mode = 'auto';
-    }
-  };
-
   // rainbow_full paints the whole track at once with a single moving marker
   // (.rainbow-full-bar in styles.ts) - generalizes to center_zero fine (each
   // arm gets its own gradient + a zero-centered marker formula). bar_stack's
   // per-entity segments have no single position for one marker, so that
   // combination falls back to plain 'rainbow' instead.
   const applyRainbowFullRule = (result: Record<string, unknown>) => {
-    const hasStack = is.nonEmptyArray((result.bar_stack as { entities?: unknown[] } | undefined)?.entities);
-    if (result.bar_color_mode === 'rainbow_full' && hasStack) {
+    if (result.bar_color_mode === 'rainbow_full' && hasStack(result)) {
       result.bar_color_mode = 'rainbow';
     }
   };
 
-  // Neither rainbow_full (no global fill fraction, a marker instead) nor
-  // bar_stack (one fraction per entity) has anything for cells to cut into.
-  const applyBarSegmentsRule = (result: Record<string, unknown>) => {
-    const hasStack = is.nonEmptyArray((result.bar_stack as { entities?: unknown[] } | undefined)?.entities);
-    if (result.bar_segments && (result.bar_color_mode === 'rainbow_full' || hasStack)) {
-      result.bar_segments = undefined;
+  const applyInertOptionsRule = (result: Record<string, unknown>) => {
+    for (const { key, hasEffect, fallback } of INERT_OPTIONS) {
+      if (!is.nullish(result[key]) && result[key] !== fallback && !hasEffect(result)) result[key] = fallback;
     }
   };
 
-  // interpolate needs the same active theme as bar_color_mode, and is only
-  // meaningful alongside bar_color_mode: 'auto' (or unset) - mirrors the
-  // editor's own interpolate showIf, and its onChange that already clears
-  // interpolate interactively when bar_color_mode changes to non-auto.
-  const applyInterpolateRule = (result: Record<string, unknown>, hasTheme: boolean) => {
-    if (result.interpolate && !(hasTheme && (is.nullish(result.bar_color_mode) || result.bar_color_mode === 'auto'))) {
-      result.interpolate = false;
-    }
-  };
-
-  // reverse_secondary_info_row: layout: vertical hardcodes
-  // --current-secondary-info-flex-direction to 'column' unconditionally (see
-  // the CSS rule on .vertical), ignoring --secondary-info-row-reverse
-  // entirely - mirrors ViewCore#hasReversedSecondaryInfoRow (bar_position
-  // nullish-coalesced to 'default' so Badge/Badge Template, which never have
-  // that key at all, aren't wrongly treated as invalid).
-  const applyReverseSecondaryInfoRowRule = (result: Record<string, unknown>) => {
-    const layout = result.layout ?? CARD.layout.orientations.horizontal.label;
-    if (
-      result.reverse_secondary_info_row &&
-      !(layout === CARD.layout.orientations.horizontal.label && (result.bar_position ?? 'default') === 'default')
-    ) {
-      result.reverse_secondary_info_row = false;
-    }
-  };
-
-  // density: 'compact' shrinks whichever layout is set: horizontal narrows
-  // the column (minGridColumns), vertical has no narrow shape so
-  // name/secondary_info are force-hidden instead (hasComponentHiddenFlag).
-  // Either way bar_position must leave {default, below, compact_below},
-  // which share a row with name/secondary_info and need the room back.
-  const applyDensityRule = (result: Record<string, unknown>) => {
-    // 'single_line' only has a horizontal shape, so it takes the layout with
-    // it rather than rendering as something it isn't. bar_position stays
-    // 'default': the row puts the bar after the content itself (see
-    // StructureElements.createContent), it is not one of the standalone
-    // top/bottom/background containers.
-    if (result.density === 'single_line') {
-      result.layout = CARD.layout.orientations.horizontal.label;
-      result.bar_position = 'default';
-      result.multiline = false;
-      return;
-    }
-    if (result.density !== 'compact') return;
-    if (!DENSITY_COMPACT_BAR_POSITIONS.includes(result.bar_position as string)) {
-      result.bar_position = 'top';
-    }
-    result.multiline = false;
-  };
+  const applyDensityRule = (result: Record<string, unknown>) => Object.assign(result, densityOverrides(result));
 
   // Same type in and out (T, not Record<string, unknown>) - every applyXxxRule
   // only ever writes a value already a member of that field's own declared
@@ -1127,23 +1088,18 @@ function struct<T>(
 
     applyDensityRule(result);
     applyBelowBarPositionRule(result);
-    applyCompactBelowRule(result);
-    applyLabelRule(result);
     applyStateColorRule(result);
-    applyBarSingleLineRule(result);
-    applyBarMaxWidthRule(result);
-    applyBarOrientationUpRule(result);
-    applyTextShadowRule(result);
-
-    const hasTheme = !is.nullish(result.theme) || is.nonEmptyArray(result.custom_theme);
-    applyBarColorModeRule(result, hasTheme);
+    // Before bar_segments reads the colour mode it rewrites.
     applyRainbowFullRule(result);
-    applyBarSegmentsRule(result);
-    applyInterpolateRule(result, hasTheme);
-    applyReverseSecondaryInfoRowRule(result);
+    applyInertOptionsRule(result);
 
     return result as T;
   };
+  const requireObjectSchema = (verb: string) => {
+    if (!validator._schema) throw new Error(`Can only ${verb} object schemas created with types.object`);
+    return validator._schema;
+  };
+
   return {
     validate: (
       data: Record<string, unknown>,
@@ -1232,12 +1188,8 @@ function struct<T>(
     // infers the merged/filtered shape straight from newSchema's structure;
     // no need to thread the exact per-field S type through struct<T> itself.
     extend: <E extends Record<string, Validator<unknown>>>(additionalFields: E, overrides: StructOptions = {}) => {
-      if (!validator._schema) {
-        throw new Error('Can only extend object schemas created with types.object');
-      }
-
       const newSchema = {
-        ...validator._schema,
+        ...requireObjectSchema('extend'),
         ...additionalFields,
       };
 
@@ -1245,12 +1197,9 @@ function struct<T>(
     },
 
     delete: (fieldsToDelete: string | string[], overrides: StructOptions = {}) => {
-      if (!validator._schema) {
-        throw new Error('Can only delete from object schemas created with types.object');
-      }
-
+      const schema = requireObjectSchema('delete from');
       const toDelete = new Set(is.array(fieldsToDelete) ? fieldsToDelete : [fieldsToDelete]);
-      const newSchema = Object.fromEntries(Object.entries(validator._schema).filter(([key]) => !toDelete.has(key)));
+      const newSchema = Object.fromEntries(Object.entries(schema).filter(([key]) => !toDelete.has(key)));
 
       return struct(types.object(newSchema), { ...structOptions, ...overrides });
     },
@@ -1260,47 +1209,36 @@ function struct<T>(
     // a hand-written one's own field order. `order` must be an exact
     // permutation of the current keys - a typo must not silently drop a field.
     reorder: (order: string[]) => {
-      if (!validator._schema) {
-        throw new Error('Can only reorder object schemas created with types.object');
-      }
-      const currentKeys = Object.keys(validator._schema);
+      const schema = requireObjectSchema('reorder');
+      const currentKeys = Object.keys(schema);
       const sameSet = order.length === currentKeys.length && currentKeys.every((key) => order.includes(key));
       if (!sameSet) {
         throw new Error("reorder: given keys must be exactly the schema's own field set, no more, no less");
       }
 
-      const schema = validator._schema;
       const newSchema = Object.fromEntries(order.map((key) => [key, schema[key]]));
 
       return struct(types.object(newSchema), structOptions);
     },
 
     fields: () => {
-      if (!validator._schema) {
-        throw new Error('Can only get fields from object schemas created with types.object');
-      }
-      return Object.keys(validator._schema);
+      return Object.keys(requireObjectSchema('get fields from'));
     },
 
     fieldDefault: (name: string) => {
-      if (!validator._schema) {
-        throw new Error('Can only get a field default from object schemas created with types.object');
-      }
-      return getSchemaDefault(validator._schema[name]);
+      return getSchemaDefault(requireObjectSchema('get a field default from')[name]);
     },
 
     // Dot path ('watermark.type') walks the nested object's own _schema, the
     // same convention the editor's own field names use.
     fieldOptions: (name: string) => {
-      if (!validator._schema) {
-        throw new Error('Can only get field options from object schemas created with types.object');
-      }
       type NestedValidator = Validator<unknown> & {
         _schema?: Record<string, NestedValidator>;
         _optionsSchema?: Record<string, NestedValidator>;
       };
       const [head, ...rest] = name.split('.');
-      let current: NestedValidator | undefined = validator._schema[head] as NestedValidator | undefined;
+      let current: NestedValidator | undefined = requireObjectSchema('get field options from')[head] as
+        NestedValidator | undefined;
       for (const segment of rest) {
         const nested = current?._optionsSchema ?? current?._schema;
         if (!nested) return undefined;
@@ -1340,6 +1278,9 @@ const hideWithDefault = <T extends readonly unknown[]>(targets: T, fallback: T[n
 // What a row IS, never how the stack looks: meaningless above one row, so
 // absent from both aggregator schemas.
 const ROW_IDENTITY_FIELDS = ['entity', 'attribute', 'name', 'icon'] as const;
+
+// The aggregator's own keys: never a row's.
+const AGGREGATOR_FIELDS = ['entities', 'rows', 'type'] as const;
 
 // A Multi row is handed straight to its own entity-progress-card child, which
 // runs the full card schema on it - postProcess included. Re-validating it
@@ -1384,6 +1325,17 @@ const watermarkSchema = {
   // as type/opacity/color/line_size above it.
   as: types.enumsWithDefault(['auto', 'percent'], 'auto'),
 };
+
+// The options that format a value as text - Feature and Template show none.
+const VALUE_TEXT_FIELDS = [
+  'decimal',
+  'unit',
+  'disable_unit',
+  'unit_spacing',
+  'unit_position',
+  'value_compact',
+  'value_sign',
+];
 
 // Dropped from Badge and Badge Template alike - deleting a key the source
 // schema doesn't have is a no-op, so one list serves both.
@@ -1447,13 +1399,7 @@ const YamlSchemaFactory = {
       .delete(
         [
           'name',
-          'decimal',
-          'unit',
-          'disable_unit',
-          'unit_spacing',
-          'unit_position',
-          'value_compact',
-          'value_sign',
+          ...VALUE_TEXT_FIELDS,
           'icon',
           'color',
           'bar_single_line',
@@ -1593,8 +1539,8 @@ const YamlSchemaFactory = {
         peak_marker: types.peakMarker(),
         // jinja: Jinja-only, like name_info/custom_info - no separate enable
         // flag, a non-empty resolved value is the signal to show it.
-        // Mutually exclusive with trend_indicator (see applyLabelRule): both
-        // occupy the same top corner - position picks which side.
+        // Mutually exclusive with trend_indicator (HAS_EFFECT.trendIndicator):
+        // both occupy the same top corner - position picks which side.
         status_label: types.statusLabel(),
         text_shadow: types.optionalBooleanWithDefault(false),
 
@@ -1668,9 +1614,7 @@ const YamlSchemaFactory = {
   },
 
   get badge() {
-    return YamlSchemaFactory.card
-      .delete(BADGE_DELETED_FIELDS)
-      .extend(badgeOverrides(['icon', 'name', 'value', 'unit', 'secondary_info', 'progress_bar'] as const));
+    return YamlSchemaFactory.card.delete(BADGE_DELETED_FIELDS).extend(badgeOverrides(hideTargetsWithout('shape')));
   },
 
   // Derived from .card: 39 of its 42 fields are identical validator calls -
@@ -1681,13 +1625,7 @@ const YamlSchemaFactory = {
     return YamlSchemaFactory.card
       .delete([
         'attribute',
-        'decimal',
-        'unit',
-        'disable_unit',
-        'unit_spacing',
-        'unit_position',
-        'value_compact',
-        'value_sign',
+        ...VALUE_TEXT_FIELDS,
         'min_value',
         'max_value',
         'bar_scale',
@@ -1725,7 +1663,7 @@ const YamlSchemaFactory = {
         theme: types.theme(PERCENT_THEME_KEYS),
         // Re-declared without 'unit' - Template has no `unit`/`disable_unit`
         // (deleted above) to hide in the first place.
-        hide: types.jinjaOrArrayWithValidatedElem(['icon', 'name', 'value', 'secondary_info', 'progress_bar', 'shape']),
+        hide: types.jinjaOrArrayWithValidatedElem(hideTargetsWithout('unit')),
         // Jinja-only - see configuration.md#alert_when.
         alert_when: types.optional(types.object({ jinja: types.optionalString() })),
       })
@@ -1815,10 +1753,7 @@ const YamlSchemaFactory = {
         // Hidden by default, not forced: a Feature's rows split one 42px HA
         // row between them, so an icon and a name do not fit unless the
         // stack is short. `hide: []` asks for them back.
-        hide: hideWithDefault(
-          HIDE_TARGETS.filter((target) => target !== 'shape'),
-          ['icon', 'name'],
-        ),
+        hide: hideWithDefault(hideTargetsWithout('shape'), ['icon', 'name']),
       });
   },
 
@@ -1845,7 +1780,7 @@ const YamlSchemaFactory = {
   get badgeTemplate() {
     return YamlSchemaFactory.template
       .delete(BADGE_DELETED_FIELDS)
-      .extend(badgeOverrides(['icon', 'name', 'value', 'secondary_info', 'progress_bar'] as const));
+      .extend(badgeOverrides(hideTargetsWithout('unit', 'shape')));
   },
 };
 
@@ -1865,7 +1800,7 @@ export {
   isMarkOverride,
 };
 export { statusLabelObj, rewrapStatusLabel };
-export { THEME_ALIASES };
+export { THEME_ALIASES, rawThemeRange };
 // Each YamlSchemaFactory getter rebuilds its whole schema on access - cached
 // here so a caller can ask per field without paying for it every time.
 type SchemaVariant =
@@ -1894,11 +1829,13 @@ export { schemaOptions, type SchemaVariant };
 // Only what the card runtime enumerates for its own CSS classes/shape lists
 // (core.ts). The editor reads its dropdown lists off the schema itself, via
 // struct().fieldOptions - see SELECT_TYPES.
-export { BAR_SIZES, BAR_POSITIONS, MARK_TYPES, MARK_ZONE_TYPES, DENSITY_COMPACT_BAR_POSITIONS };
+export { BAR_SIZES, BAR_POSITIONS, MARK_TYPES, MARK_ZONE_TYPES, DENSITY_COMPACT_BAR_POSITIONS, HAS_EFFECT };
+export { densityOverrides, OPTIONS_WITHOUT_EFFECT };
 export { ICON_ANIMATIONS, OWN_TRIGGER_ANIMATIONS };
 export { ACTION_FIELDS };
 export { DENSITY_MODES };
-export { ROW_IDENTITY_FIELDS };
+export { ROW_IDENTITY_FIELDS, AGGREGATOR_FIELDS };
+export { isToggleDomainEntity };
 export type { WatermarkMark, PeakMark, NameTokenType };
 export { YamlSchemaFactory };
 

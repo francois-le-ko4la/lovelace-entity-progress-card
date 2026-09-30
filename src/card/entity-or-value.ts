@@ -14,7 +14,7 @@ class EntityOrValue {
   #activeHelper: EntityHelper | ValueHelper | null = null;
 
   constructor() {
-    traceInstance(this, CARD_CONTEXT.debug.instances);
+    traceInstance('EntityOrValue', CARD_CONTEXT.debug.instances);
   }
 
   // ─── PRIVATE METHODS ──────────────────────────────────────────────────────

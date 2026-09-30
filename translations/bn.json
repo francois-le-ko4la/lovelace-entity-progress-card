@@ -67,6 +67,8 @@
       "height_custom_toggle": "স্বয়ংক্রিয় উচ্চতা",
       "icon_animation": "আইকন অ্যানিমেশন",
       "interpolate": "রঙ ইন্টারপোলেশন",
+      "issue_report": "@ui.components.yaml-editor.copy_to_clipboard|Copy to clipboard",
+      "issue_report_copied": "@ui.common.copied_clipboard|Copied to clipboard",
       "marginless": "মার্জিনহীন",
       "migrate_config": "কনফিগারেশন মাইগ্রেট করুন",
       "min_width": "সর্বনিম্ন প্রস্থ",

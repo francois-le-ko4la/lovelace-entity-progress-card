@@ -37,6 +37,21 @@ const isProd = process.argv.includes('--prod');
 // loaded side by side each find their own translation files.
 const STEM = `entity-progress-card${isLight ? '-light' : ''}${isProd ? '' : '_dev'}`;
 const OUTFILE = `${STEM}.js`;
+// The es2021 floor (#128) is about class static blocks, which break Chrome 92.
+// Every other class feature runs natively there, so it's kept native instead of
+// being lowered to WeakMap helpers.
+const NATIVE_CLASS_FEATURES = {
+  'class-field': true,
+  'class-static-field': true,
+  'class-private-field': true,
+  'class-private-method': true,
+  'class-private-accessor': true,
+  'class-private-static-field': true,
+  'class-private-static-method': true,
+  'class-private-static-accessor': true,
+  'class-private-brand-check': true,
+  'class-static-blocks': false,
+};
 
 // The editor's translations ship beside the bundle rather than inside it: one
 // positional array per language, indexed on TRANSLATION_KEYS from
@@ -69,27 +84,12 @@ function main() {
     // document.currentScript), so a filename/?dev=true signal alone would miss
     // it. ?dev=true still works as a runtime override on the prod file.
     define: { __EPB_DEV_BUILD__: isProd ? 'false' : 'true', __EPB_LIGHT_BUILD__: isLight ? 'true' : 'false' },
-    // Preserve original class/function names through bundling: esbuild
-    // otherwise prefixes some cross-module classes (e.g. _ThemeManager,
-    // _EntityHelper) to avoid collisions, which would surface in every
-    // `.name`-based debug line (initLogger's per-class logger and
-    // traceInstance's ?debug=instances counter).
-    keepNames: true,
   }).outputFiles[0].text;
 
   if (isProd) bundled = forceCleanCardContext(bundled);
   const { src, minifiedCount } = resolveCssBlocks(bundled, isProd);
 
-  // es2021, not es2022 (issue #128): es2022 lets esbuild emit `static {}`
-  // class blocks (its keepNames technique for static members) and other
-  // es2022-only syntax, which is a hard SyntaxError on any pre-2022 engine -
-  // not caught by dev-mode testing (modern browser) and not caught by
-  // `node --check` in CI (Node's parser is newer than the target). That
-  // broke the shipped card entirely on older/embedded Chromium (kiosk
-  // panels) that worked fine on the pre-esbuild 1.5.x monolith. es2021 keeps
-  // every syntax feature actually used here (private fields, `??=`,
-  // optional chaining) while forcing static blocks into an es2021-safe form.
-  const result = esbuild.transformSync(src, { minify: isProd, target: 'es2021' });
+  const result = esbuild.transformSync(src, { minify: isProd, target: 'es2021', supported: NATIVE_CLASS_FEATURES });
 
   fs.mkdirSync(OUTDIR, { recursive: true });
   fs.writeFileSync(path.join(OUTDIR, OUTFILE), result.code);

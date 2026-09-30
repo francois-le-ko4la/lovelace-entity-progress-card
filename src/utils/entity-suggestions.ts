@@ -17,7 +17,8 @@
  */
 
 import { HA_CONTEXT } from './parameters.js';
-import type { HomeAssistant, EntityState } from './hass-provider.js';
+import { toNumberOrNull } from './common-checks.js';
+import { HassProviderSingleton, type HomeAssistant, type EntityState } from './hass-provider.js';
 
 // No `type` here on purpose - HA requires the suggestion's own config to
 // carry a real `type: "custom:..."`, but this module is domain/attribute
@@ -34,13 +35,10 @@ interface EntitySuggestion {
   label?: string;
 }
 
-const isFiniteNumber = (value: unknown): boolean =>
-  (typeof value === 'string' || typeof value === 'number') && value !== '' && Number.isFinite(Number(value));
-
 function resolveEntitySuggestion(hass: HomeAssistant, entityId: string): EntitySuggestion | null {
-  const domain = entityId.split('.')[0];
+  const domain = HassProviderSingleton.getEntityDomain(entityId);
   const state = hass?.states?.[entityId] as EntityState | undefined;
-  if (!state) return null;
+  if (!state || domain === null) return null;
 
   // timer's state is idle/active/paused, never a number - the card reads its
   // duration natively instead (see ViewCore's own entityType.isTimer path).
@@ -51,11 +49,11 @@ function resolveEntitySuggestion(hass: HomeAssistant, entityId: string): EntityS
     // The card normalizes a scaled attribute (brightness, volume_level) to
     // 0-100 itself - a max_value here would scale it a second time.
     const attribute = mapping.suggest ?? mapping.attribute;
-    if (!isFiniteNumber(state.attributes?.[attribute])) return null;
+    if (toNumberOrNull(state.attributes?.[attribute]) === null) return null;
     return { config: { entity: entityId, attribute } };
   }
 
-  if (HA_CONTEXT.stateDomains.includes(domain) && isFiniteNumber(state.state)) {
+  if (HA_CONTEXT.stateDomains.includes(domain) && toNumberOrNull(state.state) !== null) {
     return { config: { entity: entityId } };
   }
 

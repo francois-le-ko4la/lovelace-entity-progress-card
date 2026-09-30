@@ -577,6 +577,18 @@ template:
         turn_off: []
         set_level: []
 
+  - number:
+      # A real number.* entity - input_number is read the standard way, not by
+      # its own min/max. The range reaches below zero on purpose (center_zero
+      # keeps it); set_value is a no-op, like the template entities above.
+      - name: EPB Demo number
+        unique_id: epb_demo_number
+        state: "{{ states('input_number.epb_demo_temp_negative') }}"
+        min: -50
+        max: 10
+        step: 1
+        set_value: []
+
 # Compare-with-tile section (counter): fan/cover/light above are template:
 # entities (no native YAML helper domain for them); timer and a battery
 # device_class sensor already exist elsewhere in this file

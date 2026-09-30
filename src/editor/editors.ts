@@ -74,9 +74,11 @@ class MultiEditorBase extends EditorBase {
   static _rowEditorTag: string = MULTI_CARD_ROW_EDITOR_NAME;
   #sub: SubEditorElement | null = null;
   #back: HTMLElement | null = null;
-
   // Where a value belongs depends on the rows there are, so adding, removing
-  // or reordering one settles the shared level exactly like editing one does.
+  // or reordering one settles the shared level exactly like editing one does -
+  // and parks nothing: a partial config can't tell where an option works.
+  static _parksInertOptions = false;
+
   _settle(config: LovelaceConfig): LovelaceConfig {
     return cascade(config);
   }
@@ -177,11 +179,13 @@ class EntityProgressMultiFeatureEditor extends MultiEditorBase {
  * RegistrationHelper: HA never asks for it, its own list does.
  */
 class EntityProgressMultiCardRowEditor extends EditorBase {
+  static _offersIssueReport = false;
   _configHelper = new MultiRowConfigHelper();
   static _fields = EditorFactory.buildMultiRow(false);
 }
 
 class EntityProgressMultiFeatureRowEditor extends EditorBase {
+  static _offersIssueReport = false;
   _configHelper = new MultiFeatureRowConfigHelper();
   static _fields = EditorFactory.buildMultiRow(true);
 }

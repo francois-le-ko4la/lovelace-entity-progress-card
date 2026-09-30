@@ -67,6 +67,8 @@
       "height_custom_toggle": "Automatisk höjd",
       "icon_animation": "Ikonanimering",
       "interpolate": "Interpolera färger",
+      "issue_report": "@ui.components.yaml-editor.copy_to_clipboard|Copy to clipboard",
+      "issue_report_copied": "@ui.common.copied_clipboard|Copied to clipboard",
       "marginless": "Utan marginal",
       "migrate_config": "Migrera konfiguration",
       "min_width": "Min bredd",

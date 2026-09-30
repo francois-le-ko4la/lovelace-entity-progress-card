@@ -13,6 +13,7 @@ import assert from 'node:assert/strict';
 
 import { flushFrames } from '../dom-setup.js';
 import { makeHass, TEST_ENTITY } from '../ha-stubs.js';
+import { visibleFields, type FieldTree } from '../helpers.js';
 
 import { META } from '../../src/utils/parameters.js';
 import { EditorFactory } from '../../src/editor/factory.js';
@@ -81,18 +82,6 @@ describe('the Multi row editors', () => {
  * is exactly what nothing else would notice.
  */
 describe('a static hide takes its own fields out of the editor', () => {
-  type Field = { showIf?: (c: Record<string, unknown>, n: Record<string, unknown>) => boolean };
-  type Tree = Record<string, { fields: Record<string, Field> }>;
-
-  const visible = (tree: Tree, config: Record<string, unknown>) => {
-    const out = new Set<string>();
-    for (const section of Object.values(tree)) {
-      for (const [name, field] of Object.entries(section.fields)) {
-        if (!field.showIf || field.showIf(config, config)) out.add(name);
-      }
-    }
-    return out;
-  };
 
   // What each target must take with it. Written out here on purpose: a copy of
   // the table would pass whatever the table said.
@@ -108,15 +97,15 @@ describe('a static hide takes its own fields out of the editor', () => {
 
   for (const [target, fields] of Object.entries(EXPECTED)) {
     test(`hide: [${target}]`, () => {
-      const tree = EditorFactory.build({ template: false, badge: false }) as unknown as Tree;
-      const shown = visible(tree, { hide: [target] });
+      const tree = EditorFactory.build({ template: false, badge: false }) as unknown as FieldTree;
+      const shown = visibleFields(tree, { hide: [target] });
       for (const field of fields) assert.equal(shown.has(field), false, `${field} should be gone with ${target}`);
     });
   }
 
   test('a Jinja hide gates nothing - its result is unknowable here', () => {
-    const tree = EditorFactory.build({ template: false, badge: false }) as unknown as Tree;
-    const shown = visible(tree, { hide: '{{ 1 }}' });
+    const tree = EditorFactory.build({ template: false, badge: false }) as unknown as FieldTree;
+    const shown = visibleFields(tree, { hide: '{{ 1 }}' });
     for (const field of ['icon', 'name', 'bar_size', 'unit']) {
       assert.ok(shown.has(field), `${field} must stay reachable behind a template`);
     }

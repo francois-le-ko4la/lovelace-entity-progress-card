@@ -67,6 +67,8 @@
       "height_custom_toggle": "自动高度",
       "icon_animation": "图标动画",
       "interpolate": "颜色插值",
+      "issue_report": "@ui.components.yaml-editor.copy_to_clipboard|Copy to clipboard",
+      "issue_report_copied": "@ui.common.copied_clipboard|Copied to clipboard",
       "marginless": "无边距",
       "migrate_config": "迁移配置",
       "min_width": "最小宽度",

@@ -21,6 +21,8 @@ import {
   SCHEMA_DEFAULTS,
   PEAK_RANGE_TYPE_DEFAULT,
   DENSITY_COMPACT_BAR_POSITIONS,
+  HAS_EFFECT,
+  OWN_TRIGGER_ANIMATIONS,
   type WatermarkMark,
   type PeakMark,
 } from './schema.js';
@@ -29,7 +31,9 @@ import { traceInstance } from '../utils/log.js';
 import { ProgressMath } from './progress-math.js';
 import { PercentHelper, ThemeManager, EntityCollectionHelper, EntityOrValue } from './value-helpers.js';
 import { TrendTracker, type TrendBasis } from './trend-tracker.js';
-import { HassProviderSingleton, type HomeAssistant } from '../utils/hass-provider.js';
+import { PeakTracker } from './peak-tracker.js';
+import { HassProviderSingleton, RELATIVE_TIME_PROPS, type HomeAssistant } from '../utils/hass-provider.js';
+import { nextOnGrid, relativeAge } from '../utils/clock.js';
 import {
   BaseConfigHelper,
   CardConfigHelper,
@@ -214,6 +218,9 @@ class ViewCore {
   // (also what a plain static hide: [...] array stays at forever, since
   // nothing ever calls setResolvedHide for it).
   #resolvedHide: Set<string> | null = null;
+  // What a host (the Multi Feature) takes off this card whatever hide says,
+  // Jinja included - see forceHidden.
+  #forcedHide = new Set<string>();
   // Template's own theme support (percent: true themes only). Declared here
   // rather than ViewBase (which has its own separate #theme) since
   // CardTemplateView/BadgeTemplateView are ViewCore's direct siblings of
@@ -229,7 +236,7 @@ class ViewCore {
   #templateBarColorValue: string | null = null;
 
   constructor() {
-    traceInstance(this, CARD_CONTEXT.debug.instances);
+    traceInstance('ViewCore', CARD_CONTEXT.debug.instances);
   }
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
@@ -257,11 +264,8 @@ class ViewCore {
     return this._configHelper.config;
   }
 
-  // Mirrors HACore#_addBaseClasses's vertical-bar/horizontal-bar decision:
-  // gradients are built left-to-right by default, but the bar fills
-  // bottom-to-top in these two combinations, so the direction has to follow.
-  // Lives here, not on ViewBase, so Template's own templateThemeGradient
-  // below (on ViewCore, a ViewBase sibling) can read it too.
+  // The bar fills bottom-to-top in these two combinations - read by HACore's
+  // vertical-bar class and by every gradient's direction, Template's included.
   get isVerticalBar(): boolean {
     return (
       this.config.bar_orientation === 'up' &&
@@ -325,6 +329,11 @@ class ViewCore {
         : false;
   }
 
+  // The tick's refresh: hass is still the one refresh() read, only time moved.
+  refreshClock() {
+    this._currentValue.refresh();
+  }
+
   get entity(): string | null {
     return this.config?.entity ?? null;
   }
@@ -349,6 +358,15 @@ class ViewCore {
     return is.plainObject(raw) && is.nonEmptyString((raw as { jinja?: string }).jinja);
   }
 
+  // The detections that read a status entity on the card's device instead of
+  // its own entity (#entityOrSameDevice): the ChangeTracker watches those too.
+  get readsSameDevice(): boolean {
+    const effect = this.iconAnimationEffect;
+    const animationReadsDevice =
+      !this.hasJinjaIconAnimation && effect !== null && OWN_TRIGGER_ANIMATIONS.includes(effect);
+    return animationReadsDevice || this.config?.theme === 'battery_adaptive';
+  }
+
   get jinjaIconAnimationActive(): boolean | null {
     return this.#jinjaIconAnimationActive;
   }
@@ -367,17 +385,11 @@ class ViewCore {
     return this._currentValue.entityType.isTimer && this._currentValue.state === HA_CONTEXT.entity.state.active;
   }
 
-  // How often (ms) to locally re-drive a template's display; null = no local
-  // loop needed. Default (fast_refresh unset/false) needs nothing - HA's own
-  // render_template push already fires once a minute for a now()/utcnow()
-  // field (#127), for free. `fast_refresh: true` opts into the same
-  // 1s/round-second cadence ViewBase uses, via
-  // EntityProgressTemplateBase._onAutoRefreshTick's forced resubscribe. Not
-  // gated on isActiveTimer: any now()-driven Jinja field (sun.sun,
-  // input_datetime...) needs the same push, so fast_refresh is the explicit
-  // opt-in. ViewBase overrides this with unit-aware behavior instead.
-  get autoRefreshInterval(): number | null {
-    return this.config?.fast_refresh ? 1000 : null;
+  // When the local tick next fires, null for never. A template has nothing of
+  // its own that moves: fast_refresh asks for every second, HA's own push for a
+  // now() field coming once a minute (#127).
+  nextTickAt(now: number): number | null {
+    return this.config?.fast_refresh ? nextOnGrid(now, 0, 1000) : null;
   }
 
   get cardSize(): number {
@@ -508,17 +520,7 @@ class ViewCore {
   }
 
   get hasReversedSecondaryInfoRow(): boolean {
-    // Nullish-coalesced, not strict equality: Badge/Badge Template have
-    // neither 'layout' nor 'bar_position' in their schema (always undefined
-    // here), but structurally render exactly like layout: horizontal +
-    // bar_position: default - the only shape they have. Treating "absent" as
-    // invalid would make this permanently false for them despite the option
-    // otherwise working fine.
-    return (
-      (this.config.layout ?? 'horizontal') === 'horizontal' &&
-      (this.config.bar_position ?? 'default') === 'default' &&
-      Boolean(this.config.reverse_secondary_info_row)
-    );
+    return HAS_EFFECT.reverseSecondaryInfoRow(this.config) && Boolean(this.config.reverse_secondary_info_row);
   }
 
   // The shape signals a clickable icon - which domains get one by default is
@@ -619,6 +621,12 @@ class ViewCore {
     // question-mark 'error' icon would otherwise flash on every single
     // trend_indicator: true card until a second sample lands.
     return tracker.direction() ?? 'flat';
+  }
+
+  // The same arrow re-read as its window slides - never a new sample, those
+  // stay one per state change.
+  trendNow(): string {
+    return this.#ensureTrendTracker().directionAt() ?? 'flat';
   }
 
   // History seeding (Card only, see HACore) - same lazy resolver as getTrend.
@@ -957,19 +965,23 @@ class ViewCore {
     return is.plainObject(this.#jinjaAlertResult) ? this.#jinjaAlertResult : {};
   }
 
+  // An Advanced-mode override wins over the config; each caller brings its own
+  // default for when neither says anything.
+  #alertOption(key: 'color' | 'highlight' | 'label' | 'animation'): string | undefined {
+    const override = this.#alertOverride[key];
+    return is.nonEmptyString(override) ? override : this.config?.alert_when?.[key];
+  }
+
   get resolvedAlertColor(): string | null {
-    const override = this.#alertOverride.color;
-    return is.nonEmptyString(override) ? override : (this.config?.alert_when?.color ?? null);
+    return this.#alertOption('color') ?? null;
   }
 
   get resolvedAlertHighlight(): string {
-    const override = this.#alertOverride.highlight;
-    return is.nonEmptyString(override) ? override : (this.config?.alert_when?.highlight ?? 'border');
+    return this.#alertOption('highlight') ?? 'border';
   }
 
   get resolvedAlertLabel(): string {
-    const override = this.#alertOverride.label;
-    return is.nonEmptyString(override) ? override : (this.config?.alert_when?.label ?? '');
+    return this.#alertOption('label') ?? '';
   }
 
   /**
@@ -982,11 +994,8 @@ class ViewCore {
    * `highlight`.
    */
   get alertAnimation(): string | null {
-    const alert = this.config?.alert_when;
-    if (!alert) return null;
-    const override = this.#alertOverride.animation;
-    if (is.nonEmptyString(override)) return override;
-    return alert.animation ?? (this.resolvedAlertHighlight === 'background' ? 'static' : 'blink');
+    if (!this.config?.alert_when) return null;
+    return this.#alertOption('animation') ?? (this.resolvedAlertHighlight === 'background' ? 'static' : 'blink');
   }
 
   // Single source of truth for "is X currently hidden": static `hide: [...]`
@@ -999,10 +1008,11 @@ class ViewCore {
   // time setConfig runs, so the structure can leave them out entirely instead
   // of building them only to display: none them.
   isStaticallyHidden(component: string): boolean {
-    return !is.jinja(this.config?.hide) && this.hasComponentHiddenFlag(component);
+    return this.#forcedHide.has(component) || (!is.jinja(this.config?.hide) && this.hasComponentHiddenFlag(component));
   }
 
   hasComponentHiddenFlag(component: string): boolean {
+    if (this.#forcedHide.has(component)) return true;
     if (
       this.config?.density === 'compact' &&
       this.config.layout === CARD.layout.orientations.vertical.label &&
@@ -1016,6 +1026,10 @@ class ViewCore {
 
   setResolvedHide(items: string[]): void {
     this.#resolvedHide = new Set(items);
+  }
+
+  forceHidden(targets: string[]): void {
+    this.#forcedHide = new Set(targets);
   }
 
   // Takes the whole bag: tap/hold/doubleTap is the shape _configHelper.action
@@ -1076,11 +1090,8 @@ class ViewCore {
  *   console.log('Entity has errors:', cardView.msg);
  * }
  *
- * // Timer-specific usage
- * if (cardView.isActiveTimer) {
- *   const interval = cardView.autoRefreshInterval;
- *   // Update UI at that refresh rate
- * }
+ * // When what the card shows next moves with no state change
+ * const tickAt = cardView.nextTickAt(Date.now());
  */
 class ViewBase extends ViewCore {
   #percentHelper = new PercentHelper();
@@ -1393,16 +1404,35 @@ class ViewBase extends ViewCore {
     return this.#percentHelper.calcWatermark(value);
   }
 
-  // peak_marker's own history-derived positions (Card only, see HACore's
-  // _seedPeakMarkerHistoryOnce) - percents already resolved at fetch time, set
-  // once per window fetch rather than recomputed on every repaint.
+  // peak_marker (Card only): seeded from history by HACore, then fed on every
+  // refresh; #peakMarker holds the resulting positions, in percent.
+  #peakTracker: PeakTracker | null = null;
   #peakMarker: { min: number; max: number; average: number } | null = null;
 
-  // null clears a previous entity's marks before a re-seed (HACore's
-  // _seedPeakMarkerHistoryOnce) - unlike TrendTracker, there's no live
-  // recompute to fall back on between the clear and the next fetch resolving.
-  setPeakMarker(marker: { min: number; max: number; average: number } | null) {
-    this.#peakMarker = marker;
+  seedPeakMarker(points: { t: number; value: number }[]) {
+    const window = (this.config.peak_marker as { window?: unknown } | undefined)?.window;
+    if (!is.number(window)) return;
+    this.#peakTracker = new PeakTracker(window * 1000);
+    this.#peakTracker.seed(points);
+    this.#updatePeakMarker();
+  }
+
+  // Before a re-seed: a previous entity's or window's marks must not linger.
+  clearPeakMarker() {
+    this.#peakTracker = null;
+    this.#peakMarker = null;
+  }
+
+  #updatePeakMarker() {
+    if (!this.#peakTracker) return;
+    const current = this._currentValue.value;
+    if (is.number(current)) this.#peakTracker.push(current);
+    const peaks = this.#peakTracker.peaks();
+    this.#peakMarker = peaks && {
+      min: this.percentForRawValue(peaks.min),
+      max: this.percentForRawValue(peaks.max),
+      average: this.percentForRawValue(peaks.average),
+    };
   }
 
   get peakMarker(): {
@@ -1485,10 +1515,6 @@ class ViewBase extends ViewCore {
     );
   }
 
-  get hasWatermark(): boolean {
-    return this._configHelper.config.watermark !== undefined;
-  }
-
   get watermark(): ResolvedWatermark | null {
     const watermark = this.config.watermark as WatermarkConfig | undefined;
     if (!watermark) return null;
@@ -1537,7 +1563,6 @@ class ViewBase extends ViewCore {
 
     if (!this.isAvailable) return;
 
-    this.#updatePercentHelper();
     // battery_adaptive is the one theme whose resolved value can change
     // between refreshes (charging state, not config) - #theme.configure is
     // otherwise only called from `set config` (card creation/config
@@ -1548,6 +1573,17 @@ class ViewBase extends ViewCore {
     if (this._configHelper.config.theme === 'battery_adaptive') {
       this.#configureTheme();
     }
+    this.#deriveFromCurrentValue();
+  }
+
+  refreshClock() {
+    super.refreshClock();
+    if (this.isAvailable) this.#deriveFromCurrentValue();
+  }
+
+  #deriveFromCurrentValue() {
+    this.#updatePercentHelper();
+    this.#updatePeakMarker();
     this.#theme.value =
       this.#percentHelper.valueForThemes(this.#theme.isCustomTheme, this.#theme.isBasedOnPercentage) ?? 0;
   }
@@ -1587,15 +1623,24 @@ class ViewBase extends ViewCore {
   // dropped here, leaving no way to scale such an entity at all (#143).
   #counterValues() {
     const wasSet = (key: string) => this._configHelper.wasSetByUser(key);
+    const max = wasSet('max_value') ? this.#effectiveMax : this._currentValue.value.max;
     return {
       current: this._currentValue.value.current,
       min: wasSet('min_value')
-        ? (this.#jinjaMinValue ?? this.#minValue.value?.current ?? this.#minValue.value)
-        : this._currentValue.value.min,
-      max: wasSet('max_value')
-        ? (this.#jinjaMaxValue ?? this.#maxValue.value?.current ?? this.#maxValue.value)
-        : this._currentValue.value.max,
+        ? this.#effectiveMin
+        : ProgressMath.ownRangeMin(this._currentValue.value.min, max, this._configHelper.config.centerZero),
+      max,
     };
+  }
+
+  // A Jinja push first, then the configured entity's value (its `current`, for
+  // a counter or a number) or the plain number.
+  get #effectiveMin(): unknown {
+    return this.#jinjaMinValue ?? this.#minValue.value?.current ?? this.#minValue.value;
+  }
+
+  get #effectiveMax(): unknown {
+    return this.#jinjaMaxValue ?? this.#maxValue.value?.current ?? this.#maxValue.value;
   }
 
   #stdValues() {
@@ -1615,8 +1660,8 @@ class ViewBase extends ViewCore {
       : this._currentValue.value;
     return {
       current: currentValue,
-      min: this.#jinjaMinValue ?? this.#minValue.value?.current ?? this.#minValue.value,
-      max: this.#jinjaMaxValue ?? this.#maxValue.value?.current ?? this.#maxValue.value,
+      min: this.#effectiveMin,
+      max: this.#effectiveMax,
     };
   }
 
@@ -1636,18 +1681,47 @@ class ViewBase extends ViewCore {
     this.#jinjaMaxValue = value;
   }
 
-  // Overrides ViewCore's own (template-only, fast_refresh-gated): standard
-  // cards/badges/features compute their countdown locally, no Jinja push
-  // involved - so the only thing that matters is how granular what's
-  // actually shown is. 1s (round-second) when the resolved unit displays
-  // seconds (s/timer/flextimer - see the unit doc), 1min (round-minute)
-  // otherwise (min/h/d/HA's own natural duration format), replacing the
-  // fixed per-duration formula this used to be.
-  static #SECONDS_SHOWING_UNITS = new Set(['s', 'timer', 'flextimer']);
+  // A sliding window moves all the time: re-read once a minute, sooner if
+  // shorter.
+  static #slideTickAt(now: number, windowSeconds: unknown): number[] {
+    return is.number(windowSeconds) ? [nextOnGrid(now, 0, Math.min(60000, windowSeconds * 1000))] : [];
+  }
 
-  get autoRefreshInterval(): number | null {
-    if (!this.isActiveTimer) return null;
-    return ViewBase.#SECONDS_SHOWING_UNITS.has(this.#getCurrentUnit()) ? 1000 : 60000;
+  // The next instant something shown moves with no state change: a running
+  // timer's value, a relative time, a sliding window.
+  nextTickAt(now: number): number | null {
+    if (this.isActiveTimer) return this.#timerTickAt(now);
+    const trend = this.config.trend_indicator;
+    const deadlines = [
+      ...(this.#peakTracker
+        ? ViewBase.#slideTickAt(now, (this.config.peak_marker as { window?: unknown })?.window)
+        : []),
+      ...(is.plainObject(trend) ? ViewBase.#slideTickAt(now, trend.window) : []),
+      ...this.#relativeTickAt(now),
+    ];
+    return deadlines.length > 0 ? Math.min(...deadlines) : null;
+  }
+
+  // Its value turns on the timer's own clock: at each whole step for a
+  // countdown, which truncates, half a step in for any other number (rounds).
+  #timerTickAt(now: number): number {
+    const { startedAt, max } = (this._currentValue.value ?? {}) as { startedAt?: number; max?: number };
+    const helper = this.#percentHelper;
+    const perUnitMs = helper.unit === CARD.config.unit.default ? ((max ?? 0) * 1000) / 100 : 1000;
+    const step = perUnitMs / 10 ** helper.decimal;
+    const origin = is.number(startedAt) ? startedAt : 0;
+    // Not Math.max: an unreadable duration (NaN) still ticks by the second.
+    return nextOnGrid(now, origin, step > 1000 ? step : 1000, helper.hasTimerOrFlexTimerUnit ? 0 : 0.5);
+  }
+
+  #relativeTickAt(now: number): number[] {
+    const entity = this.entity;
+    if (!entity) return [];
+    return (this._currentValue.stateContent ?? [])
+      .filter((prop) => RELATIVE_TIME_PROPS.has(prop))
+      .map((prop) => Date.parse(this._hassProvider.getEntityProp<string>(entity, prop)))
+      .filter((since) => is.number(since))
+      .map((since) => since + relativeAge(now - since).changesAtMs);
   }
 
   // Which config keys feed the theme, in one place: called on `set config`

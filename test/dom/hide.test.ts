@@ -68,3 +68,33 @@ describe('hide: static drops the subtree, Jinja keeps it', () => {
     assert.ok(jinja.querySelector(NAME), 'a Jinja hide must keep the name in the DOM');
   });
 });
+
+type RowEl = HTMLElement & { _cardView?: { config: { hide?: unknown } } };
+
+// A Multi Feature row never draws the shape, whatever its own hide says - a
+// Jinja one included, which used to be replaced by ['shape'] outright.
+describe('a Multi Feature row keeps its own hide and still drops the shape', () => {
+  test('a Jinja hide and a static one both survive next to the forced shape', async () => {
+    const jinjaHide = "{{ ['name'] }}";
+    const el = document.createElement('entity-progress-multi-feature') as CardEl;
+    el.setConfig?.({
+      type: 'custom:entity-progress-multi-feature',
+      entities: [
+        { entity: TEST_ENTITY, hide: jinjaHide },
+        { entity: TEST_ENTITY, hide: ['icon'] },
+      ],
+    });
+    document.body.appendChild(el);
+    el.hass = makeHass();
+    await flushFrames();
+    await flushFrames();
+    const rows = [...(el.shadowRoot as ShadowRoot).querySelectorAll('entity-progress-card')] as RowEl[];
+    assert.equal(rows.length, 2, 'both rows should have been built');
+    assert.equal(rows[0]._cardView?.config.hide, jinjaHide, 'the Jinja hide must reach the row untouched');
+    assert.deepEqual(rows[1]._cardView?.config.hide, ['icon'], 'a static hide gains no forced target');
+    for (const row of rows) {
+      assert.ok(row.shadowRoot?.querySelector('ha-card.hide-shape'), 'a Feature row never draws the shape');
+    }
+    el.remove();
+  });
+});

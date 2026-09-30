@@ -182,3 +182,23 @@ describe('the sample buffer', () => {
     assert.equal(tracker.direction(), 'up');
   });
 });
+
+// A window slides with time, not only with new readings: a rise that happened
+// before the window started no longer counts, even if nothing came after it.
+describe('directionAt - the window slides without a new reading', () => {
+  test('a rise inside the window still reads up', () => {
+    const tracker = feed(new TrendTracker({ windowMs: WINDOW }), [
+      [0, 40],
+      [1000, 60],
+    ]);
+    assert.equal(tracker.directionAt(WINDOW / 2), 'up');
+  });
+
+  test('once the window has passed the rise, nothing is left to compare', () => {
+    const tracker = feed(new TrendTracker({ windowMs: WINDOW }), [
+      [0, 40],
+      [1000, 60],
+    ]);
+    assert.equal(tracker.directionAt(WINDOW + 500), null);
+  });
+});

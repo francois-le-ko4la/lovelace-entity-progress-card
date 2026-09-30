@@ -21,7 +21,7 @@ class EntityCollectionHelper {
   #mode = 'stacked';
 
   constructor() {
-    traceInstance(this, CARD_CONTEXT.debug.instances);
+    traceInstance('EntityCollectionHelper', CARD_CONTEXT.debug.instances);
   }
 
   static #numericValue(helper: EntityHelper): number {

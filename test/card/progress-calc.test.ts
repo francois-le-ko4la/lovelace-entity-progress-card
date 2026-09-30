@@ -168,8 +168,9 @@ describe('decimal - how the percent is rounded', () => {
   // was invalid). Worth knowing before the split moves this logic.
   test('a refused decimal reverts to the construction default, not the last good value', () => {
     const helper = new PercentHelper();
-    helper.decimal = 2;
-    helper.decimal = -1; // skipcq: JS-W1032 - the pair IS the test
+    for (const decimal of [2, -1]) {
+      helper.decimal = decimal;
+    }
     assert.equal(helper.decimal, 0);
   });
 });

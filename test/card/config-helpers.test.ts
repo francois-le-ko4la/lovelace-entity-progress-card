@@ -1,7 +1,12 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import { assertUndefined } from '../helpers.js';
-import { CardConfigHelper, BaseConfigHelper } from '../../src/card/config-helpers.js';
+import {
+  CardConfigHelper,
+  BaseConfigHelper,
+  MultiRowConfigHelper,
+  MultiFeatureRowConfigHelper,
+} from '../../src/card/config-helpers.js';
 import type { LovelaceConfig } from '../../src/utils/types.js';
 
 const TEST_ENTITY = 'sensor.test';
@@ -169,6 +174,44 @@ describe('BaseConfigHelper._migrateWatermarkOptions - deprecated watermark shape
   });
 });
 
+// Someone who wrote the new key and left the old one: the new one is what they
+// meant, the old one only leaves - on the card and in Migrate config alike.
+describe('a new key already written wins over its deprecated one', () => {
+  test('value_position leaves an explicit reverse_secondary_info_row alone', () => {
+    const migrated = BaseConfigHelper._migrateValuePosition(
+      asConfig({ value_position: 'right', reverse_secondary_info_row: false }),
+    );
+    assert.equal(migrated.reverse_secondary_info_row, false);
+    assertUndefined(migrated.value_position);
+  });
+
+  test('show_value leaves an explicit hide alone, a Jinja one included', () => {
+    for (const hide of [['unit'], '{{ [] }}']) {
+      const migrated = BaseConfigHelper._migrateShowValue(asConfig({ show_value: false, hide }));
+      assert.deepEqual(migrated.hide, hide);
+      assertUndefined(migrated.show_value);
+    }
+  });
+
+  test('additions leaves an explicit bar_stack alone', () => {
+    const barStack = { mode: 'stacked', entities: [{ entity: EXTRA_ENTITY }] };
+    const migrated = CardConfigHelper._migrateLegacyOptions(
+      asConfig({ entity: TEST_ENTITY, additions: [{ entity: CAPACITY_ENTITY }], bar_stack: barStack }),
+    );
+    assert.deepEqual(migrated.bar_stack, barStack);
+    assertUndefined(migrated.additions);
+  });
+
+  test('a watermark side in the override shape keeps its own as, color and visibility', () => {
+    const low = { value: 20, as: 'percent', color: 'blue' };
+    const migrated = BaseConfigHelper._migrateWatermarkOptions(
+      asConfig({ watermark: { low, low_as: 'auto', low_color: 'red', disable_low: true } }),
+    );
+    assert.deepEqual(migrated.watermark.low, low);
+    for (const key of ['low_as', 'low_color', 'disable_low']) assertUndefined(migrated.watermark[key]);
+  });
+});
+
 describe('CardConfigHelper._customizeConfig - end to end, a fully deprecated config still validates', () => {
   test('legacy max_value + additions + disable_unit together still produce a valid, migrated config', () => {
     const customized = CardConfigHelper._customizeConfig(
@@ -238,4 +281,46 @@ describe('BaseConfigHelper.wasSetByUser - telling a written option from a defaul
     const helper = helperFor({ entity: TEST_ENTITY, max_value: CAPACITY_ENTITY });
     assert.equal(helper.wasSetByUser('max_value'), true);
   });
+
+  test("center_zero's own min_value is a default, not theirs", () => {
+    const helper = helperFor({ entity: TEST_ENTITY, center_zero: true });
+    assert.equal(helper.config.min_value, -100);
+    assert.equal(helper.wasSetByUser('min_value'), false);
+  });
+});
+
+// A Multi row renders as a card (multi.ts): its editor has to negotiate what
+// that card will, center_zero's own min_value included.
+describe('Multi row helpers - negotiated like the card the row renders as', () => {
+  const minValueWith = (Helper: new () => BaseConfigHelper, raw: Record<string, unknown>) => {
+    const helper = new Helper();
+    helper.config = asConfig({ entity: TEST_ENTITY, ...raw });
+    return helper.config.min_value;
+  };
+  const cases: { label: string; raw: Record<string, unknown>; min?: number }[] = [
+    { label: 'center_zero mirrors a numeric max_value', raw: { center_zero: true, max_value: 50 }, min: -50 },
+    {
+      label: "center_zero starts at a raw-value theme's bottom",
+      raw: { center_zero: true, theme: 'temperature' },
+      min: -50,
+    },
+    { label: 'center_zero alone mirrors the default max', raw: { center_zero: true }, min: -100 },
+    {
+      label: 'center_zero with an entity max_value falls back to the default max',
+      raw: { center_zero: true, max_value: { entity: CAPACITY_ENTITY } },
+      min: -100,
+    },
+    { label: 'no center_zero leaves min_value unset', raw: { max_value: 50 } },
+  ];
+  const rowHelpers: [string, new () => BaseConfigHelper][] = [
+    ['MultiRowConfigHelper', MultiRowConfigHelper],
+    ['MultiFeatureRowConfigHelper', MultiFeatureRowConfigHelper],
+  ];
+
+  for (const { label, raw, min } of cases) {
+    test(label, () => {
+      assert.equal(minValueWith(CardConfigHelper, raw), min);
+      for (const [name, Helper] of rowHelpers) assert.equal(minValueWith(Helper, raw), min, name);
+    });
+  }
 });

@@ -580,7 +580,7 @@ views:
         theme: battery_adaptive
         bar_color_mode: rainbow_full
         name: Battery EV
-      - type: custom:entity-progress-badge
+      - type: custom:entity-progress-badge-dev
         entity: cover.epb_demo_cover
     show_icon_and_title: true
     cards: []
@@ -895,7 +895,6 @@ views:
             name: 'bar_position: overlay + bar_single_line'
             bar_position: overlay
             bar_single_line: true
-            bar_size: large
       - type: grid
         cards:
           - type: heading
@@ -1968,15 +1967,6 @@ views:
               color: orange
               low: 20
               high: 80
-          - type: custom:entity-progress-card-template-dev
-            entity: input_number.epb_demo_battery
-            name: 'Template: watermark.high as entity (regression #140)'
-            percent: '{{ states(entity) }}'
-            watermark:
-              high: input_number.epb_demo_battery_reserved
-              high_as: percent
-              high_color: '#c6a445'
-              type: line
       - type: grid
         cards:
           - type: heading
@@ -2785,14 +2775,6 @@ views:
               growth_percent: true
             min_value: -3000
             max_value: 3000
-          - type: custom:entity-progress-card-dev
-            entity: input_number.epb_demo_battery
-            name: 'watermark: disable_low + disable_high'
-            watermark:
-              low: 20
-              high: 80
-              disable_low: true
-              disable_high: false
     show_icon_and_title: true
     cards: []
   - title: EP Demo - Layout & bar_position
@@ -2851,7 +2833,6 @@ views:
             name: overlay
             layout: horizontal
             bar_position: overlay
-            bar_size: large
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
             name: background
@@ -2890,14 +2871,6 @@ views:
             name: below
             layout: vertical
             bar_position: below
-            grid_options:
-              columns: 4
-              rows: 2
-          - type: custom:entity-progress-card-dev
-            entity: input_number.epb_demo_battery
-            name: 'compact_below → default (#123)'
-            layout: vertical
-            bar_position: compact_below
             grid_options:
               columns: 4
               rows: 2
@@ -4203,7 +4176,7 @@ views:
               custom_fields:
                 progress:
                   card:
-                    type: custom:entity-progress-card
+                    type: custom:entity-progress-card-dev
                     entity: input_number.epb_demo_battery
                     height: auto
                     marginless: true
@@ -5151,7 +5124,7 @@ views:
             card_mod:
               style: |
                 :host { --epb-alert-background-opacity: 0.9; }
-          - type: custom:entity-progress-card
+          - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_temperature
             name: '--epb-ping-color: blue'
             alert_when:
@@ -5162,7 +5135,7 @@ views:
             card_mod:
               style: |
                 :host { --epb-ping-color: blue; }
-          - type: custom:entity-progress-card
+          - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_temperature
             name: '--epb-ping-spread: 30px'
             alert_when:
@@ -6123,7 +6096,7 @@ views:
               bar_color_mode: rainbow_full
               bar_orientation: rtl
               ```
-              A theme is required - `applyBarColorModeRule` (schema.ts)
+              A theme is required - `INERT_OPTIONS` (schema.ts)
               silently resets `bar_color_mode` back to `auto` without one.
               `transform: scaleX(-1)` now sits on `.bar-container` (shared
               parent of both `.bar` and `.value-mark`) instead of `.bar`
@@ -6547,6 +6520,167 @@ views:
             grid_options:
               columns: 4
               rows: 2
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'center_zero on a number keeps its own minimum'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: number.epb_demo_number
+              center_zero: true
+              ```
+              A `number` brings its own range (`-50` to `10` here), and
+              `center_zero` keeps its minimum when it already reaches below
+              zero. In 1.6.3-rc9 the negative arm ran to `-100` instead.
+              Check: `-10` fills a fifth of the negative arm on the first
+              card, a tenth on the second, where `min_value: -100` is written.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card-dev
+            entity: number.epb_demo_number
+            name: own minimum
+            center_zero: true
+          - type: custom:entity-progress-card-dev
+            entity: number.epb_demo_number
+            name: 'min_value: -100'
+            center_zero: true
+            min_value: -100
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'Multi row editor: min_value under center_zero'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-multi-card-dev
+              center_zero: true
+              max_value: 30
+              entities:
+                - entity: input_number.epb_demo_temperature
+                - entity: input_number.epb_demo_temp_negative
+                  theme: temperature
+              ```
+              A row's editor showed `-100` for `min_value` under
+              `center_zero`, whatever the row actually drew from. Check: in
+              the card editor, each row's pencil reads `-30` on the first
+              row and `-50` (the theme's bottom) on the second.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-multi-card-dev
+            center_zero: true
+            max_value: 30
+            entities:
+              - entity: input_number.epb_demo_temperature
+              - entity: input_number.epb_demo_temp_negative
+                theme: temperature
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'Multi Feature row: a Jinja hide applies, still no shape'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-multi-feature-dev
+              entities:
+                - entity: light.epb_demo_light
+                  hide: "{{ ['icon'] if is_state('input_boolean.epb_demo_simple_mode', 'on') else [] }}"
+                - entity: fan.epb_demo_fan
+              ```
+              A Feature row never draws the shape, and forcing that used to
+              replace a Jinja `hide` with `[shape]`. Check: tapping the tile
+              hides and brings back the light row's icon, and neither row
+              ever shows a shape.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: tile
+            entity: input_boolean.epb_demo_simple_mode
+            features:
+              - type: custom:entity-progress-multi-feature-dev
+                entities:
+                  - entity: light.epb_demo_light
+                    hide: "{{ ['icon'] if is_state('input_boolean.epb_demo_simple_mode', 'on') else [] }}"
+                  - entity: fan.epb_demo_fan
+      - type: grid
+        cards:
+          - type: heading
+            heading: '#140 — Template: a legacy watermark.high entity migrates'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-template-dev
+              entity: input_number.epb_demo_battery
+              name: 'Template: watermark.high as entity (regression #140)'
+              percent: '{{ states(entity) }}'
+              watermark:
+                high: input_number.epb_demo_battery_reserved
+                high_as: percent
+                high_color: '#c6a445'
+                type: line
+              ```
+              Template never migrated watermark's legacy forms, so an
+              entity-sourced high was ignored. Check: the high line follows
+              `input_number.epb_demo_battery_reserved`, in `#c6a445`.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card-template-dev
+            entity: input_number.epb_demo_battery
+            name: 'Template: watermark.high as entity (regression #140)'
+            percent: '{{ states(entity) }}'
+            watermark:
+              high: input_number.epb_demo_battery_reserved
+              high_as: percent
+              high_color: '#c6a445'
+              type: line
+      - type: grid
+        cards:
+          - type: heading
+            heading: '#123 — compact_below falls back to default in vertical'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: input_number.epb_demo_battery
+              name: 'compact_below → default (#123)'
+              layout: vertical
+              bar_position: compact_below
+              grid_options:
+                columns: 4
+                rows: 2
+              ```
+              compact_below only has a shape in horizontal. Check: this
+              vertical card draws the default placement, not a broken one.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: 'compact_below → default (#123)'
+            layout: vertical
+            bar_position: compact_below
+            grid_options:
+              columns: 4
+              rows: 2
     subview: false
     cards: []
     badges:
@@ -6836,6 +6970,71 @@ views:
                 bar_color: magenta
               - entity: input_number.epb_demo_printer_ink_yellow
                 bar_color: yellow
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'Migrate config on a Multi: shared level and row'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-multi-card-dev
+              value_position: right
+              disable_unit: true
+              entities:
+                - entity: input_number.epb_demo_battery
+                  disable_unit: true
+                - entity: input_number.epb_demo_temperature
+              ```
+              The button showed on a Multi and on its rows, then left these
+              keys in place. Check: Migrate config in the card editor turns
+              them into `reverse_secondary_info_row` and `hide: [unit]` and
+              goes away; the first row's pencil does the same for its own
+              `disable_unit`.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-multi-card-dev
+            value_position: right
+            disable_unit: true
+            entities:
+              - entity: input_number.epb_demo_battery
+                disable_unit: true
+              - entity: input_number.epb_demo_temperature
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'watermark: disable_low / disable_high'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: input_number.epb_demo_battery
+              name: 'watermark: disable_low + disable_high'
+              watermark:
+                low: 20
+                high: 80
+                disable_low: true
+                disable_high: false
+              ```
+              Replaced by `low: false` / `high: false`. Check: no low
+              line, the high one at 80; Migrate config writes `low: false`.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: 'watermark: disable_low + disable_high'
+            watermark:
+              low: 20
+              high: 80
+              disable_low: true
+              disable_high: false
     show_icon_and_title: true
     cards: []
   - title: EP Demo - Cookbook examples
@@ -9077,7 +9276,6 @@ views:
               growth_percent: true
             min_value: -3000
             max_value: 3000
-            bar_color_mode: rainbow
             bar_effect:
               - shimmer
             force_circular_background: true
@@ -9105,7 +9303,6 @@ views:
             entity: input_number.epb_demo_temperature
             name: ☢️ CORE TEMP
             unit: °C
-            bar_size: xlarge
             bar_position: overlay
             bar_single_line: true
             text_shadow: true

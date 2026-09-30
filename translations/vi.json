@@ -67,6 +67,8 @@
       "height_custom_toggle": "Chiều cao tự động",
       "icon_animation": "Hoạt ảnh biểu tượng",
       "interpolate": "Nội suy màu sắc",
+      "issue_report": "@ui.components.yaml-editor.copy_to_clipboard|Copy to clipboard",
+      "issue_report_copied": "@ui.common.copied_clipboard|Copied to clipboard",
       "marginless": "Không lề",
       "migrate_config": "Di chuyển cấu hình",
       "min_width": "Chiều rộng tối thiểu",

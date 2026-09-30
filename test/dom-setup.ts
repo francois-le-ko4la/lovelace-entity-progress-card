@@ -5,6 +5,7 @@
  * customElements/HTMLElement must exist before any of them is imported.
  */
 
+import { afterEach } from 'node:test';
 import { Window } from 'happy-dom';
 
 // Copied as-is. Binding a constructor to the window would break `class X
@@ -59,5 +60,9 @@ for (const key of BOUND_GLOBALS) {
 // mounted earlier in the same file, 60ms was not enough and 200ms was - a CI
 // runner would have found the boundary somewhere else again.
 const flushFrames = () => (win.happyDOM as { waitUntilComplete: () => Promise<void> }).waitUntilComplete();
+
+// A card left mounted keeps its own timers (auto-refresh, peak_marker) armed,
+// and a live timer keeps the test process from ever exiting.
+afterEach(() => document.body.replaceChildren());
 
 export { flushFrames };

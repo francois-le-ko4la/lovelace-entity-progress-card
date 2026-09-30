@@ -67,6 +67,8 @@
       "height_custom_toggle": "Înălțime automată",
       "icon_animation": "Animația pictogramei",
       "interpolate": "Interpolare culori",
+      "issue_report": "@ui.components.yaml-editor.copy_to_clipboard|Copy to clipboard",
+      "issue_report_copied": "@ui.common.copied_clipboard|Copied to clipboard",
       "marginless": "Fără margine",
       "migrate_config": "Migrează configurația",
       "min_width": "Lățime min.",

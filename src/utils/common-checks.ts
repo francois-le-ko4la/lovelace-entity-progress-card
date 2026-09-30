@@ -55,6 +55,20 @@ const has = {
 const toNumberOrNull = (value: unknown): number | null =>
   is.number(value) ? value : is.strictNumericString(value) ? Number(value) : null;
 
+// The lookup-or-build every cache goes through, Map and WeakMap alike.
+const getOrCreate = <K, V>(
+  cache: { get(key: K): V | undefined; set(key: K, value: V): unknown },
+  key: K,
+  create: () => V,
+): V => {
+  let value = cache.get(key);
+  if (value === undefined) {
+    value = create();
+    cache.set(key, value);
+  }
+  return value;
+};
+
 // Runtime guard for a value that's non-null by construction/lifecycle (a ref
 // set once at connect/init time, a lookup keyed by something the caller just
 // registered) but not provable to the type checker. Throws instead of masking
@@ -65,14 +79,6 @@ function assertDefined<T>(value: T | null | undefined, message: string): T {
   return value;
 }
 
-// Jinja's own delimiters are a three-state language, so a regex can't judge
-// them: it cannot tell a closing pair from one sitting inside a string literal
-// ("{{ '}}' " is unclosed), nor spot a dangling second opener after a valid
-// first expression ("{{ a }} {{ b"). This walks the string once instead.
-//
-// Deliberately about delimiters only: `{{ states('x' }}` is 'valid' here and
-// HA rejects it. HA stays the authority on Jinja syntax - this exists purely to
-// skip a round trip that is certain to fail (see HACore._subscribeToTemplate).
 const END_RAW = /\{%[-+]?\s*endraw\s*[-+]?%\}/;
 const NOT_FOUND = -1;
 
@@ -115,14 +121,6 @@ function skipRaw(value: string, from: number): number {
   return from + at + (rest.slice(at).match(END_RAW) as RegExpMatchArray)[0].length;
 }
 
-// Jinja's delimiters are a three-state language, so a regex can't judge them:
-// it cannot tell a closing pair from one sitting inside a string literal
-// ("{{ '}}' " is unclosed), nor spot a dangling second opener after a valid
-// first expression ("{{ a }} {{ b"). This walks the string once instead.
-//
-// Deliberately about delimiters only: `{{ states('x' }}` is 'valid' here and
-// HA rejects it. HA stays the authority on Jinja syntax - this exists purely to
-// skip a round trip that is certain to fail (HACore._subscribeToTemplate).
 // Advances past one construct ({{ }}, {% %} or {# #}) opened at `from`.
 // NOT_FOUND when it is never closed.
 function skipConstruct(value: string, from: number, kind: string): number {
@@ -135,6 +133,10 @@ function skipConstruct(value: string, from: number, kind: string): number {
   return kind === '%' && tag.body === 'raw' ? skipRaw(value, tag.next) : tag.next;
 }
 
+// A regex can't judge Jinja's delimiters: it can't tell "{{ '}}' " (unclosed)
+// from a closed tag, nor spot "{{ a }} {{ b". This walks the string once.
+// Delimiters only - HA stays the authority on syntax; this just skips a round
+// trip certain to fail (HACore._subscribeToTemplate).
 function jinjaKind(value: unknown): 'none' | 'valid' | 'malformed' {
   if (typeof value !== 'string') return 'none';
   let i = 0;
@@ -154,6 +156,6 @@ function jinjaKind(value: unknown): 'none' | 'valid' | 'malformed' {
 
 export { is };
 export { has };
-export { toNumberOrNull };
+export { toNumberOrNull, getOrCreate };
 export { assertDefined };
 export { jinjaKind };

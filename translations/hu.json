@@ -67,6 +67,8 @@
       "height_custom_toggle": "Automatikus magasság",
       "icon_animation": "Ikon animáció",
       "interpolate": "Színinterpoláció",
+      "issue_report": "@ui.components.yaml-editor.copy_to_clipboard|Copy to clipboard",
+      "issue_report_copied": "@ui.common.copied_clipboard|Copied to clipboard",
       "marginless": "Margó nélküli",
       "migrate_config": "Konfiguráció migrálása",
       "min_width": "Min. szélesség",

@@ -176,7 +176,7 @@ class HACore extends HTMLElement {
 
   constructor() {
     super();
-    this._log = initLogger(this, this._debug, (this.constructor as typeof HACore)._loggedMethods);
+    this._log = initLogger(this, this.localName, this._debug, (this.constructor as typeof HACore)._loggedMethods);
     this._shadow = this.attachShadow({ mode: CARD.config.shadowMode as 'open' | 'closed' });
   }
 
@@ -247,6 +247,12 @@ class HACore extends HTMLElement {
 
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
+  // For a host that removes parts of this card whatever its own hide says (the
+  // Multi Feature). Called before setConfig, which builds the structure.
+  forceHidden(targets: string[]): void {
+    this._cardView.forceHidden(targets);
+  }
+
   setConfig(config: LovelaceConfig) {
     this._log?.debug('📎 HACore.setConfig()', config);
 
@@ -273,6 +279,9 @@ class HACore extends HTMLElement {
       if (is.nonEmptyString(entityId)) this._changeTracker.watchEntity(entityId);
     };
     watch(config.entity);
+    if (is.nonEmptyString(config.entity) && this._cardView.readsSameDevice) {
+      this._changeTracker.watchSameDevice(config.entity);
+    }
     // The value-shape family (min/max, the two watermarks, the two alert
     // thresholds) read through entityOf rather than by hand: matched as a bare
     // string, watermark only ever caught its pre-1.6 spelling and alert_when
@@ -322,63 +331,43 @@ class HACore extends HTMLElement {
   }
 
   // ─── AUTO-REFRESH MANAGEMENT ──────────────────────────────────────────────
-  // Shared by every subclass (cards, badges, features): a running timer
-  // entity doesn't push a new hass state every second, so this simulates the
-  // tick locally. Lives here (not HABase) so EntityProgressFeatures - which
-  // extends HACore directly, not HABase - gets it too.
+  // What moves with no state change gets a local tick: one setTimeout to the
+  // view's nextTickAt. On HACore, not HABase, so Features have it too.
+  #tickAt: number | null = null;
 
-  // Self-correcting setTimeout chain, not setInterval: each tick recomputes
-  // its delay from Date.now(), so ticks land on round boundaries of
-  // `interval` (e.g. :00, :01, :02 for 1000ms) - immune to setInterval's
-  // native drift instead of repeating the first tick's own phase. Date.now()
-  // is captured before refresh()/_onAutoRefreshTick() run, not after -
-  // doing it after would fold their execution time into the next delay.
-  _startAutoRefresh() {
+  _startAutoRefresh(at: number) {
     if (!this._resourceManager) return;
-    const cardView = this._cardView;
-    const tick = () => {
-      const firedAt = Date.now();
-      this._onAutoRefreshTick();
-      const nextInterval = cardView.autoRefreshInterval;
-      if (nextInterval === null) {
-        this._stopAutoRefresh();
-        return;
-      }
-      this._resourceManager?.setTimeout(tick, nextInterval - (firedAt % nextInterval), 'autoRefresh');
-    };
-    const interval = cardView.autoRefreshInterval;
-    if (interval !== null) this._resourceManager.setTimeout(tick, interval - (Date.now() % interval), 'autoRefresh');
+    this.#tickAt = at;
+    this._resourceManager.setTimeout(() => this.#onTickDue(at), at - Date.now(), 'autoRefresh');
   }
 
-  // Deliberately NOT a full this.refresh(): a ticking timer only ever moves
-  // the bar, so recomputing the view and repainting CSS is all every
-  // subclass needs - icon/badge/shape/trend/Jinja are state-driven, already
-  // re-run by _handleHassUpdate on a real hass change. EntityProgressCardBase
-  // overrides this to also update its value text; EntityProgressTemplateBase
-  // overrides it entirely (Jinja-push-driven display).
+  // A timer firing a hair early, while the text would still read the old value,
+  // only re-arms - from the clock, so one set back re-grids instead of waiting.
+  #onTickDue(at: number) {
+    if (Date.now() >= at) this._onAutoRefreshTick();
+    this._manageAutoRefresh();
+  }
+
   _onAutoRefreshTick() {
-    this._cardView.refresh(this.hass as HomeAssistant);
+    this._cardView.refreshClock();
     this._updateCSS();
   }
 
   _stopAutoRefresh() {
+    this.#tickAt = null;
     if (this._resourceManager) this._resourceManager.remove('autoRefresh');
   }
 
-  // Shared by EntityProgressCardBase, EntityProgressFeatures, and
-  // EntityProgressTemplateBase's own _handleHassUpdate: start/stop the local
-  // tick based on ViewCore/ViewBase's own autoRefreshInterval (null = no
-  // local loop needed - see view.ts).
+  // After every hass update and every tick. An earlier deadline - a relative
+  // time turning fresh - re-arms at once; a later one waits for the armed tick.
   // CF5 - issue (major) resolved - set hass calls _handleHassUpdate before
   // _ensureResourceManager: with an active timer entity and hass assigned
   // before connectedCallback (standard Lovelace order), _resourceManager was
   // still null and .has() crashed.
   _manageAutoRefresh() {
-    if (this._cardView.autoRefreshInterval === null) {
-      this._stopAutoRefresh();
-    } else if (!this._resourceManager?.has('autoRefresh')) {
-      this._startAutoRefresh();
-    }
+    const at = this._cardView.nextTickAt(Date.now());
+    if (!is.number(at)) this._stopAutoRefresh();
+    else if (!this._resourceManager?.has('autoRefresh') || at < (this.#tickAt ?? Infinity)) this._startAutoRefresh(at);
   }
 
   // One entry per history-backed feature (peak_marker here, trend_indicator
@@ -428,7 +417,7 @@ class HACore extends HTMLElement {
       () => {
         // Clears the previous entity's marks before the fetch resolves - unlike
         // trend's TrendTracker, nothing else self-corrects in between.
-        (this._cardView as ViewBase).setPeakMarker(null);
+        (this._cardView as ViewBase).clearPeakMarker();
         this._updateCSS();
       },
     );
@@ -444,8 +433,6 @@ class HACore extends HTMLElement {
       this.#inFlightHistoryFetches.delete(windowSeconds),
     );
     this.#inFlightHistoryFetches.set(windowSeconds, promise);
-    // Awaited, not returned bare - log.ts's wrap() only takes its
-    // timing/error branch for a real `AsyncFunction` (fn.constructor.name).
     return await promise;
   }
 
@@ -494,25 +481,11 @@ class HACore extends HTMLElement {
   }
 
   #applyPeakMarkerHistory(points: { t: number; value: number }[]) {
-    const cardView = this._cardView as ViewBase;
-    // One pass, and no Math.min(...values): a spread throws RangeError past
-    // ~125k arguments, which a 7-day window on a fast sensor does reach.
-    let min = Infinity;
-    let max = -Infinity;
-    let sum = 0;
-    for (const { value } of points) {
-      if (value < min) min = value;
-      if (value > max) max = value;
-      sum += value;
-    }
-    const marker = {
-      min: cardView.percentForRawValue(min),
-      max: cardView.percentForRawValue(max),
-      average: cardView.percentForRawValue(sum / points.length),
-    };
-    this._log?.debug('peak_marker seeded from history', marker);
-    cardView.setPeakMarker(marker);
+    this._log?.debug(`peak_marker seeded from history: ${points.length} point(s)`);
+    (this._cardView as ViewBase).seedPeakMarker(points);
     this._updateCSS();
+    // The window slides with no new reading: its eviction tick starts here.
+    this._manageAutoRefresh();
   }
 
   get isRendered(): boolean {
@@ -779,9 +752,7 @@ class HACore extends HTMLElement {
   get _baseClassStyle(): Map<string, boolean> {
     const config = this._cardView.config;
     const orientationClasses = CARD.style.dynamic.progressBar.orientation as Record<string, string>;
-    const isVerticalBar =
-      (config.layout === 'vertical' && config.bar_orientation === 'up' && config.bar_position === 'overlay') ||
-      (config.bar_orientation === 'up' && config.bar_position === 'background');
+    const isVerticalBar = this._cardView.isVerticalBar;
     return new Map([
       [this.baseClass, true],
       ...Object.values(CARD.layout.orientations).map((o): [string, boolean] => [o.label, config.layout === o.label]),
@@ -939,10 +910,7 @@ class HACore extends HTMLElement {
         [pb.stackSizePos.var, diverging?.posSize],
         [pb.stackSizeNeg.var, diverging?.negSize],
       ] as [string, CacheValue][]
-    ).forEach(([varName, value]) => {
-      if (is.nullish(value)) this._dom.removeStyle(cardKey, varName);
-      else this._dom.setStyle(cardKey, varName, value);
-    });
+    ).forEach(([varName, value]) => this._dom.setOrRemoveStyle(cardKey, varName, value));
   }
 
   // Shared by _applyWatermarkCSS/_applyPeakMarkerCSS below - one mark's own
@@ -958,8 +926,7 @@ class HACore extends HTMLElement {
     this._dom.setStyle(cardKey, `${vars.value.var}-num`, mark.value);
     this._dom.setStyle(cardKey, vars.opacity.var, mark.opacity);
     this._dom.setStyle(cardKey, vars.lineSize.var, mark.line_size);
-    if (mark.color) this._dom.setStyle(cardKey, vars.color.var, mark.color);
-    else this._dom.removeStyle(cardKey, vars.color.var);
+    this._dom.setOrRemoveStyle(cardKey, vars.color.var, mark.color);
   }
 
   _applyWatermarkCSS(watermark: ResolvedWatermark | null) {
@@ -991,8 +958,7 @@ class HACore extends HTMLElement {
     // Geometry excepted: the band reads --peak-min-value/--peak-max-value,
     // both set just above whether their own mark is drawn or not.
     this._dom.setStyle(cardKey, pm.range.opacity.var, marker.range.opacity);
-    if (marker.range.color) this._dom.setStyle(cardKey, pm.range.color.var, marker.range.color);
-    else this._dom.removeStyle(cardKey, pm.range.color.var);
+    this._dom.setOrRemoveStyle(cardKey, pm.range.color.var, marker.range.color);
   }
 
   // ─── JINJA TEMPLATE RENDERING ─────────────────────────────────────────────
@@ -1535,8 +1501,7 @@ class HABase extends HACore {
   }
 
   _buildStyle() {
-    super._buildStyle(); // _handleWatermarkClasses, _handleBarEffect
-    this._addBaseClasses();
+    super._buildStyle(); // base classes, watermark and peak marks, bar effect
     this._addBaseParameter();
     this._applyConditionalClasses();
     this._handleHiddenComponents();
@@ -1556,10 +1521,6 @@ class HABase extends HACore {
       ['text-shadow', Boolean(config.text_shadow)],
       ['label-left', statusLabelObj(config.status_label).position === 'left'],
     ]);
-  }
-
-  _addBaseClasses() {
-    this._toggleClasses(this._baseClassStyle);
   }
 
   _addBaseParameter() {
@@ -1747,6 +1708,15 @@ class HABase extends HACore {
   }
 
   // ─── Update Trend ─────────────────────────────────────────────────────────
+  // The tick moves a running timer with no new state: what reads the value
+  // follows the bar. Every write below is value-cached.
+  _onAutoRefreshTick() {
+    super._onAutoRefreshTick();
+    this._applyAlertClasses();
+    this._repaintStatusLabel();
+    if (this._cardView.config.trend_indicator) this._applyTrendVisuals((this._cardView as ViewBase).trendNow());
+  }
+
   _updateTrend() {
     if (!this._cardView.config.trend_indicator) return;
 
@@ -1773,8 +1743,7 @@ class HABase extends HACore {
       is.plainObject(config) && (direction === 'up' || direction === 'down' || direction === 'flat')
         ? ((config[`${direction}_color`] as string | undefined) ?? (config.colored ? this._cardView.iconColor : null))
         : null;
-    if (resolved) this._dom.setStyle(cardKey, varName, resolved);
-    else this._dom.removeStyle(cardKey, varName);
+    this._dom.setOrRemoveStyle(cardKey, varName, resolved);
   }
 
   // ─── ICON MANAGEMENT ──────────────────────────────────────────────────────
@@ -2048,11 +2017,8 @@ class HABase extends HACore {
     return [];
   }
 
-  // `immediate`: bypasses DOMHelper's RAF batching (setTextNow instead of
-  // setText), used by _onAutoRefreshTick - a RAF callback's own cadence isn't
-  // aligned to _startAutoRefresh's wall-clock tick, so a ticking countdown's
-  // text would land up to ~16ms off from one paint to the next otherwise.
-  // Everywhere else keeps the batched path.
+  // `immediate` (the tick's): setTextNow, not the RAF-batched setText - a frame
+  // would land a countdown's text up to ~16ms off the deadline it was due at.
   _processStandardFields(immediate = false) {
     (this.constructor as typeof HABase)._getStandardFields(this._cardView).forEach(({ className, value }) => {
       if (immediate) this._dom.setTextNow(className, value);
@@ -2119,7 +2085,7 @@ class HABase extends HACore {
   // Advanced mode's own trigger (see schema.ts's alert_when.jinja) - shared
   // by every variant, unlike above/below (_renderJinjaNumber, Card-only).
   _renderAlertWhenJinja(content: unknown) {
-    if (!is.nonEmptyString(this._cardView.config?.alert_when?.jinja)) return;
+    if (!this._cardView.hasJinjaAlertWhen) return;
     this._cardView.jinjaAlertResult = content;
     this._applyAlertClasses();
   }
@@ -2261,8 +2227,7 @@ class HABase extends HACore {
     // Defensive: only apply while icon_animation is still in { effect, jinja }
     // mode - guards against a push arriving right as the user switches modes
     // (mirrors EntityProgressCardBase._renderJinjaNumber).
-    const iconAnimation = this._cardView.config?.icon_animation;
-    if (!(is.plainObject(iconAnimation) && is.nonEmptyString((iconAnimation as { jinja?: string }).jinja))) return;
+    if (!this._cardView.hasJinjaIconAnimation) return;
     this._cardView.jinjaIconAnimationActive = content;
     // Every other Jinja setter re-applies its own changed layer - this one
     // didn't, so the value only took effect once something else re-ran

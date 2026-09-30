@@ -314,7 +314,9 @@ class EntityProgressFeatures extends HACore {
     const observerOptions = { attributes: true, attributeFilter: ['style'] };
     let observer: MutationObserver | null = null;
     const fix = () => {
-      const rowSize = parseInt(getComputedStyle(cardContainer).getPropertyValue(HA_CONTEXT.styles.rowSize));
+      // Inline, where HA writes it and this observer watches: getComputedStyle
+      // would force a style recalculation on every one of HA's re-renders.
+      const rowSize = parseInt(cardContainer.style.getPropertyValue(HA_CONTEXT.styles.rowSize));
       if (!rowSize) return;
       const targetRowSize = rowSize - 1;
       // Disconnect first: these 4 writes must not be recorded as mutations
@@ -430,14 +432,20 @@ class EntityProgressTemplateBase extends HABase {
 
   // ─── CSS MANAGEMENT ───────────────────────────────────────────────────────
 
-  _updateCSS() {
+  // What a repaint and a percent push both paint with, read off the view.
+  get #templateColors() {
     const bar = this._cardView;
-    this._applyProgressCSS(null, {
-      barColor: bar.barColor,
+    return {
       iconColor: bar.iconColor,
+      barColor: bar.barColor,
       gradient: bar.templateThemeGradient,
       diverging: bar.templateThemeDivergingGradient,
-    });
+    };
+  }
+
+  _updateCSS() {
+    this._applyProgressCSS(null, this.#templateColors);
+    const bar = this._cardView;
     this._applyWatermarkCSS(bar.hasWatermark ? bar.watermark : null);
   }
 
@@ -540,21 +548,10 @@ class EntityProgressTemplateBase extends HABase {
     const isCenterZero = Boolean(this._cardView.config.center_zero);
     const clamped = ProgressMath.clampPercent(value, isCenterZero);
 
-    // theme (percent: true only) re-derives icon/bar color (and, with
-    // bar_color_mode set, the gradient) from this same push - see
-    // _getJinjaHandlers's own color/bar_color comment for why those two
-    // stand down. Unclamped value: ThemeManager.#setStyle already clamps to
-    // its own first/last zone for an out-of-range value. All four options
-    // read straight off _cardView, the same getters _updateCSS's own repaint
-    // would read - no local computation to keep in sync.
+    // theme re-derives icon/bar color (and gradient) from this push. Unclamped:
+    // ThemeManager already clamps to its own first/last zone.
     if (this._cardView.config.theme) this._cardView.setTemplateThemeValue(value);
-    const bar = this._cardView;
-    this._renderPercentCSS(clamped, {
-      iconColor: bar.iconColor,
-      barColor: bar.barColor,
-      gradient: bar.templateThemeGradient,
-      diverging: bar.templateThemeDivergingGradient,
-    });
+    this._renderPercentCSS(clamped, this.#templateColors);
     // status_label's own fallback color (color_source: 'bar'/'icon', see its
     // own comment) depends on the same theme this push may have just moved -
     // without this, the pill only caught up on some unrelated hass update

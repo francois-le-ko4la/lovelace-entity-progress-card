@@ -7,7 +7,6 @@
 import {
   HA_CONTEXT,
   CARD,
-  THEME,
   SEV,
   MIN_VALUE_ENTITY_PATH,
   MAX_VALUE_ENTITY_PATH,
@@ -24,6 +23,7 @@ import {
   isMarkOverride,
   SCHEMA_DEFAULTS,
   THEME_ALIASES,
+  rawThemeRange,
   entityOf,
   attributeOf,
   type ValueConfig,
@@ -76,6 +76,15 @@ const hasLegacyWatermarkMarkKeys = (config: LovelaceConfig, side: 'low' | 'high'
 // aggregator's own children were able to draw.
 const LEGACY_BARE_ROW = ['icon', 'name'];
 
+const attributeMappingOf = (entityId: string) =>
+  HA_CONTEXT.attributeMapping[HassProviderSingleton.getEntityDomain(entityId) as string];
+
+// Multi only, top level or per row - harmless for every other type, which has
+// no such key to carry.
+const setOnCardOrRow = (config: LovelaceConfig, key: string): boolean =>
+  config?.[key] !== undefined ||
+  (is.array(config?.entities) && config.entities.some((row: unknown) => is.plainObject(row) && row[key] !== undefined));
+
 // Single source for "this config still uses a deprecated shape" - read by the
 // console warnings and migrations below, and by the editor's Migrate button.
 // A scaled attribute (light's 0-255 brightness, media_player's 0-1
@@ -85,7 +94,7 @@ const LEGACY_BARE_ROW = ['icon', 'name'];
 // scale, or null when the config is fine.
 const nativeScaleMaxValue = (config: LovelaceConfig): number | null => {
   if (!is.nonEmptyString(config?.entity)) return null;
-  const mapping = HA_CONTEXT.attributeMapping[HassProviderSingleton.getEntityDomain(config.entity) as string];
+  const mapping = attributeMappingOf(config.entity);
   if (!mapping?.scale) return null;
   return config?.attribute === mapping.attribute && config?.max_value === mapping.scale ? mapping.scale : null;
 };
@@ -101,24 +110,27 @@ const DEPRECATED_OPTIONS: Record<string, (config: LovelaceConfig) => boolean> = 
   navigate_to: (config) => config?.navigate_to !== undefined,
   show_more_info: (config) => config?.show_more_info !== undefined,
   theme: (config) => Boolean(THEME_ALIASES[config?.theme]),
-  // Multi only, top level or per row - harmless for every other type, which
-  // has no such key to carry.
-  // Multi only. Superseded by the card's own reverse_secondary_info_row now
-  // that a row is a card - one spelling, so the two can't disagree.
-  value_position: (config) =>
-    config?.value_position !== undefined ||
-    (is.array(config?.entities) &&
-      config.entities.some((row: unknown) => is.plainObject(row) && row.value_position !== undefined)),
-  show_value: (config) =>
-    config?.show_value !== undefined ||
-    (is.array(config?.entities) &&
-      config.entities.some((row: unknown) => is.plainObject(row) && row.show_value !== undefined)),
+  // Superseded by the card's own reverse_secondary_info_row now that a row is a
+  // card - one spelling, so the two can't disagree.
+  value_position: (config) => setOnCardOrRow(config, 'value_position'),
+  show_value: (config) => setOnCardOrRow(config, 'show_value'),
 };
+
+const deprecatedOptionsOf = (config: LovelaceConfig): string[] =>
+  Object.keys(DEPRECATED_OPTIONS).filter((option) => DEPRECATED_OPTIONS[option](config));
 
 // Also drives the editor's "Migrate config" button - see
 // docs/troubleshooting.md#deprecated-options.
-const hasDeprecatedOptions = (config: LovelaceConfig): boolean =>
-  Object.values(DEPRECATED_OPTIONS).some((isPresent) => isPresent(config));
+const hasDeprecatedOptions = (config: LovelaceConfig): boolean => deprecatedOptionsOf(config).length > 0;
+
+const resolveCenterZero = (centerZero: unknown): { enabled: boolean; zeroValue: number; growthPercent: boolean } => {
+  if (!is.plainObject(centerZero)) return { enabled: Boolean(centerZero), zeroValue: 0, growthPercent: false };
+  return {
+    enabled: true,
+    zeroValue: is.number(centerZero.value) ? centerZero.value : 0,
+    growthPercent: Boolean(centerZero.growth_percent),
+  };
+};
 
 class BaseConfigHelper {
   #hassProvider = HassProviderSingleton.getInstance();
@@ -151,7 +163,7 @@ class BaseConfigHelper {
   #userKeys: ReadonlySet<string> = new Set();
 
   constructor() {
-    this.#log = initLogger(this, false);
+    this.#log = initLogger(this, 'BaseConfigHelper', false);
   }
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
@@ -168,7 +180,8 @@ class BaseConfigHelper {
       this._yamlSchema,
       `${this.constructor.name}: set config called with no _yamlSchema (only concrete subclasses define one)`,
     );
-    const customized = (this.constructor as typeof BaseConfigHelper)._customizeConfig(config);
+    const helperClass = this.constructor as typeof BaseConfigHelper;
+    const customized = helperClass._customizeConfig(config);
     // Captured here because this is the last point where it exists: the schema
     // fills an absent max_value with its own default (types.fallbackTo), and
     // the raw config is not kept. Values, not keys - _customizeConfig drops a
@@ -179,7 +192,7 @@ class BaseConfigHelper {
         .filter(([, value]) => value !== undefined)
         .map(([key]) => key),
     );
-    this._configParsed = yamlSchema.parse(customized);
+    this._configParsed = yamlSchema.parse(helperClass._applyDefaults(customized));
     this._configResolved = BaseConfigHelper.#resolveConfig(this._configParsed?.config);
     this.#resolveDisplayDefaults();
 
@@ -217,7 +230,7 @@ class BaseConfigHelper {
     entity.entityId = config.entity;
     entity.attribute = is.nonEmptyString(config.attribute) ? config.attribute : null;
 
-    const maxIsEntity = is.plainObject(config.max_value) && is.nonEmptyString(config.max_value.entity);
+    const maxIsEntity = is.nonEmptyString(entityOf(config.max_value as ValueConfig));
     const resolvedUnit = resolveDisplayUnit(config.unit, maxIsEntity, entity.unit);
     config.resolvedUnit = resolvedUnit;
     config.resolvedDecimal = resolveDisplayDecimal(config.decimal, {
@@ -234,31 +247,20 @@ class BaseConfigHelper {
   static #resolveConfig(config: Record<string, unknown> | null | undefined): Config {
     return {
       ...config,
-      centerZero: BaseConfigHelper.#resolveCenterZero(
-        config?.center_zero as boolean | { value?: number; growth_percent?: boolean } | null | undefined,
-      ),
+      centerZero: resolveCenterZero(config?.center_zero),
     } as unknown as Config;
   }
 
-  static #resolveCenterZero(centerZero: boolean | { value?: number; growth_percent?: boolean } | null | undefined): {
-    enabled: boolean;
-    zeroValue: number;
-    growthPercent: boolean;
-  } {
-    if (!centerZero) return { enabled: false, zeroValue: 0, growthPercent: false };
-    if (centerZero === true) return { enabled: true, zeroValue: 0, growthPercent: false };
-    return {
-      enabled: true,
-      zeroValue: is.number(centerZero.value) ? centerZero.value : 0,
-      growthPercent: Boolean(centerZero.growth_percent),
-    };
-  }
-
-  // CardConfigHelper overrides this with its own extra migrations, but still
-  // routes through _migrateLegacyOptions - Template/BadgeTemplate don't
-  // override either, so this is the only call site keeping them migrated.
+  // Migrations only - each class's own _migrateLegacyOptions: what the user
+  // wrote, in today's spelling.
   static _customizeConfig(config: LovelaceConfig): LovelaceConfig {
     return (this as typeof BaseConfigHelper)._migrateLegacyOptions(config);
+  }
+
+  // What the card fills in where the user wrote nothing. Applied after the
+  // wasSetByUser snapshot, so none of it ever reads as theirs.
+  static _applyDefaults(config: LovelaceConfig): LovelaceConfig {
+    return config;
   }
 
   // Only watermark migrates here - Template/BadgeTemplate's schema has no
@@ -299,7 +301,8 @@ class BaseConfigHelper {
     if (!DEPRECATED_OPTIONS.value_position(config)) return config;
     return BaseConfigHelper._atBothLevels(config, (level) => {
       const { value_position: position, ...rest } = level;
-      if (position === undefined) return rest;
+      // The new key, already written, says it: the old one only leaves.
+      if (position === undefined || rest.reverse_secondary_info_row !== undefined) return rest;
       return { ...rest, reverse_secondary_info_row: position === 'right' };
     });
   }
@@ -311,9 +314,9 @@ class BaseConfigHelper {
       // Absent at this level: it says nothing about this level's look, so
       // nothing is decided here - the other one may still speak for it.
       if (showValue === undefined) return rest;
-      const hide = new Set([...(is.array(rest.hide) ? (rest.hide as string[]) : []), ...LEGACY_BARE_ROW]);
-      if (showValue === false) hide.add('secondary_info');
-      return { ...rest, hide: [...hide] };
+      // A row had no hide before show_value went: one written is the new form.
+      if (rest.hide !== undefined) return rest;
+      return { ...rest, hide: showValue === false ? [...LEGACY_BARE_ROW, 'secondary_info'] : [...LEGACY_BARE_ROW] };
     });
   }
 
@@ -331,7 +334,10 @@ class BaseConfigHelper {
       // modern hidden shorthand) must win outright, even alongside a stale
       // low_color sibling - otherwise it gets wrapped into a shown override
       // object with a nonsensical value: false.
-      if (raw === false || wm[`disable_${side}`] === true) return { [side]: false };
+      if (raw === false) return { [side]: false };
+      // Already the override shape: its own as/color/visibility say it all.
+      if (isMarkOverride(raw)) return {};
+      if (wm[`disable_${side}`] === true) return { [side]: false };
       const value = is.nonEmptyString(raw) ? { entity: raw, attribute: wm[`${side}_attribute`] } : raw;
       const as = wm[`${side}_as`];
       const color = wm[`${side}_color`];
@@ -593,26 +599,15 @@ class CardConfigHelper extends BaseConfigHelper {
   // overrides the symmetric mirror with the theme's own lowest zone bound
   // instead (-50 for temperature, not -max_value) - it already defines how
   // far its negative branch realistically extends.
-  static _applyCenterZeroMinDefault(config: LovelaceConfig, normalized: LovelaceConfig): LovelaceConfig {
-    if (!config?.center_zero || !is.nullish(config?.min_value)) return normalized;
-    const theme = THEME[config.theme as keyof typeof THEME];
-    if (theme && theme.percent === false && is.nonEmptyArray(theme.style)) {
-      // Cast: percent === false already rules out themes like `light`
-      // (linear, no min/max per zone - split by index instead) at runtime,
-      // but TS still unions every theme's own zone shape here since the
-      // theme key isn't statically known.
-      const mins = (theme.style as { min?: unknown }[]).map((zone) => zone.min).filter(is.number);
-      if (mins.length) return { ...normalized, min_value: Math.min(...mins) };
-    }
-    const maxForSymmetry = is.number(normalized?.max_value) ? normalized.max_value : CARD.config.value.max;
-    return { ...normalized, min_value: -maxForSymmetry };
+  static _applyCenterZeroMinDefault(config: LovelaceConfig): LovelaceConfig {
+    if (!config?.center_zero || !is.nullish(config?.min_value)) return config;
+    const bottom = rawThemeRange(config.theme)?.min;
+    if (!is.nullish(bottom)) return { ...config, min_value: bottom };
+    const maxForSymmetry = is.number(config?.max_value) ? config.max_value : CARD.config.value.max;
+    return { ...config, min_value: -maxForSymmetry };
   }
 
-  // Legacy-syntax rewriting only — never touches unrelated defaults
-  // (center_zero's min_value fill-in, device_class attribute defaults live in
-  // _customizeConfig instead). Extracted so the editor's "Migrate config"
-  // button can reuse exactly this transformation (via the config helper,
-  // polymorphically) without also re-applying those unrelated defaults. CF5 -
+  // Legacy-syntax rewriting only — the defaults live in _applyDefaults. CF5 -
   // issue (major) resolved - max_value used to be number|entity-id-string with
   // the mode sniffed at runtime (is.number/is.string), the exact pattern that
   // caused min_value's freeze bug. Bare-entity-string configs (pre-1.6) are
@@ -650,7 +645,8 @@ class CardConfigHelper extends BaseConfigHelper {
     if (is.array(config?.additions)) {
       normalized = {
         ...normalized,
-        bar_stack: { mode: 'proportional', entities: config.additions },
+        // A bar_stack already written is the new form: additions only leaves.
+        ...(config.bar_stack === undefined && { bar_stack: { mode: 'proportional', entities: config.additions } }),
         additions: undefined,
       };
     }
@@ -658,25 +654,16 @@ class CardConfigHelper extends BaseConfigHelper {
     return normalized;
   }
 
-  static _customizeConfig(config: LovelaceConfig): LovelaceConfig {
-    let normalized = CardConfigHelper._migrateLegacyOptions(config);
-    normalized = CardConfigHelper._applyCenterZeroMinDefault(config, normalized);
-    const attrMapping = HA_CONTEXT.attributeMapping;
+  static _applyDefaults(config: LovelaceConfig): LovelaceConfig {
+    const normalized = CardConfigHelper._applyCenterZeroMinDefault(config);
+    const maxEntity = entityOf(normalized?.max_value as ValueConfig);
     return {
       ...normalized,
       ...(is.nonEmptyString(normalized?.entity) && is.nullish(normalized?.attribute)
-        ? {
-            attribute: attrMapping[HassProviderSingleton.getEntityDomain(normalized?.entity) as string]?.attribute,
-          }
+        ? { attribute: attributeMappingOf(normalized.entity)?.attribute }
         : {}),
-      ...(is.nonEmptyString(normalized?.max_value?.entity) && is.nullish(normalized?.max_value?.attribute)
-        ? {
-            max_value: {
-              ...normalized.max_value,
-              attribute:
-                attrMapping[HassProviderSingleton.getEntityDomain(normalized.max_value.entity) as string]?.attribute,
-            },
-          }
+      ...(is.nonEmptyString(maxEntity) && is.nullish(attributeOf(normalized?.max_value as ValueConfig))
+        ? { max_value: { ...normalized.max_value, attribute: attributeMappingOf(maxEntity)?.attribute } }
         : {}),
     };
   }
@@ -727,16 +714,17 @@ class BadgeTemplateConfigHelper extends BaseConfigHelper {
 }
 
 /**
- * Config helper for both Multi aggregators. Plain BaseConfigHelper: an
- * aggregator has no entity, icon or action of its own to negotiate - every row
- * option it carries is a default its children re-validate for themselves (see
- * multi.ts's #childConfigs).
+ * Config helper for both Multi aggregators. No defaults of its own: an
+ * aggregator has no entity, icon or action to negotiate - every row option it
+ * carries is a default its children re-validate for themselves (see multi.ts's
+ * #childConfigs). Its migrations are the card's, plus its own: what it
+ * carries is card options.
  *
  * @extends BaseConfigHelper
  */
 class MultiConfigHelper extends BaseConfigHelper {
   static _customizeConfig(config: LovelaceConfig): LovelaceConfig {
-    return BaseConfigHelper._customizeConfig(
+    return CardConfigHelper._customizeConfig(
       MultiConfigHelper._migrateShowValue(
         MultiConfigHelper._migrateValuePosition(MultiConfigHelper._migrateSharedRowIdentity(config)),
       ),
@@ -764,31 +752,37 @@ class MultiConfigHelper extends BaseConfigHelper {
 }
 
 /**
- * MultiConfigHelper variant for the standalone card —
- * `YamlSchemaFactory.multiCard`.
- *
- * @extends MultiConfigHelper
- */
-/**
  * One row of a Multi, edited on its own — `YamlSchemaFactory.multiRow`. Same
- * migrations as its aggregator (show_value was settable per row too).
+ * migrations as its aggregator (show_value was settable per row too), and the
+ * card's own defaults: the row renders as that card (multi.ts), so its editor
+ * has to show what the card will use.
  *
  * @extends MultiConfigHelper
  */
 class MultiRowConfigHelper extends MultiConfigHelper {
-  _yamlSchema = YamlSchemaFactory.multiRow;
+  _yamlSchema: Schema = YamlSchemaFactory.multiRow;
+
+  static _applyDefaults(config: LovelaceConfig): LovelaceConfig {
+    return CardConfigHelper._applyDefaults(config);
+  }
 }
 
 /**
  * The same row, inside a Feature — `YamlSchemaFactory.multiFeatureRow`, which
  * drops what a few pixels of icon cannot carry.
  *
- * @extends MultiConfigHelper
+ * @extends MultiRowConfigHelper
  */
-class MultiFeatureRowConfigHelper extends MultiConfigHelper {
+class MultiFeatureRowConfigHelper extends MultiRowConfigHelper {
   _yamlSchema = YamlSchemaFactory.multiFeatureRow;
 }
 
+/**
+ * MultiConfigHelper variant for the standalone card —
+ * `YamlSchemaFactory.multiCard`.
+ *
+ * @extends MultiConfigHelper
+ */
 class MultiCardConfigHelper extends MultiConfigHelper {
   _yamlSchema = YamlSchemaFactory.multiCard;
 }
@@ -804,8 +798,8 @@ class MultiFeatureConfigHelper extends MultiConfigHelper {
 }
 
 export type { ActionBag };
-export { hasDeprecatedOptions };
-export { BaseConfigHelper };
+export { hasDeprecatedOptions, deprecatedOptionsOf };
+export { BaseConfigHelper, resolveCenterZero };
 export { CardConfigHelper };
 export { BadgeConfigHelper };
 export { FeatureConfigHelper };

@@ -2374,10 +2374,22 @@ progress percentage on the card depends entirely on which integration you're
 using. Here are three real, verified examples — from "just point the card at it"
 to "you need a helper".
 
+**What all three have in common: the icon animation**
+
+[`icon_animation`][config-icon_animation]`: washing_machine` behaves identically
+on all three brands, and needs no configuration at all — you never name the
+status entity. When `entity` is a plain `sensor` (a progress percentage, an
+elapsed time…), the card checks every other entity of the same device and
+animates while any of them reports `run` or `in_use` — exactly what Home
+Connect, Miele and SmartThings each publish. All three examples below include
+it.
+
 **1. Home Connect (Bosch/Siemens) — direct, no extra config**
 
 Home Connect exposes progress natively as a percentage sensor
-(`sensor.<appliance>_program_progress`, 0-100%). Just point `entity` at it:
+(`sensor.<appliance>_program_progress`, 0-100%). Point `entity` at it, and read
+the end of the cycle off `sensor.<appliance>_program_finish_time`
+(`device_class: timestamp`):
 <details>
 <summary>Show YAML</summary>
 
@@ -2385,40 +2397,66 @@ Home Connect exposes progress natively as a percentage sensor
 type: custom:entity-progress-card
 entity: sensor.washing_machine_program_progress
 name: Washing Machine
+icon: mdi:washing-machine
+icon_animation: washing_machine
+bar_size: large
+name_info: >-
+  {% if has_value('sensor.washing_machine_program_finish_time') %}ready at {{
+  as_timestamp(states('sensor.washing_machine_program_finish_time')) |
+  timestamp_custom('%H:%M', true) }}{% endif %}
 ```
 
 </details>
 
 **2. Miele — Jinja `max_value`, no helper needed**
 
-Miele exposes `elapsed_time` and `remaining_time` (minutes) but no ready-made
-percentage. Combine them with a Jinja `max_value`. `unit: '%'` is required here:
-`elapsed_time` has `device_class: duration`, and without it the card would show
-the raw elapsed time instead of the percentage (the bar fill itself is correct
-either way — only the text label is affected):
+Miele exposes `elapsed_time` and `remaining_time` (both in minutes,
+`device_class: duration`) but no ready-made percentage. Combine them with a
+Jinja [`max_value`][config-max_value].
+
+[`unit`][config-unit]`: '%'` is required here: `elapsed_time` being a duration,
+the card would otherwise print the raw elapsed time instead of the percentage.
+The bar fill is correct either way — only the text label changes. Drop the line
+if you would rather read `1h 12min` than `63%`.
 <details>
 <summary>Show YAML</summary>
 
 ```yaml
 type: custom:entity-progress-card
 entity: sensor.washing_machine_elapsed_time
+name: Washing Machine
+icon: mdi:washing-machine
+icon_animation: washing_machine
 unit: '%'
+bar_size: large
 max_value:
   jinja: >
     {{ (states('sensor.washing_machine_elapsed_time') | float(0))
        + (states('sensor.washing_machine_remaining_time') | float(0)) }}
+name_info: >-
+  {% if has_value('sensor.washing_machine_remaining_time') %}{{
+  states('sensor.washing_machine_remaining_time') }} min left{% endif %}
 ```
 
 </details>
 
-**3. Samsung (SmartThings) — the worst case, full helper setup**
+> [!NOTE]
+>
+> Between two cycles, `elapsed_time` and `remaining_time` are both `0`, so
+> `max_value` resolves to `0` as well. The card degrades to 0% rather than
+> erroring — that is expected, not a misconfiguration.
 
-SmartThings is the hardest of the three: it only exposes `machine_state`
-(run/pause/stop), `job_state` (current phase), and `completion_time` (an
-absolute end-of-cycle timestamp) — no elapsed time, no remaining time, and no
-start time to anchor a calculation. Unlike the previous two, this can't be
-solved with card config alone: you first need to _create_ a start time yourself,
-then apply the "Simple Helper" technique from the next recipe:
+**3. Samsung (SmartThings) — the animation is free, the progress is not**
+
+SmartThings only exposes `machine_state` (`run`/`pause`/`stop`), `job_state`
+(the current phase) and `completion_time` (an absolute end-of-cycle timestamp) —
+no elapsed time, no remaining time, and no start time to anchor a calculation.
+
+The animation still works out of the box, exactly like the other two:
+`machine_state` reports `run`, which is all the card looks for. The progress
+**bar** is the part card config alone cannot solve — you first need to _create_
+a start time yourself, then apply the "Simple Helper" technique from the next
+recipe:
 
 - Create an `input_datetime` helper (e.g. `input_datetime.washer_start`).
 - Add an automation that sets it to `now()` whenever
@@ -2426,6 +2464,13 @@ then apply the "Simple Helper" technique from the next recipe:
 - Follow [Cracking a Complex Case with a Simple Helper](#simple-helper) below,
   using `input_datetime.washer_start` as the start time and
   `sensor.washing_machine_completion_time` as the end time.
+
+Then add the same two lines as the other two brands to the resulting card:
+
+```yaml
+icon: mdi:washing-machine
+icon_animation: washing_machine
+```
 
 [🔼 Back to top]
 

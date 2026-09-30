@@ -7,8 +7,9 @@
 
 import { CARD_CONTEXT, HA_CONTEXT, CARD, SEV, VERSION } from './parameters.js';
 import { TRANSLATION_KEYS, EDITOR_KEY_START, TRANSLATIONS_CARD, TRANSLATIONS_EDITOR_EN } from './translations.js';
-import { is, has } from './common-checks.js';
+import { is, has, getOrCreate } from './common-checks.js';
 import { Logger, type LoggerInstance } from './log.js';
+import { relativeAge } from './clock.js';
 
 // Phantom brand (never actually present at runtime) marking a value as "the
 // real HA hass object", vs. plain `any` - guards against passing some OTHER
@@ -104,7 +105,11 @@ function resolveLabel(value: string | number, localize?: Localize): string | num
 // Markers are resolved here rather than at each read, so no caller can reach
 // a label without them - the editor half is only ever built from
 // ensureEditorTranslations, with HA's lovelace fragment loaded.
-function buildTranslationTree(lang: string, editorValues?: EditorRow, localize?: Localize): Record<string, unknown> {
+function buildTranslationTree(
+  lang: string,
+  localize?: Localize,
+  editorValues?: EditorRow | null,
+): Record<string, unknown> {
   const cardValues = TRANSLATIONS_CARD[lang as keyof typeof TRANSLATIONS_CARD];
   const tree: Record<string, unknown> = {};
   TRANSLATION_KEYS.forEach((key, i) => {
@@ -124,6 +129,35 @@ function buildTranslationTree(lang: string, editorValues?: EditorRow, localize?:
 // open - the only moment HA's lovelace translation fragment is guaranteed
 // loaded, and therefore the only moment its labels resolve.
 const editorReady = new Set<string>();
+
+// Resolving a locale builds Intl.NumberFormat objects, the costliest step of
+// a refresh - and its two inputs change once a session at most.
+const numberLocaleCache = new Map<string, string>();
+
+// hass.entities is replaced only when the registry changes: the object itself
+// keys its index, and a stale index is freed along with it.
+const deviceIndexCache = new WeakMap<object, Map<string, string[]>>();
+
+const entitiesByDevice = (entities: Record<string, EntityRegistryEntry>): Map<string, string[]> =>
+  getOrCreate(deviceIndexCache, entities, () => {
+    const index = new Map<string, string[]>();
+    for (const [entityId, entry] of Object.entries(entities)) {
+      const deviceId = entry?.device_id;
+      if (deviceId) getOrCreate(index, deviceId, () => []).push(entityId);
+    }
+    return index;
+  });
+
+// Every other entity of entityId's own device. An entity without a unique_id
+// is absent from the registry, and so has no device to share.
+const sameDeviceEntities = (entities: Record<string, EntityRegistryEntry> | undefined, entityId: string): string[] => {
+  const deviceId = entities?.[entityId]?.device_id;
+  if (!entities || !deviceId) return [];
+  return (entitiesByDevice(entities).get(deviceId) ?? []).filter((id) => id !== entityId);
+};
+
+// Read as a relative time ('5 minutes ago') - which ages with no state change.
+const RELATIVE_TIME_PROPS = new Set(['last_changed', 'last_updated']);
 
 // Last resort when the bundle's own URL can't be read: HACS installs this card
 // under its repository name.
@@ -162,11 +196,7 @@ async function fetchEditorRow(lang: string): Promise<EditorRow | null> {
 }
 
 function cachedTranslationTree(lang: string, localize?: Localize): Record<string, unknown> {
-  const cached = translationTreeCache.get(lang);
-  if (cached) return cached;
-  const tree = buildTranslationTree(lang, undefined, localize);
-  translationTreeCache.set(lang, tree);
-  return tree;
+  return getOrCreate(translationTreeCache, lang, () => buildTranslationTree(lang, localize));
 }
 
 /**
@@ -244,7 +274,7 @@ class HassProviderSingleton {
 
   get language(): string {
     const lang = this.#hass?.language;
-    return lang && lang in TRANSLATIONS_CARD ? lang : CARD.config.language;
+    return lang && has.own(TRANSLATIONS_CARD, lang) ? lang : CARD.config.language;
   }
 
   // Codes sharing a template+noun pair instead of a full sentence each -
@@ -276,7 +306,13 @@ class HassProviderSingleton {
     return msg[code ?? ''] || `Unknown message code: ${code}`;
   }
 
-  get numberFormat() {
+  get numberFormat(): string {
+    const userDef = this.#hass?.locale?.number_format;
+    const key = `${userDef ?? ''}\u0000${this.language}`;
+    return getOrCreate(numberLocaleCache, key, () => this.#resolveNumberLocale(userDef));
+  }
+
+  #resolveNumberLocale(userDef: string | undefined): string {
     const localeFromLang = (lang: string) => {
       try {
         return new Intl.NumberFormat(lang).resolvedOptions().locale;
@@ -284,7 +320,6 @@ class HassProviderSingleton {
         return 'en-US';
       }
     };
-    const userDef = this.#hass?.locale?.number_format;
     const numberFormatMap: Record<string, string> = {
       ...HA_CONTEXT.numberFormat,
       language: localeFromLang(this.language),
@@ -327,19 +362,14 @@ class HassProviderSingleton {
     if (editorReady.has(lang)) return;
     let row: EditorRow | null = TRANSLATIONS_EDITOR_EN;
     if (lang !== CARD.config.language) {
-      let pending = HassProviderSingleton.#editorRows.get(lang);
-      if (!pending) {
-        pending = fetchEditorRow(lang);
-        HassProviderSingleton.#editorRows.set(lang, pending);
-      }
-      row = await pending;
+      row = await getOrCreate(HassProviderSingleton.#editorRows, lang, () => fetchEditorRow(lang));
       this.#log?.debug(`editor translations for ${lang}: ${row ? 'loaded' : 'unavailable, staying in English'}`);
     }
     if (editorReady.has(lang)) return;
     editorReady.add(lang);
     // Rebuilt even when the fetch failed, and even for English: what changes
     // here is that HA's own labels finally resolve.
-    translationTreeCache.set(lang, buildTranslationTree(lang, row ?? undefined, this.#hass?.localize));
+    translationTreeCache.set(lang, buildTranslationTree(lang, this.#hass?.localize, row));
     if (this.language === lang) this.#loadTranslations(lang);
   }
 
@@ -386,7 +416,7 @@ class HassProviderSingleton {
   }
 
   #formatEntityProp(entityId: string, prop: string): string {
-    if (prop === 'last_changed' || prop === 'last_updated')
+    if (RELATIVE_TIME_PROPS.has(prop))
       return this.getRelativeTime(this.#resolveEntityProp(entityId, prop) as string | null);
 
     const stateObj = this.getEntityStateObj(entityId);
@@ -426,10 +456,13 @@ class HassProviderSingleton {
     return (this.#entityEntry(entityId)?.name as string) ?? null;
   }
 
-  getEntityDevice(entityId: string): string | null {
+  #deviceEntry(entityId: string): DeviceRegistryEntry | undefined {
     const deviceId = this.#entityEntry(entityId)?.device_id;
-    if (!deviceId) return null;
-    const device = this.#hass?.devices?.[deviceId as string];
+    return deviceId ? this.#hass?.devices?.[deviceId as string] : undefined;
+  }
+
+  getEntityDevice(entityId: string): string | null {
+    const device = this.#deviceEntry(entityId);
     // CF5 - issue (medium) resolved - only `.name` (the integration-assigned
     // default) was read, ignoring `.name_by_user` (set when the user renames
     // the device in Settings). HA's own computeDeviceNameDisplay prioritizes
@@ -446,20 +479,14 @@ class HassProviderSingleton {
   // its charging-status sensor battery_state, not anything containing
   // "charg".
   getSameDeviceEntities(entityId: string): string[] {
-    const deviceId = this.#entityEntry(entityId)?.device_id;
-    if (!deviceId) return [];
-    return Object.keys(this.#hass?.entities ?? {}).filter(
-      (id) => id !== entityId && this.#entityEntry(id)?.device_id === deviceId,
-    );
+    return sameDeviceEntities(this.#hass?.entities, entityId);
   }
 
   // Shared by getEntityArea/getEntityFloor below - an entity's own area_id,
   // falling back to its device's.
   #resolveAreaId(entityId: string): string | null {
-    const entityAreaId = this.#entityEntry(entityId)?.area_id;
-    if (entityAreaId) return entityAreaId as string;
-    const deviceId = this.#entityEntry(entityId)?.device_id;
-    return deviceId ? (this.#hass?.devices?.[deviceId as string]?.area_id ?? null) : null;
+    const entityAreaId = this.#entityEntry(entityId)?.area_id as string | undefined;
+    return entityAreaId || (this.#deviceEntry(entityId)?.area_id ?? null);
   }
 
   getEntityArea(entityId: string): string | null {
@@ -480,34 +507,14 @@ class HassProviderSingleton {
 
   isEntityAvailable(entityId: string): boolean {
     const state = this.getEntityStateObj(entityId)?.state;
-    return state !== 'unavailable' && state !== 'unknown';
+    const { unavailable, unknown } = HA_CONTEXT.entity.state;
+    return state !== unavailable && state !== unknown;
   }
 
   getRelativeTime(curTime: string | null): string {
     if (!curTime) return '';
-
-    const startTime = new Date(curTime).getTime();
-    const now = Date.now();
-    const diffInSeconds = Math.floor((startTime - now) / 1000);
-
-    const units: { unit: Intl.RelativeTimeFormatUnit; seconds: number }[] = [
-      { unit: 'year', seconds: 31536000 },
-      { unit: 'month', seconds: 2592000 },
-      { unit: 'day', seconds: 86400 },
-      { unit: 'hour', seconds: 3600 },
-      { unit: 'minute', seconds: 60 },
-      { unit: 'second', seconds: 1 },
-    ];
-
-    // 'second' (last entry) always matches, so find() never actually falls
-    // through to this fallback - the array can't run out without a hit. The
-    // fallback just gives the type checker a real, always-defined value
-    // instead of asserting one that's already unreachable.
-    const { unit, seconds } =
-      units.find(({ unit: u, seconds: s }) => Math.abs(diffInSeconds) >= s || u === 'second') ??
-      units[units.length - 1];
-    const value = Math.round(diffInSeconds / seconds);
-    return this.#getRelativeTimeFormat().format(value, unit);
+    const { value, unit } = relativeAge(Date.now() - new Date(curTime).getTime());
+    return this.#getRelativeTimeFormat().format(-value, unit);
   }
 
   getNumericAttributes(entityId: string): Record<string, number> {
@@ -518,9 +525,9 @@ class HassProviderSingleton {
     );
   }
 
+  // lang is always this.language, already checked against the shipped ones.
   #loadTranslations(lang: string) {
-    const curLanguage = has.own(TRANSLATIONS_CARD, lang) ? lang : CARD.config.language;
-    this.#translations = cachedTranslationTree(curLanguage, this.#hass?.localize);
+    this.#translations = cachedTranslationTree(lang, this.#hass?.localize);
   }
 
   #getRelativeTimeFormat(): Intl.RelativeTimeFormat {
@@ -532,5 +539,5 @@ class HassProviderSingleton {
   }
 }
 
-export { HassProviderSingleton, buildTranslationTree };
+export { HassProviderSingleton, buildTranslationTree, sameDeviceEntities, RELATIVE_TIME_PROPS };
 export type { HomeAssistant, EntityState };

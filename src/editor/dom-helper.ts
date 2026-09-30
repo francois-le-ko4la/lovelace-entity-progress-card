@@ -5,10 +5,10 @@
 
 import { HA_CONTEXT } from '../utils/parameters.js';
 import { is } from '../utils/common-checks.js';
-import { HassProviderSingleton, type HomeAssistant } from '../utils/hass-provider.js';
+import type { HomeAssistant } from '../utils/hass-provider.js';
 import type { LovelaceConfig, Config, FieldDef } from '../utils/types.js';
 import { DOMHelper } from '../card/dom-helpers.js';
-import { SCHEMA_DEFAULTS } from '../card/schema.js';
+import { SCHEMA_DEFAULTS, isToggleDomainEntity } from '../card/schema.js';
 
 // HA's ha-expansion-panel, reduced to what we read: its reflected `expanded`
 // boolean. `expanded-changed` (a CustomEvent<{ expanded: boolean }>) is
@@ -126,15 +126,12 @@ class EditorDOMHelper extends DOMHelper {
   /**
    * Updates the ui-action selector with the effective default_action so that
    * the native ha-selector renders "Default (action-name)" inside the box.
-   * Mirrors the validation preprocess logic for icon_tap_action (toggleDomain).
    */
   _updateActionSelector(name: string, def: FieldDef, config: LovelaceConfig) {
     const key = def.target ?? def.name;
     let defaultAction = SCHEMA_DEFAULTS.actions[key] ?? 'none';
-    if (key === 'icon_tap_action' && config.entity) {
-      const domain = HassProviderSingleton.getEntityDomain(config.entity);
-      if (domain && HA_CONTEXT.actions.toggleDomain.includes(domain)) defaultAction = 'toggle';
-    }
+    if (key === 'icon_tap_action' && is.string(config.entity) && isToggleDomainEntity(config.entity))
+      defaultAction = HA_CONTEXT.actions.toggle.action;
     this.updateSelector(name, { 'ui-action': { default_action: defaultAction } });
   }
 

@@ -67,6 +67,8 @@
       "height_custom_toggle": "Автоматска висина",
       "icon_animation": "Анимација на иконата",
       "interpolate": "Интерполација на бои",
+      "issue_report": "@ui.components.yaml-editor.copy_to_clipboard|Copy to clipboard",
+      "issue_report_copied": "@ui.common.copied_clipboard|Copied to clipboard",
       "marginless": "Без маргина",
       "migrate_config": "Мигрирај конфигурација",
       "min_width": "Мин. ширина",

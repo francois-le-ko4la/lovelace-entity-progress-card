@@ -67,6 +67,8 @@
       "height_custom_toggle": "ความสูงอัตโนมัติ",
       "icon_animation": "แอนิเมชันไอคอน",
       "interpolate": "การสอดแทรกสี",
+      "issue_report": "@ui.components.yaml-editor.copy_to_clipboard|Copy to clipboard",
+      "issue_report_copied": "@ui.common.copied_clipboard|Copied to clipboard",
       "marginless": "ไม่มีระยะขอบ",
       "migrate_config": "ย้ายการตั้งค่า",
       "min_width": "ความกว้างต่ำสุด",

@@ -4,13 +4,13 @@
  * noise to every user.
  */
 
-import { SEV, META } from './parameters.js';
+import { SEV, CARD } from './parameters.js';
 import { has } from './common-checks.js';
 
 // A notice addressed to the user about their own config - not a runtime error,
 // and not gated by the debug flags: the deprecation warnings and the Jinja
 // ones share this shape so both read alike in the console.
-const cardNotice = (msg: string) => console.warn(`${META.types.card.typeName.toUpperCase()} - ${msg}`);
+const cardNotice = (msg: string) => console.warn(`${CARD.console.tag} - ${msg}`);
 
 type Level = 'info' | 'warning' | 'error' | 'debug';
 
@@ -28,26 +28,22 @@ interface LoggerInstance {
 const Logger = {
   create(name: string, level: Level = SEV.debug): LoggerInstance {
     const levels = { error: 0, warning: 1, info: 2, debug: 3 };
-    const currentLevel = levels[level] || 3;
+    const currentLevel = levels[level] ?? levels.debug;
 
     const shouldLog = (logLevel: Level) => levels[logLevel] <= currentLevel;
+    const emit = (logLevel: Level, sink: (...args: unknown[]) => void) => (msg: string, data?: unknown) =>
+      shouldLog(logLevel) && sink(`[${name}] ${msg}`, ...(data !== undefined ? [data] : []));
 
     const loggerInstance: LoggerInstance = {
       name,
       level,
 
-      debug: (msg, data) =>
-        shouldLog(SEV.debug) && console.debug(`[${name}] ${msg}`, ...(data !== undefined ? [data] : [])),
-      info: (msg, data) =>
-        shouldLog(SEV.info) && console.info(`[${name}] ${msg}`, ...(data !== undefined ? [data] : [])),
-      warning: (msg, data) =>
-        shouldLog(SEV.warning) && console.warn(`[${name}] ${msg}`, ...(data !== undefined ? [data] : [])),
-      error: (msg, data) =>
-        shouldLog(SEV.error) && console.error(`[${name}] ${msg}`, ...(data !== undefined ? [data] : [])),
+      debug: emit(SEV.debug, (...args) => console.debug(...args)),
+      info: emit(SEV.info, (...args) => console.info(...args)),
+      warning: emit(SEV.warning, (...args) => console.warn(...args)),
+      error: emit(SEV.error, (...args) => console.error(...args)),
 
       wrap<T extends (...args: unknown[]) => unknown>(fn: T, fnName: string): T {
-        const isAsync = fn.constructor.name === 'AsyncFunction';
-
         const logStart = () => shouldLog(SEV.debug) && console.debug(`[${name}] 👉 ${fnName}`);
         const logSuccess = (start: number) =>
           shouldLog(SEV.debug) && console.debug(`[${name}] ✅ ${fnName} (${(performance.now() - start).toFixed(2)}ms)`);
@@ -55,33 +51,30 @@ const Logger = {
           shouldLog(SEV.error) &&
           console.error(`[${name}] ❌ ${fnName} failed (${(performance.now() - start).toFixed(2)}ms)`, error);
 
-        if (isAsync) {
-          return (async (...args: unknown[]) => {
-            logStart();
-            const start = performance.now();
-            try {
-              const result = await fn(...args);
+        return ((...args: unknown[]) => {
+          logStart();
+          const start = performance.now();
+          try {
+            const result = fn(...args);
+            if (!(result instanceof Promise)) {
               logSuccess(start);
               return result;
-            } catch (error) {
-              logError(start, error);
-              throw error;
             }
-          }) as T;
-        } else {
-          return ((...args: unknown[]) => {
-            logStart();
-            const start = performance.now();
-            try {
-              const result = fn(...args);
-              logSuccess(start);
-              return result;
-            } catch (error) {
-              logError(start, error);
-              throw error;
-            }
-          }) as T;
-        }
+            return result.then(
+              (value: unknown) => {
+                logSuccess(start);
+                return value;
+              },
+              (error: unknown) => {
+                logError(start, error);
+                throw error;
+              },
+            );
+          } catch (error) {
+            logError(start, error);
+            throw error;
+          }
+        }) as T;
       },
 
       wrapAll: (ctx, methodNames) => {
@@ -98,13 +91,14 @@ const Logger = {
   },
 };
 
-function initLogger(ctx: object, debugFlag: boolean, methodNames: string[] = []): LoggerInstance {
-  const className = ctx.constructor.name;
-  const logger = Logger.create(className, debugFlag ? SEV.debug : SEV.info);
+// Callers name themselves: the prod build minifies class names. An element
+// passes its localName - the tag, most-derived for free.
+function initLogger(ctx: object, name: string, debugFlag: boolean, methodNames: string[] = []): LoggerInstance {
+  const logger = Logger.create(name, debugFlag ? SEV.debug : SEV.info);
 
   if (debugFlag) {
     logger.wrapAll(ctx as Record<string, unknown>, methodNames);
-    logger.debug(`${className} initialized`);
+    logger.debug(`${name} initialized`);
   }
 
   return logger;
@@ -112,17 +106,14 @@ function initLogger(ctx: object, debugFlag: boolean, methodNames: string[] = [])
 
 // ?debug=instances counter, deliberately cheap so it's safe to call from
 // hot-path constructors: disabled, it's a single boolean check with zero
-// allocation. Call it once from the root class's constructor -
-// `this.constructor.name` reports the most-derived class, so a subclass
-// needs no call of its own. constructor.name survives esbuild's prod
-// minify (verified), so counts stay readable on the shipped build too.
+// allocation. Called once from a root class's constructor, so subclasses
+// count under the root's name.
 const instanceCounts = new Map<string, number>();
-function traceInstance(instance: object, enabled: boolean): void {
+function traceInstance(name: string, enabled: boolean): void {
   if (!enabled) return;
-  const className = instance.constructor.name;
-  const count = (instanceCounts.get(className) ?? 0) + 1;
-  instanceCounts.set(className, count);
-  console.debug(`[instances] ${className} instantiated (#${count})`);
+  const count = (instanceCounts.get(name) ?? 0) + 1;
+  instanceCounts.set(name, count);
+  console.debug(`[instances] ${name} instantiated (#${count})`);
 }
 
 export { Logger };

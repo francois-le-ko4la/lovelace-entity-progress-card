@@ -4,7 +4,7 @@
  */
 
 import { CARD } from '../utils/parameters.js';
-import { has, is } from '../utils/common-checks.js';
+import { getOrCreate, has, is } from '../utils/common-checks.js';
 
 // A superset of Home Assistant's blank_before_percent.ts, whose own comment
 // cites Wikipedia rather than locale data: its six are all confirmed by CLDR,
@@ -43,6 +43,15 @@ const SI_PREFIXES: readonly (readonly [string, number])[] = [
 const SIGNIFICANT_CAP = 2;
 const SI_PREFIXABLE_UNITS = new Set(['W', 'Wh', 'VA', 'var', 'J', 'Hz', 'B', 'bit', 'A', 'V', 'Ω', 'Pa']);
 
+// Building a formatter costs about 90 times the format() call it serves, and a
+// card formats on every refresh; the option sets a card can produce are few.
+const formatterCache = new Map<string, Intl.NumberFormat>();
+
+const formatterFor = (locale: string, options: Intl.NumberFormatOptions): Intl.NumberFormat => {
+  const key = `${locale}\u0000${JSON.stringify(options)}`;
+  return getOrCreate(formatterCache, key, () => new Intl.NumberFormat(locale, options));
+};
+
 /** Splits 'kWh' into its base and the exponent it already carries. */
 const splitPrefixedUnit = (unit: string): { base: string; exponent: number } | null => {
   for (const [prefix, exponent] of SI_PREFIXES) {
@@ -54,8 +63,6 @@ const splitPrefixedUnit = (unit: string): { base: string; exponent: number } | n
 };
 
 const NumberFormatter = {
-  // Keyed on the interface language, never on the number format: how a unit is
-  // spaced is a typographic convention, unrelated to 1,234.56 vs 1 234,56.
   /**
    * Re-expresses a value on the SI scale that keeps its mantissa readable -
    * 1500 W as 1.5 kW, 0.5 W as 500 mW. null when the unit cannot take a
@@ -72,6 +79,8 @@ const NumberFormatter = {
     return { value: value * 10 ** (parsed.exponent - step), unit: `${prefix}${parsed.base}` };
   },
 
+  // Keyed on the interface language, never on the number format: how a unit is
+  // spaced is a typographic convention, unrelated to 1,234.56 vs 1 234,56.
   getSpaceCharacter(language: string, unit: string): string {
     // Case-sensitive: lowercasing collided the duration symbols with the SI
     // ones a capital tells apart - J joule with j day, S siemens with s, H
@@ -128,7 +137,7 @@ const NumberFormatter = {
     // notation: 'compact' trims its own trailing zeros - forcing
     // minimumFractionDigits here would turn "1.2k" back into "1.20k". The SI
     // path wants the same trimming, so it shares the branch.
-    const formattedValue = new Intl.NumberFormat(locale, {
+    const formattedValue = formatterFor(locale, {
       ...(compact
         ? {
             ...(abbreviate ? { notation: 'compact' as const } : {}),

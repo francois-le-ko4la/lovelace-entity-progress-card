@@ -64,11 +64,11 @@ the [Contributing Guide](contributing.md#contribution-guidelines).
 
 Three gates, each named for when you run it. Each one contains the previous:
 
-|                | when                           | adds                                                                                                          |
-| -------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------- |
-| `check:code`   | while you code                 | syntax, format, lint, types, i18n structure, logic tests                                                      |
-| `check:github` | every push **and** the release | release flags, knip, full i18n sync, markdown, `test:dom`, `build:prod` + `build:light`, es2021 floor on both |
-| `check:push`   | before pushing                 | `check:chrome92`, the dev bundle (`build:test` + `node --check`) and its split guard                          |
+|                | when                           | adds                                                                                                            |
+| -------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------- |
+| `check:code`   | while you code                 | syntax, format, lint, types, i18n structure, logic tests                                                        |
+| `check:github` | every push **and** the release | release flags, knip, full i18n sync, markdown, `test:dom`, `build:prod` + `build:light`, language floor on both |
+| `check:push`   | before pushing                 | `check:chrome92`, the dev bundle (`build:test` + `node --check`) and its split guard                            |
 
 `check:github` deliberately never builds the dev bundle - it bakes in
 `__EPB_DEV_BUILD__: true` and has no business on a release runner.
@@ -306,13 +306,23 @@ disconnectedCallback
  └─ clear template-subscription signatures  # allows resubscription on reconnect
 ```
 
-### Timers: auto-refresh
+### The local tick (auto-refresh)
 
-Running `timer.*` entities need sub-second visual progress although HA only
-pushes state changes on start/pause/finish. `_handleHassUpdate` starts a
-`ResourceManager`-owned interval (`autoRefresh`) while `_cardView.isActiveTimer`
-is true, and stops it otherwise. The interval calls `refresh()` which recomputes
-elapsed time from `finishes_at`.
+A running `timer`, a relative `last_changed`/`last_updated` and a
+`peak_marker`/`trend_indicator` window all move with no state change from HA.
+`_manageAutoRefresh`, after every hass update and every tick, arms one
+`ResourceManager`-owned `setTimeout` (`autoRefresh`) for the view's
+`nextTickAt(now)`: the next instant something shown changes, `null` when nothing
+will. A timer's value turns on its own clock (`finishes_at - duration`), a
+relative time where `relativeAge` (`utils/clock.ts`, shared with the formatter)
+says its reading changes, a window at most a minute on. An earlier deadline
+re-arms at once; a timer firing early waits for its own.
+
+A tick is not a refresh: hass hasn't changed, only time has. The view re-reads
+what time moves (`refreshClock()`: current value, percent, peak marks, theme
+value), then the bar, the value text, alerts, the status label and the trend
+follow. Tick text goes through `setTextNow`: synchronous, still skipped when
+unchanged.
 
 ## Home Assistant integration
 
@@ -455,24 +465,29 @@ where the browser allows it.
 
 - **Syntax** (does the JS itself parse/run) is handled by the **build target**,
   not by writing fallback code — `scripts/build.js` passes `target: 'es2021'` to
-  esbuild's minifier, and `npm run check:es-target` (`es-check`, part of the
-  release build) re-verifies that language floor on the **minified** output.
-  This is the direct fix for
+  esbuild's minifier, and `npm run check:es-target` (part of the release build)
+  re-verifies that language floor on the **minified** output. This is the direct
+  fix for
   [issue #128](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/issues/128)
   (filed against Chrome 92): the build used to target `es2022`, which let
-  esbuild emit class `static {}` blocks (its `keepNames` technique on static
-  members) — a hard `SyntaxError` on any pre-2022 engine, caught by neither
-  dev-mode testing (a modern browser) nor `node --check` in CI (Node's own
-  parser is newer than the target), so it shipped broken to exactly the
-  embedded/kiosk browsers this matters most for. `es2021` keeps every syntax
-  feature actually used in `src/` (private fields, `??=`, optional chaining —
-  all supported since Chrome ~80-85) while forcing static blocks into an
-  es2021-safe form — no fallback branch needed, the build just never emits the
-  unsafe syntax in the first place. `eslint-plugin-compat` lints the **source**
-  against the same functional-minimum matrix during `npm run lint`, catching a
-  problem earlier, before it'd otherwise only surface in `check:es-target` on
-  the built output. See [Release process](#release-process) for exactly where
-  the build-time check runs.
+  esbuild emit class `static {}` blocks — a hard `SyntaxError` on Chrome 92,
+  caught by neither dev-mode testing (a modern browser) nor `node --check` in CI
+  (Node's own parser is newer than the target), so it shipped broken to exactly
+  the embedded/kiosk browsers this matters most for. Static blocks are the only
+  es2022 syntax Chrome 92 lacks: class fields, private fields and methods, and
+  `#x in obj` all run natively there (Chrome 72-91), so `build.js` declares them
+  supported (`NATIVE_CLASS_FEATURES`) and keeps them native instead of lowered
+  to `WeakMap` helpers. `check:es-target` mirrors that split: `es-check es2022`
+  for the syntax level, then `scripts/check-no-static-blocks.js`, because
+  es-check passes or fails static blocks together with the rest of es2022. The
+  build also avoids esbuild's `keepNames`: without static blocks, esbuild can
+  only name a class by lowering all of it, private members included (226
+  `WeakMap`/`WeakSet`, ~35 KB) — loggers name themselves instead, see
+  [Logging & debugging](#logging--debugging). `eslint-plugin-compat` lints the
+  **source** against the same functional-minimum matrix during `npm run lint`,
+  catching a problem earlier, before it'd otherwise only surface in
+  `check:es-target` on the built output. See [Release process](#release-process)
+  for exactly where the build-time check runs.
 - **Runtime APIs** (does the method exist at all) are neither syntax nor CSS, so
   neither mechanism catches them: esbuild's target rewrites syntax and leaves
   `Object.hasOwn` exactly as written, and `es-check` only parses. Two modules
@@ -521,13 +536,13 @@ where the browser allows it.
 The `98+`/`94+`/`15.4+`/`84+` row is where the project draws the line on
 **effort**, not a hard technical wall. Issue #128's own reporter was on Chrome
 92 — an embedded kiosk panel, the kind of device that's often the hardest to get
-upgraded. The JS syntax side is already covered for that case (the `es2021`
-build target above), so this is really about the **CSS fallback tier**: when a
-tier you're already writing for `@supports` also happens to work on something
-like Chrome 92 at no extra cost, prefer that shape. Don't spend real effort
-chasing 92 specifically, and don't let it constrain the modern tier's
-implementation — it's "free wins welcome," not a second floor to formally test
-against.
+upgraded. The JS syntax side is already covered for that case (the build target
+and static-block check above), so this is really about the **CSS fallback
+tier**: when a tier you're already writing for `@supports` also happens to work
+on something like Chrome 92 at no extra cost, prefer that shape. Don't spend
+real effort chasing 92 specifically, and don't let it constrain the modern
+tier's implementation — it's "free wins welcome," not a second floor to formally
+test against.
 
 ## Jinja template subscriptions
 
@@ -621,21 +636,20 @@ Every schema's pipeline is
   gets normalized into the real `[{type: 'text', text: ...}]` array the field
   validator expects, so the validator itself only has to handle one shape.
 - **`postProcess`** runs on the **validated, typed** result. It's the
-  cross-field safety net for "field B is meaningless without field A" — e.g.
-  `bar_color_mode`/`interpolate` reset to their defaults once no theme is active
-  (`applyBarColorModeRule`/`applyInterpolateRule`), `bar_single_line` resets
-  once `bar_position` isn't `overlay`. This runs for _every_ config,
-  hand-written YAML included, which is what actually protects rendering — the
-  editor's own `onClear`/draft-preservation (see
-  [Editor architecture](#editor-architecture)) is a separate, UI-only nicety for
-  keeping the _saved_ YAML tidy, not a substitute for this.
+  cross-field safety net for "field B is meaningless without field A":
+  `INERT_OPTIONS` lists each such option with its `HAS_EFFECT` predicate and its
+  fallback (the schema default), and wherever the option has no effect
+  `postProcess` puts the fallback back — `bar_color_mode`/`interpolate` once no
+  theme is active, `bar_single_line` once `bar_position` isn't `overlay`. This
+  runs for _every_ config, hand-written YAML included, which is what actually
+  protects rendering.
 
-**When adding an option gated by another one, add both**: a `postProcess` rule
-so a hand-written-YAML user never gets a stuck or silently-wrong render, and an
-editor `onClear` so the visual editor doesn't leave a stale value behind when
-the gate closes. Neither is where you'd reject bad input — that's the field
-validator's own job (throw `ValidationError`, or return `SKIP_PROPERTY` to drop
-silently).
+**When adding an option gated by another one**, give it a `HAS_EFFECT` predicate
+and an `INERT_OPTIONS` entry. From that one line the schema resets it, and the
+editor hides its field and parks its value (see
+[Editor architecture](#editor-architecture)). Neither is where you'd reject bad
+input — that's the field validator's own job (throw `ValidationError`, or return
+`SKIP_PROPERTY` to drop silently).
 
 ### `Config` is derived from the schema, not hand-maintained
 
@@ -861,6 +875,9 @@ one implementation, five call sites.
 - Fields read the **negotiated** config so entity-driven defaults show up,
   except `template`/`action` fields which read the raw config to avoid flicker
   while typing Jinja.
+- An emptied field (`''`, `null`, `undefined` — never `0`/`false`) unsets its
+  key instead of saving `''`; a nested one keeps its parent, whose presence is
+  what turns the section on. `onClear` only drops what depended on the key.
 - `virtual` fields (UI-only toggles), `target` remapping, `onChange`/`onClear`
   hooks cover the YAML↔UI mismatches; `_`-prefixed keys carry ephemeral UI state
   and are stripped before `config-changed` is dispatched (never round-tripped to
@@ -877,6 +894,14 @@ one implementation, five call sites.
   reference implementation for the 3-way (standard/ entity/jinja) case; every
   2-way jinja toggle (`hide_mode`, `bar_effect_mode`, `status_label_toggle`, …)
   follows the same shape with one draft each way.
+- **Inert options are parked, not kept**: on every write, an
+  `OPTIONS_WITHOUT_EFFECT` entry (`INERT_OPTIONS` plus `bar_size`) that has no
+  effect in the new config moves to `_<key>_inert_draft` and leaves the YAML; it
+  comes back once it has an effect again, unless the user set it anew meanwhile.
+  Apart from `draftToggle`'s `_<key>_draft`, which holds a value the user
+  switched off and must not return on its own. **Migrate config** shows for such
+  an option too: its click's own write parks it. Not on a Multi host
+  (`_parksInertOptions = false`): its shared level is a partial config.
 - **Field `width`** can be a plain string (set once, at build) or a function of
   config (re-evaluated on every relevant update via `EditorDOMHelper`, same as a
   dynamic `type`). Two fields meant to sit side by side in the same flex-wrap
@@ -1319,18 +1344,19 @@ reasoning survives a maintainer handoff instead of living only in chat history.
     (esbuild, `--target=es2021`, pinned as a devDependency — re-forces
     `DEBUG_DEFAULTS` all-`false` in the built output regardless of the source
     state, see `scripts/lib/release-flags.js`), a `node --check` sanity pass on
-    the minified output and `npm run check:es-target` (`es-check`, catches
-    syntax newer than the language floor that `node --check` alone can't -
-    Node's own parser is newer than the target, see issue #128). The uploaded
-    file is named explicitly, never a `dist/*` glob. HACS serves that asset.
-- **Three build modes** (`scripts/build.js`, esbuild with `keepNames: true`):
-  `build:test` → `entity-progress-card_dev.js` (debug baseline left as
-  committed), `build:prod` (`--prod`) → `entity-progress-card.js` (minified,
-  `DEBUG_DEFAULTS` re-forced all-`false`, see `scripts/lib/release-flags.js`),
-  and `build:light` (`--prod --light`) → `entity-progress-card-light.js`. `dev`
-  mode isn't baked into any of them — it follows the served filename/URL at
-  runtime (see [Logging & debugging](#logging--debugging)). Only `build:prod`
-  and `build:light` are minified and safe to ship.
+    the minified output and `npm run check:es-target` (`es-check es2022` plus
+    the static-block check, catches syntax newer than the language floor that
+    `node --check` alone can't - Node's own parser is newer than the target, see
+    issue #128). The uploaded file is named explicitly, never a `dist/*` glob.
+    HACS serves that asset.
+- **Three build modes** (`scripts/build.js`, esbuild): `build:test` →
+  `entity-progress-card_dev.js` (debug baseline left as committed), `build:prod`
+  (`--prod`) → `entity-progress-card.js` (minified, `DEBUG_DEFAULTS` re-forced
+  all-`false`, see `scripts/lib/release-flags.js`), and `build:light`
+  (`--prod --light`) → `entity-progress-card-light.js`. `dev` mode isn't baked
+  into any of them — it follows the served filename/URL at runtime (see
+  [Logging & debugging](#logging--debugging)). Only `build:prod` and
+  `build:light` are minified and safe to ship.
 - **The light build drops the editor through a separate entry point, not a
   flag.** `--light` switches the entry to `src/index-light.ts` and defines
   `__EPB_LIGHT_BUILD__: true`. The entry point is what actually removes the
@@ -1342,12 +1368,13 @@ reasoning survives a maintainer handoff instead of living only in chat history.
   Assistant falls back to its own YAML editor; `BUNDLE_STEM` gains the `-light`
   suffix; the banner and `EPB_DIAG.dump()` say which build is running. A light
   build writes no `-<lang>.json` sidecar — with no editor, nothing fetches them.
-- **Language floor**: the esbuild target is `es2021` — private fields, `??=` and
-  optional chaining are fine, but syntax newer than es2021 (e.g. class
-  `static {}` blocks - esbuild's own `keepNames` technique for those on some
-  inputs) will fail `npm run check:es-target` in the release build even though
-  it runs in dev (modern browser) and passes `node --check` (Node's parser is
-  newer than the target). Test a release build locally with
+- **Language floor**: the esbuild target is `es2021`, with class features
+  declared native (`NATIVE_CLASS_FEATURES`) — private fields, `??=` and optional
+  chaining are fine. esbuild lowers any other newer syntax, class `static {}`
+  blocks included; a build config that stops doing so fails
+  `npm run check:es-target` in the release build, even though its output runs in
+  dev (modern browser) and passes `node --check` (Node's parser is newer than
+  the target). Test a release build locally with
   `npm run build:prod && npm run check:es-target` when in doubt.
 - **HACS**: `hacs.json` declares only the `filename` (no `content_in_root` —
   nothing is served from the repo root). HACS installs from the release asset
@@ -1460,11 +1487,16 @@ Other aids:
 - The console banner printed at load confirms which version is actually running
   (cache issues are the #1 support topic). `window.EPB_DIAG.dump()` prints an
   anonymized environment/registration report - `EPB_DIAG_DEV` in a dev build, so
-  two bundles loaded side by side each keep their own.
-- `?debug=instances` counting relies on `constructor.name`; the esbuild build
-  runs with `keepNames: true` so cross-module class names survive
-  bundling/minification (otherwise `_ThemeManager` &c would surface in the
-  logs).
+  two bundles loaded side by side each keep their own. `.cardAudit()` lists
+  every card, on every dashboard, with deprecated options or options without
+  effect (`card-audit.ts`).
+- The editor's bug icon copies an issue report: `environmentReport()` (what
+  `dump()` prints), then the YAML Home Assistant holds, written by
+  `yaml-writer.ts` with `notesByPath` comments. Multi rows don't offer it.
+- Logger and `?debug=instances` names are passed explicitly (`initLogger`,
+  `traceInstance`), never read from `constructor.name`: the prod build minifies
+  class names. An element passes its `localName` (the tag), a helper a literal;
+  `?debug=instances` counts per root class.
 - `window.customCards` can be inspected to verify registration.
 - In DevTools, a card's shadow root should contain **no `<style>` element** on
   modern browsers (adopted stylesheet) — seeing one means the fallback path was

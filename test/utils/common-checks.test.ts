@@ -190,6 +190,7 @@ describe('assertDefined - throws instead of silently masking a broken invariant'
 
   test('throws with the given message for null or undefined', () => {
     assert.throws(() => assertDefined(null, 'boom'), /boom/);
-    assert.throws(() => assertDefined(undefined, 'boom'), /boom/);
+    const absent: { value?: unknown } = {};
+    assert.throws(() => assertDefined(absent.value, 'boom'), /boom/);
   });
 });

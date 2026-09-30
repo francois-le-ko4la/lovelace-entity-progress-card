@@ -119,6 +119,8 @@ const VALUE_CHANGED_EVENT = 'value-changed';
 // HA's own "the config changed" event, dispatched by EditorBase and caught by
 // whoever hosts it (the card itself, or a row list hosting a sub-editor).
 const CONFIG_CHANGED_EVENT = 'config-changed';
+// Home Assistant's own toast, shown by whoever hosts the dashboard.
+const HASS_NOTIFICATION_EVENT = 'hass-notification';
 const HA_SELECTOR_TAG = 'ha-selector';
 const HA_SVG_ICON_TAG = 'ha-svg-icon';
 const HA_ACTION_HANDLER_TAG = 'action-handler';
@@ -131,18 +133,11 @@ const SHARED_LABEL_PREFIX = 'shared.';
 const EDITOR_FIELD_HELPER_NS = 'editor.field_helper';
 const MIN_VALUE_ENTITY_PATH = 'min_value.entity';
 const MAX_VALUE_ENTITY_PATH = 'max_value.entity';
-// Not an editor field name (watermark.low/.high's entity/attribute/jinja stay
-// virtual fields, see editor/factory.ts's wmSide). The editor always wraps
-// low/high as { value, as, opacity, color } once touched - a hand-written
-// short (unwrapped) config resolves its own path inline in checkValueConfig.
-const WATERMARK_LOW_ENTITY_PATH = 'watermark.low.value.entity';
-const WATERMARK_HIGH_ENTITY_PATH = 'watermark.high.value.entity';
-// Keyed by side so a caller looping over ['low', 'high'] doesn't re-derive the
-// pairing (config-helpers.ts's own checks, factory.ts's wmSide).
-const WATERMARK_ENTITY_PATHS = { low: WATERMARK_LOW_ENTITY_PATH, high: WATERMARK_HIGH_ENTITY_PATH } as const;
-// Same reasoning as WATERMARK_LOW_ENTITY_PATH/WATERMARK_HIGH_ENTITY_PATH:
-// alert_when.above/.below stay virtual editor fields (nested one level under
-// alert_when, same depth as watermark.low).
+// Not editor field names (low/high stay virtual fields, see factory.ts's
+// wmSide): the wrapped form the editor writes. A hand-written short form
+// resolves its own path inline in checkValueConfig.
+const WATERMARK_ENTITY_PATHS = { low: 'watermark.low.value.entity', high: 'watermark.high.value.entity' } as const;
+// Same reasoning: alert_when.above/.below stay virtual editor fields too.
 const ALERT_ABOVE_ENTITY_PATH = 'alert_when.above.entity';
 const ALERT_BELOW_ENTITY_PATH = 'alert_when.below.entity';
 
@@ -160,7 +155,7 @@ export { THEME_KEYS };
 export { PERCENT_THEME_KEYS };
 export { SEV };
 export { CONTENT_SLOT };
-export { CONFIG_CHANGED_EVENT };
+export { CONFIG_CHANGED_EVENT, HASS_NOTIFICATION_EVENT };
 export { VALUE_CHANGED_EVENT };
 export { HA_SELECTOR_TAG };
 export { HA_SVG_ICON_TAG };

@@ -30,7 +30,7 @@ class ProgressCalc {
   #scale = 'linear';
 
   constructor() {
-    traceInstance(this, CARD_CONTEXT.debug.instances);
+    traceInstance('ProgressCalc', CARD_CONTEXT.debug.instances);
   }
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
@@ -141,7 +141,7 @@ class ProgressCalc {
   }
 
   get isValid(): boolean {
-    return this.range !== 0;
+    return this.#math.isValid;
   }
 
   get range(): number {
@@ -156,11 +156,7 @@ class ProgressCalc {
     return this.#math.percent;
   }
 
-  // A zero point of 0 makes the growth ratio undefined - the bar percentage
-  // stands in, which is also what ProgressMath does with the same case.
   get growthPercentValue(): number | null {
-    if (!this.isValid) return null;
-    if (this.#zeroValue === 0) return this.percent;
     return this.#math.growthPercent;
   }
 

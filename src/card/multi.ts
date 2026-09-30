@@ -31,11 +31,16 @@
 import { CARD, META, devName } from '../utils/parameters.js';
 import { is } from '../utils/common-checks.js';
 import { HACore } from './core.js';
+import { AGGREGATOR_FIELDS } from './schema.js';
 import { MultiCardConfigHelper, MultiFeatureConfigHelper, type BaseConfigHelper } from './config-helpers.js';
 import type { HomeAssistant } from '../utils/hass-provider.js';
 import type { LovelaceConfig } from '../utils/types.js';
 
-type ChildEl = HTMLElement & { hass?: HomeAssistant | null; setConfig?: (config: LovelaceConfig) => void };
+type ChildEl = HTMLElement & {
+  hass?: HomeAssistant | null;
+  setConfig?: (config: LovelaceConfig) => void;
+  forceHidden?: (targets: string[]) => void;
+};
 
 // HA's per-feature row-height variable - read for the container's own row
 // unit only (see #featureRowPx); the children are cards, sized by the var
@@ -47,9 +52,6 @@ const FEATURE_HEIGHT_VAR = '--feature-height';
 // so setting it on the child host reaches its own ha-card.
 const CARD_HEIGHT_VAR = CARD.style.dynamic.card.height.var;
 
-// What never travels down to a row: the aggregator's own keys, plus the
-// derived ones the negotiated config carries (a child re-derives its own).
-// Everything else at the top level is a row option shared by every row.
 // 24 out of a 36px shape: the glyph's job is to sit inside the circle with
 // room to spare. Without a circle there is nothing to shrink for, so it takes
 // the same box as the text beside it - which is what makes the two read as one
@@ -57,7 +59,16 @@ const CARD_HEIGHT_VAR = CARD.style.dynamic.card.height.var;
 const shapedIconSize = (_per: number, shape: number) => Math.min(24, (shape * 2) / 3);
 const bareIconSize = (per: number) => Math.min(16, per);
 
-const NOT_ROW_OPTIONS = new Set(['entities', 'rows', 'type', 'centerZero', 'resolvedUnit', 'resolvedDecimal']);
+// What never travels down to a row: the aggregator's own keys, plus the
+// derived ones the negotiated config carries (a child re-derives its own).
+// Everything else at the top level is a row option shared by every row.
+const NOT_ROW_OPTIONS = new Set<string>([...AGGREGATOR_FIELDS, 'centerZero', 'resolvedUnit', 'resolvedDecimal']);
+
+// The row shape itself, which is the aggregator's to impose and not the
+// user's - hence absent from YamlSchemaFactory.multiRow. Nothing else is
+// translated here any more: a row speaks the card's own vocabulary.
+const toRowConfig = (row: Record<string, unknown>): LovelaceConfig =>
+  ({ ...row, density: 'single_line', frameless: true, marginless: true }) as unknown as LovelaceConfig;
 
 // Minimal own stylesheet (V1). TODO: fold into the shared constructed-sheet
 // path the cards use instead of a per-instance <style>.
@@ -156,25 +167,11 @@ class EntityProgressMultiBase extends HACore {
       if (!NOT_ROW_OPTIONS.has(key)) shared[key] = value;
     }
     return (config.entities as Record<string, unknown>[]).map((item) =>
-      this.#toRowConfig({
+      toRowConfig({
         ...shared,
         ...(is.plainObject(item) ? item : { entity: item }),
       }),
     );
-  }
-
-  // The row shape itself, which is the aggregator's to impose and not the
-  // user's - hence absent from YamlSchemaFactory.multiRow. Nothing else is
-  // translated here any more: a row speaks the card's own vocabulary.
-  #toRowConfig(row: Record<string, unknown>): LovelaceConfig {
-    const hide = new Set([...(is.array(row.hide) ? (row.hide as string[]) : []), ...this.forcedHide]);
-    return {
-      ...row,
-      ...(hide.size > 0 ? { hide: [...hide] } : {}),
-      density: 'single_line',
-      frameless: true,
-      marginless: true,
-    } as unknown as LovelaceConfig;
   }
 
   static #computeStructureKey(config: LovelaceConfig): string {
@@ -212,6 +209,7 @@ class EntityProgressMultiBase extends HACore {
     const tag = devName(META.types.card.typeName);
     this._children = this.#childConfigs.map((childConfig) => {
       const child = document.createElement(tag) as ChildEl;
+      child.forceHidden?.(this.forcedHide);
       child.setConfig?.(childConfig);
       if (this.hass) child.hass = this.hass;
       // The wrapper, not the child, carries the equal-slice flex: a card host
