@@ -41,7 +41,7 @@ describe('the editor header copies an issue report', () => {
     assert.ok(await toast, 'no toast after copying');
 
     const copied = await navigator.clipboard.readText();
-    assert.match(copied, /^```text\n=== Entity Progress Card — diagnostic ===\n/);
+    assert.match(copied, /^```text\n=== Entity Progress Card — diagnostic ===\n/u);
     assert.match(copied, /\n```yaml\n(?:.+\n)*type: custom:entity-progress-card\n/);
     assert.match(copied, /\ndisable_unit: true {2}# deprecated\n/);
   });
