@@ -165,10 +165,11 @@ const HACS_DIRECTORY = '/hacsfiles/lovelace-entity-progress-card/';
 // An editor that has to wait is worse than an editor in English.
 const EDITOR_FETCH_TIMEOUT_MS = 4000;
 
-// The language file sits in the directory the bundle itself was served from.
-function editorDictionaryUrl(lang: string): string {
+// A file shipped beside the bundle (the editor, its language files), in the
+// directory the bundle itself was served from.
+function sidecarUrl(name: string): string {
   // HACS cache-busts the JS resource it installs, never a sibling file.
-  const file = `${CARD_CONTEXT.bundleStem}-${lang}.json?v=${encodeURIComponent(VERSION)}`;
+  const file = `${CARD_CONTEXT.bundleStem}-${name}?v=${encodeURIComponent(VERSION)}`;
   const base = CARD_CONTEXT.moduleUrl;
   if (!base) return `${HACS_DIRECTORY}${file}`;
   try {
@@ -182,7 +183,7 @@ async function fetchEditorRow(lang: string): Promise<EditorRow | null> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), EDITOR_FETCH_TIMEOUT_MS);
   try {
-    const response = await fetch(editorDictionaryUrl(lang), { signal: controller.signal });
+    const response = await fetch(sidecarUrl(`${lang}.json`), { signal: controller.signal });
     if (!response.ok) return null;
     const row: unknown = await response.json();
     // A file left over from another version would shift every label by one.
@@ -539,5 +540,5 @@ class HassProviderSingleton {
   }
 }
 
-export { HassProviderSingleton, buildTranslationTree, sameDeviceEntities, RELATIVE_TIME_PROPS };
+export { HassProviderSingleton, buildTranslationTree, sameDeviceEntities, sidecarUrl, RELATIVE_TIME_PROPS };
 export type { HomeAssistant, EntityState };

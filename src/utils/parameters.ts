@@ -11,7 +11,7 @@
  * `from './parameters.js'` import keeps working unchanged. No logic, just data.
  */
 
-import { VERSION, META, LIGHT_BUILD } from './meta.js';
+import { VERSION, META } from './meta.js';
 import { HA_CONTEXT } from './ha-context.js';
 import { CARD, HIDE_TARGETS, type HideTarget } from './card-config.js';
 import { THEME, THEME_KEYS, PERCENT_THEME_KEYS } from './card-themes.js';
@@ -25,16 +25,25 @@ declare const __EPB_DEV_BUILD__: boolean;
 // ES-module load (the common HACS "JavaScript Module" type) - the Resource
 // Timing API covers that instead, matched by this exact build's own filename
 // so a dev+prod pair loaded side by side never cross-match.
-// This build's own basename, without extension - the bundle and the editor
-// translation files shipped beside it share it (see scripts/build.js).
-const BUNDLE_STEM = `entity-progress-card${LIGHT_BUILD ? '-light' : ''}${__EPB_DEV_BUILD__ ? '_dev' : ''}`;
+// This build's own basename, without extension - the editor and its
+// translation files ship beside the bundle under it (see scripts/build.js).
+const BUNDLE_STEM = `entity-progress-card${__EPB_DEV_BUILD__ ? '_dev' : ''}`;
+// CF5 - issue (low) resolved - an image or a fetch carrying the bundle's name
+// could pick where its editor is imported from: only its own script counts.
+const isBundleEntry = (entry: PerformanceEntry, stem: string): boolean => {
+  const { initiatorType } = entry as PerformanceResourceTiming;
+  if (initiatorType !== 'script' && initiatorType !== 'other') return false;
+  try {
+    return new URL(entry.name).pathname.endsWith(`/${stem}.js`);
+  } catch {
+    return false;
+  }
+};
 const MODULE_URL = (() => {
   try {
     const scriptSrc = (document.currentScript as HTMLScriptElement | null)?.src;
     if (scriptSrc) return scriptSrc;
-    return (
-      performance.getEntriesByType('resource').find((entry) => entry.name.includes(`${BUNDLE_STEM}.js`))?.name ?? ''
-    );
+    return performance.getEntriesByType('resource').find((entry) => isBundleEntry(entry, BUNDLE_STEM))?.name ?? '';
   } catch {
     return '';
   }
@@ -98,8 +107,8 @@ const CARD_CONTEXT = {
   // the mere act of loading the bundle. URL-derived only, off unless asked.
   noRegistration: MODULE_PARAMS.has('noRegistration'),
   debug: resolvedDebug,
-  // Where this bundle was served from, and under which name: the editor
-  // translation files sit next to it (see editorDictionaryUrl).
+  // Where this bundle was served from, and under which name: the editor and
+  // its translation files sit next to it (see sidecarUrl).
   moduleUrl: MODULE_URL,
   bundleStem: BUNDLE_STEM,
 };
@@ -143,9 +152,8 @@ const ALERT_BELOW_ENTITY_PATH = 'alert_when.below.entity';
 
 export { VERSION };
 export { META };
-export { LIGHT_BUILD };
 export { CARD_CONTEXT };
-export { devName };
+export { devName, isBundleEntry };
 export { HA_CONTEXT };
 export { CARD };
 export { HIDE_TARGETS };

@@ -4,7 +4,7 @@
 // and the parse/compile work gzip can never remove (issue #141 - the NSPanel
 // case is about JS the device must process, not about download size).
 //
-//   node scripts/compare-bundles.js                        # prod vs prod light
+//   node scripts/compare-bundles.js                        # the bundle vs its editor file
 //   node scripts/compare-bundles.js a.js b.js [c.js ...]   # any set of files
 //
 // Measures size (raw + gzip), parse+compile time, and the bytecode V8 keeps.
@@ -16,7 +16,7 @@ const zlib = require('zlib');
 const vm = require('vm');
 const { spawnSync } = require('child_process');
 
-const DEFAULT_FILES = ['dist/entity-progress-card.js', 'dist/entity-progress-card-light.js'];
+const DEFAULT_FILES = ['dist/entity-progress-card.js', 'dist/entity-progress-card-editor.js'];
 const RUNS = 40;
 const EAGER_FLAG = '--no-lazy';
 const CHILD_MARKER = '--eager-child';
@@ -116,7 +116,7 @@ function main() {
   const missing = files.filter((file) => !fs.existsSync(file));
   if (missing.length > 0) {
     console.error(`No such file: ${missing.join(', ')}`);
-    console.error('Build them first: npm run build:prod && npm run build:light');
+    console.error('Build them first: npm run build:prod');
     process.exitCode = 1;
     return;
   }

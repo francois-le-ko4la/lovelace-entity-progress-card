@@ -1,6 +1,7 @@
 /*
- * Registers the card/badge/template/feature custom elements (and their editors)
- * with Home Assistant via customCards/customBadges/customCardFeatures.
+ * Registers the card/badge/template/feature custom elements with Home Assistant
+ * via customCards/customBadges/customCardFeatures. The editors define
+ * themselves, from their own file (src/editor/entry.ts).
  */
 
 import { VERSION, META, CARD_CONTEXT, SEV, devName } from './parameters.js';
@@ -50,8 +51,8 @@ function defineElement(name: string, elementClass: CustomElementConstructor): vo
 }
 
 /**
- * Registers a card/badge/feature custom element (and its editor, if any)
- * with `customElements` and with Home Assistant's discovery arrays
+ * Registers a card/badge/feature custom element with `customElements` and with
+ * Home Assistant's discovery arrays
  * (`window.customCards`/`customBadges`/`customCardFeatures`). In dev mode
  * (`CARD_CONTEXT.dev`), every type/editor tag and displayed name gets a
  * `-dev`/` (dev)` suffix so a dev build can be installed side by side with
@@ -120,12 +121,7 @@ const resolveEntry = (component: Component, targetKey: string) =>
           : {}),
       };
 
-const registerComponent = (
-  component: Component,
-  targetKey: string,
-  elementClass: CustomElementConstructor,
-  editorClass?: CustomElementConstructor,
-) => {
+const registerComponent = (component: Component, targetKey: string, elementClass: CustomElementConstructor) => {
   // noRegistration: skip both the define(s) and the deferred customCards push
   // in one shot, so the type is entirely absent from the browser and from
   // HA's discovery arrays (see CARD_CONTEXT.noRegistration, issue #108).
@@ -135,7 +131,6 @@ const registerComponent = (
   }
 
   defineElement(component.typeName, elementClass);
-  if (editorClass && component.editor) defineElement(component.editor, editorClass);
 
   const registerUI = () => {
     try {
@@ -156,10 +151,8 @@ const registerComponent = (
   setTimeout(registerUI, 1000);
 };
 
-const registerAs =
-  (targetKey: string) =>
-  (component: Component, elementClass: CustomElementConstructor, editorClass?: CustomElementConstructor) =>
-    registerComponent(resolveComponent(component), targetKey, elementClass, editorClass);
+const registerAs = (targetKey: string) => (component: Component, elementClass: CustomElementConstructor) =>
+  registerComponent(resolveComponent(component), targetKey, elementClass);
 
 const RegistrationHelper = {
   registerCard: registerAs(TARGET_KEY.customCards),

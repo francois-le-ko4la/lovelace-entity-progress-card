@@ -92,16 +92,17 @@ maximum over its window, filled on the bar. The bar says where the value is now;
 the band says how far it has swung. It doesn't need the minimum and maximum
 marks themselves — a band alone is enough.
 
-#### 🪶 A second bundle, without the visual editor
+#### 🪶 The visual editor loads when you open it
 
-`entity-progress-card-light.js` ships beside the usual one: the same seven card,
-badge and feature types, minus the editor. Home Assistant offers its own YAML
-editor for them instead, and every card renders identically. 299 KB instead of
-375, and about a quarter less parsing and compiling for the browser.
+The editor used to ride along with every card, on every dashboard. It now ships
+beside the card, in `entity-progress-card-editor.js`, and loads the first time
+you open one — the way Home Assistant loads its own cards' editors. A dashboard
+loads half the code it did in 1.6.2 and compiles about a third faster; the
+editor costs 23 KB compressed, once, when you need it.
 
-HACS brings it down with everything else; point your dashboard resource at it to
-switch. In storage mode HACS may put that resource back on the full file when it
-updates the card — re-point it, or keep a copy in `www/`.  
+HACS brings it down with everything else. Installed by hand, copy
+`entity-progress-card-editor.js` next to `entity-progress-card.js`: without it,
+Home Assistant offers its own YAML editor instead.  
 ➡️ Most of the bundle is translations for languages nobody uses (~300 KB) #141
 (@davidcoulson)
 
@@ -425,17 +426,19 @@ a panel.
 
 **About these numbers**: they come from a lab, not from a dashboard — 20 cards
 on a 3,000-entity instance, rendered in a virtual DOM (happy-dom) because it
-makes the bench simple to run, median of 200 runs per row. The script is public,
-`scripts/compare-hass-updates.js`, so anyone can rerun it. Read them as a trend,
-not as a speed-up you will see or feel as such: the gain shows as less load on
-constrained devices — a wall tablet, an NSPanel — more than as a snappier card
-on a desktop.
+makes the bench simple to run, median of 200 runs per row, best of several runs
+alternated between the two versions. The script is public, so anyone can rerun
+it. Read them as a trend, not as a speed-up you will see or feel as such: the
+gain shows as less load on constrained devices — a wall tablet, an NSPanel —
+more than as a snappier card on a desktop.
 
 | Per card, median (µs)         | 1.6.2 | 1.6.3 | Gain |
 | ----------------------------- | ----: | ----: | ---: |
-| Another entity changes        | 1,098 |    12 |  ÷90 |
-| Its own entity changes        | 1,088 |   578 | ÷1.9 |
-| One tick of a running `timer` |   694 |   237 |   ÷3 |
+| Another entity changes        | 1,099 |    10 | ÷108 |
+| Its own entity changes        | 1,102 |   343 | ÷3.2 |
+| One tick of a running `timer` |   689 |   119 | ÷5.8 |
+
+Measured with [`scripts/compare-hass-updates.js`][compare-hass-updates.js].
 
 - The refresh tick re-reads only what time moves, and fires when what it shows
   changes rather than on a fixed cadence: an hour-old `last_changed` ticks once
@@ -445,14 +448,18 @@ on a desktop.
 
 #### Lighter to load
 
-| Bundle                          |  1.6.2 |  1.6.3 |
-| ------------------------------- | -----: | -----: |
-| `entity-progress-card.js`       | 648 KB | 375 KB |
-| … compressed                    | 156 KB |  99 KB |
-| `entity-progress-card-light.js` |      — | 299 KB |
-| … compressed                    |      — |  78 KB |
+| Bundle                                             |  1.6.2 |  1.6.3 |
+| -------------------------------------------------- | -----: | -----: |
+| `entity-progress-card.js`                          | 648 KB | 306 KB |
+| … compressed                                       | 157 KB |  80 KB |
+| … compiled by the browser (lazy)                   |  36 ms |  24 ms |
+| … bytecode kept                                    | 587 KB | 341 KB |
+| `entity-progress-card-editor.js`, on first opening |      — |  83 KB |
+| … compressed                                       |      — |  23 KB |
 
-Over 40% smaller, despite everything this release adds.
+Measured with [`scripts/compare-bundles.js`][compare-bundles.js]. Half the size
+and a third less compiling, despite everything this release adds; compile times
+come from Node's V8 — read the ratio, not the milliseconds.
 
 #### Lighter in memory
 
@@ -487,7 +494,9 @@ Over 40% smaller, despite everything this release adds.
 - The test suite checks what the editors show and write, the refresh tick, Jinja
   subscriptions, history requests and the light bundle, and can no longer hang
   on a card left mounted.
-- 593 automated tests run before every push: 429 on the card's logic, 164
+- The editor is built into a file of its own that reads the card's modules
+  instead of copying them: the build fails if one ends up in both files.
+- 591 automated tests run before every push: 433 on the card's logic, 158
   mounting real cards and editors in a virtual DOM.
 - `scripts/compare-hass-updates.js` measures what a hass update and a tick cost
   per card, between two bundles.
@@ -498,6 +507,56 @@ We care about getting the details right — but even so, something here might ha
 slipped through. You don't need to be a developer to notice it. If something
 feels off, that's reason enough. Open a [GitHub issue]. Or say hi on [Discord].
 We'd rather know than have you go looking for a workaround on your own.
+
+## What's new (1.6.3-rc11)
+
+### ⚠️ Breaking Changes
+
+#### 🪶 `entity-progress-card-light.js` is gone
+
+The editor now loads on its own (see New), so the main file is as light as the
+light one was, and there is a single file to point at. HACS in storage mode
+points your resource back at `entity-progress-card.js` at the next update; in
+YAML mode, or with a copy in `www/`, point it there yourself.
+
+### ✨ New
+
+#### 🪶 The visual editor loads when you open it
+
+The seven editors move to `entity-progress-card-editor.js`, which
+`getConfigElement()` imports the first time one opens, alongside its
+translations. It reads the modules it shares with the card —
+`HassProviderSingleton`, the schema, `CARD_CONTEXT`, the shared stylesheets —
+off a table the bundle publishes under a key tied to its file and version, so
+`?debug=`/`?dev=true` reach it too. A missing file, or one from another version,
+makes `getConfigElement()` answer `null`: Home Assistant's YAML editor.
+
+### 📚 Documentation
+
+- README: the manual installation lists the editor file; the light-bundle
+  section is gone.
+- `docs/troubleshooting.md`: what to check when the visual editor doesn't open.
+- `docs/development.md`: the two files, the host table, and how the editor
+  loads.
+
+### 🧹 Under the hood
+
+| Loading, rc10 → rc11             |   rc10 |   rc11 |
+| -------------------------------- | -----: | -----: |
+| `entity-progress-card.js`        | 375 KB | 306 KB |
+| … compressed                     | 100 KB |  80 KB |
+| … compiled by the browser (lazy) |  34 ms |  24 ms |
+| … bytecode kept                  | 392 KB | 341 KB |
+| `entity-progress-card-editor.js` |      — |  83 KB |
+
+Measured with [`scripts/compare-bundles.js`][compare-bundles.js].
+
+- `scripts/build.js` builds in three passes: the modules the editor shares with
+  the card, the bundle with its host table, then the editor file reading it. A
+  module in both files fails the build.
+- The hot path is unchanged: rc10 and rc11, measured side by side, cost the same
+  per card. rc10's own table was taken on a busier machine — its tick reads
+  about 120 µs, not 240.
 
 ## What's new (1.6.3-rc10)
 
@@ -7382,6 +7441,10 @@ experience:
   https://htmlpreview.github.io/?https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/graphic-effects-compatibility.html
 [bar_stack]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_stack
+[compare-bundles.js]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/scripts/compare-bundles.js
+[compare-hass-updates.js]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/scripts/compare-hass-updates.js
 [max_value]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#max_value
 [multi]:

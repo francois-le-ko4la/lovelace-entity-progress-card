@@ -9,7 +9,7 @@ import { CARD_CSS, getSharedStyleSheet } from '../utils/styles.js';
 import { is, assertDefined, toNumberOrNull, jinjaKind } from '../utils/common-checks.js';
 import { initLogger, cardNotice, type LoggerInstance } from '../utils/log.js';
 import { ObjStructure, ThemeManager, ChangeTracker } from './value-helpers.js';
-import { HassProviderSingleton, type HomeAssistant, type EntityState } from '../utils/hass-provider.js';
+import { HassProviderSingleton, sidecarUrl, type HomeAssistant, type EntityState } from '../utils/hass-provider.js';
 import { type ViewCore, type ViewBase, type ResolvedWatermark } from './view.js';
 import {
   markInner,
@@ -65,6 +65,15 @@ const TREND_ICONS: Record<string, string> = {
   flat: HA_CONTEXT.icons.equalBox,
   error: HA_CONTEXT.icons.progressQuestion,
 };
+
+// One import per page, however many editors open: Home Assistant's own cards
+// load theirs the same way. A failed one is retried at the next opening.
+let editorModule: Promise<unknown> | null = null;
+const loadEditor = (): Promise<unknown> =>
+  (editorModule ??= import(sidecarUrl('editor.js')).catch((error: unknown) => {
+    editorModule = null;
+    throw error;
+  }));
 
 /**
  * Base class for Home Assistant custom elements (cards, badges, features).
@@ -181,14 +190,24 @@ class HACore extends HTMLElement {
   }
 
   // Async on purpose: Home Assistant awaits this (hui-card-element-editor and
-  // its badge/feature twins), which is where the editor's translations get
-  // loaded - they ship beside the bundle, not inside it.
+  // its badge/feature twins) - the editor and its translations ship beside the
+  // bundle and load here, the first time one opens. null: HA's YAML editor.
   static async getConfigElement(): Promise<HTMLElement | null> {
     const metaType = Object.values(META.types).find((t) => t.typeName === this._baseClass) as
       { editor?: string } | undefined;
     if (!metaType?.editor) return null;
-    await HassProviderSingleton.getInstance().ensureEditorTranslations();
-    return document.createElement(devName(metaType.editor));
+    const tag = devName(metaType.editor);
+    try {
+      await Promise.all([
+        customElements.get(tag) ? null : loadEditor(),
+        HassProviderSingleton.getInstance().ensureEditorTranslations(),
+      ]);
+    } catch (error) {
+      console.warn(`[Entity Progress Card] Visual editor unavailable: ${(error as Error).message}`);
+      return null;
+    }
+    // A file from another version defines nothing: its host table is missing.
+    return customElements.get(tag) ? document.createElement(tag) : null;
   }
 
   connectedCallback() {

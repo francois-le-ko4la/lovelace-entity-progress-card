@@ -14,27 +14,10 @@
  * aggregation; URL-derived per-area console logging and dev mode (?debug=…,
  * ?dev=true); and the window.EPB_DIAG.dump() diagnostic.
  *
- * This file is the full bundle's entry point: it hands bootstrap.ts the seven
- * visual editors, which src/index-light.ts deliberately does not.
+ * This file is the bundle's entry point. The visual editors ship beside it, in
+ * a file of their own (src/editor/entry.ts), loaded the first time one opens.
  */
 
 import { bootstrap } from './bootstrap.js';
-import {
-  EntityProgressCardEditor,
-  EntityProgressBadgeEditor,
-  EntityProgressTemplateEditor,
-  EntityProgressBadgeTemplateEditor,
-  EntityProgressFeatureEditor,
-  EntityProgressMultiCardEditor,
-  EntityProgressMultiFeatureEditor,
-} from './editor/editors.js';
 
-bootstrap({
-  card: EntityProgressCardEditor,
-  badge: EntityProgressBadgeEditor,
-  template: EntityProgressTemplateEditor,
-  badgeTemplate: EntityProgressBadgeTemplateEditor,
-  feature: EntityProgressFeatureEditor,
-  multiCard: EntityProgressMultiCardEditor,
-  multiFeature: EntityProgressMultiFeatureEditor,
-});
+bootstrap();

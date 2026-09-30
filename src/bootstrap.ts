@@ -1,5 +1,5 @@
-// What both bundle entry points do: register the types, expose
-// window.EPB_DIAG, print the console banner.
+// What the bundle does on load: register the types, expose window.EPB_DIAG,
+// print the console banner.
 
 import { META, CARD_CONTEXT, CARD } from './utils/parameters.js';
 import { RegistrationHelper } from './utils/register.js';
@@ -15,34 +15,20 @@ import {
 } from './card/cards.js';
 import { EntityProgressMultiCard, EntityProgressMultiFeature } from './card/multi.js';
 
-// A parameter, not an import: editors.ts/chips.ts/list-editors.ts call
-// defineElement() at module level, so no build flag can tree-shake them away.
-type EditorSet = {
-  card: CustomElementConstructor;
-  badge: CustomElementConstructor;
-  template: CustomElementConstructor;
-  badgeTemplate: CustomElementConstructor;
-  feature: CustomElementConstructor;
-  multiCard: CustomElementConstructor;
-  multiFeature: CustomElementConstructor;
-};
-
-function registerComponents(editors: EditorSet | null): void {
+function registerComponents(): void {
   RegistrationHelper.registerCard(
     { ...META.types.card, getEntitySuggestion: resolveEntitySuggestion },
     EntityProgressCard,
-    editors?.card,
   );
   RegistrationHelper.registerBadge(
     { ...META.types.badge, getEntitySuggestion: resolveEntitySuggestion },
     EntityProgressBadge,
-    editors?.badge,
   );
-  RegistrationHelper.registerCard(META.types.template, EntityProgressTemplateCard, editors?.template);
-  RegistrationHelper.registerBadge(META.types.badgeTemplate, EntityProgressTemplateBadge, editors?.badgeTemplate);
-  RegistrationHelper.registerCardFeature(META.types.feature, EntityProgressFeatures, editors?.feature);
-  RegistrationHelper.registerCard(META.types.multiCard, EntityProgressMultiCard, editors?.multiCard);
-  RegistrationHelper.registerCardFeature(META.types.multiFeature, EntityProgressMultiFeature, editors?.multiFeature);
+  RegistrationHelper.registerCard(META.types.template, EntityProgressTemplateCard);
+  RegistrationHelper.registerBadge(META.types.badgeTemplate, EntityProgressTemplateBadge);
+  RegistrationHelper.registerCardFeature(META.types.feature, EntityProgressFeatures);
+  RegistrationHelper.registerCard(META.types.multiCard, EntityProgressMultiCard);
+  RegistrationHelper.registerCardFeature(META.types.multiFeature, EntityProgressMultiFeature);
 }
 
 function announce(): void {
@@ -80,8 +66,8 @@ function announce(): void {
   }
 }
 
-function bootstrap(editors: EditorSet | null): void {
-  registerComponents(editors);
+function bootstrap(): void {
+  registerComponents();
   installDiagnostic(cardAudit);
   announce();
 

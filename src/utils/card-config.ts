@@ -7,7 +7,7 @@
  */
 
 import { HA_CONTEXT } from './ha-context.js';
-import { META, VERSION, LIGHT_BUILD } from './meta.js';
+import { META, VERSION } from './meta.js';
 
 // Shared by every purely decorative element below (progress bar internals,
 // marks, icon/badge wrappers) - hidden from the accessibility tree.
@@ -430,7 +430,7 @@ const WARNING_PREFIX = `%c⚠️ ${CONSOLE_TAG} ${VERSION} — `;
 
 const consoleInfo = {
   tag: CONSOLE_TAG,
-  message: `%c✨${CONSOLE_TAG} ${VERSION}${LIGHT_BUILD ? ' (LIGHT — no visual editor)' : ''} IS INSTALLED.`,
+  message: `%c✨${CONSOLE_TAG} ${VERSION} IS INSTALLED.`,
   css: 'color:orange; background-color:black; font-weight: bold;',
   link: `      For more details, check the README: ${META.documentation}`,
   // Emitted after the banner (see index.ts) only when the URL-derived dev/

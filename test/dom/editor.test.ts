@@ -18,6 +18,7 @@ import { visibleFields, type FieldTree } from '../helpers.js';
 import { META } from '../../src/utils/parameters.js';
 import { EditorFactory } from '../../src/editor/factory.js';
 import '../../src/index.js';
+import '../../src/editor/entry.js';
 
 type EditorEl = HTMLElement & { setConfig?: (c: unknown) => void; hass?: unknown };
 
@@ -28,8 +29,8 @@ describe('every card hands back an editor that builds its fields', () => {
     // contract, not as an exemption for a specific pair.
     if (!editor) continue;
 
-    // getConfigElement is async (it waits for the editor's translations, which
-    // ship beside the bundle) - Home Assistant awaits it the same way.
+    // getConfigElement is async (the editor and its translations ship beside
+    // the bundle; imported here already) - Home Assistant awaits it too.
     test(`${key} -> ${editor}`, async () => {
       const cardCtor = customElements.get(typeName) as
         (CustomElementConstructor & { getConfigElement?: () => Promise<HTMLElement | null> }) | undefined;
@@ -82,7 +83,6 @@ describe('the Multi row editors', () => {
  * is exactly what nothing else would notice.
  */
 describe('a static hide takes its own fields out of the editor', () => {
-
   // What each target must take with it. Written out here on purpose: a copy of
   // the table would pass whatever the table said.
   const EXPECTED: Record<string, string[]> = {

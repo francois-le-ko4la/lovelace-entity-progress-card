@@ -39,9 +39,9 @@ npm run build:test   # → dist/entity-progress-card_dev.js (readable, not minif
 
 `src/bootstrap.ts` is where execution actually settles: it registers the card/
 badge/feature custom elements and prints the console banner — everything else in
-`src/` is reached from there, directly or transitively. Two entry points call
-it: `src/index.ts` hands it the seven visual editors, `src/index-light.ts` hands
-it `null` (see [Release process](#release-process)).
+`src/` is reached from there, directly or transitively. `src/index.ts` calls it;
+the seven visual editors ship in a file of their own, `src/editor/entry.ts` (see
+[The editor file](#the-editor-file)).
 
 Tests come in two layers, run by two different gates:
 
@@ -64,11 +64,11 @@ the [Contributing Guide](contributing.md#contribution-guidelines).
 
 Three gates, each named for when you run it. Each one contains the previous:
 
-|                | when                           | adds                                                                                                            |
-| -------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------- |
-| `check:code`   | while you code                 | syntax, format, lint, types, i18n structure, logic tests                                                        |
-| `check:github` | every push **and** the release | release flags, knip, full i18n sync, markdown, `test:dom`, `build:prod` + `build:light`, language floor on both |
-| `check:push`   | before pushing                 | `check:chrome92`, the dev bundle (`build:test` + `node --check`) and its split guard                            |
+|                | when                           | adds                                                                                                  |
+| -------------- | ------------------------------ | ----------------------------------------------------------------------------------------------------- |
+| `check:code`   | while you code                 | syntax, format, lint, types, i18n structure, logic tests                                              |
+| `check:github` | every push **and** the release | release flags, knip, full i18n sync, markdown, `test:dom`, `build:prod`, language floor on both files |
+| `check:push`   | before pushing                 | `check:chrome92`, the dev bundle (`build:test` + `node --check`) and its split guard                  |
 
 `check:github` deliberately never builds the dev bundle - it bakes in
 `__EPB_DEV_BUILD__: true` and has no business on a release runner.
@@ -110,6 +110,37 @@ Three gates, each named for when you run it. Each one contains the previous:
 └─────────────────────────────────────────────────────────────────┘
 ```
 
+### Two files, one copy of each module
+
+Those layers ship in two files. The editors are the only part of the top layer
+that lives apart:
+
+```text
+entity-progress-card.js                        entity-progress-card-editor.js
+┌──────────────────────────────────┐           ┌──────────────────────────────┐
+│ src/index.ts → bootstrap.ts      │  import() │ src/editor/entry.ts          │
+│ cards, badges, features, Multis  │ ────────▶ │ 7 editors, 2 row editors,    │
+│                                  │  on first │ chips, list editors,         │
+│ shared: parameters, schema,      │  opening  │ EditorFactory                │
+│ config-helpers, hass-provider,   │           │                              │
+│ styles, log, register, …         │ ◀──────── │ reads the shared modules     │
+│ → host table (Symbol.for key)    │   table   │ back, never bundles them     │
+└──────────────────────────────────┘           └──────────────────────────────┘
+```
+
+- **The bundle owns every piece of state**: one `HassProviderSingleton`, one
+  `CARD_CONTEXT`, one set of shared stylesheets, one schema. The editor file
+  runs on the same objects the cards do.
+- **The seam is computed, not declared**: `scripts/build.js` shares whatever
+  card module the editor's own code imports, and fails the build if any module
+  ends up in both files.
+- **Each side keeps its own job**: the bundle registers the cards and answers
+  `getConfigElement()`; the editor file defines the editors and nothing else.
+  Neither reads the other's source at runtime - only the table.
+
+Mechanism, key and failure modes: [The editor file](#the-editor-file) and
+[Loading the editor](#loading-the-editor).
+
 ### Custom element hierarchy
 
 ```mermaid
@@ -123,13 +154,24 @@ classDiagram
     EntityProgressCardBase <|-- EntityProgressBadge
     EntityProgressTemplateBase <|-- EntityProgressTemplateCard
     EntityProgressTemplateBase <|-- EntityProgressTemplateBadge
+    HACore <|-- EntityProgressMultiBase
+    EntityProgressMultiBase <|-- EntityProgressMultiCard
+    EntityProgressMultiBase <|-- EntityProgressMultiFeature
     HTMLElement <|-- EditorBase
     EditorBase <|-- EntityProgressCardEditor
     EditorBase <|-- EntityProgressBadgeEditor
     EditorBase <|-- EntityProgressTemplateEditor
     EditorBase <|-- EntityProgressBadgeTemplateEditor
     EditorBase <|-- EntityProgressFeatureEditor
+    EditorBase <|-- MultiEditorBase
+    MultiEditorBase <|-- EntityProgressMultiCardEditor
+    MultiEditorBase <|-- EntityProgressMultiFeatureEditor
+    EditorBase <|-- EntityProgressMultiCardRowEditor
+    EditorBase <|-- EntityProgressMultiFeatureRowEditor
 ```
+
+Everything under `HACore` ships in the bundle; everything under `EditorBase` in
+the editor file.
 
 | Class                                        | Responsibility                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -328,14 +370,18 @@ unchanged.
 
 ### Registration
 
-At module load, in `src/bootstrap.ts` (reached from either entry point):
+At module load, in `src/bootstrap.ts`:
 
 ```js
-RegistrationHelper.registerCard(META.types.card, EntityProgressCard, EntityProgressCardEditor);
-RegistrationHelper.registerBadge(META.types.badge, EntityProgressBadge, …);
-RegistrationHelper.registerCardFeature(META.types.feature, EntityProgressFeatures, EntityProgressFeatureEditor);
+RegistrationHelper.registerCard(META.types.card, EntityProgressCard);
+RegistrationHelper.registerBadge(META.types.badge, EntityProgressBadge);
+RegistrationHelper.registerCardFeature(META.types.feature, EntityProgressFeatures);
 …
 ```
+
+The editors register later, from their own file: `src/editor/entry.ts` defines
+each one under `devName(META.types.*.editor)` when `getConfigElement()` imports
+it. The bundle only ever holds the tag name.
 
 `RegistrationHelper` does two things per component:
 
@@ -357,7 +403,8 @@ RegistrationHelper.registerCardFeature(META.types.feature, EntityProgressFeature
    pencil to appear in HA's tile-feature list at all
    (`hui-card-features- editor.ts`'s `_isFeatureTypeEditable`) - entirely
    independent of whether `getConfigElement()`/`customElements.define()` for the
-   editor actually work.
+   editor actually work. With the editor in its own file, that is literally the
+   case: the pencil shows before the editor file was ever fetched.
 
 ### The HA ↔ card contract
 
@@ -1100,19 +1147,57 @@ file must not contain a non-English editor label, and every language's file must
 sit beside it with the expected length. `check:github` runs it after
 `build:prod`, `check:push` again after the dev build.
 
-### Loading the editor half
+### The editor file
 
-`HACore.getConfigElement` is `async` and awaits
-`HassProviderSingleton.ensureEditorTranslations()`. Home Assistant awaits
-`getConfigElement()` on all three element families — see
-`hui-card-element-editor.ts` and its badge/feature twins in
+The editors ship beside the bundle, in `<stem>-editor.js`, and load the first
+time one opens — the way Home Assistant loads its own cards' editors. A
+dashboard never downloads, parses or compiles them.
+
+What both files need exists once, in the bundle. `scripts/build.js` runs three
+passes:
+
+1. **Find the seam**: build `src/index.ts` and `src/editor/entry.ts` for their
+   metafiles only. Every card module an editor-only module imports is shared.
+   Nothing lists them by hand.
+2. **The bundle**: `src/index.ts`, then a table holding those modules
+   (`import * as`), frozen under
+   `globalThis[Symbol.for('epb-host:<stem>:<VERSION>')]`. The key carries the
+   file and the version: a dev and a prod bundle loaded side by side never read
+   each other's table, and an editor file left over from another version finds
+   none. The first copy wins and the slot is locked (non-writable,
+   non-configurable): a second load of the same version — HACS plus a manual
+   resource — keeps the table of the bundle whose cards actually registered, and
+   no later script can swap it.
+3. **The editor file**: `src/editor/entry.ts`, with a plugin that turns every
+   import of a shared module into a read of that table. A table that is missing
+   throws while the file evaluates.
+
+The build then fails if any module was bundled into both files: a second
+`HassProviderSingleton`, a second schema, a second set of shared stylesheets
+would all look fine until they drifted. Neither file has an `import` or `export`
+statement left, so both still load as a classic script (#108).
+
+`src/` knows none of this: `src/editor/` imports `../card/schema.js` like any
+other module, and the tests bundle it that way — a DOM test that mounts an
+editor imports `src/editor/entry.js` itself. `test/bundle-suite.ts` is the one
+that loads the real pair from `dist/`, the editor file after the bundle.
+
+### Loading the editor
+
+`HACore.getConfigElement` is `async`: it imports the editor file, unless its
+elements are already defined, and awaits
+`HassProviderSingleton.ensureEditorTranslations()` alongside. One import serves
+the page; a failed one is retried at the next opening. A failure, or a file that
+defined nothing, answers `null`, and Home Assistant offers its own YAML editor
+instead. Home Assistant awaits `getConfigElement()` on all three element
+families — see `hui-card-element-editor.ts` and its badge/feature twins in
 `home-assistant/frontend` — so the editor element is only created once the
 dictionary is in. Nothing is ever rendered in English and swapped afterwards.
 
-The file is fetched from the directory the bundle itself was served from:
-`CARD_CONTEXT.moduleUrl` (`document.currentScript?.src`, or the Resource Timing
-entry matching `CARD_CONTEXT.bundleStem` for a module load — never
-`import.meta`, see issue #108), falling back to
+Both files are fetched from the directory the bundle itself was served from
+(`sidecarUrl()`): `CARD_CONTEXT.moduleUrl` (`document.currentScript?.src`, or
+the Resource Timing entry matching `CARD_CONTEXT.bundleStem` for a module load —
+never `import.meta`, see issue #108), falling back to
 `/hacsfiles/lovelace-entity-progress-card/`. A `?v=<VERSION>` query defeats the
 browser cache after an update: HACS cache-busts the JS resource it installs,
 never its sibling files.
@@ -1125,7 +1210,8 @@ element types opened in a row share one request.
 Release-side, `.github/workflows/release.yaml` uploads
 `dist/entity-progress-card[.-]*` as a glob — the pattern deliberately excludes
 the `_dev` build. HACS downloads every asset attached to the release, which is
-what puts the JSON files next to the bundle in the install directory.
+what puts the editor file and the JSON files next to the bundle in the install
+directory.
 
 ## Adding a new option
 
@@ -1347,27 +1433,18 @@ reasoning survives a maintainer handoff instead of living only in chat history.
     the minified output and `npm run check:es-target` (`es-check es2022` plus
     the static-block check, catches syntax newer than the language floor that
     `node --check` alone can't - Node's own parser is newer than the target, see
-    issue #128). The uploaded file is named explicitly, never a `dist/*` glob.
-    HACS serves that asset.
-- **Three build modes** (`scripts/build.js`, esbuild): `build:test` →
-  `entity-progress-card_dev.js` (debug baseline left as committed), `build:prod`
-  (`--prod`) → `entity-progress-card.js` (minified, `DEBUG_DEFAULTS` re-forced
-  all-`false`, see `scripts/lib/release-flags.js`), and `build:light`
-  (`--prod --light`) → `entity-progress-card-light.js`. `dev` mode isn't baked
-  into any of them — it follows the served filename/URL at runtime (see
-  [Logging & debugging](#logging--debugging)). Only `build:prod` and
-  `build:light` are minified and safe to ship.
-- **The light build drops the editor through a separate entry point, not a
-  flag.** `--light` switches the entry to `src/index-light.ts` and defines
-  `__EPB_LIGHT_BUILD__: true`. The entry point is what actually removes the
-  editor: `editors.ts`, `chips.ts` and `list-editors.ts` each call
-  `defineElement()` at module top level, and no tree-shaker may drop a side
-  effect — importing them behind a dead `if` saves 0.4 KB, never importing them
-  saves 88 KB. The define does the rest: `META.types.*.editor` becomes
-  `undefined` (meta.ts), so `HACore.getConfigElement` returns `null` and Home
-  Assistant falls back to its own YAML editor; `BUNDLE_STEM` gains the `-light`
-  suffix; the banner and `EPB_DIAG.dump()` say which build is running. A light
-  build writes no `-<lang>.json` sidecar — with no editor, nothing fetches them.
+    issue #128). The upload glob, `dist/entity-progress-card[.-]*`, takes the
+    bundle, its editor file and its language files, never the `_dev` build. HACS
+    serves those assets.
+- **Two build modes** (`scripts/build.js`, esbuild): `build:test` →
+  `entity-progress-card_dev.js` (debug baseline left as committed) and
+  `build:prod` (`--prod`) → `entity-progress-card.js` (minified,
+  `DEBUG_DEFAULTS` re-forced all-`false`, see `scripts/lib/release-flags.js`),
+  each with its `-editor.js` and `-<lang>.json` files beside it (see
+  [The editor file](#the-editor-file)). `dev` mode isn't baked into either — it
+  follows the served filename/URL at runtime (see
+  [Logging & debugging](#logging--debugging)). Only `build:prod` is minified and
+  safe to ship.
 - **Language floor**: the esbuild target is `es2021`, with class features
   declared native (`NATIVE_CLASS_FEATURES`) — private fields, `??=` and optional
   chaining are fine. esbuild lowers any other newer syntax, class `static {}`
@@ -1450,14 +1527,24 @@ reasoning survives a maintainer handoff instead of living only in chat history.
   `document.currentScript.src` is populated for a classic-script load and `null`
   for an ES-module load (`import()`, the real HACS/"JavaScript Module" path) —
   in the latter case `MODULE_URL` falls back to the Resource Timing API
-  (`performance.getEntriesByType('resource')`), matching the entry whose URL
-  contains this exact build's own filename (`entity-progress-card(_dev)?.js`) so
-  a dev+prod pair loaded side by side never cross-match each other's query
-  string. Still anchored to the **resource's own URL** either way, never the
-  dashboard page's URL. `CARD_CONTEXT.classicScript`
-  (`document.currentScript !== null`) is a separate signal, used to show a
-  one-time console nudge toward switching the resource to "JavaScript Module" —
-  the classic type still loads fine now, but stays deprecated by HA.
+  (`performance.getEntriesByType('resource')`), matching the first _script_
+  entry whose path ends with this exact build's own filename
+  (`entity-progress-card(_dev)?.js`, `isBundleEntry`) so a dev+prod pair loaded
+  side by side never cross-match each other's query string. Script only, and the
+  end of the path, not anywhere in the URL: the editor file is imported from
+  beside that URL, so an image or a fetch carrying the same name must never get
+  to pick where executable code comes from. Still anchored to the **resource's
+  own URL** either way, never the dashboard page's URL.
+  `CARD_CONTEXT.classicScript` (`document.currentScript !== null`) is a separate
+  signal, used to show a one-time console nudge toward switching the resource to
+  "JavaScript Module" — the classic type still loads fine now, but stays
+  deprecated by HA.
+- **The editor file reads none of this itself.** `CARD_CONTEXT` lives in
+  `parameters.ts`, one of the modules it reads off the bundle's host table: the
+  same object, so `?debug=`, `?dev=true` and `?noRegistration` set on the
+  resource reach the editors too, and their `-dev` tags always match the cards'.
+  The file itself loads with `?v=<VERSION>`, not the resource's query string -
+  it has nothing to read there.
 - A **console warning** is printed after the load banner whenever dev or any
   debug area is active (listing the active areas), so a non-shipped
   configuration never runs silently. Normal prod loads stay quiet.

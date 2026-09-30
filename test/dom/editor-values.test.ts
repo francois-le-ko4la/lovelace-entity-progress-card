@@ -14,6 +14,7 @@ import { assertUndefined, visibleFields, type FieldTree } from '../helpers.js';
 
 import { EditorFactory } from '../../src/editor/factory.js';
 import '../../src/index.js';
+import '../../src/editor/entry.js';
 
 type EditorEl = HTMLElement & { setConfig?: (c: unknown) => void; hass?: unknown };
 type FieldEl = HTMLElement & { value?: unknown };

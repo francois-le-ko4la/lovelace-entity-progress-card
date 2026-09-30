@@ -11,6 +11,7 @@ import assert from 'node:assert/strict';
 import { flushFrames } from '../dom-setup.js';
 import { makeHass, TEST_ENTITY } from '../ha-stubs.js';
 import '../../src/index.js';
+import '../../src/editor/entry.js';
 
 type FieldEl = HTMLElement & { label?: unknown; _fieldDef?: { name: string; type?: unknown; noLabel?: boolean } };
 type EditorEl = HTMLElement & { setConfig?: (c: unknown) => void; hass?: unknown };

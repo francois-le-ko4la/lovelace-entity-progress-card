@@ -182,6 +182,13 @@ Some issues aren't a bug — the browser is simply below the supported version.
   Settings → Dashboards → ⋮ → Resources, open the entry, set **Resource type →
   JavaScript Module**, then hard-refresh. (Recent builds load correctly either
   way and print a console warning when they detect the classic type.)
+- **The visual editor doesn't open — Home Assistant shows its YAML editor
+  instead?**  
+  ➡️ The editor ships beside the card in `entity-progress-card-editor.js`, and
+  loads the first time you open one. A manual install needs that file next to
+  `entity-progress-card.js`; the console says why it didn't load
+  (`Visual editor unavailable: …`). Right after an update, hard-refresh: a card
+  still cached from the previous version refuses the new editor.
 - **Still not working?**  
   ➡️ Open your browser’s JavaScript console to check for any errors.
 

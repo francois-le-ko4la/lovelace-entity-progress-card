@@ -1,7 +1,7 @@
 // window.EPB_DIAG (EPB_DIAG_DEV in a dev build): dump() and cardAudit(), for
 // the browser console - see docs/troubleshooting.md.
 
-import { VERSION, LIGHT_BUILD, CARD_CONTEXT, HA_SELECTOR_TAG, HA_ACTION_HANDLER_TAG } from './parameters.js';
+import { VERSION, CARD_CONTEXT, HA_SELECTOR_TAG, HA_ACTION_HANDLER_TAG } from './parameters.js';
 import { CONSTRUCTED_SHEETS, CONSTRUCTIBLE_STYLESHEETS } from './styles.js';
 import { HassProviderSingleton } from './hass-provider.js';
 
@@ -107,7 +107,7 @@ function environmentReport(): string {
       : 'supported, none built yet';
   return [
     '=== Entity Progress Card — diagnostic ===',
-    `card version   : ${VERSION}${LIGHT_BUILD ? ' light' : ''}${CARD_CONTEXT.dev ? ' (dev mode)' : ''}`,
+    `card version   : ${VERSION}${CARD_CONTEXT.dev ? ' (dev mode)' : ''}`,
     `HA core        : ${hass?.config?.version ?? 'unknown (no hass yet)'}`,
     // Two different sources under one label otherwise: a dump taken
     // before any card holds hass reports the browser, not Home Assistant.
