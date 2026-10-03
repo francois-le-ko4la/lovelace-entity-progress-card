@@ -1188,17 +1188,12 @@ Each row is a whole [`entity-progress-card`](configuration.md#standard) in
 default and takes the card's own options. Use `hide: ['value']` to turn the
 value off, and `hide: ['icon', 'name']` for bars and values alone.
 
-**Lining the bars up.** Every row sizes its own text, so `9%` and `78%` leave
-their bars starting at a different x. Two options fix that, from either side —
-take whichever suits you:
-
-- [`bar_aligned`](configuration.md#bar_aligned) gives every row the text column
-  of the widest. That is what the screenshots below use.
-- [`bar_max_width`](configuration.md#bar_max_width) pins the **bar**, and the
-  text takes what is left.
-
-Set either at the top level so every row gets it: a row left to itself falls
-back to its own width.
+**Lining the bars up.** A Multi does it on its own:
+[`bar_aligned`](configuration.md#bar_aligned), on by default, gives every row
+the text column of the widest, so `9%` and `78%` leave their bars starting at
+the same x. [`bar_max_width`](configuration.md#bar_max_width) pins the **bar**
+instead, and the text takes what is left. `bar_aligned: false` lets each row
+size its own text.
 
 See [Full Configuration Reference][FCR].
 
@@ -1233,7 +1228,6 @@ entities:
     bar_color: magenta
   - entity: sensor.printer_yellow_cartridge
     bar_color: yellow
-bar_aligned: true
 ```
 
 </details>
@@ -2211,7 +2205,6 @@ name: Energy (consumption vs production)
 features:
   - type: custom:entity-progress-multi-feature
     bar_size: medium
-    bar_aligned: true
     decimal: 0
     hide:
       - icon
@@ -2246,10 +2239,10 @@ One native HA `tile` card, two of our features stacked inside it: an
 by side with their values, and a second
 [`entity-progress-feature`](#tile-feature) below it renders the same data as one
 [`bar_stack: net`](configuration.md#bar_stack) balance, `center_zero` centered.
-Each Multi row prints its own value, and
-[`bar_aligned`](configuration.md#bar_aligned) holds those values in one column
-so the two bars start at the same x whatever the reading — `900 W` and `1600 W`
-are not the same width.
+Each Multi row prints its own value, and the Multi holds those values in one
+column ([`bar_aligned`](configuration.md#bar_aligned), on by default) so the two
+bars start at the same x whatever the reading — `900 W` and `1600 W` are not the
+same width.
 
 [🔼 Back to top]
 

@@ -1282,6 +1282,11 @@ const hideWithDefault = <T extends readonly unknown[]>(targets: T, fallback: T[n
 // absent from both aggregator schemas.
 const ROW_IDENTITY_FIELDS = ['entity', 'attribute', 'name', 'icon'] as const;
 
+// true: the rows of one Multi; a name: every card carrying it. Read by core.ts
+// wherever text sits beside the bar (HAS_EFFECT.barAligned).
+const barAligned = (defaultVal: boolean) =>
+  types.optionalWithDefault(types.union(types.boolean, types.string), defaultVal);
+
 // The aggregator's own keys: never a row's.
 const AGGREGATOR_FIELDS = ['entities', 'rows', 'type'] as const;
 
@@ -1392,6 +1397,9 @@ const badgeOverrides = <T extends readonly string[]>(hideTargets: T) => ({
 const asAggregator = (rowSchema: ReturnType<typeof struct>) =>
   rowSchema.delete([...ROW_IDENTITY_FIELDS]).extend({
     entities: types.optional(types.array(multiRowEntry)),
+    // A stack is there to compare its bars: they line up unless told not to,
+    // as the fixed value column of 1.6.1/1.6.2 had them.
+    bar_aligned: barAligned(true),
   });
 
 const YamlSchemaFactory = {
@@ -1532,9 +1540,7 @@ const YamlSchemaFactory = {
         // {top, bottom, background} - see applyDensityRule for the full
         // rewrite/clear list this triggers.
         density: types.enumsWithDefault(DENSITY_MODES, 'default'),
-        // true: the rows of one Multi; a name: every card carrying it. Read by
-        // core.ts, in single_line only and only without bar_max_width.
-        bar_aligned: types.optionalWithDefault(types.union(types.boolean, types.string), false),
+        bar_aligned: barAligned(false),
         min_width: types.optionalString(),
         height: types.optionalString(),
         frameless: types.optionalBooleanWithDefault(false),

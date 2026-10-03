@@ -157,8 +157,8 @@ describe('bar_aligned - on real cards', () => {
     card.shadowRoot?.querySelector<HTMLElement>('ha-card')?.style.getPropertyValue(name) ?? '';
   const widthOf = (card: Element) => styleOf(card, ALIGN_VAR);
 
-  test("a Multi's rows are aligned, a card on its own isn't, even single_line", async () => {
-    const multi = mount(MULTI, { bar_aligned: true, entities: [TEST_ENTITY, TEST_ENTITY] });
+  test("a Multi's rows are aligned by default, a card on its own isn't", async () => {
+    const multi = mount(MULTI, { entities: [TEST_ENTITY, TEST_ENTITY] });
     const card = mount(CARD, { entity: TEST_ENTITY, density: 'single_line', bar_aligned: true });
     await flushFrames();
     const rows = [...(multi.shadowRoot?.querySelectorAll(CARD) ?? [])];
@@ -175,6 +175,14 @@ describe('bar_aligned - on real cards', () => {
     await flushFrames();
     for (const card of cards) assert.match(widthOf(card), /^\d+px$/);
     assert.equal(widthOf(barOnTop), '', 'a bar on its own row has nothing to line up');
+  });
+
+  test('bar_aligned: false leaves a Multi as its rows size themselves', async () => {
+    const multi = mount(MULTI, { bar_aligned: false, entities: [TEST_ENTITY] });
+    await flushFrames();
+    const row = multi.shadowRoot?.querySelector(CARD);
+    assert.ok(row, 'no row');
+    assert.equal(widthOf(row), '');
   });
 
   test('bar_max_width leaves the text column alone', async () => {

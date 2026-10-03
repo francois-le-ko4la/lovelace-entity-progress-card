@@ -333,7 +333,6 @@ views:
             name: Printer
             features:
               - type: custom:entity-progress-multi-feature
-                bar_aligned: true
                 hide:
                   - icon
                   - name
@@ -462,7 +461,6 @@ views:
             name: Energy (consumption vs production)
             features:
               - type: custom:entity-progress-multi-feature
-                bar_aligned: true
                 hide:
                   - icon
                   - name
@@ -3696,7 +3694,6 @@ views:
             name: 'Printer ink levels - bar + value'
             features:
               - type: custom:entity-progress-multi-feature
-                bar_aligned: true
                 hide:
                   - icon
                   - name
@@ -3716,7 +3713,6 @@ views:
             grid_options:
               columns: full
           - type: custom:entity-progress-multi-card
-            bar_aligned: true
             hide:
               - icon
               - name
@@ -3744,7 +3740,6 @@ views:
             name: 'Energy - bar only'
             features:
               - type: custom:entity-progress-multi-feature
-                bar_aligned: true
                 hide:
                   - icon
                   - name
@@ -3763,7 +3758,6 @@ views:
             name: Energy (consumption vs production)
             features:
               - type: custom:entity-progress-multi-feature
-                bar_aligned: true
                 hide:
                   - icon
                   - name
@@ -5851,7 +5845,6 @@ views:
               columns: 12
               rows: 1
           - type: custom:entity-progress-multi-card
-            bar_aligned: true
             hide:
               - icon
               - name
@@ -6438,7 +6431,6 @@ views:
             name: Energy (consumption vs production)
             features:
               - type: custom:entity-progress-multi-feature
-                bar_aligned: true
                 hide:
                   - icon
                   - name

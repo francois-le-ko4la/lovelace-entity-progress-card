@@ -63,13 +63,14 @@ any card can use it.
 
 #### 📐 Bars that start at the same x
 
-Turn on [`bar_aligned`][bar_aligned] and every row of a Multi takes the text
-column of its widest row, so the bars line up whatever each row prints — `9 %`
-and `78 %`, `900 W` and `1600 W`. Give it a name instead, and every card sharing
-that name lines up the same way, across cards: a Multi and the cards beside it,
-a `vertical-stack-in-card`, an `auto-entities` list. The column widens with the
-text at once and narrows only once a shorter text has held for 30 seconds, so a
-changing value doesn't keep moving the bars: no width to guess, no `card_mod`.
+A Multi lines its bars up on its own again, as in 1.6.2: every row takes the
+text column of its widest row, whatever each one prints — `9 %` and `78 %`,
+`900 W` and `1600 W` ([`bar_aligned`][bar_aligned], on by default; `false` turns
+it off). Give it a name, and every card sharing that name lines up the same way,
+across cards: a Multi and the cards beside it, a `vertical-stack-in-card`, an
+`auto-entities` list. The column widens with the text at once and narrows only
+once a shorter text has held for 30 seconds, so a changing value doesn't keep
+moving the bars: no width to guess, no `card_mod`.
 
 #### 🧩 Both Multi cards get a visual editor
 

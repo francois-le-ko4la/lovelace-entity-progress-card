@@ -4081,15 +4081,14 @@ does **not** accept is anything the row shape settles on its behalf: `layout`,
 `bar_position`, `bar_single_line`, `density`, `frameless`, `marginless`,
 `multiline`, `height` and `min_width`.
 
+A stack's bars start at the same x on their own: [`bar_aligned`](#bar_aligned),
+on by default, gives every row the text column of the widest.
 [`bar_max_width`](#bar_max_width) is the exception worth knowing: a row does
-take it, and it is how a stack's bars are made to start at the same x rather
-than each one beginning where its own text ends. Set once at the top level, it
-applies to every row. The CSS hook `--epb-multi-value-width` does the same from
-the other side, by pinning the text column instead of the bar. Set it in your
-Home Assistant theme (`epb-multi-value-width: 120px`) and every card using that
-theme gets it, no `card_mod` needed. Or let [`bar_aligned`](#bar_aligned) find
-the width: the widest text of the Multi's own rows, or of every card sharing a
-name.
+take it, and it pins the bar instead, the text taking what is left. Set once at
+the top level, it applies to every row. The CSS hook `--epb-multi-value-width`
+pins the text column to a fixed width, over both — in your Home Assistant theme
+(`epb-multi-value-width: 120px`), every card using that theme gets it, no
+`card_mod` needed.
 
 > [!IMPORTANT]
 >
@@ -4268,12 +4267,14 @@ entities:
 [![Template OK][Template-OK]](#compatibility)
 [![Feature OK][Feature-OK]](#compatibility)
 
-> **`bar_aligned`** [Boolean | String] ➡️ _(optional, default: `false`)_
+> **`bar_aligned`** [Boolean | String] ➡️ _(optional, default: `true` on a
+> Multi, `false` on a card)_
 
 Lines bars up at the same x: every row of a group takes the text column of its
 widest row, whatever each one prints — `9 %` and `78 %`, `900 W` and `1600 W`.
 
-- **`true`**, on a Multi: its own rows form the group, and no other card's.
+- **`true`**, a Multi's default: its own rows form the group, and no other
+  card's. `bar_aligned: false` lets each row size its own text.
 - **A name** (`bar_aligned: batteries`): every row and every card of the page
   carrying that name forms one group, across cards — a Multi and the cards
   beside it, a `vertical-stack-in-card`, everything an `auto-entities`
@@ -4304,7 +4305,7 @@ _Examples_:
 
 ```yaml
 type: custom:entity-progress-multi-card
-bar_aligned: true
+bar_aligned: false # each row sizes its own text
 entities:
   - sensor.phone_battery
   - sensor.tablet_battery

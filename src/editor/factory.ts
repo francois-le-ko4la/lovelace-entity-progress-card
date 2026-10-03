@@ -2341,13 +2341,17 @@ const EditorFactory = {
       icon: HA_CONTEXT.icons.aspectRatio,
       fields: {
         ...(feature ? {} : { rows: EditorFieldsType.number('rows', { width: 'half' }) }),
-        // bar_max_width pins the bar instead: the text has nothing to align.
-        // A name written in YAML (a group across cards) survives an off/on.
+        // On when unset (the Multi's default); off writes false. A name written
+        // in YAML survives an off/on. bar_max_width leaves nothing to align.
         bar_aligned: EditorFieldsType.toggle('bar_aligned', {
           virtual: true,
           showIf: (c: LovelaceConfig) => !c.bar_max_width,
-          resolveVirtual: (c: LovelaceConfig) => Boolean(c.bar_aligned),
-          onVirtualChange: draftToggle('bar_aligned', () => true),
+          resolveVirtual: (c: LovelaceConfig) => Boolean(c.bar_aligned ?? true),
+          onVirtualChange: (value: boolean, config: LovelaceConfig): LovelaceConfig => ({
+            ...config,
+            bar_aligned: value ? config._bar_aligned_draft : false,
+            _bar_aligned_draft: value ? undefined : config.bar_aligned,
+          }),
         }),
       },
     },
