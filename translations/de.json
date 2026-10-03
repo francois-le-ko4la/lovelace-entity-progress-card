@@ -60,6 +60,7 @@
       "custom_info": "Zusatzinfo (sekundär)",
       "custom_theme": "Benutzerdefinierte Themenzonen",
       "density": "Dichte",
+      "bar_aligned": "Ausgerichtete Balken",
       "fast_refresh": "Schnelle Aktualisierung",
       "force_circular_background_mode": "Kreisförmiger Hintergrund",
       "frameless": "Rahmenlos",

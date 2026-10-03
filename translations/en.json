@@ -60,6 +60,7 @@
       "custom_info": "Custom secondary info",
       "custom_theme": "Custom theme zones",
       "density": "Density",
+      "bar_aligned": "Aligned bars",
       "fast_refresh": "Fast refresh",
       "force_circular_background_mode": "Circular background",
       "frameless": "Frameless",

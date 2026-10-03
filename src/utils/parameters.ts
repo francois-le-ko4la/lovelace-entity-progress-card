@@ -20,11 +20,6 @@ import { THEME, THEME_KEYS, PERCENT_THEME_KEYS } from './card-themes.js';
 // section for why baked in rather than URL-derived like `debug` below.
 declare const __EPB_DEV_BUILD__: boolean;
 
-// document.currentScript.src, not import.meta.url - a bare import.meta is a
-// parse-time SyntaxError on a classic-script load (issue #108). null for an
-// ES-module load (the common HACS "JavaScript Module" type) - the Resource
-// Timing API covers that instead, matched by this exact build's own filename
-// so a dev+prod pair loaded side by side never cross-match.
 // This build's own basename, without extension - the editor and its
 // translation files ship beside the bundle under it (see scripts/build.js).
 const BUNDLE_STEM = `entity-progress-card${__EPB_DEV_BUILD__ ? '_dev' : ''}`;
@@ -39,10 +34,16 @@ const isBundleEntry = (entry: PerformanceEntry, stem: string): boolean => {
     return false;
   }
 };
+// A stack frame names the file it runs from, query included: two copies of one
+// file (a stable and a test one) each find their own. Never import.meta (#108).
+const scriptUrlFromStack = (stack: string | undefined): string =>
+  stack?.match(/(?:https?|file):\/\/[^\s()]+?(?=:\d+:\d+)/)?.[0] ?? '';
 const MODULE_URL = (() => {
   try {
     const scriptSrc = (document.currentScript as HTMLScriptElement | null)?.src;
     if (scriptSrc) return scriptSrc;
+    const ownUrl = scriptUrlFromStack(new Error().stack);
+    if (ownUrl) return ownUrl;
     return performance.getEntriesByType('resource').find((entry) => isBundleEntry(entry, BUNDLE_STEM))?.name ?? '';
   } catch {
     return '';
@@ -97,10 +98,22 @@ const resolvedDebug = Object.fromEntries(
   (Object.keys(DEBUG_DEFAULTS) as (keyof typeof DEBUG_DEFAULTS)[]).map((area) => [area, debugOn(area)]),
 ) as Record<keyof typeof DEBUG_DEFAULTS, boolean>;
 
+const DEV_MODE = __EPB_DEV_BUILD__ || MODULE_PARAMS.get('dev') === 'true';
+
+// ?suffix=rc registers every element under a -rc name, beside an untouched
+// install - a test copy of the shipped file. A dev build is the -dev one.
+const SUFFIX_PATTERN = /^[a-z0-9]{1,16}$/;
+const suffixOf = (params: URLSearchParams, dev: boolean): string => {
+  const asked = params.get('suffix') ?? '';
+  if (SUFFIX_PATTERN.test(asked)) return asked;
+  return dev ? 'dev' : '';
+};
+
 const CARD_CONTEXT = {
-  dev: __EPB_DEV_BUILD__ || MODULE_PARAMS.get('dev') === 'true',
+  dev: DEV_MODE,
+  suffix: suffixOf(MODULE_PARAMS, DEV_MODE),
   classicScript: IS_CLASSIC_SCRIPT,
-  // ?noRegistration loads the whole module (banner, EPB_DIAG, everything) but
+  // ?noRegistration loads the whole module (banner, EPB, everything) but
   // defines zero custom elements and pushes nothing to customCards/Badges/
   // Features - a diagnostic knob for issue #108: if a freeze/clash disappears
   // with the module fully inert, it's our registration; if it persists, it's
@@ -113,7 +126,7 @@ const CARD_CONTEXT = {
   bundleStem: BUNDLE_STEM,
 };
 
-const devName = (name: string): string => `${name}${CARD_CONTEXT.dev ? '-dev' : ''}`;
+const suffixedName = (name: string): string => (CARD_CONTEXT.suffix ? `${name}-${CARD_CONTEXT.suffix}` : name);
 
 const SEV = {
   info: 'info',
@@ -153,7 +166,7 @@ const ALERT_BELOW_ENTITY_PATH = 'alert_when.below.entity';
 export { VERSION };
 export { META };
 export { CARD_CONTEXT };
-export { devName, isBundleEntry };
+export { suffixedName, isBundleEntry, scriptUrlFromStack, suffixOf };
 export { HA_CONTEXT };
 export { CARD };
 export { HIDE_TARGETS };

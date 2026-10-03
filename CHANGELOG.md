@@ -45,7 +45,7 @@ whole card now, and shows what a card shows — icon, name and value on an
 `entity-progress-multi-card`, the value on an `entity-progress-multi-feature`.
 No migration can decide this one for you: to keep the bare bars, add
 `hide: [icon, name, secondary_info]` to the Multi or to its rows.
-`EPB_DIAG.cardAudit()`, in the browser console, lists every Multi concerned, on
+`EPB.doctor.audit()`, in the browser console, lists every Multi concerned, on
 every dashboard.
 
 ### ✨ New
@@ -60,6 +60,16 @@ line truncates once at its end rather than each field cutting off inside its own
 box. [`reverse_secondary_info_row`][reverse_secondary_info_row] flips the whole
 row here: bar first, text after. It is the line every Multi row is drawn as, and
 any card can use it.
+
+#### 📐 Bars that start at the same x
+
+Turn on [`bar_aligned`][bar_aligned] and every row of a Multi takes the text
+column of its widest row, so the bars line up whatever each row prints — `9 %`
+and `78 %`, `900 W` and `1600 W`. Give it a name instead, and every card sharing
+that name lines up the same way, across cards: a Multi and the cards beside it,
+a `vertical-stack-in-card`, an `auto-entities` list. The column widens with the
+text at once and narrows only once a shorter text has held for 30 seconds, so a
+changing value doesn't keep moving the bars: no width to guess, no `card_mod`.
 
 #### 🧩 Both Multi cards get a visual editor
 
@@ -113,11 +123,28 @@ needs: your environment — card, Home Assistant and browser versions — then t
 card's YAML, each deprecated option and option without effect marked. Paste it
 into a [GitHub issue] as it is.
 
-- **`EPB_DIAG.cardAudit()`**, in the browser console, lists every card on every
+- **`EPB.doctor.audit()`**, in the browser console, lists every card on every
   dashboard — views you never open included — carrying a deprecated option or an
   option without effect, and every Multi whose rows now show more by default.
-- **`EPB_DIAG.dump()`** gives the browser's exact version and operating system
-  on Chrome, Edge and Opera over HTTPS.
+- **`EPB.doctor.dump()`** gives the browser's exact version and operating system
+  on Chrome, Edge and Opera over HTTPS, and says where the visual editor loads
+  from and whether it did. Both work on any dashboard, a card of ours on screen
+  or not.
+- **`EPB`** is the card's console helper now: `EPB.version`, `EPB.help()` for
+  the list, and `EPB.doctor` for the tools above. `EPB_DIAG.dump()` keeps
+  working. `EPB.doctor.cards()` lists the cards on the page, numbered, and
+  `EPB.doctor.inspect(2)` — or `inspect($0)` from the DevTools — shows one of
+  them: the value and range its bar is drawn from, and the config it kept. Each
+  card's config and entity get a state — ok, invalid, deprecated, no effect, not
+  found… — with the exact findings beside it.
+
+#### 🧪 Test a release candidate beside your install
+
+Copy an RC's files to `www/test/` and add
+`/local/test/entity-progress-card.js?suffix=rc` as a resource: every element of
+that copy registers under an `-rc` name — `custom:entity-progress-card-rc`, … —
+next to the cards HACS installed, with its own editor, language files and
+`EPB_RC`. See [RC testing].
 
 ### 🔧 Improvements
 
@@ -176,7 +203,15 @@ default when you set none.
 A `valve`, a `humidifier`, a `water_heater` and a `media_player` now read their
 position, humidity, temperature and volume without the [`attribute`][attribute]
 option spelled out, and Home Assistant's entity-first card picker offers them
-too.
+too. A battery comes up twice there: the plain card, and the same one under
+`battery_adaptive`.
+
+#### Card feature
+
+- **`entity-progress-feature`** and [`entity-progress-multi-feature`][multi]
+  register through Home Assistant's newer `isSupported` API (2025.6+), keeping
+  `supported` for older versions: a card that hosts features offers them even
+  without an entity of its own, Mushroom's template card included.
 
 #### Moving with time
 
@@ -395,6 +430,9 @@ a panel.
 - [`max_value`][max_value] says what a `counter` and a `number` bring with them
   — their own range, used when you set no bounds — that an explicit bound
   overrides it, and which minimum [`center_zero`][center_zero] keeps there.
+- [Feature hosts] lists the cards `entity-progress-feature` and
+  `entity-progress-multi-feature` were tested in: Home Assistant's Tile and
+  Mushroom's Template card.
 
 #### Demo dashboards
 
@@ -496,12 +534,12 @@ come from Node's V8 — read the ratio, not the milliseconds.
   on a card left mounted.
 - The editor is built into a file of its own that reads the card's modules
   instead of copying them: the build fails if one ends up in both files.
-- 591 automated tests run before every push: 433 on the card's logic, 158
+- 622 automated tests run before every push: 443 on the card's logic, 179
   mounting real cards and editors in a virtual DOM.
 - `scripts/compare-hass-updates.js` measures what a hass update and a tick cost
   per card, between two bundles.
-- `EPB_DIAG.dump()` answers for the bundle it came from — a dev build installs
-  itself as `EPB_DIAG_DEV` — and reports the two tile features' version.
+- The console helper answers for the bundle it came from — a dev build installs
+  itself as `EPB_DEV` — and the dump reports the two tile features' version.
 
 We care about getting the details right — but even so, something here might have
 slipped through. You don't need to be a developer to notice it. If something
@@ -7441,6 +7479,10 @@ experience:
   https://htmlpreview.github.io/?https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/graphic-effects-compatibility.html
 [bar_stack]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_stack
+[Feature hosts]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#feature-hosts
+[RC testing]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/rc-testing.md
 [compare-bundles.js]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/scripts/compare-bundles.js
 [compare-hass-updates.js]:
@@ -7463,6 +7505,8 @@ experience:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/demo-dashboard-helpers.yaml
 [density]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#density
+[bar_aligned]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_aligned
 [entities]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#multi-entities
 [reverse_secondary_info_row]:

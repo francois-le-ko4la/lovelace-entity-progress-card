@@ -28,7 +28,7 @@
  * TODO (schema+MultiConfigHelper, height division needs a live check).
  */
 
-import { CARD, META, devName } from '../utils/parameters.js';
+import { CARD, META, suffixedName } from '../utils/parameters.js';
 import { is } from '../utils/common-checks.js';
 import { HACore } from './core.js';
 import { AGGREGATOR_FIELDS } from './schema.js';
@@ -92,11 +92,11 @@ const MULTI_CSS = `
   /* Homogeneous split, shared by both variants: every bar gets an equal slice
      of the container (whose height is imposed by the grid for the card, and
      derived as N x 42px rows for the feature - see _applySizing). */
-  .multi-item { flex: 1 1 0; min-height: 0; overflow: hidden; }
+  .${CARD.style.dynamic.multiItem} { flex: 1 1 0; min-height: 0; overflow: hidden; }
   /* display: block, not just height: a custom element host defaults to
      inline, where height: 100% applies to nothing and each row adds a baseline
      gap - enough of them and the stack outgrows its container. */
-  .multi-item > * { display: block; height: 100%; }
+  .${CARD.style.dynamic.multiItem} > * { display: block; height: 100%; }
 
   ha-card.multi-card {
     height: 100%; box-sizing: border-box; overflow: hidden;
@@ -206,7 +206,7 @@ class EntityProgressMultiBase extends HACore {
   #buildChildren() {
     const container = this._container;
     if (!container) return;
-    const tag = devName(META.types.card.typeName);
+    const tag = suffixedName(META.types.card.typeName);
     this._children = this.#childConfigs.map((childConfig) => {
       const child = document.createElement(tag) as ChildEl;
       child.forceHidden?.(this.forcedHide);
@@ -215,7 +215,7 @@ class EntityProgressMultiBase extends HACore {
       // The wrapper, not the child, carries the equal-slice flex: a card host
       // has its own layout to keep out of.
       const wrapper = document.createElement('div');
-      wrapper.className = 'multi-item';
+      wrapper.className = CARD.style.dynamic.multiItem;
       wrapper.append(child);
       container.append(wrapper);
       return child;
@@ -346,7 +346,7 @@ class EntityProgressMultiBase extends HACore {
   // (same mechanism as HABase.getStubConfig).
   // skipcq: JS-0116 -- async matches the custom-card-helpers contract
   static async getStubConfig(): Promise<LovelaceConfig> {
-    return { type: `custom:${devName(this._baseClass)}`, entities: [] } as unknown as LovelaceConfig;
+    return { type: `custom:${suffixedName(this._baseClass)}`, entities: [] } as unknown as LovelaceConfig;
   }
 
   // Rows the aggregator occupies: explicit `rows`, else one per entity.

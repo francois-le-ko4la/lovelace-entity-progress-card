@@ -4,10 +4,10 @@
  * themselves, from their own file (src/editor/entry.ts).
  */
 
-import { VERSION, META, CARD_CONTEXT, SEV, devName } from './parameters.js';
+import { VERSION, META, CARD_CONTEXT, SEV, suffixedName } from './parameters.js';
 import { Logger } from './log.js';
 import type { HomeAssistant } from './hass-provider.js';
-import type { EntitySuggestion } from './entity-suggestions.js';
+import type { EntitySuggestion, EntitySuggestions } from './entity-suggestions.js';
 
 interface Component {
   typeName: string;
@@ -17,7 +17,7 @@ interface Component {
   // HA 2026.6+ entity-first card picker (customCards/customBadges only - see
   // entity-suggestions.ts and registerCardFeature below, which never reads
   // this field).
-  getEntitySuggestion?: (hass: HomeAssistant, entityId: string) => EntitySuggestion | null;
+  getEntitySuggestion?: (hass: HomeAssistant, entityId: string) => EntitySuggestions;
 }
 
 // ?debug=registration traces the custom-element registration lifecycle
@@ -53,14 +53,14 @@ function defineElement(name: string, elementClass: CustomElementConstructor): vo
 /**
  * Registers a card/badge/feature custom element with `customElements` and with
  * Home Assistant's discovery arrays
- * (`window.customCards`/`customBadges`/`customCardFeatures`). In dev mode
- * (`CARD_CONTEXT.dev`), every type/editor tag and displayed name gets a
- * `-dev`/` (dev)` suffix so a dev build can be installed side by side with
- * the shipped one without colliding.
+ * (`window.customCards`/`customBadges`/`customCardFeatures`). Under a suffix
+ * (`CARD_CONTEXT.suffix`: a dev build, or ?suffix=), every type/editor tag and
+ * displayed name gets it - `-rc`/` (rc)` - so the copy runs beside another
+ * install without colliding.
  */
 // Module-private (was a static-only class; kept the same encapsulation as the
 // former `#`-private static members, now via module scope).
-const DEV_MODE = CARD_CONTEXT.dev;
+const SUFFIX = CARD_CONTEXT.suffix;
 const TARGET_KEY = {
   customCards: 'customCards',
   customBadges: 'customBadges',
@@ -68,12 +68,12 @@ const TARGET_KEY = {
 } as const;
 
 const resolveComponent = (component: Component): Component => {
-  if (!DEV_MODE) return component;
+  if (!SUFFIX) return component;
   return {
     ...component,
-    typeName: devName(component.typeName),
-    name: `${component.name} (dev)`,
-    editor: component.editor ? devName(component.editor) : undefined,
+    typeName: suffixedName(component.typeName),
+    name: `${component.name} (${SUFFIX})`,
+    editor: component.editor ? suffixedName(component.editor) : undefined,
   };
 };
 
@@ -86,12 +86,14 @@ const resolveComponent = (component: Component): Component => {
 // every other field on this entry already uses.
 const withSuggestionType = (
   component: Component,
-  resolver: (hass: HomeAssistant, entityId: string) => EntitySuggestion | null,
+  resolver: (hass: HomeAssistant, entityId: string) => EntitySuggestions,
 ) => {
   const type = `custom:${component.typeName}`;
+  const typed = (suggestion: EntitySuggestion) => ({ ...suggestion, config: { type, ...suggestion.config } });
   return (hass: HomeAssistant, entityId: string) => {
-    const suggestion = resolver(hass, entityId);
-    return suggestion ? { ...suggestion, config: { type, ...suggestion.config } } : null;
+    const suggestions = resolver(hass, entityId);
+    if (!suggestions) return null;
+    return Array.isArray(suggestions) ? suggestions.map(typed) : typed(suggestions);
   };
 };
 
@@ -100,9 +102,12 @@ const resolveEntry = (component: Component, targetKey: string) =>
     ? {
         type: component.typeName,
         name: component.name,
+        // HA 2025.6+ asks isSupported; supported alone skips any host card
+        // without an entity (Mushroom's template card). Kept for older HA.
         supported: () => true,
-        // Ignored by HA, read by EPB_DIAG.dump(): without it a feature reports
-        // no version, and a dump cannot show two bundles disagreeing.
+        isSupported: () => true,
+        // Ignored by HA, read by EPB.doctor.dump(): without it a feature
+        // reports no version, and a dump cannot show two bundles disagreeing.
         version: VERSION,
         // HA's own edit-pencil-vs-trash-only decision (hui-card-features-
         // editor.ts) reads this field directly - without it, a feature with

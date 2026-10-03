@@ -65,6 +65,22 @@ const describeBundle = (file: string) => {
       });
     }
 
+    test('exposes the EPB console helper, EPB_DIAG kept as its alias', () => {
+      const globals = window as unknown as Record<string, unknown>;
+      const helper = globals.EPB as {
+        version: string;
+        help: () => string;
+        doctor: { dump: () => string; audit: () => Promise<string> };
+      };
+      assert.equal(helper.version, VERSION);
+      assert.match(helper.help(), /EPB\.doctor\.audit\(\)/);
+      assert.match(helper.doctor.dump(), /=== Entity Progress Card — diagnostic ===/u);
+      assert.equal(typeof helper.doctor.audit, 'function');
+      assert.equal(Object.getOwnPropertyDescriptor(window, 'EPB')?.writable, false);
+      const legacy = globals.EPB_DIAG as { dump: () => string };
+      assert.match(legacy.dump(), /=== Entity Progress Card — diagnostic ===/u);
+    });
+
     // The editor reads its shared modules off this table: nothing may swap it.
     test('publishes its host table once, locked', () => {
       const key = Symbol.for(`epb-host:${path.basename(bundle, '.js')}:${VERSION}`);

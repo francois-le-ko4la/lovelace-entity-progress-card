@@ -6,7 +6,7 @@
 //
 // A tag that disagrees with VERSION is silent and survives the release: the
 // card would announce the wrong version in its console banner, in META's
-// documentation URL and in EPB_DIAG.dump() - the very report used to diagnose
+// documentation URL and in EPB.doctor.dump() - the very report used to diagnose
 // what users send back.
 const fs = require('fs');
 const { execFileSync } = require('child_process');

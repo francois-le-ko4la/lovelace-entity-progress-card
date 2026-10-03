@@ -486,8 +486,8 @@ card_mod:
 > We expose the `.icon` and `.shape` to properly animate the card.
 
 **`vertical-stack-in-card`** — group multiple cards into a cohesive layout,
-combined with `auto-entities` for dynamic listing and `card_mod` to strip
-borders/shadows:
+combined with `auto-entities` for dynamic listing and
+[`frameless`](configuration.md#frameless) to strip borders and shadows:
 
 <!-- markdownlint-disable-next-line MD013 -->
 <img src="images/stack-311445.gif" alt="Stack" height="372px"/>
@@ -512,13 +512,7 @@ cards:
             icon_animation: battery_charging
             icon_tap_action:
               action: more-info
-            card_mod:
-              style:
-                .: |-
-                  :host {
-                    --ha-card-border-width: 0px !important; /* force-remove the border */
-                    box-shadow: none !important; /* remove the shadow to drop any outline */
-                  }
+            frameless: true
     sort:
       method: state
       numeric: true
@@ -1198,11 +1192,10 @@ value off, and `hide: ['icon', 'name']` for bars and values alone.
 their bars starting at a different x. Two options fix that, from either side —
 take whichever suits you:
 
+- [`bar_aligned`](configuration.md#bar_aligned) gives every row the text column
+  of the widest. That is what the screenshots below use.
 - [`bar_max_width`](configuration.md#bar_max_width) pins the **bar**, and the
-  text takes what is left. One option, nothing else needed.
-- `--epb-multi-value-width` pins the **text column** instead, through
-  [card_mod](https://github.com/thomasloven/lovelace-card-mod). That is what the
-  screenshots below use.
+  text takes what is left.
 
 Set either at the top level so every row gets it: a row left to itself falls
 back to its own width.
@@ -1240,11 +1233,7 @@ entities:
     bar_color: magenta
   - entity: sensor.printer_yellow_cartridge
     bar_color: yellow
-card_mod:
-  style: |
-    :host {
-      --epb-multi-value-width: 40px;
-    }
+bar_aligned: true
 ```
 
 </details>
@@ -2222,6 +2211,7 @@ name: Energy (consumption vs production)
 features:
   - type: custom:entity-progress-multi-feature
     bar_size: medium
+    bar_aligned: true
     decimal: 0
     hide:
       - icon
@@ -2246,11 +2236,6 @@ features:
         - entity: sensor.grid_consumption
           subtract: true
           color: blue
-card_mod:
-  style: |
-    :host {
-      --epb-multi-value-width: 45px;
-    }
 ```
 
 </details>
@@ -2261,9 +2246,10 @@ One native HA `tile` card, two of our features stacked inside it: an
 by side with their values, and a second
 [`entity-progress-feature`](#tile-feature) below it renders the same data as one
 [`bar_stack: net`](configuration.md#bar_stack) balance, `center_zero` centered.
-Each Multi row prints its own value, and the `--epb-multi-value-width` hook
-holds those values in one column so the two bars start at the same x whatever
-the reading — `900 W` and `1600 W` are not the same width.
+Each Multi row prints its own value, and
+[`bar_aligned`](configuration.md#bar_aligned) holds those values in one column
+so the two bars start at the same x whatever the reading — `900 W` and `1600 W`
+are not the same width.
 
 [🔼 Back to top]
 

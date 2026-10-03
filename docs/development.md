@@ -394,11 +394,13 @@ it. The bundle only ever holds the tag name.
    picker) — see `src/utils/entity-suggestions.ts` for the domain/ attribute
    rules deciding which entities get a suggestion and what config comes back. It
    resolves off the same `HA_CONTEXT.attributeMapping` the card itself reads for
-   a default attribute, so a picked entity and a hand-written one agree.
-   Template/Badge Template/Feature don't get one: Template needs a hand-written
-   Jinja `percent:` to render anything meaningful, and Features are never picked
-   through this entity-first flow at all (`customCardFeatures`, not
-   `customCards`).
+   a default attribute, so a picked entity and a hand-written one agree. A
+   battery (`device_class: battery`) gets two: the plain card, then the same one
+   under `theme: battery_adaptive`, labelled with that theme's own editor label
+   (HA titles it "<card> - <label>"). Template/Badge Template/Feature don't get
+   one: Template needs a hand-written Jinja `percent:` to render anything
+   meaningful, and Features are never picked through this entity-first flow at
+   all (`customCardFeatures`, not `customCards`).
 3. `customCardFeatures` entries also need `configurable: true` for the edit
    pencil to appear in HA's tile-feature list at all
    (`hui-card-features- editor.ts`'s `_isFeatureTypeEditable`) - entirely
@@ -487,6 +489,18 @@ Techniques used to keep N cards cheap on a dashboard that updates constantly:
    repaint. `contain: layout paint` bounds invalidation to the bar.
 6. **Push-based Jinja** with subscription dedup (next section) instead of
    polling or resubscribing.
+7. **`bar_aligned` only grows at once** (`card/aligned-bars.ts`). The column is
+   a single_line row's text, or the value beside a default-row bar
+   (`HAS_EFFECT.barAligned`). A row joins its group at render - its Multi for
+   `true`, the name otherwise - and leaves with its other resources. A text
+   change (`MutationObserver`) measures that row alone: wider than the column,
+   it widens every row at once; narrower, the column shrinks only if the widths
+   already read still say so 30 s later - a timer, no measurement. A resize
+   (`ResizeObserver`), a leave or a late web font measures the whole group
+   again. One `requestAnimationFrame` settles everything marked - all releases
+   to `max-content`, then all reads, then all writes - so one forced layout for
+   the page, never one per row, and a `hass` update that leaves the text alone
+   costs nothing.
 
 ## Browser compatibility matrix
 
@@ -914,6 +928,12 @@ one implementation, five call sites.
 
 ### `EditorBase` runtime conventions
 
+- **A feature's tile entity**: Home Assistant hands a feature's editor its
+  tile's `context`. `EditorBase` keeps `context.entity_id` under
+  `_context_entity` (an ephemeral key, never written), negotiates defaults off
+  it when the feature sets no entity of its own, and an entity-gated field asks
+  `effectiveEntity()` (`factory.ts`), never `c.entity` alone. The entity field
+  itself shows only what the YAML holds.
 - **Render once, update forever**: the DOM is built on first
   `connectedCallback`; every subsequent `setConfig` only pushes values,
   visibility (`showIf`) and dynamic selectors through `EditorDOMHelper` (same
@@ -1198,9 +1218,10 @@ Both files are fetched from the directory the bundle itself was served from
 (`sidecarUrl()`): `CARD_CONTEXT.moduleUrl` (`document.currentScript?.src`, or
 the Resource Timing entry matching `CARD_CONTEXT.bundleStem` for a module load —
 never `import.meta`, see issue #108), falling back to
-`/hacsfiles/lovelace-entity-progress-card/`. A `?v=<VERSION>` query defeats the
-browser cache after an update: HACS cache-busts the JS resource it installs,
-never its sibling files.
+`/hacsfiles/lovelace-entity-progress-card/`. Its query string is the bundle's
+own - HACS's `hacstag`, a dev's `?v=` - plus `version=<VERSION>`: whatever makes
+the browser fetch a new bundle makes it fetch new sibling files too, and a
+manual install without a query still changes URL with each version.
 
 Failure is not an error state. A 404, a timeout (4 s), a payload of the wrong
 length — any of these resolve the promise with the editor in English rather than
@@ -1485,7 +1506,7 @@ reasoning survives a maintainer handoff instead of living only in chat history.
 
 ## Logging & debugging
 
-`dev`/`debug`/`noRegistration` live in `CARD_CONTEXT`
+`dev`/`suffix`/`debug`/`noRegistration` live in `CARD_CONTEXT`
 (`src/utils/parameters.ts`).
 
 - **dev** (`-dev` suffix on every registered element name, so a dev build
@@ -1505,13 +1526,21 @@ reasoning survives a maintainer handoff instead of living only in chat history.
   trigger it. `?dev=true` is an optional _runtime override_ on the **prod** file
   on top of that baked value, for testing dev behavior against the exact shipped
   bundle.
+- **suffix** (`?suffix=rc`) renames and nothing else: every element, editor and
+  card-picker entry of that copy gets `-rc` / `(rc)`, and its diagnostic becomes
+  `EPB_RC` — a test copy of the shipped file beside a HACS install, no dev build
+  needed (`docs/rc-testing.md`, Method 2). Lowercase letters and digits, 16 at
+  most, or it is ignored; a dev build defaults to `dev` (`suffixOf`). Every tag
+  goes through `suffixedName()`. One limit: two copies of the **same version**
+  share one host table (its key is fixed at build time), so the second one's
+  editors never register.
 - **debug** (`?debug=area1,area2`, or `?debug=all`) turns on per-area console
   logging at runtime, no rebuild, and works against the shipped file too. The
   committed baseline is `DEBUG_DEFAULTS` (all-`false`) — `?debug=` only ever
   turns flags _on_. `check-release-flags.js` verifies `DEBUG_DEFAULTS` is
   all-false and `build:prod` re-forces it, so verbose logging can't ship.
-- **`?noRegistration`** loads the whole module (banner, `EPB_DIAG`, everything)
-  but defines zero custom elements and pushes nothing to
+- **`?noRegistration`** loads the whole module (banner, `EPB`, everything) but
+  defines zero custom elements and pushes nothing to
   `customCards`/`Badges`/`Features` — a diagnostic knob for telling apart "the
   bundle loading at all" from "the bundle registering itself" when chasing a
   freeze/clash (issue #108's own troubleshooting flow). URL-derived only, off
@@ -1526,25 +1555,27 @@ reasoning survives a maintainer handoff instead of living only in chat history.
   exists. **Never reintroduce `import.meta` anywhere in `src/`.**
   `document.currentScript.src` is populated for a classic-script load and `null`
   for an ES-module load (`import()`, the real HACS/"JavaScript Module" path) —
-  in the latter case `MODULE_URL` falls back to the Resource Timing API
+  in the latter case `MODULE_URL` reads the bundle's own URL off the stack of an
+  `Error` created while it loads (`scriptUrlFromStack`): a frame names the exact
+  file it runs from, query string included, in Chrome, Firefox and Safari. Two
+  copies with one file name — a stable and a `?suffix=` test one — each find
+  their own. The Resource Timing API is the last resort
   (`performance.getEntriesByType('resource')`), matching the first _script_
   entry whose path ends with this exact build's own filename
-  (`entity-progress-card(_dev)?.js`, `isBundleEntry`) so a dev+prod pair loaded
-  side by side never cross-match each other's query string. Script only, and the
-  end of the path, not anywhere in the URL: the editor file is imported from
-  beside that URL, so an image or a fetch carrying the same name must never get
-  to pick where executable code comes from. Still anchored to the **resource's
-  own URL** either way, never the dashboard page's URL.
-  `CARD_CONTEXT.classicScript` (`document.currentScript !== null`) is a separate
-  signal, used to show a one-time console nudge toward switching the resource to
-  "JavaScript Module" — the classic type still loads fine now, but stays
-  deprecated by HA.
+  (`entity-progress-card(_dev)?.js`, `isBundleEntry`). Script only, and the end
+  of the path, not anywhere in the URL: the editor file is imported from beside
+  that URL, so an image or a fetch carrying the same name must never get to pick
+  where executable code comes from. Still anchored to the **resource's own URL**
+  either way, never the dashboard page's URL. `CARD_CONTEXT.classicScript`
+  (`document.currentScript !== null`) is a separate signal, used to show a
+  one-time console nudge toward switching the resource to "JavaScript Module" —
+  the classic type still loads fine now, but stays deprecated by HA.
 - **The editor file reads none of this itself.** `CARD_CONTEXT` lives in
   `parameters.ts`, one of the modules it reads off the bundle's host table: the
-  same object, so `?debug=`, `?dev=true` and `?noRegistration` set on the
-  resource reach the editors too, and their `-dev` tags always match the cards'.
-  The file itself loads with `?v=<VERSION>`, not the resource's query string -
-  it has nothing to read there.
+  same object, so `?debug=`, `?dev=true`, `?suffix=` and `?noRegistration` set
+  on the resource reach the editors too, and their suffixed tags always match
+  the cards'. The file itself loads under the resource's own query string plus
+  `version=<VERSION>`, for the cache only - nothing reads it.
 - A **console warning** is printed after the load banner whenever dev or any
   debug area is active (listing the active areas), so a non-shipped
   configuration never runs silently. Normal prod loads stay quiet.
@@ -1572,11 +1603,20 @@ you need it (via `initLogger`/`traceInstance`, or a module-level
 Other aids:
 
 - The console banner printed at load confirms which version is actually running
-  (cache issues are the #1 support topic). `window.EPB_DIAG.dump()` prints an
-  anonymized environment/registration report - `EPB_DIAG_DEV` in a dev build, so
-  two bundles loaded side by side each keep their own. `.cardAudit()` lists
-  every card, on every dashboard, with deprecated options or options without
-  effect (`card-audit.ts`).
+  (cache issues are the #1 support topic). `window.EPB` is the console helper:
+  `EPB.version`, `EPB.help()`, and `EPB.doctor.dump()`, an anonymized
+  environment/registration report - `EPB_DEV` in a dev build, `EPB_RC` under
+  `?suffix=rc`, so copies loaded side by side each keep their own. Published
+  once and locked (`diagnostic.ts`); `EPB_DIAG`, its 1.6.2 name, stays as an
+  alias that points to it. The dump's `editor` line says where the editor file
+  is loaded from and whether it loaded (`loadEditor`, `hass-provider.ts`). With
+  no card of ours on screen yet, it reads hass off Home Assistant's root element
+  (`currentHass`), and so does `EPB.doctor.audit()`, which lists every card, on
+  every dashboard, with deprecated options or options without effect
+  (`card-audit.ts`). `EPB.doctor.cards()` and `.inspect(n | $0)`
+  (`card/doctor.ts`) walk every shadow root for cards of ours, a Multi's rows
+  included; `inspect` climbs from any element inside a card to it, and reports
+  `ViewBase.drawnFrom` - the value and range the bar is drawn from.
 - The editor's bug icon copies an issue report: `environmentReport()` (what
   `dump()` prints), then the YAML Home Assistant holds, written by
   `yaml-writer.ts` with `notesByPath` comments. Multi rows don't offer it.

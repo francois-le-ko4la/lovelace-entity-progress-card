@@ -165,19 +165,48 @@ const HACS_DIRECTORY = '/hacsfiles/lovelace-entity-progress-card/';
 // An editor that has to wait is worse than an editor in English.
 const EDITOR_FETCH_TIMEOUT_MS = 4000;
 
-// A file shipped beside the bundle (the editor, its language files), in the
-// directory the bundle itself was served from.
-function sidecarUrl(name: string): string {
-  // HACS cache-busts the JS resource it installs, never a sibling file.
-  const file = `${CARD_CONTEXT.bundleStem}-${name}?v=${encodeURIComponent(VERSION)}`;
-  const base = CARD_CONTEXT.moduleUrl;
-  if (!base) return `${HACS_DIRECTORY}${file}`;
+// A file shipped beside the bundle (the editor, its language files): same
+// directory, same query - HACS's hacstag or a dev's ?v= - plus the version.
+function sidecarUrl(name: string, bundleUrl: string = CARD_CONTEXT.moduleUrl): string {
+  const file = `${CARD_CONTEXT.bundleStem}-${name}`;
   try {
-    return new URL(file, base).href;
+    const url = new URL(file, bundleUrl);
+    const query = new URL(bundleUrl).searchParams;
+    query.set('version', VERSION);
+    url.search = query.toString();
+    return url.href;
   } catch {
-    return `${HACS_DIRECTORY}${file}`;
+    return `${HACS_DIRECTORY}${file}?version=${encodeURIComponent(VERSION)}`;
   }
 }
+
+// One import per page, however many editors open: Home Assistant's own cards
+// load theirs the same way. A failed one is retried at the next opening.
+let editorModule: Promise<unknown> | null = null;
+let editorFile: { status: 'not loaded yet' | 'loading' | 'loaded' | 'failed'; error?: string } = {
+  status: 'not loaded yet',
+};
+const loadEditor = (): Promise<unknown> => {
+  if (!editorModule) {
+    editorFile = { status: 'loading' };
+    editorModule = import(sidecarUrl('editor.js')).then(
+      (module: unknown) => {
+        editorFile = { status: 'loaded' };
+        return module;
+      },
+      (error: unknown) => {
+        editorModule = null;
+        editorFile = { status: 'failed', error: (error as Error)?.message ?? String(error) };
+        throw error;
+      },
+    );
+  }
+  return editorModule;
+};
+
+// What EPB.doctor.dump() says about it: "the editor won't open" starts here.
+const editorFileReport = (): string =>
+  `${editorFile.status}${editorFile.error ? ` (${editorFile.error})` : ''} — ${sidecarUrl('editor.js')}`;
 
 async function fetchEditorRow(lang: string): Promise<EditorRow | null> {
   const controller = new AbortController();
@@ -540,5 +569,13 @@ class HassProviderSingleton {
   }
 }
 
+// For a console helper run before any card of ours holds hass: the page's root
+// element always does (home-assistant.ts).
+const currentHass = (): HomeAssistant | null =>
+  HassProviderSingleton.getInstance().hass ??
+  (document.querySelector('home-assistant') as { hass?: HomeAssistant } | null)?.hass ??
+  null;
+
 export { HassProviderSingleton, buildTranslationTree, sameDeviceEntities, sidecarUrl, RELATIVE_TIME_PROPS };
+export { loadEditor, editorFileReport, currentHass };
 export type { HomeAssistant, EntityState };

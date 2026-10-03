@@ -4,7 +4,7 @@
  * mode, bar_stack mode...).
  */
 
-import { CARD, VALUE_CHANGED_EVENT, devName } from '../utils/parameters.js';
+import { CARD, VALUE_CHANGED_EVENT, suffixedName } from '../utils/parameters.js';
 import { CHIPS_HOST_STYLE } from '../utils/styles.js';
 import { is } from '../utils/common-checks.js';
 import { defineElement } from '../utils/register.js';
@@ -155,7 +155,7 @@ abstract class MultiSelectChipsBase extends ChipsBase {
  * @extends MultiSelectChipsBase
  */
 class EntityProgressEffectChips extends MultiSelectChipsBase {
-  static ELEMENT_NAME = devName('entity-progress-effect-chips');
+  static ELEMENT_NAME = suffixedName('entity-progress-effect-chips');
   // Three effects paint the fill themselves, so they only exist while nothing
   // else is painting it - one rule, not three copies to keep in agreement.
   static #AUTO_COLOR_ONLY = (c: LovelaceConfig) => c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode);
@@ -222,7 +222,7 @@ defineElement(EntityProgressEffectChips.ELEMENT_NAME, EntityProgressEffectChips)
  * @extends MultiSelectChipsBase
  */
 class EntityProgressHideChips extends MultiSelectChipsBase {
-  static ELEMENT_NAME = devName('entity-progress-hide-chips');
+  static ELEMENT_NAME = suffixedName('entity-progress-hide-chips');
   #items: string[] = [];
 
   get items(): string[] {
@@ -280,7 +280,7 @@ defineElement(EntityProgressHideChips.ELEMENT_NAME, EntityProgressHideChips);
 // `modes` is per-instance, set by EditorBase#buildModeChipsField, same
 // pattern as EntityProgressHideChips's own `items`.
 class EntityProgressModeChips extends ChipsBase {
-  static ELEMENT_NAME = devName('entity-progress-mode-chips');
+  static ELEMENT_NAME = suffixedName('entity-progress-mode-chips');
   #selected: string | null = null;
   #modes: string[] = [];
 

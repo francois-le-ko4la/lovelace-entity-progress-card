@@ -373,6 +373,12 @@ const style = {
     // density: single_line - set on .content-section itself by
     // StructureElements.createContent, not on the card.
     singleLineRow: 'single-line-row',
+    // bar_aligned's shared text column (aligned-bars.ts).
+    alignWidth: { var: '--current-align-width' },
+    // Lifts the text's own floor while aligned: the column is measured instead.
+    alignTextFloor: { var: '--current-align-text-floor' },
+    // A Multi's wrapper around each row: what tells a row it is one.
+    multiItem: 'multi-item',
     frameless: 'frameless',
     marginless: 'marginless',
   },
@@ -436,9 +442,10 @@ const consoleInfo = {
   // Emitted after the banner (see index.ts) only when the URL-derived dev/
   // debug modes are active, so a non-shipped configuration is never silent.
   warnCss: 'color:black; background-color:orange; font-weight:bold;',
-  devWarning: `${WARNING_PREFIX}DEV MODE: elements registered under "…-dev" type names, diagnostic under EPB_DIAG_DEV. Not for production dashboards. (this is the _dev.js build, or ?dev=true is set)`,
+  devWarning: `${WARNING_PREFIX}DEV MODE: elements registered under "…-dev" type names, console helper EPB_DEV. Not for production dashboards. (this is the _dev.js build, or ?dev=true is set)`,
   debugWarning: `${WARNING_PREFIX}DEBUG logging ON for: `,
   debugWarningHint: ' — drop the ?debug query param to silence it.',
+  suffixWarning: `${WARNING_PREFIX}SIDE-BY-SIDE COPY: every element registered under the suffix `,
   noRegistrationWarning: `${WARNING_PREFIX}NO-REGISTRATION MODE: no custom element defined, cards of this type will NOT render. Diagnostic only (issue #108). Drop the ?noRegistration query param to restore.`,
   classicResourceWarning: `${WARNING_PREFIX}this resource is registered as a classic "JavaScript" type, deprecated by Home Assistant. Switch it to "JavaScript Module" (Settings → Dashboards → Resources): the classic type can freeze pop-ups such as browser_mod and is being phased out. See the troubleshooting guide.`,
 };

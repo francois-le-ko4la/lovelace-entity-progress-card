@@ -876,7 +876,7 @@ ha-card.${CARD.style.dynamic.hiddenComponent.name.class}.secondary-info-blank
      -width pins that column instead - the hook the Multi carried when it drew
      the value itself (1.6.1/1.6.2), kept under its own name: a stack whose
      bars are meant to be compared needs them to start at the same x. */
-  width: var(--epb-multi-value-width, auto);
+  width: var(--epb-multi-value-width, var(${CARD.style.dynamic.alignWidth.var}, auto));
   /* Its own font-size, not the document one it would otherwise inherit: the
      block strut is what floors the line box, so 1.2em there measured ~16px of
      inherited body text and kept the row 8px taller than its slice, whatever
@@ -1054,11 +1054,18 @@ ha-card.type-entities .${CARD.htmlStructure.sections.content.class} {
 
 .${CARD.htmlStructure.elements.secondaryInfoWrapper.class} {
   --group-height: var(--detail-height);
-  /* The 45px floor holds while the row can spare it, else a quarter. Lower
-     than the bar's own 33% cap: text can still ellipsis, a squeezed bar
-     stops meaning anything. */
-  --group-min-width: min(45px, 25%);
+  /* 45px, else a quarter - under the bar's 33%: text can ellipsis, a squeezed
+     bar means nothing. Lifted on a bar_aligned row, whose column is measured. */
+  --group-min-width: var(${CARD.style.dynamic.alignTextFloor.var}, min(45px, 25%));
   --group-max-width: 60%;
+}
+
+/* bar_aligned outside single_line: the value beside a default-row bar is the
+   column. Scoped to that row: elsewhere the group's 100% must stand. */
+ha-card.horizontal.default:not(.xlarge)
+  .${CARD.htmlStructure.sections.content.class}:not(.${CARD.style.dynamic.singleLineRow})
+  .${CARD.htmlStructure.elements.secondaryInfoWrapper.class} {
+  --group-width: var(${CARD.style.dynamic.alignWidth.var}, auto);
 }
 
 .progress-badge .${CARD.htmlStructure.elements.nameContent.class} {

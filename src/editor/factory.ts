@@ -89,6 +89,7 @@ const BAR_FIELDS = [
   'bar_max_width',
   'bar_max_width_custom',
   'bar_max_width_unit',
+  'bar_aligned',
   'bar_effect_mode',
   'bar_effect_chips',
   'bar_effect',
@@ -825,13 +826,21 @@ const wmSide = (side: 'low' | 'high', defaultVal: number) => {
 // Mirrors _fetchHistory's own eligibility check (cards.ts): sensor/number
 // only, no attribute override, not timer/counter/duration - recorder keeps
 // no attribute history and those domains/device_class have no numeric trend.
+// A tile feature with no entity of its own renders its tile's (cards.ts):
+// EditorBase keeps that one under this key, which never reaches the YAML.
+const CONTEXT_ENTITY_KEY = '_context_entity';
+const effectiveEntity = (c: LovelaceConfig): string | undefined => {
+  if (is.nonEmptyString(c.entity)) return c.entity;
+  const inherited = c[CONTEXT_ENTITY_KEY];
+  return is.nonEmptyString(inherited) ? inherited : undefined;
+};
+
 const peakMarkerEligible = (c: LovelaceConfig): boolean => {
-  if (!is.nonEmptyString(c.entity) || is.nonEmptyString(c.attribute)) return false;
-  const domain = HassProviderSingleton.getEntityDomain(c.entity);
+  const entity = effectiveEntity(c);
+  if (!entity || is.nonEmptyString(c.attribute)) return false;
+  const domain = HassProviderSingleton.getEntityDomain(entity);
   if (domain === 'timer' || domain === 'counter') return false;
-  return (
-    HassProviderSingleton.getInstance().getEntityProp(c.entity, 'device_class') !== HA_CONTEXT.entity.type.duration
-  );
+  return HassProviderSingleton.getInstance().getEntityProp(entity, 'device_class') !== HA_CONTEXT.entity.type.duration;
 };
 const peakMarkerOn = (c: LovelaceConfig) => peakMarkerEligible(c) && Boolean(c.peak_marker);
 
@@ -1178,7 +1187,7 @@ const EditorFactory = {
           type: 'attribute',
           selectorOf: 'entity',
           labelKey: LABEL_ATTRIBUTE,
-          showIf: (c: LovelaceConfig) => Boolean(c.entity),
+          showIf: (c: LovelaceConfig) => Boolean(effectiveEntity(c)),
         }),
         bar_stack_mode: {
           name: 'bar_stack_mode',
@@ -1273,8 +1282,10 @@ const EditorFactory = {
             }),
             ...multilineField(badge),
             reverse: EditorFieldsType.toggle('reverse', {
-              showIf: (c: LovelaceConfig) =>
-                Boolean(c.entity) && HassProviderSingleton.getEntityDomain(c.entity) === 'timer',
+              showIf: (c: LovelaceConfig) => {
+                const entity = effectiveEntity(c);
+                return entity !== undefined && HassProviderSingleton.getEntityDomain(entity) === 'timer';
+              },
             }),
           }),
     },
@@ -1631,7 +1642,7 @@ const EditorFactory = {
     // (see peakMarkerEligible) - spells out the requirement instead of just
     // hiding the option with no explanation.
     peak_marker_unsupported: EditorFieldsType.sectionLabel('peak_marker_unsupported', {
-      showIf: (c: LovelaceConfig) => is.nonEmptyString(c.entity) && !peakMarkerEligible(c),
+      showIf: (c: LovelaceConfig) => Boolean(effectiveEntity(c)) && !peakMarkerEligible(c),
     }),
     ...enabledToggleField(
       'peak_marker.toggle',
@@ -2323,18 +2334,23 @@ const EditorFactory = {
         entities: { name: 'entities', type: 'multi_row_editor' },
       },
     },
-    // The Sections grid row span, standalone card only - a Feature is always
-    // exactly one HA feature row (see multi.ts's _applySizing). Genuinely the
-    // aggregator's own, with nothing per-row to factorise from.
-    ...(feature
-      ? {}
-      : {
-          layout: {
-            title: TITLE.layout,
-            icon: HA_CONTEXT.icons.aspectRatio,
-            fields: { rows: EditorFieldsType.number('rows', { width: 'half' }) },
-          },
+    // The aggregator's own: rows, the grid span a Feature doesn't have (one HA
+    // row, see _applySizing), and bar_aligned, which lines its rows up.
+    layout: {
+      title: TITLE.layout,
+      icon: HA_CONTEXT.icons.aspectRatio,
+      fields: {
+        ...(feature ? {} : { rows: EditorFieldsType.number('rows', { width: 'half' }) }),
+        // bar_max_width pins the bar instead: the text has nothing to align.
+        // A name written in YAML (a group across cards) survives an off/on.
+        bar_aligned: EditorFieldsType.toggle('bar_aligned', {
+          virtual: true,
+          showIf: (c: LovelaceConfig) => !c.bar_max_width,
+          resolveVirtual: (c: LovelaceConfig) => Boolean(c.bar_aligned),
+          onVirtualChange: draftToggle('bar_aligned', () => true),
         }),
+      },
+    },
   }),
 
   // One row, edited whole behind the list's pencil - and a row IS a card
@@ -2369,4 +2385,4 @@ const EditorFactory = {
   },
 };
 
-export { EditorFactory };
+export { EditorFactory, effectiveEntity, CONTEXT_ENTITY_KEY };

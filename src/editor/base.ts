@@ -32,6 +32,7 @@ import {
   buildIconButton,
 } from './list-editors.js';
 import { BUG_ICON_PATH, issueReport, copyText } from './issue-report.js';
+import { effectiveEntity, CONTEXT_ENTITY_KEY } from './factory.js';
 import { lengthSliderSelector, lengthUnitSelector } from '../utils/length.js';
 import { durationSliderSelector } from '../utils/duration.js';
 import {
@@ -347,6 +348,25 @@ class EditorBase extends HTMLElement {
     return this.#hassProvider.hass;
   }
 
+  // A feature's editor gets its host card's context (hui-element-editor.ts):
+  // the entity the feature renders when it sets none of its own.
+  set context(context: { entity_id?: string } | undefined) {
+    const inherited = context?.entity_id;
+    if (inherited === this.#config[CONTEXT_ENTITY_KEY]) return;
+    this.#config = { ...this.#config, [CONTEXT_ENTITY_KEY]: inherited };
+    if (Object.keys(this.#lastConfig).length === 0) return;
+    this._configHelper.config = EditorBase.#withContextEntity(this.#lastConfig, inherited);
+    this._configHelper.refreshDisplayDefaults();
+    this.#updateFields();
+  }
+
+  // Defaults (unit, decimal, range) are negotiated off the entity the card
+  // actually renders.
+  static #withContextEntity(config: LovelaceConfig, inherited: unknown): LovelaceConfig {
+    if (is.nonEmptyString(config.entity) || !is.nonEmptyString(inherited)) return config;
+    return { ...config, entity: inherited } as LovelaceConfig;
+  }
+
   setConfig(config: LovelaceConfig) {
     if (!config) throw new Error(CARD.config.configError);
     // _-prefixed keys are ephemeral UI state (e.g. _visible_actions): stripped
@@ -361,7 +381,7 @@ class EditorBase extends HTMLElement {
     // #lastConfig is touched only here, so it's a stable "previous".
     const changed = EditorBase.#changedTopLevelKeys(config, this.#lastConfig);
     this.#lastConfig = config;
-    this._configHelper.config = config;
+    this._configHelper.config = EditorBase.#withContextEntity(config, uiState[CONTEXT_ENTITY_KEY]);
     this.#config = { ...config, ...uiState };
     // If every changed key is a known-isolated leaf, only its own field needs
     // refreshing - refresh just those instead of re-walking every visible
@@ -541,7 +561,7 @@ class EditorBase extends HTMLElement {
       entity: () => ({ entity: {} }),
       entity_name: () => ({ entity_name: {} }),
       state_content: () => ({ ui_state_content: { allow_context: true } }),
-      attribute: () => ({ attribute: { entity_id: this.#config.entity ?? '' } }),
+      attribute: () => ({ attribute: { entity_id: effectiveEntity(this.#config) ?? '' } }),
       maxValueAttribute: () => ({ attribute: { entity_id: entityOf(this.#config.max_value) ?? '' } }),
       minValueAttribute: () => ({ attribute: { entity_id: entityOf(this.#config.min_value) ?? '' } }),
       number: () => ({ number: {} }),
@@ -886,8 +906,11 @@ class EditorBase extends HTMLElement {
     // any zone still missing a valid min/max, so a just-added row would
     // otherwise vanish from the list the instant it round-trips through the
     // negotiated config, before its fields are even filled in.
+    // entity too: a feature's negotiated one may be its tile's, never written.
     const config =
-      negotiated && !['template', 'action', 'custom_theme_editor'].includes(def.type) ? negotiated : rawConfig;
+      negotiated && def.name !== 'entity' && !['template', 'action', 'custom_theme_editor'].includes(def.type)
+        ? negotiated
+        : rawConfig;
 
     const { parentKey, childKey } = EditorBase.#splitFieldName(def.name);
     const key = def.target ?? def.name;

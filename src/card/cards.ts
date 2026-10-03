@@ -4,7 +4,7 @@
  * config helper + view + structure together on top of core.js.
  */
 
-import { META, devName, HA_CONTEXT, CARD } from '../utils/parameters.js';
+import { META, suffixedName, HA_CONTEXT, CARD } from '../utils/parameters.js';
 import { is, toNumberOrNull } from '../utils/common-checks.js';
 import { ThemeManager } from './value-helpers.js';
 import {
@@ -217,7 +217,7 @@ class EntityProgressFeatures extends HACore {
   // See HABase.getStubConfig for why this is async.
   // skipcq: JS-0116 -- async is intentional, no await by design.
   static async getStubConfig(): Promise<LovelaceConfig> {
-    return { type: `custom:${devName(META.types.feature.typeName)}` } as unknown as LovelaceConfig;
+    return { type: `custom:${suffixedName(META.types.feature.typeName)}` } as unknown as LovelaceConfig;
   }
 
   // ─── ENTITY CONTEXT (Tile → Feature) ───────────────────────────────────────

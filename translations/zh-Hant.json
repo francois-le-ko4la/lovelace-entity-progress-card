@@ -60,6 +60,7 @@
       "custom_info": "自訂次要資訊",
       "custom_theme": "自訂主題區域",
       "density": "密度",
+      "bar_aligned": "對齊進度條",
       "fast_refresh": "快速重新整理",
       "force_circular_background_mode": "圓形背景",
       "frameless": "無邊框",

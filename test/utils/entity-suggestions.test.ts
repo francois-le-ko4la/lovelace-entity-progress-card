@@ -6,8 +6,11 @@ import type { HomeAssistant } from '../../src/utils/hass-provider.js';
 const hass = (entityId: string, state: string, attributes: Record<string, unknown> = {}) =>
   ({ states: { [entityId]: { entity_id: entityId, state, attributes } } }) as unknown as HomeAssistant;
 
-const suggest = (entityId: string, state: string, attributes: Record<string, unknown> = {}) =>
-  resolveEntitySuggestion(hass(entityId, state, attributes), entityId)?.config ?? null;
+// The plain suggestion: the first one when a list comes back.
+const suggest = (entityId: string, state: string, attributes: Record<string, unknown> = {}) => {
+  const found = resolveEntitySuggestion(hass(entityId, state, attributes), entityId);
+  return (Array.isArray(found) ? found[0] : found)?.config ?? null;
+};
 
 describe('resolveEntitySuggestion - numeric-state domains', () => {
   for (const domain of ['sensor', 'number', 'input_number', 'counter']) {
@@ -75,5 +78,22 @@ describe('resolveEntitySuggestion - never scales a value twice', () => {
       suggest('media_player.x', 'playing', { volume_level: 1 }),
     ];
     for (const config of scaled) assert.equal('max_value' in (config as object), false);
+  });
+});
+
+describe('resolveEntitySuggestion - a battery also gets its theme', () => {
+  const PHONE = 'sensor.phone';
+
+  test('the plain card, then the same one under battery_adaptive, labelled', () => {
+    const found = resolveEntitySuggestion(hass(PHONE, '64', { device_class: 'battery' }), PHONE);
+    assert.ok(Array.isArray(found), 'a single suggestion for a battery');
+    assert.deepEqual(found[0].config, { entity: PHONE });
+    assert.deepEqual(found[1].config, { entity: PHONE, theme: 'battery_adaptive' });
+    assert.ok(found[1].label, 'the themed one has no label');
+  });
+
+  test('any other sensor keeps a single suggestion', () => {
+    const found = resolveEntitySuggestion(hass('sensor.cpu', '12', { device_class: 'power_factor' }), 'sensor.cpu');
+    assert.equal(Array.isArray(found), false);
   });
 });

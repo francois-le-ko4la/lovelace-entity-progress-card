@@ -1388,6 +1388,12 @@ class ViewBase extends ViewCore {
     });
   }
 
+  // What EPB.doctor.inspect() shows: the value and range the bar is drawn from.
+  get drawnFrom(): { value: number; min: number; max: number; unit: string; theme: string | undefined } {
+    const { current: value, min, max, unit } = this.#percentHelper;
+    return { value, min, max, unit, theme: this.resolvedTheme };
+  }
+
   get percent(): number {
     if (!this.isAvailable) return 0;
     return ProgressMath.clampPercent(this.#percentHelper.percent ?? 0, this.#percentHelper.isCenterZero);

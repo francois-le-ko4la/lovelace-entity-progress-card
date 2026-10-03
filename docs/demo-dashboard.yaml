@@ -333,6 +333,7 @@ views:
             name: Printer
             features:
               - type: custom:entity-progress-multi-feature
+                bar_aligned: true
                 hide:
                   - icon
                   - name
@@ -347,11 +348,6 @@ views:
                     bar_color: magenta
                   - entity: input_number.epb_demo_printer_ink_yellow
                     bar_color: yellow
-            card_mod:
-              style: |
-                :host {
-                  --epb-multi-value-width: 40px;
-                }
             grid_options:
               columns: 4
               rows: 1
@@ -466,6 +462,7 @@ views:
             name: Energy (consumption vs production)
             features:
               - type: custom:entity-progress-multi-feature
+                bar_aligned: true
                 hide:
                   - icon
                   - name
@@ -490,11 +487,6 @@ views:
                     - entity: input_number.epb_demo_grid_consumption
                       subtract: true
                       color: blue
-            card_mod:
-              style: |
-                :host {
-                  --epb-multi-value-width: 45px;
-                }
             grid_options:
               columns: 9
               rows: 3
@@ -3704,6 +3696,7 @@ views:
             name: 'Printer ink levels - bar + value'
             features:
               - type: custom:entity-progress-multi-feature
+                bar_aligned: true
                 hide:
                   - icon
                   - name
@@ -3717,17 +3710,13 @@ views:
                     bar_color: magenta
                   - entity: input_number.epb_demo_printer_ink_yellow
                     bar_color: yellow
-            card_mod:
-              style: |
-                :host {
-                  --epb-multi-value-width: 45px;
-                }
           - type: heading
             heading: 'Printer ink levels - standalone entity-progress-multi-card'
             heading_style: subtitle
             grid_options:
               columns: full
           - type: custom:entity-progress-multi-card
+            bar_aligned: true
             hide:
               - icon
               - name
@@ -3755,6 +3744,7 @@ views:
             name: 'Energy - bar only'
             features:
               - type: custom:entity-progress-multi-feature
+                bar_aligned: true
                 hide:
                   - icon
                   - name
@@ -3773,6 +3763,7 @@ views:
             name: Energy (consumption vs production)
             features:
               - type: custom:entity-progress-multi-feature
+                bar_aligned: true
                 hide:
                   - icon
                   - name
@@ -3797,11 +3788,6 @@ views:
                     - entity: input_number.epb_demo_grid_consumption
                       subtract: true
                       color: blue
-            card_mod: # or: uix:
-              style: |
-                :host {
-                  --epb-multi-value-width: 45px;
-                }
             grid_options:
               min_columns: 4
               columns: 6
@@ -5246,7 +5232,7 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: '📚 vertical-stack-in-card (Cookbook - auto-entities + card_mod borderless)'
+            heading: '📚 vertical-stack-in-card (Cookbook - auto-entities + frameless)'
             heading_style: title
           - type: markdown
             content: |
@@ -5255,7 +5241,7 @@ views:
 
               Same `auto-entities`/`device_class: battery` filter as above,
               wrapped in `vertical-stack-in-card` for a cohesive group, with
-              `card_mod` stripping the border/shadow for a seamless look.
+              `frameless` stripping the border/shadow for a seamless look.
               {% endraw %}
             grid_options:
               columns: 12
@@ -5276,13 +5262,39 @@ views:
                         icon_animation: battery_charging
                         icon_tap_action:
                           action: more-info
-                        card_mod:
-                          style:
-                            .: |-
-                              :host {
-                                --ha-card-border-width: 0px !important;
-                                box-shadow: none !important;
-                              }
+                        frameless: true
+                sort:
+                  method: state
+                  numeric: true
+                  ignore_case: false
+                card:
+                  square: false
+                  type: grid
+                  columns: 2
+                card_param: cards
+          - type: heading
+            heading: 'Same, with bar_aligned: batteries'
+            heading_style: subtitle
+            grid_options:
+              columns: full
+          - type: custom:vertical-stack-in-card
+            cards:
+              - type: custom:auto-entities
+                filter:
+                  include:
+                    - entity_id: sensor.epb_demo_*
+                      attributes:
+                        device_class: battery
+                      options:
+                        type: custom:entity-progress-card
+                        entity: this.entity_id
+                        theme: battery_adaptive
+                        bar_color_mode: rainbow
+                        icon_animation: battery_charging
+                        icon_tap_action:
+                          action: more-info
+                        frameless: true
+                        bar_aligned: batteries
                 sort:
                   method: state
                   numeric: true
@@ -5839,6 +5851,7 @@ views:
               columns: 12
               rows: 1
           - type: custom:entity-progress-multi-card
+            bar_aligned: true
             hide:
               - icon
               - name
@@ -5853,11 +5866,6 @@ views:
                 bar_color: magenta
               - entity: input_number.epb_demo_printer_ink_yellow
                 bar_color: yellow
-            card_mod:
-              style: |
-                :host {
-                  --epb-multi-value-width: 40px;
-                }
             grid_options:
               rows: 3
       - type: grid
@@ -6430,6 +6438,7 @@ views:
             name: Energy (consumption vs production)
             features:
               - type: custom:entity-progress-multi-feature
+                bar_aligned: true
                 hide:
                   - icon
                   - name
@@ -6454,11 +6463,6 @@ views:
                     - entity: input_number.epb_demo_grid_consumption
                       subtract: true
                       color: blue
-            card_mod:
-              style: |
-                :host {
-                  --epb-multi-value-width: 45px;
-                }
             grid_options:
               columns: 12
     badges:

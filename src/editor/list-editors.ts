@@ -3,7 +3,7 @@
  * bar_stack entities and custom_theme zones.
  */
 
-import { VALUE_CHANGED_EVENT, HA_SELECTOR_TAG, HA_SVG_ICON_TAG, devName } from '../utils/parameters.js';
+import { VALUE_CHANGED_EVENT, HA_SELECTOR_TAG, HA_SVG_ICON_TAG, suffixedName } from '../utils/parameters.js';
 import {
   BAR_STACK_EDITOR_STYLE,
   MULTI_ROW_EDITOR_STYLE,
@@ -40,8 +40,8 @@ const EDIT_ICON_PATH =
 // already imports this file, and a cycle around a class whose fields are
 // static (EditorFactory.buildMultiRow() runs at module load) fails as a
 // silent undefined, not as an error.
-const MULTI_CARD_ROW_EDITOR_NAME = devName('entity-progress-multi-card-row-editor');
-const MULTI_FEATURE_ROW_EDITOR_NAME = devName('entity-progress-multi-feature-row-editor');
+const MULTI_CARD_ROW_EDITOR_NAME = suffixedName('entity-progress-multi-card-row-editor');
+const MULTI_FEATURE_ROW_EDITOR_NAME = suffixedName('entity-progress-multi-feature-row-editor');
 
 // "Open row N" - raised by the list, answered by whoever hosts it.
 const EDIT_ROW_EVENT = 'epb-edit-row';
@@ -308,7 +308,7 @@ abstract class ListEditorBase extends HTMLElement {
  * @extends ListEditorBase
  */
 class EntityProgressBarStackEditor extends ListEditorBase {
-  static ELEMENT_NAME = devName('entity-progress-bar-stack-editor');
+  static ELEMENT_NAME = suffixedName('entity-progress-bar-stack-editor');
   _addLabel = 'Add entity';
 
   _buildDOM() {
@@ -371,7 +371,7 @@ defineElement(EntityProgressBarStackEditor.ELEMENT_NAME, EntityProgressBarStackE
  * @extends ListEditorBase
  */
 class EntityProgressMultiRowEditor extends ListEditorBase {
-  static ELEMENT_NAME = devName('entity-progress-multi-row-editor');
+  static ELEMENT_NAME = suffixedName('entity-progress-multi-row-editor');
   _addLabel = 'Add entity';
 
   _buildDOM() {
@@ -419,7 +419,7 @@ defineElement(EntityProgressMultiRowEditor.ELEMENT_NAME, EntityProgressMultiRowE
  */
 
 class EntityProgressCustomThemeEditor extends ListEditorBase {
-  static ELEMENT_NAME = devName('entity-progress-custom-theme-editor');
+  static ELEMENT_NAME = suffixedName('entity-progress-custom-theme-editor');
   _addLabel = 'Add zone';
 
   _buildDOM() {
@@ -477,7 +477,7 @@ defineElement(EntityProgressCustomThemeEditor.ELEMENT_NAME, EntityProgressCustom
 // "+" picker for the interactions panel: reveals one hidden action field at
 // a time. value: { visible, hidden }; picking a key dispatches the new array.
 class EntityProgressActionPicker extends HTMLElement {
-  static ELEMENT_NAME = devName('entity-progress-action-picker');
+  static ELEMENT_NAME = suffixedName('entity-progress-action-picker');
   #shadow!: ShadowRoot;
   #btn: HTMLElement | null = null;
   #menu: HTMLElement | null = null;

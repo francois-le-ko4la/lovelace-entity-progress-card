@@ -60,6 +60,7 @@
       "custom_info": "Özel ikincil bilgi",
       "custom_theme": "Özel tema bölgeleri",
       "density": "Yoğunluk",
+      "bar_aligned": "Hizalı çubuklar",
       "fast_refresh": "Hızlı yenileme",
       "force_circular_background_mode": "Dairesel arka plan",
       "frameless": "Çerçevesiz",

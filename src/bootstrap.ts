@@ -1,11 +1,12 @@
-// What the bundle does on load: register the types, expose window.EPB_DIAG,
-// print the console banner.
+// What the bundle does on load: register the types, expose window.EPB, print
+// the console banner.
 
-import { META, CARD_CONTEXT, CARD } from './utils/parameters.js';
+import { META, CARD_CONTEXT, CARD, suffixedName } from './utils/parameters.js';
 import { RegistrationHelper } from './utils/register.js';
 import { resolveEntitySuggestion } from './utils/entity-suggestions.js';
-import { installDiagnostic } from './utils/diagnostic.js';
-import { cardAudit } from './card/card-audit.js';
+import { installDiagnostic, CONSOLE_GLOBAL, consoleHelper } from './utils/diagnostic.js';
+import { audit } from './card/card-audit.js';
+import { cards, inspect } from './card/doctor.js';
 import {
   EntityProgressCard,
   EntityProgressBadge,
@@ -43,6 +44,12 @@ function announce(): void {
   // build.
   if (CARD_CONTEXT.dev) {
     console.warn(CARD.console.devWarning, CARD.console.warnCss);
+  } else if (CARD_CONTEXT.suffix) {
+    const example = `custom:${suffixedName(META.types.card.typeName)}`;
+    console.warn(
+      `${CARD.console.suffixWarning}-${CARD_CONTEXT.suffix} (${example}…), console helper ${CONSOLE_GLOBAL}.`,
+      CARD.console.warnCss,
+    );
   }
   // Loaded as a classic <script> (deprecated resource type). Harmless now the
   // bundle no longer uses import.meta, but it used to freeze browser_mod popups
@@ -68,13 +75,13 @@ function announce(): void {
 
 function bootstrap(): void {
   registerComponents();
-  installDiagnostic(cardAudit);
+  installDiagnostic({ audit, cards, inspect });
   announce();
 
-  // noRegistration renders nothing, so the EPB_DIAG.dump() cue never reaches
+  // noRegistration renders nothing, so the EPB.doctor.dump() cue never reaches
   // the reporter - emit the report automatically right after the banner (#108).
   if (CARD_CONTEXT.noRegistration) {
-    (window.EPB_DIAG_DEV ?? window.EPB_DIAG)?.dump();
+    consoleHelper()?.doctor.dump();
   }
 }
 

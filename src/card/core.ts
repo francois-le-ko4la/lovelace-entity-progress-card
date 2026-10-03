@@ -4,12 +4,12 @@
  * that every concrete card type extends.
  */
 
-import { VERSION, META, CARD_CONTEXT, devName, HA_CONTEXT, CARD } from '../utils/parameters.js';
+import { VERSION, META, CARD_CONTEXT, suffixedName, HA_CONTEXT, CARD } from '../utils/parameters.js';
 import { CARD_CSS, getSharedStyleSheet } from '../utils/styles.js';
 import { is, assertDefined, toNumberOrNull, jinjaKind } from '../utils/common-checks.js';
 import { initLogger, cardNotice, type LoggerInstance } from '../utils/log.js';
 import { ObjStructure, ThemeManager, ChangeTracker } from './value-helpers.js';
-import { HassProviderSingleton, sidecarUrl, type HomeAssistant, type EntityState } from '../utils/hass-provider.js';
+import { HassProviderSingleton, loadEditor, type HomeAssistant, type EntityState } from '../utils/hass-provider.js';
 import { type ViewCore, type ViewBase, type ResolvedWatermark } from './view.js';
 import {
   markInner,
@@ -27,8 +27,10 @@ import {
   PEAK_RANGE_TYPE_DEFAULT,
   ICON_ANIMATIONS,
   OWN_TRIGGER_ANIMATIONS,
+  HAS_EFFECT,
 } from './schema.js';
 import { ResourceManager, DOMHelper, ActionHelper } from './dom-helpers.js';
+import { joinAlignedRows } from './aligned-bars.js';
 import type { CacheValue } from './dom-helpers.js';
 import type { LovelaceConfig, Config } from '../utils/types.js';
 import type { StructureOptions } from './structure.js';
@@ -66,14 +68,7 @@ const TREND_ICONS: Record<string, string> = {
   error: HA_CONTEXT.icons.progressQuestion,
 };
 
-// One import per page, however many editors open: Home Assistant's own cards
-// load theirs the same way. A failed one is retried at the next opening.
-let editorModule: Promise<unknown> | null = null;
-const loadEditor = (): Promise<unknown> =>
-  (editorModule ??= import(sidecarUrl('editor.js')).catch((error: unknown) => {
-    editorModule = null;
-    throw error;
-  }));
+const ALIGNED_BARS_ID = 'alignedBars';
 
 /**
  * Base class for Home Assistant custom elements (cards, badges, features).
@@ -111,6 +106,7 @@ const loadEditor = (): Promise<unknown> =>
  * @abstract
  * @extends HTMLElement
  */
+
 class HACore extends HTMLElement {
   static version = VERSION;
   static _baseClass: string = META.types.feature.typeName;
@@ -130,6 +126,8 @@ class HACore extends HTMLElement {
   // HACore directly) leaves it null, which _createCardElements's own
   // optional-chained triggerIconTap() call already handles as a no-op.
   _actionHelper: ActionHelper | null = null;
+  // As written, before negotiation migrates it: what EPB.doctor judges.
+  _givenConfig: LovelaceConfig | null = null;
   // Concrete subclasses swap this in for CardView/BadgeView/FeatureView/
   // CardTemplateView/BadgeTemplateView - ViewCore (not a union, not `any`)
   // is the widest type accurate for all of them. `declare`: HACore itself
@@ -196,7 +194,7 @@ class HACore extends HTMLElement {
     const metaType = Object.values(META.types).find((t) => t.typeName === this._baseClass) as
       { editor?: string } | undefined;
     if (!metaType?.editor) return null;
-    const tag = devName(metaType.editor);
+    const tag = suffixedName(metaType.editor);
     try {
       await Promise.all([
         customElements.get(tag) ? null : loadEditor(),
@@ -219,6 +217,7 @@ class HACore extends HTMLElement {
       this._watchWebSocket();
     }
     this.#watchInterference();
+    this.#syncAlignedBars();
   }
 
   disconnectedCallback() {
@@ -260,6 +259,49 @@ class HACore extends HTMLElement {
     this.#interferenceObserver.observe(this, { attributes: true, attributeOldValue: true });
   }
 
+  // Rebuilt with every render: the text it watches is a new one each time.
+  #syncAlignedBars() {
+    if (!this.isConnected || !this._resourceManager) return;
+    const config = this._cardView.config;
+    // A name gathers every card carrying it; true, the rows of one Multi - a
+    // row is told it is one by the wrapper it sits in.
+    const inMulti = this.parentElement?.classList.contains(CARD.style.dynamic.multiItem);
+    const setting = config.bar_aligned;
+    const group = is.nonEmptyString(setting) ? setting : setting === true && inMulti ? this.getRootNode() : null;
+    const singleLine = config.density === 'single_line';
+    const { infoRow: rowText } = CARD.htmlStructure.sections;
+    const { secondaryInfoWrapper: valueText } = CARD.htmlStructure.elements;
+    const column =
+      group && HAS_EFFECT.barAligned(config)
+        ? this._shadow.querySelector<HTMLElement>('.' + (singleLine ? rowText.class : valueText.class))
+        : null;
+    const row = singleLine
+      ? column?.closest<HTMLElement>('.' + CARD.style.dynamic.singleLineRow)
+      : column?.parentElement;
+    if (!group || !column || !row) {
+      this._resourceManager.remove(ALIGNED_BARS_ID);
+      return;
+    }
+    const rows = joinAlignedRows(group, {
+      measure: () => column.getBoundingClientRect().width,
+      cap: () => row.clientWidth / 2,
+      apply: (width) => {
+        const card = CARD.htmlStructure.card.element;
+        this._dom.setStyleNow(card, CARD.style.dynamic.alignWidth.var, width);
+        this._dom.setStyleNow(card, CARD.style.dynamic.alignTextFloor.var, width ? '0px' : '');
+      },
+    });
+    const texts = new MutationObserver(rows.textChanged);
+    texts.observe(column, { characterData: true, childList: true, subtree: true });
+    const size = new ResizeObserver(rows.resized);
+    size.observe(row);
+    this._resourceManager.add(() => {
+      texts.disconnect();
+      size.disconnect();
+      rows.leave();
+    }, ALIGNED_BARS_ID);
+  }
+
   _ensureResourceManager() {
     if (!this._resourceManager) this._resourceManager = new ResourceManager();
   }
@@ -277,6 +319,7 @@ class HACore extends HTMLElement {
 
     if (!config) throw new Error('setConfig: invalid config');
 
+    this._givenConfig = config;
     this._cardView.config = { ...config };
     this._registerWatchedEntities();
     if (this.isRendered) this.reset(); // Card/Badge editor
@@ -549,6 +592,7 @@ class HACore extends HTMLElement {
     // the shape class on the mark elements, which must be registered by then.
     this._buildStyle();
     this._buildSegmentCells();
+    this.#syncAlignedBars();
     requestAnimationFrame(() => {
       this._dom.addClass(CARD.htmlStructure.card.element, 'transition-ready');
     });
@@ -2335,7 +2379,7 @@ class HABase extends HACore {
   // skipcq: JS-0116 -- async is intentional, no await by design.
   static async getStubConfig(hass: HomeAssistant): Promise<LovelaceConfig> {
     return {
-      type: `custom:${devName(this._baseClass)}`,
+      type: `custom:${suffixedName(this._baseClass)}`,
       entity: HABase.getStubEntity(hass),
       ...this._stubExtras,
     } as unknown as LovelaceConfig;

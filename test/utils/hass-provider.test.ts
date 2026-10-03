@@ -1,8 +1,14 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
-import { HassProviderSingleton, sameDeviceEntities, buildTranslationTree } from '../../src/utils/hass-provider.js';
+import {
+  HassProviderSingleton,
+  sameDeviceEntities,
+  buildTranslationTree,
+  sidecarUrl,
+} from '../../src/utils/hass-provider.js';
 import type { HomeAssistant } from '../../src/utils/hass-provider.js';
 import { TRANSLATION_KEYS, EDITOR_KEY_START } from '../../src/utils/translations.js';
+import { VERSION } from '../../src/utils/parameters.js';
 
 const PROGRESS = 'sensor.washer_progress';
 const STATUS = 'sensor.washer_status';
@@ -82,7 +88,10 @@ describe('ensureEditorTranslations - a sidecar that fails leaves the editor in E
       globalThis.fetch = original;
     }
   };
-  const reply = (body: unknown, ok = true) => () => Promise.resolve({ ok, json: () => Promise.resolve(body) });
+  const reply =
+    (body: unknown, ok = true) =>
+    () =>
+      Promise.resolve({ ok, json: () => Promise.resolve(body) });
 
   test('a fetch that throws', async () => {
     assert.equal(await labelIn('fr', () => Promise.reject(new Error('offline'))), english);
@@ -100,5 +109,31 @@ describe('ensureEditorTranslations - a sidecar that fails leaves the editor in E
     const row = new Array<string | 0>(rowLength).fill(0);
     row[0] = 'Libellé';
     assert.equal(await labelIn('it', reply(row)), 'Libellé');
+  });
+});
+
+describe('sidecarUrl - the editor and its language files, beside the bundle', () => {
+  const VERSIONED = `version=${encodeURIComponent(VERSION)}`;
+  const HACS_DIR = 'https://ha.local:8123/hacsfiles/lovelace-entity-progress-card/';
+
+  test("takes the bundle's own query, HACS's hacstag included, plus the version", () => {
+    assert.equal(
+      sidecarUrl('editor.js', `${HACS_DIR}entity-progress-card.js?hacstag=123`),
+      `${HACS_DIR}entity-progress-card-editor.js?hacstag=123&${VERSIONED}`,
+    );
+  });
+
+  test("keeps a dev's own ?v= next to the version", () => {
+    assert.equal(
+      sidecarUrl('fr.json', 'https://ha.local:8123/local/test/entity-progress-card.js?v=7'),
+      `https://ha.local:8123/local/test/entity-progress-card-fr.json?v=7&${VERSIONED}`,
+    );
+  });
+
+  test('without a bundle URL, the HACS directory and the version alone', () => {
+    assert.equal(
+      sidecarUrl('editor.js', ''),
+      `/hacsfiles/lovelace-entity-progress-card/entity-progress-card-editor.js?${VERSIONED}`,
+    );
   });
 });

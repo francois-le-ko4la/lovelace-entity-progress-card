@@ -60,6 +60,7 @@
       "custom_info": "ข้อมูลรองที่กำหนดเอง",
       "custom_theme": "โซนธีมกำหนดเอง",
       "density": "ความหนาแน่น",
+      "bar_aligned": "แถบที่จัดแนว",
       "fast_refresh": "รีเฟรชเร็ว",
       "force_circular_background_mode": "พื้นหลังวงกลม",
       "frameless": "ไม่มีกรอบ",

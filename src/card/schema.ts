@@ -218,6 +218,9 @@ const HAS_EFFECT = {
   interpolate: (c: ConfigLike) => hasTheme(c) && (is.nullish(c.bar_color_mode) || c.bar_color_mode === 'auto'),
   // Neither has a single fill fraction for cells to cut into.
   barSegments: (c: ConfigLike) => c.bar_color_mode !== 'rainbow_full' && !hasStack(c),
+  // A text column beside the bar: a single_line row's, or the value next to a
+  // default-row bar. bar_max_width pins the bar instead.
+  barAligned: (c: ConfigLike) => !c.bar_max_width && (c.density === 'single_line' || HAS_EFFECT.barMaxWidth(c)),
   // Both take the top-right corner: a whole Jinja template outranks a toggle.
   trendIndicator: (c: ConfigLike) => !is.nonEmptyString(statusLabelObj(c.status_label).jinja),
 };
@@ -1348,6 +1351,7 @@ const BADGE_DELETED_FIELDS = [
   'force_circular_background',
   'layout',
   'density',
+  'bar_aligned',
   'height',
   'icon_tap_action',
   'icon_hold_action',
@@ -1406,6 +1410,7 @@ const YamlSchemaFactory = {
           'bar_max_width',
           'icon_animation',
           'density',
+          'bar_aligned',
           'min_width',
           'height',
           'frameless',
@@ -1527,6 +1532,9 @@ const YamlSchemaFactory = {
         // {top, bottom, background} - see applyDensityRule for the full
         // rewrite/clear list this triggers.
         density: types.enumsWithDefault(DENSITY_MODES, 'default'),
+        // true: the rows of one Multi; a name: every card carrying it. Read by
+        // core.ts, in single_line only and only without bar_max_width.
+        bar_aligned: types.optionalWithDefault(types.union(types.boolean, types.string), false),
         min_width: types.optionalString(),
         height: types.optionalString(),
         frameless: types.optionalBooleanWithDefault(false),
@@ -1689,6 +1697,7 @@ const YamlSchemaFactory = {
         'icon_animation',
         'layout',
         'density',
+        'bar_aligned',
         'min_width',
         'height',
         'frameless',

@@ -96,6 +96,7 @@
     - [`entities`](#multi-entities)
     - [The value, and which side it sits on](#multi-value)
     - [`rows`](#multi-rows)
+    - [`bar_aligned`](#bar_aligned)
 
 ## Introduction
 
@@ -395,6 +396,16 @@ work with specific configuration options:
 | [![Feature OK][Feature-OK]](#compatibility)              | **Tile Feature Compatible**   | This option works with the tile feature              |
 | [![Template OK][Template-OK]](#compatibility)            | **Template Compatible**       | This option supports Jinja2 templating               |
 | [![Badge Template OK][BadgeTemplate-OK]](#compatibility) | **Badge Template Compatible** | This option supports Jinja2 templating within badges |
+
+##### Feature hosts
+
+`entity-progress-feature` and `entity-progress-multi-feature` are card features:
+they sit in a host card's `features:` list.
+
+| Host card                   | Tested | Notes                                                                                                                     |
+| --------------------------- | :----: | ------------------------------------------------------------------------------------------------------------------------- |
+| Tile (Home Assistant)       |   ✅   | Takes the tile's entity when the feature sets none; `bar_position: top`/`bottom` included.                                |
+| Mushroom Template card (v5) |   ✅   | YAML and visual editor, with or without a card entity; `features_position` `bottom` or `inline`, `top`/`bottom` included. |
 
 ##### YAML Only
 
@@ -4074,7 +4085,11 @@ does **not** accept is anything the row shape settles on its behalf: `layout`,
 take it, and it is how a stack's bars are made to start at the same x rather
 than each one beginning where its own text ends. Set once at the top level, it
 applies to every row. The CSS hook `--epb-multi-value-width` does the same from
-the other side, by pinning the text column instead of the bar.
+the other side, by pinning the text column instead of the bar. Set it in your
+Home Assistant theme (`epb-multi-value-width: 120px`) and every card using that
+theme gets it, no `card_mod` needed. Or let [`bar_aligned`](#bar_aligned) find
+the width: the widest text of the Multi's own rows, or of every card sharing a
+name.
 
 > [!IMPORTANT]
 >
@@ -4241,6 +4256,72 @@ entities:
   - entity: sensor.printer_cyan_cartridge
   - entity: sensor.printer_magenta_cartridge
   - entity: sensor.printer_yellow_cartridge
+```
+
+[🔼 Back to top]
+
+<a id="bar_aligned"></a>
+
+### `bar_aligned`
+
+[![Card OK][Card-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+[![Feature OK][Feature-OK]](#compatibility)
+
+> **`bar_aligned`** [Boolean | String] ➡️ _(optional, default: `false`)_
+
+Lines bars up at the same x: every row of a group takes the text column of its
+widest row, whatever each one prints — `9 %` and `78 %`, `900 W` and `1600 W`.
+
+- **`true`**, on a Multi: its own rows form the group, and no other card's.
+- **A name** (`bar_aligned: batteries`): every row and every card of the page
+  carrying that name forms one group, across cards — a Multi and the cards
+  beside it, a `vertical-stack-in-card`, everything an `auto-entities`
+  generates. Cards without the name, or with another one, stay out of it. The
+  visual editor's toggle writes `true`; a name is written in YAML, and the
+  toggle keeps it.
+
+The column follows the text as it grows — a longer name, another unit, a value
+reaching 100 % — at once. When the text gets shorter, it waits: only a narrower
+text that holds for 30 seconds tightens it, so a value changing every second
+doesn't move the bars every second, and a wall panel that never reloads doesn't
+keep the width of a long text gone by. A resize or a config change measures it
+from scratch.
+
+- It needs text beside the bar: a [`density: single_line`](#density) row (every
+  Multi row), or a card in the default shape — `layout: horizontal`,
+  `bar_position: default`, not `bar_size: xlarge` — where the value sits next to
+  the bar. Elsewhere the bar has a row of its own and already starts at the same
+  x. A lone card with `true` has no one to line up with.
+- Keep one shape per group: a single-line row measures its name and value, a
+  default card its value alone.
+- The column never takes more than half of a row; longer text ellipses.
+- [`bar_max_width`](#bar_max_width) pins the bar instead, and wins:
+  `bar_aligned` does nothing next to it. `--epb-multi-value-width` still wins
+  over both.
+
+_Examples_:
+
+```yaml
+type: custom:entity-progress-multi-card
+bar_aligned: true
+entities:
+  - sensor.phone_battery
+  - sensor.tablet_battery
+  - sensor.living_room_remote_battery
+```
+
+```yaml
+type: custom:auto-entities
+filter:
+  include:
+    - attributes:
+        device_class: battery
+      options:
+        type: custom:entity-progress-card
+        bar_aligned: batteries
+card:
+  type: custom:vertical-stack-in-card
 ```
 
 [🔼 Back to top]

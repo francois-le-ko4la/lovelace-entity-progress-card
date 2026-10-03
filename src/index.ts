@@ -12,7 +12,7 @@
  * Jinja-driven min/max/watermark/alert thresholds; theme presets and custom
  * themes with segment/rainbow gradients; center-zero diverging bars; bar_stack
  * aggregation; URL-derived per-area console logging and dev mode (?debug=…,
- * ?dev=true); and the window.EPB_DIAG.dump() diagnostic.
+ * ?dev=true); and the window.EPB console helper (EPB.help()).
  *
  * This file is the bundle's entry point. The visual editors ship beside it, in
  * a file of their own (src/editor/entry.ts), loaded the first time one opens.

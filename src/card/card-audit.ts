@@ -1,8 +1,8 @@
-// EPB_DIAG.cardAudit(): every card, on every dashboard, carrying an option it
+// EPB.doctor.audit(): every card, on every dashboard, carrying an option it
 // shouldn't need - read from Home Assistant's own configs, unopened views too.
 
 import { is } from '../utils/common-checks.js';
-import { HassProviderSingleton, type HomeAssistant } from '../utils/hass-provider.js';
+import { currentHass, type HomeAssistant } from '../utils/hass-provider.js';
 import type { LovelaceConfig } from '../utils/types.js';
 import { deprecatedOptionsOf } from './config-helpers.js';
 import { OPTIONS_WITHOUT_EFFECT } from './schema.js';
@@ -11,7 +11,7 @@ type Node = Record<string, unknown>;
 type Finding = { where: string; notes: string[] };
 type Dashboard = { title: string; urlPath: string | null };
 // rows: each Multi row's options without effect, by row index.
-type CardAudit = { deprecated: string[]; inert: string[]; rows: string[][]; newLook: boolean };
+type Cleanup = { deprecated: string[]; inert: string[]; rows: string[][]; newLook: boolean };
 
 const OURS = 'custom:entity-progress-';
 const MULTI = 'custom:entity-progress-multi-';
@@ -26,7 +26,7 @@ const inertOptionsOf = (config: Node): string[] =>
 const rowsOf = (multi: Node): Node[] =>
   (is.array(multi.entities) ? multi.entities : []).map((row) => (is.plainObject(row) ? row : { entity: row }));
 
-const auditCard = (card: Node): CardAudit => {
+const cleanupOf = (card: Node): Cleanup => {
   const isMulti = is.string(card.type) && card.type.startsWith(MULTI);
   const rows = isMulti ? rowsOf(card) : [];
   return {
@@ -38,7 +38,7 @@ const auditCard = (card: Node): CardAudit => {
   };
 };
 
-const notesOf = ({ deprecated, inert, rows, newLook }: CardAudit): string[] => [
+const notesOf = ({ deprecated, inert, rows, newLook }: Cleanup): string[] => [
   ...(deprecated.length > 0 ? [`deprecated: ${deprecated.join(', ')}`] : []),
   ...(inert.length > 0 ? [`no effect: ${inert.join(', ')}`] : []),
   ...rows.flatMap((keys, index) => (keys.length > 0 ? [`row ${index + 1}, no effect: ${keys.join(', ')}`] : [])),
@@ -50,7 +50,7 @@ const isSetOn = (level: unknown, key: string): boolean => is.plainObject(level) 
 // Each note at the key it is about, as a dotted path into the card's YAML: a
 // row's own key when the row sets it, the shared one otherwise; '' is the card.
 const notesByPath = (card: Node): Map<string, string[]> => {
-  const { deprecated, inert, rows, newLook } = auditCard(card);
+  const { deprecated, inert, rows, newLook } = cleanupOf(card);
   const notes = new Map<string, string[]>();
   const add = (path: string, note: string) => notes.set(path, [...(notes.get(path) ?? []), note]);
   const entities = is.array(card.entities) ? card.entities : [];
@@ -91,7 +91,7 @@ const walk = (node: unknown, where: string, findings: Finding[]) => {
   if (!is.plainObject(node)) return;
   const type = node.type;
   if (is.string(type) && type.startsWith(OURS)) {
-    const notes = notesOf(auditCard(node));
+    const notes = notesOf(cleanupOf(node));
     if (notes.length > 0)
       findings.push({ where: `${where}${SEPARATOR}${type.replace('custom:', '')}${labelOf(node)}`, notes });
     return;
@@ -148,14 +148,14 @@ const summarize = (findings: Finding[]): string[] => [
     : 'Nothing to review.',
 ];
 
-const cardAudit = async (): Promise<string> => {
-  const connection = HassProviderSingleton.getInstance().hass?.connection;
+const audit = async (): Promise<string> => {
+  const connection = currentHass()?.connection;
   const lines = connection
     ? summarize(await readFindings(connection))
     : ['No Home Assistant connection yet - open a dashboard first.'];
-  const report = ['=== Entity Progress Card — card audit ===', ...lines].join('\n');
+  const report = ['=== Entity Progress Card — audit ===', ...lines].join('\n');
   console.info(report);
   return report;
 };
 
-export { auditDashboard, cardAudit, notesByPath };
+export { auditDashboard, audit, notesByPath, cleanupOf, notesOf };

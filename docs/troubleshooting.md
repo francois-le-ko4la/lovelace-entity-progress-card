@@ -106,7 +106,7 @@ To find every card that needs it, on every dashboard — views you never open
 included — run this in the browser console (F12) on any dashboard:
 
 ```js
-EPB_DIAG.cardAudit();
+EPB.doctor.audit();
 ```
 
 It lists each card with its deprecated options and those without effect, and
@@ -270,23 +270,33 @@ one of its rows.
 
 The card ships with a small diagnostic helper that collects most of the
 information above in one shot. Open your browser's developer console (`F12` or
-`Ctrl`/`Cmd` + `Shift` + `I`, then the **Console** tab) on a dashboard that has
-the card, and run:
+`Ctrl`/`Cmd` + `Shift` + `I`, then the **Console** tab) on any dashboard, and
+run:
 
 ```js
-EPB_DIAG.dump();
+EPB.doctor.dump();
 ```
 
 > [!NOTE]
 >
-> On a development build the helper answers to `EPB_DIAG_DEV` instead, so a dev
-> bundle loaded beside the shipped one keeps its own.
+> On a development build the helper answers to `EPB_DEV` instead, and on a copy
+> loaded with `?suffix=rc` to `EPB_RC`: each copy keeps its own. `EPB.help()`
+> lists every command; the former `EPB_DIAG.dump()` still works.
+
+To look at one card in particular, `EPB.doctor.cards()` lists the cards on the
+page, numbered, each with a `config` state (`✅ ok`, `❌ invalid`,
+`⚠️ deprecated`, `🧹 no effect`, `🎨 new look`) and an `entity state` (`✅ ok`,
+`⏳ unavailable`, `❓ unknown`, `🚫 not found`), the exact findings in
+`details`. `EPB.doctor.inspect(2)` shows one of them — or
+`EPB.doctor.inspect($0)` after picking it in the DevTools' Elements tab — with
+the value and the range its bar is drawn from, and the config it ended up with.
 
 It prints an anonymized report — card and Home Assistant versions, browser, dark
-mode / reduced motion status, registered card types, and whether the required HA
-components (`ha-card`, `ha-selector`, `action-handler`) are present — ready to
-copy/paste into your issue. Chrome, Edge and Opera only give their exact version
-and operating system over HTTPS; elsewhere, the user agent line is all there is.
+mode / reduced motion status, registered card types, whether the required HA
+components (`ha-card`, `ha-selector`, `action-handler`) are present, and where
+the visual editor is loaded from and whether it loaded — ready to copy/paste
+into your issue. Chrome, Edge and Opera only give their exact version and
+operating system over HTTPS; elsewhere, the user agent line is all there is.
 
 It also flags a **duplicate resource load** on its own
 (`duplicate load: ⚠️ YES`) — a common, hard-to-diagnose cause of erratic

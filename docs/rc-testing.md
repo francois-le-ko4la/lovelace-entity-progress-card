@@ -28,7 +28,7 @@ verify your backups before proceeding.
   installation, so make sure you have a backup.
 - **[Method 2 — Manual isolated install](#-method-2--manual-isolated-install-side-by-side-zero-risk)**:
   the RC runs side-by-side with your stable card, under a different type
-  (`custom:entity-progress-card-dev`), with zero risk to your production config.
+  (`custom:entity-progress-card-rc`), with zero risk to your production config.
   Better suited for deeper testing, or if you'd rather not touch your live setup
   at all.
 
@@ -53,7 +53,7 @@ Both are equally welcome — pick whichever fits how you like to test.
 #### 🧪 Test the RC Card in Lovelace
 
 This RC build is the same `custom:entity-progress-card` type as the stable
-release — there's no separate `-dev` type here, and nothing to duplicate or
+release — there's no separate `-rc` type here, and nothing to duplicate or
 change in your YAML. Your existing cards are already running the RC as soon as
 HACS finishes updating.
 
@@ -72,12 +72,12 @@ the latest stable version.
 
 #### ⬇️ Install the RC version
 
-We recommend separating the RC version from your main setup by creating a
-dedicated test folder.
+##### 📁 Copy it to a test directory
 
-##### 📁 Create a Test Directory
-
-In your Home Assistant config folder, create a `test` folder.
+From the RC's release page on GitHub, download `entity-progress-card.js`, its
+editor `entity-progress-card-editor.js`, and the
+`entity-progress-card-<lang>.json` file of your language — or all of them. In
+your Home Assistant config folder, create a `test` folder and put them there:
 
 ```sh
 mkdir -p config/www/test/
@@ -85,33 +85,25 @@ mkdir -p config/www/test/
 
 > [!NOTE]
 >
-> This allows for clean separation between official HACS components and manually
-> tested files.
+> They go together: without the editor file, Home Assistant offers its own YAML
+> editor for the test cards; without the language file, the visual editor falls
+> back to English.
 
-##### ⬇️ Download and Add the RC version
+##### ➕ Add the resource, with a suffix
 
-- Download the file `entity-progress-card_dev.js` (RC version) to the
-  `/config/www/test/` directory in your Home Assistant setup. No editing needed
-  — the `_dev.js` filename automatically registers the extra
-  `custom:entity-progress-card-dev` type (on top of the regular one), which is
-  what keeps this test file isolated from your production install.
+- Go to **Settings** ➡️ **Dashboards** ➡️ **Resources** ➡️ **`⋮`** ➡️ **Add
+  Resource**
+- Set:
+  - URL: `/local/test/entity-progress-card.js?suffix=rc`
+  - Type: `JavaScript Module`
+- Save
+- reload the browser cache (**`CTRL`** + **`F5`** or clear cache).
 
-  > [!NOTE]
-  >
-  > "dev mode" is detected from the served URL, not baked into the file: a file
-  > named `…_dev.js` — or any resource URL with a `?dev` query — turns it on. So
-  > if you happen to have the plain `entity-progress-card.js`, you can instead
-  > register it as `…/entity-progress-card.js?dev` to get the same isolated
-  > `-dev` type.
-
-- Add `/local/test/entity-progress-card_dev.js` to your Lovelace resources:
-  - Go to **Settings** ➡️ **Dashboards** ➡️ **Resources** ➡️ **`⋮`** ➡️ **Add
-    Resource**
-  - Set:
-    - URL: `/local/test/entity-progress-card_dev.js`
-    - Type: `JavaScript Module`
-  - Save
-  - reload the browser cache (**`CTRL`** + **`F5`** or clear cache).
+`?suffix=rc` registers every element of this copy under an `-rc` name
+(`custom:entity-progress-card-rc`, `custom:entity-progress-feature-rc`, …) next
+to the stable ones HACS installed, and its diagnostic answers to `EPB_RC`. Any
+lowercase word or number works (`?suffix=test`), up to 16 characters. The two
+copies find their own editor and language files, even with the same file name.
 
 #### 🧪 Test the RC Card in Lovelace
 
@@ -128,7 +120,7 @@ type: custom:entity-progress-card
 Copy a card or create your test card with:
 
 ```yaml
-type: custom:entity-progress-card-dev
+type: custom:entity-progress-card-rc
 ```
 
 This allows side-by-side testing of the stable and RC versions.
@@ -138,7 +130,8 @@ This allows side-by-side testing of the stable and RC versions.
 Once you're done testing:
 
 - Remove the resource definition
-- Delete the entity-progress-card-dev.js file from /www/test/
+- Delete `entity-progress-card.js`, `entity-progress-card-editor.js` and the
+  `entity-progress-card-*.json` files from `/config/www/test/`
 
 ## ✅ Testing Checklist
 

@@ -28,6 +28,7 @@ import { HassProviderSingleton, type HomeAssistant, type EntityState } from './h
 interface EntitySuggestionConfig {
   entity: string;
   attribute?: string;
+  theme?: string;
 }
 
 interface EntitySuggestion {
@@ -35,7 +36,18 @@ interface EntitySuggestion {
   label?: string;
 }
 
-function resolveEntitySuggestion(hass: HomeAssistant, entityId: string): EntitySuggestion | null {
+type EntitySuggestions = EntitySuggestion | EntitySuggestion[] | null;
+
+// A battery also gets its own theme, colored by charge and charging state: HA
+// lists both, the second titled "<card> - <label>" (hui-suggestion-card.ts).
+const BATTERY_THEME = 'battery_adaptive';
+const withBatteryTheme = (suggestion: EntitySuggestion, state: EntityState): EntitySuggestion | EntitySuggestion[] => {
+  if (state.attributes?.device_class !== 'battery') return suggestion;
+  const label = HassProviderSingleton.getInstance().localize(`editor.option.theme.${BATTERY_THEME}`);
+  return [suggestion, { label, config: { ...suggestion.config, theme: BATTERY_THEME } }];
+};
+
+function resolveEntitySuggestion(hass: HomeAssistant, entityId: string): EntitySuggestions {
   const domain = HassProviderSingleton.getEntityDomain(entityId);
   const state = hass?.states?.[entityId] as EntityState | undefined;
   if (!state || domain === null) return null;
@@ -54,11 +66,11 @@ function resolveEntitySuggestion(hass: HomeAssistant, entityId: string): EntityS
   }
 
   if (HA_CONTEXT.stateDomains.includes(domain) && toNumberOrNull(state.state) !== null) {
-    return { config: { entity: entityId } };
+    return withBatteryTheme({ config: { entity: entityId } }, state);
   }
 
   return null;
 }
 
 export { resolveEntitySuggestion };
-export type { EntitySuggestion };
+export type { EntitySuggestion, EntitySuggestions };

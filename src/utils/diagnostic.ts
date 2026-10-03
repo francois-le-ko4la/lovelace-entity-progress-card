@@ -1,16 +1,26 @@
-// window.EPB_DIAG (EPB_DIAG_DEV in a dev build): dump() and cardAudit(), for
-// the browser console - see docs/troubleshooting.md.
+// window.EPB (EPB_DEV, EPB_RC… under a suffix), the card's browser console
+// helper: version, help() and the doctor tools - see troubleshooting.md.
 
 import { VERSION, CARD_CONTEXT, HA_SELECTOR_TAG, HA_ACTION_HANDLER_TAG } from './parameters.js';
 import { CONSTRUCTED_SHEETS, CONSTRUCTIBLE_STYLESHEETS } from './styles.js';
-import { HassProviderSingleton } from './hass-provider.js';
+import { currentHass, editorFileReport } from './hass-provider.js';
 
 interface RegisteredEntry {
   type: string;
   version?: string;
 }
 
-type Diagnostic = { version: string; dump: () => string; cardAudit: () => Promise<string> };
+type Doctor = {
+  dump: () => string;
+  audit: () => Promise<string>;
+  cards: () => HTMLElement[];
+  inspect: (target: unknown) => Record<string, unknown> | null;
+};
+// What the card side brings: it reads card code, which utils/ doesn't.
+type CardTools = Omit<Doctor, 'dump'>;
+type ConsoleHelper = { version: string; help: () => string; doctor: Doctor };
+// What 1.6.2 published, kept as an alias: version and dump, audit added since.
+type LegacyDiagnostic = { version: string } & Doctor;
 type BrandVersion = { brand: string; version: string };
 type UaHints = {
   brands?: BrandVersion[];
@@ -21,15 +31,15 @@ type UaHints = {
 };
 type UaData = Pick<UaHints, 'brands' | 'platform'> & { getHighEntropyValues: (hints: string[]) => Promise<UaHints> };
 
-// One global per build, mirroring devName()'s own -dev suffix on the element
-// names: a dev bundle loaded beside the shipped one used to lose the race and
-// leave the console answering for the other file.
-const DIAG_GLOBAL = CARD_CONTEXT.dev ? 'EPB_DIAG_DEV' : 'EPB_DIAG';
+// One global per copy, suffixed like its element names: two bundles loaded side
+// by side each answer for themselves.
+const SUFFIX_KEY = CARD_CONTEXT.suffix ? `_${CARD_CONTEXT.suffix.toUpperCase()}` : '';
+const CONSOLE_GLOBAL: `EPB${string}` = `EPB${SUFFIX_KEY}`;
+const LEGACY_GLOBAL: `EPB_DIAG${string}` = `EPB_DIAG${SUFFIX_KEY}`;
 
 declare global {
   interface Window {
-    EPB_DIAG?: Diagnostic;
-    EPB_DIAG_DEV?: Diagnostic;
+    [helper: `EPB${string}`]: ConsoleHelper | LegacyDiagnostic | undefined;
     customCards?: RegisteredEntry[];
     customBadges?: RegisteredEntry[];
     customCardFeatures?: RegisteredEntry[];
@@ -87,7 +97,7 @@ const browserOf = (hints: UaHints | null, secure: boolean): string => {
 
 // What dump() prints - also what the editor's issue report opens with.
 function environmentReport(): string {
-  const hass = HassProviderSingleton.getInstance().hass;
+  const hass = currentHass();
   // Badges and features register in lists of their own (RegistrationHelper).
   // One type listed twice is the resource loaded twice: HACS plus a manual one.
   const allRegistered = [
@@ -107,7 +117,7 @@ function environmentReport(): string {
       : 'supported, none built yet';
   return [
     '=== Entity Progress Card — diagnostic ===',
-    `card version   : ${VERSION}${CARD_CONTEXT.dev ? ' (dev mode)' : ''}`,
+    `card version   : ${VERSION}${CARD_CONTEXT.dev ? ' (dev mode)' : ''}${CARD_CONTEXT.suffix ? `, names -${CARD_CONTEXT.suffix}` : ''}`,
     `HA core        : ${hass?.config?.version ?? 'unknown (no hass yet)'}`,
     // Two different sources under one label otherwise: a dump taken
     // before any card holds hass reports the browser, not Home Assistant.
@@ -120,24 +130,57 @@ function environmentReport(): string {
     `duplicate load : ${duplicates ? '⚠️ YES — remove one of the two resources!' : 'no'}`,
     `HA elements    : ha-card=${Boolean(customElements.get('ha-card'))} ha-selector=${Boolean(customElements.get(HA_SELECTOR_TAG))} action-handler=${Boolean(customElements.get(HA_ACTION_HANDLER_TAG))}`,
     `constructed CSS: ${constructedCss}`,
-    `card audit     : run ${DIAG_GLOBAL}.cardAudit() to list cards to review`,
+    `editor         : ${editorFileReport()}`,
+    `audit          : run ${CONSOLE_GLOBAL}.doctor.audit() to list cards to review`,
     '=========================================',
   ].join('\n');
 }
 
-// cardAudit comes from the caller: it reads card code, which utils/ doesn't.
-function installDiagnostic(cardAudit: () => Promise<string>): void {
-  if (window[DIAG_GLOBAL]) return;
+const COMMANDS: [string, string][] = [
+  ['version', 'the version running'],
+  ['doctor.dump()', 'environment report, to paste into an issue'],
+  ['doctor.audit()', 'every card, on every dashboard, to review'],
+  ['doctor.cards()', 'the cards on this page, numbered'],
+  ['doctor.inspect(n | $0)', 'one of them: its value, range and config'],
+  ['help()', 'this list'],
+];
+const helpText = (): string => {
+  const width = Math.max(...COMMANDS.map(([command]) => command.length));
+  return [
+    '=== Entity Progress Card — console ===',
+    ...COMMANDS.map(([command, what]) => `${CONSOLE_GLOBAL}.${command.padEnd(width)}  ${what}`),
+  ].join('\n');
+};
+
+const printed = (report: string): string => {
+  console.info(report);
+  return report;
+};
+
+// The first copy of a name keeps it, locked: a second load of the same bundle
+// is what dump() reports as a duplicate, not a reason to swap the helper.
+const publish = (name: string, descriptor: PropertyDescriptor): void => {
+  if (name in window) return;
+  Object.defineProperty(window, name, descriptor);
+};
+
+function installDiagnostic(cardTools: CardTools): void {
+  if (CONSOLE_GLOBAL in window) return;
   requestUaHints();
-  window[DIAG_GLOBAL] = Object.freeze({
-    version: VERSION,
-    cardAudit,
-    dump() {
-      const report = environmentReport();
-      console.info(report);
-      return report;
+  const doctor: Doctor = Object.freeze({ dump: () => printed(environmentReport()), ...cardTools });
+  const helper: ConsoleHelper = Object.freeze({ version: VERSION, help: () => printed(helpText()), doctor });
+  publish(CONSOLE_GLOBAL, { value: helper });
+  let warned = false;
+  const legacy: LegacyDiagnostic = Object.freeze({ version: VERSION, ...doctor });
+  publish(LEGACY_GLOBAL, {
+    get: () => {
+      if (!warned) console.warn(`${LEGACY_GLOBAL} is now ${CONSOLE_GLOBAL}.doctor - try ${CONSOLE_GLOBAL}.help().`);
+      warned = true;
+      return legacy;
     },
   });
 }
 
-export { installDiagnostic, environmentReport, browserOf };
+const consoleHelper = (): ConsoleHelper | undefined => window[CONSOLE_GLOBAL] as ConsoleHelper | undefined;
+
+export { installDiagnostic, environmentReport, browserOf, CONSOLE_GLOBAL, consoleHelper };

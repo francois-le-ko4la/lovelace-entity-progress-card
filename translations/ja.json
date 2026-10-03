@@ -60,6 +60,7 @@
       "custom_info": "カスタム補助情報",
       "custom_theme": "カスタムテーマゾーン",
       "density": "密度",
+      "bar_aligned": "バーを揃える",
       "fast_refresh": "高速更新",
       "force_circular_background_mode": "円形背景",
       "frameless": "枠なし",
