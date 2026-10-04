@@ -15,20 +15,8 @@ import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { load as loadYaml } from 'js-yaml';
-import { YamlSchemaFactory, type SchemaVariant } from '../../src/card/schema.js';
-import {
-  CardConfigHelper,
-  BadgeConfigHelper,
-  FeatureConfigHelper,
-  TemplateConfigHelper,
-  BadgeTemplateConfigHelper,
-  MultiCardConfigHelper,
-  MultiFeatureConfigHelper,
-  type BaseConfigHelper,
-} from '../../src/card/config-helpers.js';
 import { auditDashboard } from '../../src/card/card-audit.js';
-import { META } from '../../src/utils/meta.js';
-import type { LovelaceConfig } from '../../src/utils/types.js';
+import { collectCards, droppedOptions } from './card-configs.js';
 
 const FILES = ['docs/demo-dashboard.yaml', 'docs/demo-dashboard-dev.yaml'];
 const DASHBOARDS = new Map(FILES.map((file) => [file, loadYaml(fs.readFileSync(file, 'utf8'))]));
@@ -37,73 +25,7 @@ const DASHBOARDS = new Map(FILES.map((file) => [file, loadYaml(fs.readFileSync(f
 // deprecated ones Migrate config rewrites.
 const AUDIT_EXEMPT_VIEWS = new Set(['EP Demo - Regression tests (past issues)', 'EP Demo - Deprecated options']);
 
-const HELPERS: Record<string, typeof BaseConfigHelper> = {
-  card: CardConfigHelper,
-  badge: BadgeConfigHelper,
-  feature: FeatureConfigHelper,
-  template: TemplateConfigHelper,
-  badgeTemplate: BadgeTemplateConfigHelper,
-  multiCard: MultiCardConfigHelper,
-  multiFeature: MultiFeatureConfigHelper,
-};
-
-// Home Assistant's own per-card keys, plus the editor's ephemeral ones: never
-// this project's to validate.
-const FOREIGN_KEYS = new Set(['type', 'card_mod', 'view_layout', 'grid_options', 'layout_options', 'visibility']);
-
-// Deliberately deprecated shapes: the -dev file has a whole view exercising
-// them, and being rewritten by the migration is the point.
-const DEPRECATED_KEYS = new Set([
-  'show_value',
-  'value_position',
-  'additions',
-  'navigate_to',
-  'show_more_info',
-  'disable_unit',
-  'max_value_attribute',
-]);
-
-const TYPE_TO_VARIANT = new Map<string, SchemaVariant>(
-  Object.entries(META.types).map(([variant, meta]) => [
-    (meta as { typeName: string }).typeName,
-    variant as SchemaVariant,
-  ]),
-);
-
-type Card = { variant: SchemaVariant; config: LovelaceConfig; file: string };
-
-const collect = (file: string): Card[] => {
-  const found: Card[] = [];
-  const walk = (node: unknown) => {
-    if (Array.isArray(node)) {
-      node.forEach(walk);
-      return;
-    }
-    if (!node || typeof node !== 'object') return;
-    const record = node as Record<string, unknown>;
-    if (typeof record.type === 'string' && record.type.startsWith('custom:entity-progress')) {
-      // The -dev dashboard uses the dev element names, same configs otherwise.
-      const typeName = record.type.replace('custom:', '').replace(/-dev$/, '');
-      const variant = TYPE_TO_VARIANT.get(typeName);
-      if (variant) found.push({ variant, config: record as LovelaceConfig, file });
-    }
-    Object.values(record).forEach(walk);
-  };
-  walk(DASHBOARDS.get(file));
-  return found;
-};
-
-const cards = FILES.flatMap(collect);
-
-// An empty array/object says "nothing here", which is what its absence says
-// too - not a dropped option.
-const isEmpty = (value: unknown) =>
-  value === undefined ||
-  (Array.isArray(value) && value.length === 0) ||
-  (typeof value === 'object' && value !== null && Object.keys(value).length === 0);
-
-const describeCard = (card: Card) =>
-  `${card.file} · ${card.variant} · ${String(card.config.name ?? card.config.entity ?? '(unnamed)')}`;
+const cards = FILES.flatMap((file) => collectCards(DASHBOARDS.get(file), file));
 
 describe('the demo dashboards are configs the card actually accepts', () => {
   test('both files hold cards to check', () => {
@@ -111,22 +33,7 @@ describe('the demo dashboards are configs the card actually accepts', () => {
   });
 
   test('no card declares an option the schema then drops', () => {
-    const lost: string[] = [];
-    for (const card of cards) {
-      const helper = HELPERS[card.variant];
-      const parsed = YamlSchemaFactory[card.variant].parse(helper._customizeConfig(card.config)) as {
-        config: Record<string, unknown> | null;
-      };
-      if (!parsed.config) {
-        lost.push(`${describeCard(card)} → the whole config was rejected`);
-        continue;
-      }
-      for (const key of Object.keys(card.config)) {
-        if (FOREIGN_KEYS.has(key) || DEPRECATED_KEYS.has(key) || key.startsWith('_')) continue;
-        if (isEmpty(card.config[key]) || parsed.config[key] !== undefined) continue;
-        lost.push(`${describeCard(card)} → \`${key}\` is dropped`);
-      }
-    }
+    const lost = droppedOptions(cards);
     assert.deepEqual(lost, [], `\n${lost.join('\n')}\n`);
   });
 });

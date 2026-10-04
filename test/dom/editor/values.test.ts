@@ -8,13 +8,13 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { flushFrames } from '../dom-setup.js';
-import { makeHass, TEST_ENTITY } from '../ha-stubs.js';
-import { assertUndefined, visibleFields, type FieldTree } from '../helpers.js';
+import { flushFrames } from '../../dom-setup.js';
+import { makeHass, TEST_ENTITY } from '../../ha-stubs.js';
+import { assertUndefined, visibleFields, type FieldTree } from '../../helpers.js';
 
-import { EditorFactory } from '../../src/editor/factory.js';
-import '../../src/index.js';
-import '../../src/editor/entry.js';
+import { EditorFactory } from '../../../src/editor/factory.js';
+import '../../../src/index.js';
+import '../../../src/editor/entry.js';
 
 type EditorEl = HTMLElement & { setConfig?: (c: unknown) => void; hass?: unknown };
 type FieldEl = HTMLElement & { value?: unknown };

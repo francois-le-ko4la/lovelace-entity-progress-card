@@ -15,14 +15,16 @@ import {
   markValue,
   MARK_FACTORIZATION,
   type MarkField,
+  type PeakPoint,
   SCHEMA_DEFAULTS,
   PEAK_RANGE_TYPE_DEFAULT,
   DENSITY_COMPACT_BAR_POSITIONS,
   BAR_AROUND_ICON,
   HAS_EFFECT,
   OWN_TRIGGER_ANIMATIONS,
-  type WatermarkMark,
   type PeakMark,
+  YamlSchemaFactory,
+  type Infer,
 } from './schema.js';
 import { cloneValue } from '../utils/browser-support.js';
 import { traceInstance } from '../utils/log.js';
@@ -42,25 +44,12 @@ import {
   type ActionBag,
 } from './config-helpers.js';
 
-// Mirrors schema.ts's watermarkSchema (see card/schema.ts) - the validated
-// shape of config.watermark as it comes out of the schema. low/high are
-// types.watermarkMark's own shape (see WatermarkMark in schema.ts) since the
-// getters below immediately resolve them via markValue/markShown/etc.
+// The validated shapes, read off the schema rather than restated: a field the
+// schema gains is in the type the same day (watermark.as once was not).
+type CardShape = Infer<typeof YamlSchemaFactory.card>;
+type WatermarkConfig = NonNullable<CardShape['watermark']>;
 type WatermarkType = 'blended' | 'area' | 'striped' | 'triangle' | 'round' | 'line';
 type WatermarkSide = 'low' | 'high';
-type WatermarkConfig = {
-  low: WatermarkMark;
-  high: WatermarkMark;
-  // No schema default (unlike low/high/line_size) - genuinely absent once
-  // neither side needs it, see the `watermark` getter's own fallback to
-  // SCHEMA_DEFAULTS.watermark for the real default.
-  opacity?: number;
-  color?: string;
-  type?: WatermarkType;
-  line_size: string;
-  // Shared by both sides unless one says otherwise (MARK_FIELDS).
-  as?: 'auto' | 'percent';
-};
 
 // What ViewCore/ViewBase's `watermark` getter resolves each side to -
 // consumed by HACore._applyWatermarkCSS/_handleWatermarkClasses (core.ts).
@@ -103,8 +92,7 @@ type ResolvedPeakMark = {
   value: number;
 };
 
-// Mirrors schema.ts's barStackEntity - one row of bar_stack.entities.
-type BarStackEntityConfig = { entity: string; attribute?: string; color?: string; subtract?: boolean };
+type BarStackEntityConfig = NonNullable<NonNullable<CardShape['bar_stack']>['entities']>[number];
 
 // Shared by ViewBase.themeDivergingGradient/ViewCore's own
 // templateThemeDivergingGradient below - center_zero's two independent
@@ -275,13 +263,13 @@ class ViewCore {
     );
   }
 
-  // Mirrors HACore#_buildSegmentCells's own active check - both need to
-  // agree on when bar_segments actually renders real cells.
   // bar_position: icon - the bar is the ring around the icon.
   get isRing(): boolean {
     return this.config.bar_position === BAR_AROUND_ICON;
   }
 
+  // When bar_segments renders real cells: HACore#_buildSegmentCells and the
+  // gradients both read this one rule.
   get isSegmented(): boolean {
     return is.number(this.config.bar_segments) && this.config.bar_segments >= 2;
   }
@@ -1465,7 +1453,7 @@ class ViewBase extends ViewCore {
     const field = (key: string, name: MarkField) =>
       MARK_FACTORIZATION.peak_marker.resolve({ peak_marker: config }, key, name);
     const color = (key: string) => ThemeManager.adaptColor((field(key, 'color') as string | undefined) ?? null);
-    const resolve = (key: 'min' | 'max' | 'average', value: number): ResolvedPeakMark => ({
+    const resolve = (key: PeakPoint, value: number): ResolvedPeakMark => ({
       shown: peakMarkShown(config[key] as PeakMark),
       value,
       type: field(key, 'type') as PeakMarkType,

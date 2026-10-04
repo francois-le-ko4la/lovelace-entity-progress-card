@@ -9,6 +9,7 @@ import { HA_CONTEXT, CARD, HIDE_TARGETS, THEME, THEME_KEYS, PERCENT_THEME_KEYS, 
 import { is } from '../utils/common-checks.js';
 import { HassProviderSingleton } from '../utils/hass-provider.js';
 import { NumberFormatter } from './formatting.js';
+import { DURATION_RE } from '../utils/duration.js';
 import { Factorization, type FactorRule } from './factorization.js';
 
 // A validation path is the sequence of object keys/array indices leading to
@@ -83,7 +84,8 @@ const markValue = (mark: WatermarkMark, defaultValue: number): ValueConfig =>
 // whether the family's stands in for it. The one table the card resolves a mark
 // by (resolveMarkField) and the editor cascades it by (factory.ts): a field
 // known to one side only was how watermark.as came to be ignored.
-type MarkField = 'type' | 'line_size' | 'opacity' | 'color' | 'as';
+const MARK_FIELD_NAMES = ['type', 'line_size', 'opacity', 'color', 'as'] as const;
+type MarkField = (typeof MARK_FIELD_NAMES)[number];
 type MarkFieldRules = Partial<Record<MarkField, boolean>>;
 const POINT_MARK: MarkFieldRules = { type: true, line_size: true, opacity: true, color: true };
 const MARK_FIELDS = {
@@ -97,6 +99,11 @@ const MARK_FIELDS = {
   },
 } satisfies Record<string, Record<string, MarkFieldRules>>;
 type MarkFamily = keyof typeof MARK_FIELDS;
+// A family's marks, as the table lists them - the one list of them there is.
+type MarkId<F extends MarkFamily> = keyof (typeof MARK_FIELDS)[F] & string;
+const markIds = <F extends MarkFamily>(family: F): MarkId<F>[] => Object.keys(MARK_FIELDS[family]) as MarkId<F>[];
+// peak_marker's points - every mark but the band.
+type PeakPoint = Exclude<MarkId<'peak_marker'>, 'range'>;
 
 // What a mark sets itself: an override's field, or a peak mark's bare string,
 // the shorthand for its color.
@@ -692,7 +699,7 @@ const types = {
   // vocabulary (formatting.ts) instead of a parallel parser, resolved to
   // seconds so every consumer works in one unit.
   duration: ((value: unknown, path: Path = []) => {
-    const match = is.string(value) ? value.match(/^(\d+(?:\.\d+)?)(s|min|h|d)$/) : null;
+    const match = is.string(value) ? value.match(DURATION_RE) : null;
     if (!match) throw invalid(path, ERROR_CODES.invalidTypeString);
     return NumberFormatter.durationToSeconds(Number(match[1]), match[2]) as number;
   }) as Validator<number>,
@@ -1828,7 +1835,8 @@ const YamlSchemaFactory = {
 export type { Infer };
 export type { ValueConfig };
 export { entityOf, attributeOf, jinjaOf };
-export { markInner, markShown, markValue, MARK_FIELDS, type MarkField, type MarkFamily, peakMarkShown, isMarkOverride };
+export { markInner, markShown, markValue, MARK_FIELDS, markIds, peakMarkShown, isMarkOverride };
+export type { MarkField, MarkFamily, MarkId, PeakPoint };
 export { statusLabelObj, rewrapStatusLabel };
 export { THEME_ALIASES, rawThemeRange };
 // Each YamlSchemaFactory getter rebuilds its whole schema on access - cached
@@ -1940,14 +1948,14 @@ const rewrapPeakMark = (mark: unknown, patch: Rec): unknown => {
   return Object.fromEntries(keys.map((k) => [k, merged[k]]));
 };
 
-const MARK_FIELD_KEYS = new Set<string>(['type', 'line_size', 'opacity', 'color', 'as']);
+const MARK_FIELD_KEYS = new Set<string>(MARK_FIELD_NAMES);
 
 const markFamily = (
   family: MarkFamily,
   write: (id: string, item: unknown, patch: Rec) => unknown,
   votes: (item: unknown) => boolean,
 ) => {
-  const ids = Object.keys(MARK_FIELDS[family]);
+  const ids = markIds(family);
   const familyOf = (config: Rec): Rec => (is.plainObject(config[family]) ? config[family] : {});
   return new Factorization({
     shared: familyOf,

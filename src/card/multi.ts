@@ -1,37 +1,12 @@
 /*
- * Multi-bar orchestrators (V1 skeleton).
- *
- * The child brick is entity-progress-CARD in density: single_line - one row
- * holding icon, name, value and bar, frameless so there is no nested card
- * chrome to fight. It's created directly (document.createElement, sync), gets
- * setConfig + hass, and watches/refreshes/more-info's itself - including its
- * own text, which is why the aggregator no longer formats any. It only stacks
- * N of them and gives each one its slice (--card-height per child).
- *
- * The two subclasses differ ONLY in how much of a "host" they need to provide,
- * via two overridable hooks (_wrapFrame/_applySizing):
- *
- * entity-progress-multi-feature (the base's own default) - attached to a tile,
- *   bare render (HA's own hui-card-feature already frames/insets it), and lets
- *   HA size the tile's row via its natural (unconstrained) height - same
- *   auto-growth every feature already gets, so each child just gets a fixed
- *   compact default height.
- * entity-progress-multi-card - standalone, so it must supply its own <ha-card>
- *   frame, and the Sections grid imposes ITS height (getGridOptions) rather
- *   than letting content dictate it - each child gets an equal measured pixel
- *   slice instead.
- *
- * The base is a thin passthrough over HACore (reused for its shadow root,
- * logger and ResourceManager), with the single-bar render/hass path overridden.
- *
- * Skeleton status: structure + wiring are real; heavy/uncertain bits are marked
- * TODO (schema+MultiConfigHelper, height division needs a live check).
+ * The Multis stack N entity-progress-card rows, each a real card with its own
+ * config and hass, and only size them: docs/development.md#the-multi-cards.
  */
 
 import { CARD, META, suffixedName } from '../utils/parameters.js';
 import { is } from '../utils/common-checks.js';
 import { HACore } from './core.js';
-import { AGGREGATOR_FIELDS } from './schema.js';
+import { rowConfigsOf } from './multi-rows.js';
 import { MultiCardConfigHelper, MultiFeatureConfigHelper, type BaseConfigHelper } from './config-helpers.js';
 import type { HomeAssistant } from '../utils/hass-provider.js';
 import type { LovelaceConfig } from '../utils/types.js';
@@ -58,17 +33,6 @@ const CARD_HEIGHT_VAR = CARD.style.dynamic.card.height.var;
 // row, and gives back the third of the height the shape was costing.
 const shapedIconSize = (_per: number, shape: number) => Math.min(24, (shape * 2) / 3);
 const bareIconSize = (per: number) => Math.min(16, per);
-
-// What never travels down to a row: the aggregator's own keys, plus the
-// derived ones the negotiated config carries (a child re-derives its own).
-// Everything else at the top level is a row option shared by every row.
-const NOT_ROW_OPTIONS = new Set<string>([...AGGREGATOR_FIELDS, 'centerZero', 'resolvedUnit', 'resolvedDecimal']);
-
-// The row shape itself, which is the aggregator's to impose and not the
-// user's - hence absent from YamlSchemaFactory.multiRow. Nothing else is
-// translated here any more: a row speaks the card's own vocabulary.
-const toRowConfig = (row: Record<string, unknown>): LovelaceConfig =>
-  ({ ...row, density: 'single_line', frameless: true, marginless: true }) as unknown as LovelaceConfig;
 
 // Minimal own stylesheet (V1). TODO: fold into the shared constructed-sheet
 // path the cards use instead of a per-instance <style>.
@@ -155,23 +119,8 @@ class EntityProgressMultiBase extends HACore {
     }
   }
 
-  // Each child config = the shared top-level options merged under the
-  // per-entity item (item wins), then given the row shape. bar_size defaults
-  // to 'small' (not the card schema's own default): a stack of N rows needs a
-  // compact one. Still overridable, shared or per-item.
   get #childConfigs(): LovelaceConfig[] {
-    const config = this.#config;
-    if (!config || !is.array(config.entities)) return [];
-    const shared: Record<string, unknown> = { bar_size: 'small' };
-    for (const [key, value] of Object.entries(config)) {
-      if (!NOT_ROW_OPTIONS.has(key)) shared[key] = value;
-    }
-    return (config.entities as Record<string, unknown>[]).map((item) =>
-      toRowConfig({
-        ...shared,
-        ...(is.plainObject(item) ? item : { entity: item }),
-      }),
-    );
+    return rowConfigsOf(this.#config);
   }
 
   static #computeStructureKey(config: LovelaceConfig): string {

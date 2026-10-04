@@ -55,4 +55,4 @@ const MULTI_ROWS = new Factorization({
 const cascade = (config: LovelaceConfig): LovelaceConfig =>
   rowsOf(config).length === 0 ? config : (MULTI_ROWS.settle(config) as LovelaceConfig);
 
-export { cascade, sharedOf, rowsOf, isRowOption };
+export { cascade, sharedOf, rowsOf, isRowOption, MULTI_ROWS };

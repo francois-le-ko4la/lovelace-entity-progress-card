@@ -105,6 +105,9 @@ accompanied by detailed examples to help you configure the system precisely to
 your needs. Whether you’re optimizing for customizing features, or ensuring
 compatibility, this guide will serve as your comprehensive reference.
 
+For which variant accepts which option, and whether its visual editor offers it,
+see the [option map](option-map.md).
+
 ## Conventions
 
 In this documentation, the following types are used to describe configuration
@@ -1750,6 +1753,7 @@ bar_size: medium
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
 [![Feature OK][Feature-OK]](#compatibility)
 [![Template OK][Template-OK]](#compatibility)
+[![Badge Template OK][BadgeTemplate-OK]](#compatibility)
 
 > **`bar_position`** [String] _(optional, default: "default")_
 
@@ -2364,6 +2368,7 @@ _Default value_:
 #### `peak_marker`
 
 [![Card OK][Card-OK]](#compatibility)
+[![Feature OK][Feature-OK]](#compatibility)
 
 > **`peak_marker`** [Object] _(optional)_
 
@@ -3851,37 +3856,42 @@ tap_action:
 These options are the same as those of the `entity-progress-card` and are
 available for Templates as well:
 
-| **Option**                   | **Type**           | **Default**  | **Description**                    | **Link**                                   |
-| :--------------------------- | :----------------- | :----------- | :--------------------------------- | :----------------------------------------- |
-| **Data Options**             |                    |              |                                    |                                            |
-| `entity`                     | string (optional)  | —            | Main entity ID                     | [Config Ref.](#entity)                     |
-| **Styling Options**          |                    |              |                                    |                                            |
-| `badge_icon`                 | Jinja (optional)   | —            | Dynamic badge icon                 | [Config Ref.](#badge_icon)                 |
-| `badge_color`                | Jinja (optional)   | —            | Dynamic badge color                | [Config Ref.](#badge_color)                |
-| `bar_size`                   | string (optional)  | `small`      | Size of the progress bar           | [Config Ref.](#bar_size)                   |
-| `bar_position`               | string (optional)  | `default`    | Position of the progress bar       | [Config Ref.](#bar_position)               |
-| `bar_single_line`            | boolean (optional) | `false`      | single-line mode for overlay bars  | [Config Ref.](#bar_single_line)            |
-| `bar_segments`               | integer (optional) | —            | Render bar as discrete segments    | [Config Ref.](#bar_segments)               |
-| `bar_effect`                 | string/list/jinja  | —            | Visual effects for the bar         | [Config Ref.](#bar_effect)                 |
-| `bar_max_width`              | string (optional)  | -            | Limits the max width of the bar    | [Config Ref.](#bar_max_width)              |
-| `bar_orientation`            | string (optional)  | `ltr`        | Bar direction                      | [Config Ref.](#bar_orientation)            |
-| `bar_scale`                  | string (optional)  | `linear`     | Value-to-width mapping             | [Config Ref.](#bar_scale)                  |
-| `icon_animation`             | string (optional)  | —            | Animate icon on active state       | [Config Ref.](#icon_animation)             |
-| `force_circular_background`  | boolean (optional) | `false`      | Force icon circle background       | [Config Ref.](#force_circular_background)  |
-| `trend_indicator`            | string (optional)  | `false`      | Displays trend icons.              | [Config Ref.](#trend_indicator)            |
-| `peak_marker`                | Map (optional)     | —            | Min/max/average marks from history | [Config Ref.](#peak_marker)                |
-| `layout`                     | string (optional)  | `horizontal` | Layout direction                   | [Config Ref.](#layout)                     |
-| `frameless`                  | boolean (optional) | `false`      | Remove card frame                  | [Config Ref.](#frameless)                  |
-| `marginless`                 | boolean (optional) | `false`      | Remove top/bottom margin           | [Config Ref.](#marginless)                 |
-| `height`                     | string (optional)  | —            | Card height                        | [Config Ref.](#height)                     |
-| `min_width`                  | string (optional)  | —            | Minimum width                      | [Config Ref.](#min_width)                  |
-| `reverse_secondary_info_row` | boolean (optional) | `false`      | Flip info bar layout               | [Config Ref.](#reverse_secondary_info_row) |
-| `multiline`                  | boolean (optional) | `false`      | Split secondary text on 2 lines    | [Config Ref.](#multiline)                  |
-| `center_zero`                | boolean (optional) | `false`      | Center the bar on 0                | [Config Ref.](#center_zero)                |
-| `hide`                       | list (optional)    | —            | Hide parts of the card             | [Config Ref.](#hide)                       |
-| `watermark`                  | map (optional)     | —            | Adds min/max overlays              | [Config Ref.](#watermark)                  |
-| **Behavior And Actions**     |                    |              |                                    |                                            |
-| `xyz_action`                 | map (optional)     | see defaults | Tap/double/hold actions            | [Config Ref.](#xyz_action)                 |
+| **Option**                   | **Type**                  | **Default**  | **Description**                      | **Link**                                   |
+| :--------------------------- | :------------------------ | :----------- | :----------------------------------- | :----------------------------------------- |
+| **Data Options**             |                           |              |                                      |                                            |
+| `entity`                     | string (optional)         | —            | Main entity ID                       | [Config Ref.](#entity)                     |
+| **Styling Options**          |                           |              |                                      |                                            |
+| `badge_icon`                 | Jinja (optional)          | —            | Dynamic badge icon                   | [Config Ref.](#badge_icon)                 |
+| `badge_color`                | Jinja (optional)          | —            | Dynamic badge color                  | [Config Ref.](#badge_color)                |
+| `bar_size`                   | string (optional)         | `small`      | Size of the progress bar             | [Config Ref.](#bar_size)                   |
+| `bar_position`               | string (optional)         | `default`    | Position of the progress bar         | [Config Ref.](#bar_position)               |
+| `bar_single_line`            | boolean (optional)        | `false`      | single-line mode for overlay bars    | [Config Ref.](#bar_single_line)            |
+| `bar_segments`               | integer (optional)        | —            | Render bar as discrete segments      | [Config Ref.](#bar_segments)               |
+| `bar_effect`                 | string/list/jinja         | —            | Visual effects for the bar           | [Config Ref.](#bar_effect)                 |
+| `bar_color_mode`             | string (optional)         | `auto`       | Bar fill color rendering mode        | [Config Ref.](#bar_color_mode)             |
+| `bar_max_width`              | string (optional)         | -            | Limits the max width of the bar      | [Config Ref.](#bar_max_width)              |
+| `bar_aligned`                | boolean/string (optional) | `false`      | Bars start at the same x             | [Config Ref.](#bar_aligned)                |
+| `bar_orientation`            | string (optional)         | `ltr`        | Bar direction                        | [Config Ref.](#bar_orientation)            |
+| `icon_animation`             | string (optional)         | —            | Animate icon on active state         | [Config Ref.](#icon_animation)             |
+| `force_circular_background`  | boolean (optional)        | `false`      | Force icon circle background         | [Config Ref.](#force_circular_background)  |
+| `trend_indicator`            | string (optional)         | `false`      | Displays trend icons.                | [Config Ref.](#trend_indicator)            |
+| `status_label`               | string/Map (optional)     | —            | Status pill on the card              | [Config Ref.](#status_label)               |
+| `text_shadow`                | boolean (optional)        | `false`      | Display a text shadow (overlay)      | [Config Ref.](#text_shadow)                |
+| `density`                    | string (optional)         | `default`    | Smaller footprint preset             | [Config Ref.](#density)                    |
+| `layout`                     | string (optional)         | `horizontal` | Layout direction                     | [Config Ref.](#layout)                     |
+| `frameless`                  | boolean (optional)        | `false`      | Remove card frame                    | [Config Ref.](#frameless)                  |
+| `marginless`                 | boolean (optional)        | `false`      | Remove top/bottom margin             | [Config Ref.](#marginless)                 |
+| `height`                     | string (optional)         | —            | Card height                          | [Config Ref.](#height)                     |
+| `min_width`                  | string (optional)         | —            | Minimum width                        | [Config Ref.](#min_width)                  |
+| `reverse_secondary_info_row` | boolean (optional)        | `false`      | Flip info bar layout                 | [Config Ref.](#reverse_secondary_info_row) |
+| `multiline`                  | boolean (optional)        | `false`      | Split secondary text on 2 lines      | [Config Ref.](#multiline)                  |
+| `center_zero`                | boolean (optional)        | `false`      | Center the bar on 0                  | [Config Ref.](#center_zero)                |
+| `theme`                      | string (optional)         | —            | Applies a preset theme               | [Config Ref.](#theme)                      |
+| `hide`                       | list (optional)           | —            | Hide parts of the card               | [Config Ref.](#hide)                       |
+| `watermark`                  | map (optional)            | —            | Adds min/max overlays                | [Config Ref.](#watermark)                  |
+| `alert_when`                 | map (optional)            | —            | Highlight card on threshold crossing | [Config Ref.](#alert_when)                 |
+| **Behavior And Actions**     |                           |              |                                      |                                            |
+| `xyz_action`                 | map (optional)            | see defaults | Tap/double/hold actions              | [Config Ref.](#xyz_action)                 |
 
 [🔼 Back to top]
 
@@ -4298,7 +4308,6 @@ entities:
 
 [![Card OK][Card-OK]](#compatibility)
 [![Template OK][Template-OK]](#compatibility)
-[![Feature OK][Feature-OK]](#compatibility)
 
 > **`bar_aligned`** [Boolean | String] ➡️ _(optional, default: `true` on a
 > Multi, `false` on a card)_

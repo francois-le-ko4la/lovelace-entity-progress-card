@@ -25,6 +25,7 @@
     "check:es-target": "es-check es2022 dist/entity-progress-card.js dist/entity-progress-card-editor.js && node scripts/check-no-static-blocks.js dist/entity-progress-card.js dist/entity-progress-card-editor.js",
     "check:i18n-split": "node scripts/check-i18n-split.js",
     "check:chrome92": "eslint --config eslint.chrome92.config.mjs \"src/**/*.{js,ts}\"",
+    "docs:options": "node scripts/option-map.js",
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\"",
     "lint:unused": "knip",
     "format:md": "prettier --write \"**/*.md\" \"!node_modules/**\"",

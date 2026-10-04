@@ -38,11 +38,15 @@ import {
   type WatermarkMark,
   MARK_FIELDS,
   MARK_FACTORIZATION,
+  markIds,
   type MarkField,
   type MarkFamily,
+  type MarkId,
+  type PeakPoint,
 } from '../card/schema.js';
 import type { Factorization } from '../card/factorization.js';
 import { resolveCenterZero } from '../card/config-helpers.js';
+import { hasUsableHistory } from '../card/entity-helper.js';
 
 // hide's chips in the order the editor shows them; the set itself comes from
 // the schema (see hideChipsItems).
@@ -87,6 +91,7 @@ const BAR_FIELDS = [
   'bar_color',
   'bar_color_mode',
   'bar_segments',
+  'bar_scale',
   'bar_single_line',
   'text_shadow',
   'interpolate',
@@ -679,10 +684,9 @@ const draftToggle =
     };
   };
 
-const WM_SIDES = ['low', 'high'] as const;
-const WATERMARK_CASCADE: OverrideCascadeAdapter<(typeof WM_SIDES)[number]> = {
+const WATERMARK_CASCADE: OverrideCascadeAdapter<MarkId<'watermark'>> = {
   parentKey: 'watermark',
-  keys: WM_SIDES,
+  keys: markIds('watermark'),
   factorization: MARK_FACTORIZATION.watermark,
   isActive: (config, side) => MARK_FACTORIZATION.watermark.votes(config, side),
   defaults: SCHEMA_DEFAULTS.watermark,
@@ -725,9 +729,6 @@ const wmSide = (side: 'low' | 'high', defaultVal: number) => {
   };
 };
 
-// Mirrors _fetchHistory's own eligibility check (cards.ts): sensor/number
-// only, no attribute override, not timer/counter/duration - recorder keeps
-// no attribute history and those domains/device_class have no numeric trend.
 // A tile feature with no entity of its own renders its tile's (cards.ts):
 // EditorBase keeps that one under this key, which never reaches the YAML.
 const CONTEXT_ENTITY_KEY = '_context_entity';
@@ -737,23 +738,16 @@ const effectiveEntity = (c: LovelaceConfig): string | undefined => {
   return is.nonEmptyString(inherited) ? inherited : undefined;
 };
 
-const peakMarkerEligible = (c: LovelaceConfig): boolean => {
-  const entity = effectiveEntity(c);
-  if (!entity || is.nonEmptyString(c.attribute)) return false;
-  const domain = HassProviderSingleton.getEntityDomain(entity);
-  if (domain === 'timer' || domain === 'counter') return false;
-  return HassProviderSingleton.getInstance().getEntityProp(entity, 'device_class') !== HA_CONTEXT.entity.type.duration;
-};
+const peakMarkerEligible = (c: LovelaceConfig): boolean => hasUsableHistory(effectiveEntity(c), c.attribute);
 const peakMarkerOn = (c: LovelaceConfig) => peakMarkerEligible(c) && Boolean(c.peak_marker);
 
-const PEAK_MARKS = ['min', 'max', 'average'] as const;
-const PEAK_KEYS = [...PEAK_MARKS, 'range'] as const;
+const PEAK_MARKS = markIds('peak_marker').filter((mark): mark is PeakPoint => mark !== 'range');
 // The three marks and the band, one family: the band is a mark whose type is
 // its own (a zone shape) and has no line - MARK_FIELDS says so, not a second
 // adapter, so a family value it still reads is never dropped behind its back.
-const PEAK_MARKER_CASCADE: OverrideCascadeAdapter<(typeof PEAK_KEYS)[number]> = {
+const PEAK_MARKER_CASCADE: OverrideCascadeAdapter<MarkId<'peak_marker'>> = {
   parentKey: 'peak_marker',
-  keys: PEAK_KEYS,
+  keys: markIds('peak_marker'),
   factorization: MARK_FACTORIZATION.peak_marker,
   isActive: (config, mark) => MARK_FACTORIZATION.peak_marker.votes(config, mark),
   optIn: true,
@@ -780,12 +774,12 @@ const peakRange = () => {
 
 // min and max say the same word as the min_value/max_value options above, so
 // they read the same key - average has no such twin and keeps its own.
-const PEAK_SHARED_LABEL: Partial<Record<'min' | 'max' | 'average', string>> = {
+const PEAK_SHARED_LABEL: Partial<Record<PeakPoint, string>> = {
   min: 'shared.min',
   max: 'shared.max',
 };
 
-const peakMark = (mark: 'min' | 'max' | 'average') => {
+const peakMark = (mark: PeakPoint) => {
   const isShown = (c: LovelaceConfig) => PEAK_MARKER_CASCADE.isActive(c, mark);
   const isEnabled = (c: LovelaceConfig) => peakMarkerOn(c) && isShown(c);
   const toggle = markToggleField(PEAK_MARKER_CASCADE, mark, peakMarkerOn, isShown, true);

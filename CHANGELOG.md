@@ -11,9 +11,10 @@ candidate safely before it becomes stable.
 The transformation that began with 1.6.0 goes deeper. Every card does only the
 work that matters, in a fraction of the time, and ships lighter — built for the
 oldest wall tablet as much as the newest phone. More of it is tested
-automatically, on every change. Then comes the rest: a Multi card where every
-row is a real card, an editor that speaks Home Assistant's own language, and a
-long run of refinements and fixes.
+automatically, on every change. Then comes the rest: a ring around the icon,
+bars that line up across cards, a Multi card where every row is a real card, an
+editor that speaks Home Assistant's own language, and a long run of refinements
+and fixes.
 
 A couple of Multi options changed name along the way, fully backward-compatible,
 and a Multi row that never said what to show now shows more — see
@@ -21,32 +22,21 @@ and a Multi row that never said what to show now shows more — see
 
 ### ⚠️ Breaking Changes
 
-#### 🧹 The Multi's rows speak the card's own vocabulary
+#### 🧹 Multi rows: two options renamed, more shown by default
 
 **You can update right away — no extra action needed on your part.** A Multi row
-used to be a bare bar with two options of its own; now that it is a whole card,
-both collapse into what the card already said. `show_value` becomes
-[`hide`][hide], and `value_position` becomes
-[`reverse_secondary_info_row`][reverse_secondary_info_row]. Existing configs
-keep working exactly as before — auto-migrated for the session (console-warned),
-and to the hide list that preserves your rows' previous look — use the editor's
-**Migrate config** button to update your YAML permanently whenever you're ready,
-no rush.
+is a whole card now — see
+[A Multi row is a whole card](#a-multi-row-is-a-whole-card) — and speaks its
+vocabulary:
 
-This one wasn't a preference: a row is validated by the card's own schema now,
-so an option both of them have has to be spelled the same way in both. Keeping
-the Multi's names would have meant two keys for one behaviour, free to drift
-apart at the first change to either.
-
-#### 🎨 A Multi row shows its icon, name and value by default
-
-A row that set neither `show_value` nor [`hide`][hide] drew a bare bar; it is a
-whole card now, and shows what a card shows — icon, name and value on an
-`entity-progress-multi-card`, the value on an `entity-progress-multi-feature`.
-No migration can decide this one for you: to keep the bare bars, add
-`hide: [icon, name, secondary_info]` to the Multi or to its rows.
-`EPB.doctor.audit()`, in the browser console, lists every Multi concerned, on
-every dashboard.
+- `show_value` becomes [`hide`][hide], `value_position` becomes
+  [`reverse_secondary_info_row`][reverse_secondary_info_row]. Existing configs
+  keep working as they are; the editor's **Migrate config** button updates your
+  YAML whenever you're ready.
+- A row that set neither `show_value` nor `hide` shows its icon, name and value
+  now — the value only, on a Multi Feature. To keep the bare bars, add
+  `hide: [icon, name, secondary_info]`; `EPB.doctor.audit()` lists every Multi
+  concerned.
 
 ### ✨ New
 
@@ -89,38 +79,16 @@ No more YAML-only. An entity list you can add to, reorder and delete from, and a
 pencil on every row that opens that row's **entire** configuration — the card
 editor itself, not a cut-down copy of it.
 
-What the two levels do between them is automatic: set something on enough rows
-and it moves up to the card as a shared default; contradict it on one row and
-that row keeps its own. Nothing to declare, nothing to keep in sync, and the
-YAML stays as short as it can be.
-
-#### 📏 A thickness and a reading mode per mark
-
-[`watermark`][watermark] and [`peak_marker`][peak_marker] take `line_size` at
-three levels now — the whole family, one side (`low`/`high`), or a single mark —
-each falling back to the one above it. `watermark`'s `as` follows the same three
-levels, and `peak_marker` gains a `line_size` of its own, 1px unless you set it.
-
-```yaml
-watermark:
-  line_size: 4px
-  low: { value: 20, line_size: 9px } # this side only
-```
-
-#### 📊 The range a value travelled, painted
-
-[`peak_marker`][peak_marker] gains `range`: the band between the minimum and the
-maximum over its window, filled on the bar. The bar says where the value is now;
-the band says how far it has swung. It doesn't need the minimum and maximum
-marks themselves — a band alone is enough.
+What the rows share moves up to the card on its own — see
+[Shared settings, shorter YAML](#shared-settings-shorter-yaml).
 
 #### 🪶 The visual editor loads when you open it
 
 The editor used to ride along with every card, on every dashboard. It now ships
 beside the card, in `entity-progress-card-editor.js`, and loads the first time
 you open one — the way Home Assistant loads its own cards' editors. A dashboard
-loads half the code it did in 1.6.2 and compiles about a third faster; the
-editor costs 23 KB compressed, once, when you need it.
+loads half the code it did in 1.6.2 and spends over a quarter less time
+compiling it; the editor costs 23 KB compressed, once, when you need it.
 
 HACS brings it down with everything else. Installed by hand, copy
 `entity-progress-card-editor.js` next to `entity-progress-card.js`: without it,
@@ -181,6 +149,25 @@ icon badge and [`alert_when`][alert_when].
   first on a card too narrow for both. The `--epb-multi-value-width` CSS hook
   does the same from the text side.
 
+#### Shared settings, shorter YAML
+
+A setting most marks of a family, or most rows of a Multi, have in common is
+written once at the top, and only the exceptions stay below: the visual editor
+files it there for you, and the card reads it the same way. Your YAML is tidied
+the next time you edit; nothing changes on screen. Usable on:
+
+- **[`watermark`][watermark]**: `type`, `line_size`, `opacity`, `color` and
+  `as`, shared by `low` and `high`.
+- **[`peak_marker`][peak_marker]**: `type`, `line_size`, `opacity` and `color`,
+  shared by `min`, `max` and `average` — the `range` band takes the `opacity`
+  and `color`.
+- **[`entity-progress-multi-card`][multi]** and
+  **[`entity-progress-multi-feature`][multi]**: every row option, shared by the
+  rows — `entity`, `attribute`, `name` and `icon` stay each row's own.
+
+The watermark and peak_marker panels drop their separate defaults block with it:
+each mark is set on its own, and a family value written in YAML still applies.
+
 #### `hide`, all the way
 
 A [`hide`][hide] list (not a Jinja one) is settled before the card renders, so
@@ -233,8 +220,25 @@ too. A battery comes up twice there: the plain card, and the same one under
   and each second otherwise, on the timer's own second, where it moved once a
   minute — a 5-minute timer in `%` jumped 20% at a time.
 
+#### Thickness and reading mode per mark
+
+[`watermark`][watermark] and [`peak_marker`][peak_marker] take `line_size` at
+three levels now — the whole family, one side (`low`/`high`), or a single mark —
+each falling back to the one above it. `watermark`'s `as` follows the same three
+levels, and `peak_marker` gains a `line_size` of its own, 1px unless you set it.
+
+```yaml
+watermark:
+  line_size: 4px
+  low: { value: 20, line_size: 9px } # this side only
+```
+
 #### `peak_marker`
 
+- **`range`**: the band between the minimum and the maximum over its window,
+  filled on the bar. The bar says where the value is now; the band says how far
+  it has swung. It doesn't need the minimum and maximum marks themselves — a
+  band alone is enough.
 - **Shapes**: a mark takes the same six as a [`watermark`][watermark] now —
   `area`, `blended` and `striped` fill a region besides `line`, `round` and
   `triangle`. A filled `min` covers everything below it, a filled `max`
@@ -376,12 +380,6 @@ a panel.
 - **Type**: the editor left a mark's type empty whenever it followed its
   family's value instead of carrying its own, and showed nothing at all for a
   bare `watermark: {}`.
-- **`watermark.as`** set once for both sides — what the editor writes when `low`
-  and `high` agree — was ignored: the marks stayed on the sensor's own scale
-  instead of a percentage of the bar. Both sides follow it now.
-- **Band colour**: giving [`peak_marker`][peak_marker]'s min, max and average
-  their own colour, one by one, changed the colour the band was drawn in — to
-  the default, or to theirs once they agreed. The band keeps it now.
 - **Shared level**: a value set the same way on every visible
   [`peak_marker`][peak_marker] mark never moved up to it, and editing one mark
   could switch a hidden one back on.
@@ -427,13 +425,12 @@ a panel.
   for every [`bar_position`][bar_position] but `default` — since 1.6.1.  
   ➡️ Discord @mooseBringer
 
-#### Configuration
+#### Console messages
 
-- **Invalid config**: the path shown on the card used commas
-  (`watermark,low,value`) where the console used dots.
-- **Validation**: a refused decimal announced "a valid decimal number" while the
-  rule is a positive integer; four codes saying the same thing to a user became
-  one.
+- **Invalid option**: its path reads `watermark.low.value`, not
+  `watermark,low,value`.
+- **[`decimal`][decimal]**: a refused value asks for a positive whole number,
+  where it asked for "a valid decimal number".
 
 ### 📚 Documentation
 
@@ -451,6 +448,12 @@ a panel.
 - [Feature hosts] lists the cards `entity-progress-feature` and
   `entity-progress-multi-feature` were tested in: Home Assistant's Tile and
   Mushroom's Template card.
+- A new [option map][Option map] shows, for every option, which variant takes
+  it, whether its visual editor offers it, and its default.
+- The option tables of the cookbook and the reference list every option each
+  variant takes — 28 rows were missing — and the templates' table no longer
+  lists `bar_scale` and `peak_marker`, which they never took.
+- A review of the documentation, with minor corrections.
 
 #### Demo dashboards
 
@@ -491,8 +494,8 @@ more than as a snappier card on a desktop.
 | Per card, median (µs)         | 1.6.2 | 1.6.3 | Gain |
 | ----------------------------- | ----: | ----: | ---: |
 | Another entity changes        | 1,099 |    10 | ÷108 |
-| Its own entity changes        | 1,102 |   343 | ÷3.2 |
-| One tick of a running `timer` |   689 |   119 | ÷5.8 |
+| Its own entity changes        | 1,102 |   371 | ÷3.0 |
+| One tick of a running `timer` |   689 |   129 | ÷5.3 |
 
 Measured with [`scripts/compare-hass-updates.js`][compare-hass-updates.js].
 
@@ -506,16 +509,16 @@ Measured with [`scripts/compare-hass-updates.js`][compare-hass-updates.js].
 
 | Bundle                                             |  1.6.2 |  1.6.3 |
 | -------------------------------------------------- | -----: | -----: |
-| `entity-progress-card.js`                          | 648 KB | 306 KB |
-| … compressed                                       | 157 KB |  80 KB |
-| … compiled by the browser (lazy)                   |  36 ms |  24 ms |
-| … bytecode kept                                    | 587 KB | 341 KB |
-| `entity-progress-card-editor.js`, on first opening |      — |  83 KB |
+| `entity-progress-card.js`                          | 648 KB | 328 KB |
+| … compressed                                       | 157 KB |  86 KB |
+| … compiled by the browser (lazy)                   |  36 ms |  26 ms |
+| … bytecode kept                                    | 587 KB | 365 KB |
+| `entity-progress-card-editor.js`, on first opening |      — |  81 KB |
 | … compressed                                       |      — |  23 KB |
 
 Measured with [`scripts/compare-bundles.js`][compare-bundles.js]. Half the size
-and a third less compiling, despite everything this release adds; compile times
-come from Node's V8 — read the ratio, not the milliseconds.
+and over a quarter less compiling, despite everything this release adds; compile
+times come from Node's V8 — read the ratio, not the milliseconds.
 
 #### Lighter in memory
 
@@ -530,12 +533,6 @@ come from Node's V8 — read the ratio, not the milliseconds.
 
 #### Code and tooling
 
-- **Shared settings**: the visual editor files a setting most marks or Multi
-  rows share at the top, and keeps only the exceptions below — one rule for
-  both. Nothing changes on screen; your YAML is tidied the next time you edit.
-  The watermark and peak_marker panels drop their separate defaults block with
-  it: each mark is set on its own, and a family value written in YAML still
-  applies.
 - The Multi cards are validated by a real schema at last, like every other card
   type — an unknown option is dropped instead of quietly reaching the DOM.
 - The card's default attribute per domain and the entity picker's own
@@ -558,8 +555,10 @@ come from Node's V8 — read the ratio, not the milliseconds.
   on a card left mounted.
 - The editor is built into a file of its own that reads the card's modules
   instead of copying them: the build fails if one ends up in both files.
-- 650 automated tests run before every push: 464 on the card's logic, 186
-  mounting real cards and editors in a virtual DOM.
+- 732 automated tests run before every push: 545 on the card's logic, 187
+  mounting real cards and editors in a virtual DOM. The documentation is checked
+  against the schema too — its YAML examples, defaults, compatibility badges and
+  option tables — and a test fails when the option map falls behind the code.
 - `scripts/compare-hass-updates.js` measures what a hass update and a tick cost
   per card, between two bundles.
 - The console helper answers for the bundle it came from — a dev build installs
@@ -7503,6 +7502,8 @@ experience:
   https://htmlpreview.github.io/?https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/graphic-effects-compatibility.html
 [bar_stack]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_stack
+[Option map]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/option-map.md
 [Feature hosts]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#feature-hosts
 [RC testing]:

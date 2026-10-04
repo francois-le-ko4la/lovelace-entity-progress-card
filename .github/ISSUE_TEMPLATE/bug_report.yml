@@ -38,10 +38,12 @@ body:
           required: true
     - type: textarea
       attributes:
-          label: Card Configuration (YAML)
+          label: Issue report
           description: |
-              Please paste the card's YAML configuration (as shown in the dashboard's card editor, "Edit in YAML"). This is required to reproduce the issue.
-          render: yaml
+              Open the card's editor and click the 🐞 bug icon at its top left: it copies your environment and the card's YAML, ready to paste. Paste it here as it is.
+
+              No editor? Run `EPB.doctor.dump()` in the browser console (F12) for the environment, and paste the card's YAML ("Edit in YAML") in a ```yaml block.
+          placeholder: Paste the bug icon's report here.
       validations:
           required: true
     - type: textarea
@@ -52,21 +54,6 @@ body:
           render: yaml
       validations:
           required: false
-    - type: textarea
-      attributes:
-          label: Environment
-          description: |
-              examples:
-                - **Brower**: Chrome 136.0.7103.93
-                - **HA Version**: 2024.12.0
-                - **Entity Progress Card**: 1.2.3
-          value: |
-              - Browser:
-              - HA Version:
-              - Entity Progress Card:
-          render: markdown
-      validations:
-          required: true
     - type: textarea
       attributes:
           label: Anything else?

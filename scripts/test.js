@@ -9,6 +9,7 @@
 const fs = require('fs');
 const path = require('path');
 const esbuild = require('esbuild');
+const { TARGET, NATIVE_CLASS_FEATURES, devBuildDefine } = require('./lib/esbuild-settings.js');
 
 const TEST_DIR = 'test';
 const OUT_DIR = 'test-dist';
@@ -52,10 +53,11 @@ function main() {
       platform: 'node',
       format: 'esm',
       outfile,
-      // Deterministic for tests regardless of committed CARD_CONTEXT state -
-      // same reasoning as build.js's own --prod define, dev flags aren't
-      // what's under test here.
-      define: { __EPB_DEV_BUILD__: 'false' },
+      // The shipped bundle's own rules (esbuild-settings.js), its prod define
+      // included: dev flags aren't what's under test here.
+      define: devBuildDefine(false),
+      target: TARGET,
+      supported: NATIVE_CLASS_FEATURES,
       // src/ has no runtime dependency, so this only ever leaves the test-only
       // ones (happy-dom) to Node's own resolver instead of inlining a whole
       // DOM implementation into every test bundle.

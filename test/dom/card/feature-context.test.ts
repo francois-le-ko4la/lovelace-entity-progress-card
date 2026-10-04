@@ -7,12 +7,12 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { flushFrames } from '../dom-setup.js';
-import { makeHass, TEST_ENTITY } from '../ha-stubs.js';
-import { assertUndefined } from '../helpers.js';
+import { flushFrames } from '../../dom-setup.js';
+import { makeHass, TEST_ENTITY } from '../../ha-stubs.js';
+import { assertUndefined } from '../../helpers.js';
 
-import '../../src/index.js';
-import '../../src/editor/entry.js';
+import '../../../src/index.js';
+import '../../../src/editor/entry.js';
 
 type EditorEl = HTMLElement & {
   setConfig?: (c: unknown) => void;

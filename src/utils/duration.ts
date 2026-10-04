@@ -20,6 +20,8 @@ const DURATION_RANGE: Record<DurationUnit, { min: number; max: number }> = {
   h: { min: 1, max: derivedMax('h') },
   d: { min: 1, max: derivedMax('d') },
 };
+// The one spelling of a duration: the schema reads YAML with it, the editor
+// splits it for its slider.
 const DURATION_RE = /^(\d+(?:\.\d+)?)(s|min|h|d)$/;
 
 const parseDuration = (raw: unknown): ParsedDuration => {
@@ -36,4 +38,4 @@ const durationSliderSelector = (unit: string): Record<string, unknown> => {
   return { number: { ...range, step: 1, mode: 'slider' } };
 };
 
-export { parseDuration, serializeDuration, durationSliderSelector };
+export { parseDuration, serializeDuration, durationSliderSelector, DURATION_RE };

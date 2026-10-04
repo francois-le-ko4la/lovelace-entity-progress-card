@@ -11,11 +11,11 @@ import assert from 'node:assert/strict';
 
 // Side-effect import, and it must stay first: src/ registers its elements at
 // module-evaluation time.
-import { flushFrames } from '../dom-setup.js';
-import { makeHass } from '../ha-stubs.js';
+import { flushFrames } from '../../dom-setup.js';
+import { makeHass } from '../../ha-stubs.js';
 
-import { META } from '../../src/utils/parameters.js';
-import '../../src/index.js';
+import { META } from '../../../src/utils/parameters.js';
+import '../../../src/index.js';
 
 const MAIN = 'sensor.main';
 const REFERENCED = 'sensor.referenced';

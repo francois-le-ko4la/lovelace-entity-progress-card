@@ -22,6 +22,7 @@ const path = require('path');
 const esbuild = require('esbuild');
 const { resolveCssBlocks } = require('./lib/inline-css.js');
 const { forceCleanCardContext } = require('./lib/release-flags.js');
+const { TARGET, NATIVE_CLASS_FEATURES, devBuildDefine } = require('./lib/esbuild-settings.js');
 const { JS_FILE, parseJsBlock } = require('./lib/i18n-block.js');
 
 const OUTDIR = 'dist';
@@ -43,21 +44,6 @@ const VERSION = fs.readFileSync(path.join(ROOT, 'src/utils/meta.ts'), 'utf8').ma
 // editor file left over from another version, never read each other's table.
 const HOST_KEY = `epb-host:${STEM}:${VERSION}`;
 const HOST_TABLE = 'epb-host-table';
-// The es2021 floor (#128) is about class static blocks, which break Chrome 92.
-// Every other class feature runs natively there, so it's kept native instead of
-// being lowered to WeakMap helpers.
-const NATIVE_CLASS_FEATURES = {
-  'class-field': true,
-  'class-static-field': true,
-  'class-private-field': true,
-  'class-private-method': true,
-  'class-private-accessor': true,
-  'class-private-static-field': true,
-  'class-private-static-method': true,
-  'class-private-static-accessor': true,
-  'class-private-brand-check': true,
-  'class-static-blocks': false,
-};
 
 // The editor's translations ship beside the bundle rather than inside it: one
 // positional array per language, indexed on TRANSLATION_KEYS from
@@ -89,7 +75,7 @@ const BUNDLE_OPTIONS = {
   // URL can't be read when the bundle is loaded as an ES module (no
   // document.currentScript), so a filename/?dev=true signal alone would miss
   // it. ?dev=true still works as a runtime override on the prod file.
-  define: { __EPB_DEV_BUILD__: isProd ? 'false' : 'true' },
+  define: devBuildDefine(!isProd),
 };
 
 // The card modules the editor's own code imports: what the bundle hands over.
@@ -152,7 +138,7 @@ module.exports = table;`
 function finish(bundled, { cardContext }) {
   const cleaned = isProd && cardContext ? forceCleanCardContext(bundled) : bundled;
   const { src, minifiedCount } = resolveCssBlocks(cleaned, isProd);
-  const { code } = esbuild.transformSync(src, { minify: isProd, target: 'es2021', supported: NATIVE_CLASS_FEATURES });
+  const { code } = esbuild.transformSync(src, { minify: isProd, target: TARGET, supported: NATIVE_CLASS_FEATURES });
   return { code, src, minifiedCount };
 }
 

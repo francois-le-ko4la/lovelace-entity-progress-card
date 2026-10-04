@@ -8,7 +8,8 @@ import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { MARK_FACTORIZATION, MARK_FIELDS } from '../../src/card/schema.js';
-import { cascade, rowsOf } from '../../src/editor/multi-cascade.js';
+import { cascade, rowsOf, MULTI_ROWS } from '../../src/editor/multi-cascade.js';
+import { rowConfigsOf } from '../../src/card/multi-rows.js';
 import type { LovelaceConfig } from '../../src/utils/types.js';
 
 type Rec = Record<string, unknown>;
@@ -85,6 +86,26 @@ describe('settling a Multi moves values, never what a row uses', () => {
       const settled = cascade(config);
       assert.deepEqual(usedByRows(settled), usedByRows(config), JSON.stringify(config));
       assert.deepEqual(cascade(settled), settled, 'settling twice moved something');
+    }
+  });
+});
+
+// The card hands each row its own merge (multi-rows.ts); the editor files the
+// same config by resolve. A row must get from one what the other says it uses.
+describe('a Multi row gets from the card what the editor resolves for it', () => {
+  test('rows', () => {
+    const next = random(11);
+    for (let run = 0; run < RUNS; run += 1) {
+      const config = multiConfig(next);
+      const handed = rowConfigsOf(config) as unknown as Rec[];
+      handed.forEach((row, index) => {
+        for (const key of ['bar_color', 'decimal'])
+          assert.equal(
+            row[key],
+            MULTI_ROWS.resolve(config, String(index), key),
+            `row ${index} ${key}: ${JSON.stringify(config)}`,
+          );
+      });
     }
   });
 });

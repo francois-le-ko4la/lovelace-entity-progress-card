@@ -46,15 +46,20 @@ the seven visual editors ship in a file of their own, `src/editor/entry.ts` (see
 Tests come in two layers, run by two different gates:
 
 - **`npm test`** — pure logic (schema validation, math, formatting), in
-  `test/card/` and `test/utils/`. No DOM, no `hass`.
+  `test/card/`, `test/editor/` and `test/utils/`, plus `test/docs/`: the
+  documentation checked against the schema — YAML examples, documented defaults,
+  compatibility badges, option tables, the demo dashboards, and
+  `docs/option-map.md` against what its generator renders today. No DOM, no
+  `hass`.
 - **`npm run test:dom`** — mounts every registered custom element and builds
-  every editor against a real DOM (`happy-dom`), in `test/dom/`. It asserts that
-  things mount and build, never what they look like. `test/dom-setup.ts`
-  installs the browser globals - **never bind a constructor to the window**, it
-  breaks the `HTMLElement` prototype chain and the elements silently lose
-  `.style`. `test/ha-stubs.ts` stands in for what Home Assistant provides
-  (`ha-card`, `ha-svg-icon`, `action-handler`'s `bind()`) plus a `makeHass()`
-  whose `connection` is a real `EventTarget`.
+  every editor against a real DOM (`happy-dom`), in `test/dom/`, split by domain
+  like `src/` (`card/`, `editor/`, `utils/`; the whole bundle at its root). It
+  asserts that things mount and build, never what they look like.
+  `test/dom-setup.ts` installs the browser globals - **never bind a constructor
+  to the window**, it breaks the `HTMLElement` prototype chain and the elements
+  silently lose `.style`. `test/ha-stubs.ts` stands in for what Home Assistant
+  provides (`ha-card`, `ha-svg-icon`, `action-handler`'s `bind()`) plus a
+  `makeHass()` whose `connection` is a real `EventTarget`.
 
 Neither covers rendering, real entity state, or the WebSocket Jinja round trip.
 To see the card render against real entities, point a Lovelace resource at the
@@ -225,8 +230,11 @@ this is the diagram's "Config helpers + validation" layer; see
 | `HassProviderSingleton`                                   | Single access point to the `hass` object: entity props, attributes, names/areas/floors, localization, locale-aware formatting. Shared by all cards on the page.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | `ChangeTracker`                                           | Per-card filter deciding whether a `hass` update concerns this card (reference comparison of watched entities' state objects).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | `EntityHelper` / `EntityOrValue`                          | Wraps one entity (or a literal value): type detection (timer, counter, number, duration), value extraction, validity/availability.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `hasUsableHistory`                                        | The one rule for what the recorder keeps a usable numeric history of (no attribute, no `timer`/`counter`, no `device_class: duration`): the card fetches history by it, the editor offers `peak_marker` by it.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | `EntityCollectionHelper`                                  | The `bar_stack` feature: `proportional` mode renormalizes shares against the combined total (a.k.a. "100% stacked"), `stacked` places each entity at its own position on the min/max scale, `net` reduces everything to one algebraic total. Width/share math always runs on `#magnitude` (`Math.abs`) - a raw negative value must never produce a negative width. An entity counts as negative (`net`'s sign, or the arm it lands in with `center_zero`) via `#isNegative`: marked `subtract`, **or** its own raw value is already negative - checking both instead of just flipping the sign on `subtract` avoids double-negating an already-negative value back to positive. With `center_zero`, `stacked`/`proportional` split by that same `#isNegative` into two independent arm gradients (`getDivergingGradients`) applied via dedicated CSS variables (`--stack-*`) instead of the single shared fill. |
 | `ProgressCalc` / `PercentHelper`                          | Percentage math (min/max/center-zero/reversed) and locale-aware value+unit formatting.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `ProgressMath`                                            | The percentage formulas themselves (min/max, reversed, `bar_scale`, center-zero), immutable: the whole input comes in through the constructor, so no formula reads what it was not given. `ProgressCalc` feeds it.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `ValueHelper` / `DecimalHelper` / `UnitHelper`            | `value-primitives.ts`: a validated value with its fallback, a decimal count, a unit and its display flag - the bricks `ProgressCalc` holds.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | `ThemeManager`                                            | Built-in & custom themes: color/icon per value zone, `segment`/`rainbow` gradients, HA color name adaptation.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | `NumberFormatter`                                         | Value/unit/duration formatting (`Intl.NumberFormat`, timedelta parsing).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | `ObjStructure` + `StructureTemplates`/`StructureElements` | HTML structure factory: pure string builders + per-option `<template>` cache (see [Rendering](#rendering--performance)).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
@@ -241,6 +249,38 @@ this is the diagram's "Config helpers + validation" layer; see
 | `Logger`             | Per-class leveled logging with optional method wrapping (`wrapAll`) for call tracing.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | `is` / `has`         | Type guards used everywhere (`is.number` rejects `NaN`/`Infinity`, `is.strictNumericString` vs lax `is.numericString`, …).                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | `RegistrationHelper` | `customElements.define` + `window.customCards` / `customBadges` / `customCardFeatures` registration.                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+
+### The Multi cards
+
+`entity-progress-multi-card` and `entity-progress-multi-feature`
+(`card/multi.ts`) render no bar of their own. Each row is a real
+`entity-progress-card`, created with `document.createElement` (synchronous, no
+`loadCardHelpers`) inside a `.multi-item` wrapper, and handed its own config and
+`hass`: it watches, refreshes, formats and opens its more-info by itself. The
+aggregator only stacks the rows and gives each an equal slice of the height
+through the child's own height variable.
+
+- **A row's config**: `rowConfigsOf` (`multi-rows.ts`) merges the top level into
+  each row ([Shared values](#shared-values-one-factorisation)) and `toRowConfig`
+  imposes the row shape — `density: single_line`, `frameless`, `marginless` —
+  which the row schemas therefore leave out. `bar_size` defaults to `small`.
+- **Validation**: the aggregator's own keys (`AGGREGATOR_FIELDS`: `entities`,
+  `rows`) by its schema; each row by the full card schema, in its child. A row
+  identity (`ROW_IDENTITY_FIELDS`: `entity`, `attribute`, `name`, `icon`) is
+  never shared.
+- **The two variants** differ only in two hooks: the card wraps the stack in its
+  own `ha-card` and lets the Sections grid impose the height (`getGridOptions`,
+  `rows`); the feature renders bare in its tile row, takes HA's
+  `--feature-height` as its unit, and hides each child's shape through
+  `forceHidden`, called before `setConfig`. What a slice of a 42 px row can't
+  hold (icon actions, `trend_indicator`, `status_label`, the icon badge,
+  `alert_when`) its row schema, `multiFeatureRow`, doesn't accept at all.
+- **Bars line up** through `bar_aligned`, true by default here: a row knows it
+  is one by its `.multi-item` parent (see
+  [Rendering & performance](#rendering--performance)).
+- **The editor** is a list (`entity-progress-multi-row-editor`,
+  `list-editors.ts`) whose pencil opens a row editor — the card editor itself,
+  built by `EditorFactory.buildMultiRow` — and writes back through `MULTI_ROWS`.
 
 ## Card lifecycle
 
@@ -407,6 +447,10 @@ it. The bundle only ever holds the tag name.
    independent of whether `getConfigElement()`/`customElements.define()` for the
    editor actually work. With the editor in its own file, that is literally the
    case: the pencil shows before the editor file was ever fetched.
+4. Features answer both `isSupported` (HA 2025.6+) and the older `supported`: HA
+   2025.6+ only asks the first, and a feature answering `supported` alone is
+   skipped by any host card without an entity of its own (Mushroom's template
+   card).
 
 ### The HA ↔ card contract
 
@@ -445,6 +489,24 @@ Beyond the `hass` object, the card talks to HA through the shared WebSocket
 connection (`hass.connection`) for Jinja rendering — see next section. The
 `disconnected` / `ready` connection events are watched to drop and restore
 subscriptions across reconnections (HA restart, network loss).
+
+### History
+
+`trend_indicator` with a `window` and `peak_marker` start from the recorder's
+history, then follow the live value.
+
+- **Who may ask**: `hasUsableHistory` (`entity-helper.ts`) — the same rule the
+  editor uses to offer `peak_marker`: no attribute, no `timer`/`counter`, no
+  `device_class: duration`.
+- **The request**: `_fetchHistory` sends one `history/history_during_period`
+  over the shared connection. Two features asking for the same window share one
+  in-flight call (`#inFlightHistoryFetches`), and `_seedFromHistory` drops a
+  reply whose entity, attribute or window changed while it was in flight.
+- **The samples**: `SampleRing` keeps (time, value) pairs in growable typed
+  arrays, not an object per reading — Float32 percents for `TrendTracker`,
+  Float64 raw values for `PeakTracker` (min, max, time-weighted average). Both
+  trim to their window, and the window slides with time, not only with new
+  readings.
 
 ## Rendering & performance
 
@@ -501,6 +563,16 @@ Techniques used to keep N cards cheap on a dashboard that updates constantly:
    to `max-content`, then all reads, then all writes - so one forced layout for
    the page, never one per row, and a `hass` update that leaves the text alone
    costs nothing.
+8. **The ring is the shape's `::after`, not a bar.** `bar_position: icon` builds
+   no straight bar (`hasStraightBar` turns `center_zero`, `bar_effect`,
+   `bar_stack` and `bar_segments` inert there). A conic-gradient under a radial
+   mask draws the ring outside the shape (`--ring-offset`), inside a fixed 44 px
+   envelope, so the icon never shrinks under it. Its fill animates through
+   `--entity-progress-ring-value`, registered with `CSS.registerProperty` in
+   `bootstrap.ts` so it can transition, and held at 0 until `transition-ready`,
+   as the bar is. Colours come from `ThemeManager` with `isRing` (a conic
+   gradient over the whole track), and the marks are `.ring-*` layers driven by
+   the bar's own `shown`/`wm-*` classes: no second mark pipeline.
 
 ## Browser compatibility matrix
 
@@ -525,10 +597,11 @@ where the browser allows it.
 ### How the two floors are enforced
 
 - **Syntax** (does the JS itself parse/run) is handled by the **build target**,
-  not by writing fallback code — `scripts/build.js` passes `target: 'es2021'` to
-  esbuild's minifier, and `npm run check:es-target` (part of the release build)
-  re-verifies that language floor on the **minified** output. This is the direct
-  fix for
+  not by writing fallback code — `scripts/lib/esbuild-settings.js` holds
+  `target: 'es2021'` and `NATIVE_CLASS_FEATURES`, read by `build.js`'s minifier
+  and by `test.js`, so the tests compile as the shipped bundle does;
+  `npm run check:es-target` (part of the release build) re-verifies that
+  language floor on the **minified** output. This is the direct fix for
   [issue #128](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/issues/128)
   (filed against Chrome 92): the build used to target `es2022`, which let
   esbuild emit class `static {}` blocks — a hard `SyntaxError` on Chrome 92,
@@ -536,14 +609,15 @@ where the browser allows it.
   (Node's own parser is newer than the target), so it shipped broken to exactly
   the embedded/kiosk browsers this matters most for. Static blocks are the only
   es2022 syntax Chrome 92 lacks: class fields, private fields and methods, and
-  `#x in obj` all run natively there (Chrome 72-91), so `build.js` declares them
-  supported (`NATIVE_CLASS_FEATURES`) and keeps them native instead of lowered
-  to `WeakMap` helpers. `check:es-target` mirrors that split: `es-check es2022`
-  for the syntax level, then `scripts/check-no-static-blocks.js`, because
-  es-check passes or fails static blocks together with the rest of es2022. The
-  build also avoids esbuild's `keepNames`: without static blocks, esbuild can
-  only name a class by lowering all of it, private members included (226
-  `WeakMap`/`WeakSet`, ~35 KB) — loggers name themselves instead, see
+  `#x in obj` all run natively there (Chrome 72-91), so `esbuild-settings.js`
+  declares them supported (`NATIVE_CLASS_FEATURES`) and keeps them native
+  instead of lowered to `WeakMap` helpers. `check:es-target` mirrors that split:
+  `es-check es2022` for the syntax level, then
+  `scripts/check-no-static-blocks.js`, because es-check passes or fails static
+  blocks together with the rest of es2022. The build also avoids esbuild's
+  `keepNames`: without static blocks, esbuild can only name a class by lowering
+  all of it, private members included (226 `WeakMap`/`WeakSet`, ~35 KB) —
+  loggers name themselves instead, see
   [Logging & debugging](#logging--debugging). `eslint-plugin-compat` lints the
   **source** against the same functional-minimum matrix during `npm run lint`,
   catching a problem earlier, before it'd otherwise only surface in
@@ -664,7 +738,17 @@ Key mechanics (`_processJinjaFields` / `_subscribeToTemplate`):
 ## Configuration validation
 
 `BaseConfigHelper` subclasses run the raw YAML through a schema built with the
-`types` combinators (`YamlSchemaFactory`). Principles:
+`types` combinators (`YamlSchemaFactory`), one helper per variant:
+
+| Helper                                                 | Schema                                  | Extends             |
+| ------------------------------------------------------ | --------------------------------------- | ------------------- |
+| `CardConfigHelper`                                     | `card` (legacy migrations, defaults)    | `BaseConfigHelper`  |
+| `BadgeConfigHelper` / `FeatureConfigHelper`            | `badge` / `feature`                     | `CardConfigHelper`  |
+| `TemplateConfigHelper` / `BadgeTemplateConfigHelper`   | `template` / `badgeTemplate`            | `BaseConfigHelper`  |
+| `MultiCardConfigHelper` / `MultiFeatureConfigHelper`   | `multiCard` / `multiFeature`            | `MultiConfigHelper` |
+| `MultiRowConfigHelper` / `MultiFeatureRowConfigHelper` | `multiRow` / `multiFeatureRow` (editor) | `MultiConfigHelper` |
+
+Principles:
 
 - **Negotiation, not rejection**: an invalid property is dropped
   (`SKIP_PROPERTY`) or replaced by its default, and a message is surfaced in the
@@ -754,6 +838,33 @@ Two more things come from the schema rather than a parallel table, through
 > reach through `optional` turns absent defaults into real ones — measured:
 > `alert_when` gains `{ highlight: 'border' }` and `bar_stack`
 > `{ mode: 'stacked' }`, injected into cards that never configured either.
+
+### The schema holds every option rule
+
+`schema.ts` started as the validator. It is now where every rule about an option
+lives, and the card, the editor, the diagnostics and the docs all read it there
+instead of keeping their own copy:
+
+- **What each variant accepts**: its field list, shared by `.delete()`/
+  `.extend()`. The editor offers exactly those fields (`editor-coverage.test`).
+- **Types, defaults, allowed values**: `Config`, `SCHEMA_DEFAULTS`,
+  `fieldOptions` — the sections above.
+- **Where an option has an effect**: `HAS_EFFECT` and `INERT_OPTIONS` (with the
+  fallback an inert option gets back), and `densityOverrides` (what a density
+  imposes). `postProcess` applies them to the negotiated config, the editor
+  hides and parks a field by them, and `card-audit.ts` reports "no effect" by
+  them — in `EPB.doctor` and the issue report.
+- **Marks**: `MARK_FIELDS`, which mark has which field and whether it inherits
+  ([Shared values](#shared-values-one-factorisation)).
+- **The Multi's split**: `AGGREGATOR_FIELDS` (the aggregator's own keys) and
+  `ROW_IDENTITY_FIELDS` (never shared between rows).
+- **The documentation**: `test/docs/` checks `configuration.md`'s defaults,
+  compatibility badges and option tables, and every documented YAML example,
+  against it; `docs/option-map.md` is generated from it.
+
+A new rule about an option goes in `schema.ts`, exported, never written in the
+card or the editor alone — two copies of one rule drift apart without a line of
+code in common to give them away.
 
 ## Security
 
@@ -915,9 +1026,11 @@ one implementation, five call sites.
 - A declarative **field map** (`static _fields`) organized in expansion panels;
   each field is an `ha-selector` (or a custom element:
   `entity-progress-effect-chips`, `entity-progress-hide-chips`,
-  `entity-progress-bar-stack-editor`, `entity-progress-action-picker`), or
-  `type: 'section_label'` - a non-interactive caption grouping the fields after
-  it (no value, no `ha-selector`; see `EditorFieldsType.sectionLabel`).
+  `entity-progress-mode-chips`, `entity-progress-bar-stack-editor`,
+  `entity-progress-custom-theme-editor`, `entity-progress-multi-row-editor`,
+  `entity-progress-action-picker`), or `type: 'section_label'` - a
+  non-interactive caption grouping the fields after it (no value, no
+  `ha-selector`; see `EditorFieldsType.sectionLabel`).
   `entity-progress-action-picker` is the interactions panel's "+ Add
   interaction" reveal-one-at-a-time picker (`hold_action`, `icon_hold_action`,
   `double_tap_action`, `icon_double_tap_action`) - the same UX as `ha-form`'s
@@ -985,6 +1098,30 @@ one implementation, five call sites.
   same template-method pattern `ChipsBase`/`SingleSelectChipsBase` use for the
   chip family. A concrete row editor only implements
   `_buildDOM()`/`_render()`/`_dispatch()` and its own per-field builders.
+
+### Shared values: one factorisation
+
+`card/factorization.ts` is the one rule for every "set once on top, exceptions
+below" level: the mark families (`MARK_FACTORIZATION`, built from schema.ts's
+`MARK_FIELDS` table) and the Multi's rows (`MULTI_ROWS`, `multi-cascade.ts`). A
+`Factorization` is stateless, built from a spec (where the shared values and
+items live, how an item reads and writes a key, which keys an item inherits,
+pins or owns, which items have a say). The card reads through `resolve` (an
+item's own value, else the shared one if it inherits); the editor writes through
+`setLocal`, which calls `settle`.
+
+`settle` moves where values are written, never what a shown item uses: the
+values in use are read first; a strict majority (at least 2 voters, or the only
+one) becomes the shared value; a tie keeps the current one; an item using no
+value at all blocks the rule (there is no "nothing" to write as its exception);
+a pinned key found on top is pushed back down. Hidden marks don't vote and are
+left as they are.
+
+`MARK_FIELDS` is the single table of which mark has which field and whether it
+inherits — the editor's fields, the card's resolution and `markIds` all derive
+from it (`mark-cascade.test`). The Multi card's own merge (`multi-rows.ts`,
+`rowConfigsOf`) is checked against `MULTI_ROWS.resolve` (`factorization.test`),
+and a property test holds the invariant over random configs.
 
 ## Internationalization
 
@@ -1305,6 +1442,8 @@ Checklist for a new YAML option, in the order that avoids back-tracking:
    types!), and route any HTML rendering through `setHTML`.
 8. **Documentation** — a section in [`docs/configuration.md`](configuration.md)
    (badges, type, example, back-to-top link) and a line in the release notes.
+   Then `npm run docs:options` regenerates the [option map](option-map.md):
+   where each option is accepted, edited, documented, shown and tested.
 9. **Watched entities** — if the option can reference another entity, add it to
    `_registerWatchedEntities` so state changes trigger a refresh.
 10. **Value-shape/mark reuse** — if the option is a value/entity/jinja triad
@@ -1363,6 +1502,11 @@ Checklist for a new YAML option, in the order that avoids back-tracking:
   purely cosmetic change. `src/utils/translations.js` is excluded via
   `.prettierignore` (its own generator serializes it, not Prettier — formatting
   it here would just drift back out of sync on the next `i18n:sync`).
+- **Generated docs**: `docs/option-map.md` is written by `npm run docs:options`
+  (`scripts/option-map.js`, which renders `test/docs/option-map.ts`). Never edit
+  it by hand: `option-map.test` fails when it differs from what the generator
+  renders, so a change that moves an option's coverage needs a regeneration. It
+  is in `.prettierignore`: a reformatted table would never match again.
 - **Pre-commit hooks** (`husky` + `lint-staged`, `.lintstagedrc.json`): staged
   `src/**/*.{js,ts}` files get `prettier --write` then `eslint --fix`; staged
   `*.md` files get `prettier --write` then `markdownlint-cli2 --fix`. Installed

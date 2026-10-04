@@ -12,10 +12,10 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { flushFrames } from '../dom-setup.js';
-import { makeHass, TEST_ENTITY } from '../ha-stubs.js';
-import { HassProviderSingleton, type HomeAssistant } from '../../src/utils/hass-provider.js';
-import '../../src/index.js';
+import { flushFrames } from '../../dom-setup.js';
+import { makeHass, TEST_ENTITY } from '../../ha-stubs.js';
+import { HassProviderSingleton, type HomeAssistant } from '../../../src/utils/hass-provider.js';
+import '../../../src/index.js';
 
 // Compressed-state shape, the one _fetchHistory reads (s/lu, lu in seconds).
 const history = () => {

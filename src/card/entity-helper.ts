@@ -433,5 +433,15 @@ class EntityHelper {
   }
 }
 
-export { EntityHelper, emptyEntityTypeFlags };
+// Whether the recorder keeps a numeric history worth reading: none for an
+// attribute, nor for a timer, a counter or a duration. The one rule the card
+// fetches history by and the editor offers peak_marker by.
+const hasUsableHistory = (entity: unknown, attribute?: unknown): entity is string => {
+  if (!is.nonEmptyString(entity) || is.nonEmptyString(attribute)) return false;
+  const domain = HassProviderSingleton.getEntityDomain(entity);
+  if (domain === HA_CONTEXT.entity.type.timer || domain === HA_CONTEXT.entity.type.counter) return false;
+  return HassProviderSingleton.getInstance().getEntityProp(entity, 'device_class') !== HA_CONTEXT.entity.type.duration;
+};
+
+export { EntityHelper, emptyEntityTypeFlags, hasUsableHistory };
 export type { NameToken };

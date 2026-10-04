@@ -9,6 +9,7 @@ import { CARD_CSS, getSharedStyleSheet } from '../utils/styles.js';
 import { is, assertDefined, toNumberOrNull, jinjaKind } from '../utils/common-checks.js';
 import { initLogger, cardNotice, type LoggerInstance } from '../utils/log.js';
 import { ObjStructure, ThemeManager, ChangeTracker } from './value-helpers.js';
+import { hasUsableHistory } from './entity-helper.js';
 import { HassProviderSingleton, loadEditor, type HomeAssistant, type EntityState } from '../utils/hass-provider.js';
 import { type ViewCore, type ViewBase, type ResolvedWatermark } from './view.js';
 import {
@@ -284,7 +285,11 @@ class HACore extends HTMLElement {
       return;
     }
     const rows = joinAlignedRows(group, {
-      measure: () => column.getBoundingClientRect().width,
+      measure: () => {
+        // Layout px, like cap: a rect is post-transform (HA's dialog zooms in).
+        const scale = row.getBoundingClientRect().width / row.offsetWidth || 1;
+        return column.getBoundingClientRect().width / scale;
+      },
       cap: () => row.clientWidth / 2,
       apply: (width) => {
         const card = CARD.htmlStructure.card.element;
@@ -503,15 +508,9 @@ class HACore extends HTMLElement {
   // or [] if the entity/window is ineligible (attribute:, timer/counter/
   // duration - recorder keeps no attribute history) or the fetch fails.
   async #fetchHistoryUncached(windowSeconds: number): Promise<{ t: number; value: number }[]> {
-    const entity = this._cardView.config.entity;
-    const entityType = (this._cardView as ViewBase)._currentValue.entityType;
-    const isHistoryEligible = !entityType.isTimer && !entityType.isCounter && !entityType.isDuration;
-    if (!entity || this._cardView.config.attribute || !isHistoryEligible) {
-      this._log?.debug('_fetchHistory: ineligible', {
-        entity,
-        attribute: this._cardView.config.attribute,
-        isHistoryEligible,
-      });
+    const { entity, attribute } = this._cardView.config;
+    if (!hasUsableHistory(entity, attribute)) {
+      this._log?.debug('_fetchHistory: ineligible', { entity, attribute });
       return [];
     }
 
@@ -771,8 +770,8 @@ class HACore extends HTMLElement {
   // clipping through markers across two prior rebuilds). Built once per
   // render(); each cell's own fill is pure CSS off --progress-bar-value.
   _buildSegmentCells() {
-    const count = this._cardView.config.bar_segments;
-    const active = is.number(count) && count >= 2;
+    const active = this._cardView.isSegmented;
+    const count = this._cardView.config.bar_segments as number;
     const isCenterZero = Boolean(this._cardView.config.center_zero);
     const rounded = active ? Math.round(count) : 0;
     // .bar-segmented itself only still matters for .bar's own border-radius

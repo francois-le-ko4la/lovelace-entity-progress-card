@@ -193,59 +193,64 @@ work out on its own.
 <details>
 <summary>Show options</summary>
 
-| **Option**                   | **Type**               | **Default**               | **Description**                       | **Link**                                         |
-| :--------------------------- | :--------------------- | :------------------------ | :------------------------------------ | :----------------------------------------------- |
-| **Data Options**             |                        |                           |                                       |                                                  |
-| `entity`                     | string (required)      | —                         | Main entity ID                        | [Config Ref.][config-entity]                     |
-| `attribute`                  | string (optional)      | depends on entity         | Attribute to use as value             | [Config Ref.][config-attribute]                  |
-| `name`                       | string (optional)      | entity name               | Custom name to show                   | [Config Ref.][config-name]                       |
-| `unit`                       | string (optional)      | `auto`                    | Unit displayed                        | [Config Ref.][config-unit]                       |
-| `decimal`                    | integer (optional)     | context-based             | Number of decimal places              | [Config Ref.][config-decimal]                    |
-| `min_value`                  | float/Map (optional)   | `0` or `-100`             | Min for progress calculation          | [Config Ref.][config-min_value]                  |
-| `max_value`                  | float/Map (optional)   | `100`                     | Max for progress calculation          | [Config Ref.][config-max_value]                  |
-| `reverse`                    | boolean (optional)     | depends on entity         | Countdown-style behavior              | [Config Ref.][config-reverse]                    |
-| `state_content`              | string/list (optional) | depends on domain         | Attribute to show near value          | [Config Ref.][config-state_content]              |
-| `custom_info`                | Jinja (optional)       | —                         | Extra info near value                 | [Config Ref.][config-custom_info]                |
-| `multiline`                  | boolean (optional)     | `false`                   | Split secondary text on 2 lines       | [Config Ref.][config-multiline]                  |
-| `name_info`                  | Jinja (optional)       | —                         | Extra info near name                  | [Config Ref.][config-name_info]                  |
-| `bar_stack`                  | Map (optional)         | —                         | Combine several entities in one bar   | [Config Ref.][config-bar_stack]                  |
-| **Styling Options**          |                        |                           |                                       |                                                  |
-| `icon`                       | string (optional)      | —                         | Icon override                         | [Config Ref.][config-icon]                       |
-| `color`                      | string (optional)      | based on entity           | Icon color                            | [Config Ref.][config-color]                      |
-| `icon_animation`             | string (optional)      | `none`                    | Animate icon on active state          | [Config Ref.][config-icon_animation]             |
-| `badge_icon`                 | Jinja (optional)       | —                         | Dynamic badge icon                    | [Config Ref.][config-badge_icon]                 |
-| `badge_color`                | Jinja (optional)       | —                         | Dynamic badge color                   | [Config Ref.][config-badge_color]                |
-| `bar_color`                  | string (optional)      | `var(--state-icon-color)` | Color of progress bar                 | [Config Ref.][config-bar_color]                  |
-| `bar_size`                   | string (optional)      | `small`                   | Size of the progress bar              | [Config Ref.][config-bar_size]                   |
-| `bar_position`               | string (optional)      | `default`                 | Position of the progress bar          | [Config Ref.][config-bar_position]               |
-| `bar_single_line`            | boolean (optional)     | `false`                   | single-line mode for overlay bars     | [Config Ref.][config-bar_single_line]            |
-| `bar_segments`               | integer (optional)     | —                         | Render bar as discrete segments       | [Config Ref.][config-bar_segments]               |
-| `bar_effect`                 | string/list/jinja      | —                         | Visual effects for the bar            | [Config Ref.][config-bar_effect]                 |
-| `bar_color_mode`             | string (optional)      | `auto`                    | Bar fill color rendering mode         | [Config Ref.][config-bar_color_mode]             |
-| `bar_scale`                  | string (optional)      | `linear`                  | Value-to-width mapping (linear/log)   | [Config Ref.][config-bar_scale]                  |
-| `bar_max_width`              | string (optional)      | -                         | Limits the maximum width of the bar   | [Config Ref.][config-bar_max_width]              |
-| `bar_orientation`            | string (optional)      | `ltr`                     | Bar direction                         | [Config Ref.][config-bar_orientation]            |
-| `force_circular_background`  | boolean (optional)     | `false`                   | Force icon circle background          | [Config Ref.][config-force_circular_background]  |
-| `trend_indicator`            | string (optional)      | `false`                   | Displays trend icons.                 | [Config Ref.][config-trend_indicator]            |
-| `peak_marker`                | Map (optional)         | —                         | Min/max/average marks from history    | [Config Ref.][config-peak_marker]                |
-| `text_shadow`                | boolean (optional)     | `false`                   | Display a text shadow (overlay)       | [Config Ref.][config-text_shadow]                |
-| `density`                    | string (optional)      | `default`                 | Smaller footprint preset              | [Config Ref.][config-density]                    |
-| `layout`                     | string (optional)      | `horizontal`              | Layout direction                      | [Config Ref.][config-layout]                     |
-| `frameless`                  | boolean (optional)     | `false`                   | Remove card frame                     | [Config Ref.][config-frameless]                  |
-| `marginless`                 | boolean (optional)     | `false`                   | Remove top/bottom margin              | [Config Ref.][config-marginless]                 |
-| `height`                     | string (optional)      | —                         | Card height                           | [Config Ref.][config-height]                     |
-| `min_width`                  | string (optional)      | —                         | Minimum width                         | [Config Ref.][config-min_width]                  |
-| `reverse_secondary_info_row` | boolean (optional)     | `false`                   | Flip info bar layout                  | [Config Ref.][config-reverse_secondary_info_row] |
-| `unit_spacing`               | string (optional)      | `auto`                    | Controls space between value and unit | [Config Ref.][config-unit_spacing]               |
-| `center_zero`                | boolean (optional)     | `false`                   | Center the bar on 0                   | [Config Ref.][config-center_zero]                |
-| `theme`                      | string (optional)      | —                         | Applies a preset theme                | [Config Ref.][config-theme]                      |
-| `custom_theme`               | list (optional)        | —                         | Define color thresholds               | [Config Ref.][config-custom_theme]               |
-| `interpolate`                | boolean (optional)     | —                         | Enables smooth color transition       | [Config Ref.][config-custom_theme]               |
-| `hide`                       | list (optional)        | —                         | Hide parts of the card                | [Config Ref.][config-hide]                       |
-| `watermark`                  | map (optional)         | —                         | Adds min/max overlays                 | [Config Ref.][config-watermark]                  |
-| `alert_when`                 | map (optional)         | —                         | Highlight card on threshold crossing  | [Config Ref.][config-alert_when]                 |
-| **Behavior And Actions**     |                        |                           |                                       |                                                  |
-| `xyz_action`                 | map (optional)         | see defaults              | Tap/double/hold actions               | [Config Ref.][config-xyz_action]                 |
+| **Option**                   | **Type**                  | **Default**               | **Description**                       | **Link**                                         |
+| :--------------------------- | :------------------------ | :------------------------ | :------------------------------------ | :----------------------------------------------- |
+| **Data Options**             |                           |                           |                                       |                                                  |
+| `entity`                     | string (required)         | —                         | Main entity ID                        | [Config Ref.][config-entity]                     |
+| `attribute`                  | string (optional)         | depends on entity         | Attribute to use as value             | [Config Ref.][config-attribute]                  |
+| `name`                       | string (optional)         | entity name               | Custom name to show                   | [Config Ref.][config-name]                       |
+| `unit`                       | string (optional)         | `auto`                    | Unit displayed                        | [Config Ref.][config-unit]                       |
+| `decimal`                    | integer (optional)        | context-based             | Number of decimal places              | [Config Ref.][config-decimal]                    |
+| `min_value`                  | float/Map (optional)      | `0` or `-100`             | Min for progress calculation          | [Config Ref.][config-min_value]                  |
+| `max_value`                  | float/Map (optional)      | `100`                     | Max for progress calculation          | [Config Ref.][config-max_value]                  |
+| `reverse`                    | boolean (optional)        | depends on entity         | Countdown-style behavior              | [Config Ref.][config-reverse]                    |
+| `state_content`              | string/list (optional)    | depends on domain         | Attribute to show near value          | [Config Ref.][config-state_content]              |
+| `custom_info`                | Jinja (optional)          | —                         | Extra info near value                 | [Config Ref.][config-custom_info]                |
+| `multiline`                  | boolean (optional)        | `false`                   | Split secondary text on 2 lines       | [Config Ref.][config-multiline]                  |
+| `name_info`                  | Jinja (optional)          | —                         | Extra info near name                  | [Config Ref.][config-name_info]                  |
+| `bar_stack`                  | Map (optional)            | —                         | Combine several entities in one bar   | [Config Ref.][config-bar_stack]                  |
+| **Styling Options**          |                           |                           |                                       |                                                  |
+| `icon`                       | string (optional)         | —                         | Icon override                         | [Config Ref.][config-icon]                       |
+| `color`                      | string (optional)         | based on entity           | Icon color                            | [Config Ref.][config-color]                      |
+| `icon_animation`             | string (optional)         | `none`                    | Animate icon on active state          | [Config Ref.][config-icon_animation]             |
+| `badge_icon`                 | Jinja (optional)          | —                         | Dynamic badge icon                    | [Config Ref.][config-badge_icon]                 |
+| `badge_color`                | Jinja (optional)          | —                         | Dynamic badge color                   | [Config Ref.][config-badge_color]                |
+| `bar_color`                  | string (optional)         | `var(--state-icon-color)` | Color of progress bar                 | [Config Ref.][config-bar_color]                  |
+| `bar_size`                   | string (optional)         | `small`                   | Size of the progress bar              | [Config Ref.][config-bar_size]                   |
+| `bar_position`               | string (optional)         | `default`                 | Position of the progress bar          | [Config Ref.][config-bar_position]               |
+| `bar_single_line`            | boolean (optional)        | `false`                   | single-line mode for overlay bars     | [Config Ref.][config-bar_single_line]            |
+| `bar_segments`               | integer (optional)        | —                         | Render bar as discrete segments       | [Config Ref.][config-bar_segments]               |
+| `bar_effect`                 | string/list/jinja         | —                         | Visual effects for the bar            | [Config Ref.][config-bar_effect]                 |
+| `bar_color_mode`             | string (optional)         | `auto`                    | Bar fill color rendering mode         | [Config Ref.][config-bar_color_mode]             |
+| `bar_scale`                  | string (optional)         | `linear`                  | Value-to-width mapping (linear/log)   | [Config Ref.][config-bar_scale]                  |
+| `bar_max_width`              | string (optional)         | -                         | Limits the maximum width of the bar   | [Config Ref.][config-bar_max_width]              |
+| `bar_aligned`                | boolean/string (optional) | `false`                   | Bars start at the same x              | [Config Ref.][config-bar_aligned]                |
+| `bar_orientation`            | string (optional)         | `ltr`                     | Bar direction                         | [Config Ref.][config-bar_orientation]            |
+| `force_circular_background`  | boolean (optional)        | `false`                   | Force icon circle background          | [Config Ref.][config-force_circular_background]  |
+| `trend_indicator`            | string (optional)         | `false`                   | Displays trend icons.                 | [Config Ref.][config-trend_indicator]            |
+| `peak_marker`                | Map (optional)            | —                         | Min/max/average marks from history    | [Config Ref.][config-peak_marker]                |
+| `status_label`               | string/Map (optional)     | —                         | Status pill on the card               | [Config Ref.][config-status_label]               |
+| `text_shadow`                | boolean (optional)        | `false`                   | Display a text shadow (overlay)       | [Config Ref.][config-text_shadow]                |
+| `density`                    | string (optional)         | `default`                 | Smaller footprint preset              | [Config Ref.][config-density]                    |
+| `layout`                     | string (optional)         | `horizontal`              | Layout direction                      | [Config Ref.][config-layout]                     |
+| `frameless`                  | boolean (optional)        | `false`                   | Remove card frame                     | [Config Ref.][config-frameless]                  |
+| `marginless`                 | boolean (optional)        | `false`                   | Remove top/bottom margin              | [Config Ref.][config-marginless]                 |
+| `height`                     | string (optional)         | —                         | Card height                           | [Config Ref.][config-height]                     |
+| `min_width`                  | string (optional)         | —                         | Minimum width                         | [Config Ref.][config-min_width]                  |
+| `reverse_secondary_info_row` | boolean (optional)        | `false`                   | Flip info bar layout                  | [Config Ref.][config-reverse_secondary_info_row] |
+| `unit_spacing`               | string (optional)         | `auto`                    | Controls space between value and unit | [Config Ref.][config-unit_spacing]               |
+| `unit_position`              | string (optional)         | `after`                   | Unit before or after the value        | [Config Ref.][config-unit_position]              |
+| `value_compact`              | boolean (optional)        | `false`                   | Shorten large values (1.2 kW)         | [Config Ref.][config-value_compact]              |
+| `value_sign`                 | boolean (optional)        | `false`                   | Always show the +/- sign              | [Config Ref.][config-value_sign]                 |
+| `center_zero`                | boolean (optional)        | `false`                   | Center the bar on 0                   | [Config Ref.][config-center_zero]                |
+| `theme`                      | string (optional)         | —                         | Applies a preset theme                | [Config Ref.][config-theme]                      |
+| `custom_theme`               | list (optional)           | —                         | Define color thresholds               | [Config Ref.][config-custom_theme]               |
+| `interpolate`                | boolean (optional)        | —                         | Enables smooth color transition       | [Config Ref.][config-custom_theme]               |
+| `hide`                       | list (optional)           | —                         | Hide parts of the card                | [Config Ref.][config-hide]                       |
+| `watermark`                  | map (optional)            | —                         | Adds min/max overlays                 | [Config Ref.][config-watermark]                  |
+| `alert_when`                 | map (optional)            | —                         | Highlight card on threshold crossing  | [Config Ref.][config-alert_when]                 |
+| **Behavior And Actions**     |                           |                           |                                       |                                                  |
+| `xyz_action`                 | map (optional)            | see defaults              | Tap/double/hold actions               | [Config Ref.][config-xyz_action]                 |
 
 </details>
 <br />
@@ -674,44 +679,50 @@ fixed min/max.
 <details>
 <summary>Show options</summary>
 
-| **Option**                   | **Type**           | **Description**                                                                | **Link**                                         |
-| :--------------------------- | :----------------- | :----------------------------------------------------------------------------- | :----------------------------------------------- |
-| **Data Options**             |                    |                                                                                |                                                  |
-| `entity`                     | string (optional)  | Entity ID.                                                                     | [Config Ref.][config-entity]                     |
-| **Jinja Options**            |                    |                                                                                |                                                  |
-| `name`                       | JINJA              | Renders the customized entity name                                             | [Config Ref.][name-jinja]                        |
-| `icon`                       | JINJA              | Main icon shown on the card                                                    | [Config Ref.][icon-jinja]                        |
-| `secondary`                  | JINJA              | Renders the secondary content (e.g., unit, status, additional info)            | [Config Ref.][secondary-jinja]                   |
-| `percent`                    | JINJA              | Numerical value representing progress (0–100%), affects progress bar width     | [Config Ref.][percent-jinja]                     |
-| `color`                      | JINJA              | Dynamic color for the icon and shape, adapted using `ThemeManager`             | [Config Ref.][color-jinja]                       |
-| `bar_color`                  | JINJA              | Dynamic progress bar color, also handled through `ThemeManager`                | [Config Ref.][bar_color-jinja]                   |
-| **Styling Options**          |                    |                                                                                |                                                  |
-| `badge_icon`                 | Jinja (optional)   | Dynamic badge icon                                                             | [Config Ref.][config-badge_icon]                 |
-| `badge_color`                | Jinja (optional)   | Dynamic badge color                                                            | [Config Ref.][config-badge_color]                |
-| `bar_size`                   | string (optional)  | Customize the size or thickness of the progress bar.                           | [Config Ref.][config-bar_size]                   |
-| `bar_position`               | string (optional)  | Position of the progress bar                                                   | [Config Ref.][config-bar_position]               |
-| `bar_single_line`            | boolean (optional) | single-line mode for overlay bars                                              | [Config Ref.][config-bar_single_line]            |
-| `bar_segments`               | integer (optional) | Render bar as discrete segments                                                | [Config Ref.][config-bar_segments]               |
-| `bar_effect`                 | string/list/jinja  | Visual effects for the bar                                                     | [Config Ref.][config-bar_effect]                 |
-| `bar_max_width`              | string (optional)  | Limits the maximum width of the bar                                            | [Config Ref.][config-bar_max_width]              |
-| `bar_orientation`            | string (optional)  | Define the direction of the progress bar (e.g., `ltr`, `rtl`).                 | [Config Ref.][config-bar_orientation]            |
-| `icon_animation`             | string (optional)  | Animate icon on active state                                                   | [Config Ref.][config-icon_animation]             |
-| `force_circular_background`  | boolean (optional) | Force icon circle background.                                                  | [Config Ref.][config-force_circular_background]  |
-| `trend_indicator`            | string (optional)  | Displays trend icons.                                                          | [Config Ref.][config-trend_indicator]            |
-| `text_shadow`                | boolean (optional) | Display a text shadow (overlay)                                                | [Config Ref.][config-text_shadow]                |
-| `density`                    | string (optional)  | Smaller footprint preset (`default`, `compact`, `single_line`).                | [Config Ref.][config-density]                    |
-| `layout`                     | string (optional)  | Adjust the overall layout (e.g., `horizontal`, `vertical`).                    | [Config Ref.][config-layout]                     |
-| `frameless`                  | boolean (optional) | Remove the default card border and background for a seamless, flat appearance. | [Config Ref.][config-frameless]                  |
-| `marginless`                 | boolean (optional) | Remove vertical margin for a more compact template display.                    | [Config Ref.][config-marginless]                 |
-| `height`                     | string (optional)  | Card height                                                                    | [Config Ref.][config-height]                     |
-| `min_width`                  | string (optional)  | Set a minimum width for the template to ensure consistent layout.              | [Config Ref.][config-min_width]                  |
-| `reverse_secondary_info_row` | boolean (optional) | Flip info bar layout.                                                          | [Config Ref.][config-reverse_secondary_info_row] |
-| `multiline`                  | boolean (optional) | Split secondary text on 2 lines.                                               | [Config Ref.][config-multiline]                  |
-| `center_zero`                | boolean (optional) | Center the bar on 0.                                                           | [Config Ref.][config-center_zero]                |
-| `hide`                       | list (optional)    | Hide parts of the card.                                                        | [Config Ref.][config-hide]                       |
-| `watermark`                  | map (optional)     | Adds min/max overlays.                                                         | [Config Ref.][config-watermark]                  |
-| **Behavior & Actions**       |                    |                                                                                |                                                  |
-| `xyz_action`                 | map (optional)     | Configure custom actions (e.g., `tap`, `hold`, etc.).                          | [Config Ref.][config-xyz_action]                 |
+| **Option**                   | **Type**                  | **Description**                                                                | **Link**                                         |
+| :--------------------------- | :------------------------ | :----------------------------------------------------------------------------- | :----------------------------------------------- |
+| **Data Options**             |                           |                                                                                |                                                  |
+| `entity`                     | string (optional)         | Entity ID.                                                                     | [Config Ref.][config-entity]                     |
+| `fast_refresh`               | boolean (optional)        | Refresh `now()` templates every second                                         | [Config Ref.][config-fast_refresh]               |
+| **Jinja Options**            |                           |                                                                                |                                                  |
+| `name`                       | JINJA                     | Renders the customized entity name                                             | [Config Ref.][name-jinja]                        |
+| `icon`                       | JINJA                     | Main icon shown on the card                                                    | [Config Ref.][icon-jinja]                        |
+| `secondary`                  | JINJA                     | Renders the secondary content (e.g., unit, status, additional info)            | [Config Ref.][secondary-jinja]                   |
+| `percent`                    | JINJA                     | Numerical value representing progress (0–100%), affects progress bar width     | [Config Ref.][percent-jinja]                     |
+| `color`                      | JINJA                     | Dynamic color for the icon and shape, adapted using `ThemeManager`             | [Config Ref.][color-jinja]                       |
+| `bar_color`                  | JINJA                     | Dynamic progress bar color, also handled through `ThemeManager`                | [Config Ref.][bar_color-jinja]                   |
+| **Styling Options**          |                           |                                                                                |                                                  |
+| `badge_icon`                 | Jinja (optional)          | Dynamic badge icon                                                             | [Config Ref.][config-badge_icon]                 |
+| `badge_color`                | Jinja (optional)          | Dynamic badge color                                                            | [Config Ref.][config-badge_color]                |
+| `bar_size`                   | string (optional)         | Customize the size or thickness of the progress bar.                           | [Config Ref.][config-bar_size]                   |
+| `bar_position`               | string (optional)         | Position of the progress bar                                                   | [Config Ref.][config-bar_position]               |
+| `bar_single_line`            | boolean (optional)        | single-line mode for overlay bars                                              | [Config Ref.][config-bar_single_line]            |
+| `bar_segments`               | integer (optional)        | Render bar as discrete segments                                                | [Config Ref.][config-bar_segments]               |
+| `bar_effect`                 | string/list/jinja         | Visual effects for the bar                                                     | [Config Ref.][config-bar_effect]                 |
+| `bar_color_mode`             | string (optional)         | Bar fill color rendering mode                                                  | [Config Ref.][config-bar_color_mode]             |
+| `bar_max_width`              | string (optional)         | Limits the maximum width of the bar                                            | [Config Ref.][config-bar_max_width]              |
+| `bar_aligned`                | boolean/string (optional) | Bars start at the same x                                                       | [Config Ref.][config-bar_aligned]                |
+| `bar_orientation`            | string (optional)         | Define the direction of the progress bar (e.g., `ltr`, `rtl`).                 | [Config Ref.][config-bar_orientation]            |
+| `icon_animation`             | string (optional)         | Animate icon on active state                                                   | [Config Ref.][config-icon_animation]             |
+| `force_circular_background`  | boolean (optional)        | Force icon circle background.                                                  | [Config Ref.][config-force_circular_background]  |
+| `trend_indicator`            | string (optional)         | Displays trend icons.                                                          | [Config Ref.][config-trend_indicator]            |
+| `status_label`               | string/Map (optional)     | Status pill on the card                                                        | [Config Ref.][config-status_label]               |
+| `text_shadow`                | boolean (optional)        | Display a text shadow (overlay)                                                | [Config Ref.][config-text_shadow]                |
+| `density`                    | string (optional)         | Smaller footprint preset (`default`, `compact`, `single_line`).                | [Config Ref.][config-density]                    |
+| `layout`                     | string (optional)         | Adjust the overall layout (e.g., `horizontal`, `vertical`).                    | [Config Ref.][config-layout]                     |
+| `frameless`                  | boolean (optional)        | Remove the default card border and background for a seamless, flat appearance. | [Config Ref.][config-frameless]                  |
+| `marginless`                 | boolean (optional)        | Remove vertical margin for a more compact template display.                    | [Config Ref.][config-marginless]                 |
+| `height`                     | string (optional)         | Card height                                                                    | [Config Ref.][config-height]                     |
+| `min_width`                  | string (optional)         | Set a minimum width for the template to ensure consistent layout.              | [Config Ref.][config-min_width]                  |
+| `reverse_secondary_info_row` | boolean (optional)        | Flip info bar layout.                                                          | [Config Ref.][config-reverse_secondary_info_row] |
+| `multiline`                  | boolean (optional)        | Split secondary text on 2 lines.                                               | [Config Ref.][config-multiline]                  |
+| `center_zero`                | boolean (optional)        | Center the bar on 0.                                                           | [Config Ref.][config-center_zero]                |
+| `theme`                      | string (optional)         | Applies a preset theme                                                         | [Config Ref.][config-theme]                      |
+| `hide`                       | list (optional)           | Hide parts of the card.                                                        | [Config Ref.][config-hide]                       |
+| `watermark`                  | map (optional)            | Adds min/max overlays.                                                         | [Config Ref.][config-watermark]                  |
+| `alert_when`                 | map (optional)            | Highlight card on threshold crossing                                           | [Config Ref.][config-alert_when]                 |
+| **Behavior & Actions**       |                           |                                                                                |                                                  |
+| `xyz_action`                 | map (optional)            | Configure custom actions (e.g., `tap`, `hold`, etc.).                          | [Config Ref.][config-xyz_action]                 |
 
 </details>
 <br />
@@ -835,6 +846,7 @@ view's other badges, not as the dashboard's main focus.
 | `color`                      | string (optional)      | based on entity           | Icon color                            | [Config Ref.][config-color]                      |
 | `bar_color`                  | string (optional)      | `var(--state-icon-color)` | Color of progress bar                 | [Config Ref.][config-bar_color]                  |
 | `bar_size`                   | string (optional)      | `small`                   | Size of the progress bar              | [Config Ref.][config-bar_size]                   |
+| `bar_position`               | string (optional)      | `default`                 | Bar under the text or around the icon | [Config Ref.][config-bar_position]               |
 | `bar_segments`               | integer (optional)     | —                         | Render bar as discrete segments       | [Config Ref.][config-bar_segments]               |
 | `bar_effect`                 | string/list/jinja      | —                         | Visual effects for the bar            | [Config Ref.][config-bar_effect]                 |
 | `bar_color_mode`             | string (optional)      | `auto`                    | Bar fill color rendering mode         | [Config Ref.][config-bar_color_mode]             |
@@ -845,6 +857,9 @@ view's other badges, not as the dashboard's main focus.
 | `min_width`                  | string (optional)      | —                         | Minimum width                         | [Config Ref.][config-min_width]                  |
 | `reverse_secondary_info_row` | boolean (optional)     | `false`                   | Flip info bar layout                  | [Config Ref.][config-reverse_secondary_info_row] |
 | `unit_spacing`               | string (optional)      | `auto`                    | Controls space between value and unit | [Config Ref.][config-unit_spacing]               |
+| `unit_position`              | string (optional)      | `after`                   | Unit before or after the value        | [Config Ref.][config-unit_position]              |
+| `value_compact`              | boolean (optional)     | `false`                   | Shorten large values (1.2 kW)         | [Config Ref.][config-value_compact]              |
+| `value_sign`                 | boolean (optional)     | `false`                   | Always show the +/- sign              | [Config Ref.][config-value_sign]                 |
 | `center_zero`                | boolean (optional)     | `false`                   | Center the bar on 0                   | [Config Ref.][config-center_zero]                |
 | `theme`                      | string (optional)      | —                         | Applies a preset theme                | [Config Ref.][config-theme]                      |
 | `custom_theme`               | list (optional)        | —                         | Define color thresholds               | [Config Ref.][config-custom_theme]               |
@@ -935,6 +950,7 @@ already exposes directly.
 | :--------------------------- | :----------------- | :----------------------------------------------------------------------------- | :----------------------------------------------- |
 | **Data Options**             |                    |                                                                                |                                                  |
 | `entity`                     | string (optional)  | Entity ID.                                                                     | [Config Ref.][config-entity]                     |
+| `fast_refresh`               | boolean (optional) | Refresh `now()` templates every second                                         | [Config Ref.][config-fast_refresh]               |
 | **Jinja Options**            |                    |                                                                                |                                                  |
 | `name`                       | JINJA              | Renders the customized entity name                                             | [Config Ref.][name-jinja]                        |
 | `icon`                       | JINJA              | Main icon shown on the card                                                    | [Config Ref.][icon-jinja]                        |
@@ -944,16 +960,20 @@ already exposes directly.
 | `bar_color`                  | JINJA              | Dynamic progress bar color, also handled through `ThemeManager`                | [Config Ref.][bar_color-jinja]                   |
 | **Styling Options**          |                    |                                                                                |                                                  |
 | `bar_size`                   | string (optional)  | Customize the size or thickness of the progress bar.                           | [Config Ref.][config-bar_size]                   |
+| `bar_position`               | string (optional)  | Bar under the text or around the icon                                          | [Config Ref.][config-bar_position]               |
 | `bar_segments`               | integer (optional) | Render bar as discrete segments                                                | [Config Ref.][config-bar_segments]               |
 | `bar_effect`                 | string/list/jinja  | Visual effects for the bar                                                     | [Config Ref.][config-bar_effect]                 |
+| `bar_color_mode`             | string (optional)  | Bar fill color rendering mode                                                  | [Config Ref.][config-bar_color_mode]             |
 | `bar_orientation`            | string (optional)  | Define the direction of the progress bar (e.g., `ltr`, `rtl`).                 | [Config Ref.][config-bar_orientation]            |
 | `frameless`                  | boolean (optional) | Remove the default card border and background for a seamless, flat appearance. | [Config Ref.][config-frameless]                  |
 | `marginless`                 | boolean (optional) | Remove vertical margin for a more compact template display.                    | [Config Ref.][config-marginless]                 |
 | `min_width`                  | string (optional)  | Set a minimum width for the template to ensure consistent layout.              | [Config Ref.][config-min_width]                  |
 | `reverse_secondary_info_row` | boolean (optional) | Flip info bar layout.                                                          | [Config Ref.][config-reverse_secondary_info_row] |
 | `center_zero`                | boolean (optional) | Center the bar on 0.                                                           | [Config Ref.][config-center_zero]                |
+| `theme`                      | string (optional)  | Applies a preset theme                                                         | [Config Ref.][config-theme]                      |
 | `hide`                       | list (optional)    | Hide parts of the card.                                                        | [Config Ref.][config-hide]                       |
 | `watermark`                  | map (optional)     | Adds min/max overlays.                                                         | [Config Ref.][config-watermark]                  |
+| `alert_when`                 | map (optional)     | Highlight card on threshold crossing                                           | [Config Ref.][config-alert_when]                 |
 | **Behavior & Actions**       |                    |                                                                                |                                                  |
 | `xyz_action`                 | map (optional)     | Configure custom actions (e.g., `tap`, `hold`, etc.).                          | [Config Ref.][config-xyz_action]                 |
 
@@ -1073,6 +1093,7 @@ bolted on, not a replacement.
 | `custom_theme`      | list (optional)        | —                         | Define color thresholds             | [Config Ref.][config-custom_theme]    |
 | `interpolate`       | boolean (optional)     | `false`                   | Enables smooth color transition     | [Config Ref.][config-interpolate]     |
 | `watermark`         | map (optional)         | —                         | Adds min/max overlays               | [Config Ref.][config-watermark]       |
+| `peak_marker`       | Map (optional)         | —                         | Min/max/average marks from history  | [Config Ref.][config-peak_marker]     |
 | **Bar Stack**       |                        |                           |                                     |                                       |
 | `bar_stack`         | Map (optional)         | —                         | Combine several entities in one bar | [Config Ref.][config-bar_stack]       |
 
@@ -1170,11 +1191,12 @@ aggregator only stacks them and divides the available height.
 <details>
 <summary>Show options</summary>
 
-| **Option**                   | **Type**           | **Default**        | **Description**                                            | **Link**                                         |
-| :--------------------------- | :----------------- | :----------------- | :--------------------------------------------------------- | :----------------------------------------------- |
-| `entities`                   | list (required)    | —                  | List of row configs, at minimum an `entity` each           | [Config Ref.][config-entities]                   |
-| `reverse_secondary_info_row` | boolean (optional) | `false`            | Puts the bar before the text instead of after it           | [Config Ref.][config-reverse_secondary_info_row] |
-| `rows`                       | integer (optional) | one row per entity | `entity-progress-multi-card` only — Sections grid row span | [Config Ref.][config-rows]                       |
+| **Option**                   | **Type**                  | **Default**        | **Description**                                            | **Link**                                         |
+| :--------------------------- | :------------------------ | :----------------- | :--------------------------------------------------------- | :----------------------------------------------- |
+| `entities`                   | list (required)           | —                  | List of row configs, at minimum an `entity` each           | [Config Ref.][config-entities]                   |
+| `reverse_secondary_info_row` | boolean (optional)        | `false`            | Puts the bar before the text instead of after it           | [Config Ref.][config-reverse_secondary_info_row] |
+| `bar_aligned`                | boolean/string (optional) | `true`             | Every row's bar starts at the same x                       | [Config Ref.][config-bar_aligned]                |
+| `rows`                       | integer (optional)        | one row per entity | `entity-progress-multi-card` only — Sections grid row span | [Config Ref.][config-rows]                       |
 
 </details>
 <br />
@@ -2218,7 +2240,6 @@ features:
         max_value: 3000
   - type: custom:entity-progress-feature
     entity: sensor.solar_production
-    name: Net
     center_zero: true
     min_value: -3000
     max_value: 3000
@@ -2964,6 +2985,18 @@ track solar cycles from your dashboard.
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#alert_when
 [config-xyz_action]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#xyz_action
+[config-unit_position]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#unit_position
+[config-value_compact]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#value_compact
+[config-value_sign]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#value_sign
+[config-status_label]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#status_label
+[config-bar_aligned]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_aligned
+[config-fast_refresh]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#fast_refresh
 [config-entities]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#multi-entities
 [config-rows]:

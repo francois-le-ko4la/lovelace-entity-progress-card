@@ -11,14 +11,14 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { flushFrames } from '../dom-setup.js';
-import { makeHass, TEST_ENTITY } from '../ha-stubs.js';
-import { visibleFields, type FieldTree } from '../helpers.js';
+import { flushFrames } from '../../dom-setup.js';
+import { makeHass, TEST_ENTITY } from '../../ha-stubs.js';
+import { visibleFields, type FieldTree } from '../../helpers.js';
 
-import { META } from '../../src/utils/parameters.js';
-import { EditorFactory } from '../../src/editor/factory.js';
-import '../../src/index.js';
-import '../../src/editor/entry.js';
+import { META } from '../../../src/utils/parameters.js';
+import { EditorFactory } from '../../../src/editor/factory.js';
+import '../../../src/index.js';
+import '../../../src/editor/entry.js';
 
 type EditorEl = HTMLElement & { setConfig?: (c: unknown) => void; hass?: unknown };
 
@@ -102,6 +102,22 @@ describe('a static hide takes its own fields out of the editor', () => {
       for (const field of fields) assert.equal(shown.has(field), false, `${field} should be gone with ${target}`);
     });
   }
+
+  // bar_stack also sets the value the text shows (its total, or net balance):
+  // it has a say with the bar hidden.
+  const BAR_BUT_NOT_ONLY = ['bar_stack'];
+
+  // The table is hand-kept, and EXPECTED above only samples it: every bar_*
+  // field, whatever is added later, has to go with the bar.
+  test('hide: [progress_bar] takes every bar_* field with it', () => {
+    const tree = EditorFactory.build({ template: false, badge: false }) as unknown as FieldTree;
+    const all = visibleFields(tree, {});
+    const shown = visibleFields(tree, { hide: ['progress_bar'] });
+    const left = [...all].filter(
+      (name) => name.startsWith('bar_') && !BAR_BUT_NOT_ONLY.some((kept) => name.startsWith(kept)) && shown.has(name),
+    );
+    assert.deepEqual(left, [], `still shown with the bar hidden: ${left.join(', ')}`);
+  });
 
   test('a Jinja hide gates nothing - its result is unknowable here', () => {
     const tree = EditorFactory.build({ template: false, badge: false }) as unknown as FieldTree;

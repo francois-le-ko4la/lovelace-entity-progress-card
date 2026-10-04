@@ -7,11 +7,11 @@
 import { test, describe, before, beforeEach, after } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { flushFrames } from '../dom-setup.js';
-import { makeHass, TEST_ENTITY } from '../ha-stubs.js';
+import { flushFrames } from '../../dom-setup.js';
+import { makeHass, TEST_ENTITY } from '../../ha-stubs.js';
 
-import '../../src/index.js';
-import { cards, inspect } from '../../src/card/doctor.js';
+import '../../../src/index.js';
+import { cards, inspect } from '../../../src/card/doctor.js';
 
 type CardEl = HTMLElement & { setConfig?: (c: unknown) => void; hass?: unknown };
 

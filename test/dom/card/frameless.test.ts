@@ -14,10 +14,10 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { flushFrames } from '../dom-setup.js';
-import { makeHass, TEST_ENTITY } from '../ha-stubs.js';
-import { CARD_CSS } from '../../src/utils/styles.js';
-import '../../src/index.js';
+import { flushFrames } from '../../dom-setup.js';
+import { makeHass, TEST_ENTITY } from '../../ha-stubs.js';
+import { CARD_CSS } from '../../../src/utils/styles.js';
+import '../../../src/index.js';
 
 // Every property ha-card's own :host block paints with, and what it must be
 // given for the card to disappear (home-assistant/frontend, ha-card.ts) - plus

@@ -14,10 +14,10 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { flushFrames } from '../dom-setup.js';
-import { makeHass, TEST_ENTITY } from '../ha-stubs.js';
-import { CARD_CSS } from '../../src/utils/styles.js';
-import '../../src/index.js';
+import { flushFrames } from '../../dom-setup.js';
+import { makeHass, TEST_ENTITY } from '../../ha-stubs.js';
+import { CARD_CSS } from '../../../src/utils/styles.js';
+import '../../../src/index.js';
 
 const LAYOUTS: [string, Record<string, unknown>][] = [
   ['plain', {}],

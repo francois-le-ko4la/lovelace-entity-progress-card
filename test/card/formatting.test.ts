@@ -80,6 +80,7 @@ describe('formatValueAndUnit - compact scales a prefixable unit, not the number'
   test('a prefix already on the unit is carried, never doubled', () => {
     assert.equal(compact(1500, 'kW'), '1.5 MW');
     assert.equal(compact(1500, 'kWh'), '1.5 MWh');
+    assert.equal(compact(0.5, 'kW'), '500 W');
   });
 
   test('zero has no scale', () => {

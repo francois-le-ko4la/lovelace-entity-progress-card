@@ -200,10 +200,9 @@ test: add validation for custom theme ranges
 
 ### Testing Your Changes
 
-There's no automated test suite (see
-[Rendering & performance](development.md#rendering--performance) and elsewhere
-in the dev guide for how correctness is verified instead). Before submitting a
-PR, please ensure:
+The automated tests cover the card's logic, the editors and the documentation
+(see the [Quick start](development.md#quick-start)), but none of them sees how a
+card looks. Before submitting a PR, please ensure:
 
 - ✅ `npm run check:code` passes locally (syntax, format, lint, types,
   translation structure, unit tests)
@@ -218,7 +217,9 @@ PR, please ensure:
 - ✅ **Different themes** render correctly
 - ✅ **Mobile/tablet** compatibility
 - ✅ **Various entity types** are supported
-- ✅ **Documentation** is updated
+- ✅ **Documentation** is updated — and after adding or changing an option,
+  `npm run docs:options` regenerates [`docs/option-map.md`](option-map.md),
+  which a test checks against the code
 
 **How to actually check the boxes above**: `npm run build:test` gives you
 `dist/entity-progress-card_dev.js` — point a `dashboard-resources:` entry (or a

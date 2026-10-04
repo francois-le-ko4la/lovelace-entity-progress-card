@@ -7,11 +7,11 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { flushFrames } from '../dom-setup.js';
-import { makeHass, TEST_ENTITY } from '../ha-stubs.js';
+import { flushFrames } from '../../dom-setup.js';
+import { makeHass, TEST_ENTITY } from '../../ha-stubs.js';
 
-import '../../src/index.js';
-import { joinAlignedRows, alignTiming } from '../../src/card/aligned-bars.js';
+import '../../../src/index.js';
+import { joinAlignedRows, alignTiming } from '../../../src/card/aligned-bars.js';
 
 const ALIGN_VAR = '--current-align-width';
 const FLOOR_VAR = '--current-align-text-floor';

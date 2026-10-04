@@ -6,8 +6,8 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 
-import '../dom-setup.js';
-import { browserOf } from '../../src/utils/diagnostic.js';
+import '../../dom-setup.js';
+import { browserOf } from '../../../src/utils/diagnostic.js';
 
 const CHROME = '153.0.7300.42';
 const BRANDS = [
