@@ -275,10 +275,10 @@ class HACore extends HTMLElement {
     const { secondaryInfoWrapper: valueText } = CARD.htmlStructure.elements;
     const column =
       group && HAS_EFFECT.barAligned(config)
-        ? this._shadow.querySelector<HTMLElement>('.' + (singleLine ? rowText.class : valueText.class))
+        ? this._shadow.querySelector<HTMLElement>(`.${singleLine ? rowText.class : valueText.class}`)
         : null;
     const row = singleLine
-      ? column?.closest<HTMLElement>('.' + CARD.style.dynamic.singleLineRow)
+      ? column?.closest<HTMLElement>(`.${CARD.style.dynamic.singleLineRow}`)
       : column?.parentElement;
     if (!group || !column || !row) {
       this._resourceManager.remove(ALIGNED_BARS_ID);

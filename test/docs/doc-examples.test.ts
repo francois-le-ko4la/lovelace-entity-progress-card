@@ -9,7 +9,7 @@ import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { load as loadYaml } from 'js-yaml';
-import { collectCards, droppedOptions, type Card } from './card-configs.js';
+import { collectCards, droppedOptions, withoutElisions, type Card } from './card-configs.js';
 
 const FILES = ['docs/configuration.md', 'docs/cookbook.md', 'README.md'];
 
@@ -27,15 +27,6 @@ const yamlBlocks = (file: string): { line: number; text: string }[] => {
   });
   return blocks;
 };
-
-// The docs elide the rest of a config with a line of its own - `...` or
-// `····` - which YAML can't read (`...` even ends the document).
-const ELISION = /^\s*(\.\.\.|····|…)\s*$/;
-const withoutElisions = (text: string) =>
-  text
-    .split('\n')
-    .filter((line) => !ELISION.test(line))
-    .join('\n');
 
 const unreadable: string[] = [];
 const cards: Card[] = FILES.flatMap((file) =>

@@ -8,7 +8,7 @@ import fs from 'node:fs';
 import { load as loadYaml } from 'js-yaml';
 import { YamlSchemaFactory, schemaOptions, type SchemaVariant } from '../../src/card/schema.js';
 import { EditorFactory } from '../../src/editor/factory.js';
-import { collectCards } from './card-configs.js';
+import { collectCards, withoutElisions } from './card-configs.js';
 
 const OPTION_MAP = 'docs/option-map.md';
 const CONFIGURATION = 'docs/configuration.md';
@@ -82,10 +82,7 @@ const yamlCards = (file: string): Config[] => {
   lines.forEach((line, index) => {
     if (start < 0 && /^\s*```yaml\s*$/.test(line)) start = index;
     else if (start >= 0 && /^\s*```\s*$/.test(line)) {
-      const text = lines
-        .slice(start + 1, index)
-        .filter((kept) => !/^\s*(\.\.\.|····|…)\s*$/.test(kept))
-        .join('\n');
+      const text = withoutElisions(lines.slice(start + 1, index).join('\n'));
       if (text.includes('custom:entity-progress'))
         try {
           cards.push(...collectCards(loadYaml(text), file).map((card) => card.config as Config));

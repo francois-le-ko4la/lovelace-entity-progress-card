@@ -107,4 +107,13 @@ const droppedOptions = (cards: Card[]): string[] => {
   return lost;
 };
 
-export { collectCards, droppedOptions, DEPRECATED_KEYS, type Card };
+// The docs elide the rest of a config with a line of its own - `...` or
+// `····` - which YAML can't read (`...` even ends the document).
+const ELISION = /^\s*(\.\.\.|····|…)\s*$/u;
+const withoutElisions = (text: string) =>
+  text
+    .split('\n')
+    .filter((line) => !ELISION.test(line))
+    .join('\n');
+
+export { collectCards, droppedOptions, withoutElisions, DEPRECATED_KEYS, type Card };
