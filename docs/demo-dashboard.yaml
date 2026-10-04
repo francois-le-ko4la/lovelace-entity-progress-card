@@ -3609,6 +3609,91 @@ views:
               columns: 12
               rows: 1
         column_span: 2
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'bar_position: icon — a ring around the icon'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card
+              entity: sensor.epb_demo_battery_ev
+              bar_position: icon
+              ```
+              The bar becomes a ring round the icon: `bar_size` sets its
+              thickness (`xlarge` adds no row), `bar_orientation: rtl` turns
+              it the other way, and it takes the theme zones and the marks.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card
+            entity: sensor.epb_demo_battery_ev
+            name: plain
+            bar_position: icon
+            grid_options:
+              columns: 6
+              rows: 1
+          - type: custom:entity-progress-card
+            entity: sensor.epb_demo_battery_ev
+            name: 'bar_size: xlarge'
+            bar_size: xlarge
+            bar_position: icon
+            grid_options:
+              columns: 6
+              rows: 1
+          - type: custom:entity-progress-card
+            entity: sensor.epb_demo_battery_ev
+            name: 'theme + segment'
+            theme: optimal_when_high
+            bar_color_mode: segment
+            bar_position: icon
+            grid_options:
+              columns: 6
+              rows: 1
+          - type: custom:entity-progress-card
+            entity: sensor.epb_demo_battery_ev
+            name: rainbow_full
+            theme: optimal_when_high
+            bar_color_mode: rainbow_full
+            bar_position: icon
+            grid_options:
+              columns: 6
+              rows: 1
+          - type: custom:entity-progress-card
+            entity: sensor.epb_demo_battery_ev
+            name: '+ watermark'
+            watermark:
+              low: 20
+              high: 80
+              type: line
+            bar_position: icon
+            grid_options:
+              columns: 6
+              rows: 1
+          - type: custom:entity-progress-card
+            entity: sensor.epb_demo_battery_ev
+            name: 'rtl, vertical'
+            bar_orientation: rtl
+            layout: vertical
+            bar_position: icon
+            grid_options:
+              columns: 6
+              rows: 2
+        column_span: 2
+    badges:
+      - type: custom:entity-progress-badge
+        entity: sensor.epb_demo_battery_ev
+        name: Ring
+        bar_position: icon
+      - type: custom:entity-progress-badge
+        entity: sensor.epb_demo_battery_ev
+        name: Ring zones
+        bar_position: icon
+        theme: optimal_when_high
+        bar_color_mode: rainbow_full
     show_icon_and_title: true
     cards: []
   - title: EP Demo - Aggregation & card_mod

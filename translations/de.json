@@ -113,7 +113,6 @@
       "window": "Zeitfenster",
       "rows": "Zeilen",
       "line_size": "Stärke",
-      "mark_defaults": "Standardwerte",
       "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
       "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
       "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "Kartenhintergrund",
+        "icon": "Um das Symbol",
         "below": "Unter dem Inhalt",
         "bottom": "Unten",
         "compact_below": "Kompakt unten",

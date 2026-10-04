@@ -113,7 +113,6 @@
       "window": "Χρονικό παράθυρο",
       "rows": "Γραμμές",
       "line_size": "Πάχος",
-      "mark_defaults": "Προεπιλογές",
       "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
       "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
       "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "Φόντο κάρτας",
+        "icon": "Γύρω από το εικονίδιο",
         "below": "Κάτω από το περιεχόμενο",
         "bottom": "Κάτω",
         "compact_below": "Συμπαγής από κάτω",

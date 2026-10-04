@@ -113,7 +113,6 @@
       "window": "Tidsvindue",
       "rows": "Rækker",
       "line_size": "Tykkelse",
-      "mark_defaults": "Standardværdier",
       "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
       "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
       "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "Kortbaggrund",
+        "icon": "Rundt om ikonet",
         "below": "Under indhold",
         "bottom": "Nederst",
         "compact_below": "Kompakt nedenunder",

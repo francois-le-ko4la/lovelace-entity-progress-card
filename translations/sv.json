@@ -113,7 +113,6 @@
       "window": "Tidsfönster",
       "rows": "Rader",
       "line_size": "Tjocklek",
-      "mark_defaults": "Standardvärden",
       "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
       "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
       "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "Kortbakgrund",
+        "icon": "Runt ikonen",
         "below": "Under innehållet",
         "bottom": "Längst ned",
         "compact_below": "Kompakt under",

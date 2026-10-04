@@ -7,6 +7,7 @@
 import { is } from '../utils/common-checks.js';
 import { AGGREGATOR_FIELDS, ROW_IDENTITY_FIELDS } from '../card/schema.js';
 import type { LovelaceConfig } from '../utils/types.js';
+import { Factorization } from '../card/factorization.js';
 
 // Never factorised up or down, like the _-prefixed (editor state) keys.
 const AGGREGATOR_KEYS = new Set<string>(AGGREGATOR_FIELDS);
@@ -18,12 +19,6 @@ const isRowOption = (key: string) => !AGGREGATOR_KEYS.has(key) && !key.startsWit
 // - hand-written, or left by an older build - is pushed back down.
 const NEVER_SHARED = new Set<string>(ROW_IDENTITY_FIELDS);
 
-// Config values are plain schema-shaped data (numbers, strings, small maps
-// built by the same field code), so a structural compare is enough - and it
-// is the only one that answers "does this row still agree with the others"
-// for a watermark or an action map.
-const same = (a: unknown, b: unknown) => JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
-
 const sharedOf = (config: LovelaceConfig): Record<string, unknown> =>
   Object.fromEntries(Object.entries(config).filter(([key]) => isRowOption(key)));
 
@@ -33,93 +28,31 @@ const asRow = (row: unknown): Record<string, unknown> => (is.plainObject(row) ? 
 const rowsOf = (config: LovelaceConfig): Record<string, unknown>[] =>
   is.array(config.entities) ? config.entities.map(asRow) : [];
 
-/**
- * The shared level is not a place to configure - it is where agreement ends
- * up. A row keeps only what it says differently; once every row says the same
- * thing it moves up and no row carries it any more; once every row contradicts
- * the shared value, nothing reads it and it goes. Same cascade the watermark
- * and peak_marker marks already run over their own keys (see factory.ts's
- * factorizeGlobalOverride/pruneGlobalOverride) - one level up.
- */
-// A key that identifies a row, found at the shared level: hand-written, or
-// left behind by an older build. Every row that hasn't already said its own
-// gets it back, then it goes.
-// Reflect.deleteProperty, not `delete obj[key]`, wherever the key is a
-// variable here: the algorithm tells "the key is there" (`key in row`) from
-// "its value is undefined", so dropping a key can't become writing undefined
-// into it - and a computed `delete` is what DeepSource's JS-0320 flags.
-const pushDown = (key: string, shared: Record<string, unknown>, rows: Record<string, unknown>[]) => {
-  if (!(key in shared)) return;
-  for (const row of rows) if (!(key in row)) row[key] = shared[key];
-  Reflect.deleteProperty(shared, key);
-};
+// The shared level is where agreement ends up, not a place to configure: the
+// one factorisation every shared level runs (factorization.ts), over rows.
+const MULTI_ROWS = new Factorization({
+  shared: (config) => sharedOf(config as LovelaceConfig),
+  items: (config) => Object.fromEntries(rowsOf(config as LovelaceConfig).map((row, index) => [String(index), row])),
+  rebuild: (config, shared, items) => {
+    const kept = Object.fromEntries(Object.entries(config).filter(([key]) => !isRowOption(key)));
+    const cleaned = Object.fromEntries(Object.entries(shared).filter(([, value]) => value !== undefined));
+    return { ...kept, ...cleaned, entities: Object.values(items) };
+  },
+  own: (row, key) => (row as Record<string, unknown>)[key],
+  write: (_id, row, patch) => {
+    const next = { ...(row as Record<string, unknown>) };
+    for (const [key, value] of Object.entries(patch)) {
+      if (value === undefined) Reflect.deleteProperty(next, key);
+      else next[key] = value;
+    }
+    return next;
+  },
+  rule: (_id, key) => (NEVER_SHARED.has(key) ? 'pinned' : 'inherits'),
+  votes: () => true,
+  isKey: isRowOption,
+});
 
-// No value carried enough weight to become the shared one. Its own symbol,
-// not undefined: "most rows set nothing" is a real outcome and has to be told
-// apart from "no election happened".
-const NO_WINNER = Symbol('no winner');
-
-const tally = (values: unknown[]): { value: unknown; count: number }[] => {
-  const counts = new Map<string, { value: unknown; count: number }>();
-  for (const value of values) {
-    const key = JSON.stringify(value ?? null);
-    const entry = counts.get(key) ?? { value, count: 0 };
-    entry.count += 1;
-    counts.set(key, entry);
-  }
-  return [...counts.values()];
-};
-
-// The value most rows carry, if it reaches the quorum. A tie keeps whatever is
-// already shared, so editing an unrelated row can't flip the winner.
-const elect = (values: unknown[], current: unknown, quorum: number): unknown => {
-  const entries = tally(values);
-  const best = Math.max(...entries.map((entry) => entry.count));
-  if (best < quorum) return NO_WINNER;
-  const winners = entries.filter((entry) => entry.count === best);
-  return (winners.find((entry) => same(entry.value, current)) ?? winners[0]).value;
-};
-
-// One key, one election. Whatever the outcome, a row that was reading the
-// shared value has to write it down before that value moves or goes - the
-// election decides where a value lives, never what a row renders.
-const settle = (key: string, shared: Record<string, unknown>, rows: Record<string, unknown>[]) => {
-  const values = rows.map((row) => (key in row ? row[key] : shared[key]));
-  // One copy doesn't make a rule - unless it is the only one: a lone row's
-  // setting describes the card, and the rows added next inherit it.
-  const winner = elect(values, shared[key], rows.length > 1 ? 2 : 1);
-  const materialise = (row: Record<string, unknown>, index: number) => {
-    if (values[index] === undefined) Reflect.deleteProperty(row, key);
-    else row[key] = values[index];
-  };
-
-  if (winner === NO_WINNER || winner === undefined) {
-    Reflect.deleteProperty(shared, key);
-    rows.forEach(materialise);
-    return;
-  }
-
-  shared[key] = winner;
-  rows.forEach((row, index) => {
-    if (same(values[index], winner)) Reflect.deleteProperty(row, key);
-    else materialise(row, index);
-  });
-};
-
-const cascade = (config: LovelaceConfig): LovelaceConfig => {
-  const rows = rowsOf(config);
-  if (rows.length === 0) return config;
-  const shared = { ...sharedOf(config) };
-  const keys = new Set([...Object.keys(shared), ...rows.flatMap((row) => Object.keys(row))].filter(isRowOption));
-
-  for (const key of keys) {
-    if (NEVER_SHARED.has(key)) pushDown(key, shared, rows);
-    else settle(key, shared, rows);
-  }
-
-  const cleaned = Object.fromEntries(Object.entries(shared).filter(([, value]) => value !== undefined));
-  const kept = Object.fromEntries(Object.entries(config).filter(([key]) => !isRowOption(key)));
-  return { ...kept, ...cleaned, entities: rows } as unknown as LovelaceConfig;
-};
+const cascade = (config: LovelaceConfig): LovelaceConfig =>
+  rowsOf(config).length === 0 ? config : (MULTI_ROWS.settle(config) as LovelaceConfig);
 
 export { cascade, sharedOf, rowsOf, isRowOption };

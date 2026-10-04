@@ -113,7 +113,6 @@
       "window": "Jendela waktu",
       "rows": "Baris",
       "line_size": "Ketebalan",
-      "mark_defaults": "Nilai default",
       "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
       "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
       "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "Latar belakang kartu",
+        "icon": "Di sekitar ikon",
         "below": "Di bawah konten",
         "bottom": "Di bawah",
         "compact_below": "Ringkas di bawah",

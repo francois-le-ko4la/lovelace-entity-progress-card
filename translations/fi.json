@@ -113,7 +113,6 @@
       "window": "Aikaikkuna",
       "rows": "Rivit",
       "line_size": "Paksuus",
-      "mark_defaults": "Oletusarvot",
       "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
       "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
       "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "Kortin tausta",
+        "icon": "Kuvakkeen ympärillä",
         "below": "Sisällön alla",
         "bottom": "Alhaalla",
         "compact_below": "Kompakti alla",

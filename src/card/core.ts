@@ -21,6 +21,7 @@ import {
   type ValueConfig,
   SCHEMA_DEFAULTS,
   BAR_POSITIONS,
+  BAR_AROUND_ICON,
   BAR_SIZES,
   MARK_TYPES,
   MARK_ZONE_TYPES,
@@ -713,6 +714,8 @@ class HACore extends HTMLElement {
     CARD.htmlStructure.elements.progressBar.minMarker.class,
     CARD.htmlStructure.elements.progressBar.maxMarker.class,
     CARD.htmlStructure.elements.progressBar.averageMarker.class,
+    ...Object.values(CARD.htmlStructure.elements.ringMarks).map((mark) => mark.class),
+    CARD.htmlStructure.elements.ringProgress.class,
   ];
 
   get domKeys(): string[] {
@@ -738,7 +741,13 @@ class HACore extends HTMLElement {
     if (!marker) return;
 
     const pb = CARD.htmlStructure.elements.progressBar;
-    const markKeys = { min: pb.minMarker.class, max: pb.maxMarker.class, avg: pb.averageMarker.class };
+    const ring = CARD.htmlStructure.elements.ringMarks;
+    // The bar's mark and its ring twin: only one of them is ever built.
+    const markKeys = {
+      min: [pb.minMarker.class, ring.min.class],
+      max: [pb.maxMarker.class, ring.max.class],
+      avg: [pb.averageMarker.class, ring.avg.class],
+    };
     (
       [
         ['min', marker.min],
@@ -746,11 +755,15 @@ class HACore extends HTMLElement {
         ['avg', marker.average],
       ] as const
     ).forEach(([key, mark]) => {
-      this._dom.toggleClass(markKeys[key], CARD.style.dynamic.markShown, mark.shown);
-      this._applyMarkShape(markKeys[key], mark.type, MARK_TYPES, SCHEMA_DEFAULTS.peakMarker.type);
+      for (const markKey of markKeys[key]) {
+        this._dom.toggleClass(markKey, CARD.style.dynamic.markShown, mark.shown);
+        this._applyMarkShape(markKey, mark.type, MARK_TYPES, SCHEMA_DEFAULTS.peakMarker.type);
+      }
     });
-    this._dom.toggleClass(pb.rangeMarker.class, CARD.style.dynamic.markShown, marker.range.shown);
-    this._applyMarkShape(pb.rangeMarker.class, marker.range.type, MARK_ZONE_TYPES, PEAK_RANGE_TYPE_DEFAULT);
+    for (const markKey of [pb.rangeMarker.class, ring.range.class]) {
+      this._dom.toggleClass(markKey, CARD.style.dynamic.markShown, marker.range.shown);
+      this._applyMarkShape(markKey, marker.range.type, MARK_ZONE_TYPES, PEAK_RANGE_TYPE_DEFAULT);
+    }
   }
 
   // N real fill cells per fillable half (bar_segments: N), not a divider
@@ -852,12 +865,20 @@ class HACore extends HTMLElement {
     if (!watermark) return;
 
     const pb = CARD.htmlStructure.elements.progressBar;
+    const ring = CARD.htmlStructure.elements.ringMarks;
     const shownClass = CARD.style.dynamic.markShown;
-
-    this._dom.toggleClass(pb.highWatermark.class, shownClass, watermark.high.shown);
-    this._dom.toggleClass(pb.lowWatermark.class, shownClass, watermark.low.shown);
-    this._applyMarkShape(pb.highWatermark.class, watermark.high.type, MARK_TYPES, SCHEMA_DEFAULTS.watermark.type);
-    this._applyMarkShape(pb.lowWatermark.class, watermark.low.type, MARK_TYPES, SCHEMA_DEFAULTS.watermark.type);
+    // The bar's mark and its ring twin: only one of them is ever built.
+    (
+      [
+        [[pb.highWatermark.class, ring.high.class], watermark.high],
+        [[pb.lowWatermark.class, ring.low.class], watermark.low],
+      ] as const
+    ).forEach(([keys, mark]) => {
+      for (const markKey of keys) {
+        this._dom.toggleClass(markKey, shownClass, mark.shown);
+        this._applyMarkShape(markKey, mark.type, MARK_TYPES, SCHEMA_DEFAULTS.watermark.type);
+      }
+    });
   }
 
   // The editor (EntityProgressEffectChips) can only guard interactive
@@ -950,11 +971,13 @@ class HACore extends HTMLElement {
 
     if (progressValue !== null) {
       this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.value.var, progressValue);
-      this._dom.setAttribute(
+      // The bar's, or the ring's stand-in: only one of them is ever built.
+      for (const key of [
         CARD.htmlStructure.elements.progressBar.container.class,
-        'aria-valuenow',
-        Math.round(progressValue * 100),
-      );
+        CARD.htmlStructure.elements.ringProgress.class,
+      ]) {
+        this._dom.setAttribute(key, 'aria-valuenow', Math.round(progressValue * 100));
+      }
     }
   }
 
@@ -1575,8 +1598,10 @@ class HABase extends HACore {
     return new Map([
       ...super._baseClassStyle,
       ['progress-badge', this._isBadge],
-      // Badge/Badge Template have no such field, so they match none of them.
-      ...BAR_POSITIONS.map((position): [string, boolean] => [position, config.bar_position === position]),
+      ...BAR_POSITIONS.map((position): [string, boolean] => [
+        position === BAR_AROUND_ICON ? CARD.style.dynamic.barAroundIcon : position,
+        config.bar_position === position,
+      ]),
       ['row-reverse', this._cardView.hasReversedSecondaryInfoRow],
       // A pinned bar makes the text the flexible half - the CSS can't branch
       // on a variable being set, so the config says it here.

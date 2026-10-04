@@ -113,7 +113,6 @@
       "window": "Ventana de tiempo",
       "rows": "Filas",
       "line_size": "Grosor",
-      "mark_defaults": "Valores predeterminados",
       "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
       "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
       "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "Fondo de la tarjeta",
+        "icon": "Alrededor del icono",
         "below": "Debajo del contenido",
         "bottom": "Abajo",
         "compact_below": "Compacta abajo",

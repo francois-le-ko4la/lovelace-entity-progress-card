@@ -7,10 +7,7 @@ import {
   jinjaOf,
   markShown,
   peakMarkShown,
-  markType,
-  markOpacity,
-  markColor,
-  markLineSize,
+  MARK_FACTORIZATION,
   type PeakMark,
   YamlSchemaFactory,
 } from '../../src/card/schema.js';
@@ -116,29 +113,50 @@ describe('YamlSchemaFactory.card.validate - end-to-end shape', () => {
   });
 });
 
-// One cascade serves both mark kinds (ViewCore's watermark and peak_marker
-// getters call these same helpers). The two differences are pinned here so a
-// future "simplification" of either side can't quietly re-fork them.
-describe('mark helpers - one cascade for watermark and peak marks alike', () => {
+// One resolver serves every mark (MARK_FACTORIZATION): the card's watermark and
+// peak_marker getters both go through it. The differences between marks are
+// the table's, pinned here so neither side can quietly re-fork.
+describe('MARK_FACTORIZATION.resolve - one cascade for every mark', () => {
+  const FAMILY = { type: 'line', opacity: 0.8, line_size: '2px', color: 'grey', as: 'percent' };
+
   test('an override wins over the family value, on either mark kind', () => {
-    assert.equal(markType({ type: 'round' }, 'line'), 'round');
-    assert.equal(markOpacity({ opacity: 0.5 }, 0.8), 0.5);
-    assert.equal(markLineSize({ line_size: '4px' }, '2px'), '4px');
-    assert.equal(markColor({ color: 'blue' }, 'grey'), 'blue');
+    const watermark = { ...FAMILY, low: { type: 'round', opacity: 0.5, line_size: '4px', color: 'blue', as: 'auto' } };
+    for (const [field, own] of [
+      ['type', 'round'],
+      ['opacity', 0.5],
+      ['line_size', '4px'],
+      ['color', 'blue'],
+      ['as', 'auto'],
+    ] as const)
+      assert.equal(MARK_FACTORIZATION.watermark.resolve({ watermark }, 'low', field), own);
+    assert.equal(
+      MARK_FACTORIZATION.peak_marker.resolve({ peak_marker: { ...FAMILY, min: 'red' } }, 'min', 'color'),
+      'red',
+      'a bare string is a color',
+    );
   });
 
   test('a mark carrying nothing of its own inherits the family value', () => {
-    for (const mark of [undefined, true, false, {}] as const) {
-      assert.equal(markType(mark, 'line'), 'line');
-      assert.equal(markOpacity(mark, 0.8), 0.8);
-      assert.equal(markLineSize(mark, '2px'), '2px');
-      assert.equal(markColor(mark, 'grey'), 'grey');
+    for (const mark of [true, false, {}, 20, { entity: 'sensor.x' }, { jinja: '{{ 20 }}' }]) {
+      const watermark = { ...FAMILY, low: mark };
+      for (const field of ['type', 'opacity', 'line_size', 'color', 'as'] as const)
+        assert.equal(
+          MARK_FACTORIZATION.watermark.resolve({ watermark }, 'low', field),
+          FAMILY[field],
+          `${field} of ${JSON.stringify(mark)}`,
+        );
     }
   });
 
-  test('a threshold-shaped mark is a value, not an override - it inherits everything', () => {
-    assert.equal(markType({ entity: 'sensor.x' }, 'line'), 'line');
-    assert.equal(markColor({ jinja: '{{ 20 }}' }, 'grey'), 'grey');
+  test('the band keeps its own type, and has no line or scale to inherit', () => {
+    const peak = { ...FAMILY, range: true };
+    assertUndefined(MARK_FACTORIZATION.peak_marker.resolve({ peak_marker: peak }, 'range', 'type'));
+    assertUndefined(MARK_FACTORIZATION.peak_marker.resolve({ peak_marker: peak }, 'range', 'line_size'));
+    assert.equal(MARK_FACTORIZATION.peak_marker.resolve({ peak_marker: peak }, 'range', 'color'), 'grey');
+  });
+
+  test('only a watermark has a scale to read its threshold on', () => {
+    assertUndefined(MARK_FACTORIZATION.peak_marker.resolve({ peak_marker: { ...FAMILY, min: true } }, 'min', 'as'));
   });
 
   test('a watermark side exists unless turned off; a peak mark only once set', () => {

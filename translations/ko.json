@@ -113,7 +113,6 @@
       "window": "시간 창",
       "rows": "행 수",
       "line_size": "두께",
-      "mark_defaults": "기본값",
       "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
       "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
       "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "카드 배경",
+        "icon": "아이콘 주위",
         "below": "콘텐츠 아래",
         "bottom": "하단",
         "compact_below": "아래에 컴팩트",

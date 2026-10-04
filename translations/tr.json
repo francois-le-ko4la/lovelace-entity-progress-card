@@ -113,7 +113,6 @@
       "window": "Zaman penceresi",
       "rows": "Satırlar",
       "line_size": "Kalınlık",
-      "mark_defaults": "Varsayılanlar",
       "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
       "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
       "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "Kart arka planı",
+        "icon": "Simgenin çevresinde",
         "below": "İçeriğin altında",
         "bottom": "Altta",
         "compact_below": "Altta kompakt",

@@ -72,6 +72,17 @@ across cards: a Multi and the cards beside it, a `vertical-stack-in-card`, an
 once a shorter text has held for 30 seconds, so a changing value doesn't keep
 moving the bars: no width to guess, no `card_mod`.
 
+#### ⭕ A ring around the icon
+
+[`bar_position`][bar_position] `icon` draws the bar as a ring around the icon,
+on cards and badges alike. [`bar_size`][bar_size] sets its thickness,
+[`bar_orientation`][bar_orientation] `rtl` turns it the other way, and it takes
+the bar's colors and theme zones — [`bar_color_mode`][bar_color_mode] `segment`,
+`rainbow` and `rainbow_full` included — along with [`watermark`][watermark] and
+[`peak_marker`][peak_marker] marks. It fills from empty when the card appears,
+like the bar. Badges can also be made [`frameless`][frameless] and
+[`marginless`][marginless] from the editor now.
+
 #### 🧩 Both Multi cards get a visual editor
 
 No more YAML-only. An entity list you can add to, reorder and delete from, and a
@@ -365,6 +376,12 @@ a panel.
 - **Type**: the editor left a mark's type empty whenever it followed its
   family's value instead of carrying its own, and showed nothing at all for a
   bare `watermark: {}`.
+- **`watermark.as`** set once for both sides — what the editor writes when `low`
+  and `high` agree — was ignored: the marks stayed on the sensor's own scale
+  instead of a percentage of the bar. Both sides follow it now.
+- **Band colour**: giving [`peak_marker`][peak_marker]'s min, max and average
+  their own colour, one by one, changed the colour the band was drawn in — to
+  the default, or to theirs once they agreed. The band keeps it now.
 - **Shared level**: a value set the same way on every visible
   [`peak_marker`][peak_marker] mark never moved up to it, and editing one mark
   could switch a hidden one back on.
@@ -513,6 +530,12 @@ come from Node's V8 — read the ratio, not the milliseconds.
 
 #### Code and tooling
 
+- **Shared settings**: the visual editor files a setting most marks or Multi
+  rows share at the top, and keeps only the exceptions below — one rule for
+  both. Nothing changes on screen; your YAML is tidied the next time you edit.
+  The watermark and peak_marker panels drop their separate defaults block with
+  it: each mark is set on its own, and a family value written in YAML still
+  applies.
 - The Multi cards are validated by a real schema at last, like every other card
   type — an unknown option is dropped instead of quietly reaching the DOM.
 - The card's default attribute per domain and the entity picker's own
@@ -535,7 +558,7 @@ come from Node's V8 — read the ratio, not the milliseconds.
   on a card left mounted.
 - The editor is built into a file of its own that reads the card's modules
   instead of copying them: the build fails if one ends up in both files.
-- 622 automated tests run before every push: 443 on the card's logic, 179
+- 650 automated tests run before every push: 464 on the card's logic, 186
   mounting real cards and editors in a virtual DOM.
 - `scripts/compare-hass-updates.js` measures what a hass update and a tick cost
   per card, between two bundles.
@@ -7538,6 +7561,10 @@ experience:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_single_line
 [frameless]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#frameless
+[marginless]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#marginless
+[bar_size]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_size
 [force_circular_background]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#force_circular_background
 [height]:

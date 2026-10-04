@@ -113,7 +113,6 @@
       "window": "Janela de tempo",
       "rows": "Linhas",
       "line_size": "Espessura",
-      "mark_defaults": "Padrões",
       "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
       "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
       "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "Fundo do cartão",
+        "icon": "Ao redor do ícone",
         "below": "Abaixo do conteúdo",
         "bottom": "Abaixo",
         "compact_below": "Compacta abaixo",

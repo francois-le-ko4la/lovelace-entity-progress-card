@@ -113,7 +113,6 @@
       "window": "Cửa sổ thời gian",
       "rows": "Số hàng",
       "line_size": "Độ dày",
-      "mark_defaults": "Giá trị mặc định",
       "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
       "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
       "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "Nền thẻ",
+        "icon": "Quanh biểu tượng",
         "below": "Bên dưới nội dung",
         "bottom": "Ở dưới cùng",
         "compact_below": "Gọn bên dưới",

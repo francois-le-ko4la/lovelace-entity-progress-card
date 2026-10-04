@@ -113,7 +113,6 @@
       "window": "Временски прозорец",
       "rows": "Редови",
       "line_size": "Дебелина",
-      "mark_defaults": "Стандардни вредности",
       "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
       "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
       "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "Позадина на картичката",
+        "icon": "Околу иконата",
         "below": "Под содржината",
         "bottom": "На дното",
         "compact_below": "Компактна подолу",

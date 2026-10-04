@@ -363,7 +363,9 @@ ${CARD.htmlStructure.card.element}:not(.${CARD.style.dynamic.clickable.card}) .$
    redeclares the variable for itself, so a card-level rule never reaches it.
    ha-card's own overflow: hidden still holds the outer edge. */
 .${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.badge.container.class}
-  .${CARD.htmlStructure.sections.container.class}.vertical {
+  .${CARD.htmlStructure.sections.container.class}.vertical,
+ha-card.${CARD.style.dynamic.barAroundIcon} .${CARD.htmlStructure.sections.container.class}.vertical {
+  /* bar_position: icon's ring overhangs the icon's box the same way. */
   --current-container-overflow: visible;
 }
 
@@ -648,6 +650,201 @@ ha-card.label-left .status-label {
      far easier accidental collision target (a user's card_mod included). */
   background-color: var(--shape-hover-color, var(--shape-background-color, var(--epb-icon-shape-color, var(--shape-fallback-color, var(--epb-icon-and-shape-color, var(${CARD.style.dynamic.iconAndShape.color.var}, ${CARD.style.dynamic.iconAndShape.color.default}))))));
   opacity: var(--epb-icon-shape-opacity, var(--shape-opacity));
+}
+
+/* bar_position: icon - the fill drawn as a ring around the icon: a conic fill
+   cut to a ring by a mask, off the same --progress-bar-value as the bar. */
+/* Outside the shape, 2px off it: inside, the ring ate into the icon's room. */
+ha-card.${CARD.style.dynamic.barAroundIcon} {
+  --ring-width: var(--epb-progress-bar-size, 3px);
+  --ring-offset: calc(var(--ring-width) + 2px);
+}
+ha-card.${CARD.style.dynamic.barAroundIcon}.xsmall { --ring-width: var(--epb-progress-bar-size, 2px); }
+ha-card.${CARD.style.dynamic.barAroundIcon}.medium { --ring-width: var(--epb-progress-bar-size, 4px); }
+ha-card.${CARD.style.dynamic.barAroundIcon}.large { --ring-width: var(--epb-progress-bar-size, 6px); }
+ha-card.${CARD.style.dynamic.barAroundIcon}.xlarge { --ring-width: var(--epb-progress-bar-size, 8px); }
+/* A card's ring keeps one outer size whatever its width: the shape gives way
+   inside it, so the icon section - and the card - never move. */
+ha-card.${CARD.style.dynamic.barAroundIcon}:not(.progress-badge) .${CARD.htmlStructure.elements.shape.class} {
+  --current-shape-size: calc(44px - 2 * var(--ring-offset));
+}
+ha-card.${CARD.style.dynamic.barAroundIcon}.progress-badge {
+  --ring-width: var(--epb-progress-bar-size, 4px);
+}
+/* Around a badge's 18px icon, each size reads one step thicker than a card's. */
+ha-card.${CARD.style.dynamic.barAroundIcon}.progress-badge.xsmall { --ring-width: var(--epb-progress-bar-size, 3px); }
+ha-card.${CARD.style.dynamic.barAroundIcon}.progress-badge.medium { --ring-width: var(--epb-progress-bar-size, 5px); }
+ha-card.${CARD.style.dynamic.barAroundIcon}.progress-badge.large { --ring-width: var(--epb-progress-bar-size, 6px); }
+ha-card.${CARD.style.dynamic.barAroundIcon} .${CARD.htmlStructure.elements.shape.class}::after {
+  /* A colour, or a theme's zones as a conic gradient (ThemeManager, isRing). */
+  --ring-paint: var(--epb-progress-bar-color, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default}));
+  --ring-track: var(${CARD.style.dynamic.progressBar.background.var}, var(--divider-color));
+  --ring-cut: calc(100% - var(--ring-width));
+  --ring-fill: calc(var(${CARD.style.dynamic.ringValue.var}, 0) * 360deg);
+  content: '';
+  position: absolute;
+  inset: calc(-1 * var(--ring-offset));
+  border-radius: 50%;
+  pointer-events: none;
+  /* Past the value: the track, over the card's own opaque background - a theme's
+     track is translucent, and the zones painted underneath showed through it. */
+  background:
+    conic-gradient(transparent var(--ring-fill), var(--ring-track) 0),
+    conic-gradient(transparent var(--ring-fill), var(--ha-card-background, var(--card-background-color)) 0),
+    var(--ring-paint);
+  -webkit-mask: radial-gradient(farthest-side, transparent var(--ring-cut), #000 calc(var(--ring-cut) + 1px));
+  mask: radial-gradient(farthest-side, transparent var(--ring-cut), #000 calc(var(--ring-cut) + 1px));
+}
+/* Held at 0 until the first paint, like the bar's .inner: transition-ready
+   then releases the value, and the ring fills from empty. On .shape, a real
+   element, where it is registered (bootstrap.ts); ::after inherits each step. */
+ha-card.${CARD.style.dynamic.barAroundIcon} .${CARD.htmlStructure.elements.shape.class} {
+  ${CARD.style.dynamic.ringValue.var}: 0;
+}
+/* Same timing as the bar; .shape's own press scale kept. */
+ha-card.${CARD.style.dynamic.barAroundIcon}.transition-ready .${CARD.htmlStructure.elements.shape.class} {
+  ${CARD.style.dynamic.ringValue.var}: var(${CARD.style.dynamic.progressBar.value.var}, 0);
+  transition:
+    transform 180ms ease-in-out,
+    ${CARD.style.dynamic.ringValue.var} var(--progress-transition);
+}
+/* rainbow_full around the icon: every zone, all the way round, and a pill at
+   the value instead of a fill - the bar's own value mark, bent onto the ring. */
+ha-card.${CARD.style.dynamic.barAroundIcon}.rainbow-full-bar .${CARD.htmlStructure.elements.shape.class}::after {
+  background: var(--ring-paint);
+}
+.${CARD.htmlStructure.elements.ringMark.class} {
+  display: none;
+}
+ha-card.${CARD.style.dynamic.barAroundIcon}.rainbow-full-bar .${CARD.htmlStructure.elements.ringMark.class} {
+  /* Mid-ring: the shape's half, out to the ring, back by half its width. */
+  --ring-radius: calc(var(--current-shape-size) / 2 + var(--ring-offset) - var(--ring-width) / 2);
+  --mark-border-width: var(--epb-rainbow-marker-border-width, 1px);
+  display: block;
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  top: 50%;
+  width: var(--epb-rainbow-marker-size, 4px);
+  height: calc(var(--ring-width) + 4px);
+  box-sizing: border-box;
+  border-radius: 999px;
+  pointer-events: none;
+  background: var(--epb-rainbow-marker-color, var(${CARD.style.dynamic.iconAndShape.color.var}, white));
+  box-shadow:
+    0 0 0 var(--mark-border-width) var(--epb-rainbow-marker-border-color, rgba(255, 255, 255, 0.9)),
+    0 0 var(--mark-border-width) rgba(0, 0, 0, 0.35);
+  opacity: var(--epb-rainbow-marker-opacity, 1);
+  transform: translate(-50%, -50%) rotate(calc(var(--ring-turn, 1) * var(${CARD.style.dynamic.ringValue.var}, 0) * 360deg))
+    translateY(calc(-1 * var(--ring-radius)));
+}
+ha-card.${CARD.style.dynamic.barAroundIcon}.${CARD.style.dynamic.progressBar.orientation.rtl} {
+  --ring-turn: -1;
+}
+/* bar_position: icon - the bar's marks, a layer each round the ring, carrying
+   the bar's own shown/wm-* classes (core.ts). Zones are arcs, points pills. */
+.${CARD.htmlStructure.elements.ringMarks.low.class}, .${CARD.htmlStructure.elements.ringMarks.high.class}, .${CARD.htmlStructure.elements.ringMarks.range.class},
+.${CARD.htmlStructure.elements.ringMarks.min.class}, .${CARD.htmlStructure.elements.ringMarks.max.class}, .${CARD.htmlStructure.elements.ringMarks.avg.class} {
+  display: none;
+}
+ha-card.${CARD.style.dynamic.barAroundIcon} .${CARD.htmlStructure.elements.ringMarks.low.class} {
+  --ring-mark-color: var(--epb-low-watermark-color, var(--low-watermark-color, ${CARD.style.dynamic.watermark.low.color.default}));
+  --ring-mark-opacity: var(--epb-low-watermark-opacity, var(--epb-watermark-opacity, var(--low-watermark-opacity-value, 0.8)));
+  --ring-mark-line: var(--epb-watermark-line-size, var(--low-watermark-line-size, var(--watermark-line-size, 2px)));
+  --ring-mark-at: var(--low-watermark-value-num, 0);
+  --ring-zone: conic-gradient(var(--ring-mark-color) 0 var(--low-watermark-value, 0%), transparent 0);
+}
+ha-card.${CARD.style.dynamic.barAroundIcon} .${CARD.htmlStructure.elements.ringMarks.high.class} {
+  --ring-mark-color: var(--epb-high-watermark-color, var(--high-watermark-color, ${CARD.style.dynamic.watermark.high.color.default}));
+  --ring-mark-opacity: var(--epb-high-watermark-opacity, var(--epb-watermark-opacity, var(--high-watermark-opacity-value, 0.8)));
+  --ring-mark-line: var(--epb-watermark-line-size, var(--high-watermark-line-size, var(--watermark-line-size, 2px)));
+  --ring-mark-at: var(--high-watermark-value-num, 100);
+  --ring-zone: conic-gradient(transparent 0 var(--high-watermark-value, 100%), var(--ring-mark-color) 0);
+}
+ha-card.${CARD.style.dynamic.barAroundIcon} .${CARD.htmlStructure.elements.ringMarks.range.class} {
+  --ring-mark-color: var(--epb-peak-range-color, var(--peak-range-color, ${CARD.style.dynamic.peakMarker.range.color.default}));
+  --ring-mark-opacity: var(--epb-peak-range-opacity, var(--peak-range-opacity-value, 0.8));
+  --ring-zone: conic-gradient(
+    transparent 0 var(--peak-min-value, 0%),
+    var(--ring-mark-color) 0 var(--peak-max-value, 0%),
+    transparent 0
+  );
+}
+ha-card.${CARD.style.dynamic.barAroundIcon} .${CARD.htmlStructure.elements.ringMarks.min.class} {
+  --ring-mark-color: var(--epb-peak-min-color, var(--peak-min-color, ${CARD.style.dynamic.peakMarker.min.color.default}));
+  --ring-mark-opacity: var(--epb-peak-min-opacity, var(--peak-min-opacity-value, 0.8));
+  --ring-mark-line: var(--epb-peak-marker-line-size, var(--peak-min-line-size, var(--peak-marker-line-size, 2px)));
+  --ring-mark-at: var(--peak-min-value-num, 0);
+}
+ha-card.${CARD.style.dynamic.barAroundIcon} .${CARD.htmlStructure.elements.ringMarks.max.class} {
+  --ring-mark-color: var(--epb-peak-max-color, var(--peak-max-color, ${CARD.style.dynamic.peakMarker.max.color.default}));
+  --ring-mark-opacity: var(--epb-peak-max-opacity, var(--peak-max-opacity-value, 0.8));
+  --ring-mark-line: var(--epb-peak-marker-line-size, var(--peak-max-line-size, var(--peak-marker-line-size, 2px)));
+  --ring-mark-at: var(--peak-max-value-num, 0);
+}
+ha-card.${CARD.style.dynamic.barAroundIcon} .${CARD.htmlStructure.elements.ringMarks.avg.class} {
+  --ring-mark-color: var(--epb-peak-average-color, var(--peak-average-color, ${CARD.style.dynamic.peakMarker.average.color.default}));
+  --ring-mark-opacity: var(--epb-peak-average-opacity, var(--peak-average-opacity-value, 0.8));
+  --ring-mark-line: var(--epb-peak-marker-line-size, var(--peak-average-line-size, var(--peak-marker-line-size, 2px)));
+  --ring-mark-at: var(--peak-average-value-num, 0);
+}
+ha-card.${CARD.style.dynamic.barAroundIcon} .${CARD.style.dynamic.markShown}:is(
+    .${CARD.htmlStructure.elements.ringMarks.low.class}, .${CARD.htmlStructure.elements.ringMarks.high.class}, .${CARD.htmlStructure.elements.ringMarks.range.class},
+    .${CARD.htmlStructure.elements.ringMarks.min.class}, .${CARD.htmlStructure.elements.ringMarks.max.class}, .${CARD.htmlStructure.elements.ringMarks.avg.class}
+  ) {
+  display: block;
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  opacity: var(--ring-mark-opacity);
+}
+/* A zone: the same ring, cut by the same mask, painted over its own arc. */
+ha-card.${CARD.style.dynamic.barAroundIcon} :is(.${CARD.htmlStructure.elements.ringMarks.low.class}, .${CARD.htmlStructure.elements.ringMarks.high.class}, .${CARD.htmlStructure.elements.ringMarks.range.class}):is(.wm-area, .wm-blended, .wm-striped) {
+  --ring-cut: calc(100% - var(--ring-width));
+  inset: calc(-1 * var(--ring-offset));
+  border-radius: 50%;
+  background: var(--ring-zone);
+  -webkit-mask: radial-gradient(farthest-side, transparent var(--ring-cut), #000 calc(var(--ring-cut) + 1px));
+  mask: radial-gradient(farthest-side, transparent var(--ring-cut), #000 calc(var(--ring-cut) + 1px));
+}
+ha-card.${CARD.style.dynamic.barAroundIcon}.${CARD.style.dynamic.progressBar.orientation.rtl}
+  :is(.${CARD.htmlStructure.elements.ringMarks.low.class}, .${CARD.htmlStructure.elements.ringMarks.high.class}, .${CARD.htmlStructure.elements.ringMarks.range.class}):is(.wm-area, .wm-blended, .wm-striped) {
+  transform: scaleX(-1);
+}
+/* A point: a pill across the ring at its angle - a line keeps its own width,
+   triangle and round become the rainbow_full marker's pin. */
+ha-card.${CARD.style.dynamic.barAroundIcon}
+  :is(.${CARD.htmlStructure.elements.ringMarks.low.class}, .${CARD.htmlStructure.elements.ringMarks.high.class}, .${CARD.htmlStructure.elements.ringMarks.min.class}, .${CARD.htmlStructure.elements.ringMarks.max.class}, .${CARD.htmlStructure.elements.ringMarks.avg.class}):is(.wm-line, .wm-triangle, .wm-round) {
+  --ring-radius: calc(var(--current-shape-size) / 2 + var(--ring-offset) - var(--ring-width) / 2);
+  left: 50%;
+  top: 50%;
+  width: var(--ring-mark-line);
+  height: calc(var(--ring-width) + 4px);
+  border-radius: 999px;
+  background: var(--ring-mark-color);
+  transform: translate(-50%, -50%) rotate(calc(var(--ring-turn, 1) * var(--ring-mark-at) * 3.6deg))
+    translateY(calc(-1 * var(--ring-radius)));
+}
+ha-card.${CARD.style.dynamic.barAroundIcon}
+  :is(.${CARD.htmlStructure.elements.ringMarks.low.class}, .${CARD.htmlStructure.elements.ringMarks.high.class}, .${CARD.htmlStructure.elements.ringMarks.min.class}, .${CARD.htmlStructure.elements.ringMarks.max.class}, .${CARD.htmlStructure.elements.ringMarks.avg.class}):is(.wm-triangle, .wm-round) {
+  width: 4px;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.9),
+    0 0 1px rgba(0, 0, 0, 0.35);
+}
+/* Read out, never seen: the ring's progressbar for a screen reader. */
+.${CARD.htmlStructure.elements.ringProgress.class} {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+/* rtl: counter-clockwise - the whole ring mirrored, zones included. */
+ha-card.${CARD.style.dynamic.barAroundIcon}.${CARD.style.dynamic.progressBar.orientation.rtl}
+  .${CARD.htmlStructure.elements.shape.class}::after {
+  transform: scaleX(-1);
 }
 
 /* A tinted disc drawn at 20% over a bar that covers the whole card just shows
@@ -1081,7 +1278,7 @@ ha-card.horizontal.default:not(.xlarge)
 /* Same set as StructureElements.createSecondaryInfo's excludedPositions
    (structure.ts): only bar_position: default puts the bar in .secondary-info's
    row, so every other position gets the row's full width. */
-ha-card:is(.vertical, .xlarge, .below, .bottom, .top, .overlay, .background) .${CARD.htmlStructure.elements.secondaryInfoWrapper.class} {
+ha-card:is(.vertical, .xlarge, .below, .bottom, .top, .overlay, .background, .${CARD.style.dynamic.barAroundIcon}) .${CARD.htmlStructure.elements.secondaryInfoWrapper.class} {
   --group-min-width: 100%;
   --group-max-width: 100%;
 }

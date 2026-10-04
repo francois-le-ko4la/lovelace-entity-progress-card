@@ -1747,7 +1747,7 @@ bar_size: medium
 
 #### `bar_position`
 
-[![Card OK][Card-OK]](#compatibility)
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
 [![Feature OK][Feature-OK]](#compatibility)
 [![Template OK][Template-OK]](#compatibility)
 
@@ -1780,14 +1780,47 @@ _Options:_
 | `bottom`        | At the bottom of the card edge                                       |  ✅  |    ✅    |   ✅    |
 | `overlay`       | Overlaid on top of the content                                       |  ✅  |    ✅    |    —    |
 | `background`    | Fills the entire card as a background layer, behind the content      |  ✅  |    ✅    |    —    |
+| `icon`          | A ring around the icon, in place of the bar — see below              |  ✅  |    ✅    |    —    |
 
 > [!NOTE]
 >
 > The Tile Feature only supports `default`/`top`/`bottom`: it's a single row
 > added to an existing Tile card, not a full card with its own dedicated rows or
-> content to overlay/background — `below`, `compact_below`, `overlay`, and
-> `background` don't apply to that context. Badge and Badge Template don't have
-> this option at all.
+> content to overlay/background — `below`, `compact_below`, `overlay`,
+> `background` and `icon` don't apply to that context. Badge and Badge Template
+> take `default` and `icon` only.
+
+##### `icon`: a ring around the icon
+
+The bar becomes a ring around the icon, filling clockwise from the top. The card
+keeps its size and its text; only the straight bar goes.
+
+- [`bar_size`](#bar_size) sets the ring's thickness. On a card the ring keeps
+  one outer size and the icon's circle gives way inside it; on a badge the ring
+  goes around the icon, one step thicker than a card's at the same size.
+  `xlarge` adds no row here.
+- [`bar_orientation`](#bar_orientation) `rtl` turns it counter-clockwise.
+- [`bar_color`](#bar_color), [`theme`](#theme) and
+  [`bar_color_mode`](#bar_color_mode) color it: `segment` and `rainbow` show
+  each zone at its place round the ring, `rainbow_full` paints every zone all
+  the way round with a pin at the value.
+- [`watermark`](#watermark) and [`peak_marker`](#peak_marker) are drawn on the
+  ring: a zone as an arc, a point as a tick across it. On a ring, `striped` and
+  `blended` read as `area`, `triangle` and `round` as the same pin.
+- It fills from empty when the card appears and follows each change, like the
+  bar.
+- [`center_zero`](#center_zero), [`bar_stack`](#bar_stack),
+  [`bar_effect`](#bar_effect) and [`bar_segments`](#bar_segments) have no effect
+  here yet.
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.phone_battery
+bar_position: icon
+bar_size: medium
+theme: optimal_when_high
+bar_color_mode: segment
+```
 
 > [!NOTE]
 >

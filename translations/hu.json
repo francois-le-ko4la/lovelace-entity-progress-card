@@ -113,7 +113,6 @@
       "window": "Időablak",
       "rows": "Sorok",
       "line_size": "Vastagság",
-      "mark_defaults": "Alapértelmezések",
       "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
       "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
       "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "Kártya háttér",
+        "icon": "Az ikon körül",
         "below": "A tartalom alatt",
         "bottom": "Lent",
         "compact_below": "Kompakt alul",

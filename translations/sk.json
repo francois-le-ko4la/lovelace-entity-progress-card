@@ -113,7 +113,6 @@
       "window": "Časové okno",
       "rows": "Riadky",
       "line_size": "Hrúbka",
-      "mark_defaults": "Predvolené hodnoty",
       "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
       "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
       "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "Pozadie karty",
+        "icon": "Okolo ikony",
         "below": "Pod obsahom",
         "bottom": "Dole",
         "compact_below": "Kompaktný dole",

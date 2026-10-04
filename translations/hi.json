@@ -113,7 +113,6 @@
       "window": "समय विंडो",
       "rows": "पंक्तियाँ",
       "line_size": "मोटाई",
-      "mark_defaults": "डिफ़ॉल्ट",
       "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
       "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
       "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "कार्ड पृष्ठभूमि",
+        "icon": "आइकन के चारों ओर",
         "below": "सामग्री के नीचे",
         "bottom": "नीचे",
         "compact_below": "कॉम्पैक्ट नीचे",

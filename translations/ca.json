@@ -113,7 +113,6 @@
       "window": "Finestra de temps",
       "rows": "Files",
       "line_size": "Gruix",
-      "mark_defaults": "Valors per defecte",
       "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
       "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
       "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "Fons de la targeta",
+        "icon": "Al voltant de la icona",
         "below": "Sota el contingut",
         "bottom": "A sota",
         "compact_below": "Compacta a sota",

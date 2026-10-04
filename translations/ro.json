@@ -113,7 +113,6 @@
       "window": "Fereastră de timp",
       "rows": "Rânduri",
       "line_size": "Grosime",
-      "mark_defaults": "Valori implicite",
       "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
       "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
       "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "Fundal card",
+        "icon": "În jurul pictogramei",
         "below": "Sub conținut",
         "bottom": "Jos",
         "compact_below": "Compactă dedesubt",

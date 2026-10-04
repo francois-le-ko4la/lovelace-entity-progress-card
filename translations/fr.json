@@ -113,7 +113,6 @@
       "window": "Fenêtre temporelle",
       "rows": "Lignes",
       "line_size": "Épaisseur",
-      "mark_defaults": "Valeurs par défaut",
       "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
       "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
       "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "Arrière-plan de la carte",
+        "icon": "Autour de l'icône",
         "below": "En dessous du contenu",
         "bottom": "En bas",
         "compact_below": "Compacte en dessous",

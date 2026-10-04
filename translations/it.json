@@ -113,7 +113,6 @@
       "window": "Finestra temporale",
       "rows": "Righe",
       "line_size": "Spessore",
-      "mark_defaults": "Valori predefiniti",
       "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
       "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
       "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "Sfondo della scheda",
+        "icon": "Intorno all'icona",
         "below": "Sotto il contenuto",
         "bottom": "In basso",
         "compact_below": "Compatta sotto",

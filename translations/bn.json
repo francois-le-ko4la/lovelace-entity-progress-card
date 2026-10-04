@@ -113,7 +113,6 @@
       "window": "সময় উইন্ডো",
       "rows": "সারি",
       "line_size": "পুরুত্ব",
-      "mark_defaults": "ডিফল্ট মান",
       "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
       "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
       "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "কার্ড পটভূমি",
+        "icon": "আইকনের চারপাশে",
         "below": "বিষয়বস্তুর নিচে",
         "bottom": "নিচের দিকে",
         "compact_below": "কমপ্যাক্ট নিচে",

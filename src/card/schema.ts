@@ -9,6 +9,7 @@ import { HA_CONTEXT, CARD, HIDE_TARGETS, THEME, THEME_KEYS, PERCENT_THEME_KEYS, 
 import { is } from '../utils/common-checks.js';
 import { HassProviderSingleton } from '../utils/hass-provider.js';
 import { NumberFormatter } from './formatting.js';
+import { Factorization, type FactorRule } from './factorization.js';
 
 // A validation path is the sequence of object keys/array indices leading to
 // the value being checked (e.g. ['bar_stack', 'entities', 0, 'entity']).
@@ -78,16 +79,32 @@ const markValue = (mark: WatermarkMark, defaultValue: number): ValueConfig =>
     : is.boolean(mark)
       ? defaultValue
       : (mark as ValueConfig);
-const markAs = (mark: WatermarkMark): 'auto' | 'percent' =>
-  isMarkOverride(mark) ? ((mark.as as 'auto' | 'percent') ?? 'auto') : 'auto';
-const markOpacity = (mark: Mark, fallback: number): number =>
-  isMarkOverride(mark) && is.number(mark.opacity) ? mark.opacity : fallback;
-const markType = (mark: Mark, fallback: string): string =>
-  isMarkOverride(mark) && is.string(mark.type) ? mark.type : fallback;
-const markColor = (mark: Mark, fallback?: string): string | undefined =>
-  (isMarkOverride(mark) ? mark.color : undefined) ?? fallback;
-const markLineSize = (mark: Mark, fallback: string): string =>
-  (isMarkOverride(mark) ? mark.line_size : undefined) ?? fallback;
+// Every field a mark carries at two levels - its own, else its family's - and
+// whether the family's stands in for it. The one table the card resolves a mark
+// by (resolveMarkField) and the editor cascades it by (factory.ts): a field
+// known to one side only was how watermark.as came to be ignored.
+type MarkField = 'type' | 'line_size' | 'opacity' | 'color' | 'as';
+type MarkFieldRules = Partial<Record<MarkField, boolean>>;
+const POINT_MARK: MarkFieldRules = { type: true, line_size: true, opacity: true, color: true };
+const MARK_FIELDS = {
+  watermark: { low: { ...POINT_MARK, as: true }, high: { ...POINT_MARK, as: true } },
+  // The band's type is a zone shape, never the family's point one.
+  peak_marker: {
+    min: POINT_MARK,
+    max: POINT_MARK,
+    average: POINT_MARK,
+    range: { type: false, opacity: true, color: true },
+  },
+} satisfies Record<string, Record<string, MarkFieldRules>>;
+type MarkFamily = keyof typeof MARK_FIELDS;
+
+// What a mark sets itself: an override's field, or a peak mark's bare string,
+// the shorthand for its color.
+const markOwn = (mark: Mark, field: MarkField): unknown => {
+  if (isMarkOverride(mark)) return mark[field];
+  return field === 'color' && is.string(mark) ? mark : undefined;
+};
+
 // A watermark's low/high exist unless turned off; a peak mark exists only once
 // set. `false` is the editor's explicit "hidden" state (types.peakMark()'s
 // boolean branch) - distinct from absent, which is also hidden.
@@ -179,7 +196,11 @@ const BADGE_BAR_SIZES = ['xsmall', 'small', 'medium', 'large'];
 const BAR_ORIENTATIONS = ['ltr', 'rtl', 'up'];
 // 'up' needs .vertical.overlay, which Badge/Badge Template/Feature never get.
 const BAR_ORIENTATIONS_NO_UP = ['ltr', 'rtl'];
-const BAR_POSITIONS = ['default', 'below', 'compact_below', 'top', 'bottom', 'overlay', 'background'];
+const BAR_POSITIONS = ['default', 'below', 'compact_below', 'top', 'bottom', 'overlay', 'background', 'icon'];
+// The bar drawn as a ring around the icon: nothing straight to mark or cut.
+const BAR_AROUND_ICON = 'icon';
+const BADGE_BAR_POSITIONS = ['default', BAR_AROUND_ICON];
+const hasStraightBar = (c: ConfigLike) => c.bar_position !== BAR_AROUND_ICON;
 const FEATURE_BAR_POSITIONS = ['default', 'top', 'bottom'];
 // The positions density: compact leaves standing - not schema truth (the
 // schema accepts all of BAR_POSITIONS and rewrites to 'top' instead, see
@@ -217,7 +238,7 @@ const HAS_EFFECT = {
   barColorMode: hasTheme,
   interpolate: (c: ConfigLike) => hasTheme(c) && (is.nullish(c.bar_color_mode) || c.bar_color_mode === 'auto'),
   // Neither has a single fill fraction for cells to cut into.
-  barSegments: (c: ConfigLike) => c.bar_color_mode !== 'rainbow_full' && !hasStack(c),
+  barSegments: (c: ConfigLike) => c.bar_color_mode !== 'rainbow_full' && !hasStack(c) && hasStraightBar(c),
   // A text column beside the bar: a single_line row's, or the value next to a
   // default-row bar. bar_max_width pins the bar instead.
   barAligned: (c: ConfigLike) => !c.bar_max_width && (c.density === 'single_line' || HAS_EFFECT.barMaxWidth(c)),
@@ -260,6 +281,10 @@ const INERT_OPTIONS: InertOption[] = [
   { key: 'bar_segments', hasEffect: HAS_EFFECT.barSegments, fallback: undefined },
   { key: 'interpolate', hasEffect: HAS_EFFECT.interpolate, fallback: false },
   { key: 'reverse_secondary_info_row', hasEffect: HAS_EFFECT.reverseSecondaryInfoRow, fallback: false },
+  // A ring has no effect, stack or centre of its own (yet).
+  { key: 'center_zero', hasEffect: hasStraightBar, fallback: false },
+  { key: 'bar_effect', hasEffect: hasStraightBar, fallback: undefined },
+  { key: 'bar_stack', hasEffect: hasStraightBar, fallback: undefined },
 ];
 
 // What the editor parks and the audit reports: bar_size too, which the schema
@@ -1348,9 +1373,8 @@ const VALUE_TEXT_FIELDS = [
 // Dropped from Badge and Badge Template alike - deleting a key the source
 // schema doesn't have is a no-op, so one list serves both.
 const BADGE_DELETED_FIELDS = [
-  // A badge has no bar_position/layout/height/icon action/inner badge of its
-  // own, and every key after them only ever acts through one of those.
-  'bar_position',
+  // A badge has no layout/height/icon action/inner badge of its own, and
+  // every key after them only ever acts through one of those.
   'badge_icon',
   'badge_color',
   'force_circular_background',
@@ -1376,6 +1400,8 @@ const BADGE_DELETED_FIELDS = [
 // Narrowed for both badge variants: 'up' needs .vertical.overlay, 'xlarge' a
 // 42px progress-container (past --ha-badge-size), 'shape' a circular bg.
 const badgeOverrides = <T extends readonly string[]>(hideTargets: T) => ({
+  // Its bar inline, or around its icon: no row to put it on top of.
+  bar_position: types.enumsWithDefault(BADGE_BAR_POSITIONS, 'default'),
   bar_orientation: types.enumsWithDefault(BAR_ORIENTATIONS_NO_UP, 'ltr'),
   bar_size: types.enumsWithDefault(BADGE_BAR_SIZES, 'small'),
   hide: types.jinjaOrArrayWithValidatedElem(hideTargets),
@@ -1802,18 +1828,7 @@ const YamlSchemaFactory = {
 export type { Infer };
 export type { ValueConfig };
 export { entityOf, attributeOf, jinjaOf };
-export {
-  markInner,
-  markShown,
-  markValue,
-  markAs,
-  markType,
-  markOpacity,
-  markColor,
-  markLineSize,
-  peakMarkShown,
-  isMarkOverride,
-};
+export { markInner, markShown, markValue, MARK_FIELDS, type MarkField, type MarkFamily, peakMarkShown, isMarkOverride };
 export { statusLabelObj, rewrapStatusLabel };
 export { THEME_ALIASES, rawThemeRange };
 // Each YamlSchemaFactory getter rebuilds its whole schema on access - cached
@@ -1844,6 +1859,7 @@ export { schemaOptions, type SchemaVariant };
 // Only what the card runtime enumerates for its own CSS classes/shape lists
 // (core.ts). The editor reads its dropdown lists off the schema itself, via
 // struct().fieldOptions - see SELECT_TYPES.
+export { BAR_AROUND_ICON };
 export { BAR_SIZES, BAR_POSITIONS, MARK_TYPES, MARK_ZONE_TYPES, DENSITY_COMPACT_BAR_POSITIONS, HAS_EFFECT };
 export { densityOverrides, OPTIONS_WITHOUT_EFFECT };
 export { ICON_ANIMATIONS, OWN_TRIGGER_ANIMATIONS };
@@ -1899,5 +1915,74 @@ const SCHEMA_DEFAULTS = {
   ) as Record<string, string>,
 };
 
+// ─── Mark factorisation ─────────────────────────────────────────────────────
+// Each family read and written by the one mechanism (factorization.ts), its
+// rules taken from MARK_FIELDS - the card resolves with it, the editor settles.
+
+type Rec = Record<string, unknown>;
+
+// A watermark side in object form, the overrides merged in: a bare threshold
+// moves under `value`, `true` takes the side's default.
+const rewrapMark = (mark: unknown, patch: Rec, defaultVal: number): unknown => {
+  const value = is.boolean(mark) ? defaultVal : mark;
+  const merged: Rec = { ...(isMarkOverride(mark as WatermarkMark) ? (mark as Rec) : { value }), ...patch };
+  return Object.fromEntries(Object.entries(merged).filter(([, v]) => v !== undefined));
+};
+
+// A peak mark's shortest shape: color alone stays the string shorthand
+// (types.peakMark), nothing left goes back to bare `true`.
+const peakMarkObj = (mark: unknown): Rec => (is.plainObject(mark) ? mark : is.string(mark) ? { color: mark } : {});
+const rewrapPeakMark = (mark: unknown, patch: Rec): unknown => {
+  const merged: Rec = { ...peakMarkObj(mark), ...patch };
+  const keys = Object.keys(merged).filter((k) => merged[k] !== undefined);
+  if (keys.length === 0) return true;
+  if (keys.length === 1 && keys[0] === 'color') return merged.color;
+  return Object.fromEntries(keys.map((k) => [k, merged[k]]));
+};
+
+const MARK_FIELD_KEYS = new Set<string>(['type', 'line_size', 'opacity', 'color', 'as']);
+
+const markFamily = (
+  family: MarkFamily,
+  write: (id: string, item: unknown, patch: Rec) => unknown,
+  votes: (item: unknown) => boolean,
+) => {
+  const ids = Object.keys(MARK_FIELDS[family]);
+  const familyOf = (config: Rec): Rec => (is.plainObject(config[family]) ? config[family] : {});
+  return new Factorization({
+    shared: familyOf,
+    items: (config) => Object.fromEntries(ids.map((id) => [id, familyOf(config)[id]])),
+    rebuild: (config, shared, items) => ({
+      ...config,
+      [family]: { ...shared, ...Object.fromEntries(Object.entries(items).filter(([, item]) => item !== undefined)) },
+    }),
+    own: (item, key) => markOwn(item as Mark, key as MarkField),
+    write,
+    rule: (id, key): FactorRule | null => {
+      const rules = (MARK_FIELDS[family] as Record<string, MarkFieldRules>)[id];
+      if (!rules || !(key in rules)) return null;
+      return rules[key as MarkField] ? 'inherits' : 'own';
+    },
+    votes: (config, id) => votes(familyOf(config)[id]),
+    isKey: (key) => MARK_FIELD_KEYS.has(key),
+  });
+};
+
+const MARK_FACTORIZATION: Record<MarkFamily, Factorization> = {
+  // A side is shown unless `false`; a peak mark only once set.
+  watermark: markFamily(
+    'watermark',
+    (id, item, patch) =>
+      rewrapMark(item, patch, id === 'low' ? SCHEMA_DEFAULTS.watermark.low : SCHEMA_DEFAULTS.watermark.high),
+    (item) => item !== false,
+  ),
+  peak_marker: markFamily(
+    'peak_marker',
+    (_id, item, patch) => rewrapPeakMark(item, patch),
+    (item) => peakMarkShown(item as PeakMark),
+  ),
+};
+
 export { SCHEMA_DEFAULTS };
 export { PEAK_RANGE_TYPE_DEFAULT };
+export { MARK_FACTORIZATION };

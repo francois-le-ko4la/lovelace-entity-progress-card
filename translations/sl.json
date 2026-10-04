@@ -113,7 +113,6 @@
       "window": "Časovno okno",
       "rows": "Vrstice",
       "line_size": "Debelina",
-      "mark_defaults": "Privzete vrednosti",
       "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
       "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
       "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "Ozadje kartice",
+        "icon": "Okoli ikone",
         "below": "Pod vsebino",
         "bottom": "Spodaj",
         "compact_below": "Kompaktna spodaj",

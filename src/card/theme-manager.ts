@@ -291,6 +291,8 @@ class ThemeManager {
   // reversed for the negative arm. `valueRange`: the bar's own min/max, not
   // the theme's - projects a raw-value theme's zone bounds onto the same
   // 0-100% scale fillPercent uses (else compared as if already %, #129).
+  // `isRing`: bar_position: icon - every zone at its place round the circle,
+  // the track covering what isn't filled yet (styles.ts).
   buildGradient(
     fillPercent: number,
     mode: string,
@@ -300,12 +302,14 @@ class ThemeManager {
       window = [0, 100],
       valueRange = null,
       isSegmented = false,
+      isRing = false,
     }: {
       defaultColor?: string | null;
       isVertical?: boolean;
       window?: [number, number];
       valueRange?: { min: number; max: number } | null;
       isSegmented?: boolean;
+      isRing?: boolean;
     } = {},
   ) {
     const currentStyle = this.#currentStyle;
@@ -334,7 +338,7 @@ class ThemeManager {
     // skips the guard below. The window/toLocal/style computation right after
     // still applies to it (same center_zero per-arm windowing as segment/
     // rainbow).
-    if (mode !== 'rainbow_full' && !(fillPercent > 0)) return null;
+    if (mode !== 'rainbow_full' && !isRing && !(fillPercent > 0)) return null;
 
     const [windowStart, windowEnd] = window;
     // A degenerate window (center_zero_value pinned exactly to min/max, so
@@ -368,6 +372,13 @@ class ThemeManager {
 
     // style is already windowed to this arm's own slice, so this works
     // identically for a single-arm bar and each of center_zero's two arms.
+    if (isRing && style.length > 0) {
+      const stops =
+        mode === 'segment'
+          ? ThemeManager.#fullSegmentStops(style, defaultColor)
+          : ThemeManager.#fullRainbowStops(style, defaultColor);
+      return `conic-gradient(${stops.join(', ')})`;
+    }
     if (mode === 'rainbow_full') {
       return ThemeManager.#buildFullRainbowGradient(style, defaultColor, direction);
     }
@@ -450,17 +461,29 @@ class ThemeManager {
   // with segment/rainbow), so this needs no window/direction logic of its own.
   static #buildFullRainbowGradient(style: ThemeZone[], defaultColor: string | null, direction: string): string | null {
     if (style.length === 0) return null;
+    return `linear-gradient(${direction}, ${ThemeManager.#fullRainbowStops(style, defaultColor).join(', ')})`;
+  }
 
+  static #fullRainbowStops(style: ThemeZone[], defaultColor: string | null): string[] {
     const col = (level: ThemeZone) => ThemeManager.#zoneColor(level, defaultColor);
-    const first = col(style[0]);
-    const last = col(style[style.length - 1]);
-    const stops = [`${first} 0%`];
+    const stops = [`${col(style[0])} 0%`];
     style.forEach((level) => {
       const mid = ((level.min ?? 0) + (level.max ?? 100)) / 2;
       stops.push(`${col(level)} ${mid.toFixed(2)}%`);
     });
-    stops.push(`${last} 100%`);
-    return `linear-gradient(${direction}, ${stops.join(', ')})`;
+    stops.push(`${col(style[style.length - 1])} 100%`);
+    return stops;
+  }
+
+  // segment's hard edges, over the whole track: the first zone reaches back
+  // to 0 and the last one on to 100, so no gap is left uncoloured.
+  static #fullSegmentStops(style: ThemeZone[], defaultColor: string | null): string[] {
+    const col = (level: ThemeZone) => ThemeManager.#zoneColor(level, defaultColor);
+    return style.flatMap((level, i) => {
+      const start = i === 0 ? 0 : (level.min ?? 0);
+      const end = i === style.length - 1 ? 100 : (level.max ?? 100);
+      return [`${col(level)} ${start.toFixed(2)}%`, `${col(level)} ${end.toFixed(2)}%`];
+    });
   }
 }
 

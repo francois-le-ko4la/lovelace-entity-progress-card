@@ -13,14 +13,12 @@ import {
   markShown,
   peakMarkShown,
   markValue,
-  markAs,
-  markType,
-  markOpacity,
-  markColor,
-  markLineSize,
+  MARK_FACTORIZATION,
+  type MarkField,
   SCHEMA_DEFAULTS,
   PEAK_RANGE_TYPE_DEFAULT,
   DENSITY_COMPACT_BAR_POSITIONS,
+  BAR_AROUND_ICON,
   HAS_EFFECT,
   OWN_TRIGGER_ANIMATIONS,
   type WatermarkMark,
@@ -49,6 +47,7 @@ import {
 // types.watermarkMark's own shape (see WatermarkMark in schema.ts) since the
 // getters below immediately resolve them via markValue/markShown/etc.
 type WatermarkType = 'blended' | 'area' | 'striped' | 'triangle' | 'round' | 'line';
+type WatermarkSide = 'low' | 'high';
 type WatermarkConfig = {
   low: WatermarkMark;
   high: WatermarkMark;
@@ -59,6 +58,8 @@ type WatermarkConfig = {
   color?: string;
   type?: WatermarkType;
   line_size: string;
+  // Shared by both sides unless one says otherwise (MARK_FIELDS).
+  as?: 'auto' | 'percent';
 };
 
 // What ViewCore/ViewBase's `watermark` getter resolves each side to -
@@ -276,6 +277,11 @@ class ViewCore {
 
   // Mirrors HACore#_buildSegmentCells's own active check - both need to
   // agree on when bar_segments actually renders real cells.
+  // bar_position: icon - the bar is the ring around the icon.
+  get isRing(): boolean {
+    return this.config.bar_position === BAR_AROUND_ICON;
+  }
+
   get isSegmented(): boolean {
     return is.number(this.config.bar_segments) && this.config.bar_segments >= 2;
   }
@@ -426,7 +432,8 @@ class ViewCore {
         ? 1
         : layout.grid.grid_min_rows;
     const needsExtraRow =
-      this.config.bar_size === CARD.style.bar.sizeOptions.xlarge ||
+      // Around the icon, xlarge is a thicker ring, not a taller bar row.
+      (this.config.bar_size === CARD.style.bar.sizeOptions.xlarge && !this.isRing) ||
       (this.config.layout === 'horizontal' && this.config.bar_position === 'below') ||
       (this.config.layout === 'vertical' &&
         ['default', 'below'].includes(this.config.bar_position ?? '') &&
@@ -565,27 +572,29 @@ class ViewCore {
     jinjaHigh: number | null;
     lowValue: unknown;
     highValue: unknown;
-    toPos: (value: unknown, mark: WatermarkMark) => number;
+    toPos: (value: unknown, side: WatermarkSide) => number;
   }): ResolvedWatermark {
     // type/opacity carry no schema default (see WatermarkConfig) - applied
     // here from SCHEMA_DEFAULTS.watermark instead.
     const globalType = watermark.type ?? SCHEMA_DEFAULTS.watermark.type;
     const globalOpacity = watermark.opacity ?? SCHEMA_DEFAULTS.watermark.opacity;
+    const field = (side: WatermarkSide, name: MarkField) =>
+      MARK_FACTORIZATION.watermark.resolve({ watermark }, side, name);
     const resolveMark = (
-      mark: WatermarkMark,
+      side: WatermarkSide,
       jinjaOverride: number | null,
       resolvedValue: unknown,
     ): ResolvedWatermarkMark => ({
-      shown: markShown(mark),
-      value: toPos(jinjaOverride ?? resolvedValue, mark),
-      type: markType(mark, globalType) as WatermarkType,
-      opacity: markOpacity(mark, globalOpacity),
-      color: ThemeManager.adaptColor(markColor(mark, watermark.color) ?? null),
-      line_size: markLineSize(mark, watermark.line_size),
+      shown: markShown(watermark[side]),
+      value: toPos(jinjaOverride ?? resolvedValue, side),
+      type: (field(side, 'type') ?? globalType) as WatermarkType,
+      opacity: (field(side, 'opacity') ?? globalOpacity) as number,
+      color: ThemeManager.adaptColor((field(side, 'color') as string | undefined) ?? null),
+      line_size: (field(side, 'line_size') ?? watermark.line_size) as string,
     });
     return {
-      low: resolveMark(watermark.low, jinjaLow, lowValue),
-      high: resolveMark(watermark.high, jinjaHigh, highValue),
+      low: resolveMark('low', jinjaLow, lowValue),
+      high: resolveMark('high', jinjaHigh, highValue),
       opacity: globalOpacity,
       type: globalType as WatermarkType,
       line_size: watermark.line_size,
@@ -822,6 +831,7 @@ class ViewCore {
       {
         isVertical: this.isVerticalBar,
         isSegmented: this.isSegmented,
+        isRing: this.isRing,
       },
     );
   }
@@ -1345,6 +1355,7 @@ class ViewBase extends ViewCore {
         isVertical: this.isVerticalBar,
         valueRange: { min: this.#percentHelper.min, max: this.#percentHelper.max },
         isSegmented: this.isSegmented,
+        isRing: this.isRing,
       },
     );
   }
@@ -1449,28 +1460,28 @@ class ViewBase extends ViewCore {
   } | null {
     if (!this.#peakMarker || !is.plainObject(this.config.peak_marker)) return null;
     const config = this.config.peak_marker;
-    const globalColor = config.color as string | undefined;
-    // Same per-mark cascade as _resolveWatermark above, through the same
-    // helpers - a peak mark differs only in existing solely once set, and in
-    // taking a bare string as a color shorthand.
-    const resolve = (mark: PeakMark, value: number): ResolvedPeakMark => ({
-      shown: peakMarkShown(mark),
+    // The same table and resolver as the watermark above (MARK_FIELDS): a
+    // peak mark differs only in existing solely once set.
+    const field = (key: string, name: MarkField) =>
+      MARK_FACTORIZATION.peak_marker.resolve({ peak_marker: config }, key, name);
+    const color = (key: string) => ThemeManager.adaptColor((field(key, 'color') as string | undefined) ?? null);
+    const resolve = (key: 'min' | 'max' | 'average', value: number): ResolvedPeakMark => ({
+      shown: peakMarkShown(config[key] as PeakMark),
       value,
-      type: markType(mark, config.type as string) as PeakMarkType,
-      opacity: markOpacity(mark, config.opacity as number),
-      line_size: markLineSize(mark, config.line_size as string),
-      color: ThemeManager.adaptColor(markColor(mark, is.string(mark) ? mark : globalColor) ?? null),
+      type: field(key, 'type') as PeakMarkType,
+      opacity: field(key, 'opacity') as number,
+      line_size: field(key, 'line_size') as string,
+      color: color(key),
     });
-    const range = config.range as PeakMark;
     return {
-      min: resolve(config.min as PeakMark, this.#peakMarker.min),
-      max: resolve(config.max as PeakMark, this.#peakMarker.max),
-      average: resolve(config.average as PeakMark, this.#peakMarker.average),
+      min: resolve('min', this.#peakMarker.min),
+      max: resolve('max', this.#peakMarker.max),
+      average: resolve('average', this.#peakMarker.average),
       range: {
-        shown: peakMarkShown(range),
-        type: markType(range, PEAK_RANGE_TYPE_DEFAULT) as PeakZoneType,
-        opacity: markOpacity(range, config.opacity as number),
-        color: ThemeManager.adaptColor(markColor(range, is.string(range) ? range : globalColor) ?? null),
+        shown: peakMarkShown(config.range as PeakMark),
+        type: (field('range', 'type') ?? PEAK_RANGE_TYPE_DEFAULT) as PeakZoneType,
+        opacity: field('range', 'opacity') as number,
+        color: color('range'),
       },
     };
   }
@@ -1535,10 +1546,11 @@ class ViewBase extends ViewCore {
     // already a position), but under center_zero a position still needs the
     // same 50 + value/2 recenter calcWatermark itself applies - same bug as
     // ViewCore's own watermark getter, fixed there for the same reason.
-    const toPos = (v: unknown, mark: WatermarkMark) => {
+    const toPos = (v: unknown, side: WatermarkSide) => {
       const raw = v as number | { current: number } | null | undefined;
       if (isTimer) return is.number(raw) ? raw : (raw?.current ?? 0);
-      if (markAs(mark) !== 'percent') return this.#percentHelper.calcWatermark(raw);
+      const as = MARK_FACTORIZATION.watermark.resolve({ watermark }, side, 'as');
+      if (as !== 'percent') return this.#percentHelper.calcWatermark(raw);
       const value = is.number(raw) ? raw : (raw?.current ?? 0);
       return this.#percentHelper.isCenterZero ? 50 + value / 2 : value;
     };

@@ -113,7 +113,6 @@
       "window": "時間ウィンドウ",
       "rows": "行数",
       "line_size": "太さ",
-      "mark_defaults": "既定値",
       "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
       "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
       "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "カードの背景",
+        "icon": "アイコンの周り",
         "below": "コンテンツの下",
         "bottom": "下部",
         "compact_below": "下にコンパクト",

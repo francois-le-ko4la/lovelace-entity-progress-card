@@ -100,6 +100,24 @@ const htmlStructure = {
   elements: {
     icon: { element: 'div', class: 'icon' },
     shape: { element: 'shape', class: 'shape' },
+    // rainbow_full's value pill on the ring (bar_position: icon).
+    ringMark: { element: 'div', class: 'ring-mark', extraAttr: ARIA_HIDDEN },
+    // What a screen reader reads in place of the bar: the ring sits in the
+    // icon section, which is aria-hidden. Seen by nobody else (styles.ts).
+    ringProgress: {
+      element: 'div',
+      class: 'ring-progress',
+      extraAttr: { role: 'progressbar', 'aria-valuemin': 0, 'aria-valuemax': 100, 'aria-valuenow': 0 },
+    },
+    // The bar's marks, one layer each round the ring: same shown/wm-* classes.
+    ringMarks: {
+      low: { element: 'div', class: 'ring-low', extraAttr: ARIA_HIDDEN },
+      high: { element: 'div', class: 'ring-high', extraAttr: ARIA_HIDDEN },
+      range: { element: 'div', class: 'ring-range', extraAttr: ARIA_HIDDEN },
+      min: { element: 'div', class: 'ring-min', extraAttr: ARIA_HIDDEN },
+      max: { element: 'div', class: 'ring-max', extraAttr: ARIA_HIDDEN },
+      avg: { element: 'div', class: 'ring-avg', extraAttr: ARIA_HIDDEN },
+    },
     ellipsisWrapper: { element: 'div', class: 'ellipsis-wrapper' },
     nameContent: { element: 'div', class: 'name' },
     nameValue: { element: 'span', class: 'name-value' },
@@ -373,6 +391,10 @@ const style = {
     // density: single_line - set on .content-section itself by
     // StructureElements.createContent, not on the card.
     singleLineRow: 'single-line-row',
+    // bar_position: icon - not 'icon' itself, the icon element's own class.
+    barAroundIcon: 'bar-around-icon',
+    // Registered as a <number> (bootstrap.ts), so the ring's fill animates.
+    ringValue: { var: '--entity-progress-ring-value' },
     // bar_aligned's shared text column (aligned-bars.ts).
     alignWidth: { var: '--current-align-width' },
     // Lifts the text's own floor while aligned: the column is measured instead.

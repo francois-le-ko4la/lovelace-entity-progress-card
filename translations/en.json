@@ -113,7 +113,6 @@
       "window": "Time window",
       "rows": "Rows",
       "line_size": "Thickness",
-      "mark_defaults": "Defaults",
       "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
       "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
       "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "Full card background",
+        "icon": "Around the icon",
         "below": "Below content",
         "bottom": "On bottom",
         "compact_below": "Compact below",

@@ -113,7 +113,6 @@
       "window": "النافذة الزمنية",
       "rows": "الصفوف",
       "line_size": "السُمك",
-      "mark_defaults": "الإعدادات الافتراضية",
       "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
       "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
       "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "خلفية البطاقة",
+        "icon": "حول الأيقونة",
         "below": "تحت المحتوى",
         "bottom": "في الأسفل",
         "compact_below": "مضغوط في الأسفل",

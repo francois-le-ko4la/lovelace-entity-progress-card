@@ -65,6 +65,7 @@ const SELECT_TYPES: Record<string, string | [group: string, keys: readonly strin
   bar_position_no_compact_below: ['bar_position', BAR_POSITIONS.filter((position) => position !== 'compact_below')],
   bar_position_density_compact: ['bar_position', DENSITY_COMPACT_BAR_POSITIONS],
   bar_position_feature: ['bar_position', from('feature', 'bar_position')],
+  bar_position_badge: ['bar_position', from('badge', 'bar_position')],
   bar_color_mode: ['bar_color_mode', from('card', 'bar_color_mode')],
   bar_scale: ['bar_scale', from('card', 'bar_scale')],
   icon_animation: ['icon_animation', from('card', 'icon_animation')],

@@ -113,7 +113,6 @@
       "window": "Tijdvenster",
       "rows": "Rijen",
       "line_size": "Dikte",
-      "mark_defaults": "Standaardwaarden",
       "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
       "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
       "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "Kaartachtergrond",
+        "icon": "Rond het pictogram",
         "below": "Onder de inhoud",
         "bottom": "Onderaan",
         "compact_below": "Compact onderaan",

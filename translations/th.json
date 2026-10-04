@@ -113,7 +113,6 @@
       "window": "ช่วงเวลา",
       "rows": "จำนวนแถว",
       "line_size": "ความหนา",
-      "mark_defaults": "ค่าเริ่มต้น",
       "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
       "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
       "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "พื้นหลังการ์ด",
+        "icon": "รอบไอคอน",
         "below": "ใต้เนื้อหา",
         "bottom": "ด้านล่าง",
         "compact_below": "กะทัดรัดด้านล่าง",

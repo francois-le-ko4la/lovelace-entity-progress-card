@@ -113,7 +113,6 @@
       "window": "Laika logs",
       "rows": "Rindas",
       "line_size": "Biezums",
-      "mark_defaults": "Noklusējuma vērtības",
       "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
       "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
       "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "Kartes fons",
+        "icon": "Ap ikonu",
         "below": "Zem satura",
         "bottom": "Apakšā",
         "compact_below": "Kompakta apakšā",

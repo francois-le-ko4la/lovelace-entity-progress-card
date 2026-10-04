@@ -73,8 +73,24 @@ function announce(): void {
   }
 }
 
+// A custom property only interpolates once its type is known, and @property in
+// a shadow root is ignored: the ring's value is registered here, page-wide.
+function registerRingValue(): void {
+  try {
+    globalThis.CSS?.registerProperty?.({
+      name: CARD.style.dynamic.ringValue.var,
+      syntax: '<number>',
+      inherits: true,
+      initialValue: '0',
+    });
+  } catch {
+    // Another copy of the card on this page registered it first.
+  }
+}
+
 function bootstrap(): void {
   registerComponents();
+  registerRingValue();
   installDiagnostic({ audit, cards, inspect });
   announce();
 

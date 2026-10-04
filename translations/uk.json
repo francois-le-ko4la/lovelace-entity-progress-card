@@ -113,7 +113,6 @@
       "window": "Часове вікно",
       "rows": "Рядки",
       "line_size": "Товщина",
-      "mark_defaults": "Значення за замовчуванням",
       "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
       "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
       "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "Фон картки",
+        "icon": "Навколо значка",
         "below": "Під вмістом",
         "bottom": "Знизу",
         "compact_below": "Компактна знизу",

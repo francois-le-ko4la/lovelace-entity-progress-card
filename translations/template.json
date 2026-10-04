@@ -113,7 +113,6 @@
       "window": "",
       "rows": "",
       "line_size": "",
-      "mark_defaults": "",
       "icon": "",
       "name": "",
       "theme": "",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "",
+        "icon": "",
         "below": "",
         "bottom": "",
         "compact_below": "",

@@ -113,7 +113,6 @@
       "window": "Ajaaken",
       "rows": "Read",
       "line_size": "Paksus",
-      "mark_defaults": "Vaikeväärtused",
       "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
       "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
       "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "Kaardi taust",
+        "icon": "Ikooni ümber",
         "below": "Sisu all",
         "bottom": "All",
         "compact_below": "Kompaktne all",

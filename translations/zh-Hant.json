@@ -113,7 +113,6 @@
       "window": "時間窗口",
       "rows": "行數",
       "line_size": "粗細",
-      "mark_defaults": "預設值",
       "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
       "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
       "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "卡片背景",
+        "icon": "圖示周圍",
         "below": "內容下方",
         "bottom": "下方",
         "compact_below": "下方精簡",

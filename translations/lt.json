@@ -113,7 +113,6 @@
       "window": "Laiko langas",
       "rows": "Eilutės",
       "line_size": "Storis",
-      "mark_defaults": "Numatytosios reikšmės",
       "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
       "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
       "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "Kortelės fonas",
+        "icon": "Aplink piktogramą",
         "below": "Po turiniu",
         "bottom": "Apačioje",
         "compact_below": "Kompaktiška apačioje",

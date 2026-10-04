@@ -113,7 +113,6 @@
       "window": "Временное окно",
       "rows": "Строки",
       "line_size": "Толщина",
-      "mark_defaults": "Значения по умолчанию",
       "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
       "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
       "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "Фон карточки",
+        "icon": "Вокруг значка",
         "below": "Под содержимым",
         "bottom": "Внизу",
         "compact_below": "Компактная снизу",

@@ -113,7 +113,6 @@
       "window": "Okno czasowe",
       "rows": "Wiersze",
       "line_size": "Grubość",
-      "mark_defaults": "Wartości domyślne",
       "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
       "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
       "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
@@ -180,6 +179,7 @@
       },
       "bar_position": {
         "background": "Tło karty",
+        "icon": "Wokół ikony",
         "below": "Pod zawartością",
         "bottom": "Na dole",
         "compact_below": "Kompaktowy poniżej",

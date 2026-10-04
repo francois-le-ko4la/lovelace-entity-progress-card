@@ -36,7 +36,12 @@ import {
   type SchemaVariant,
   type ValueConfig,
   type WatermarkMark,
+  MARK_FIELDS,
+  MARK_FACTORIZATION,
+  type MarkField,
+  type MarkFamily,
 } from '../card/schema.js';
+import type { Factorization } from '../card/factorization.js';
 import { resolveCenterZero } from '../card/config-helpers.js';
 
 // hide's chips in the order the editor shows them; the set itself comes from
@@ -474,11 +479,11 @@ const nestedValueField = (
   };
 };
 
-// Every attribute a mark can override on its parent. Not all of them exist on
-// both families - each adapter declares its own list below - but the machinery
-// is the same for all: read own, fall back to the parent's, factorise back up
-// once every mark agrees.
-type CascadeField = 'type' | 'opacity' | 'color' | 'as' | 'line_size';
+// Every attribute a mark can override on its parent: which ones each mark has,
+// and whether its family's stands in for it, is MARK_FIELDS (schema.ts) - the
+// table the card resolves marks by too. Read own, fall back to the parent's,
+// factorise back up once every mark reading it agrees.
+type CascadeField = MarkField;
 
 // One cascading attribute: which input builds it, and which label it borrows.
 // `labelKey` defaults to the field's own name, which is also its translation
@@ -497,15 +502,16 @@ type CascadeSpec = {
   // has one (a thickness means nothing on a mark that isn't drawn as a line),
   // and it needs the adapter to answer for the right mark - hence a factory,
   // not a plain predicate.
-  gate?: <K extends string>(adapter: OverrideCascadeAdapter<K>, key: K | null) => (config: LovelaceConfig) => boolean;
+  gate?: <K extends string>(adapter: OverrideCascadeAdapter<K>, key: K) => (config: LovelaceConfig) => boolean;
   // Which half of a mark's block the field belongs to: 'value' is how its
   // threshold is read and sits with the threshold itself, 'look' is how it is
   // drawn. Both builders render one section at a time.
   section?: 'value' | 'look';
-  // False where the family level can't stand in for this mark: peak_marker's
-  // own type is a point shape, which the band can never be, so it falls back
-  // to its own default instead of inheriting a nonsense value.
-  inherits?: boolean;
+  // The marks this input is offered to, when not all of them: peak_marker's
+  // band picks a zone shape, its points a point one - same field, two lists.
+  keys?: readonly string[];
+  // What it shows unset, when not the family's default (the band's type).
+  fallback?: unknown;
 };
 
 // Everything that differs between watermark's low/high sides and peak_marker's
@@ -513,8 +519,8 @@ type CascadeSpec = {
 type OverrideCascadeAdapter<K extends string> = {
   parentKey: string;
   keys: readonly K[];
-  extractOwn: (rawMark: unknown, field: CascadeField) => unknown;
-  rewrap: (key: K, rawMark: unknown, patch: Record<string, unknown>) => unknown;
+  // Reads and writes the family: MARK_FACTORIZATION (schema.ts), the card's.
+  factorization: Factorization;
   defaults: Record<string, unknown>;
   // A hidden mark has no opinion: peak_marker's three are shown one at a time
   // as often as not, and counting an absent one as "disagrees" kept every
@@ -529,84 +535,31 @@ type OverrideCascadeAdapter<K extends string> = {
   cascade: readonly CascadeSpec[];
 };
 
-const ownValue = <K extends string>(
-  adapter: OverrideCascadeAdapter<K>,
-  config: LovelaceConfig,
-  key: K,
-  field: CascadeField,
-) => adapter.extractOwn(config[adapter.parentKey]?.[key], field);
+// The fields a mark carries, each with whether its family's stands in for it.
+const rulesOf = <K extends string>(adapter: OverrideCascadeAdapter<K>, key: K): Partial<Record<MarkField, boolean>> =>
+  (MARK_FIELDS[adapter.parentKey as MarkFamily] as Record<string, Partial<Record<MarkField, boolean>>>)[key] ?? {};
+const inheritsField = <K extends string>(adapter: OverrideCascadeAdapter<K>, key: K, field: CascadeField) =>
+  rulesOf(adapter, key)[field] === true;
 
-// The mark's own override, else the family's global value - the runtime's own
-// fallback (schema.ts's markType/markOpacity/markColor).
+// The mark's own override, else the family's when it inherits it - the very
+// resolve the card draws the mark with.
 const effectiveValue = <K extends string>(
   adapter: OverrideCascadeAdapter<K>,
   config: LovelaceConfig,
   key: K,
   field: CascadeField,
-) => ownValue(adapter, config, key, field) ?? config[adapter.parentKey]?.[field];
-
-// The marks the cascade answers to: a hidden one is left exactly as it is,
-// both as a voter and as a value to rewrite (`false` through rewrap would
-// come back shown).
-const activeKeys = <K extends string>(adapter: OverrideCascadeAdapter<K>, config: LovelaceConfig): K[] =>
-  adapter.keys.filter((k) => adapter.isActive(config, k));
-
-// Once every shown key explicitly overrides `field` away from the shared
-// global value, nothing reads the global one anymore - dropped so the YAML
-// doesn't carry a dead default around.
-const pruneGlobalOverride = <K extends string>(
-  adapter: OverrideCascadeAdapter<K>,
-  config: LovelaceConfig,
-  field: CascadeField,
-): LovelaceConfig => {
-  const { parentKey } = adapter;
-  const globalVal = config[parentKey]?.[field];
-  if (globalVal === undefined) return config;
-  const active = activeKeys(adapter, config);
-  const diverges = (k: K) => {
-    const own = ownValue(adapter, config, k, field);
-    return own !== undefined && own !== globalVal;
-  };
-  if (active.length === 0 || active.some((k) => !diverges(k))) return config;
-  return { ...config, [parentKey]: { ...config[parentKey], [field]: undefined } };
-};
-
-// Opposite direction: once two or more shown keys explicitly agree on the same
-// value, it moves to the global field and each of them drops its own (the
-// adapter's own `rewrap` cleans the now-undefined key out). A single shown
-// mark keeps its value where it is - nothing to share it with yet, and
-// hoisting it would silently pre-color the next mark switched on.
-const factorizeGlobalOverride = <K extends string>(
-  adapter: OverrideCascadeAdapter<K>,
-  config: LovelaceConfig,
-  field: CascadeField,
-): LovelaceConfig => {
-  const { parentKey, rewrap } = adapter;
-  const active = activeKeys(adapter, config);
-  if (active.length < 2) return config;
-  const values = active.map((k) => ownValue(adapter, config, k, field));
-  const [shared] = values;
-  if (shared === undefined || values.some((v) => v !== shared)) return config;
-  const patched = Object.fromEntries(active.map((k) => [k, rewrap(k, config[parentKey]?.[k], { [field]: undefined })]));
-  return { ...config, [parentKey]: { ...config[parentKey], ...patched, [field]: shared } };
-};
+) => adapter.factorization.resolve(config, key, field);
 
 // A greyed hint only helps if it is what the field would actually use: the
 // value inherited from just above, not the schema's own default two levels up.
 const inheritedHint = (value: unknown): string => (value === undefined ? '' : String(value));
 
-// What a mark is drawn as, its own override and the family's global value
-// resolved in that order. `null` asks the family: its own type counts, not just
-// its shown marks - with none shown the family default is exactly what the
-// thickness applies to, and hiding the field there left a hole in the defaults.
-const drawsLine = <K extends string>(adapter: OverrideCascadeAdapter<K>, key: K | null) => {
-  const typeOf = (c: LovelaceConfig, k: K) => effectiveValue(adapter, c, k, 'type') ?? adapter.defaults.type;
-  const familyType = (c: LovelaceConfig) => c[adapter.parentKey]?.type ?? adapter.defaults.type;
-  return (c: LovelaceConfig) =>
-    key === null
-      ? familyType(c) === 'line' || activeKeys(adapter, c).some((k) => typeOf(c, k) === 'line')
-      : typeOf(c, key) === 'line';
-};
+// Whether a mark is drawn as a line - the one place its thickness means
+// anything - by the type it really uses, inherited or not.
+const drawsLine =
+  <K extends string>(adapter: OverrideCascadeAdapter<K>, key: K) =>
+  (c: LovelaceConfig) =>
+    (effectiveValue(adapter, c, key, 'type') ?? adapter.defaults.type) === 'line';
 
 // The look (or value) fields a single mark can override, each cascading to the
 // parent's own global value - identical for watermark and peak_marker.
@@ -624,9 +577,11 @@ const overrideCascadeFields = <K extends string>(
     placeholder = true,
     showsDefault,
     gate,
-    inherits = true,
+    fallback,
   }: CascadeSpec) => {
     const extra = gate?.(adapter, key);
+    const inherits = inheritsField(adapter, key, field);
+    const unset = fallback ?? adapter.defaults[field];
     const inherited = (c: LovelaceConfig) => (inherits ? c[adapter.parentKey]?.[field] : undefined);
     return fieldDef(`${adapter.parentKey}.${key}_${field}`, {
       ...fieldOpts,
@@ -639,26 +594,20 @@ const overrideCascadeFields = <K extends string>(
       // Shows what this mark inherits while it overrides nothing - the global
       // value if the family has one, the schema default otherwise.
       ...(placeholder && {
-        placeholder: (c: LovelaceConfig) => inheritedHint(inherited(c) ?? adapter.defaults[field]),
+        placeholder: (c: LovelaceConfig) => inheritedHint(inherited(c) ?? unset),
       }),
       resolveVirtual: (c: LovelaceConfig) =>
-        (inherits ? effectiveValue(adapter, c, key, field) : ownValue(adapter, c, key, field)) ??
-        (showsDefault ? adapter.defaults[field] : undefined),
-      onVirtualChange: (value: unknown, config: LovelaceConfig) => {
-        const patched = {
-          ...config,
-          [adapter.parentKey]: {
-            ...config[adapter.parentKey],
-            [key]: adapter.rewrap(key, config[adapter.parentKey]?.[key], { [field]: value }),
-          },
-        };
-        return pruneGlobalOverride(adapter, factorizeGlobalOverride(adapter, patched, field), field);
-      },
+        effectiveValue(adapter, c, key, field) ?? (showsDefault ? unset : undefined),
+      onVirtualChange: (value: unknown, config: LovelaceConfig) =>
+        adapter.factorization.setLocal(config, key, field, value) as LovelaceConfig,
     });
   };
+  // Offered where the table gives the mark the field, and the input is meant
+  // for that mark.
+  const offered = (spec: CascadeSpec) => spec.field in rulesOf(adapter, key) && (!spec.keys || spec.keys.includes(key));
   return Object.fromEntries(
     adapter.cascade
-      .filter((spec) => (spec.section ?? 'look') === section)
+      .filter((spec) => (spec.section ?? 'look') === section && offered(spec))
       .map((spec) => [`${adapter.parentKey}.${key}_${spec.field}`, build(spec)]),
   );
 };
@@ -674,15 +623,21 @@ const MARK_APPEARANCE: CascadeSpec[] = [
   },
 ];
 
+const typeSpec = (selectType: string, extra: Partial<CascadeSpec> = {}): CascadeSpec => ({
+  field: 'type',
+  build: EditorFieldsType.select,
+  opts: { type: selectType },
+  showsDefault: true,
+  ...extra,
+});
+
+// Only exists for a mark drawn as a line; the row it shares with type closes
+// itself when it goes (see EDITOR_BASE_STYLE).
+const LINE_SIZE_SPEC: CascadeSpec = { field: 'line_size', build: EditorFieldsType.text, gate: drawsLine };
+
 // The trio every mark family shares, spelled once. Each adapter appends its
 // own extras rather than restating these.
-const SHARED_CASCADE = (selectType: string): CascadeSpec[] => [
-  { field: 'type', build: EditorFieldsType.select, opts: { type: selectType }, showsDefault: true },
-  // Only exists for a mark drawn as a line; the row it shares with type closes
-  // itself when it goes (see EDITOR_BASE_STYLE).
-  { field: 'line_size', build: EditorFieldsType.text, gate: drawsLine },
-  ...MARK_APPEARANCE,
-];
+const SHARED_CASCADE = (type: CascadeSpec): CascadeSpec[] => [type, LINE_SIZE_SPEC, ...MARK_APPEARANCE];
 
 // Per-mark show/hide toggle: the hidden value is parked in an ephemeral draft
 // and restored on the way back, same as every other draft in this file.
@@ -711,41 +666,6 @@ const markToggleField = <K extends string>(
   };
 };
 
-// The global value every mark's own override cascades from - built from the
-// same cascade declaration, one level up, so a family that gains an attribute
-// gains both levels at once.
-const globalMarkFields = <K extends string>(
-  adapter: OverrideCascadeAdapter<K>,
-  showIf: (c: LovelaceConfig) => boolean,
-  section: 'value' | 'look',
-) => {
-  const { parentKey, defaults } = adapter;
-  return Object.fromEntries(
-    adapter.cascade
-      .filter((spec) => (spec.section ?? 'look') === section)
-      .map((spec) => {
-        const extra = spec.gate?.(adapter, null);
-        return [
-          `${parentKey}.${spec.field}`,
-          spec.build(`${parentKey}.${spec.field}`, {
-            ...spec.opts,
-            // The same generic word at both levels (Type/Opacity/Color/Line
-            // size): which mark it is shows in the group, not the label.
-            labelKey: spec.labelKey ?? spec.field,
-            showIf: (c: LovelaceConfig) => showIf(c) && (!extra || extra(c)),
-            width: 'half',
-            // Same reason as the marks' own selects: watermark.type has no
-            // schema default to fall back on (see schema.ts's watermarkSchema),
-            // so the negotiated config leaves it empty and only `default`
-            // fills it in.
-            ...(spec.showsDefault && { default: () => defaults[spec.field] }),
-            ...(spec.placeholder !== false && { placeholder: () => inheritedHint(defaults[spec.field]) }),
-          }),
-        ];
-      }),
-  );
-};
-
 // Master on/off for an option parked in an ephemeral `_<key>_draft` while off.
 // `initial` is a factory: each card gets its own object, never a shared one.
 const draftToggle =
@@ -759,33 +679,15 @@ const draftToggle =
     };
   };
 
-// Drops a patched key when undefined (rewrapPeakMark's precedent), and wraps
-// a bare `true` mark as `{ value: defaultVal, ...patch }` - `true` itself
-// isn't a valid ValueConfig once nested under `value`.
-const rewrapMark = (mark: unknown, patch: Record<string, unknown>, defaultVal: number): unknown => {
-  const markAsWm = mark as WatermarkMark;
-  const value = is.boolean(mark) ? defaultVal : mark;
-  const merged: Record<string, unknown> = { ...(isMarkOverride(markAsWm) ? markAsWm : { value }), ...patch };
-  return Object.fromEntries(Object.entries(merged).filter(([, v]) => v !== undefined));
-};
-
 const WM_SIDES = ['low', 'high'] as const;
-const WM_DEFAULTS: Record<(typeof WM_SIDES)[number], number> = {
-  low: SCHEMA_DEFAULTS.watermark.low,
-  high: SCHEMA_DEFAULTS.watermark.high,
-};
 const WATERMARK_CASCADE: OverrideCascadeAdapter<(typeof WM_SIDES)[number]> = {
   parentKey: 'watermark',
   keys: WM_SIDES,
-  extractOwn: (rawMark, field) => {
-    const mark = rawMark as WatermarkMark;
-    return isMarkOverride(mark) ? mark[field] : undefined;
-  },
-  rewrap: (side, rawMark, patch) => rewrapMark(rawMark, patch, WM_DEFAULTS[side]),
-  isActive: (config, side) => config.watermark?.[side] !== false,
+  factorization: MARK_FACTORIZATION.watermark,
+  isActive: (config, side) => MARK_FACTORIZATION.watermark.votes(config, side),
   defaults: SCHEMA_DEFAULTS.watermark,
   cascade: [
-    ...SHARED_CASCADE('watermark_type'),
+    ...SHARED_CASCADE(typeSpec('watermark_type')),
     // watermark's own: how to read a threshold the user typed. Borrows
     // 'unit' as its label, as its hand-built predecessor did.
     // Not a look: it says how the threshold next to it is read, so it sits
@@ -844,63 +746,24 @@ const peakMarkerEligible = (c: LovelaceConfig): boolean => {
 };
 const peakMarkerOn = (c: LovelaceConfig) => peakMarkerEligible(c) && Boolean(c.peak_marker);
 
-// peak_marker.min/max/average: boolean | string (color shorthand) | { type?,
-// opacity?, color? } (types.peakMark, schema.ts) - simpler than wmSide, no
-// entity/jinja/value, just a show toggle + overrides cascading from the
-// global peak_marker.type/.opacity (mirrors view.ts's resolve()).
-const peakMarkObj = (mark: unknown): Record<string, unknown> =>
-  is.plainObject(mark) ? mark : is.string(mark) ? { color: mark } : {};
-
-// Collapses to the simplest equivalent shape - color alone stays the string
-// shorthand (types.peakMark()'s own short form), nothing left reverts to
-// bare `true` (shown, all defaults).
-const rewrapPeakMark = (mark: unknown, patch: Record<string, unknown>): unknown => {
-  const merged: Record<string, unknown> = { ...peakMarkObj(mark), ...patch };
-  const keys = Object.keys(merged).filter((k) => merged[k] !== undefined);
-  if (keys.length === 0) return true;
-  if (keys.length === 1 && keys[0] === 'color') return merged.color;
-  return merged;
-};
-
-// The three marks and the band alike.
-const PEAK_FAMILY = {
-  parentKey: 'peak_marker',
-  extractOwn: (rawMark: unknown, field: CascadeField) => peakMarkObj(rawMark)[field],
-  rewrap: (_mark: string, rawMark: unknown, patch: Record<string, unknown>) => rewrapPeakMark(rawMark, patch),
-  isActive: (config: LovelaceConfig, mark: string) => {
-    const raw = config.peak_marker?.[mark];
-    return raw !== undefined && raw !== false;
-  },
-  optIn: true,
-};
-
 const PEAK_MARKS = ['min', 'max', 'average'] as const;
-const PEAK_MARKER_CASCADE: OverrideCascadeAdapter<(typeof PEAK_MARKS)[number]> = {
-  ...PEAK_FAMILY,
-  keys: PEAK_MARKS,
+const PEAK_KEYS = [...PEAK_MARKS, 'range'] as const;
+// The three marks and the band, one family: the band is a mark whose type is
+// its own (a zone shape) and has no line - MARK_FIELDS says so, not a second
+// adapter, so a family value it still reads is never dropped behind its back.
+const PEAK_MARKER_CASCADE: OverrideCascadeAdapter<(typeof PEAK_KEYS)[number]> = {
+  parentKey: 'peak_marker',
+  keys: PEAK_KEYS,
+  factorization: MARK_FACTORIZATION.peak_marker,
+  isActive: (config, mark) => MARK_FACTORIZATION.peak_marker.votes(config, mark),
+  optIn: true,
   defaults: SCHEMA_DEFAULTS.peakMarker,
   // No `as`: a peak's value comes from history, there is no threshold to read
   // one way or the other.
-  cascade: SHARED_CASCADE('peak_marker_type'),
-};
-
-// peak_marker.range: the band between min and max (types.peakZone). Its own
-// adapter rather than a fourth PEAK_MARKS entry - it has no line to size, only
-// zone shapes to pick from, and no family type to inherit.
-const PEAK_RANGE_CASCADE: OverrideCascadeAdapter<'range'> = {
-  ...PEAK_FAMILY,
-  keys: ['range'],
-  defaults: { ...SCHEMA_DEFAULTS.peakMarker, type: SCHEMA_DEFAULTS.peakMarker.rangeType },
-  // No line_size: a band is not a line. Its own type, and the appearance
-  // every mark shares.
   cascade: [
-    {
-      field: 'type',
-      build: EditorFieldsType.select,
-      opts: { type: 'peak_range_type' },
-      showsDefault: true,
-      inherits: false,
-    },
+    typeSpec('peak_marker_type', { keys: PEAK_MARKS }),
+    typeSpec('peak_range_type', { keys: ['range'], fallback: SCHEMA_DEFAULTS.peakMarker.rangeType }),
+    LINE_SIZE_SPEC,
     ...MARK_APPEARANCE,
   ],
 };
@@ -908,10 +771,10 @@ const PEAK_RANGE_CASCADE: OverrideCascadeAdapter<'range'> = {
 // Independent of min/max being drawn: the band spans their values, which are
 // measured whether or not their own marks are shown.
 const peakRange = () => {
-  const isShown = (c: LovelaceConfig) => PEAK_RANGE_CASCADE.isActive(c, 'range');
+  const isShown = (c: LovelaceConfig) => PEAK_MARKER_CASCADE.isActive(c, 'range');
   return {
-    ...markToggleField(PEAK_RANGE_CASCADE, 'range', peakMarkerOn, isShown, true),
-    ...overrideCascadeFields(PEAK_RANGE_CASCADE, 'range', (c) => peakMarkerOn(c) && isShown(c), 'look'),
+    ...markToggleField(PEAK_MARKER_CASCADE, 'range', peakMarkerOn, isShown, true),
+    ...overrideCascadeFields(PEAK_MARKER_CASCADE, 'range', (c) => peakMarkerOn(c) && isShown(c), 'look'),
   };
 };
 
@@ -1620,14 +1483,8 @@ const EditorFactory = {
         draftToggle('watermark', () => ({})),
         { noLabel: true },
       ),
-      ...globalMarkFields(WATERMARK_CASCADE, watermarkOn, 'value'),
-      // type/opacity have no schema default (see schema.ts's watermarkSchema) -
-      // genuinely absent, so they show SCHEMA_DEFAULTS as a greyed placeholder.
-      watermark_shared: EditorFieldsType.sectionLabel('watermark_shared', {
-        labelKey: 'mark_defaults',
-        showIf: watermarkOn,
-      }),
-      ...globalMarkFields(WATERMARK_CASCADE, watermarkOn, 'look'),
+      // No family-level fields: watermark.type/.color/... is where the sides'
+      // agreement ends up (MARK_FACTORIZATION), edited on the sides themselves.
       // ── LOW / HIGH groups (generated by wmSide) ────────────────────
       ...wmSide('low', 20),
       ...wmSide('high', 80),
@@ -1651,11 +1508,6 @@ const EditorFactory = {
       { showIf: peakMarkerEligible, noLabel: true },
     ),
     ...durationFields('peak_marker', 'window', peakMarkerOn),
-    peak_marker_shared: EditorFieldsType.sectionLabel('peak_marker_shared', {
-      labelKey: 'mark_defaults',
-      showIf: peakMarkerOn,
-    }),
-    ...globalMarkFields(PEAK_MARKER_CASCADE, peakMarkerOn, 'look'),
     ...peakMark('min'),
     ...peakMark('max'),
     ...peakMark('average'),
@@ -1839,13 +1691,11 @@ const EditorFactory = {
   // still works) and documented as such - just not worth a control in the
   // badge editor, a deliberate choice, not a dead-CSS case. `height` is
   // genuinely deleted from the badge schema (see YamlSchemaFactory.badge).
-  themeCardLayoutFields: (badge: boolean) =>
-    badge
-      ? {}
-      : {
-          frameless: EditorFieldsType.toggle('frameless', { width: 'half' }),
-          marginless: EditorFieldsType.toggle('marginless', { width: 'half' }),
-        },
+  // A badge takes both too (YamlSchemaFactory.badge keeps them).
+  themeCardLayoutFields: () => ({
+    frameless: EditorFieldsType.toggle('frameless', { width: 'half' }),
+    marginless: EditorFieldsType.toggle('marginless', { width: 'half' }),
+  }),
 
   // A "Card size" toggle that reveals min_width (+ height on cards) without
   // forcing a value: `_show_size` is ephemeral UI state, same pattern as
@@ -1976,9 +1826,18 @@ const EditorFactory = {
   themeBarSizingFields: (template: boolean, badge: boolean) => {
     const themeActive = EditorFactory.themeActive;
     return {
-      // Badge has no bar_position (where the label normally sits, see
-      // themeCardOnlyFields) - bar_orientation is its first bar field.
-      ...(badge ? { bar_group: EditorFieldsType.sectionLabel('bar_group', { labelKey: 'shared.bar' }) } : {}),
+      // A badge's bar_position (inline or around its icon) sits here, not in
+      // themeCardOnlyFields, which carries every other card's.
+      ...(badge
+        ? {
+            bar_group: EditorFieldsType.sectionLabel('bar_group', { labelKey: 'shared.bar' }),
+            bar_position: EditorFieldsType.select('bar_position', {
+              type: 'bar_position_badge',
+              labelKey: LABEL_POSITION,
+              width: 'half',
+            }),
+          }
+        : {}),
       bar_orientation: EditorFieldsType.select('bar_orientation', {
         // Badge/Badge Template have no bar_position/layout: 'up' never applies.
         type: badge
@@ -2181,7 +2040,7 @@ const EditorFactory = {
       // gated on `badge` for min_width - valid for badges too (not in
       // YamlSchemaFactory.badge's delete list).
       ...EditorFactory.cardSizeFields(badge),
-      ...EditorFactory.themeCardLayoutFields(badge),
+      ...EditorFactory.themeCardLayoutFields(),
     },
   }),
 

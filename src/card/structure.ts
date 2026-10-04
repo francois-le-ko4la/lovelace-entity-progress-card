@@ -4,6 +4,7 @@
  * (StructureTemplates) assembled from them.
  */
 
+import { BAR_AROUND_ICON } from './schema.js';
 import { CARD, CARD_CONTEXT, CONTENT_SLOT } from '../utils/parameters.js';
 import { traceInstance } from '../utils/log.js';
 
@@ -90,7 +91,11 @@ const StructureElements = {
   // instead of a second <ha-ripple>. .shape re-enables pointer-events itself
   // (also gated by .clickable-icon) so it still receives its own clicks
   // rather than falling through to the card-level ripple underneath.
-  iconAndShape: () => Element(CARD.htmlStructure.elements.shape).html(Element(CARD.htmlStructure.elements.icon).html()),
+  iconAndShape: (options: StructureOptions = {}) =>
+    Element(CARD.htmlStructure.elements.shape).html(
+      Element(CARD.htmlStructure.elements.icon).html() +
+        (options.barPosition === BAR_AROUND_ICON ? StructureElements.ringLayers() : ''),
+    ),
   badge: () =>
     Element(CARD.htmlStructure.elements.badge.container).html(Element(CARD.htmlStructure.elements.badge.icon).html()),
   nameContent: (minimal = false) =>
@@ -213,7 +218,7 @@ const StructureElements = {
     const isSingleLine = options.barSingleLine;
     const isVertical = options.layout === 'vertical';
     const isSingleLineRow = Boolean(options.singleLine);
-    const isBelowTopOrBottom = ['below', 'top', 'bottom', 'background'].includes(options.barPosition ?? '');
+    const barElsewhere = ['below', 'top', 'bottom', 'background', BAR_AROUND_ICON].includes(options.barPosition ?? '');
 
     const extraClass =
       (isOverlay ? ' overlay' : '') +
@@ -223,10 +228,10 @@ const StructureElements = {
     // Same slot vertical already uses: the bar sits after the content instead
     // of inside secondary-info, which is what makes it a sibling on the row.
     const after =
-      !isOverlay && !isBelowTopOrBottom && (isVertical || isSingleLineRow)
-        ? StructureElements.progressBar(options)
-        : '';
-    const content = before + rightContent + after;
+      !isOverlay && !barElsewhere && (isVertical || isSingleLineRow) ? StructureElements.progressBar(options) : '';
+    const ringProgress =
+      options.barPosition === BAR_AROUND_ICON ? Element(CARD.htmlStructure.elements.ringProgress).html() : '';
+    const content = before + rightContent + after + ringProgress;
 
     return Element(CARD.htmlStructure.sections.content, extraClass).html(content);
   },
@@ -268,9 +273,15 @@ const StructureElements = {
       ),
     ),
 
-  iconSection: () =>
-    Element(CARD.htmlStructure.sections.icon).html(StructureElements.iconAndShape() + StructureElements.badge()),
-  iconSectionWoBadge: () => Element(CARD.htmlStructure.sections.icon).html(StructureElements.iconAndShape()),
+  ringLayers: () =>
+    Object.values(CARD.htmlStructure.elements.ringMarks)
+      .map((mark) => Element(mark).html())
+      .join('') + Element(CARD.htmlStructure.elements.ringMark).html(),
+
+  iconSection: (options: StructureOptions = {}) =>
+    Element(CARD.htmlStructure.sections.icon).html(StructureElements.iconAndShape(options) + StructureElements.badge()),
+  iconSectionWoBadge: (options: StructureOptions = {}) =>
+    Element(CARD.htmlStructure.sections.icon).html(StructureElements.iconAndShape(options)),
 
   trendIndicator: (options: StructureOptions) =>
     options.trendIndicator
@@ -307,7 +318,7 @@ const buildCardLike = (options: StructureOptions, contentFn: (options: Structure
       CONTENT_SLOT,
       StructureElements.trendIndicator(options) +
         StructureElements.label(options) +
-        (options.hideIcon ? '' : StructureElements.iconSection()) +
+        (options.hideIcon ? '' : StructureElements.iconSection(options)) +
         contentFn(options),
     ),
     options,
@@ -319,7 +330,7 @@ const StructureTemplates = {
   badge: (options: StructureOptions = {}) => {
     return StructureElements.container(options).replace(
       CONTENT_SLOT,
-      (options.hideIcon ? '' : StructureElements.iconSectionWoBadge()) + StructureElements.contentFull(options),
+      (options.hideIcon ? '' : StructureElements.iconSectionWoBadge(options)) + StructureElements.contentFull(options),
     );
   },
 
