@@ -1,0 +1,318 @@
+{
+  "card": {
+    "msg": {
+      "appliedDefaultValue": "Примењена је подразумевана вредност.",
+      "invalidEnumValue": "Вредност није дозвољена.",
+      "invalidNoun": "Неважеће или неисправно: {noun}.",
+      "invalidTheme": "Непозната тема.",
+      "invalidType": "Очекивани тип: {type}.",
+      "missingRequiredProperty": "Недостаје обавезно својство.",
+      "notFound": "Није пронађено у ХА: {noun}.",
+      "words": {
+        "nouns": {
+          "action_object": "објект радње",
+          "attribute": "атрибут",
+          "entity": "ентитет",
+          "entity_id": "ИД ентитета",
+          "state_content": "садржај стања"
+        },
+        "types": {
+          "array": "поље",
+          "boolean": "логичка вредност",
+          "number": "број",
+          "positiveinteger": "позитиван цео број",
+          "object": "објекат",
+          "string": "текстуални низ"
+        }
+      }
+    }
+  },
+  "editor": {
+    "field": {
+      "add_zone": "Додај зону",
+      "alert_when": {
+        "animation": "Анимација",
+        "highlight": "Истицање",
+        "label": "Ознака",
+        "above_mode": "Изнад горњег упозорења",
+        "below_mode": "Испод доњег упозорења",
+        "above": "@ui.panel.lovelace.editor.condition-editor.condition.numeric_state.above|Above",
+        "below": "@ui.panel.lovelace.editor.condition-editor.condition.numeric_state.below|Below"
+      },
+      "badge": {
+        "toggle": "Беџ",
+        "color_toggle": "Независна боја"
+      },
+      "bar_color_mode": "Режим боја",
+      "bar_effect_mode": "Ефекат траке",
+      "bar_max_width_toggle": "Максимална ширина траке",
+      "bar_orientation": "Оријентација",
+      "bar_scale": "Скала",
+      "bar_segments": "Сегменти",
+      "bar_single_line": "У једном реду",
+      "bar_size": "Величина",
+      "bar_stack": "Додатни ентитети",
+      "bar_stack_mode": "Начин слагања",
+      "card_size_toggle": "Величина картице",
+      "center_zero": "Нула у центру",
+      "center_zero_growth_percent": "Проценат раста",
+      "center_zero_value": "Вредност у центру",
+      "custom_info": "Прилагођене додатне информације",
+      "custom_theme": "Прилагођене зоне теме",
+      "density": "Густина",
+      "bar_aligned": "Поравнате траке",
+      "fast_refresh": "Брзо освежавање",
+      "force_circular_background_mode": "Кружна позадина",
+      "frameless": "Без оквира",
+      "height": "Висина",
+      "height_custom_toggle": "Аутоматска висина",
+      "icon_animation": "Анимација иконице",
+      "interpolate": "Интерполација боја",
+      "issue_report": "@ui.components.yaml-editor.copy_to_clipboard|Copy to clipboard",
+      "issue_report_copied": "@ui.common.copied_clipboard|Copied to clipboard",
+      "marginless": "Без маргина",
+      "migrate_config": "Миграција конфигурације",
+      "min_width": "Минимална ширина",
+      "multiline": "Више редова",
+      "name_info": "Прилагођени назив",
+      "opacity": "Прозирност",
+      "peak_marker": {
+        "average_toggle": "Просек",
+        "range_toggle": "Опсег"
+      },
+			"peak_marker_unsupported": "Недоступно: потребан је сензор или бројчани ентитет без атрибута.",
+      "percent": "Проценат",
+      "reverse": "Обрнути тајмер",
+      "reverse_secondary_info_row": "Замени места траци и тексту",
+      "secondary": "Додатне информације",
+      "status_label": {
+				"color_source": "Извор боје",
+        "toggle": "Ознака статуса"
+      },
+        "text_shadow": "Додај сенку тексту",
+      "trend_indicator": {
+        "window_toggle": "Користи временски прозор",
+        "basis": "Основа за поређење",
+        "threshold": "Мртва зона (поени)",
+        "colored": "Нијанса у боји иконице",
+        "up_color": "Боја за раст",
+        "down_color": "Боја за пад",
+        "flat_color": "Боја за непромењено",
+        "toggle": "Индикатор тренда",
+        "mode": "Način"
+      },
+      "trigger": "Окидач",
+      "type": "Тип",
+      "unit_spacing": "Размак",
+      "value_compact": "Компактна вредност (1.2k)",
+      "value_sign": "Прикажи знак (+/-)",
+      "watermark": {
+        "high_toggle": "Горњи праг",
+        "low_toggle": "Доњи праг"
+      },
+      "window": "Временски прозор",
+      "rows": "Редови",
+      "line_size": "Дебљина",
+      "icon": "@ui.panel.lovelace.editor.card.generic.icon|Icon",
+      "name": "@ui.panel.lovelace.editor.card.generic.name|Name",
+      "theme": "@ui.panel.lovelace.editor.card.generic.theme|Theme",
+      "unit": "@ui.panel.lovelace.editor.card.generic.unit|Unit",
+      "entities": "@ui.panel.lovelace.editor.card.generic.entities|Entities",
+      "hide_mode": "@ui.common.hide|Hide",
+      "layout": "@ui.panel.lovelace.editor.card.tile.content_layout|Content layout",
+      "decimal": "@ui.dialogs.entity_registry.editor.precision|Display precision",
+      "state_content": "@ui.panel.lovelace.editor.card.heading.entity_config.state_content|State content",
+      "add_entity": "@ui.panel.lovelace.editor.entities.add|Add entity",
+      "action_picker": "@ui.components.form-optional-actions.add|Add interaction",
+      "action": {
+        "tap": "@ui.panel.lovelace.editor.card.generic.tap_action|Tap behavior",
+        "hold": "@ui.panel.lovelace.editor.card.generic.hold_action|Hold behavior",
+        "double_tap": "@ui.panel.lovelace.editor.card.generic.double_tap_action|Double tap behavior",
+        "icon_tap": "@ui.panel.lovelace.editor.card.tile.icon_tap_action|Icon tap behavior",
+        "icon_hold": "@ui.panel.lovelace.editor.card.tile.icon_hold_action|Icon hold behavior",
+        "icon_double_tap": "@ui.panel.lovelace.editor.card.tile.icon_double_tap_action|Icon double tap behavior"
+      }
+    },
+    "field_helper": {
+      "alert_when_jinja": "Returns Boolean (true) or Object ({color, animation, highlight, label})",
+      "badge_icon": "Returns String (mdi:fan) or Object ({icon, color})",
+      "bar_effect": "Returns String (shimmer) or List ([shimmer, gradient])",
+      "color": "Returns String (#ff0000)",
+      "custom_info": "Returns String (Charging)",
+      "hide": "Returns String (icon, name) or List ([icon, name])",
+      "icon": "Returns String (mdi:fan)",
+      "icon_animation_jinja": "Returns Boolean (true)",
+      "name_info": "Returns String (Living Room)",
+      "returns_number": "Returns Number (42)",
+      "status_label_jinja": "Returns String (hot) or Object ({label, color})",
+      "feature_entity": "Defaults to this tile's own entity when left empty"
+    },
+    "option": {
+      "alert_animation": {
+        "blink": "Трептање",
+        "ping": "Пинг",
+        "static": "Статично"
+      },
+      "alert_highlight": {
+        "background": "Позадина",
+        "border": "Оквир",
+        "label": "Ознака"
+      },
+      "bar_color_mode": {
+        "auto": "Аутоматски",
+        "rainbow": "Дуга",
+        "rainbow_full": "Дуга (пуна)",
+        "segment": "Сегменти"
+      },
+      "bar_effect": {
+        "glass": "Стакло",
+        "gradient": "Градијент",
+        "gradient_reverse": "Обрнути градијент",
+        "radius": "Заобљени углови",
+        "shimmer": "Пресијавање",
+        "shimmer_reverse": "Обрнуто пресијавање"
+      },
+      "bar_orientation": {
+        "ltr": "Слева надесно",
+        "rtl": "Сдесна налево",
+        "up": "Нагоре"
+      },
+      "bar_position": {
+        "background": "Позадина картице",
+        "icon": "Око иконе",
+        "below": "Испод садржаја",
+        "bottom": "На дну",
+        "compact_below": "Компактна испод",
+        "overlay": "Преко садржаја",
+        "top": "На врху",
+        "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
+      },
+      "bar_scale": {
+        "linear": "Линеарна",
+        "log": "Логаритамска"
+      },
+      "bar_size": {
+        "large": "Велики",
+        "medium": "Средњи",
+        "small": "Мали",
+        "xlarge": "Веома велики",
+        "xsmall": "Веома мали"
+      },
+      "bar_stack_mode": {
+        "net": "Нето",
+        "proportional": "Пропорционално",
+        "stacked": "Наслагано"
+      },
+      "density": {
+        "compact": "Компактно",
+        "single_line": "У једном реду",
+        "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
+      },
+      "enabled_disabled_mode": {
+        "disabled": "Онемогућено",
+        "enabled": "Омогућено"
+      },
+      "force_circular_background_mode": {
+        "auto": "Аутоматски",
+        "forced": "Присилно"
+      },
+      "hide": {
+        "secondary_info": "Додатне информације",
+        "value": "Вредност"
+      },
+      "icon_animation": {
+        "battery_charging": "Пуњење батерије",
+        "bounce": "Одскакање",
+        "ping": "Пинг",
+        "pulse": "Пулсирање",
+        "reveal": "Откривање",
+        "shake": "Подрхтавање",
+        "spin": "Окретање",
+        "washing_machine": "Веш машина"
+      },
+      "icon_animation_mode": {
+        "auto": "Аутоматски",
+        "template": "Jinja"
+      },
+      "label_position": {
+        "left": "Лево",
+        "right": "Десно"
+      },
+      "simple_advanced_mode": {
+        "advanced": "Напредно",
+        "simple": "Једноставно"
+      },
+      "theme": {
+        "battery_adaptive": "Батерија (прилагођава се стању пуњења)",
+        "critical_when_extreme": "Критично код екстремних вредности",
+        "critical_when_extreme_center": "Критично код екстремних вредности, центрирано",
+        "critical_when_high": "Критично код високих вредности",
+        "critical_when_low": "Критично код ниских вредности",
+        "humidity": "Влажност ваздуха",
+        "light": "Осветљеност",
+        "optimal_when_high": "Оптимално код високих вредности",
+        "optimal_when_low": "Оптимално код ниских вредности",
+        "pm25": "PM2.5",
+        "temperature": "Температура",
+        "voc": "VOC"
+      },
+      "theme_mode": {
+        "custom": "Прилагођено",
+        "preset": "Предефинисано"
+      },
+      "trend_indicator_basis": {
+        "average": "Просек",
+        "edge": "Ивица",
+        "slope": "Нагиб"
+      },
+      "unit_position": {
+        "after": "Након вредности",
+        "before": "Пре вредности"
+      },
+      "unit_spacing": {
+        "auto": "Аутоматски",
+        "no-space": "Без размака",
+        "space": "Са размаком"
+      },
+      "value_source_mode": {
+        "jinja": "Jinja",
+        "standard": "Фиксна вредност"
+      },
+      "watermark_as": {
+        "auto": "Аутоматски",
+        "percent": "Проценат"
+      },
+      "watermark_type": {
+        "area": "Површински",
+        "blended": "Стопљено",
+        "line": "Линијски",
+        "round": "Округло",
+        "striped": "Пругасто",
+        "triangle": "Тругласто"
+      },
+      "layout": {
+        "horizontal": "@ui.panel.lovelace.editor.card.tile.content_layout_options.horizontal|Horizontal",
+        "vertical": "@ui.panel.lovelace.editor.card.tile.content_layout_options.vertical|Vertical"
+      }
+    },
+    "title": {
+      "layout": "Распоред и димензије",
+      "theme": "Изглед и стил",
+      "watermark": "Водени жигови",
+      "peak_marker": "Ознаке врхова",
+      "indicators": "Индикатори и ознаке",
+      "alerts": "Упозорења",
+      "content": "@ui.panel.lovelace.editor.card.generic.content|Content",
+      "interaction": "@ui.panel.lovelace.editor.card.generic.interactions|Interactions"
+    },
+    "shared": {
+      "bar": "Трака",
+      "ent": "@ui.panel.lovelace.editor.card.generic.entity|Entity",
+      "attr": "@ui.panel.lovelace.editor.card.generic.attribute|Attribute",
+      "min": "@ui.panel.lovelace.editor.card.generic.minimum|Minimum",
+      "max": "@ui.panel.lovelace.editor.card.generic.maximum|Maximum",
+      "col": "@ui.panel.lovelace.editor.card.tile.color|Color",
+      "pos": "@ui.panel.lovelace.editor.card.entities.secondary_info_values.position|Position"
+    }
+  }
+}
