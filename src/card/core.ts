@@ -24,6 +24,7 @@ import {
   BAR_POSITIONS,
   BAR_AROUND_ICON,
   BAR_SIZES,
+  raisesRainbowFullRow,
   MARK_TYPES,
   MARK_ZONE_TYPES,
   PEAK_RANGE_TYPE_DEFAULT,
@@ -524,7 +525,7 @@ class HACore extends HTMLElement {
     // Compressed-state reply (s/lu, not state/last_updated; lu is epoch
     // seconds) - see history/websocket_api.py's _history_compressed_state().
     const result = (await hass.connection.sendMessagePromise({
-      type: 'history/history_during_period',
+      type: HA_CONTEXT.ws.historyDuringPeriod,
       start_time: new Date(Date.now() - cappedWindow * 1000).toISOString(),
       entity_ids: [entity],
       no_attributes: true,
@@ -838,6 +839,7 @@ class HACore extends HTMLElement {
       ]),
       [CARD.style.dynamic.progressBar.centerZero, Boolean(config.center_zero)],
       ['rainbow-full-bar', config.bar_color_mode === 'rainbow_full'],
+      ['rainbow-full-raised', raisesRainbowFullRow(config)],
       ['vertical-bar', isVerticalBar],
       ['horizontal-bar', !isVerticalBar],
     ]);
@@ -1305,7 +1307,7 @@ class HACore extends HTMLElement {
       const unsub = await hass.connection.subscribeMessage(
         (msg: unknown) => this._renderJinja(key, (msg as { result: unknown }).result),
         {
-          type: 'render_template',
+          type: HA_CONTEXT.ws.renderTemplate,
           template,
           variables: this._getTemplateContext(),
         },
@@ -1943,7 +1945,7 @@ class HABase extends HACore {
     const { entity: entityId, icon: curIcon } = this._cardView as ViewCore & { icon: string | null };
     const stateObj = this._hassProvider.getEntityStateObj(entityId as string);
     const hasIconOverride = is.nonEmptyString(curIcon);
-    const srcPicture = this._hassProvider.getEntityProp(entityId as string, 'entity_picture');
+    const srcPicture = this._hassProvider.getEntityProp(entityId as string, HA_CONTEXT.attributes.entityPicture);
     const hasPicture = is.nonEmptyString(srcPicture);
 
     const iconContainer = this._dom.get(CARD.htmlStructure.elements.icon.class);

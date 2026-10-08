@@ -31,9 +31,9 @@ if (tag !== version) {
   throw new Error(`❌ Tag ${tag} does not match VERSION ${version} in ${META}.`);
 }
 
-// An RC documents itself under "What's new (x.y.z-rcN)", a stable under "x.y.z".
-const heading = version.includes('-rc') ? `## What's new (${version})` : `## ${version}`;
-if (!fs.readFileSync(CHANGELOG, 'utf8').includes(heading)) {
+// The exact heading line: a stable still marked "x.y.z (soon)" is not released.
+const heading = `## ${version}`;
+if (!fs.readFileSync(CHANGELOG, 'utf8').split('\n').includes(heading)) {
   throw new Error(`❌ ${CHANGELOG} has no "${heading}" section.`);
 }
 

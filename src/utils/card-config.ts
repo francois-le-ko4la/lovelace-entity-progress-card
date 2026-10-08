@@ -6,7 +6,7 @@
  * (see CARD below) so TypeScript sees the final shape from the start.
  */
 
-import { HA_CONTEXT } from './ha-context.js';
+import { HA_CONTEXT, haColor, haStateColor } from './ha-context.js';
 import { META, VERSION } from './meta.js';
 
 // Shared by every purely decorative element below (progress bar internals,
@@ -200,6 +200,8 @@ const HIDE_TARGETS = ['icon', 'name', 'value', 'unit', 'secondary_info', 'progre
 type HideTarget = (typeof HIDE_TARGETS)[number];
 
 // Every mark's CSS variables follow one naming scheme.
+const STATE_ICON_COLOR = haColor('state-icon');
+
 const markVars = (prefix: string, color: string) => ({
   value: { var: `--${prefix}-value` },
   color: { var: `--${prefix}-color`, default: color },
@@ -211,56 +213,38 @@ const style = {
   element: 'style',
 
   color: {
-    default: HA_CONTEXT.colors.stateIcon,
-    disabled: HA_CONTEXT.colors.darkGrey,
-    unavailable: HA_CONTEXT.colors.unavailable,
-    notFound: HA_CONTEXT.colors.inactive,
-    active: HA_CONTEXT.colors.active,
-    coverActive: HA_CONTEXT.colors.coverActive,
-    lightActive: '#FF890E',
-    fanActive: HA_CONTEXT.colors.fanActive,
-    battery: {
-      low: HA_CONTEXT.colors.batteryLow,
-      medium: HA_CONTEXT.colors.batteryMedium,
-      high: HA_CONTEXT.colors.batteryHigh,
-    },
-    climate: {
-      dry: HA_CONTEXT.colors.climateDry,
-      cool: HA_CONTEXT.colors.climateCool,
-      heat: HA_CONTEXT.colors.climateHeat,
-      fanOnly: HA_CONTEXT.colors.climateFanOnly,
-    },
-    inactive: HA_CONTEXT.colors.inactive,
+    default: STATE_ICON_COLOR,
+    disabled: haColor('dark-grey'),
+    unavailable: haStateColor('unavailable'),
+    notFound: haStateColor('inactive'),
   },
   icon: {
-    default: { icon: HA_CONTEXT.icons.alert },
-    alert: { icon: HA_CONTEXT.icons.alertCircleOutline, color: '#0080ff', attribute: 'icon' },
     notFound: { icon: HA_CONTEXT.icons.help },
     badge: {
       default: { attribute: 'icon' },
       unavailable: {
         icon: HA_CONTEXT.icons.exclamationThick,
         color: 'white',
-        backgroundColor: HA_CONTEXT.colors.orange,
+        backgroundColor: haColor('orange'),
         attribute: 'icon',
       },
       notFound: {
         icon: HA_CONTEXT.icons.exclamationThick,
         color: 'white',
-        backgroundColor: HA_CONTEXT.colors.red,
+        backgroundColor: haColor('red'),
         attribute: 'icon',
       },
       timer: {
         active: {
           icon: HA_CONTEXT.icons.play,
           color: 'white',
-          backgroundColor: HA_CONTEXT.colors.success,
+          backgroundColor: haColor('success'),
           attribute: 'icon',
         },
         paused: {
           icon: HA_CONTEXT.icons.pause,
           color: 'white',
-          backgroundColor: HA_CONTEXT.colors.stateIcon,
+          backgroundColor: STATE_ICON_COLOR,
           attribute: 'icon',
         },
       },
@@ -281,7 +265,7 @@ const style = {
       height: { var: '--card-height' },
     },
     badge: {
-      color: { var: '--badge-color', default: HA_CONTEXT.colors.orange },
+      color: { var: '--badge-color', default: haColor('orange') },
       backgroundColor: { var: '--badge-bgcolor', default: 'transparent' },
     },
     // Internal vars only - JS (HACore._renderLabel) sets these, never the
@@ -299,19 +283,15 @@ const style = {
       l: { var: '--label-l', default: '60' },
     },
     iconAndShape: {
-      color: { var: '--icon-and-shape-color', default: HA_CONTEXT.colors.stateIcon },
+      color: { var: '--icon-and-shape-color', default: STATE_ICON_COLOR },
       icon: { size: { var: '--icon-size' } },
-      shape: { size: { var: '--shape-size' } },
     },
     trendIndicator: {
       color: { var: '--trend-icon-color' },
     },
-    haRipple: {
-      color: { var: '--ha-ripple-color' },
-    },
     progressBar: {
-      color: { var: '--progress-bar-color', default: HA_CONTEXT.colors.stateIcon },
-      value: { var: '--progress-bar-value', default: '0' },
+      color: { var: '--progress-bar-color', default: STATE_ICON_COLOR },
+      value: { var: '--progress-bar-value' },
       maxWidth: { var: '--progress-bar-max-width', default: 'unset' },
       background: { var: '--epb-progress-bar-background-color' },
       // bar_stack 'stacked'/'proportional' + center_zero only: independent
@@ -346,8 +326,8 @@ const style = {
       centerZero: 'center-zero',
     },
     watermark: {
-      low: markVars('low-watermark', HA_CONTEXT.colors.red),
-      high: markVars('high-watermark', HA_CONTEXT.colors.red),
+      low: markVars('low-watermark', haColor('red')),
+      high: markVars('high-watermark', haColor('red')),
       // Still written, still the fallback each side reads when it has no
       // line_size of its own - it is no longer the only value there is.
       lineSize: { var: '--watermark-line-size' },
@@ -356,14 +336,14 @@ const style = {
       opacity: { var: '--watermark-opacity-value' },
     },
     peakMarker: {
-      min: markVars('peak-min', HA_CONTEXT.colors.stateIcon),
-      max: markVars('peak-max', HA_CONTEXT.colors.stateIcon),
-      average: markVars('peak-average', HA_CONTEXT.colors.stateIcon),
+      min: markVars('peak-min', STATE_ICON_COLOR),
+      max: markVars('peak-max', STATE_ICON_COLOR),
+      average: markVars('peak-average', STATE_ICON_COLOR),
       // No value/lineSize: the band spans --peak-min-value to --peak-max-value
       // (set for all three marks whether they are drawn or not), and a zone has
       // no line to size.
       range: {
-        color: { var: '--peak-range-color', default: HA_CONTEXT.colors.stateIcon },
+        color: { var: '--peak-range-color', default: STATE_ICON_COLOR },
         opacity: { var: '--peak-range-opacity-value' },
       },
       // The family's shared thickness, read by a mark that has none of its

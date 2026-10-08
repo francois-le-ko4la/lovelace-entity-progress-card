@@ -137,15 +137,6 @@ const SEV = {
 
 const CONTENT_SLOT = '{{content}}';
 
-const VALUE_CHANGED_EVENT = 'value-changed';
-// HA's own "the config changed" event, dispatched by EditorBase and caught by
-// whoever hosts it (the card itself, or a row list hosting a sub-editor).
-const CONFIG_CHANGED_EVENT = 'config-changed';
-// Home Assistant's own toast, shown by whoever hosts the dashboard.
-const HASS_NOTIFICATION_EVENT = 'hass-notification';
-const HA_SELECTOR_TAG = 'ha-selector';
-const HA_SVG_ICON_TAG = 'ha-svg-icon';
-const HA_ACTION_HANDLER_TAG = 'action-handler';
 const EDITOR_FIELD_NS = 'editor.field';
 // Labels several fields answer to (see EditorBase#labelFor): their own
 // group, so editing one in translations/ visibly edits every field using it.
@@ -176,11 +167,6 @@ export { THEME_KEYS };
 export { PERCENT_THEME_KEYS };
 export { SEV };
 export { CONTENT_SLOT };
-export { CONFIG_CHANGED_EVENT, HASS_NOTIFICATION_EVENT };
-export { VALUE_CHANGED_EVENT };
-export { HA_SELECTOR_TAG };
-export { HA_SVG_ICON_TAG };
-export { HA_ACTION_HANDLER_TAG };
 export { EDITOR_FIELD_NS, SHARED_LABEL_NS, SHARED_LABEL_PREFIX };
 export { EDITOR_FIELD_HELPER_NS };
 export { MIN_VALUE_ENTITY_PATH };

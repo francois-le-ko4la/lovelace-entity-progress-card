@@ -15,6 +15,9 @@ const NOT_ROW_OPTIONS = new Set<string>([...AGGREGATOR_FIELDS, 'centerZero', 're
 const toRowConfig = (row: Record<string, unknown>): LovelaceConfig =>
   ({ ...row, density: 'single_line', frameless: true, marginless: true }) as unknown as LovelaceConfig;
 
+// `entities` accepts a bare entity id as shorthand for { entity }.
+const asRow = (row: unknown): Record<string, unknown> => (is.plainObject(row) ? { ...row } : { entity: row as string });
+
 // bar_size defaults to 'small' (not the card schema's own default): a stack of
 // N rows needs a compact one. Still overridable, shared or per-item.
 const rowConfigsOf = (config: LovelaceConfig | null): LovelaceConfig[] => {
@@ -23,9 +26,7 @@ const rowConfigsOf = (config: LovelaceConfig | null): LovelaceConfig[] => {
   for (const [key, value] of Object.entries(config)) {
     if (!NOT_ROW_OPTIONS.has(key)) shared[key] = value;
   }
-  return (config.entities as Record<string, unknown>[]).map((item) =>
-    toRowConfig({ ...shared, ...(is.plainObject(item) ? item : { entity: item }) }),
-  );
+  return config.entities.map((item) => toRowConfig({ ...shared, ...asRow(item) }));
 };
 
-export { rowConfigsOf };
+export { asRow, rowConfigsOf };

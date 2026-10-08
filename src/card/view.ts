@@ -19,6 +19,7 @@ import {
   SCHEMA_DEFAULTS,
   PEAK_RANGE_TYPE_DEFAULT,
   DENSITY_COMPACT_BAR_POSITIONS,
+  raisesRainbowFullRow,
   BAR_AROUND_ICON,
   HAS_EFFECT,
   OWN_TRIGGER_ANIMATIONS,
@@ -32,7 +33,8 @@ import { ProgressMath } from './progress-math.js';
 import { PercentHelper, ThemeManager, EntityCollectionHelper, EntityOrValue } from './value-helpers.js';
 import { TrendTracker, type TrendBasis } from './trend-tracker.js';
 import { PeakTracker } from './peak-tracker.js';
-import { HassProviderSingleton, RELATIVE_TIME_PROPS, type HomeAssistant } from '../utils/hass-provider.js';
+import { HassProviderSingleton, type HomeAssistant } from '../utils/hass-provider.js';
+import { domainProfile, isStateActive } from './ha-state.js';
 import { nextOnGrid, relativeAge } from '../utils/clock.js';
 import {
   BaseConfigHelper,
@@ -274,12 +276,8 @@ class ViewCore {
     return is.number(this.config.bar_segments) && this.config.bar_segments >= 2;
   }
 
-  // Shared by watermark.low/high and #resolveMaxValue/#resolveMinValue
-  // below: all four share the same "value config" shape (number | { entity,
-  // attribute } | { jinja }, see schema.ts). Jinja mode resolves elsewhere
-  // (#jinjaMaxValue/#jinjaMinValue/etc.), so it's null here on purpose.
-  // `fallback` varies per caller: max_value defaults to CARD.config.value.max,
-  // the other three stay null.
+  // The value-config shape (number | {entity, attribute} | {jinja}) of max/min,
+  // watermark and alert_when. Jinja resolves elsewhere (#jinjaMaxValue…): null.
   static _resolveValueConfig(
     cfg: number | { entity?: string; attribute?: string; jinja?: string } | null | undefined,
     fallback: number | null,
@@ -376,7 +374,7 @@ class ViewCore {
   // state change on a tracked entity (issue #127). Both cases rely on
   // config.entity being the timer, resolved into _currentValue above.
   get isActiveTimer(): boolean {
-    return this._currentValue.entityType.isTimer && this._currentValue.state === HA_CONTEXT.entity.state.active;
+    return this._currentValue.valueKind === 'timer' && this._currentValue.state === HA_CONTEXT.entity.state.active;
   }
 
   // When the local tick next fires, null for never. A template has nothing of
@@ -427,17 +425,7 @@ class ViewCore {
         ['default', 'below'].includes(this.config.bar_position ?? '') &&
         this.config.bar_size !== CARD.style.bar.sizeOptions.small &&
         this.config.bar_size !== CARD.style.bar.sizeOptions.xsmall) ||
-      // rainbow_full's bar-row is forced up to horizontal's own 16px in
-      // vertical layout too (see the matching CSS in styles.ts) for
-      // xsmall/small/medium (large already reaches 16px natively there,
-      // xlarge is well past it) - the extra row gives the card the budget
-      // for that growth instead of squeezing it out of the rest of the
-      // layout.
-      (this.config.layout === 'vertical' &&
-        this.config.bar_color_mode === 'rainbow_full' &&
-        (this.config.bar_size === CARD.style.bar.sizeOptions.xsmall ||
-          this.config.bar_size === CARD.style.bar.sizeOptions.small ||
-          this.config.bar_size === CARD.style.bar.sizeOptions.medium));
+      raisesRainbowFullRow(this.config);
     return baseRows + (needsExtraRow ? 1 : 0);
   }
 
@@ -472,14 +460,19 @@ class ViewCore {
     return layout.grid;
   }
 
+  // The entity's HA state color, or the card default when HA gives none.
+  _entityDefaultColor(): string {
+    return this._currentValue.defaultColor || CARD.style.color.default;
+  }
+
   _getEntityColor(): string | null {
     if (this._currentValue.state === HA_CONTEXT.entity.state.unavailable) return CARD.style.color.unavailable;
     if (this._currentValue.state === HA_CONTEXT.entity.state.notFound) return CARD.style.color.notFound;
-    return ThemeManager.adaptColor(this._currentValue.defaultColor || CARD.style.color.default);
+    return ThemeManager.adaptColor(this._entityDefaultColor());
   }
 
-  // theme (percent: true only) wins outright when configured - same
-  // precedence as ViewBase.iconColor's `theme.iconColor || config.color`.
+  // Template precedence, on purpose unlike ViewBase: theme, then color, then
+  // the entity - the user's Jinja can test availability itself.
   // Reading it here (not just from _managePercent's one-off push) is what
   // makes every other repaint (_updateCSS on every hass update) see the
   // themed color too, not just right after a percent Jinja push.
@@ -655,60 +648,21 @@ class ViewCore {
     };
   }
 
-  // icon_animation only makes sense for domains with a real on/active vs
-  // off/idle semantics (fan spinning, media playing…). A plain measurement
-  // (sensor, battery %, input_number…) has no such state — without this gate a
-  // battery sensor spun forever, since its numeric state never matched the
-  // resting-state exclusion list below.
-  static #ANIMATABLE_DOMAINS = new Set([
-    'fan',
-    'light',
-    'switch',
-    'climate',
-    'humidifier',
-    'vacuum',
-    'media_player',
-    'water_heater',
-    'siren',
-    'alarm_control_panel',
-    'automation',
-    'script',
-    'input_boolean',
-    'remote',
-    'lock',
-    'cover',
-    'valve',
-    'binary_sensor',
-    'timer',
-  ]);
-
+  // icon_animation needs a domain with a real working state (fan spinning,
+  // media playing): a battery sensor's numeric state would animate forever.
   get isEntityActive(): boolean {
     if (!this._currentValue.isAvailable) return false;
-    if (!ViewCore.#ANIMATABLE_DOMAINS.has(HassProviderSingleton.getEntityDomain(this.entity) ?? '')) return false;
+    const domain = HassProviderSingleton.getEntityDomain(this.entity);
+    const traits = domainProfile(domain);
     const state = String(this._currentValue.state ?? '').toLowerCase();
-    return !['off', 'idle', 'standby', 'paused', 'closed', 'locked', 'docked', 'disarmed', 'none', ''].includes(state);
+    return (
+      domain !== null &&
+      traits.animatable === true &&
+      state !== '' &&
+      !traits.stillStates?.includes(state) &&
+      isStateActive(domain, state)
+    );
   }
-
-  // No standard domain/state pair means "charging" the way isEntityActive's
-  // resting-state list means "off" - it's usually an attribute on the entity
-  // itself, and its name isn't standardized across integrations. Checked in
-  // likelihood order; first one present wins. Covers both a boolean flag
-  // (true) and a string status enum (e.g. battery_state: 'charging').
-  static #CHARGING_ATTRIBUTES = ['battery_charging', 'charging', 'is_charging'];
-  // Exact enum values, not a substring match: Renault's charge_state sensor
-  // has both 'charge_in_progress' AND 'charge_ended'/'waiting_for_a_planned_
-  // charge', all containing "charge" - a loose match would treat "finished"
-  // as charging too. Same trap with MG SAIC's bmsChrgSts: "charging (ac/dc)"
-  // is active, but "charging finished/stopped/fault/scheduled" all also
-  // contain "charging" while meaning the opposite.
-  static #CHARGING_STATES = new Set([
-    'charging',
-    'charge_in_progress',
-    'v2g_charging_normal',
-    'charging (ac)',
-    'charging (dc)',
-    'super offboard charging',
-  ]);
 
   // EV integrations tend to report charging as the entity's own state, in
   // one of two shapes: a text status sensor (Tesla Fleet's
@@ -731,9 +685,14 @@ class ViewCore {
 
   static #entityReportsCharging(hassProvider: HassProviderSingleton, entityId: string): boolean {
     const state = String(hassProvider.getEntityProp(entityId, 'state') ?? '').toLowerCase();
-    if (ViewCore.#CHARGING_STATES.has(state)) return true;
-    if (state === 'on' && hassProvider.getEntityProp(entityId, 'device_class') === 'battery_charging') return true;
-    return ViewCore.#CHARGING_ATTRIBUTES.some((attr) => {
+    if (HA_CONTEXT.integrations.charging.states.has(state)) return true;
+    if (
+      state === HA_CONTEXT.entity.state.on &&
+      hassProvider.getEntityProp(entityId, HA_CONTEXT.attributes.deviceClass) ===
+        HA_CONTEXT.deviceClasses.batteryCharging
+    )
+      return true;
+    return HA_CONTEXT.integrations.charging.attributes.some((attr) => {
       const value = hassProvider.getEntityAttribute(entityId, attr);
       return value === true || String(value).toLowerCase() === 'charging';
     });
@@ -862,22 +821,22 @@ class ViewCore {
   // those - the CSS applies a compensating offset via this flag instead of
   // changing which icon is shown.
   get isBatteryIconShifted(): boolean {
-    const icon = this._configHelper.config.icon || this._hassProvider.getEntityProp(this.entity as string, 'icon');
+    const icon =
+      this._configHelper.config.icon ||
+      this._hassProvider.getEntityProp(this.entity as string, HA_CONTEXT.attributes.icon);
     return is.nonEmptyString(icon) && /-charging-|-bluetooth$/i.test(icon);
   }
 
   // Home Connect's sensor.<appliance>_operation_state uses 'run', Miele's
   // sensor.<appliance>_status uses 'in_use' - both plain `sensor` entities,
   // which isEntityActive's domain gate deliberately excludes (see
-  // #ANIMATABLE_DOMAINS). Checked in addition to, not instead of,
+  // HA_CONTEXT.domainProfiles). Checked in addition to, not instead of,
   // isEntityActive, so a binary_sensor/switch-based washing setup (e.g. a
   // smart-plug power monitor) keeps working exactly as before.
-  static #WASHING_ACTIVE_STATES = new Set(['run', 'in_use']);
-
   static #sensorReportsWashing(hassProvider: HassProviderSingleton, entityId: string): boolean {
-    if (HassProviderSingleton.getEntityDomain(entityId) !== 'sensor') return false;
+    if (HassProviderSingleton.getEntityDomain(entityId) !== HA_CONTEXT.domains.sensor) return false;
     const state = String(hassProvider.getEntityProp(entityId, 'state') ?? '').toLowerCase();
-    return ViewCore.#WASHING_ACTIVE_STATES.has(state);
+    return HA_CONTEXT.integrations.washing.states.has(state);
   }
 
   // Same split as isBatteryCharging: the card's `entity` is usually the
@@ -1178,18 +1137,19 @@ class ViewBase extends ViewCore {
       stateContent: this._configHelper.stateContent,
     });
 
-    if (this._currentValue.entityType.isTimer) {
+    if (this._currentValue.valueKind === 'timer') {
       this.#maxValue.value = CARD.config.value.max;
     } else {
       this._currentValue.attribute = this._configHelper.config.attribute ?? null;
       // max_value/min_value: number (legacy) | {value} | {entity, attribute} |
       // {jinja}. Jinja mode is fed by the template subscription
-      // (#jinjaMaxValue/#jinjaMinValue), not by EntityOrValue — see
-      // #resolveMaxValue/#resolveMinValue for the per-shape resolution, kept
-      // out of this method to avoid nesting their ternaries in here.
-      Object.assign(this.#maxValue, ViewBase.#resolveMaxValue(this._configHelper.config.max_value));
+      // (#jinjaMaxValue/#jinjaMinValue), not by EntityOrValue.
+      Object.assign(
+        this.#maxValue,
+        ViewCore._resolveValueConfig(this._configHelper.config.max_value, CARD.config.value.max),
+      );
       this.#jinjaMaxValue = null;
-      Object.assign(this.#minValue, ViewBase.#resolveMinValue(this._configHelper.config.min_value));
+      Object.assign(this.#minValue, ViewCore._resolveValueConfig(this._configHelper.config.min_value, null));
       this.#jinjaMinValue = null;
     }
     // Wired for timers too, unlike attribute/min/max (which a timer overrides).
@@ -1208,18 +1168,6 @@ class ViewBase extends ViewCore {
 
   get config(): Config {
     return this._configHelper.config;
-  }
-
-  static #resolveMaxValue(
-    maxCfg: number | { entity?: string; attribute?: string; jinja?: string } | null | undefined,
-  ): { value: number | string | null; attribute?: string } {
-    return ViewCore._resolveValueConfig(maxCfg, CARD.config.value.max);
-  }
-
-  static #resolveMinValue(
-    minCfg: number | { entity?: string; attribute?: string; jinja?: string } | null | undefined,
-  ): { value: number | string | null; attribute?: string } {
-    return ViewCore._resolveValueConfig(minCfg, null);
   }
 
   #hasState(state: string | null): boolean {
@@ -1285,16 +1233,14 @@ class ViewBase extends ViewCore {
     if (this.isNotFound) return CARD.style.color.notFound;
     return (
       ThemeManager.adaptColor(this.#theme.iconColor || this._configHelper.config.color || null) ||
-      this._currentValue.defaultColor ||
-      CARD.style.color.default
+      this._entityDefaultColor()
     );
   }
 
   #curBarColor(): string | null {
     return (
       ThemeManager.adaptColor(this.#theme.barColor || this._configHelper.config.bar_color || null) ||
-      this._currentValue.defaultColor ||
-      CARD.style.color.default
+      this._entityDefaultColor()
     );
   }
 
@@ -1477,14 +1423,14 @@ class ViewBase extends ViewCore {
   get secondaryInfoMain(): string | null {
     if (
       this.hasStandardEntityError ||
-      (this._currentValue.entityType.isTimer && this._currentValue.value.state === HA_CONTEXT.entity.state.idle)
+      (this._currentValue.valueKind === 'timer' && this._currentValue.value.state === HA_CONTEXT.entity.state.idle)
     )
       return this._currentValue.formatedEntityState;
 
     const additionalInfo = this._currentValue.stateContentToString;
     if (this.hasComponentHiddenFlag(CARD.style.dynamic.hiddenComponent.value.label)) return additionalInfo;
     const valueInfo =
-      this._currentValue.entityType.isDuration && !this._configHelper.config.unit
+      this._currentValue.valueKind === 'duration' && !this._configHelper.config.unit
         ? this._currentValue.formatedEntityState
         : this.#percentHelper.toString();
 
@@ -1501,7 +1447,7 @@ class ViewBase extends ViewCore {
     if (this.isNotFound) return CARD.style.icon.badge.notFound;
     if (this.isUnavailable) return CARD.style.icon.badge.unavailable;
 
-    if (this._currentValue.entityType.isTimer) {
+    if (this._currentValue.valueKind === 'timer') {
       const { state } = this._currentValue.value;
       const { paused, active } = HA_CONTEXT.entity.state;
       if (state === paused) return CARD.style.icon.badge.timer.paused;
@@ -1529,7 +1475,7 @@ class ViewBase extends ViewCore {
     // means a different position every run. 'auto' resolves to 'percent'
     // behavior for timers instead, so the configured value stays a stable
     // percentage regardless of how long any given run happens to be.
-    const isTimer = this._currentValue.entityType.isTimer;
+    const isTimer = this._currentValue.valueKind === 'timer';
     // as: 'percent' skips calcWatermark's min/max projection (the value is
     // already a position), but under center_zero a position still needs the
     // same 50 + value/2 recenter calcWatermark itself applies - same bug as
@@ -1601,15 +1547,15 @@ class ViewBase extends ViewCore {
     this.#percentHelper.updateResolved(this.#resolvedValues(), {
       unit: currentUnit,
       decimal: this.#getCurrentDecimal(currentUnit),
-      isTimer: this._currentValue.entityType.isTimer || this._currentValue.entityType.isDuration,
+      isTimer: this._currentValue.valueKind === 'timer' || this._currentValue.valueKind === 'duration',
     });
   }
 
   // Which value/min/max the bar runs on, by entity kind. Returned rather than
   // written into the helper: one caller assembles, one call applies.
   #resolvedValues(): { current: unknown; min: unknown; max: unknown; reversed?: boolean } {
-    if (this._currentValue.entityType.isTimer) return this.#timerValues();
-    if (this._currentValue.entityType.isCounter || this._currentValue.entityType.isNumber) {
+    if (this._currentValue.valueKind === 'timer') return this.#timerValues();
+    if (this._currentValue.valueKind === 'counter' || this._currentValue.valueKind === 'number') {
       return this.#counterValues();
     }
     return this.#stdValues();
@@ -1724,7 +1670,7 @@ class ViewBase extends ViewCore {
     const entity = this.entity;
     if (!entity) return [];
     return (this._currentValue.stateContent ?? [])
-      .filter((prop) => RELATIVE_TIME_PROPS.has(prop))
+      .filter((prop) => HA_CONTEXT.timestampProps.has(prop))
       .map((prop) => Date.parse(this._hassProvider.getEntityProp<string>(entity, prop)))
       .filter((since) => is.number(since))
       .map((since) => since + relativeAge(now - since).changesAtMs);
@@ -1749,7 +1695,7 @@ class ViewBase extends ViewCore {
       configUnit: this._configHelper.config.unit,
       resolvedUnit: currentUnit,
       entityPrecision: this._currentValue.precision,
-      entityType: this._currentValue.entityType,
+      valueKind: this._currentValue.valueKind,
       entityUnit: this._currentValue.unit,
     });
   }

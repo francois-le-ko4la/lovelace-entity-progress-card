@@ -4,7 +4,7 @@
  * mode, bar_stack mode...).
  */
 
-import { CARD, VALUE_CHANGED_EVENT, suffixedName } from '../utils/parameters.js';
+import { CARD, HA_CONTEXT, suffixedName } from '../utils/parameters.js';
 import { CHIPS_HOST_STYLE } from '../utils/styles.js';
 import { is } from '../utils/common-checks.js';
 import { defineElement } from '../utils/register.js';
@@ -81,7 +81,9 @@ abstract class ChipsBase extends HTMLElement {
   // Every chip set reports the same way, only the payload shape differs (an
   // array for the multi-selects, one mode name for EntityProgressModeChips).
   _emit(value: unknown) {
-    this.dispatchEvent(new CustomEvent(VALUE_CHANGED_EVENT, { detail: { value }, bubbles: true, composed: true }));
+    this.dispatchEvent(
+      new CustomEvent(HA_CONTEXT.events.valueChanged, { detail: { value }, bubbles: true, composed: true }),
+    );
   }
 
   _createChip(value: string, onToggle: (value: string) => void): HTMLButtonElement {

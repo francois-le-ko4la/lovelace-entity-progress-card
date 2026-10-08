@@ -8,6 +8,7 @@ import { is } from '../utils/common-checks.js';
 import { AGGREGATOR_FIELDS, ROW_IDENTITY_FIELDS } from '../card/schema.js';
 import type { LovelaceConfig } from '../utils/types.js';
 import { Factorization } from '../card/factorization.js';
+import { asRow } from '../card/multi-rows.js';
 
 // Never factorised up or down, like the _-prefixed (editor state) keys.
 const AGGREGATOR_KEYS = new Set<string>(AGGREGATOR_FIELDS);
@@ -21,9 +22,6 @@ const NEVER_SHARED = new Set<string>(ROW_IDENTITY_FIELDS);
 
 const sharedOf = (config: LovelaceConfig): Record<string, unknown> =>
   Object.fromEntries(Object.entries(config).filter(([key]) => isRowOption(key)));
-
-// `entities` accepts a bare entity id as shorthand for { entity }.
-const asRow = (row: unknown): Record<string, unknown> => (is.plainObject(row) ? { ...row } : { entity: row as string });
 
 const rowsOf = (config: LovelaceConfig): Record<string, unknown>[] =>
   is.array(config.entities) ? config.entities.map(asRow) : [];

@@ -9,8 +9,8 @@
  * suggestion for those would just show a static, misleading preview instead
  * of a working one.
  *
- * Domain coverage is HA_CONTEXT.attributeMapping, the same table the card
- * itself reads for a default attribute, so a picked entity and a
+ * Domain coverage is HA_CONTEXT.domainProfiles' `percent`, the same table
+ * the card itself reads for a default attribute, so a picked entity and a
  * hand-written one resolve to the same value. Anything outside it returns
  * null, per HA's own guidance ("check the domain, device class, or supported
  * features... return null otherwise").
@@ -52,11 +52,12 @@ function resolveEntitySuggestion(hass: HomeAssistant, entityId: string): EntityS
   const state = hass?.states?.[entityId] as EntityState | undefined;
   if (!state || domain === null) return null;
 
+  const traits = HA_CONTEXT.domainProfiles[domain];
   // timer's state is idle/active/paused, never a number - the card reads its
-  // duration natively instead (see ViewCore's own entityType.isTimer path).
-  if (domain === HA_CONTEXT.entity.type.timer) return { config: { entity: entityId } };
+  // duration natively instead (its 'timer' value kind).
+  if (traits?.kind === 'timer') return { config: { entity: entityId } };
 
-  const mapping = HA_CONTEXT.attributeMapping[domain];
+  const mapping = traits?.percent;
   if (mapping) {
     // The card normalizes a scaled attribute (brightness, volume_level) to
     // 0-100 itself - a max_value here would scale it a second time.
@@ -65,7 +66,7 @@ function resolveEntitySuggestion(hass: HomeAssistant, entityId: string): EntityS
     return { config: { entity: entityId, attribute } };
   }
 
-  if (HA_CONTEXT.stateDomains.includes(domain) && toNumberOrNull(state.state) !== null) {
+  if (traits?.numericState && toNumberOrNull(state.state) !== null) {
     return withBatteryTheme({ config: { entity: entityId } }, state);
   }
 

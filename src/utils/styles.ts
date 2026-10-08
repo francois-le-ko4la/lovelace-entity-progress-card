@@ -2821,22 +2821,14 @@ ha-card.info-multiline {
   --mark-display: flex;
 }
 
-/* vertical reserves only the bar's own thickness for its row (no 16px cushion
-   like horizontal gets), and .container's padding-top scales with that same raw
-   size. Both are forced up to 16px here, through the dedicated
-   --current-specific-* slots (immune to being shadowed by an intermediate
-   element), so the marker gets room to stay a pill instead of shrinking to a
-   circle. large already reaches 16px natively; ViewCore.minGridRows reserves
-   the extra grid row this needs. */
-ha-card.vertical.default.rainbow-full-bar.${CARD.style.bar.sizeOptions.xsmall},
-ha-card.vertical.default.rainbow-full-bar.${CARD.style.bar.sizeOptions.small},
-ha-card.vertical.default.rainbow-full-bar.${CARD.style.bar.sizeOptions.medium} {
+/* vertical gives the bar row only the bar's thickness: 16px here keeps the
+   marker a pill. When: schema.ts raisesRainbowFullRow (.rainbow-full-raised);
+   .vertical/.rainbow-full-bar, implied, keep the old size selectors' specificity. */
+ha-card.vertical.default.rainbow-full-bar.rainbow-full-raised {
   --current-specific-progress-container-height: 16px;
   --current-specific-padding-top: 16px;
 }
-ha-card.vertical.default.rainbow-full-bar.${CARD.style.bar.sizeOptions.xsmall} .${CARD.htmlStructure.sections.content.class},
-ha-card.vertical.default.rainbow-full-bar.${CARD.style.bar.sizeOptions.small} .${CARD.htmlStructure.sections.content.class},
-ha-card.vertical.default.rainbow-full-bar.${CARD.style.bar.sizeOptions.medium} .${CARD.htmlStructure.sections.content.class} {
+ha-card.vertical.default.rainbow-full-bar.rainbow-full-raised .${CARD.htmlStructure.sections.content.class} {
   --current-content-height: calc(var(--name-height) + var(--detail-height) + 16px);
 }
 
@@ -2845,9 +2837,7 @@ ha-card.vertical.default.rainbow-full-bar.${CARD.style.bar.sizeOptions.medium} .
    container-height forcing on both boxes that hard-code the bar's row height
    here. Neither inherits --current-progress-container-height the way .default's
    .container does, so .below-container needs its own fallback slot too. */
-ha-card.vertical.below.rainbow-full-bar.${CARD.style.bar.sizeOptions.xsmall},
-ha-card.vertical.below.rainbow-full-bar.${CARD.style.bar.sizeOptions.small},
-ha-card.vertical.below.rainbow-full-bar.${CARD.style.bar.sizeOptions.medium} {
+ha-card.vertical.below.rainbow-full-bar.rainbow-full-raised {
   --current-specific-progress-container-height: 16px;
 }
 

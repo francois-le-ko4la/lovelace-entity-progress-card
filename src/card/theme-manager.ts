@@ -4,6 +4,7 @@
  */
 
 import { CARD, CARD_CONTEXT, HA_CONTEXT, THEME } from '../utils/parameters.js';
+import { cssColorVar } from '../utils/ha-context.js';
 import { assertDefined, has, is } from '../utils/common-checks.js';
 import { traceInstance } from '../utils/log.js';
 
@@ -19,6 +20,16 @@ type ThemeZone = {
   icon_color?: string;
   bar_color?: string;
   icon?: string | null;
+};
+
+type ClippedGradient = {
+  visible: ThemeZone[];
+  direction: string;
+  fillPercent: number;
+  offset: number;
+  filledEdge: string;
+  col: (level: ThemeZone) => string;
+  toElemPos: (pos: number) => string;
 };
 
 class ThemeManager {
@@ -237,7 +248,10 @@ class ThemeManager {
   }
 
   static adaptColor(curColor: string | null): string | null {
-    return HA_CONTEXT.haColors.get(curColor as string) ?? curColor;
+    if (!curColor) return curColor;
+    if (HA_CONTEXT.palette.has(curColor)) return cssColorVar(curColor);
+    const stateVar = `--${curColor}-color`;
+    return HA_CONTEXT.stateColorVars.has(stateVar) ? `var(${stateVar})` : curColor;
   }
 
   // Splits a resolved color into the r/g/b/h/s/l components styles.ts's
@@ -395,12 +409,11 @@ class ThemeManager {
     // segmented has no such edge, so it needs the real position instead.
     const filledEdge = isSegmented ? `${fillPercent.toFixed(2)}%` : '100%';
 
-    if (mode === 'segment') {
-      return ThemeManager.#buildSegmentGradient(visible, direction, defaultColor, offset, fillPercent, filledEdge);
-    }
-    if (mode === 'rainbow') {
-      return ThemeManager.#buildRainbowGradient(visible, direction, defaultColor, offset, fillPercent, filledEdge);
-    }
+    const col = (level: ThemeZone) => ThemeManager.#zoneColor(level, defaultColor);
+    const toElemPos = (pos: number) => `${(pos + offset).toFixed(2)}%`;
+    const gradient: ClippedGradient = { visible, direction, fillPercent, offset, filledEdge, col, toElemPos };
+    if (mode === 'segment') return ThemeManager.#buildSegmentGradient(gradient);
+    if (mode === 'rainbow') return ThemeManager.#buildRainbowGradient(gradient);
     return null;
   }
 
@@ -411,17 +424,14 @@ class ThemeManager {
     return ThemeManager.adaptColor(level.bar_color || level.color || null) || defaultColor || CARD.style.color.default;
   }
 
-  // eslint-disable-next-line max-params -- private, single call site.
-  static #buildSegmentGradient(
-    visible: ThemeZone[],
-    direction: string,
-    defaultColor: string | null,
-    offset: number,
-    fillPercent: number,
-    filledEdge: string,
-  ): string {
-    const toElemPos = (b: number) => `${(b + offset).toFixed(2)}%`;
-    const col = (level: ThemeZone) => ThemeManager.#zoneColor(level, defaultColor);
+  static #buildSegmentGradient({
+    visible,
+    direction,
+    fillPercent,
+    filledEdge,
+    col,
+    toElemPos,
+  }: ClippedGradient): string {
     const stops = visible.flatMap((level, i) => {
       const start = i === 0 ? '0%' : toElemPos(level.min ?? 0);
       const end = (level.max ?? 0) >= fillPercent ? filledEdge : toElemPos(level.max ?? 0);
@@ -431,17 +441,15 @@ class ThemeManager {
   }
 
   // Stops at each zone's midpoint, not its start - last one uses fillPercent.
-  // eslint-disable-next-line max-params -- private, single call site.
-  static #buildRainbowGradient(
-    visible: ThemeZone[],
-    direction: string,
-    defaultColor: string | null,
-    offset: number,
-    fillPercent: number,
-    filledEdge: string,
-  ): string {
-    const toElemPos = (b: number) => `${(b + offset).toFixed(2)}%`;
-    const col = (level: ThemeZone) => ThemeManager.#zoneColor(level, defaultColor);
+  static #buildRainbowGradient({
+    visible,
+    direction,
+    fillPercent,
+    offset,
+    filledEdge,
+    col,
+    toElemPos,
+  }: ClippedGradient): string {
     const first = col(visible[0]);
     const stops = [`${first} 0%`];
     if (offset > 0) stops.push(`${first} ${offset.toFixed(2)}%`);

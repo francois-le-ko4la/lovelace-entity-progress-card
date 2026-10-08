@@ -1,26 +1,30 @@
 /*
  * EntityHelper: resolves a single entity (state, attributes, name tokens,
- * type/timer/duration handling) into renderable values.
+ * value kind) into renderable values.
  */
 
 import { CARD, CARD_CONTEXT, HA_CONTEXT } from '../utils/parameters.js';
+import type { ValueKind } from '../utils/ha-context.js';
 import { assertDefined, is } from '../utils/common-checks.js';
 import { traceInstance } from '../utils/log.js';
-import { HassProviderSingleton, type EntityState } from '../utils/hass-provider.js';
+import { HassProviderSingleton } from '../utils/hass-provider.js';
 import { NumberFormatter } from './formatting.js';
+import { domainProfile, stateColor } from './ha-state.js';
 import type { NameTokenType } from './schema.js';
 
 // One entry of the `name` config option's composition array (see
 // EditorFieldsType.entityName / types.stateContent in schema.ts).
 type NameToken = { type: NameTokenType; text?: string };
 
-// Shared with EntityOrValue's fallback - one source for this 4-key shape.
-const emptyEntityTypeFlags = (): Record<string, boolean> => ({
-  isTimer: false,
-  isDuration: false,
-  isNumber: false,
-  isCounter: false,
-});
+const KINDS_WITHOUT_HISTORY: ReadonlySet<ValueKind> = new Set(['timer', 'counter', 'duration']);
+
+// A duration sensor reads as seconds for its own state only, not an attribute.
+const valueKindOf = (entityId: string, attribute: unknown): ValueKind => {
+  const kind = domainProfile(HassProviderSingleton.getEntityDomain(entityId)).kind;
+  if (kind) return kind;
+  const deviceClass = HassProviderSingleton.getInstance().getEntityProp(entityId, HA_CONTEXT.attributes.deviceClass);
+  return deviceClass === HA_CONTEXT.deviceClasses.duration && !is.nonEmptyString(attribute) ? 'duration' : 'default';
+};
 
 // This class's own #value stays genuinely `any` on purpose: an entity's
 // value is polymorphic per domain (number, string, timer duration...), same
@@ -39,20 +43,18 @@ class EntityHelper {
   #isMain = false;
   #state: string | null = null;
   #domain: string | null = null;
-  #entityType: string | null = null;
-  #entityTypeFlags: Record<string, boolean> = emptyEntityTypeFlags();
-  // Memoization only - deliberately not inside #entityTypeFlags, which every
-  // entityType consumer receives as-is.
-  #entityTypeSynced = false;
+  #valueKind: ValueKind | null = null;
+  // undefined: not resolved since the last refresh.
+  #defaultColor: string | null | undefined = undefined;
   #stateContent: string[] = [];
   #nameTokens: NameToken[] | null = null;
-  static #handleRefreshType = new Map<string, (self: EntityHelper) => void>([
-    [HA_CONTEXT.entity.type.timer, (self) => self._manageTimerEntity()],
-    [HA_CONTEXT.entity.type.duration, (self) => self._manageDurationEntity()],
-    [HA_CONTEXT.entity.type.counter, (self) => self._manageCounterAndNumberEntity('minimum', 'maximum')],
-    [HA_CONTEXT.entity.type.number, (self) => self._manageCounterAndNumberEntity('min', 'max')],
-    [HA_CONTEXT.entity.type.default, (self) => self._manageStdEntity()],
-  ]);
+  static #refreshByKind: Record<ValueKind, (self: EntityHelper) => void> = {
+    timer: (self) => self._manageTimerEntity(),
+    duration: (self) => self._manageDurationEntity(),
+    counter: (self) => self._manageRangedEntity(),
+    number: (self) => self._manageRangedEntity(),
+    default: (self) => self._manageStdEntity(),
+  };
 
   constructor() {
     traceInstance('EntityHelper', CARD_CONTEXT.debug.instances);
@@ -63,8 +65,8 @@ class EntityHelper {
   set entityId(newValue: string) {
     this.#entityId = newValue;
     this.#nameTokens = null;
-    this.#entityType = null;
-    this.#entityTypeSynced = false;
+    this.#valueKind = null;
+    this.#defaultColor = undefined;
     this.#value = 0;
     this.#domain = HassProviderSingleton.getEntityDomain(newValue);
     this.#isValid = this.#hassProvider.hasEntity(this.#entity);
@@ -85,6 +87,7 @@ class EntityHelper {
 
   set attribute(newValue: string | null) {
     this.#attribute = newValue;
+    this.#valueKind = null;
   }
 
   get attribute(): string | null {
@@ -149,29 +152,15 @@ class EntityHelper {
   }
 
   get attributes(): Record<string, number> {
-    return this.#isValid &&
-      !this.entityType.isCounter &&
-      !this.entityType.isNumber &&
-      !this.entityType.isDuration &&
-      !this.entityType.isTimer
-      ? this.#hassProvider.getNumericAttributes(this.#entity)
-      : {};
+    return this.#isValid && this.valueKind === 'default' ? this.#hassProvider.getNumericAttributes(this.#entity) : {};
   }
 
-  get hasAttribute(): boolean {
-    return this.#isValid && Object.keys(this.attributes).length > 0;
-  }
-
-  get #attributeMapping() {
-    return HA_CONTEXT.attributeMapping[this.#domain as string];
-  }
-
-  get defaultAttribute(): string | null {
-    return this.#attributeMapping?.attribute ?? null;
+  get #percentMapping() {
+    return domainProfile(this.#domain).percent;
   }
 
   get name(): string {
-    return this.#hassProvider.getEntityProp(this.#entity, 'friendly_name');
+    return this.#hassProvider.getEntityProp(this.#entity, HA_CONTEXT.attributes.friendlyName);
   }
 
   _nameResolver(): string {
@@ -203,22 +192,18 @@ class EntityHelper {
     return this.#nameTokens ? this._nameResolver() : this.name;
   }
 
-  get stateObj(): EntityState | null {
-    return this.#hassProvider.getEntityStateObj(this.#entity);
-  }
-
   get formatedEntityState(): string {
     return this.#hassProvider.getEntityProp(this.#entity, 'state', true);
   }
 
   get unit(): string | null {
     if (!this.#isValid) return null;
-    if (this.entityType.isTimer) return CARD.config.unit.flexTimer;
-    if (this.entityType.isDuration) return CARD.config.unit.second;
-    if (this.entityType.isCounter) return CARD.config.unit.disable;
+    if (this.valueKind === 'timer') return CARD.config.unit.flexTimer;
+    if (this.valueKind === 'duration') return CARD.config.unit.second;
+    if (this.valueKind === 'counter') return CARD.config.unit.disable;
     // Neither carries unit_of_measurement: climate uses the global unit
     // system, weather its own per-attribute `<attr>_unit` key.
-    const mapping = this.#attributeMapping;
+    const mapping = this.#percentMapping;
     if (mapping?.unit === 'system_temperature') return this.#hassProvider.temperatureUnit;
     if (mapping?.unit === 'attribute_suffix') {
       const attr = this.#attribute || mapping.attribute;
@@ -226,57 +211,34 @@ class EntityHelper {
       return is.nonEmptyString(unitAttr) ? unitAttr : null;
     }
 
-    return this.#hassProvider.getEntityProp(this.#entity, 'unit_of_measurement');
+    return this.#hassProvider.getEntityProp(this.#entity, HA_CONTEXT.attributes.unit);
   }
 
   get precision(): number | null {
-    return this.#isValid ? (this.#hassProvider.getEntityProp(this.#entity, 'display_precision') ?? null) : null;
+    return this.#isValid
+      ? (this.#hassProvider.getEntityProp(this.#entity, HA_CONTEXT.attributes.displayPrecision) ?? null)
+      : null;
   }
 
-  get entityType(): Record<string, boolean> {
-    if (!this.#entityTypeSynced) {
-      const type = this.getEntityType();
-      const key = `is${type.charAt(0).toUpperCase() + type.slice(1)}`;
-      this.#entityTypeFlags = { ...emptyEntityTypeFlags(), [key]: true };
-      this.#entityTypeSynced = true;
-    }
-    return this.#entityTypeFlags;
+  get valueKind(): ValueKind {
+    this.#valueKind ??= valueKindOf(this.#entity, this.#attribute);
+    return this.#valueKind;
   }
 
-  // The domain first, then the device_class - read only if the domain said
-  // nothing, so a matched domain never costs a registry lookup. A switch and
-  // not a lookup table: the table computed all six colors on every read, five
-  // of them to be thrown away, and this getter is read five times per render.
+  // Read five times per render: resolved once per refresh.
   get defaultColor(): string | null {
-    return (
-      this.#colorFor(this.#domain) ??
-      this.#colorFor(this.#hassProvider.getEntityProp<string>(this.#entity, 'device_class')) ??
-      null
-    );
-  }
-
-  #colorFor(key: string | null): string | null {
-    switch (key) {
-      case HA_CONTEXT.entity.type.timer:
-        return this.value?.state === HA_CONTEXT.entity.state.active
-          ? CARD.style.color.active
-          : CARD.style.color.inactive;
-      case HA_CONTEXT.entity.type.cover:
-        return this.value > 0 ? CARD.style.color.coverActive : CARD.style.color.inactive;
-      case HA_CONTEXT.entity.type.light:
-        return this.value > 0 ? CARD.style.color.lightActive : CARD.style.color.inactive;
-      // state, not value: a fan on a dynamic preset (e.g. "auto") is genuinely
-      // on but its percentage attribute can legitimately read 0 - the fan
-      // decides its own speed rather than reporting a fixed one.
-      case HA_CONTEXT.entity.type.fan:
-        return this.state === HA_CONTEXT.entity.state.on ? CARD.style.color.fanActive : CARD.style.color.inactive;
-      case HA_CONTEXT.entity.type.climate:
-        return this.#getClimateColor();
-      case HA_CONTEXT.entity.class.battery:
-        return this.#getBatteryColor();
-      default:
-        return null;
+    if (this.#defaultColor === undefined) {
+      this.#defaultColor =
+        this.#domain === null || this.#state === null
+          ? null
+          : stateColor(
+              this.#domain,
+              this.#hassProvider.getEntityProp<string>(this.#entity, HA_CONTEXT.attributes.deviceClass) ?? null,
+              this.#state,
+              this.#hassProvider.getEntityAttribute<unknown>(this.#entity, HA_CONTEXT.attributes.entityId),
+            );
     }
+    return this.#defaultColor;
   }
 
   get stateContentToString(): string {
@@ -294,18 +256,8 @@ class EntityHelper {
 
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
-  getEntityType(): string {
-    this.#entityType ??= EntityHelper.#handleRefreshType.has(this.#domain as string)
-      ? (this.#domain as string)
-      : this.#hassProvider.getEntityProp(this.#entity, 'device_class') === HA_CONTEXT.entity.type.duration &&
-          !this.#attribute
-        ? HA_CONTEXT.entity.type.duration
-        : HA_CONTEXT.entity.type.default;
-
-    return this.#entityType;
-  }
-
   refresh() {
+    this.#defaultColor = undefined;
     this.#isValid = this.#hassProvider.hasEntity(this.#entity);
 
     if (!this.#isValid) {
@@ -322,18 +274,13 @@ class EntityHelper {
     this.#state = this.#hassProvider.getEntityProp(this.#entity, 'state');
     if (!this.isValid || !this.isAvailable) return;
 
-    const type = this.getEntityType();
-    const handler = assertDefined(
-      EntityHelper.#handleRefreshType.get(type) ?? EntityHelper.#handleRefreshType.get(HA_CONTEXT.entity.type.default),
-      `EntityHelper: no refresh handler for '${type}' and no default handler registered`,
-    );
-    handler(this);
+    EntityHelper.#refreshByKind[this.valueKind](this);
   }
 
   // ─── PRIVATE METHODS ──────────────────────────────────────────────────────
 
   _manageStdEntity() {
-    const mapping = this.#attributeMapping;
+    const mapping = this.#percentMapping;
     this.#attribute = this.#attribute || (mapping?.attribute ?? null);
     if (!this.#attribute) {
       this.#value = parseFloat(this.#state as string) || 0;
@@ -372,15 +319,23 @@ class EntityHelper {
         break;
       }
       case HA_CONTEXT.entity.state.active: {
-        const finished_at = new Date(this.#hassProvider.getEntityProp(this.#entity, 'finishes_at')).getTime();
-        duration = NumberFormatter.convertDuration(this.#hassProvider.getEntityProp(this.#entity, 'duration'));
+        const finished_at = new Date(
+          this.#hassProvider.getEntityProp(this.#entity, HA_CONTEXT.attributes.timer.finishesAt),
+        ).getTime();
+        duration = NumberFormatter.convertDuration(
+          this.#hassProvider.getEntityProp(this.#entity, HA_CONTEXT.attributes.timer.duration),
+        );
         startedAt = finished_at - duration;
         elapsed = Date.now() - startedAt;
         break;
       }
       case HA_CONTEXT.entity.state.paused: {
-        const remaining = NumberFormatter.convertDuration(this.#hassProvider.getEntityProp(this.#entity, 'remaining'));
-        duration = NumberFormatter.convertDuration(this.#hassProvider.getEntityProp(this.#entity, 'duration'));
+        const remaining = NumberFormatter.convertDuration(
+          this.#hassProvider.getEntityProp(this.#entity, HA_CONTEXT.attributes.timer.remaining),
+        );
+        duration = NumberFormatter.convertDuration(
+          this.#hassProvider.getEntityProp(this.#entity, HA_CONTEXT.attributes.timer.duration),
+        );
         elapsed = duration - remaining;
         break;
       }
@@ -396,7 +351,8 @@ class EntityHelper {
     };
   }
 
-  _manageCounterAndNumberEntity(min: string, max: string) {
+  _manageRangedEntity() {
+    const [min, max] = assertDefined(domainProfile(this.#domain).range, `EntityHelper: no range for '${this.#domain}'`);
     this.#value = {
       current: parseFloat(this.#state as string),
       min: this.#hassProvider.getEntityAttribute(this.#entity, min),
@@ -405,7 +361,7 @@ class EntityHelper {
   }
 
   _manageDurationEntity() {
-    const unit = this.#hassProvider.getEntityProp<string>(this.#entity, 'unit_of_measurement');
+    const unit = this.#hassProvider.getEntityProp<string>(this.#entity, HA_CONTEXT.attributes.unit);
     const value = parseFloat(this.#state as string);
     // CF5 - issue (critical) resolved - getEntityProp returns null (never
     // undefined), so the guard never matched and a missing unit crashed in
@@ -414,34 +370,15 @@ class EntityHelper {
     this.#value = seconds ?? 0;
     this.#isValid = seconds !== null;
   }
-
-  #getClimateColor(): string {
-    const climateColorMap: Record<string, string> = {
-      heat_cool: CARD.style.color.active,
-      dry: CARD.style.color.climate.dry,
-      cool: CARD.style.color.climate.cool,
-      heat: CARD.style.color.climate.heat,
-      fan_only: CARD.style.color.climate.fanOnly,
-    };
-    return climateColorMap[this.#state as string] || CARD.style.color.inactive;
-  }
-
-  #getBatteryColor(): string {
-    if (!this.#value || this.#value <= 30) return CARD.style.color.battery.low;
-    if (this.#value <= 70) return CARD.style.color.battery.medium;
-    return CARD.style.color.battery.high;
-  }
 }
 
 // Whether the recorder keeps a numeric history worth reading: none for an
 // attribute, nor for a timer, a counter or a duration. The one rule the card
 // fetches history by and the editor offers peak_marker by.
-const hasUsableHistory = (entity: unknown, attribute?: unknown): entity is string => {
-  if (!is.nonEmptyString(entity) || is.nonEmptyString(attribute)) return false;
-  const domain = HassProviderSingleton.getEntityDomain(entity);
-  if (domain === HA_CONTEXT.entity.type.timer || domain === HA_CONTEXT.entity.type.counter) return false;
-  return HassProviderSingleton.getInstance().getEntityProp(entity, 'device_class') !== HA_CONTEXT.entity.type.duration;
-};
+const hasUsableHistory = (entity: unknown, attribute?: unknown): entity is string =>
+  is.nonEmptyString(entity) &&
+  !is.nonEmptyString(attribute) &&
+  !KINDS_WITHOUT_HISTORY.has(valueKindOf(entity, attribute));
 
-export { EntityHelper, emptyEntityTypeFlags, hasUsableHistory };
+export { EntityHelper, hasUsableHistory };
 export type { NameToken };

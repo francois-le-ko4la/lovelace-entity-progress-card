@@ -109,6 +109,9 @@ as defined by the CSS standard.
 
 | **Color Name**                                | **CSS Variable**                                             |
 | --------------------------------------------- | ------------------------------------------------------------ |
+| state-active                                  | `var(--state-active-color)`                                  |
+| state-inactive                                | `var(--state-inactive-color)`                                |
+| state-unavailable                             | `var(--state-unavailable-color)`                             |
 | state-alarm_control_panel-armed_away          | `var(--state-alarm_control_panel-armed_away-color)`          |
 | state-alarm_control_panel-armed_custom_bypass | `var(--state-alarm_control_panel-armed_custom_bypass-color)` |
 | state-alarm_control_panel-armed_home          | `var(--state-alarm_control_panel-armed_home-color)`          |
@@ -124,6 +127,7 @@ as defined by the CSS standard.
 | state-binary_sensor-battery-on                | `var(--state-binary_sensor-battery-on-color)`                |
 | state-binary_sensor-carbon_monoxide-on        | `var(--state-binary_sensor-carbon_monoxide-on-color)`        |
 | state-binary_sensor-gas-on                    | `var(--state-binary_sensor-gas-on-color)`                    |
+| state-binary_sensor-glass_break-on            | `var(--state-binary_sensor-glass_break-on-color)`            |
 | state-binary_sensor-heat-on                   | `var(--state-binary_sensor-heat-on-color)`                   |
 | state-binary_sensor-lock-on                   | `var(--state-binary_sensor-lock-on-color)`                   |
 | state-binary_sensor-moisture-on               | `var(--state-binary_sensor-moisture-on-color)`               |
@@ -143,30 +147,31 @@ as defined by the CSS standard.
 | state-device_tracker-home                     | `var(--state-device_tracker-home-color)`                     |
 | state-fan-active                              | `var(--state-fan-active-color)`                              |
 | state-humidifier-on                           | `var(--state-humidifier-on-color)`                           |
+| state-lawn_mower-active                       | `var(--state-lawn_mower-active-color)`                       |
 | state-lawn_mower-error                        | `var(--state-lawn_mower-error-color)`                        |
-| state-lawn_mower-mowing                       | `var(--state-lawn_mower-mowing-color)`                       |
 | state-light-active                            | `var(--state-light-active-color)`                            |
 | state-lock-jammed                             | `var(--state-lock-jammed-color)`                             |
 | state-lock-locked                             | `var(--state-lock-locked-color)`                             |
 | state-lock-locking                            | `var(--state-lock-locking-color)`                            |
-| state-lock-unlocked                           | `var(--state-lock-unlocked-color)`                           |
-| state-lock-unlocking                          | `var(--state-lock-unlocking-color)`                          |
 | state-lock-open                               | `var(--state-lock-open-color)`                               |
 | state-lock-opening                            | `var(--state-lock-opening-color)`                            |
+| state-lock-unlocked                           | `var(--state-lock-unlocked-color)`                           |
+| state-lock-unlocking                          | `var(--state-lock-unlocking-color)`                          |
 | state-media_player-active                     | `var(--state-media_player-active-color)`                     |
 | state-person-active                           | `var(--state-person-active-color)`                           |
 | state-person-home                             | `var(--state-person-home-color)`                             |
 | state-plant-active                            | `var(--state-plant-active-color)`                            |
+| state-sensor-battery-high                     | `var(--state-sensor-battery-high-color)`                     |
+| state-sensor-battery-low                      | `var(--state-sensor-battery-low-color)`                      |
+| state-sensor-battery-medium                   | `var(--state-sensor-battery-medium-color)`                   |
 | state-siren-active                            | `var(--state-siren-active-color)`                            |
 | state-sun-above_horizon                       | `var(--state-sun-above_horizon-color)`                       |
 | state-sun-below_horizon                       | `var(--state-sun-below_horizon-color)`                       |
 | state-switch-active                           | `var(--state-switch-active-color)`                           |
 | state-update-active                           | `var(--state-update-active-color)`                           |
 | state-vacuum-active                           | `var(--state-vacuum-active-color)`                           |
+| state-vacuum-error                            | `var(--state-vacuum-error-color)`                            |
 | state-valve-active                            | `var(--state-valve-active-color)`                            |
-| state-sensor-battery-high                     | `var(--state-sensor-battery-high-color)`                     |
-| state-sensor-battery-low                      | `var(--state-sensor-battery-low-color)`                      |
-| state-sensor-battery-medium                   | `var(--state-sensor-battery-medium-color)`                   |
 | state-water_heater-eco                        | `var(--state-water_heater-eco-color)`                        |
 | state-water_heater-electric                   | `var(--state-water_heater-electric-color)`                   |
 | state-water_heater-gas                        | `var(--state-water_heater-gas-color)`                        |
@@ -178,16 +183,16 @@ as defined by the CSS standard.
 | state-weather-exceptional                     | `var(--state-weather-exceptional-color)`                     |
 | state-weather-fog                             | `var(--state-weather-fog-color)`                             |
 | state-weather-hail                            | `var(--state-weather-hail-color)`                            |
-| state-weather-lightning_rainy                 | `var(--state-weather-lightning_rainy-color)`                 |
 | state-weather-lightning                       | `var(--state-weather-lightning-color)`                       |
+| state-weather-lightning_rainy                 | `var(--state-weather-lightning_rainy-color)`                 |
 | state-weather-partlycloudy                    | `var(--state-weather-partlycloudy-color)`                    |
 | state-weather-pouring                         | `var(--state-weather-pouring-color)`                         |
 | state-weather-rainy                           | `var(--state-weather-rainy-color)`                           |
-| state-weather-snowy_rainy                     | `var(--state-weather-snowy_rainy-color)`                     |
 | state-weather-snowy                           | `var(--state-weather-snowy-color)`                           |
+| state-weather-snowy_rainy                     | `var(--state-weather-snowy_rainy-color)`                     |
 | state-weather-sunny                           | `var(--state-weather-sunny-color)`                           |
-| state-weather-windy_variant                   | `var(--state-weather-windy_variant-color)`                   |
 | state-weather-windy                           | `var(--state-weather-windy-color)`                           |
+| state-weather-windy_variant                   | `var(--state-weather-windy_variant-color)`                   |
 
 [🔼 Back to top]
 

@@ -8,6 +8,7 @@
 import { HA_CONTEXT, CARD, HIDE_TARGETS, THEME, THEME_KEYS, PERCENT_THEME_KEYS, SEV } from '../utils/parameters.js';
 import { is } from '../utils/common-checks.js';
 import { HassProviderSingleton } from '../utils/hass-provider.js';
+import { isToggleDomain } from './ha-state.js';
 import { NumberFormatter } from './formatting.js';
 import { DURATION_RE } from '../utils/duration.js';
 import { Factorization, type FactorRule } from './factorization.js';
@@ -219,6 +220,12 @@ type ConfigLike = Record<string, unknown>;
 const HORIZONTAL = CARD.layout.orientations.horizontal.label;
 const hasTheme = (c: ConfigLike) => !is.nullish(c.theme) || is.nonEmptyArray(c.custom_theme);
 const hasStack = (c: ConfigLike) => is.nonEmptyArray((c.bar_stack as { entities?: unknown } | undefined)?.entities);
+// rainbow_full's pill needs a 16px bar row, vertical's only from large up:
+// styles.ts grows it (.rainbow-full-raised), minGridRows reserves the row.
+const raisesRainbowFullRow = (c: ConfigLike) =>
+  c.layout === CARD.layout.orientations.vertical.label &&
+  c.bar_color_mode === 'rainbow_full' &&
+  ['xsmall', 'small', 'medium'].includes(c.bar_size as string);
 // Badge and Multi rows carry no layout/bar_position key at all, and render as
 // exactly this row.
 const isDefaultRow = (c: ConfigLike) =>
@@ -500,7 +507,7 @@ const types = {
       } catch (error) {
         if (error instanceof ValidationError) {
           if (is.nullish(value)) {
-            error.severity = SEV.info;
+            error.severity = ERROR_CODES.appliedDefaultValue.severity;
             error.errorCode = ERROR_CODES.appliedDefaultValue.code;
           } else {
             error.severity = SEV.warning;
@@ -515,7 +522,6 @@ const types = {
 
   optionalString: () => types.optional(types.string),
   optionalNumber: () => types.optional(types.number),
-  optionalBoolean: () => types.optional(types.boolean),
 
   // Exclude<T, undefined> - not just T | D - because the undefined branch of
   // the composed validator (types.optional(baseValidator)) is exactly the
@@ -962,7 +968,7 @@ const nameValidator = types.array(nameItem);
 // watermark's shared opacity/type/color, see watermarkSchema's own comment).
 const isToggleDomainEntity = (entityId: string): boolean => {
   const domain = HassProviderSingleton.getEntityDomain(entityId);
-  return domain !== null && HA_CONTEXT.actions.toggleDomain.includes(domain);
+  return isToggleDomain(domain);
 };
 
 function getSchemaDefault(
@@ -1337,7 +1343,7 @@ const multiRowEntry: Validator<unknown> = (value: unknown, _path: Path = []) => 
 const barStackEntity = types.fallbackTo(
   types.object({
     entity: types.entityId,
-    attribute: types.optional(types.string),
+    attribute: types.optionalString(),
     color: types.optionalString(),
     // 'net': subtracted from the algebraic total. 'stacked'/'proportional' +
     // center_zero: placed on the negative arm instead of the positive one.
@@ -1868,7 +1874,15 @@ export { schemaOptions, type SchemaVariant };
 // (core.ts). The editor reads its dropdown lists off the schema itself, via
 // struct().fieldOptions - see SELECT_TYPES.
 export { BAR_AROUND_ICON };
-export { BAR_SIZES, BAR_POSITIONS, MARK_TYPES, MARK_ZONE_TYPES, DENSITY_COMPACT_BAR_POSITIONS, HAS_EFFECT };
+export {
+  BAR_SIZES,
+  BAR_POSITIONS,
+  MARK_TYPES,
+  MARK_ZONE_TYPES,
+  DENSITY_COMPACT_BAR_POSITIONS,
+  HAS_EFFECT,
+  raisesRainbowFullRow,
+};
 export { densityOverrides, OPTIONS_WITHOUT_EFFECT };
 export { ICON_ANIMATIONS, OWN_TRIGGER_ANIMATIONS };
 export { ACTION_FIELDS };

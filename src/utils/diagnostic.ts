@@ -1,7 +1,7 @@
 // window.EPB (EPB_DEV, EPB_RC… under a suffix), the card's browser console
 // helper: version, help() and the doctor tools - see troubleshooting.md.
 
-import { VERSION, CARD_CONTEXT, HA_SELECTOR_TAG, HA_ACTION_HANDLER_TAG } from './parameters.js';
+import { VERSION, CARD_CONTEXT, HA_CONTEXT } from './parameters.js';
 import { CONSTRUCTED_SHEETS, CONSTRUCTIBLE_STYLESHEETS } from './styles.js';
 import { currentHass, editorFileReport } from './hass-provider.js';
 
@@ -128,7 +128,7 @@ function environmentReport(): string {
     `reduced motion : ${window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? 'n/a'}`,
     `EPB registered : ${epbEntries.map((card) => `${card.type}@${card.version ?? '?'}`).join(', ') || 'none'}`,
     `duplicate load : ${duplicates ? '⚠️ YES — remove one of the two resources!' : 'no'}`,
-    `HA elements    : ha-card=${Boolean(customElements.get('ha-card'))} ha-selector=${Boolean(customElements.get(HA_SELECTOR_TAG))} action-handler=${Boolean(customElements.get(HA_ACTION_HANDLER_TAG))}`,
+    `HA elements    : ha-card=${Boolean(customElements.get('ha-card'))} ha-selector=${Boolean(customElements.get(HA_CONTEXT.elements.selector))} action-handler=${Boolean(customElements.get(HA_CONTEXT.elements.actionHandler))}`,
     `constructed CSS: ${constructedCss}`,
     `editor         : ${editorFileReport()}`,
     `audit          : run ${CONSOLE_GLOBAL}.doctor.audit() to list cards to review`,

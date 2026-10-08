@@ -6,9 +6,9 @@
 import { CARD_CONTEXT } from '../utils/parameters.js';
 import { is } from '../utils/common-checks.js';
 import { traceInstance } from '../utils/log.js';
-import type { EntityState } from '../utils/hass-provider.js';
 import { ValueHelper } from './value-primitives.js';
-import { EntityHelper, emptyEntityTypeFlags, type NameToken } from './entity-helper.js';
+import { EntityHelper, type NameToken } from './entity-helper.js';
+import type { ValueKind } from '../utils/ha-context.js';
 
 class EntityOrValue {
   #activeHelper: EntityHelper | ValueHelper | null = null;
@@ -92,20 +92,12 @@ class EntityOrValue {
     return this.#entity()?.stateContentToString ?? null;
   }
 
-  get entityType(): Record<string, boolean> {
-    return this.#entity()?.entityType ?? emptyEntityTypeFlags();
+  get valueKind(): ValueKind {
+    return this.#entity()?.valueKind ?? 'default';
   }
 
   get defaultColor(): string | null | false {
     return this.#entity()?.defaultColor ?? false;
-  }
-
-  get hasAttribute(): boolean {
-    return this.#entity()?.hasAttribute ?? false;
-  }
-
-  get defaultAttribute(): string | null {
-    return this.#entity()?.defaultAttribute ?? null;
   }
 
   get attributes(): Record<string, number> | null {
@@ -114,10 +106,6 @@ class EntityOrValue {
 
   get unit(): string | null {
     return this.#entity()?.unit ?? null;
-  }
-
-  get stateObj(): EntityState | null {
-    return this.#entity()?.stateObj ?? null;
   }
 
   get nameTokens(): NameToken[] | null {

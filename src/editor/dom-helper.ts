@@ -8,7 +8,7 @@ import { is } from '../utils/common-checks.js';
 import type { HomeAssistant } from '../utils/hass-provider.js';
 import type { LovelaceConfig, Config, FieldDef } from '../utils/types.js';
 import { DOMHelper } from '../card/dom-helpers.js';
-import { SCHEMA_DEFAULTS, isToggleDomainEntity } from '../card/schema.js';
+import { SCHEMA_DEFAULTS, isToggleDomainEntity, markInner, type WatermarkMark } from '../card/schema.js';
 
 // HA's ha-expansion-panel, reduced to what we read: its reflected `expanded`
 // boolean. `expanded-changed` (a CustomEvent<{ expanded: boolean }>) is
@@ -233,14 +233,11 @@ class EditorDOMHelper extends DOMHelper {
 
     // Dynamic selector
     if (def.selectorOf) {
-      // A '.value.' segment (watermark.low/.high's own entity path) only
-      // exists once the mark is wrapped ({ value: {...}, as, type, opacity,
-      // color }) - a short, never-wrapped form ({ entity: ... } directly) has
-      // no 'value' key to walk through, so treat that step as a no-op instead
-      // of losing the rest of the path.
+      // '.value.' (WATERMARK_ENTITY_PATHS) steps through a mark wrapper that a
+      // short form ({ entity } directly) lacks: markInner unwraps both.
       const resolved = def.selectorOf.includes('.')
         ? (def.selectorOf as string).split('.').reduce<unknown>((obj, k) => {
-            if (k === 'value' && is.plainObject(obj) && !('value' in obj)) return obj;
+            if (k === 'value') return markInner(obj as WatermarkMark);
             return (obj as Record<string, unknown>)?.[k];
           }, config)
         : config[def.selectorOf];

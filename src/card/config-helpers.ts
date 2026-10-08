@@ -5,7 +5,6 @@
  */
 
 import {
-  HA_CONTEXT,
   CARD,
   SEV,
   MIN_VALUE_ENTITY_PATH,
@@ -30,6 +29,7 @@ import {
   ROW_IDENTITY_FIELDS,
 } from './schema.js';
 import { EntityHelper } from './entity-helper.js';
+import { domainProfile } from './ha-state.js';
 import { resolveDisplayUnit, resolveDisplayDecimal } from '../utils/display-defaults.js';
 import type { LovelaceConfig, Config } from '../utils/types.js';
 
@@ -76,8 +76,7 @@ const hasLegacyWatermarkMarkKeys = (config: LovelaceConfig, side: 'low' | 'high'
 // aggregator's own children were able to draw.
 const LEGACY_BARE_ROW = ['icon', 'name'];
 
-const attributeMappingOf = (entityId: string) =>
-  HA_CONTEXT.attributeMapping[HassProviderSingleton.getEntityDomain(entityId) as string];
+const attributeMappingOf = (entityId: string) => domainProfile(HassProviderSingleton.getEntityDomain(entityId)).percent;
 
 // Multi only, top level or per row - harmless for every other type, which has
 // no such key to carry.
@@ -237,7 +236,7 @@ class BaseConfigHelper {
       configUnit: config.unit,
       resolvedUnit,
       entityPrecision: entity.precision,
-      entityType: entity.entityType,
+      valueKind: entity.valueKind,
       entityUnit: entity.unit,
     });
   }

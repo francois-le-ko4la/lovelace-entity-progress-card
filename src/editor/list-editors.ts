@@ -3,7 +3,7 @@
  * bar_stack entities and custom_theme zones.
  */
 
-import { VALUE_CHANGED_EVENT, HA_SELECTOR_TAG, HA_SVG_ICON_TAG, suffixedName } from '../utils/parameters.js';
+import { HA_CONTEXT, suffixedName } from '../utils/parameters.js';
 import {
   BAR_STACK_EDITOR_STYLE,
   MULTI_ROW_EDITOR_STYLE,
@@ -55,7 +55,7 @@ const buildIconButton = (path: string, title: string, onClick: () => void): HTML
   const btn = document.createElement('button');
   btn.className = 'del-btn';
   btn.title = title;
-  const icon = document.createElement(HA_SVG_ICON_TAG) as HaSvgIconElement;
+  const icon = document.createElement(HA_CONTEXT.elements.svgIcon) as HaSvgIconElement;
   icon.path = path;
   btn.appendChild(icon);
   btn.addEventListener('click', onClick);
@@ -70,7 +70,7 @@ const buildAddButton = (label: string, onClick: (e: MouseEvent) => void): HTMLEl
   const btn = document.createElement('ha-button');
   btn.setAttribute('appearance', 'filled');
   btn.setAttribute('size', 's');
-  const addIcon = document.createElement(HA_SVG_ICON_TAG) as HaSvgIconElement;
+  const addIcon = document.createElement(HA_CONTEXT.elements.svgIcon) as HaSvgIconElement;
   addIcon.setAttribute('slot', 'start');
   addIcon.path = ADD_ICON_PATH;
   btn.appendChild(addIcon);
@@ -144,7 +144,8 @@ abstract class ListEditorBase extends HTMLElement {
 
   set hass(hass: HomeAssistant) {
     this._hass = hass;
-    for (const el of this.shadowRoot?.querySelectorAll(HA_SELECTOR_TAG) ?? []) (el as HaSelectorElement).hass = hass;
+    for (const el of this.shadowRoot?.querySelectorAll(HA_CONTEXT.elements.selector) ?? [])
+      (el as HaSelectorElement).hass = hass;
   }
 
   connectedCallback() {
@@ -214,14 +215,14 @@ abstract class ListEditorBase extends HTMLElement {
     required?: boolean;
     onChange: (value: unknown) => void;
   }): HaSelectorElement {
-    const el = document.createElement(HA_SELECTOR_TAG) as HaSelectorElement;
+    const el = document.createElement(HA_CONTEXT.elements.selector) as HaSelectorElement;
     el.hass = this._hass;
     el.selector = selector;
     if (label) el.label = label;
     if (fullWidth) el.style.width = '100%';
     if (required !== undefined) el.required = required;
     el.value = value;
-    el.addEventListener(VALUE_CHANGED_EVENT, (e: Event) => {
+    el.addEventListener(HA_CONTEXT.events.valueChanged, (e: Event) => {
       const evt = e as CustomEvent;
       evt.stopPropagation();
       onChange(evt.detail.value);
@@ -233,7 +234,7 @@ abstract class ListEditorBase extends HTMLElement {
   _dispatchRows(isFilled: (item: Record<string, unknown>) => boolean) {
     const clean = this._value.filter(isFilled);
     this.dispatchEvent(
-      new CustomEvent(VALUE_CHANGED_EVENT, {
+      new CustomEvent(HA_CONTEXT.events.valueChanged, {
         detail: { value: clean.length ? clean : undefined },
         bubbles: true,
         composed: true,
@@ -564,7 +565,7 @@ class EntityProgressActionPicker extends HTMLElement {
   #pick(key: string) {
     this.#closeMenu();
     this.dispatchEvent(
-      new CustomEvent(VALUE_CHANGED_EVENT, {
+      new CustomEvent(HA_CONTEXT.events.valueChanged, {
         detail: { value: [...this.#visible, key] },
         bubbles: true,
         composed: true,

@@ -3,7 +3,7 @@
  * card watches, so a redundant refresh can be skipped.
  */
 
-import { CARD_CONTEXT, SEV } from '../utils/parameters.js';
+import { CARD_CONTEXT, HA_CONTEXT, SEV } from '../utils/parameters.js';
 import { is } from '../utils/common-checks.js';
 import { Logger, traceInstance, type LoggerInstance } from '../utils/log.js';
 import { sameDeviceEntities, type EntityState, type HomeAssistant } from '../utils/hass-provider.js';
@@ -21,10 +21,6 @@ const CONTEXT_KEYS = [
   'floors',
   'config',
 ] as const;
-
-// The registry fields read for a watched entity: its precision, and the area
-// and device that the area and device names resolve from.
-const REGISTRY_FIELDS = ['display_precision', 'area_id', 'device_id'] as const;
 
 class ChangeTracker {
   #debug = CARD_CONTEXT.debug.hass;
@@ -86,12 +82,12 @@ class ChangeTracker {
       // replaces the two full JSON.stringify serializations previously run per
       // entity on every hass update
       if ((newHass?.states?.[entityId] ?? null) !== this.#entityCache?.[entityId]) return true;
-      // CF5 - issue (medium) resolved - REGISTRY_FIELDS live in the registry,
+      // CF5 - issue (medium) resolved - registry fields live in the registry,
       // not the state object: compared by value, normalized like the cache (a
       // raw `undefined` against a cached `null` read as a change).
       const entry = newHass?.entities?.[entityId];
       const cached = this.#registryCache[entityId];
-      if (REGISTRY_FIELDS.some((field, index) => (entry?.[field] ?? null) !== cached?.[index])) return true;
+      if (HA_CONTEXT.registryFields.some((field, index) => (entry?.[field] ?? null) !== cached?.[index])) return true;
     }
 
     return false;
@@ -104,7 +100,7 @@ class ChangeTracker {
     for (const entityId of this.#entitiesToCheck(hass)) {
       this.#entityCache[entityId] = hass.states?.[entityId] ?? null;
       const entry = hass.entities?.[entityId];
-      this.#registryCache[entityId] = REGISTRY_FIELDS.map((field) => entry?.[field] ?? null);
+      this.#registryCache[entityId] = HA_CONTEXT.registryFields.map((field) => entry?.[field] ?? null);
     }
   }
 

@@ -3,7 +3,7 @@
  * Static utility, no state.
  */
 
-import { CARD } from '../utils/parameters.js';
+import { CARD, HA_CONTEXT } from '../utils/parameters.js';
 import { getOrCreate, has, is } from '../utils/common-checks.js';
 
 // A superset of Home Assistant's blank_before_percent.ts, whose own comment
@@ -18,9 +18,6 @@ const PERCENT_SPACED_LANGUAGES = new Set(
 // Latin American Spanish glues the percent sign where es-ES spaces it, so the
 // full tag is read before the base language it would otherwise fall back to.
 const PERCENT_GLUED_LOCALES = new Set(['es-419']);
-// The one place this card diverges from HA's blank_before_unit.ts: a duration
-// stays compact, so a timer on a bar reads 1h23min and not 1 h 23 min.
-const DURATION_UNITS = new Set(['j', 'd', 'h', 'min', 's', 'ms', 'μs']);
 
 // Intl's compact notation abbreviates the WORD for a magnitude, per locale -
 // 'тыс.' in Russian, 'tis.' in Czech, 'K' (kelvin's letter) in English. Only
@@ -85,7 +82,9 @@ const NumberFormatter = {
     // Case-sensitive: lowercasing collided the duration symbols with the SI
     // ones a capital tells apart - J joule with j day, S siemens with s, H
     // henry with h. Every duration symbol is lowercase already.
-    if (DURATION_UNITS.has(unit) || unit === '°') return '';
+    // The one place this card diverges from HA's blank_before_unit.ts: a
+    // duration stays compact, so a timer reads 1h23min, not 1 h 23 min.
+    if (HA_CONTEXT.durationUnits.has(unit) || unit === '°') return '';
     if (unit === '%') {
       if (PERCENT_GLUED_LOCALES.has(language)) return '';
       return PERCENT_SPACED_LANGUAGES.has(language.split('-')[0].toLowerCase()) ? CARD.config.unit.space : '';

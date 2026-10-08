@@ -4,6 +4,82 @@ All notable changes to the Entity Progress Card are documented here, most recent
 first. See [`docs/rc-testing.md`](docs/rc-testing.md) for how to try a release
 candidate safely before it becomes stable.
 
+## 1.6.4 (soon)
+
+**The colors Home Assistant would pick.**
+
+An entity's default color now comes from Home Assistant itself: the same state
+colors its own tiles use, from your theme, for every domain Home Assistant
+colors. Icons animate on the same rules Home Assistant applies, and tap to
+toggle like its tile card.
+
+### 🔧 Improvements
+
+- **Toggle mechanism**: the default [`icon_tap_action`][xyz_action] now aligns
+  with the tile card's behavior.
+
+#### Default colors follow your Home Assistant theme
+
+- Every domain Home Assistant colors now gets its color here too: locks, media
+  players, vacuums, binary sensors, alarm panels, weather and more.
+- A light takes your theme's light color instead of a fixed orange; a cover
+  counts as active as soon as it is open; a climate in `auto` gets its color.
+
+- **`input_number`** reads its own `min` and `max`, like `number`.
+- **[`icon_animation`][icon_animation]** follows Home Assistant's idea of an
+  active state per domain: a media player no longer animates while idle or
+  paused, a lawn mower animates while mowing.
+
+### 🐛 Fixes
+
+- **A `binary_sensor` with `device_class: light`** no longer takes the color of
+  a lit bulb.
+
+> We care about getting the details right — but even so, something here might
+> have slipped through. You don't need to be a developer to notice it. If
+> something feels off, that's reason enough. Open a [GitHub issue]. Or say hi on
+> [Discord]. We'd rather know than have you go looking for a workaround on your
+> own.
+
+➡️ **Full Changelog**:
+<https://github.com/francois-le-ko4la/lovelace-entity-progress-card/compare/1.6.3...1.6.4>
+
+## 1.6.4-rc1
+
+### 🔧 Improvements
+
+- **Toggle mechanism**: the default [`icon_tap_action`][xyz_action] now aligns
+  with the tile card's behavior.
+
+#### Default colors follow your Home Assistant theme
+
+- The default color is Home Assistant's `--state-*-color` for the entity's
+  domain, device class and state — the first variable the theme defines wins, as
+  in `state_color.ts`. 31 colored domains instead of 5.
+- The light's fixed `#FF890E` is gone; `climate` `auto` gets
+  `--state-climate-auto-color`. Cover and light are active by state (`open`,
+  `on`), no longer by value > 0. A group of a single domain takes that domain's
+  color.
+
+- **`input_number`** reads `min`/`max` from its attributes, like `number`.
+- **[`icon_animation`][icon_animation]** uses Home Assistant's per-domain
+  inactive states (`state_active.ts`) instead of one shared list; a
+  `media_player` in `idle`/`paused` no longer animates; `lawn_mower` animates.
+
+### 🐛 Fixes
+
+- **Battery color thresholds** aligned with Home Assistant: ≥ 70 high, ≥ 30
+  medium (30 and 70 were one step lower).
+- **`binary_sensor` with `device_class: light`** no longer gets the light
+  domain's color.
+
+### 🧹 Under the hood
+
+- `HA_CONTEXT` mirrors Home Assistant's state colors, active states, toggle
+  domains and battery steps, each pinned to its source file.
+- Unused constants and helpers removed (dead `HA_CONTEXT`/`CARD` keys,
+  `ResourceManager`/`DOMHelper`/`EntityOrValue` members).
+
 ## 1.6.3
 
 **Richer on screen. Quieter underneath.**
@@ -62,6 +138,9 @@ across cards: a Multi and the cards beside it, a `vertical-stack-in-card`, an
 once a shorter text has held for 30 seconds, so a changing value doesn't keep
 moving the bars: no width to guess, no `card_mod`.
 
+<img width="250" alt="image"
+  src="https://github.com/user-attachments/assets/16767e59-59e7-4706-a84e-9941ee09639c"/>
+
 #### ⭕ A ring around the icon
 
 [`bar_position`][bar_position] `icon` draws the bar as a ring around the icon,
@@ -73,6 +152,9 @@ the bar's colors and theme zones — [`bar_color_mode`][bar_color_mode] `segment
 like the bar. Badges can also be made [`frameless`][frameless] and
 [`marginless`][marginless] from the editor now.
 
+<img width="250" alt="image"
+  src="https://github.com/user-attachments/assets/2b99638b-e8c1-40d6-9f04-f63ec6f78fc9"/>
+
 #### 🧩 Both Multi cards get a visual editor
 
 No more YAML-only. An entity list you can add to, reorder and delete from, and a
@@ -81,6 +163,9 @@ editor itself, not a cut-down copy of it.
 
 What the rows share moves up to the card on its own — see
 [Shared settings, shorter YAML](#shared-settings-shorter-yaml).
+
+<img width="500" alt="image"
+  src="https://github.com/user-attachments/assets/66f36fde-918a-4459-85f2-b95417f4cc58"/>
 
 #### 🪶 The visual editor loads when you open it
 
@@ -97,6 +182,9 @@ Home Assistant offers its own YAML editor instead.
 (@davidcoulson)
 
 #### 🐞 An issue report in one click
+
+<img width="55" height="36" alt="image"
+  src="https://github.com/user-attachments/assets/ed2e4819-350d-4d1c-8322-4435bd281f2b"/>
 
 The bug icon at the top left of the card editor copies everything an issue
 needs: your environment — card, Home Assistant and browser versions — then the
@@ -259,6 +347,9 @@ The bar fills the whole card, and the rest of the card keeps working around it:
 - **Icon**: it no longer drowns in a fill that carries its own color — the
   circular background comes out to protect it. `--epb-icon-shape-color` still
   wins.
+
+<img width="100" alt="image"
+  src="https://github.com/user-attachments/assets/d702eb45-c97f-4ce3-bbab-5e5ef61ae88a"/>
 
 #### The visual editor
 
@@ -432,6 +523,9 @@ a panel.
 - **[`decimal`][decimal]**: a refused value asks for a positive whole number,
   where it asked for "a valid decimal number".
 
+<img width="500" alt="image"
+  src="https://github.com/user-attachments/assets/cc4625d5-61a8-4446-8cf2-7d4c24b0da6c"/>
+
 ### 📚 Documentation
 
 - [`trend_indicator`][trend_indicator] now says what it measures — the bar's own
@@ -564,10 +658,14 @@ times come from Node's V8 — read the ratio, not the milliseconds.
 - The console helper answers for the bundle it came from — a dev build installs
   itself as `EPB_DEV` — and the dump reports the two tile features' version.
 
-We care about getting the details right — but even so, something here might have
-slipped through. You don't need to be a developer to notice it. If something
-feels off, that's reason enough. Open a [GitHub issue]. Or say hi on [Discord].
-We'd rather know than have you go looking for a workaround on your own.
+> We care about getting the details right — but even so, something here might
+> have slipped through. You don't need to be a developer to notice it. If
+> something feels off, that's reason enough. Open a [GitHub issue]. Or say hi on
+> [Discord]. We'd rather know than have you go looking for a workaround on your
+> own.
+
+➡️ **Full Changelog**:
+<https://github.com/francois-le-ko4la/lovelace-entity-progress-card/compare/1.6.2...1.6.3>
 
 ## What's new (1.6.3-rc11)
 
@@ -1688,6 +1786,9 @@ whichever entity the parent Tile card is already using.
 > [Discord]. We'd rather know than have you go looking for a workaround on your
 > own.
 
+➡️ **Full Changelog**:
+<https://github.com/francois-le-ko4la/lovelace-entity-progress-card/compare/1.6.1...1.6.2>
+
 ---
 
 ## What's new (1.6.2-rc6)
@@ -2564,6 +2665,9 @@ and [`docs/configuration.md`](docs/configuration.md)/
 everything this release actually shipped.
 
 Thanks to everyone who reported, tested and contributed 🙏
+
+➡️ **Full Changelog**:
+<https://github.com/francois-le-ko4la/lovelace-entity-progress-card/compare/1.6.0...1.6.1>
 
 ---
 
@@ -3770,6 +3874,9 @@ Compatible with Home Assistant 2026.2+. The notable fixes over 1.5.2:
 
 Thanks to everyone who reported, tested and contributed 🙏
 
+➡️ **Full Changelog**:
+<https://github.com/francois-le-ko4la/lovelace-entity-progress-card/compare/1.5.2...1.6.0>
+
 ---
 
 ## What's new (1.6.0-rc4)
@@ -4502,7 +4609,7 @@ text_shadow: true
 
 - update documentation
 
-**Full Changelog**:
+➡️ **Full Changelog**:
 <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/compare/1.5.1...1.5.2>
 
 ---
@@ -4523,7 +4630,7 @@ caught—but a few minor glitches still slipped through.
 - Prevented text overflow in top, bottom, and overlay sections.
 - Minor visual tweaks for smoother display in various layouts.
 
-**Full Changelog**:
+➡️ **Full Changelog**:
 <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/compare/1.5.0...1.5.1>
 
 ---
@@ -4668,7 +4775,7 @@ This docs update dramatically improves usability:
 - More maintainable
 - Looks great across all devices
 
-**Full Changelog**:
+➡️ **Full Changelog**:
 <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/compare/1.4.12...1.5.0>
 
 ---
@@ -7572,6 +7679,8 @@ experience:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#height
 [icon_animation]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#icon_animation
+[xyz_action]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#xyz_action
 [state_content]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#state_content
 [alert_when]:

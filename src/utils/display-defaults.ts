@@ -10,13 +10,9 @@
  * show it as a greyed placeholder without writing a YAML key.
  */
 
-import { CARD } from './parameters.js';
+import { CARD, HA_CONTEXT } from './parameters.js';
 import { is } from './common-checks.js';
-
-// Units that read as a duration even when the entity isn't typed as one.
-const DURATION_UNITS = ['j', 'd', 'h', 'min', 's', 'ms', 'μs'];
-
-type EntityTypeFlags = { isTimer?: boolean; isCounter?: boolean; isDuration?: boolean };
+import type { ValueKind } from './ha-context.js';
 
 const resolveDisplayUnit = (
   configUnit: string | undefined,
@@ -34,22 +30,23 @@ const resolveDisplayDecimal = (
     configUnit,
     resolvedUnit,
     entityPrecision,
-    entityType,
+    valueKind,
     entityUnit,
   }: {
     configUnit: string | undefined;
     resolvedUnit: string;
     entityPrecision: number | null;
-    entityType: EntityTypeFlags;
+    valueKind: ValueKind;
     entityUnit: string | null;
   },
 ): number => {
   if (is.unsignedInteger(configDecimal)) return configDecimal;
   if (entityPrecision) return entityPrecision;
-  if (entityType.isTimer) return CARD.config.decimal.timer;
-  if (entityType.isCounter) return CARD.config.decimal.counter;
-  if (entityType.isDuration) return CARD.config.decimal.duration;
-  if (DURATION_UNITS.includes(entityUnit as string)) return CARD.config.decimal.duration;
+  if (valueKind === 'timer') return CARD.config.decimal.timer;
+  if (valueKind === 'counter') return CARD.config.decimal.counter;
+  if (valueKind === 'duration') return CARD.config.decimal.duration;
+  // A duration unit, even when the entity isn't typed as one.
+  if (entityUnit !== null && HA_CONTEXT.durationUnits.has(entityUnit)) return CARD.config.decimal.duration;
   // ||, never ??: the disable unit is the empty string, and an explicit
   // `unit: ''` has always fallen through to the resolved one.
   const unit = configUnit || resolvedUnit;

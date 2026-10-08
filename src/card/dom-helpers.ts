@@ -4,7 +4,7 @@
  * dispatch).
  */
 
-import { CARD_CONTEXT, HA_SVG_ICON_TAG, HA_ACTION_HANDLER_TAG } from '../utils/parameters.js';
+import { CARD_CONTEXT, HA_CONTEXT } from '../utils/parameters.js';
 import { is, assertDefined } from '../utils/common-checks.js';
 import { initLogger, type LoggerInstance } from '../utils/log.js';
 import type { Config } from '../utils/types.js';
@@ -19,16 +19,6 @@ class ResourceManager {
 
   constructor() {
     this.#log = initLogger(this, 'ResourceManager', this.#debug, ['add', 'remove', 'cleanup']);
-  }
-
-  // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
-
-  get list() {
-    return [...this.#resources.keys()];
-  }
-
-  get count() {
-    return this.#resources.size;
   }
 
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
@@ -46,19 +36,6 @@ class ResourceManager {
     this.#log?.debug(`Set: ${finalId}`);
 
     return finalId;
-  }
-
-  setInterval(handler: () => void, timeout: number, id: string): string {
-    this.#log?.debug('Starting interval with id:', id);
-    const timerId = setInterval(handler, timeout);
-    this.#log?.debug('Timer started with timerId:', timerId);
-
-    this.add(() => {
-      this.#log?.debug('Stopping interval with id:', id);
-      clearInterval(timerId);
-    }, id);
-
-    return id;
   }
 
   has(id: string): boolean {
@@ -238,7 +215,7 @@ class DOMHelper {
   _rafScheduled: boolean;
 
   constructor() {
-    this.#log = initLogger(this, 'DOMHelper', this.#debug, ['register', 'unregister', 'destroy']);
+    this.#log = initLogger(this, 'DOMHelper', this.#debug, ['register', 'destroy']);
     this._domElements = new Map(); // key → HTMLElement
     this._appliedValues = new Map(); // "key:prop" → last applied value
     this._pendingUpdates = new Map(); // "key:prop" → pending update function
@@ -254,15 +231,6 @@ class DOMHelper {
 
   get(key: string): HTMLElement | undefined {
     return this._domElements.get(key);
-  }
-
-  unregister(key: string) {
-    this._domElements.delete(key);
-    for (const cacheKey of this._appliedValues.keys()) {
-      if (cacheKey.startsWith(`${key}:`)) {
-        this._appliedValues.delete(cacheKey);
-      }
-    }
   }
 
   // ─── RAF queue ────────────────────────────────────────────────────────────
@@ -542,7 +510,7 @@ class ActionHelper {
   #fromIcon = false;
   #initialized = false;
   #disableIconTap = false;
-  #iconClickSources = new Set(['shape', HA_SVG_ICON_TAG, 'img']);
+  #iconClickSources = new Set(['shape', HA_CONTEXT.elements.svgIcon, 'img']);
   #debug = CARD_CONTEXT.debug.interactionHandler;
   #log: LoggerInstance | null = null;
 
@@ -555,9 +523,9 @@ class ActionHelper {
   // lazily; querySelector could return null and crash if this card loads before
   // any native card
   static #getActionHandler(): ActionHandlerElement {
-    let handler = document.body.querySelector(HA_ACTION_HANDLER_TAG) as ActionHandlerElement | null;
+    let handler = document.body.querySelector(HA_CONTEXT.elements.actionHandler) as ActionHandlerElement | null;
     if (!handler) {
-      handler = document.createElement(HA_ACTION_HANDLER_TAG) as unknown as ActionHandlerElement;
+      handler = document.createElement(HA_CONTEXT.elements.actionHandler) as unknown as ActionHandlerElement;
       document.body.appendChild(handler);
     }
     return handler;
@@ -623,7 +591,7 @@ class ActionHelper {
     if (!actionConfig) return;
 
     this.#target?.dispatchEvent(
-      new CustomEvent('hass-action', {
+      new CustomEvent(HA_CONTEXT.events.action, {
         bubbles: true,
         composed: true,
         detail: {

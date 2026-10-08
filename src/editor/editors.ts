@@ -14,6 +14,7 @@ import {
   MultiRowConfigHelper,
   MultiFeatureRowConfigHelper,
 } from '../card/config-helpers.js';
+import { HA_CONTEXT } from '../utils/parameters.js';
 import { EditorBase } from './base.js';
 import {
   MULTI_CARD_ROW_EDITOR_NAME,
@@ -22,7 +23,6 @@ import {
   buildIconButton,
   BACK_ICON_PATH,
 } from './list-editors.js';
-import { CONFIG_CHANGED_EVENT } from '../utils/parameters.js';
 import { cascade, sharedOf, rowsOf, isRowOption } from './multi-cascade.js';
 import type { HomeAssistant } from '../utils/hass-provider.js';
 import type { LovelaceConfig } from '../utils/types.js';
@@ -112,7 +112,7 @@ class MultiEditorBase extends EditorBase {
     sub.setConfig?.({ ...shared, ...row } as unknown as LovelaceConfig);
     // EditorBase dispatches config-changed bubbling AND composed: left alone
     // it reaches Home Assistant, which reads one row as the whole card.
-    sub.addEventListener(CONFIG_CHANGED_EVENT, (e: Event) => {
+    sub.addEventListener(HA_CONTEXT.events.configChanged, (e: Event) => {
       e.stopPropagation();
       this.#writeRow(index, (e as CustomEvent).detail.config as LovelaceConfig);
     });

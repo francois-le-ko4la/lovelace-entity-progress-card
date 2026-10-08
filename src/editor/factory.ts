@@ -47,6 +47,7 @@ import {
 import type { Factorization } from '../card/factorization.js';
 import { resolveCenterZero } from '../card/config-helpers.js';
 import { hasUsableHistory } from '../card/entity-helper.js';
+import { domainProfile } from '../card/ha-state.js';
 
 // hide's chips in the order the editor shows them; the set itself comes from
 // the schema (see hideChipsItems).
@@ -221,7 +222,6 @@ const EditorFieldsType = {
   stateContent: field('state_content'),
   text: field('text'),
   number: field('number'),
-  slider: field('slider'),
   decimal: field('decimal'),
   toggle: field('toggle'),
   tpl: field('template'),
@@ -1141,7 +1141,9 @@ const EditorFactory = {
             reverse: EditorFieldsType.toggle('reverse', {
               showIf: (c: LovelaceConfig) => {
                 const entity = effectiveEntity(c);
-                return entity !== undefined && HassProviderSingleton.getEntityDomain(entity) === 'timer';
+                return (
+                  entity !== undefined && domainProfile(HassProviderSingleton.getEntityDomain(entity)).kind === 'timer'
+                );
               },
             }),
           }),

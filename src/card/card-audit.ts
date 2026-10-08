@@ -2,6 +2,7 @@
 // shouldn't need - read from Home Assistant's own configs, unopened views too.
 
 import { is } from '../utils/common-checks.js';
+import { HA_CONTEXT } from '../utils/parameters.js';
 import { currentHass, type HomeAssistant } from '../utils/hass-provider.js';
 import type { LovelaceConfig } from '../utils/types.js';
 import { deprecatedOptionsOf } from './config-helpers.js';
@@ -114,7 +115,7 @@ const auditDashboard = (config: unknown, dashboard: string): Finding[] => {
 // A user refused the list still gets the dashboard on screen.
 const dashboardsToRead = async (send: (msg: Node) => Promise<unknown>): Promise<Dashboard[]> => {
   try {
-    const listed = (await send({ type: 'lovelace/dashboards/list' })) as { title?: string; url_path: string }[];
+    const listed = (await send({ type: HA_CONTEXT.ws.lovelaceDashboards })) as { title?: string; url_path: string }[];
     return [
       ...listed.map((entry) => ({ title: entry.title ?? entry.url_path, urlPath: entry.url_path })),
       { title: 'Overview', urlPath: null },
@@ -129,7 +130,7 @@ const readFindings = async (connection: HomeAssistant['connection']): Promise<Fi
   const send = (msg: Node) => connection.sendMessagePromise(msg);
   const dashboards = await dashboardsToRead(send);
   const configs = await Promise.all(
-    dashboards.map(({ urlPath }) => send({ type: 'lovelace/config', url_path: urlPath }).catch(() => null)),
+    dashboards.map(({ urlPath }) => send({ type: HA_CONTEXT.ws.lovelaceConfig, url_path: urlPath }).catch(() => null)),
   );
   const seen = new Set<string>();
   return dashboards.flatMap(({ title }, index) => {

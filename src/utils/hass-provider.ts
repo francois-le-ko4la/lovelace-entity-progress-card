@@ -157,7 +157,6 @@ const sameDeviceEntities = (entities: Record<string, EntityRegistryEntry> | unde
 };
 
 // Read as a relative time ('5 minutes ago') - which ages with no state change.
-const RELATIVE_TIME_PROPS = new Set(['last_changed', 'last_updated']);
 
 // Last resort when the bundle's own URL can't be read: HACS installs this card
 // under its repository name.
@@ -354,7 +353,6 @@ class HassProviderSingleton {
       ...HA_CONTEXT.numberFormat,
       language: localeFromLang(this.language),
       system: Intl.NumberFormat().resolvedOptions().locale,
-      none: 'en',
     };
     return (userDef && numberFormatMap[userDef]) || localeFromLang(this.language);
   }
@@ -446,7 +444,7 @@ class HassProviderSingleton {
   }
 
   #formatEntityProp(entityId: string, prop: string): string {
-    if (RELATIVE_TIME_PROPS.has(prop))
+    if (HA_CONTEXT.timestampProps.has(prop))
       return this.getRelativeTime(this.#resolveEntityProp(entityId, prop) as string | null);
 
     const stateObj = this.getEntityStateObj(entityId);
@@ -576,6 +574,6 @@ const currentHass = (): HomeAssistant | null =>
   (document.querySelector('home-assistant') as { hass?: HomeAssistant } | null)?.hass ??
   null;
 
-export { HassProviderSingleton, buildTranslationTree, sameDeviceEntities, sidecarUrl, RELATIVE_TIME_PROPS };
+export { HassProviderSingleton, buildTranslationTree, sameDeviceEntities, sidecarUrl };
 export { loadEditor, editorFileReport, currentHass };
 export type { HomeAssistant, EntityState };

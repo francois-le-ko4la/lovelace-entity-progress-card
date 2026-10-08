@@ -3,7 +3,7 @@
  * config and hass, and only size them: docs/development.md#the-multi-cards.
  */
 
-import { CARD, META, suffixedName } from '../utils/parameters.js';
+import { CARD, HA_CONTEXT, META, suffixedName } from '../utils/parameters.js';
 import { is } from '../utils/common-checks.js';
 import { HACore } from './core.js';
 import { rowConfigsOf } from './multi-rows.js';
@@ -16,11 +16,6 @@ type ChildEl = HTMLElement & {
   setConfig?: (config: LovelaceConfig) => void;
   forceHidden?: (targets: string[]) => void;
 };
-
-// HA's per-feature row-height variable - read for the container's own row
-// unit only (see #featureRowPx); the children are cards, sized by the var
-// below.
-const FEATURE_HEIGHT_VAR = '--feature-height';
 
 // The same var an explicit `height:` writes inline on a standalone card (see
 // styles.ts's ha-card height rule). Custom properties cross a shadow boundary,
@@ -188,7 +183,7 @@ class EntityProgressMultiBase extends HACore {
   // untouched as the unit. Only resolvable from the DOM once connected;
   // before that, fall back to HA's own default.
   #featureRowPx(): number {
-    const raw = parseFloat(getComputedStyle(this).getPropertyValue(FEATURE_HEIGHT_VAR));
+    const raw = parseFloat(getComputedStyle(this).getPropertyValue(HA_CONTEXT.styles.featureHeight));
     return Number.isFinite(raw) && raw > 0 ? raw : 42;
   }
 

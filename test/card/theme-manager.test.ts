@@ -1,52 +1,52 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import { ThemeManager } from '../../src/card/theme-manager.js';
-import { HA_CONTEXT } from '../../src/utils/parameters.js';
+import { haColor } from '../../src/utils/ha-context.js';
 
 describe('ThemeManager - built-in theme zone at a given percent', () => {
   test('critical_when_high at 42% lands in the 0-60 green zone', () => {
     const theme = new ThemeManager();
     theme.theme = 'critical_when_high';
     theme.value = 42;
-    assert.equal(theme.barColor, HA_CONTEXT.colors.green);
-    assert.equal(theme.iconColor, HA_CONTEXT.colors.green);
+    assert.equal(theme.barColor, haColor('green'));
+    assert.equal(theme.iconColor, haColor('green'));
   });
 
   test('critical_when_high at 75% lands in the 70-80 yellow zone', () => {
     const theme = new ThemeManager();
     theme.theme = 'critical_when_high';
     theme.value = 75;
-    assert.equal(theme.barColor, HA_CONTEXT.colors.yellow);
+    assert.equal(theme.barColor, haColor('yellow'));
   });
 
   test('critical_when_high at 95% lands in the 90-100 red zone', () => {
     const theme = new ThemeManager();
     theme.theme = 'critical_when_high';
     theme.value = 95;
-    assert.equal(theme.barColor, HA_CONTEXT.colors.red);
+    assert.equal(theme.barColor, haColor('red'));
   });
 
   test('zone boundaries are min-inclusive, max-exclusive', () => {
     const theme = new ThemeManager();
     theme.theme = 'critical_when_high';
     theme.value = 69.999;
-    assert.equal(theme.barColor, HA_CONTEXT.colors.green, 'just under 70 is still the 60-70 zone');
+    assert.equal(theme.barColor, haColor('green'), 'just under 70 is still the 60-70 zone');
     theme.value = 70;
-    assert.equal(theme.barColor, HA_CONTEXT.colors.yellow, 'exactly 70 already belongs to the 70-80 zone');
+    assert.equal(theme.barColor, haColor('yellow'), 'exactly 70 already belongs to the 70-80 zone');
   });
 
   test('a value below the first zone clamps to the first zone', () => {
     const theme = new ThemeManager();
     theme.theme = 'critical_when_high';
     theme.value = -20;
-    assert.equal(theme.barColor, HA_CONTEXT.colors.green);
+    assert.equal(theme.barColor, haColor('green'));
   });
 
   test('a value above the last zone clamps to the last zone', () => {
     const theme = new ThemeManager();
     theme.theme = 'critical_when_high';
     theme.value = 150;
-    assert.equal(theme.barColor, HA_CONTEXT.colors.red);
+    assert.equal(theme.barColor, haColor('red'));
   });
 });
 
@@ -97,6 +97,11 @@ describe('ThemeManager - interpolation between two zones', () => {
 describe('ThemeManager.adaptColor - HA color name -> CSS var, everything else passed through', () => {
   test('resolves a known HA color name to its CSS variable', () => {
     assert.equal(ThemeManager.adaptColor('primary'), 'var(--primary-color)');
+  });
+
+  test('resolves a state color name HA defines, not one it does not', () => {
+    assert.equal(ThemeManager.adaptColor('state-vacuum-error'), 'var(--state-vacuum-error-color)');
+    assert.equal(ThemeManager.adaptColor('state-lawn_mower-mowing'), 'state-lawn_mower-mowing');
   });
 
   test('passes an already-resolved value (hex, unknown name) through unchanged', () => {

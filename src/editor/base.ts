@@ -7,14 +7,11 @@
 import {
   CARD,
   CARD_CONTEXT,
-  VALUE_CHANGED_EVENT,
-  HA_SELECTOR_TAG,
+  HA_CONTEXT,
   EDITOR_FIELD_NS,
   SHARED_LABEL_NS,
   SHARED_LABEL_PREFIX,
   EDITOR_FIELD_HELPER_NS,
-  CONFIG_CHANGED_EVENT,
-  HASS_NOTIFICATION_EVENT,
 } from '../utils/parameters.js';
 import { EDITOR_BASE_STYLE } from '../utils/styles.js';
 import { is } from '../utils/common-checks.js';
@@ -322,11 +319,11 @@ class EditorBase extends HTMLElement {
   connectedCallback() {
     this.#boundOnChanged = this.#onChanged.bind(this);
     this.#render();
-    this.#shadow.addEventListener(VALUE_CHANGED_EVENT, this.#boundOnChanged);
+    this.#shadow.addEventListener(HA_CONTEXT.events.valueChanged, this.#boundOnChanged);
   }
 
   disconnectedCallback() {
-    if (this.#boundOnChanged) this.#shadow.removeEventListener(VALUE_CHANGED_EVENT, this.#boundOnChanged);
+    if (this.#boundOnChanged) this.#shadow.removeEventListener(HA_CONTEXT.events.valueChanged, this.#boundOnChanged);
     this.#boundOnChanged = null;
   }
 
@@ -452,7 +449,7 @@ class EditorBase extends HTMLElement {
     if (!(await copyText(issueReport(this.#lastConfig), this.#shadow))) return;
     const message = this.#hassProvider.localizeGroup(EDITOR_FIELD_NS)?.issue_report_copied ?? 'Copied to clipboard';
     this.dispatchEvent(
-      new CustomEvent(HASS_NOTIFICATION_EVENT, { detail: { message }, bubbles: true, composed: true }),
+      new CustomEvent(HA_CONTEXT.events.notification, { detail: { message }, bubbles: true, composed: true }),
     );
   }
 
@@ -463,7 +460,7 @@ class EditorBase extends HTMLElement {
     button.append(this.#hassProvider.localizeGroup(EDITOR_FIELD_NS)?.migrate_config ?? 'Migrate config');
     button.addEventListener('click', () => {
       button.dispatchEvent(
-        new CustomEvent(VALUE_CHANGED_EVENT, { detail: { value: true }, bubbles: true, composed: true }),
+        new CustomEvent(HA_CONTEXT.events.valueChanged, { detail: { value: true }, bubbles: true, composed: true }),
       );
     });
 
@@ -836,7 +833,7 @@ class EditorBase extends HTMLElement {
     const special = this.#buildSpecialField(field);
     if (special) return special;
 
-    const el = document.createElement(HA_SELECTOR_TAG) as EditorFieldElement;
+    const el = document.createElement(HA_CONTEXT.elements.selector) as EditorFieldElement;
 
     el.id = field.name;
     el.hass = this.hass;
@@ -1112,7 +1109,7 @@ class EditorBase extends HTMLElement {
       this.#pendingSentConfig = null;
       this.#log?.debug('config-changed →', clean);
       this.dispatchEvent(
-        new CustomEvent(CONFIG_CHANGED_EVENT, {
+        new CustomEvent(HA_CONTEXT.events.configChanged, {
           detail: { config: clean },
           bubbles: true,
           composed: true,

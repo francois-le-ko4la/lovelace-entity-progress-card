@@ -7,16 +7,18 @@
  * data - consumed by card/value-helpers.ts's ThemeManager.
  */
 
-import { HA_CONTEXT } from './ha-context.js';
+import { HA_CONTEXT, haColor } from './ha-context.js';
+
+const DEEP_PURPLE = haColor('deep-purple');
 
 // Shared by battery_adaptive (its own not-charging fallback, see its own
 // comment below) and critical_when_low - identical on purpose.
 const CRITICAL_WHEN_LOW_ZONES = [
-  { min: 0, max: 10, icon: null, color: HA_CONTEXT.colors.red },
-  { min: 10, max: 20, icon: null, color: HA_CONTEXT.colors.orange },
-  { min: 20, max: 30, icon: null, color: HA_CONTEXT.colors.yellow },
-  { min: 30, max: 40, icon: null, color: HA_CONTEXT.colors.green },
-  { min: 40, max: 100, icon: null, color: HA_CONTEXT.colors.green },
+  { min: 0, max: 10, icon: null, color: haColor('red') },
+  { min: 10, max: 20, icon: null, color: haColor('orange') },
+  { min: 20, max: 30, icon: null, color: haColor('yellow') },
+  { min: 30, max: 40, icon: null, color: haColor('green') },
+  { min: 40, max: 100, icon: null, color: haColor('green') },
 ];
 
 const THEME = {
@@ -41,11 +43,11 @@ const THEME = {
     percent: true,
     signed: false,
     style: [
-      { min: 0, max: 20, icon: null, color: HA_CONTEXT.colors.green },
-      { min: 20, max: 40, icon: null, color: HA_CONTEXT.colors.lightGreen },
-      { min: 40, max: 60, icon: null, color: HA_CONTEXT.colors.yellow },
-      { min: 60, max: 80, icon: null, color: HA_CONTEXT.colors.orange },
-      { min: 80, max: 100, icon: null, color: HA_CONTEXT.colors.red },
+      { min: 0, max: 20, icon: null, color: haColor('green') },
+      { min: 20, max: 40, icon: null, color: haColor('light-green') },
+      { min: 40, max: 60, icon: null, color: haColor('yellow') },
+      { min: 60, max: 80, icon: null, color: haColor('orange') },
+      { min: 80, max: 100, icon: null, color: haColor('red') },
     ],
   },
   critical_when_high: {
@@ -53,11 +55,11 @@ const THEME = {
     percent: true,
     signed: false,
     style: [
-      { min: 0, max: 60, icon: null, color: HA_CONTEXT.colors.green },
-      { min: 60, max: 70, icon: null, color: HA_CONTEXT.colors.green },
-      { min: 70, max: 80, icon: null, color: HA_CONTEXT.colors.yellow },
-      { min: 80, max: 90, icon: null, color: HA_CONTEXT.colors.orange },
-      { min: 90, max: 100, icon: null, color: HA_CONTEXT.colors.red },
+      { min: 0, max: 60, icon: null, color: haColor('green') },
+      { min: 60, max: 70, icon: null, color: haColor('green') },
+      { min: 70, max: 80, icon: null, color: haColor('yellow') },
+      { min: 80, max: 90, icon: null, color: haColor('orange') },
+      { min: 90, max: 100, icon: null, color: haColor('red') },
     ],
   },
   optimal_when_high: {
@@ -65,11 +67,11 @@ const THEME = {
     percent: true,
     signed: false,
     style: [
-      { min: 0, max: 20, icon: null, color: HA_CONTEXT.colors.red },
-      { min: 20, max: 40, icon: null, color: HA_CONTEXT.colors.orange },
-      { min: 40, max: 60, icon: null, color: HA_CONTEXT.colors.yellow },
-      { min: 60, max: 80, icon: null, color: HA_CONTEXT.colors.lightGreen },
-      { min: 80, max: 100, icon: null, color: HA_CONTEXT.colors.green },
+      { min: 0, max: 20, icon: null, color: haColor('red') },
+      { min: 20, max: 40, icon: null, color: haColor('orange') },
+      { min: 40, max: 60, icon: null, color: haColor('yellow') },
+      { min: 60, max: 80, icon: null, color: haColor('light-green') },
+      { min: 80, max: 100, icon: null, color: haColor('green') },
     ],
   },
   critical_when_extreme: {
@@ -77,15 +79,15 @@ const THEME = {
     percent: true,
     signed: false,
     style: [
-      { min: 0, max: 10, icon: null, color: HA_CONTEXT.colors.red },
-      { min: 10, max: 20, icon: null, color: HA_CONTEXT.colors.orange },
-      { min: 20, max: 30, icon: null, color: HA_CONTEXT.colors.yellow },
-      { min: 30, max: 40, icon: null, color: HA_CONTEXT.colors.green },
-      { min: 40, max: 60, icon: null, color: HA_CONTEXT.colors.green },
-      { min: 60, max: 70, icon: null, color: HA_CONTEXT.colors.green },
-      { min: 70, max: 80, icon: null, color: HA_CONTEXT.colors.yellow },
-      { min: 80, max: 90, icon: null, color: HA_CONTEXT.colors.orange },
-      { min: 90, max: 100, icon: null, color: HA_CONTEXT.colors.red },
+      { min: 0, max: 10, icon: null, color: haColor('red') },
+      { min: 10, max: 20, icon: null, color: haColor('orange') },
+      { min: 20, max: 30, icon: null, color: haColor('yellow') },
+      { min: 30, max: 40, icon: null, color: haColor('green') },
+      { min: 40, max: 60, icon: null, color: haColor('green') },
+      { min: 60, max: 70, icon: null, color: haColor('green') },
+      { min: 70, max: 80, icon: null, color: haColor('yellow') },
+      { min: 80, max: 90, icon: null, color: haColor('orange') },
+      { min: 90, max: 100, icon: null, color: haColor('red') },
     ],
   },
   // center_zero's own equivalent of critical_when_extreme above - same
@@ -99,15 +101,15 @@ const THEME = {
     percent: true,
     signed: true,
     style: [
-      { min: -100, max: -80, icon: null, color: HA_CONTEXT.colors.red },
-      { min: -80, max: -60, icon: null, color: HA_CONTEXT.colors.orange },
-      { min: -60, max: -40, icon: null, color: HA_CONTEXT.colors.yellow },
-      { min: -40, max: -20, icon: null, color: HA_CONTEXT.colors.green },
-      { min: -20, max: 20, icon: null, color: HA_CONTEXT.colors.green },
-      { min: 20, max: 40, icon: null, color: HA_CONTEXT.colors.green },
-      { min: 40, max: 60, icon: null, color: HA_CONTEXT.colors.yellow },
-      { min: 60, max: 80, icon: null, color: HA_CONTEXT.colors.orange },
-      { min: 80, max: 100, icon: null, color: HA_CONTEXT.colors.red },
+      { min: -100, max: -80, icon: null, color: haColor('red') },
+      { min: -80, max: -60, icon: null, color: haColor('orange') },
+      { min: -60, max: -40, icon: null, color: haColor('yellow') },
+      { min: -40, max: -20, icon: null, color: haColor('green') },
+      { min: -20, max: 20, icon: null, color: haColor('green') },
+      { min: 20, max: 40, icon: null, color: haColor('green') },
+      { min: 40, max: 60, icon: null, color: haColor('yellow') },
+      { min: 60, max: 80, icon: null, color: haColor('orange') },
+      { min: 80, max: 100, icon: null, color: haColor('red') },
     ],
   },
   // `light` theme (colors + lightbulb icon progression) contributed by
@@ -129,15 +131,15 @@ const THEME = {
     percent: false,
     signed: false,
     style: [
-      { min: -50, max: -20, icon: HA_CONTEXT.icons.thermometer, color: HA_CONTEXT.colors.indigo },
-      { min: -20, max: -2, icon: HA_CONTEXT.icons.thermometer, color: HA_CONTEXT.colors.blue },
-      { min: -2, max: 2, icon: HA_CONTEXT.icons.thermometer, color: HA_CONTEXT.colors.lightBlue },
-      { min: 2, max: 15, icon: HA_CONTEXT.icons.thermometer, color: HA_CONTEXT.colors.cyan },
-      { min: 15, max: 20, icon: HA_CONTEXT.icons.thermometer, color: HA_CONTEXT.colors.teal },
-      { min: 20, max: 25, icon: HA_CONTEXT.icons.thermometer, color: HA_CONTEXT.colors.green },
-      { min: 25, max: 27, icon: HA_CONTEXT.icons.thermometer, color: HA_CONTEXT.colors.yellow },
-      { min: 27, max: 30, icon: HA_CONTEXT.icons.thermometer, color: HA_CONTEXT.colors.amber },
-      { min: 30, max: 100, icon: HA_CONTEXT.icons.thermometer, color: HA_CONTEXT.colors.red },
+      { min: -50, max: -20, icon: HA_CONTEXT.icons.thermometer, color: haColor('indigo') },
+      { min: -20, max: -2, icon: HA_CONTEXT.icons.thermometer, color: haColor('blue') },
+      { min: -2, max: 2, icon: HA_CONTEXT.icons.thermometer, color: haColor('light-blue') },
+      { min: 2, max: 15, icon: HA_CONTEXT.icons.thermometer, color: haColor('cyan') },
+      { min: 15, max: 20, icon: HA_CONTEXT.icons.thermometer, color: haColor('teal') },
+      { min: 20, max: 25, icon: HA_CONTEXT.icons.thermometer, color: haColor('green') },
+      { min: 25, max: 27, icon: HA_CONTEXT.icons.thermometer, color: haColor('yellow') },
+      { min: 27, max: 30, icon: HA_CONTEXT.icons.thermometer, color: haColor('amber') },
+      { min: 30, max: 100, icon: HA_CONTEXT.icons.thermometer, color: haColor('red') },
     ],
   },
   humidity: {
@@ -152,13 +154,13 @@ const THEME = {
     // as merely "different" (deep-purple) while a 15% reading hit red, the
     // opposite of the actual risk profile.
     style: [
-      { min: 0, max: 20, icon: HA_CONTEXT.icons.waterPercent, color: HA_CONTEXT.colors.red },
-      { min: 20, max: 30, icon: HA_CONTEXT.icons.waterPercent, color: HA_CONTEXT.colors.orange },
-      { min: 30, max: 40, icon: HA_CONTEXT.icons.waterPercent, color: HA_CONTEXT.colors.yellow },
-      { min: 40, max: 60, icon: HA_CONTEXT.icons.waterPercent, color: HA_CONTEXT.colors.green },
+      { min: 0, max: 20, icon: HA_CONTEXT.icons.waterPercent, color: haColor('red') },
+      { min: 20, max: 30, icon: HA_CONTEXT.icons.waterPercent, color: haColor('orange') },
+      { min: 30, max: 40, icon: HA_CONTEXT.icons.waterPercent, color: haColor('yellow') },
+      { min: 40, max: 60, icon: HA_CONTEXT.icons.waterPercent, color: haColor('green') },
       { min: 60, max: 70, icon: HA_CONTEXT.icons.waterPercent, color: 'var(--light-blue-color)' },
-      { min: 70, max: 80, icon: HA_CONTEXT.icons.waterPercent, color: HA_CONTEXT.colors.indigo },
-      { min: 80, max: 100, icon: HA_CONTEXT.icons.waterPercent, color: HA_CONTEXT.colors.deepPurple },
+      { min: 70, max: 80, icon: HA_CONTEXT.icons.waterPercent, color: haColor('indigo') },
+      { min: 80, max: 100, icon: HA_CONTEXT.icons.waterPercent, color: DEEP_PURPLE },
     ],
   },
   voc: {
@@ -166,11 +168,11 @@ const THEME = {
     percent: false,
     signed: false,
     style: [
-      { min: 0, max: 300, icon: HA_CONTEXT.icons.airFilter, color: HA_CONTEXT.colors.green },
-      { min: 300, max: 500, icon: HA_CONTEXT.icons.airFilter, color: HA_CONTEXT.colors.yellow },
-      { min: 500, max: 3000, icon: HA_CONTEXT.icons.airFilter, color: HA_CONTEXT.colors.orange },
-      { min: 3000, max: 25000, icon: HA_CONTEXT.icons.airFilter, color: HA_CONTEXT.colors.red },
-      { min: 25000, max: 50000, icon: HA_CONTEXT.icons.airFilter, color: HA_CONTEXT.colors.deepPurple },
+      { min: 0, max: 300, icon: HA_CONTEXT.icons.airFilter, color: haColor('green') },
+      { min: 300, max: 500, icon: HA_CONTEXT.icons.airFilter, color: haColor('yellow') },
+      { min: 500, max: 3000, icon: HA_CONTEXT.icons.airFilter, color: haColor('orange') },
+      { min: 3000, max: 25000, icon: HA_CONTEXT.icons.airFilter, color: haColor('red') },
+      { min: 25000, max: 50000, icon: HA_CONTEXT.icons.airFilter, color: DEEP_PURPLE },
     ],
   },
   pm25: {
@@ -178,11 +180,11 @@ const THEME = {
     percent: false,
     signed: false,
     style: [
-      { min: 0, max: 12, icon: HA_CONTEXT.icons.airFilter, color: HA_CONTEXT.colors.green },
-      { min: 12, max: 35, icon: HA_CONTEXT.icons.airFilter, color: HA_CONTEXT.colors.yellow },
-      { min: 35, max: 55, icon: HA_CONTEXT.icons.airFilter, color: HA_CONTEXT.colors.orange },
-      { min: 55, max: 150, icon: HA_CONTEXT.icons.airFilter, color: HA_CONTEXT.colors.red },
-      { min: 150, max: 200, icon: HA_CONTEXT.icons.airFilter, color: HA_CONTEXT.colors.deepPurple },
+      { min: 0, max: 12, icon: HA_CONTEXT.icons.airFilter, color: haColor('green') },
+      { min: 12, max: 35, icon: HA_CONTEXT.icons.airFilter, color: haColor('yellow') },
+      { min: 35, max: 55, icon: HA_CONTEXT.icons.airFilter, color: haColor('orange') },
+      { min: 55, max: 150, icon: HA_CONTEXT.icons.airFilter, color: haColor('red') },
+      { min: 150, max: 200, icon: HA_CONTEXT.icons.airFilter, color: DEEP_PURPLE },
     ],
   },
 };

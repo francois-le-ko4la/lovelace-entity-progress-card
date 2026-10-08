@@ -105,19 +105,32 @@ describe('a static hide takes its own fields out of the editor', () => {
 
   // bar_stack also sets the value the text shows (its total, or net balance):
   // it has a say with the bar hidden.
-  const BAR_BUT_NOT_ONLY = ['bar_stack'];
+  const STILL_ACTIVE = ['bar_stack'];
 
-  // The table is hand-kept, and EXPECTED above only samples it: every bar_*
-  // field, whatever is added later, has to go with the bar.
-  test('hide: [progress_bar] takes every bar_* field with it', () => {
-    const tree = EditorFactory.build({ template: false, badge: false }) as unknown as FieldTree;
-    const all = visibleFields(tree, {});
-    const shown = visibleFields(tree, { hide: ['progress_bar'] });
-    const left = [...all].filter(
-      (name) => name.startsWith('bar_') && !BAR_BUT_NOT_ONLY.some((kept) => name.startsWith(kept)) && shown.has(name),
-    );
-    assert.deepEqual(left, [], `still shown with the bar hidden: ${left.join(', ')}`);
-  });
+  // The table is hand-kept, and EXPECTED above only samples it: every field
+  // under a target's own prefix, whatever is added later, has to go with it.
+  const OWN_PREFIXES: Record<string, string[]> = {
+    icon: ['icon_', 'badge_'],
+    name: ['name_'],
+    value: ['value_'],
+    unit: ['unit_'],
+    progress_bar: ['bar_'],
+  };
+
+  for (const [target, prefixes] of Object.entries(OWN_PREFIXES)) {
+    test(`hide: [${target}] takes every ${prefixes.join('/')}* field with it`, () => {
+      const tree = EditorFactory.build({ template: false, badge: false }) as unknown as FieldTree;
+      const all = visibleFields(tree, {});
+      const shown = visibleFields(tree, { hide: [target] });
+      const left = [...all].filter(
+        (name) =>
+          prefixes.some((prefix) => name.startsWith(prefix)) &&
+          !STILL_ACTIVE.some((kept) => name.startsWith(kept)) &&
+          shown.has(name),
+      );
+      assert.deepEqual(left, [], `still shown with ${target} hidden: ${left.join(', ')}`);
+    });
+  }
 
   test('a Jinja hide gates nothing - its result is unknowable here', () => {
     const tree = EditorFactory.build({ template: false, badge: false }) as unknown as FieldTree;

@@ -1,16 +1,294 @@
 /*
- * HA_CONTEXT: Home Assistant integration constants - MDI icon ids, theme color
- * CSS-variable names, the HA color name → var map, per-domain attribute
- * mapping, number-format locales, entity state/type/class enums, action
- * shapes, and misc style hooks. No logic, just data.
+ * HA_CONTEXT: what the card knows about Home Assistant - HA mirrors, our own
+ * decisions, integration enums, gathered at the end. No logic, just data.
  */
 
-// Every HA theme color var follows this one naming convention - shared by
-// colors/haColors below so the two never encode it separately and drift.
+// ─── NAME BUILDERS ──────────────────────────────────────────────────────────
+
+// Every HA theme color var follows this one naming convention.
 const cssColorVar = (name: string): string => `var(--${name}-color)`;
+const stateColorName = (...parts: string[]): string => `--state-${parts.join('-')}-color`;
 
 const MDI_PREFIX = 'mdi:';
-const mdi = (name: string): string => `${MDI_PREFIX}${name}`;
+type CamelCase<S extends string> = S extends `${infer H}-${infer T}` ? `${H}${Capitalize<CamelCase<T>>}` : S;
+const ICON_NAMES = [
+  'help',
+  'help-circle-outline',
+  'chevron-up-box',
+  'chevron-down-box',
+  'equal-box',
+  'progress-question',
+  'alert-circle-outline',
+  'exclamation-thick',
+  'play',
+  'pause',
+  'gesture-tap-hold',
+  'washing-machine',
+  'update',
+  'lightbulb',
+  'lightbulb-outline',
+  'thermometer',
+  'water-percent',
+  'air-filter',
+  'list-box',
+  'text-short',
+  'radar',
+  'chart-bell-curve',
+  'label-outline',
+  'aspect-ratio',
+] as const;
+const ICONS = Object.fromEntries(
+  ICON_NAMES.map((name) => [name.replace(/-(\w)/g, (_, char: string) => char.toUpperCase()), `${MDI_PREFIX}${name}`]),
+) as { [N in (typeof ICON_NAMES)[number] as CamelCase<N>]: string };
+
+// ─── HA MIRRORS ─────────────────────────────────────────────────────────────
+// Verbatim copies, re-synced from the source file named above each, at:
+// https://github.com/home-assistant/frontend/tree/59444f72bc81b05e3e016861cf2c5d14a96f3217
+// https://github.com/home-assistant/core/tree/53b8909e780b0be512680a19d294a67c6b0a7b30
+
+// src/common/color/compute-color.ts: THEME_COLORS (what its color picker
+// offers), then YAML_ONLY_THEMES_COLORS.
+const HA_THEME_COLORS = [
+  'primary',
+  'accent',
+  'red',
+  'pink',
+  'purple',
+  'deep-purple',
+  'indigo',
+  'blue',
+  'light-blue',
+  'cyan',
+  'teal',
+  'green',
+  'light-green',
+  'lime',
+  'yellow',
+  'amber',
+  'orange',
+  'deep-orange',
+  'brown',
+  'light-grey',
+  'grey',
+  'dark-grey',
+  'blue-grey',
+  'black',
+  'white',
+] as const;
+const HA_YAML_ONLY_COLORS = ['primary-text', 'secondary-text', 'disabled'] as const;
+
+// src/resources/theme/color/color.globals.ts: the --state-*-color variables,
+// nested domain → device_class (`_` = none) → states.
+const HA_GENERIC_STATE_COLORS = ['active', 'inactive', 'unavailable'];
+const HA_STATE_COLORS: Record<string, Record<string, readonly string[]>> = {
+  alarm_control_panel: {
+    _: [
+      'armed_away',
+      'armed_custom_bypass',
+      'armed_home',
+      'armed_night',
+      'armed_vacation',
+      'arming',
+      'disarming',
+      'pending',
+      'triggered',
+    ],
+  },
+  alert: { _: ['off', 'on'] },
+  binary_sensor: {
+    _: ['active'],
+    battery: ['on'],
+    carbon_monoxide: ['on'],
+    gas: ['on'],
+    glass_break: ['on'],
+    heat: ['on'],
+    lock: ['on'],
+    moisture: ['on'],
+    problem: ['on'],
+    safety: ['on'],
+    smoke: ['on'],
+    sound: ['on'],
+    tamper: ['on'],
+  },
+  // 'heat-cool' (hyphen) is HA's own spelling: no state slugifies to it, so
+  // heat_cool falls through to --state-active-color, in HA as here.
+  climate: { _: ['auto', 'cool', 'dry', 'fan_only', 'heat', 'heat-cool'] },
+  cover: { _: ['active'] },
+  device_tracker: { _: ['active', 'home'] },
+  fan: { _: ['active'] },
+  humidifier: { _: ['on'] },
+  lawn_mower: { _: ['active', 'error'] },
+  light: { _: ['active'] },
+  lock: { _: ['jammed', 'locked', 'locking', 'open', 'opening', 'unlocked', 'unlocking'] },
+  media_player: { _: ['active'] },
+  person: { _: ['active', 'home'] },
+  plant: { _: ['active'] },
+  sensor: { battery: ['high', 'low', 'medium'] },
+  siren: { _: ['active'] },
+  sun: { _: ['above_horizon', 'below_horizon'] },
+  switch: { _: ['active'] },
+  update: { _: ['active'] },
+  vacuum: { _: ['active', 'error'] },
+  valve: { _: ['active'] },
+  water_heater: { _: ['eco', 'electric', 'gas', 'heat_pump', 'high_demand', 'performance'] },
+  weather: {
+    _: [
+      'clear_night',
+      'cloudy',
+      'exceptional',
+      'fog',
+      'hail',
+      'lightning',
+      'lightning_rainy',
+      'partlycloudy',
+      'pouring',
+      'rainy',
+      'snowy',
+      'snowy_rainy',
+      'sunny',
+      'windy',
+      'windy_variant',
+    ],
+  },
+};
+
+const STATE_COLOR_VARS: ReadonlySet<string> = new Set([
+  ...HA_GENERIC_STATE_COLORS.map((state) => stateColorName(state)),
+  ...Object.entries(HA_STATE_COLORS).flatMap(([domain, byDeviceClass]) =>
+    Object.entries(byDeviceClass).flatMap(([deviceClass, states]) =>
+      states.map((state) =>
+        deviceClass === '_' ? stateColorName(domain, state) : stateColorName(domain, deviceClass, state),
+      ),
+    ),
+  ),
+]);
+const haStateColor = (state: string): string => `var(${stateColorName(state)})`;
+
+// src/common/entity/state_color.ts: STATE_COLORED_DOMAIN.
+const STATE_COLORED_DOMAINS: ReadonlySet<string> = new Set([
+  'alarm_control_panel',
+  'alert',
+  'automation',
+  'binary_sensor',
+  'calendar',
+  'camera',
+  'climate',
+  'cover',
+  'device_tracker',
+  'fan',
+  'group',
+  'humidifier',
+  'input_boolean',
+  'lawn_mower',
+  'light',
+  'lock',
+  'media_player',
+  'person',
+  'plant',
+  'remote',
+  'schedule',
+  'script',
+  'siren',
+  'sun',
+  'switch',
+  'timer',
+  'update',
+  'vacuum',
+  'valve',
+  'water_heater',
+  'weather',
+]);
+
+// src/common/entity/color/battery_color.ts: first threshold reached wins.
+const BATTERY_COLOR_STEPS = [
+  [70, 'high'],
+  [30, 'medium'],
+  [-Infinity, 'low'],
+] as const;
+
+// src/common/entity/state_active.ts (+ const.ts TIMESTAMP_STATE_DOMAINS_LIST):
+// `inactive` besides 'off', `activeOnly` the only active states.
+const STATE_ACTIVITY = {
+  inactive: {
+    alarm_control_panel: ['disarmed'],
+    alert: ['idle'],
+    cover: ['closed'],
+    device_tracker: ['not_home'],
+    person: ['not_home'],
+    lawn_mower: ['docked', 'paused', 'idle'],
+    lock: ['locked'],
+    media_player: ['standby'],
+    vacuum: ['idle', 'docked', 'paused'],
+    valve: ['closed'],
+  } as Record<string, readonly string[] | undefined>,
+  activeOnly: {
+    plant: ['problem'],
+    group: ['on', 'home', 'open', 'locked', 'problem'],
+    timer: ['active'],
+    camera: ['streaming', 'recording'],
+  } as Record<string, readonly string[] | undefined>,
+  offIsActive: new Set(['alert']) as ReadonlySet<string>,
+  timestamp: new Set([
+    'ai_task',
+    'button',
+    'conversation',
+    'event',
+    'image',
+    'infrared',
+    'input_button',
+    'notify',
+    'radio_frequency',
+    'scene',
+    'stt',
+    'tag',
+    'tts',
+    'wake_word',
+    'datetime',
+  ]) as ReadonlySet<string>,
+};
+
+// Where the tile card's icon toggles by default: DOMAINS_TOGGLE plus the three
+// it presses or activates (getEntityDefaultTileIconAction, hui-tile-card.ts).
+const TOGGLE_DOMAINS: ReadonlySet<string> = new Set([
+  'fan',
+  'input_boolean',
+  'light',
+  'switch',
+  'group',
+  'automation',
+  'humidifier',
+  'valve',
+  'button',
+  'input_button',
+  'scene',
+]);
+
+// ─── OURS ───────────────────────────────────────────────────────────────────
+
+// Other --<name>-color variables HA's themes define, accepted by name too.
+const EXTRA_THEME_COLORS = [
+  // text & interface
+  'text-primary',
+  'text-light-primary',
+  'disabled-text',
+  'dark-primary',
+  'darker-primary',
+  'light-primary',
+  'divider',
+  'outline',
+  'outline-hover',
+  'shadow',
+  // status (alerts, badges), not entity state
+  'success',
+  'warning',
+  'error',
+  'info',
+  // state: HA's default icon color
+  'state-icon',
+] as const;
+const HA_PALETTE = [...HA_THEME_COLORS, ...HA_YAML_ONLY_COLORS, ...EXTRA_THEME_COLORS] as const;
+type HaColorName = (typeof HA_PALETTE)[number];
+const haColor = (name: HaColorName): string => cssColorVar(name);
 
 interface DomainMapping {
   attribute: string;
@@ -19,233 +297,137 @@ interface DomainMapping {
   unit?: 'system_temperature' | 'attribute_suffix';
 }
 
-// from:
-// https://github.com/home-assistant/frontend/blob/master/src/resources/theme/color/color.globals.ts
+// How value, min and max are read - the engine's own notion, not HA's.
+type ValueKind = 'timer' | 'counter' | 'number' | 'duration' | 'default';
+
+// How the card reads and animates an entity of one domain.
+interface DomainProfile {
+  kind?: ValueKind;
+  // [min, max] attribute names of a ranged entity.
+  range?: readonly [string, string];
+  // `scale`: the attribute's native full scale when it isn't 0-100. `suggest`:
+  // what the entity-first picker offers instead (no hvac_mode context there).
+  // `unit`: the two domains with no unit_of_measurement.
+  percent?: DomainMapping;
+  // The state itself is a plain, directly-usable number.
+  numericState?: true;
+  // icon_animation may fire: a real moving/working state, not just on/off.
+  animatable?: true;
+  // Active for HA, yet nothing moves (a media player idling).
+  stillStates?: readonly string[];
+}
+
+const DOMAIN_PROFILES: Record<string, DomainProfile | undefined> = {
+  light: { percent: { attribute: 'brightness', scale: 255 }, animatable: true },
+  cover: { percent: { attribute: 'current_position' }, animatable: true },
+  valve: { percent: { attribute: 'current_position' }, animatable: true },
+  fan: { percent: { attribute: 'percentage' }, animatable: true },
+  humidifier: { percent: { attribute: 'current_humidity' }, animatable: true },
+  water_heater: { percent: { attribute: 'current_temperature' }, animatable: true },
+  media_player: {
+    percent: { attribute: 'volume_level', scale: 1 },
+    animatable: true,
+    stillStates: ['idle', 'paused'],
+  },
+  climate: {
+    percent: { attribute: 'temperature', suggest: 'current_temperature', unit: 'system_temperature' },
+    animatable: true,
+  },
+  weather: { percent: { attribute: 'temperature', unit: 'attribute_suffix' } },
+  timer: { kind: 'timer', animatable: true },
+  counter: { kind: 'counter', range: ['minimum', 'maximum'], numericState: true },
+  number: { kind: 'number', range: ['min', 'max'], numericState: true },
+  input_number: { kind: 'number', range: ['min', 'max'], numericState: true },
+  sensor: { numericState: true },
+  switch: { animatable: true },
+  input_boolean: { animatable: true },
+  automation: { animatable: true },
+  script: { animatable: true },
+  remote: { animatable: true },
+  siren: { animatable: true },
+  vacuum: { animatable: true },
+  lawn_mower: { animatable: true },
+  lock: { animatable: true },
+  alarm_control_panel: { animatable: true },
+  binary_sensor: { animatable: true },
+};
+
+// ─── INTEGRATIONS ───────────────────────────────────────────────────────────
+
+const INTEGRATIONS = {
+  charging: {
+    // Exact enums: Renault's charge_state has 'charge_in_progress' but also
+    // 'charge_ended', MG SAIC's "charging finished" - no substring match.
+    states: new Set([
+      'charging',
+      'charge_in_progress',
+      'v2g_charging_normal',
+      'charging (ac)',
+      'charging (dc)',
+      'super offboard charging',
+    ]) as ReadonlySet<string>,
+    // Not standardized: checked in likelihood order, first present wins; a
+    // boolean flag or a 'charging' status enum.
+    attributes: ['battery_charging', 'charging', 'is_charging'],
+  },
+  // Home Connect's operation_state 'run', Miele's status 'in_use'.
+  washing: { states: new Set(['run', 'in_use']) as ReadonlySet<string> },
+};
+
+// ─── HA_CONTEXT ─────────────────────────────────────────────────────────────
+
 const HA_CONTEXT = {
-  icons: {
-    prefix: MDI_PREFIX,
-    help: mdi('help'),
-    helpCircle: mdi('help-circle'),
-    helpCircleOutline: mdi('help-circle-outline'),
-    chevronUpBox: mdi('chevron-up-box'),
-    chevronDownBox: mdi('chevron-down-box'),
-    equalBox: mdi('equal-box'),
-    progressQuestion: mdi('progress-question'),
-    focusHorizontal: mdi('focus-field-horizontal'),
-    focusVertical: mdi('focus-field-vertical'),
-    alert: mdi('alert'),
-    alertCircleOutline: mdi('alert-circle-outline'),
-    exclamationThick: mdi('exclamation-thick'),
-    play: mdi('play'),
-    pause: mdi('pause'),
-    gestureTapHold: mdi('gesture-tap-hold'),
-    washingMachine: mdi('washing-machine'),
-    update: mdi('update'),
-    lightbulb: mdi('lightbulb'),
-    lightbulbOutline: mdi('lightbulb-outline'),
-    thermometer: mdi('thermometer'),
-    waterPercent: mdi('water-percent'),
-    airFilter: mdi('air-filter'),
-    listBox: mdi('list-box'),
-    textShort: mdi('text-short'),
-    radar: mdi('radar'),
-    chartBellCurve: mdi('chart-bell-curve'),
-    labelOutline: mdi('label-outline'),
-    aspectRatio: mdi('aspect-ratio'),
-    sizeExtraSmall: mdi('size-xs'),
-    sizeSmall: mdi('size-s'),
-    sizeMedium: mdi('size-m'),
-    sizeLarge: mdi('size-l'),
-    sizeXLarge: mdi('size-xl'),
+  icons: { prefix: MDI_PREFIX, ...ICONS },
+  palette: new Set<string>(HA_PALETTE) as ReadonlySet<string>,
+  stateColorVars: STATE_COLOR_VARS,
+  stateColoredDomains: STATE_COLORED_DOMAINS,
+  batteryColorSteps: BATTERY_COLOR_STEPS,
+  stateActivity: STATE_ACTIVITY,
+  toggleDomains: TOGGLE_DOMAINS,
+  domainProfiles: DOMAIN_PROFILES,
+  domains: { sensor: 'sensor', group: 'group' },
+  deviceClasses: { duration: 'duration', battery: 'battery', batteryCharging: 'battery_charging' },
+  // Entity state-object properties and attributes the card reads by name.
+  attributes: {
+    deviceClass: 'device_class',
+    unit: 'unit_of_measurement',
+    friendlyName: 'friendly_name',
+    displayPrecision: 'display_precision',
+    icon: 'icon',
+    entityPicture: 'entity_picture',
+    // a group's members
+    entityId: 'entity_id',
+    timer: { duration: 'duration', remaining: 'remaining', finishesAt: 'finishes_at' },
   },
-  colors: {
-    success: cssColorVar('success'),
-    stateIcon: cssColorVar('state-icon'),
-    red: cssColorVar('red'),
-    orange: cssColorVar('orange'),
-    deepOrange: cssColorVar('deep-orange'),
-    yellow: cssColorVar('yellow'),
-    amber: cssColorVar('amber'),
-    accent: cssColorVar('accent'),
-    deepPurple: cssColorVar('deep-purple'),
-    indigo: cssColorVar('indigo'),
-    blue: cssColorVar('blue'),
-    lightBlue: cssColorVar('light-blue'),
-    cyan: cssColorVar('cyan'),
-    teal: cssColorVar('teal'),
-    green: cssColorVar('green'),
-    lightGreen: cssColorVar('light-green'),
-    lime: cssColorVar('lime'),
-    darkGrey: cssColorVar('dark-grey'),
-    unavailable: cssColorVar('state-unavailable'),
-    inactive: cssColorVar('state-inactive'),
-    active: cssColorVar('state-active'),
-    coverActive: cssColorVar('state-cover-active'),
-    fanActive: cssColorVar('state-fan-active'),
-    batteryLow: cssColorVar('state-sensor-battery-low'),
-    batteryMedium: cssColorVar('state-sensor-battery-medium'),
-    batteryHigh: cssColorVar('state-sensor-battery-high'),
-    climateDry: cssColorVar('state-climate-dry'),
-    climateCool: cssColorVar('state-climate-cool'),
-    climateHeat: cssColorVar('state-climate-heat'),
-    climateFanOnly: cssColorVar('state-climate-fan_only'),
+  // WebSocket message types the card sends.
+  ws: {
+    renderTemplate: 'render_template',
+    historyDuringPeriod: 'history/history_during_period',
+    lovelaceConfig: 'lovelace/config',
+    lovelaceDashboards: 'lovelace/dashboards/list',
   },
-  haColors: new Map(
-    [
-      // text
-      'primary-text',
-      'secondary-text',
-      'text-primary',
-      'text-light-primary',
-      'disabled-text',
-      // interface
-      'dark-primary',
-      'darker-primary',
-      'light-primary',
-      'divider',
-      'outline',
-      'outline-hover',
-      'shadow',
-      // material color
-      'primary',
-      'accent',
-      'red',
-      'pink',
-      'purple',
-      'deep-purple',
-      'indigo',
-      'blue',
-      'light-blue',
-      'cyan',
-      'teal',
-      'green',
-      'light-green',
-      'lime',
-      'yellow',
-      'amber',
-      'orange',
-      'deep-orange',
-      'brown',
-      'light-grey',
-      'grey',
-      'dark-grey',
-      'blue-grey',
-      'black',
-      'white',
-      // HA
-      'success',
-      'warning',
-      'error',
-      'info',
-      'disabled',
-      // State
-      'state-icon',
-      'state-active',
-      'state-inactive',
-      'state-unavailable',
-      'state-alarm_control_panel-armed_away',
-      'state-alarm_control_panel-armed_custom_bypass',
-      'state-alarm_control_panel-armed_home',
-      'state-alarm_control_panel-armed_night',
-      'state-alarm_control_panel-armed_vacation',
-      'state-alarm_control_panel-arming',
-      'state-alarm_control_panel-disarming',
-      'state-alarm_control_panel-pending',
-      'state-alarm_control_panel-triggered',
-      'state-alert-off',
-      'state-alert-on',
-      'state-binary_sensor-active',
-      'state-binary_sensor-battery-on',
-      'state-binary_sensor-carbon_monoxide-on',
-      'state-binary_sensor-gas-on',
-      'state-binary_sensor-heat-on',
-      'state-binary_sensor-lock-on',
-      'state-binary_sensor-moisture-on',
-      'state-binary_sensor-problem-on',
-      'state-binary_sensor-safety-on',
-      'state-binary_sensor-smoke-on',
-      'state-binary_sensor-sound-on',
-      'state-binary_sensor-tamper-on',
-      'state-climate-auto',
-      'state-climate-cool',
-      'state-climate-dry',
-      'state-climate-fan_only',
-      'state-climate-heat',
-      'state-climate-heat-cool',
-      'state-cover-active',
-      'state-device_tracker-active',
-      'state-device_tracker-home',
-      'state-fan-active',
-      'state-humidifier-on',
-      'state-lawn_mower-error',
-      'state-lawn_mower-mowing',
-      'state-light-active',
-      'state-lock-jammed',
-      'state-lock-locked',
-      'state-lock-locking',
-      'state-lock-unlocked',
-      'state-lock-unlocking',
-      'state-lock-open',
-      'state-lock-opening',
-      'state-media_player-active',
-      'state-person-active',
-      'state-person-home',
-      'state-plant-active',
-      'state-siren-active',
-      'state-sun-above_horizon',
-      'state-sun-below_horizon',
-      'state-switch-active',
-      'state-update-active',
-      'state-vacuum-active',
-      'state-valve-active',
-      'state-sensor-battery-high',
-      'state-sensor-battery-low',
-      'state-sensor-battery-medium',
-      'state-water_heater-eco',
-      'state-water_heater-electric',
-      'state-water_heater-gas',
-      'state-water_heater-heat_pump',
-      'state-water_heater-high_demand',
-      'state-water_heater-performance',
-      'state-weather-clear_night',
-      'state-weather-cloudy',
-      'state-weather-exceptional',
-      'state-weather-fog',
-      'state-weather-hail',
-      'state-weather-lightning_rainy',
-      'state-weather-lightning',
-      'state-weather-partlycloudy',
-      'state-weather-pouring',
-      'state-weather-rainy',
-      'state-weather-snowy_rainy',
-      'state-weather-snowy',
-      'state-weather-sunny',
-      'state-weather-windy_variant',
-      'state-weather-windy',
-    ].map((c) => [c, cssColorVar(c)]),
-  ),
-  // Per-domain numeric source. `scale`: the attribute's native full scale when
-  // it isn't 0-100. `suggest`: what the entity-first picker offers instead -
-  // it has no hvac_mode context to tell climate's target apart from
-  // target_temp_high/low. `unit`: the two domains with no unit_of_measurement.
-  attributeMapping: {
-    cover: { attribute: 'current_position' },
-    valve: { attribute: 'current_position' },
-    fan: { attribute: 'percentage' },
-    light: { attribute: 'brightness', scale: 255 },
-    humidifier: { attribute: 'current_humidity' },
-    water_heater: { attribute: 'current_temperature' },
-    media_player: { attribute: 'volume_level', scale: 1 },
-    climate: { attribute: 'temperature', suggest: 'current_temperature', unit: 'system_temperature' },
-    weather: { attribute: 'temperature', unit: 'attribute_suffix' },
-  } as Record<string, DomainMapping | undefined>,
-  // Domains whose own state is already a plain, directly-usable number.
-  stateDomains: ['sensor', 'number', 'input_number', 'counter'],
+  events: {
+    action: 'hass-action',
+    notification: 'hass-notification',
+    valueChanged: 'value-changed',
+    // dispatched by an editor, caught by whoever hosts it
+    configChanged: 'config-changed',
+  },
+  elements: { selector: 'ha-selector', svgIcon: 'ha-svg-icon', actionHandler: 'action-handler' },
+  // State-object timestamps, shown as relative times.
+  timestampProps: new Set(['last_changed', 'last_updated']) as ReadonlySet<string>,
+  // Entity-registry fields the card reads.
+  registryFields: ['display_precision', 'area_id', 'device_id'] as const,
+  // A sensor's time units (UnitOfTime), plus French 'j'.
+  durationUnits: new Set(['j', 'd', 'h', 'min', 's', 'ms', 'μs']) as ReadonlySet<string>,
+  integrations: INTEGRATIONS,
   numberFormat: {
-    decimal_comma: 'de-DE', // 1.234,56 (Germany, France, etc.)
+    decimal_comma: 'de-DE', // 1.234,56 (Germany, Italy, etc.)
     comma_decimal: 'en-US', // 1,234.56 (USA, UK, etc.)
     space_comma: 'fr-FR', // 1 234,56 (France, Norway, etc.)
     quote_decimal: 'de-CH', // 12'345.60 (Switzerland)
+    none: 'en',
+    // language and system resolve at runtime (hass-provider.ts).
   },
   entity: {
     state: {
@@ -256,47 +438,19 @@ const HA_CONTEXT = {
       active: 'active',
       paused: 'paused',
       on: 'on',
+      off: 'off',
     },
-    type: {
-      timer: 'timer',
-      light: 'light',
-      cover: 'cover',
-      fan: 'fan',
-      climate: 'climate',
-      counter: 'counter',
-      number: 'number',
-      duration: 'duration',
-      default: 'default',
-    },
-    class: { shutter: 'shutter', battery: 'battery' },
   },
   actions: {
-    default: 'default',
-    navigate: { action: 'navigate' },
     moreInfo: { action: 'more-info' },
-    url: { action: 'url' },
-    assist: { action: 'assist' },
     toggle: { action: 'toggle' },
-    performAction: { action: 'perform-action' },
     none: { action: 'none' },
-    toggleDomain: [
-      'light',
-      'switch',
-      'fan',
-      'input_boolean',
-      'media_player',
-      'automation',
-      'humidifier',
-      'remote',
-      'siren',
-      'water_heater',
-      'vacuum',
-      'group',
-    ],
   },
   styles: {
     rowSize: '--row-size',
+    featureHeight: '--feature-height',
   },
 };
 
-export { HA_CONTEXT };
+export { HA_CONTEXT, cssColorVar, stateColorName, haColor, haStateColor };
+export type { ValueKind, DomainProfile };

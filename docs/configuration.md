@@ -1426,9 +1426,9 @@ _Order of Priority for the Icon:_
 > **`color`** [String] _(optional)_
 
 The color of the icon. Accepts [Token color][token-color], color names, RGB
-values, or HEX codes. By default, the color is based on state, domain, and
-device_class of your entity for `timer`, `cover`, `light`, `fan`, `climate` and
-`battery`.
+values, or HEX codes. By default, the color is the one Home Assistant's theme
+gives the entity, by domain, device_class and state (31 domains, plus battery
+levels), as on its tiles. Other entities use `var(--state-icon-color)`.
 
 _Examples:_ `"green"`, `"rgb(68, 115, 158)"`, `"#FF5733"`,
 `var(--state-icon-color)`...
@@ -1689,10 +1689,11 @@ badge_color: >-
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
 [![Feature OK][Feature-OK]](#compatibility)
 
-> **`bar_color`** [String] _(optional, default: `var(--state-icon-color)`)_
+> **`bar_color`** [String] _(optional, default: the entity's state color)_
 
 The color of the progress bar. Accepts [Token color][token-color], color names,
-RGB values, or HEX codes.
+RGB values, or HEX codes. By default, it follows the same state color as
+[`color`](#color).
 
 _Examples:_ `"blue"`, `"rgb(68, 115, 158)"`, `"#FF5733"`,
 `var(--state-icon-color)`
@@ -3801,12 +3802,21 @@ _Default:_
 - tap_action: `more-info`
 - hold_action: `none`
 - double_tap_action: `none`
-- icon_tap_action:
-  - `toggle` if the entity is a `light`, `switch`, `fan`, `input_boolean`, or
-    `media_player`
-  - `none` otherwise
+- icon_tap_action: depends on the entity's domain, like Home Assistant's tile
+  card (see the table below)
 - icon_hold_action: `none`
 - icon_double_tap_action: `none`
+
+_Default `icon_tap_action` by entity:_
+
+| Entity domain                                                                                              | Default `icon_tap_action` |
+| ---------------------------------------------------------------------------------------------------------- | ------------------------- |
+| `light`, `switch`, `fan`, `input_boolean`, `group`, `automation`, `humidifier`, `valve`                    | `toggle`                  |
+| `button`, `input_button`                                                                                   | `toggle` (presses it)     |
+| `scene`                                                                                                    | `toggle` (activates it)   |
+| any other (`sensor`, `media_player`, `remote`, `siren`, `vacuum`, `water_heater`, `cover`, `climate`, ...) | `none`                    |
+
+Any `icon_tap_action` you set replaces the default.
 
 > [!NOTE]
 >
