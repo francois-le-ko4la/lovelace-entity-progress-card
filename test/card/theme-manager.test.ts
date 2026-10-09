@@ -144,3 +144,31 @@ describe('switching between a custom theme and a built-in one', () => {
     assert.equal(theme.isCustomTheme, true);
   });
 });
+
+describe('ThemeManager - center_zero arms on a percent-scaled theme', () => {
+  const themed = (name: string) => {
+    const theme = new ThemeManager();
+    theme.theme = name;
+    return theme;
+  };
+
+  test('a percent theme is scaled per arm, a signed or raw-unit one is not', () => {
+    assert.equal(themed('critical_when_high').isPercentScaled, true);
+    assert.equal(themed('critical_when_extreme_center').isPercentScaled, false);
+    assert.equal(themed('temperature').isPercentScaled, false);
+  });
+
+  test('the floor gradient is the first zone, whatever the mode', () => {
+    const green = ThemeManager.adaptColor(haColor('green'));
+    const expected = `linear-gradient(${green}, ${green})`;
+    const theme = themed('critical_when_high');
+    assert.equal(theme.buildFloorGradient(40, 'segment'), expected);
+    assert.equal(theme.buildFloorGradient(0, 'rainbow_full'), expected);
+  });
+
+  test('no floor gradient for an empty arm or without a color mode', () => {
+    const theme = themed('critical_when_high');
+    assert.equal(theme.buildFloorGradient(0, 'segment'), null);
+    assert.equal(theme.buildFloorGradient(40, 'auto'), null);
+  });
+});

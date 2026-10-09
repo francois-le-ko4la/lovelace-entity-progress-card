@@ -1039,7 +1039,7 @@ function struct<T>(
   // marker reads the bar_size class directly - a bigger bar_size stayed
   // sized for a thickness the bar never has. overlay/background's own marker
   // is already hardcoded regardless of bar_size (styles.ts's
-  // .vertical.up-orientation.overlay rule), so it's simply dropped there.
+  // .vertical-bar rule), so it's simply dropped there.
   const applyBarSizeConflictRule = (result: Record<string, unknown>) => {
     if (HAS_EFFECT.barSize(result)) return;
     if (result.bar_position === 'top' || result.bar_position === 'bottom') {

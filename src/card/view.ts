@@ -148,20 +148,19 @@ const buildDivergingGradient = (params: {
   // fill past .half's own overflow: hidden instead of just filling it.
   const posFill = Math.min(100, Math.max(0, signedPercent));
   const negFill = Math.min(100, Math.max(0, -signedPercent));
+  // A percent-scaled theme reads each arm's own 0-100%: the positive arm shows
+  // its zones as they are, the negative one sits below the first zone.
+  const perArm = theme.isPercentScaled;
   const posGradient = theme.buildGradient(posFill, mode, {
     defaultColor,
     isVertical,
-    window: posWindow,
+    window: perArm ? [0, 100] : posWindow,
     valueRange,
     isSegmented,
   });
-  const negGradient = theme.buildGradient(negFill, mode, {
-    defaultColor,
-    isVertical,
-    window: negWindow,
-    valueRange,
-    isSegmented,
-  });
+  const negGradient = perArm
+    ? theme.buildFloorGradient(negFill, mode, defaultColor)
+    : theme.buildGradient(negFill, mode, { defaultColor, isVertical, window: negWindow, valueRange, isSegmented });
   if (!posGradient && !negGradient) return null;
   return { posGradient, negGradient, posSize: posFill / 100, negSize: negFill / 100 };
 };

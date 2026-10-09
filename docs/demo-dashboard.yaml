@@ -271,6 +271,8 @@ views:
             theme: temperature
             bar_color_mode: rainbow_full
             center_zero: true
+            min_value: -50
+            max_value: 100
             bar_size: xlarge
             status_label: Temperate # shorthand for { jinja: Temperate }
             grid_options:
@@ -6463,6 +6465,8 @@ views:
             theme: temperature
             bar_color_mode: rainbow_full
             center_zero: true
+            min_value: -50
+            max_value: 100
             bar_size: xlarge
             status_label:
               jinja: Temperate

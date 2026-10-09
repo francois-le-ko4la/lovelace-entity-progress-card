@@ -2500,7 +2500,7 @@ ha-card.info-multiline {
   background: var(--mark-background);
 }
 
-.vertical.up-orientation.overlay .mark {
+.vertical-bar .mark {
   --mark-top: auto;
   --mark-bottom: 0;
   --mark-left: 0;
@@ -2515,7 +2515,7 @@ ha-card.info-multiline {
   --mark-background: var(--epb-zero-mark-color, white);
 }
 
-.vertical.up-orientation.overlay .${CARD.htmlStructure.elements.progressBar.zeroMark.class} {
+.vertical-bar .${CARD.htmlStructure.elements.progressBar.zeroMark.class} {
   --mark-height: var(--epb-zero-mark-width, 1px);
   --mark-top: 50%;
 }
@@ -2620,17 +2620,17 @@ ha-card.info-multiline {
   --mark-width: calc(var(--peak-max-value, 100%) - var(--peak-min-value, 0%));
 }
 
-.vertical.up-orientation.overlay .${CARD.htmlStructure.elements.progressBar.lowWatermark.class}:is(.wm-area, .wm-blended, .wm-striped),
-.vertical.up-orientation.overlay .${CARD.htmlStructure.elements.progressBar.minMarker.class}:is(.wm-area, .wm-blended, .wm-striped),
-.vertical.up-orientation.overlay .${CARD.htmlStructure.elements.progressBar.averageMarker.class}:is(.wm-area, .wm-blended, .wm-striped) {
+.vertical-bar .${CARD.htmlStructure.elements.progressBar.lowWatermark.class}:is(.wm-area, .wm-blended, .wm-striped),
+.vertical-bar .${CARD.htmlStructure.elements.progressBar.minMarker.class}:is(.wm-area, .wm-blended, .wm-striped),
+.vertical-bar .${CARD.htmlStructure.elements.progressBar.averageMarker.class}:is(.wm-area, .wm-blended, .wm-striped) {
   --mark-height: var(--wm-value);
 }
-.vertical.up-orientation.overlay .${CARD.htmlStructure.elements.progressBar.highWatermark.class}:is(.wm-area, .wm-blended, .wm-striped),
-.vertical.up-orientation.overlay .${CARD.htmlStructure.elements.progressBar.maxMarker.class}:is(.wm-area, .wm-blended, .wm-striped) {
+.vertical-bar .${CARD.htmlStructure.elements.progressBar.highWatermark.class}:is(.wm-area, .wm-blended, .wm-striped),
+.vertical-bar .${CARD.htmlStructure.elements.progressBar.maxMarker.class}:is(.wm-area, .wm-blended, .wm-striped) {
   --mark-bottom: var(--wm-value);
   --mark-height: calc(100% - var(--wm-value));
 }
-.vertical.up-orientation.overlay .${CARD.htmlStructure.elements.progressBar.rangeMarker.class} {
+.vertical-bar .${CARD.htmlStructure.elements.progressBar.rangeMarker.class} {
   --mark-left: auto;
   --mark-width: 100%;
   --mark-bottom: var(--peak-min-value, 0%);
@@ -2658,7 +2658,7 @@ ha-card.info-multiline {
   border: none;
   transform: none;
 }
-.vertical.up-orientation.overlay .mark.wm-line {
+.vertical-bar .mark.wm-line {
   --mark-height: var(--wm-line-size);
   --mark-bottom: var(--wm-position);
 }
@@ -2678,7 +2678,7 @@ ha-card.info-multiline {
   transform: translate(-50%, -50%);
 }
 /* Anchored by --mark-bottom here, so the Y translate goes the other way. */
-.vertical.up-orientation.overlay .mark.wm-round {
+.vertical-bar .mark.wm-round {
   --mark-left: 50%;
   --mark-right: auto;
   --mark-top: auto;
@@ -2700,7 +2700,7 @@ ha-card.info-multiline {
   border-left: var(--wm-half-tri) solid transparent;
   border-right: calc(var(--wm-half-tri) + 1px) solid transparent;
 }
-.vertical.up-orientation.overlay .mark.wm-triangle {
+.vertical-bar .mark.wm-triangle {
   --mark-left: 0;
   --mark-bottom: calc(var(--wm-value) - var(--wm-half-tri));
   border-right: none;
@@ -2894,9 +2894,9 @@ ha-card.vertical.below.rainbow-full-bar.rainbow-full-raised {
 }
 
 /* Fixed at xlarge (12px, 3px ring) rather than graduated by bar_size: a
-   vertical + up + overlay bar is a full-height strip at every size, so a
+   vertical bar (overlay or background) is a full-height strip at every size, so a
    smaller marker would look undersized against it. -6px matches 2x the ring. */
-.vertical.up-orientation.overlay.rainbow-full-bar .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
+.vertical-bar.rainbow-full-bar .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
   --mark-top: auto;
   --mark-left: 50%;
   --mark-width: calc(100% - 6px);
@@ -2919,7 +2919,7 @@ ha-card.vertical.below.rainbow-full-bar.rainbow-full-raised {
     calc(100% - var(--mark-width) / 2 - var(--mark-border-width))
   );
 }
-.vertical.up-orientation.overlay.${CARD.style.dynamic.progressBar.centerZero}.rainbow-full-bar .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
+.vertical-bar.${CARD.style.dynamic.progressBar.centerZero}.rainbow-full-bar .${CARD.htmlStructure.elements.progressBar.valueMarker.class} {
   /* --mark-left stays 50%: it's the cross axis here, unrelated to center_zero,
      which only moves the fill axis (--mark-bottom when vertical). Resetting it
      to 0 shoved the pill half a bar-width left, off past the bar's edge. */

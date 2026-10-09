@@ -2030,14 +2030,16 @@ Controls how theme colors are applied to the progress bar fill.
 > [!NOTE]
 >
 > `bar_color_mode` also works with [`center_zero`](#center_zero): each arm
-> (positive/negative) gets its own independent gradient, projected onto that
-> arm's own half of the `min_value`/`max_value` scale — `rainbow_full` included
-> (each arm always shows its own half of the theme in full, and the marker
-> slides from one end of the bar to the other through the visual center, which
-> always represents zero regardless of where `center_zero_value` actually sits
-> numerically). [`bar_stack`](#bar_stack) is the one combination that doesn't
-> apply: several entities, no single position for one marker — so `rainbow_full`
-> falls back to plain `rainbow` automatically there.
+> (positive/negative) gets its own independent gradient. A percentage theme
+> reads each arm's own 0–100% (the negative arm takes the first zone's color); a
+> theme in raw units is projected onto that arm's half of the
+> `min_value`/`max_value` scale — `rainbow_full` included (each arm always shows
+> its own half of the theme in full, and the marker slides from one end of the
+> bar to the other through the visual center, which always represents zero
+> regardless of where `center_zero_value` actually sits numerically).
+> [`bar_stack`](#bar_stack) is the one combination that doesn't apply: several
+> entities, no single position for one marker — so `rainbow_full` falls back to
+> plain `rainbow` automatically there.
 
 > [!NOTE]
 >

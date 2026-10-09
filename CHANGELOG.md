@@ -47,6 +47,16 @@ toggle like its tile card.
 - An unavailable **[`min_value`][min_value]** entity or a failed Jinja range no
   longer draws a wrong bar silently; **[`alert_when`][alert_when]** and a Jinja
   **[`watermark`][watermark]** no longer react to a 0 that is not a value.
+- **[`bar_position: background`][bar_position]** with
+  [`bar_orientation: up`][bar_orientation]: the [`center_zero`][center_zero]
+  line, [`watermark`][watermark] and [`peak_marker`][peak_marker] marks and the
+  `rainbow_full` marker lie across the bar again instead of along it.  
+  ➡️ [Bug]: Center zero line is not rotated when bar_orientation is up #146
+  (@tomlevels)
+- **[`center_zero`][center_zero]** with a percentage theme (`critical_when_low`,
+  `battery_adaptive`, …): the positive arm shows the whole theme instead of its
+  upper half, and the negative arm takes the first zone's color. Themes in raw
+  units (`temperature`) are unchanged.
 
 > We care about getting the details right — but even so, something here might
 > have slipped through. You don't need to be a developer to notice it. If
@@ -104,6 +114,15 @@ toggle like its tile card.
   drew the bar on the default range.
 - **[`alert_when`][alert_when]** no longer triggers on the 0 of an unavailable
   entity; a **[`watermark`][watermark]** in Jinja error no longer lands at 0 %.
+- **[`bar_position: background`][bar_position]** with
+  [`bar_orientation: up`][bar_orientation]: the [`center_zero`][center_zero]
+  line, [`watermark`][watermark] and [`peak_marker`][peak_marker] marks and the
+  `rainbow_full` marker follow the vertical bar.  
+  ➡️ [Bug]: Center zero line is not rotated when bar_orientation is up #146
+  (@tomlevels)
+- **[`center_zero`][center_zero]** with a percentage theme (`critical_when_low`,
+  `battery_adaptive`, …): each arm reads its own 0–100%; the negative arm takes
+  the first zone's color. Themes in raw units (`temperature`) are unchanged.
 
 ### 🧹 Under the hood
 

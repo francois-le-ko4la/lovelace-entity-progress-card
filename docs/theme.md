@@ -949,12 +949,14 @@ bar_color_mode: rainbow
 > `bar_color_mode` also works with
 > [`center_zero`](configuration.md#center_zero): a signed theme like
 > `critical_when_extreme_center` reads as one continuous curve across both arms,
-> while a regular theme gets its zones mirrored onto each arm independently.
-> `rainbow_full` in particular was built with `center_zero` in mind: each arm
-> gets its own always-full gradient, with the marker crossing the visual center
-> at zero. For linear themes (e.g. `light`), zone boundaries are derived
-> automatically by splitting 0–100% into equal segments (5 levels → 0–20%,
-> 20–40%, …).
+> while a percentage theme reads each arm's own 0–100%: the positive arm shows
+> its zones as they are, the negative arm takes the first zone's color
+> throughout. A theme in raw units (e.g. `temperature`) is projected onto each
+> arm's half of the `min_value`/`max_value` scale. `rainbow_full` in particular
+> was built with `center_zero` in mind: each arm gets its own always-full
+> gradient, with the marker crossing the visual center at zero. For linear
+> themes (e.g. `light`), zone boundaries are derived automatically by splitting
+> 0–100% into equal segments (5 levels → 0–20%, 20–40%, …).
 
 [🔼 Back to top]
 

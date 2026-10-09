@@ -106,6 +106,12 @@ class ThemeManager {
     return this.#isSigned;
   }
 
+  // Zones are 0-100% of an arm, not raw units: each center_zero arm reads them
+  // as they are.
+  get isPercentScaled(): boolean {
+    return !this.#isSigned && (this.#isLinear || this.#isBasedOnPercentage);
+  }
+
   get isCustomTheme(): boolean {
     return this.#isCustomTheme;
   }
@@ -415,6 +421,17 @@ class ThemeManager {
     if (mode === 'segment') return ThemeManager.#buildSegmentGradient(gradient);
     if (mode === 'rainbow') return ThemeManager.#buildRainbowGradient(gradient);
     return null;
+  }
+
+  // center_zero's negative arm on a percent-scaled theme: below the first zone,
+  // so the whole arm takes that zone's color.
+  buildFloorGradient(fillPercent: number, mode: string, defaultColor: string | null = null): string | null {
+    const zones = this.#currentStyle;
+    if (!this.#isValid || !zones?.length || mode === 'auto') return null;
+    if (mode !== 'rainbow_full' && !(fillPercent > 0)) return null;
+    const [first] = [...zones].sort((a, b) => (a.min ?? 0) - (b.min ?? 0));
+    const color = ThemeManager.#zoneColor(first, defaultColor);
+    return `linear-gradient(${color}, ${color})`;
   }
 
   // Shared by #buildSegmentGradient/#buildRainbowGradient/
