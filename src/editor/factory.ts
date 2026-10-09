@@ -43,6 +43,7 @@ import {
   type MarkFamily,
   type MarkId,
   type PeakPoint,
+  BAR_AROUND_ICON,
 } from '../card/schema.js';
 import type { Factorization } from '../card/factorization.js';
 import { resolveCenterZero } from '../card/config-helpers.js';
@@ -972,6 +973,18 @@ const barSegmentsField = () => ({
   }),
 });
 
+const barRingFields = () => {
+  const field = (key: 'start' | 'gap') => ({
+    [`bar_ring.${key}`]: EditorFieldsType.number(`bar_ring.${key}`, {
+      type: 'degrees',
+      labelKey: `bar_ring_${key}`,
+      width: 'half',
+      showIf: (c: LovelaceConfig) => c.bar_position === BAR_AROUND_ICON,
+    }),
+  });
+  return { ...field('start'), ...field('gap') };
+};
+
 // Virtual: status_label's bare-string shorthand is past what the generic
 // dot-path machinery reads (see statusLabelObj/rewrapStatusLabel, schema.ts).
 const statusLabelField = (
@@ -1859,6 +1872,7 @@ const EditorFactory = {
       }),
       ...EditorFactory.themeSingleLineShadowFields(badge),
       ...barSegmentsField(),
+      ...barRingFields(),
     };
   },
 

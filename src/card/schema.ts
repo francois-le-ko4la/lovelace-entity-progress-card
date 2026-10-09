@@ -201,8 +201,8 @@ const THEME_ALIASES: Record<string, string> = {
 const BAR_SIZES = Object.values(CARD.style.bar.sizeOptions);
 // No 'xlarge': it would demand a 42px bar inside a badge capped at ~36px.
 const BADGE_BAR_SIZES = ['xsmall', 'small', 'medium', 'large'];
-const BAR_ORIENTATIONS = ['ltr', 'rtl', 'up'];
-// 'up' needs .vertical.overlay, which Badge/Badge Template/Feature never get.
+const BAR_ORIENTATIONS = ['ltr', 'rtl', 'up', 'down'];
+// 'up'/'down' need .vertical.overlay, which Badge/Badge Template/Feature never get.
 const BAR_ORIENTATIONS_NO_UP = ['ltr', 'rtl'];
 const BAR_POSITIONS = ['default', 'below', 'compact_below', 'top', 'bottom', 'overlay', 'background', 'icon'];
 // The bar drawn as a ring around the icon: nothing straight to mark or cut.
@@ -286,13 +286,14 @@ const INERT_OPTIONS: InertOption[] = [
   { key: 'bar_max_width', hasEffect: HAS_EFFECT.barMaxWidth, fallback: undefined },
   {
     key: 'bar_orientation',
-    hasEffect: (c) => c.bar_orientation !== 'up' || HAS_EFFECT.barOrientationUp(c),
+    hasEffect: (c) => !['up', 'down'].includes(c.bar_orientation as string) || HAS_EFFECT.barOrientationUp(c),
     fallback: 'ltr',
   },
   { key: 'text_shadow', hasEffect: HAS_EFFECT.textShadow, fallback: false },
   // Before interpolate, which reads the colour mode it settles.
   { key: 'bar_color_mode', hasEffect: HAS_EFFECT.barColorMode, fallback: 'auto' },
   { key: 'bar_segments', hasEffect: HAS_EFFECT.barSegments, fallback: undefined },
+  { key: 'bar_ring', hasEffect: (c) => !hasStraightBar(c), fallback: undefined },
   { key: 'interpolate', hasEffect: HAS_EFFECT.interpolate, fallback: false },
   { key: 'reverse_secondary_info_row', hasEffect: HAS_EFFECT.reverseSecondaryInfoRow, fallback: false },
   // A ring has no effect, stack or centre of its own (yet).
@@ -1455,6 +1456,7 @@ const YamlSchemaFactory = {
           'color',
           'bar_single_line',
           'bar_max_width',
+          'bar_ring',
           'icon_animation',
           'density',
           'bar_aligned',
@@ -1568,6 +1570,14 @@ const YamlSchemaFactory = {
         bar_single_line: types.optionalBooleanWithDefault(false),
         bar_max_width: types.optionalString(),
         bar_segments: types.optionalNumber(),
+        // Degrees: start clockwise from the top, gap = the arc left open. Only
+        // bar_position: icon draws a ring (INERT_OPTIONS).
+        bar_ring: types.optional(
+          types.object({
+            start: types.optionalNumberWithDefault(0),
+            gap: types.optionalNumberWithDefault(0),
+          }),
+        ),
         // No forced default (like `theme`): unset stays absent. The legacy
         // 'none' value is stripped before validation (see config-helpers.ts).
         icon_animation: types.optional(types.enumOrJinjaTrigger(ICON_ANIMATIONS)),
@@ -1739,6 +1749,7 @@ const YamlSchemaFactory = {
         'bar_single_line',
         'bar_max_width',
         'bar_segments',
+        'bar_ring',
         'icon_animation',
         'layout',
         'density',

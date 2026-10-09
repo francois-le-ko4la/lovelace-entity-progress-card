@@ -47,6 +47,8 @@
       "bar_effect_mode": "Efecto de la barra de progreso",
       "bar_max_width_toggle": "Ancho máximo de la barra",
       "bar_orientation": "Orientación",
+      "bar_ring_start": null,
+      "bar_ring_gap": null,
       "bar_scale": "Escala",
       "bar_segments": "Segmentos",
       "bar_single_line": "Una línea",
@@ -175,7 +177,8 @@
       "bar_orientation": {
         "ltr": "LTR",
         "rtl": "RTL",
-        "up": "UP"
+        "up": "UP",
+        "down": null
       },
       "bar_position": {
         "background": "Fondo de la tarjeta",

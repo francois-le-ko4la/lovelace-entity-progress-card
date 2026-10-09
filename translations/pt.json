@@ -47,6 +47,8 @@
       "bar_effect_mode": "Efeito na barra",
       "bar_max_width_toggle": "Largura máx. da barra",
       "bar_orientation": "Orientação",
+      "bar_ring_start": null,
+      "bar_ring_gap": null,
       "bar_scale": "Escala",
       "bar_segments": "Segmentos",
       "bar_single_line": "Uma linha",
@@ -175,7 +177,8 @@
       "bar_orientation": {
         "ltr": "LTR",
         "rtl": "RTL",
-        "up": "UP"
+        "up": "UP",
+        "down": null
       },
       "bar_position": {
         "background": "Fundo do cartão",

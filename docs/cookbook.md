@@ -220,6 +220,7 @@ work out on its own.
 | `bar_position`               | string (optional)         | `default`                 | Position of the progress bar          | [Config Ref.][config-bar_position]               |
 | `bar_single_line`            | boolean (optional)        | `false`                   | single-line mode for overlay bars     | [Config Ref.][config-bar_single_line]            |
 | `bar_segments`               | integer (optional)        | —                         | Render bar as discrete segments       | [Config Ref.][config-bar_segments]               |
+| `bar_ring`                   | object (optional)         | —                         | Start angle and gap of the ring       | [Config Ref.][config-bar_ring]                   |
 | `bar_effect`                 | string/list/jinja         | —                         | Visual effects for the bar            | [Config Ref.][config-bar_effect]                 |
 | `bar_color_mode`             | string (optional)         | `auto`                    | Bar fill color rendering mode         | [Config Ref.][config-bar_color_mode]             |
 | `bar_scale`                  | string (optional)         | `linear`                  | Value-to-width mapping (linear/log)   | [Config Ref.][config-bar_scale]                  |
@@ -698,6 +699,7 @@ fixed min/max.
 | `bar_position`               | string (optional)         | Position of the progress bar                                                   | [Config Ref.][config-bar_position]               |
 | `bar_single_line`            | boolean (optional)        | single-line mode for overlay bars                                              | [Config Ref.][config-bar_single_line]            |
 | `bar_segments`               | integer (optional)        | Render bar as discrete segments                                                | [Config Ref.][config-bar_segments]               |
+| `bar_ring`                   | object (optional)         | Start angle and gap of the ring                                                | [Config Ref.][config-bar_ring]                   |
 | `bar_effect`                 | string/list/jinja         | Visual effects for the bar                                                     | [Config Ref.][config-bar_effect]                 |
 | `bar_color_mode`             | string (optional)         | Bar fill color rendering mode                                                  | [Config Ref.][config-bar_color_mode]             |
 | `bar_max_width`              | string (optional)         | Limits the maximum width of the bar                                            | [Config Ref.][config-bar_max_width]              |
@@ -848,6 +850,7 @@ view's other badges, not as the dashboard's main focus.
 | `bar_size`                   | string (optional)      | `small`                   | Size of the progress bar              | [Config Ref.][config-bar_size]                   |
 | `bar_position`               | string (optional)      | `default`                 | Bar under the text or around the icon | [Config Ref.][config-bar_position]               |
 | `bar_segments`               | integer (optional)     | —                         | Render bar as discrete segments       | [Config Ref.][config-bar_segments]               |
+| `bar_ring`                   | object (optional)      | —                         | Start angle and gap of the ring       | [Config Ref.][config-bar_ring]                   |
 | `bar_effect`                 | string/list/jinja      | —                         | Visual effects for the bar            | [Config Ref.][config-bar_effect]                 |
 | `bar_color_mode`             | string (optional)      | `auto`                    | Bar fill color rendering mode         | [Config Ref.][config-bar_color_mode]             |
 | `bar_scale`                  | string (optional)      | `linear`                  | Value-to-width mapping (linear/log)   | [Config Ref.][config-bar_scale]                  |
@@ -962,6 +965,7 @@ already exposes directly.
 | `bar_size`                   | string (optional)  | Customize the size or thickness of the progress bar.                           | [Config Ref.][config-bar_size]                   |
 | `bar_position`               | string (optional)  | Bar under the text or around the icon                                          | [Config Ref.][config-bar_position]               |
 | `bar_segments`               | integer (optional) | Render bar as discrete segments                                                | [Config Ref.][config-bar_segments]               |
+| `bar_ring`                   | object (optional)  | Start angle and gap of the ring                                                | [Config Ref.][config-bar_ring]                   |
 | `bar_effect`                 | string/list/jinja  | Visual effects for the bar                                                     | [Config Ref.][config-bar_effect]                 |
 | `bar_color_mode`             | string (optional)  | Bar fill color rendering mode                                                  | [Config Ref.][config-bar_color_mode]             |
 | `bar_orientation`            | string (optional)  | Define the direction of the progress bar (e.g., `ltr`, `rtl`).                 | [Config Ref.][config-bar_orientation]            |
@@ -2935,6 +2939,8 @@ track solar cycles from your dashboard.
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_single_line
 [config-bar_segments]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_segments
+[config-bar_ring]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_ring
 [config-bar_effect]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_effect
 [config-bar_color_mode]:

@@ -47,6 +47,8 @@
       "bar_effect_mode": "Εφέ γραμμής",
       "bar_max_width_toggle": "Μέγιστο πλάτος γραμμής",
       "bar_orientation": "Προσανατολισμός",
+      "bar_ring_start": null,
+      "bar_ring_gap": null,
       "bar_scale": "Κλίμακα",
       "bar_segments": "Τμήματα",
       "bar_single_line": "Μία γραμμή",
@@ -175,7 +177,8 @@
       "bar_orientation": {
         "ltr": "LTR",
         "rtl": "RTL",
-        "up": "UP"
+        "up": "UP",
+        "down": null
       },
       "bar_position": {
         "background": "Φόντο κάρτας",

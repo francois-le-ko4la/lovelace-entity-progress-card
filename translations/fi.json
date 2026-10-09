@@ -47,6 +47,8 @@
       "bar_effect_mode": "Palkin efekti",
       "bar_max_width_toggle": "Palkin enimmäisleveys",
       "bar_orientation": "Suunta",
+      "bar_ring_start": null,
+      "bar_ring_gap": null,
       "bar_scale": "Asteikko",
       "bar_segments": "Segmentit",
       "bar_single_line": "Yksi rivi",
@@ -175,7 +177,8 @@
       "bar_orientation": {
         "ltr": "LTR",
         "rtl": "RTL",
-        "up": "UP"
+        "up": "UP",
+        "down": null
       },
       "bar_position": {
         "background": "Kortin tausta",

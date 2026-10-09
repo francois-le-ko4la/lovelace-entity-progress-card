@@ -395,9 +395,9 @@ class ThemeManager {
     if (isRing && style.length > 0) {
       const stops =
         mode === 'segment'
-          ? ThemeManager.#fullSegmentStops(style, defaultColor)
-          : ThemeManager.#fullRainbowStops(style, defaultColor);
-      return `conic-gradient(${stops.join(', ')})`;
+          ? ThemeManager.#fullSegmentStops(style, defaultColor, ThemeManager.#ringAt)
+          : ThemeManager.#fullRainbowStops(style, defaultColor, ThemeManager.#ringAt);
+      return `conic-gradient(from var(--ring-start, 0deg), ${stops.join(', ')})`;
     }
     if (mode === 'rainbow_full') {
       return ThemeManager.#buildFullRainbowGradient(style, defaultColor, direction);
@@ -489,25 +489,34 @@ class ThemeManager {
     return `linear-gradient(${direction}, ${ThemeManager.#fullRainbowStops(style, defaultColor).join(', ')})`;
   }
 
-  static #fullRainbowStops(style: ThemeZone[], defaultColor: string | null): string[] {
+  static #fullRainbowStops(style: ThemeZone[], defaultColor: string | null, at = ThemeManager.#percentAt): string[] {
     const col = (level: ThemeZone) => ThemeManager.#zoneColor(level, defaultColor);
-    const stops = [`${col(style[0])} 0%`];
+    const stops = [`${col(style[0])} ${at(0)}`];
     style.forEach((level) => {
       const mid = ((level.min ?? 0) + (level.max ?? 100)) / 2;
-      stops.push(`${col(level)} ${mid.toFixed(2)}%`);
+      stops.push(`${col(level)} ${at(mid)}`);
     });
-    stops.push(`${col(style[style.length - 1])} 100%`);
+    stops.push(`${col(style[style.length - 1])} ${at(100)}`);
     return stops;
+  }
+
+  static #percentAt(pos: number): string {
+    return `${pos.toFixed(2)}%`;
+  }
+
+  // A ring's arc is only part of the circle (bar_ring.gap): stops are scaled onto it.
+  static #ringAt(pos: number): string {
+    return `calc(${pos.toFixed(2)}% * var(--ring-span-ratio, 1))`;
   }
 
   // segment's hard edges, over the whole track: the first zone reaches back
   // to 0 and the last one on to 100, so no gap is left uncoloured.
-  static #fullSegmentStops(style: ThemeZone[], defaultColor: string | null): string[] {
+  static #fullSegmentStops(style: ThemeZone[], defaultColor: string | null, at = ThemeManager.#percentAt): string[] {
     const col = (level: ThemeZone) => ThemeManager.#zoneColor(level, defaultColor);
     return style.flatMap((level, i) => {
       const start = i === 0 ? 0 : (level.min ?? 0);
       const end = i === style.length - 1 ? 100 : (level.max ?? 100);
-      return [`${col(level)} ${start.toFixed(2)}%`, `${col(level)} ${end.toFixed(2)}%`];
+      return [`${col(level)} ${at(start)}`, `${col(level)} ${at(end)}`];
     });
   }
 }

@@ -47,6 +47,8 @@
       "bar_effect_mode": "Effet sur la barre",
       "bar_max_width_toggle": "Largeur max de la barre",
       "bar_orientation": "Orientation",
+      "bar_ring_start": null,
+      "bar_ring_gap": null,
       "bar_scale": "Échelle",
       "bar_segments": "Segments",
       "bar_single_line": "Une ligne",
@@ -175,7 +177,8 @@
       "bar_orientation": {
         "ltr": "LTR",
         "rtl": "RTL",
-        "up": "UP"
+        "up": "UP",
+        "down": null
       },
       "bar_position": {
         "background": "Arrière-plan de la carte",

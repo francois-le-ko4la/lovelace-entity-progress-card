@@ -249,11 +249,11 @@ abstract class ViewCore {
     return this._configHelper.config;
   }
 
-  // The bar fills bottom-to-top in these two combinations - read by HACore's
-  // vertical-bar class and by every gradient's direction, Template's included.
+  // The bar fills vertically (down: mirrored) in these two combinations - read by
+  // HACore's vertical-bar class and by every gradient's direction, Template's included.
   get isVerticalBar(): boolean {
     return (
-      this.config.bar_orientation === 'up' &&
+      (this.config.bar_orientation === 'up' || this.config.bar_orientation === 'down') &&
       ((this.config.layout === 'vertical' && this.config.bar_position === 'overlay') ||
         this.config.bar_position === 'background')
     );

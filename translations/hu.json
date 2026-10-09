@@ -47,6 +47,8 @@
       "bar_effect_mode": "Sáv effektus",
       "bar_max_width_toggle": "Sáv max. szélessége",
       "bar_orientation": "Tájolás",
+      "bar_ring_start": null,
+      "bar_ring_gap": null,
       "bar_scale": "Skála",
       "bar_segments": "Szegmensek",
       "bar_single_line": "Egy sor",
@@ -175,7 +177,8 @@
       "bar_orientation": {
         "ltr": "LTR",
         "rtl": "RTL",
-        "up": "UP"
+        "up": "UP",
+        "down": null
       },
       "bar_position": {
         "background": "Kártya háttér",

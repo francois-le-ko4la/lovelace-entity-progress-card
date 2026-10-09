@@ -47,6 +47,8 @@
       "bar_effect_mode": "Hiệu ứng thanh",
       "bar_max_width_toggle": "Chiều rộng tối đa của thanh",
       "bar_orientation": "Hướng",
+      "bar_ring_start": null,
+      "bar_ring_gap": null,
       "bar_scale": "Tỷ lệ",
       "bar_segments": "Phân đoạn",
       "bar_single_line": "Một dòng",
@@ -175,7 +177,8 @@
       "bar_orientation": {
         "ltr": "LTR",
         "rtl": "RTL",
-        "up": "UP"
+        "up": "UP",
+        "down": null
       },
       "bar_position": {
         "background": "Nền thẻ",

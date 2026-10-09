@@ -47,6 +47,8 @@
       "bar_effect_mode": "Ефекат траке",
       "bar_max_width_toggle": "Максимална ширина траке",
       "bar_orientation": "Оријентација",
+      "bar_ring_start": "Ring start",
+      "bar_ring_gap": "Ring gap",
       "bar_scale": "Скала",
       "bar_segments": "Сегменти",
       "bar_single_line": "У једном реду",
@@ -80,16 +82,16 @@
         "average_toggle": "Просек",
         "range_toggle": "Опсег"
       },
-			"peak_marker_unsupported": "Недоступно: потребан је сензор или бројчани ентитет без атрибута.",
+      "peak_marker_unsupported": "Недоступно: потребан је сензор или бројчани ентитет без атрибута.",
       "percent": "Проценат",
       "reverse": "Обрнути тајмер",
       "reverse_secondary_info_row": "Замени места траци и тексту",
       "secondary": "Додатне информације",
       "status_label": {
-				"color_source": "Извор боје",
+        "color_source": "Извор боје",
         "toggle": "Ознака статуса"
       },
-        "text_shadow": "Додај сенку тексту",
+      "text_shadow": "Додај сенку тексту",
       "trend_indicator": {
         "window_toggle": "Користи временски прозор",
         "basis": "Основа за поређење",
@@ -175,7 +177,8 @@
       "bar_orientation": {
         "ltr": "Слева надесно",
         "rtl": "Сдесна налево",
-        "up": "Нагоре"
+        "up": "Нагоре",
+        "down": "DOWN"
       },
       "bar_position": {
         "background": "Позадина картице",
@@ -288,7 +291,7 @@
         "line": "Линијски",
         "round": "Округло",
         "striped": "Пругасто",
-        "triangle": "Тругласто"
+        "triangle": "Троугласто"
       },
       "layout": {
         "horizontal": "@ui.panel.lovelace.editor.card.tile.content_layout_options.horizontal|Horizontal",

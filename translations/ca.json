@@ -47,6 +47,8 @@
       "bar_effect_mode": "Efecte de la barra",
       "bar_max_width_toggle": "Amplada màxima de la barra",
       "bar_orientation": "Orientació",
+      "bar_ring_start": null,
+      "bar_ring_gap": null,
       "bar_scale": "Escala",
       "bar_segments": "Segments",
       "bar_single_line": "Una línia",
@@ -175,7 +177,8 @@
       "bar_orientation": {
         "ltr": "LTR",
         "rtl": "RTL",
-        "up": "UP"
+        "up": "UP",
+        "down": null
       },
       "bar_position": {
         "background": "Fons de la targeta",

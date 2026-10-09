@@ -47,6 +47,8 @@
       "bar_effect_mode": "Efekt pruhu",
       "bar_max_width_toggle": "Max. šírka pruhu",
       "bar_orientation": "Orientácia",
+      "bar_ring_start": null,
+      "bar_ring_gap": null,
       "bar_scale": "Mierka",
       "bar_segments": "Segmenty",
       "bar_single_line": "Jeden riadok",
@@ -175,7 +177,8 @@
       "bar_orientation": {
         "ltr": "LTR",
         "rtl": "RTL",
-        "up": "UP"
+        "up": "UP",
+        "down": null
       },
       "bar_position": {
         "background": "Pozadie karty",

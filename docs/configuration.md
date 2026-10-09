@@ -52,6 +52,7 @@
       - [`bar_position`](#bar_position)
       - [`bar_single_line`](#bar_single_line)
       - [`bar_segments`](#bar_segments)
+      - [`bar_ring`](#bar_ring)
       - [`bar_effect`](#bar_effect)
       - [`bar_color_mode`](#bar_color_mode)
       - [`bar_scale`](#bar_scale)
@@ -1917,6 +1918,39 @@ exposes this as a numeric field.
 
 [🔼 Back to top]
 
+#### `bar_ring`
+
+[![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+[![Badge Template OK][BadgeTemplate-OK]](#compatibility)
+
+> **`bar_ring`** [Object] _(optional)_
+
+Shapes the ring drawn by [`bar_position: icon`](#bar_position). It has no effect
+with any other `bar_position`.
+
+- `start` [Number] _(default: 0)_: where the ring begins, in degrees clockwise
+  from the top.
+- `gap` [Number] _(default: 0)_: the part of the circle left open, in degrees
+  (capped at 330).
+
+The fill, the theme zones, the watermarks, the peak markers and the
+`rainbow_full` marker all follow the arc. [`bar_orientation`](#bar_orientation)
+`rtl` mirrors the whole ring, gap included.
+
+_Example_ (thermostat dial, open at the bottom):
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.temperature
+bar_position: icon
+bar_ring:
+  start: 225
+  gap: 90
+```
+
+[🔼 Back to top]
+
 #### `bar_effect`
 
 [![Card OK][Card-OK]](#compatibility) [![Badge OK][Badge-OK]](#compatibility)
@@ -2192,9 +2226,11 @@ bar_max_width: 100px
 [![Template OK][Template-OK]](#compatibility)
 [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
 
-> **`bar_orientation`** [String] {`rtl`|`ltr`|`up`} _(optional, default: `ltr`)_
+> **`bar_orientation`** [String] {`rtl`|`ltr`|`up`|`down`} _(optional, default:
+> `ltr`)_
 
-Adjusts the progress bar direction to display from right to left.
+Adjusts the progress bar direction to display from right to left. `up` fills a
+vertical bar from the bottom, `down` from the top.
 
 This is especially useful for timers to visually represent the remaining time.
 
@@ -2222,12 +2258,12 @@ reverse: true
 
 > [!IMPORTANT]
 >
-> `up` only has a visible effect in two combinations: [`layout`](#layout):
-> `vertical` with [`bar_position`](#bar_position): `overlay`, or `bar_position`:
-> `background` (this one works with either layout). Badge, Badge Template, and
-> the Tile Feature don't offer `up` at all ({`rtl`|`ltr`} only): none of them
-> have a `layout` option, and their `bar_position` values never include
-> `overlay` or `background`.
+> `up` and `down` only have a visible effect in two combinations:
+> [`layout`](#layout): `vertical` with [`bar_position`](#bar_position):
+> `overlay`, or `bar_position`: `background` (this one works with either
+> layout). Badge, Badge Template, and the Tile Feature don't offer `up` or
+> `down` at all ({`rtl`|`ltr`} only): none of them have a `layout` option, and
+> their `bar_position` values never include `overlay` or `background`.
 
 [🔼 Back to top]
 
@@ -3879,6 +3915,7 @@ available for Templates as well:
 | `bar_position`               | string (optional)         | `default`    | Position of the progress bar         | [Config Ref.](#bar_position)               |
 | `bar_single_line`            | boolean (optional)        | `false`      | single-line mode for overlay bars    | [Config Ref.](#bar_single_line)            |
 | `bar_segments`               | integer (optional)        | —            | Render bar as discrete segments      | [Config Ref.](#bar_segments)               |
+| `bar_ring`                   | object (optional)         | —            | Start angle and gap of the ring      | [Config Ref.](#bar_ring)                   |
 | `bar_effect`                 | string/list/jinja         | —            | Visual effects for the bar           | [Config Ref.](#bar_effect)                 |
 | `bar_color_mode`             | string (optional)         | `auto`       | Bar fill color rendering mode        | [Config Ref.](#bar_color_mode)             |
 | `bar_max_width`              | string (optional)         | -            | Limits the max width of the bar      | [Config Ref.](#bar_max_width)              |

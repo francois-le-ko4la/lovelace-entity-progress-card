@@ -47,6 +47,8 @@
       "bar_effect_mode": "Çubuk efekti",
       "bar_max_width_toggle": "Maks. çubuk genişliği",
       "bar_orientation": "Yön",
+      "bar_ring_start": null,
+      "bar_ring_gap": null,
       "bar_scale": "Ölçek",
       "bar_segments": "Segmentler",
       "bar_single_line": "Tek satır",
@@ -175,7 +177,8 @@
       "bar_orientation": {
         "ltr": "LTR",
         "rtl": "RTL",
-        "up": "UP"
+        "up": "UP",
+        "down": null
       },
       "bar_position": {
         "background": "Kart arka planı",

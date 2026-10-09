@@ -680,7 +680,11 @@ ha-card.${CARD.style.dynamic.barAroundIcon} .${CARD.htmlStructure.elements.shape
   --ring-paint: var(--epb-progress-bar-color, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default}));
   --ring-track: var(${CARD.style.dynamic.progressBar.background.var}, var(--divider-color));
   --ring-cut: calc(100% - var(--ring-width));
-  --ring-fill: calc(var(${CARD.style.dynamic.ringValue.var}, 0) * 360deg);
+  /* bar_ring: the arc starts at --ring-start and spans --ring-span-ratio of the
+     circle; what is left is the gap, painted over with the card's background. */
+  --ring-span: calc(var(--ring-span-ratio, 1) * 360deg);
+  --ring-fill: calc(var(${CARD.style.dynamic.ringValue.var}, 0) * var(--ring-span));
+  --ring-gap-cover: conic-gradient(from var(--ring-start, 0deg), transparent var(--ring-span), var(--ha-card-background, var(--card-background-color)) 0);
   content: '';
   position: absolute;
   inset: calc(-1 * var(--ring-offset));
@@ -689,8 +693,9 @@ ha-card.${CARD.style.dynamic.barAroundIcon} .${CARD.htmlStructure.elements.shape
   /* Past the value: the track, over the card's own opaque background - a theme's
      track is translucent, and the zones painted underneath showed through it. */
   background:
-    conic-gradient(transparent var(--ring-fill), var(--ring-track) 0),
-    conic-gradient(transparent var(--ring-fill), var(--ha-card-background, var(--card-background-color)) 0),
+    var(--ring-gap-cover),
+    conic-gradient(from var(--ring-start, 0deg), transparent var(--ring-fill), var(--ring-track) 0),
+    conic-gradient(from var(--ring-start, 0deg), transparent var(--ring-fill), var(--ha-card-background, var(--card-background-color)) 0),
     var(--ring-paint);
   -webkit-mask: radial-gradient(farthest-side, transparent var(--ring-cut), #000 calc(var(--ring-cut) + 1px));
   mask: radial-gradient(farthest-side, transparent var(--ring-cut), #000 calc(var(--ring-cut) + 1px));
@@ -711,7 +716,7 @@ ha-card.${CARD.style.dynamic.barAroundIcon}.transition-ready .${CARD.htmlStructu
 /* rainbow_full around the icon: every zone, all the way round, and a pill at
    the value instead of a fill - the bar's own value mark, bent onto the ring. */
 ha-card.${CARD.style.dynamic.barAroundIcon}.rainbow-full-bar .${CARD.htmlStructure.elements.shape.class}::after {
-  background: var(--ring-paint);
+  background: var(--ring-gap-cover), var(--ring-paint);
 }
 .${CARD.htmlStructure.elements.ringMark.class} {
   display: none;
@@ -735,7 +740,7 @@ ha-card.${CARD.style.dynamic.barAroundIcon}.rainbow-full-bar .${CARD.htmlStructu
     0 0 0 var(--mark-border-width) var(--epb-rainbow-marker-border-color, rgba(255, 255, 255, 0.9)),
     0 0 var(--mark-border-width) rgba(0, 0, 0, 0.35);
   opacity: var(--epb-rainbow-marker-opacity, 1);
-  transform: translate(-50%, -50%) rotate(calc(var(--ring-turn, 1) * var(${CARD.style.dynamic.ringValue.var}, 0) * 360deg))
+  transform: translate(-50%, -50%) rotate(calc(var(--ring-turn, 1) * (var(--ring-start, 0deg) + var(${CARD.style.dynamic.ringValue.var}, 0) * var(--ring-span-ratio, 1) * 360deg)))
     translateY(calc(-1 * var(--ring-radius)));
 }
 ha-card.${CARD.style.dynamic.barAroundIcon}.${CARD.style.dynamic.progressBar.orientation.rtl} {
@@ -752,21 +757,22 @@ ha-card.${CARD.style.dynamic.barAroundIcon} .${CARD.htmlStructure.elements.ringM
   --ring-mark-opacity: var(--epb-low-watermark-opacity, var(--epb-watermark-opacity, var(--low-watermark-opacity-value, 0.8)));
   --ring-mark-line: var(--epb-watermark-line-size, var(--low-watermark-line-size, var(--watermark-line-size, 2px)));
   --ring-mark-at: var(--low-watermark-value-num, 0);
-  --ring-zone: conic-gradient(var(--ring-mark-color) 0 var(--low-watermark-value, 0%), transparent 0);
+  --ring-zone: conic-gradient(from var(--ring-start, 0deg), var(--ring-mark-color) 0 calc(var(--low-watermark-value, 0%) * var(--ring-span-ratio, 1)), transparent 0);
 }
 ha-card.${CARD.style.dynamic.barAroundIcon} .${CARD.htmlStructure.elements.ringMarks.high.class} {
   --ring-mark-color: var(--epb-high-watermark-color, var(--high-watermark-color, ${CARD.style.dynamic.watermark.high.color.default}));
   --ring-mark-opacity: var(--epb-high-watermark-opacity, var(--epb-watermark-opacity, var(--high-watermark-opacity-value, 0.8)));
   --ring-mark-line: var(--epb-watermark-line-size, var(--high-watermark-line-size, var(--watermark-line-size, 2px)));
   --ring-mark-at: var(--high-watermark-value-num, 100);
-  --ring-zone: conic-gradient(transparent 0 var(--high-watermark-value, 100%), var(--ring-mark-color) 0);
+  --ring-zone: conic-gradient(from var(--ring-start, 0deg), transparent 0 calc(var(--high-watermark-value, 100%) * var(--ring-span-ratio, 1)), var(--ring-mark-color) 0 calc(100% * var(--ring-span-ratio, 1)), transparent 0);
 }
 ha-card.${CARD.style.dynamic.barAroundIcon} .${CARD.htmlStructure.elements.ringMarks.range.class} {
   --ring-mark-color: var(--epb-peak-range-color, var(--peak-range-color, ${CARD.style.dynamic.peakMarker.range.color.default}));
   --ring-mark-opacity: var(--epb-peak-range-opacity, var(--peak-range-opacity-value, 0.8));
   --ring-zone: conic-gradient(
-    transparent 0 var(--peak-min-value, 0%),
-    var(--ring-mark-color) 0 var(--peak-max-value, 0%),
+    from var(--ring-start, 0deg),
+    transparent 0 calc(var(--peak-min-value, 0%) * var(--ring-span-ratio, 1)),
+    var(--ring-mark-color) 0 calc(var(--peak-max-value, 0%) * var(--ring-span-ratio, 1)),
     transparent 0
   );
 }
@@ -822,7 +828,7 @@ ha-card.${CARD.style.dynamic.barAroundIcon}
   height: calc(var(--ring-width) + 4px);
   border-radius: 999px;
   background: var(--ring-mark-color);
-  transform: translate(-50%, -50%) rotate(calc(var(--ring-turn, 1) * var(--ring-mark-at) * 3.6deg))
+  transform: translate(-50%, -50%) rotate(calc(var(--ring-turn, 1) * (var(--ring-start, 0deg) + var(--ring-mark-at) * var(--ring-span-ratio, 1) * 3.6deg)))
     translateY(calc(-1 * var(--ring-radius)));
 }
 ha-card.${CARD.style.dynamic.barAroundIcon}
@@ -1717,6 +1723,10 @@ ha-card.info-multiline {
    .bar is flex-centered in the container, so its own pixels are unchanged. */
 .${CARD.style.dynamic.progressBar.orientation.rtl} .${CARD.htmlStructure.elements.progressBar.container.class} {
   transform: scaleX(-1);
+}
+/* down: the vertical bar (up) mirrored top to bottom, same reason as rtl. */
+.${CARD.style.dynamic.progressBar.orientation.down} .${CARD.htmlStructure.elements.progressBar.container.class} {
+  transform: scaleY(-1);
 }
 
 /* === SEGMENTED BAR (bar_segments: N, HABase#_buildSegmentCells) ===

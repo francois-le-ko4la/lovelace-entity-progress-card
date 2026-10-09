@@ -47,6 +47,8 @@
       "bar_effect_mode": "Эффект на полосе",
       "bar_max_width_toggle": "Макс. ширина полосы",
       "bar_orientation": "Ориентация",
+      "bar_ring_start": null,
+      "bar_ring_gap": null,
       "bar_scale": "Масштаб",
       "bar_segments": "Сегменты",
       "bar_single_line": "Одна строка",
@@ -175,7 +177,8 @@
       "bar_orientation": {
         "ltr": "LTR",
         "rtl": "RTL",
-        "up": "UP"
+        "up": "UP",
+        "down": null
       },
       "bar_position": {
         "background": "Фон карточки",

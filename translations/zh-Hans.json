@@ -47,6 +47,8 @@
       "bar_effect_mode": "进度条效果",
       "bar_max_width_toggle": "进度条最大宽度",
       "bar_orientation": "方向",
+      "bar_ring_start": null,
+      "bar_ring_gap": null,
       "bar_scale": "比例",
       "bar_segments": "分段",
       "bar_single_line": "单行",
@@ -175,7 +177,8 @@
       "bar_orientation": {
         "ltr": "LTR",
         "rtl": "RTL",
-        "up": "UP"
+        "up": "UP",
+        "down": null
       },
       "bar_position": {
         "background": "卡片背景",

@@ -18,11 +18,11 @@
         },
         "types": {
           "array": "polje",
-          "boolean": "boolean",
+          "boolean": "logička vrednost",
           "number": "broj",
           "positiveinteger": "pozitivan ceo broj",
           "object": "objekat",
-          "string": "string"		
+          "string": "tekstualni niz"
         }
       }
     }
@@ -35,7 +35,7 @@
         "highlight": "Isticanje",
         "label": "Oznaka",
         "above_mode": "Iznad gornjeg upozorenja",
-        "below_mode": "Ispod donjeg upozorenja",		
+        "below_mode": "Ispod donjeg upozorenja",
         "above": "@ui.panel.lovelace.editor.condition-editor.condition.numeric_state.above|Above",
         "below": "@ui.panel.lovelace.editor.condition-editor.condition.numeric_state.below|Below"
       },
@@ -43,10 +43,12 @@
         "toggle": "Bedž",
         "color_toggle": "Nezavisna boja"
       },
-      "bar_color_mode": "Način boje",
+      "bar_color_mode": "Režim boja",
       "bar_effect_mode": "Efekat trake",
       "bar_max_width_toggle": "Maksimalna širina trake",
       "bar_orientation": "Orijentacija",
+      "bar_ring_start": "Ring start",
+      "bar_ring_gap": "Ring gap",
       "bar_scale": "Skala",
       "bar_segments": "Segmenti",
       "bar_single_line": "U jednom redu",
@@ -89,7 +91,7 @@
         "color_source": "Izvor boje",
         "toggle": "Oznaka statusa"
       },
-        "text_shadow": "Dodaj senku tekstu",
+      "text_shadow": "Dodaj senku tekstu",
       "trend_indicator": {
         "window_toggle": "Koristi vremenski prozor",
         "basis": "Osnova za poređenje",
@@ -175,7 +177,8 @@
       "bar_orientation": {
         "ltr": "Sleva nadesno",
         "rtl": "Sdesna nalevo",
-        "up": "Nagore"
+        "up": "Nagore",
+        "down": "DOWN"
       },
       "bar_position": {
         "background": "Pozadina kartice",
@@ -192,10 +195,10 @@
         "log": "Logaritamska"
       },
       "bar_size": {
-        "large": "Velik",
+        "large": "Veliki",
         "medium": "Srednji",
         "small": "Mali",
-        "xlarge": "Veoma velik",
+        "xlarge": "Veoma veliki",
         "xsmall": "Veoma mali"
       },
       "bar_stack_mode": {

@@ -16,14 +16,15 @@ None.
 
 None.
 
-### Named in no test (8)
+### Named in no test (9)
 
-`bar_scale`, `double_tap_action`, `fast_refresh`, `force_circular_background`,
-`hold_action`, `icon_double_tap_action`, `icon_hold_action`, `min_width`
+`bar_ring`, `bar_scale`, `double_tap_action`, `fast_refresh`,
+`force_circular_background`, `hold_action`, `icon_double_tap_action`,
+`icon_hold_action`, `min_width`
 
-### Not on the demo dashboard (2)
+### Not on the demo dashboard (3)
 
-`disable_unit`, `rows`
+`bar_ring`, `disable_unit`, `rows`
 
 ### No YAML example in the docs (4)
 
@@ -47,13 +48,14 @@ _Tests_ (files in `test/`) count the files naming the option, not uses.
 | [`bar_effect`](configuration.md#bar_effect) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — | 5 | 4 | 24 | 1 |
 | [`bar_max_width`](configuration.md#bar_max_width) | ✅ | ✅ | · | · | · | ✅ | ✅ | — | 4 | 1 | 1 | 3 |
 | [`bar_orientation`](configuration.md#bar_orientation) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | `ltr` | 3 | 3 | 13 | 1 |
-| [`bar_position`](configuration.md#bar_position) | ✅ | ✅ | ✅ | ✅ | ✅ | · | · | `default` | 8 | 5 | 67 | 10 |
+| [`bar_position`](configuration.md#bar_position) | ✅ | ✅ | ✅ | ✅ | ✅ | · | · | `default` | 8 | 6 | 67 | 10 |
+| [`bar_ring`](configuration.md#bar_ring) | ✅ | ✅ | ✅ | ✅ | · | ✅ | ✅ | — | 4 | 1 | 0 | 0 |
 | [`bar_scale`](configuration.md#bar_scale) | ✅ | · | ✅ | · | ✅ | ✅ | ✅ | `linear` | 2 | 1 | 1 | 0 |
 | [`bar_segments`](configuration.md#bar_segments) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — | 6 | 2 | 5 | 2 |
 | [`bar_single_line`](configuration.md#bar_single_line) | ✅ | ✅ | · | · | · | · | · | `false` | 2 | 1 | 2 | 3 |
 | [`bar_size`](configuration.md#bar_size) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | `small` | 7 | 14 | 97 | 8 |
 | [`bar_stack`](configuration.md#bar_stack) | ✅ | · | ✅ | · | ✅ | ✅ | ✅ | — | 8 | 10 | 14 | 3 |
-| [`center_zero`](configuration.md#center_zero) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | `false` | 11 | 11 | 53 | 7 |
+| [`center_zero`](configuration.md#center_zero) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | `false` | 11 | 11 | 53 | 8 |
 | [`color`](configuration.md#color) | ✅ | ✅ | ✅ | ✅ | · | ✅ | ✅ | — | 15 | 8 | 21 | 12 |
 | [`custom_info`](configuration.md#custom_info) | ✅ | · | ✅ | · | · | ✅ | ✅ | — | 4 | 2 | 15 | 3 |
 | [`custom_theme`](configuration.md#custom_theme) | ✅ | · | ✅ | · | ✅ | ✅ | ✅ | — | 4 | 6 | 12 | 3 |
@@ -62,7 +64,7 @@ _Tests_ (files in `test/`) count the files naming the option, not uses.
 | [`disable_unit`](configuration.md#disable_unit) ¹ | 📝 | · | 📝 | · | · | 📝 | 📝 | `false` | 3 | 1 | 0 | 9 |
 | [`double_tap_action`](configuration.md#xyz_action) | ✅ | ✅ | ✅ | ✅ | · | ✅ | ✅ | `{"action":"none"}` | 2 | 0 | 4 | 0 |
 | [`entities`](configuration.md#entities) | · | · | · | · | · | ✅ | ✅ | — | 11 | 9 | 13 | 25 |
-| [`entity`](configuration.md#entity) | ✅ | ✅ | ✅ | ✅ | ✅ | · | · | — | 29 | 123 | 517 | 46 |
+| [`entity`](configuration.md#entity) | ✅ | ✅ | ✅ | ✅ | ✅ | · | · | — | 29 | 124 | 517 | 46 |
 | [`fast_refresh`](configuration.md#fast_refresh) | · | ✅ | · | ✅ | · | · | · | `false` | 2 | 2 | 4 | 0 |
 | [`force_circular_background`](configuration.md#force_circular_background) | ✅ | ✅ | · | · | · | ✅ | · | `false` | 3 | 2 | 7 | 0 |
 | [`frameless`](configuration.md#frameless) | ✅ | ✅ | ✅ | ✅ | · | · | · | `false` | 5 | 4 | 23 | 3 |
@@ -77,8 +79,8 @@ _Tests_ (files in `test/`) count the files naming the option, not uses.
 | [`interpolate`](configuration.md#interpolate) | ✅ | · | ✅ | · | ✅ | ✅ | ✅ | `false` | 4 | 2 | 1 | 2 |
 | [`layout`](configuration.md#layout) ¹ | ✅ | ✅ | ➖ | ➖ | ➖ | · | · | `horizontal` | 9 | 7 | 116 | 8 |
 | [`marginless`](configuration.md#marginless) | ✅ | ✅ | ✅ | ✅ | · | · | · | `false` | 5 | 3 | 18 | 1 |
-| [`max_value`](configuration.md#max_value) | ✅ | · | ✅ | · | ✅ | ✅ | ✅ | `100` | 10 | 27 | 86 | 6 |
-| [`min_value`](configuration.md#min_value) | ✅ | · | ✅ | · | ✅ | ✅ | ✅ | — | 9 | 14 | 47 | 7 |
+| [`max_value`](configuration.md#max_value) | ✅ | · | ✅ | · | ✅ | ✅ | ✅ | `100` | 10 | 27 | 88 | 6 |
+| [`min_value`](configuration.md#min_value) | ✅ | · | ✅ | · | ✅ | ✅ | ✅ | — | 9 | 14 | 49 | 7 |
 | [`min_width`](configuration.md#min_width) | ✅ | ✅ | ✅ | ✅ | · | · | · | — | 3 | 1 | 1 | 0 |
 | [`multiline`](configuration.md#multiline) | ✅ | ✅ | · | · | · | · | · | `false` | 7 | 1 | 3 | 1 |
 | [`name`](configuration.md#name) | ✅ | ✅ | ✅ | ✅ | · | · | · | — | 25 | 24 | 440 | 28 |
@@ -95,7 +97,7 @@ _Tests_ (files in `test/`) count the files naming the option, not uses.
 | [`text_shadow`](configuration.md#text_shadow) | ✅ | ✅ | · | · | · | ✅ | ✅ | `false` | 2 | 1 | 2 | 2 |
 | [`theme`](configuration.md#theme) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — | 16 | 19 | 134 | 11 |
 | [`trend_indicator`](configuration.md#trend_indicator) | ✅ | ✅ | · | · | · | ✅ | · | `{"basis":"average","threshold":0,"colored":false}` | 6 | 3 | 6 | 6 |
-| [`unit`](configuration.md#unit) | ✅ | · | ✅ | · | · | ✅ | ✅ | — | 17 | 8 | 22 | 15 |
+| [`unit`](configuration.md#unit) | ✅ | · | ✅ | · | · | ✅ | ✅ | — | 17 | 8 | 22 | 16 |
 | [`unit_position`](configuration.md#unit_position) | ✅ | · | ✅ | · | · | ✅ | ✅ | `after` | 2 | 2 | 2 | 1 |
 | [`unit_spacing`](configuration.md#unit_spacing) | ✅ | · | ✅ | · | · | ✅ | ✅ | `auto` | 2 | 3 | 5 | 2 |
 | [`value_compact`](configuration.md#value_compact) | ✅ | · | ✅ | · | · | ✅ | ✅ | `false` | 2 | 2 | 3 | 1 |

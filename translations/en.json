@@ -47,6 +47,8 @@
       "bar_effect_mode": "Bar effect",
       "bar_max_width_toggle": "Bar max width",
       "bar_orientation": "Orientation",
+      "bar_ring_start": "Ring start",
+      "bar_ring_gap": "Ring gap",
       "bar_scale": "Scale",
       "bar_segments": "Segments",
       "bar_single_line": "Single line",
@@ -175,7 +177,8 @@
       "bar_orientation": {
         "ltr": "LTR",
         "rtl": "RTL",
-        "up": "UP"
+        "up": "UP",
+        "down": "DOWN"
       },
       "bar_position": {
         "background": "Full card background",

@@ -47,6 +47,8 @@
       "bar_effect_mode": "Ефект на лентата",
       "bar_max_width_toggle": "Макс. ширина на лентата",
       "bar_orientation": "Ориентација",
+      "bar_ring_start": null,
+      "bar_ring_gap": null,
       "bar_scale": "Скала",
       "bar_segments": "Сегменти",
       "bar_single_line": "Еден ред",
@@ -175,7 +177,8 @@
       "bar_orientation": {
         "ltr": "LTR",
         "rtl": "RTL",
-        "up": "UP"
+        "up": "UP",
+        "down": null
       },
       "bar_position": {
         "background": "Позадина на картичката",

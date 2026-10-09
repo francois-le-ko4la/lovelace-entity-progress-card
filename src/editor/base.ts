@@ -568,6 +568,7 @@ class EditorBase extends HTMLElement {
       // Below 2, HABase#_buildSegmentCells never builds any cell - same
       // floor as its own count >= 2 check.
       bar_segments: () => ({ number: { min: 2, max: 10, step: 1, mode: 'box' } }),
+      degrees: () => ({ number: { min: 0, max: 360, step: 1, mode: 'box', unit_of_measurement: '°' } }),
       template: () => ({ template: {} }),
       toggle: () => ({ boolean: {} }),
       action: () => ({ 'ui-action': {} }),

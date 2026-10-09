@@ -47,6 +47,8 @@
       "bar_effect_mode": "Učinek vrstice",
       "bar_max_width_toggle": "Najv. širina vrstice",
       "bar_orientation": "Usmerjenost",
+      "bar_ring_start": null,
+      "bar_ring_gap": null,
       "bar_scale": "Merilo",
       "bar_segments": "Segmenti",
       "bar_single_line": "Ena vrstica",
@@ -175,7 +177,8 @@
       "bar_orientation": {
         "ltr": "LTR",
         "rtl": "RTL",
-        "up": "UP"
+        "up": "UP",
+        "down": null
       },
       "bar_position": {
         "background": "Ozadje kartice",

@@ -302,7 +302,7 @@ const style = {
       stackGradientNeg: { var: '--stack-gradient-neg' },
       stackSizePos: { var: '--stack-size-pos' },
       stackSizeNeg: { var: '--stack-size-neg' },
-      orientation: { rtl: 'rtl-orientation', ltr: 'ltr-orientation', up: 'up-orientation' },
+      orientation: { rtl: 'rtl-orientation', ltr: 'ltr-orientation', up: 'up-orientation', down: 'down-orientation' },
       effect: {
         radius: { label: 'radius', class: 'progress-bar-effect-radius' },
         glass: { label: 'glass', class: 'progress-bar-effect-glass' },

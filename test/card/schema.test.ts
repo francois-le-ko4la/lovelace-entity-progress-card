@@ -69,7 +69,7 @@ describe('YamlSchemaFactory.<type>.fieldDefault - real schema defaults, not a ha
 describe('YamlSchemaFactory.<type>.fieldOptions - allowed values read off the live validator', () => {
   test('the per-variant restriction is the schema itself, not a parallel list', () => {
     assert.deepEqual(YamlSchemaFactory.badge.fieldOptions('bar_orientation'), ['ltr', 'rtl']);
-    assert.deepEqual(YamlSchemaFactory.card.fieldOptions('bar_orientation'), ['ltr', 'rtl', 'up']);
+    assert.deepEqual(YamlSchemaFactory.card.fieldOptions('bar_orientation'), ['ltr', 'rtl', 'up', 'down']);
     assert.deepEqual(YamlSchemaFactory.feature.fieldOptions('bar_position'), ['default', 'top', 'bottom']);
     assert.equal(YamlSchemaFactory.badge.fieldOptions('bar_size')?.includes('xlarge'), false);
     assert.equal(YamlSchemaFactory.card.fieldOptions('bar_size')?.includes('xlarge'), true);

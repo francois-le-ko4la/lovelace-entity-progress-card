@@ -83,6 +83,9 @@ const TREND_ICONS: Record<string, string> = {
 
 const ALIGNED_BARS_ID = 'alignedBars';
 
+// bar_ring.gap is capped so a sliver of arc always remains.
+const RING_MAX_GAP = 330;
+
 /**
  * Base class for Home Assistant custom elements (cards, badges, features).
  *
@@ -1666,6 +1669,22 @@ class HABase extends HACore {
       ] as [unknown, string, CacheValue][]
     ).forEach(([condition, prop, value]) => {
       if (condition) this._dom.setStyle(cardKey, prop, value);
+    });
+    this.#applyRingGeometry(cardKey);
+  }
+
+  // bar_ring: the arc left after the gap is a ratio of the circle, for the
+  // calc()s of styles.ts; an unset ring removes both vars (setStyle never unsets).
+  #applyRingGeometry(cardKey: string) {
+    const { start = 0, gap = 0 } = this._cardView.config.bar_ring ?? {};
+    const openArc = Math.min(Math.max(gap, 0), RING_MAX_GAP);
+    const vars: [string, CacheValue, boolean][] = [
+      ['--ring-start', `${start}deg`, start !== 0],
+      ['--ring-span-ratio', 1 - openArc / 360, openArc > 0],
+    ];
+    vars.forEach(([prop, value, isSet]) => {
+      if (isSet) this._dom.setStyle(cardKey, prop, value);
+      else this._dom.removeStyle(cardKey, prop);
     });
   }
 

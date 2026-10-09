@@ -47,6 +47,8 @@
       "bar_effect_mode": "Juostos efektas",
       "bar_max_width_toggle": "Maks. juostos plotis",
       "bar_orientation": "Orientacija",
+      "bar_ring_start": null,
+      "bar_ring_gap": null,
       "bar_scale": "Skalė",
       "bar_segments": "Segmentai",
       "bar_single_line": "Viena eilutė",
@@ -175,7 +177,8 @@
       "bar_orientation": {
         "ltr": "LTR",
         "rtl": "RTL",
-        "up": "UP"
+        "up": "UP",
+        "down": null
       },
       "bar_position": {
         "background": "Kortelės fonas",
