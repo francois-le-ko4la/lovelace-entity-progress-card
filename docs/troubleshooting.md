@@ -31,6 +31,93 @@ stays clean and stable. We handle two main categories of errors in the card:
    <img src="images/errors-f73970.png" alt="errors" width="1000px"/>
    </details>
 
+<a id="unavailable-entities"></a>
+
+### When an entity or a Jinja field is unavailable, unknown or not found
+
+A card can depend on several entities (its own `entity`, an entity in
+`min_value`, `max_value`, `watermark`, `alert_when`, `bar_stack`) and on Jinja
+templates. When one of them cannot give a value, the card does not guess: it
+stops drawing what depends on it, and says which one is at fault.
+
+The three states have the same effect:
+
+- `unavailable`: the integration behind the entity is offline.
+- `unknown`: the entity exists but has no value yet.
+- `not found`: no entity has this ID in Home Assistant (a typo, or a removed
+  entity).
+
+#### Required and extra entities
+
+What the bar is drawn from is **required**: without it, any percentage would be
+made up. The rest only **adds information** and is dropped on its own.
+
+| Entity                                               | Role     | When it is down                                        |
+| ---------------------------------------------------- | -------- | ------------------------------------------------------ |
+| The card's `entity`                                  | Required | The bar stops, the state replaces the value            |
+| An entity in `min_value` or `max_value`              | Required | The bar stops, the line names the entity               |
+| A Jinja template in `min_value` or `max_value`       | Required | The bar stops, the line names the field (see below)    |
+| An entity or template in `watermark.low`/`.high`     | Extra    | That mark is not drawn, the bar is unchanged           |
+| An entity or template in `alert_when.above`/`.below` | Extra    | That threshold is ignored, it cannot trigger the alert |
+| An entity in `bar_stack.entities`                    | Extra    | Left out of the total                                  |
+
+#### What the card shows
+
+When a required entity is down, the bar stops: 0 %, in the disabled color (the
+default color for `unknown`), and the value is replaced by a line naming the
+cause. The icon and the badge show the matching error look.
+
+- The card's own entity: its state, as Home Assistant words it (`Unavailable`).
+- An entity in `min_value` or `max_value`: its name and state, for example
+  `sensor.limit · Unavailable`.
+- A Jinja template in `min_value` or `max_value`: the field and `JINJA`, for
+  example `max_value · JINJA unavailable`.
+
+When several required entities are down at once, the card names the first of
+`entity`, `max_value`, `min_value`. Fix it, and the next one shows up if it is
+still down.
+
+#### Jinja templates
+
+A Jinja `min_value` or `max_value` can fail in four ways, all shown alike:
+
+- Home Assistant refuses the template (a syntax error, an unknown filter).
+- The template has an unclosed delimiter (`{{`, `{%` or `{#`). It is not even
+  sent to Home Assistant.
+- Home Assistant reports an error while rendering it.
+- It renders something that is not a number, such as `unavailable` or `unknown`
+  (what `states('sensor.x')` returns for an entity that is down).
+
+The line then reads `max_value · JINJA unavailable`, followed by Home
+Assistant's own message instead of `unavailable` when it gives one. The card
+also writes a notice in the browser console, once per template, and again when
+the template changes.
+
+Until Home Assistant has answered for the first time, a Jinja range is
+**waiting**: the bar is grayed and no value is shown. This is not an error, and
+it goes away as soon as the template renders a number.
+
+> [!NOTE]
+>
+> A timer ignores `min_value` and `max_value`: it runs on its own duration. They
+> never put a timer in error.
+
+#### Find the cause
+
+`EPB.doctor.cards()` lists the cards on the page. Its `entity state` column
+gives the state and, when it is not the card's own entity, the field at fault:
+`⏳ unavailable (max_value)`, or `⏳ unavailable (max_value, Jinja)` for a
+template. See [Run the built-in diagnostic](#-run-the-built-in-diagnostic).
+
+Then, in Home Assistant:
+
+1. **Developer tools → States**: look the entity up. If it is missing, check the
+   ID in the card's YAML.
+2. **Developer tools → Template**: paste the Jinja template. The error shown
+   there is the one the card receives.
+3. If the entity is `unavailable` or `unknown`, the card is right: fix the
+   integration or the device, not the card.
+
 <a id="deprecated-options"></a>
 
 ## ⚠️ Deprecated Options

@@ -6,8 +6,6 @@
  */
 
 export { ObjStructure } from './structure.js';
-export { PercentHelper } from './progress-calc.js';
 export { ThemeManager } from './theme-manager.js';
 export { ChangeTracker } from './change-tracker.js';
 export { EntityCollectionHelper } from './entity-collection.js';
-export { EntityOrValue } from './entity-or-value.js';

@@ -1,59 +1,6 @@
-/*
- * Small self-validating value building blocks: TypedValueHelper (base) and the
- * numeric ValueHelper/DecimalHelper plus the string UnitHelper.
- */
-
 import { CARD, CARD_CONTEXT } from '../utils/parameters.js';
 import { is } from '../utils/common-checks.js';
 import { traceInstance } from '../utils/log.js';
-
-/**
- * Base class for a self-validating typed value: stores a value only if
- * `_validate()` (overridden per subclass) accepts it, otherwise falls back
- * to the constructor's initial value. `isValid` reflects the last assignment.
- *
- * @abstract
- */
-
-class TypedValueHelper<T = unknown> {
-  #value: T | null = null;
-  #isValid = false;
-  #defaultValue: T | null = null;
-
-  constructor(newValue: unknown = null) {
-    if (this._validate(newValue)) this.#defaultValue = newValue;
-    traceInstance('TypedValueHelper', CARD_CONTEXT.debug.instances);
-  }
-
-  set value(newValue: unknown) {
-    this.#isValid = this._validate(newValue);
-    this.#value = this.#isValid ? (newValue as T) : null;
-  }
-
-  get value(): T | null {
-    return this.#isValid ? this.#value : this.#defaultValue;
-  }
-
-  get isValid(): boolean {
-    return this.#isValid;
-  }
-
-  _validate(_value: unknown): _value is T {
-    return false;
-  }
-}
-
-class ValueHelper extends TypedValueHelper<number> {
-  _validate(v: unknown): v is number {
-    return is.number(v);
-  }
-}
-
-class DecimalHelper extends TypedValueHelper<number> {
-  _validate(v: unknown): v is number {
-    return Number.isInteger(v) && (v as number) >= 0;
-  }
-}
 
 class UnitHelper {
   #value: string = CARD.config.unit.default;
@@ -98,6 +45,4 @@ class UnitHelper {
   }
 }
 
-export { ValueHelper };
-export { DecimalHelper };
 export { UnitHelper };

@@ -4,6 +4,7 @@
  */
 
 import { is } from '../utils/common-checks.js';
+import { CARD } from '../utils/parameters.js';
 
 // Grouped, not three flat fields: a null centerZero makes zeroValue and
 // growthPercent unrepresentable rather than merely ignored.
@@ -18,6 +19,28 @@ type ProgressInput = {
   scale: string;
   centerZero: CenterZero | null;
 };
+
+// What a refresh resolves from entity state: unknown on purpose, validated by
+// resolveProgressInput. The config side (scale, center_zero) is schema-typed.
+type RawProgress = { current: unknown; min: unknown; max: unknown; decimal: unknown; reversed: boolean };
+type ProgressSettings = { scale: string | undefined; centerZero: CenterZero | null };
+
+const numberOr = (value: unknown, fallback: number): number => (is.number(value) ? value : fallback);
+
+// An invalid value falls back to its default rather than failing: the card
+// keeps rendering on a half-resolved entity.
+function resolveProgressInput(raw: RawProgress, { scale, centerZero }: ProgressSettings): ProgressInput {
+  const decimal = raw.decimal;
+  return {
+    min: numberOr(raw.min, CARD.config.value.min),
+    max: numberOr(raw.max, CARD.config.value.max),
+    current: numberOr(raw.current, 0),
+    decimal: is.number(decimal) && Number.isInteger(decimal) && decimal >= 0 ? decimal : CARD.config.decimal.percentage,
+    reversed: raw.reversed,
+    scale: scale === 'log' ? 'log' : 'linear',
+    centerZero,
+  };
+}
 
 class ProgressMath {
   readonly #input: ProgressInput;
@@ -119,5 +142,5 @@ class ProgressMath {
   }
 }
 
-export { ProgressMath };
-export type { ProgressInput };
+export { ProgressMath, resolveProgressInput };
+export type { ProgressInput, RawProgress, ProgressSettings };

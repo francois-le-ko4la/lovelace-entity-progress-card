@@ -1,61 +1,6 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
-import { ValueHelper, DecimalHelper, UnitHelper } from '../../src/card/value-primitives.js';
-
-describe('ValueHelper - self-validating number', () => {
-  test('accepts a number at construction', () => {
-    // isValid only reflects a later assignment through the `value` setter
-    // (see TypedValueHelper's own doc comment) - the constructor sets the
-    // fallback default directly, without going through it.
-    const helper = new ValueHelper(5);
-    assert.equal(helper.value, 5);
-    assert.equal(helper.isValid, false);
-  });
-
-  test('a later valid assignment replaces the current value', () => {
-    const helper = new ValueHelper(5);
-    helper.value = 10;
-    assert.equal(helper.value, 10);
-  });
-
-  test('an invalid assignment falls back to the constructor default, not the last valid value', () => {
-    const helper = new ValueHelper(5);
-    helper.value = 10;
-    assert.equal(helper.value, 10);
-    helper.value = 'not a number';
-    assert.equal(helper.isValid, false);
-    assert.equal(helper.value, 5, 'falls back to the ORIGINAL constructor value (5), not the last good one (10)');
-  });
-
-  test('no constructor argument means no valid default either - value is null', () => {
-    const helper = new ValueHelper();
-    assert.equal(helper.value, null);
-    assert.equal(helper.isValid, false);
-  });
-});
-
-describe('DecimalHelper - non-negative integer only', () => {
-  test('accepts zero and positive integers', () => {
-    const helper = new DecimalHelper(0);
-    assert.equal(helper.value, 0);
-    helper.value = 3;
-    assert.equal(helper.value, 3);
-  });
-
-  test('rejects a fractional value', () => {
-    const helper = new DecimalHelper(2);
-    helper.value = 3.5;
-    assert.equal(helper.isValid, false);
-    assert.equal(helper.value, 2);
-  });
-
-  test('rejects a negative value', () => {
-    const helper = new DecimalHelper(2);
-    helper.value = -1;
-    assert.equal(helper.isValid, false);
-    assert.equal(helper.value, 2);
-  });
-});
+import { UnitHelper } from '../../src/card/value-primitives.js';
 
 describe('UnitHelper - string coercion, disable, timer detection', () => {
   test('defaults to the card-wide default unit when constructed', () => {

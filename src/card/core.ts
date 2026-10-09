@@ -62,6 +62,16 @@ type JinjaNumberProp =
   | 'jinjaAlertAbove'
   | 'jinjaAlertBelow';
 
+// The option each one answers for, as the subscription is keyed.
+const JINJA_NUMBER_KEY: Record<JinjaNumberProp, string> = {
+  jinjaMinValue: 'min_value',
+  jinjaMaxValue: 'max_value',
+  jinjaWatermarkLow: 'watermark.low',
+  jinjaWatermarkHigh: 'watermark.high',
+  jinjaAlertAbove: 'alert_when.above',
+  jinjaAlertBelow: 'alert_when.below',
+};
+
 // HABase#_applyTrendVisuals's own icon-per-direction map - shared by every
 // instance (never overridden, never mutated), not rebuilt per card.
 const TREND_ICONS: Record<string, string> = {
@@ -486,7 +496,7 @@ class HACore extends HTMLElement {
       () => {
         // Clears the previous entity's marks before the fetch resolves - unlike
         // trend's TrendTracker, nothing else self-corrects in between.
-        (this._cardView as ViewBase).clearPeakMarker();
+        this._cardView.entityView?.clearPeakMarker();
         this._updateCSS();
       },
     );
@@ -545,7 +555,7 @@ class HACore extends HTMLElement {
 
   #applyPeakMarkerHistory(points: { t: number; value: number }[]) {
     this._log?.debug(`peak_marker seeded from history: ${points.length} point(s)`);
-    (this._cardView as ViewBase).seedPeakMarker(points);
+    this._cardView.entityView?.seedPeakMarker(points);
     this._updateCSS();
     // The window slides with no new reading: its eviction tick starts here.
     this._manageAutoRefresh();
@@ -737,7 +747,7 @@ class HACore extends HTMLElement {
   }
 
   _handlePeakMarkerClasses() {
-    const marker = (this._cardView as ViewBase).peakMarker;
+    const marker = this._cardView.entityView?.peakMarker;
     if (!marker) return;
 
     const pb = CARD.htmlStructure.elements.progressBar;
@@ -930,7 +940,8 @@ class HACore extends HTMLElement {
   // Entity-driven bar repaint, shared by Card/Badge and Feature.
   // EntityProgressTemplateBase overrides it (percent comes from a Jinja push).
   _updateCSS() {
-    const bar = this._cardView as ViewBase;
+    const bar = this._cardView.entityView;
+    if (!bar) return;
     this._applyProgressCSS(bar.percent / 100, {
       barColor: bar.barColor,
       // Feature has no icon, but rainbow_full's value-mark pill still reads
@@ -1096,6 +1107,16 @@ class HACore extends HTMLElement {
     this._resourceManager?.setTimeout(() => this.#applyJinja(key, content), 80, `jinja-render-${key}`);
   }
 
+  // A Jinja field Home Assistant could not render; HABase decides what to do.
+  _onJinjaFailure(key: string, message: string) {
+    this._log?.debug('📎 HACore._onJinjaFailure():', { key, message });
+  }
+
+  #onJinjaMessage(key: string, msg: { result?: unknown; error?: unknown }) {
+    if (is.nullish(msg.error)) this._renderJinja(key, msg.result);
+    else this._onJinjaFailure(key, String(msg.error));
+  }
+
   #applyJinja(key: string, content: unknown) {
     const renderHandlers = this._getJinjaHandlers(content);
     const handler = renderHandlers[key];
@@ -1175,12 +1196,9 @@ class HACore extends HTMLElement {
   }
 
   _validateProcessJinjaFields(): boolean {
-    // hasStandardEntityError is ViewBase-only (undefined, harmlessly, on the
-    // template views - which have no single "standard entity" concept to
-    // begin with).
     return (
       Boolean(this._resourceManager) &&
-      !(this._cardView.config?.entity && (this._cardView as ViewBase).hasStandardEntityError)
+      !(this._cardView.config?.entity && this._cardView.entityView?.hasStandardEntityError)
     );
   }
 
@@ -1291,6 +1309,7 @@ class HACore extends HTMLElement {
     // so it is reported once and never re-sent until the template changes.
     if (jinjaKind(template) === 'malformed') {
       this.#failedSignatures.set(subscriptionKey, signature);
+      this._onJinjaFailure(key, 'unclosed delimiter');
       this.#reportTemplateFailure(
         `${key}: the Jinja template has an unclosed delimiter and was not sent to Home Assistant. ` +
           'Please close it ({{ ... }}, {% ... %} or {# ... #}). This field stays empty until the template changes.',
@@ -1305,7 +1324,7 @@ class HACore extends HTMLElement {
       this._log?.debug('template:', template);
 
       const unsub = await hass.connection.subscribeMessage(
-        (msg: unknown) => this._renderJinja(key, (msg as { result: unknown }).result),
+        (msg: unknown) => this.#onJinjaMessage(key, msg as { result?: unknown; error?: unknown }),
         {
           type: HA_CONTEXT.ws.renderTemplate,
           template,
@@ -1337,7 +1356,10 @@ class HACore extends HTMLElement {
       // Only a template-level rejection is deterministic: the same string will
       // fail the same way forever. A transport failure (HA restarting, socket
       // dropped) must stay retryable, or a valid template dies for the session.
-      if (HACore.#isTemplateError(error)) this.#failedSignatures.set(subscriptionKey, signature);
+      if (HACore.#isTemplateError(error)) {
+        this.#failedSignatures.set(subscriptionKey, signature);
+        this._onJinjaFailure(key, (error as { message?: string })?.message ?? String(error));
+      }
       this.#reportTemplateFailure(
         `${key}: Home Assistant rejected the Jinja template (${(error as { message?: string })?.message ?? error}). ` +
           'Please check its syntax. This field stays empty until the template changes.',
@@ -1537,10 +1559,11 @@ class HABase extends HACore {
   // ─── ERROR MESSAGE MANAGEMENT ─────────────────────────────────────────────
 
   _manageErrorMessage(): boolean {
-    // msg/isAvailable/hasValidatedConfig are ViewBase-only (never present on
-    // the template views) - see _cardView's own declaration above.
-    const cardView = this._cardView as ViewBase;
-    if (cardView.msg && (is.nullish(this._cardView.entity) || (cardView.isAvailable && !cardView.hasValidatedConfig))) {
+    const cardView = this._cardView.entityView;
+    if (
+      cardView?.msg &&
+      (is.nullish(this._cardView.entity) || (cardView.isAvailable && !cardView.hasValidatedConfig))
+    ) {
       this._renderMessage(cardView.msg);
       return true;
     }
@@ -1803,18 +1826,15 @@ class HABase extends HACore {
     super._onAutoRefreshTick();
     this._applyAlertClasses();
     this._repaintStatusLabel();
-    if (this._cardView.config.trend_indicator) this._applyTrendVisuals((this._cardView as ViewBase).trendNow());
+    const bar = this._cardView.entityView;
+    if (bar && this._cardView.config.trend_indicator) this._applyTrendVisuals(bar.trendNow());
   }
 
   _updateTrend() {
-    if (!this._cardView.config.trend_indicator) return;
+    const bar = this._cardView.entityView;
+    if (!bar || !this._cardView.config.trend_indicator) return;
 
-    // ViewBase.getTrend() overrides ViewCore's own (currentPercent: number)
-    // signature with a no-arg one that supplies its own current percent -
-    // the template views don't override it and have no trend concept to
-    // begin with, so this only ever meaningfully runs for ViewBase-family
-    // instances.
-    this._applyTrendVisuals((this._cardView as ViewBase).getTrend());
+    this._applyTrendVisuals(bar.getTrend());
   }
 
   // Shared with EntityProgressTemplateBase's own _updateTrend (cards.ts).
@@ -1939,10 +1959,7 @@ class HABase extends HACore {
   _showIcon() {
     if (!this._cardView) return;
 
-    // icon exists on every concrete view (ViewBase's own getter for
-    // CardView/BadgeView/FeatureView, a plain field on CardTemplateView/
-    // BadgeTemplateView), just not on the shared ViewCore base itself.
-    const { entity: entityId, icon: curIcon } = this._cardView as ViewCore & { icon: string | null };
+    const { entity: entityId, icon: curIcon } = this._cardView;
     const stateObj = this._hassProvider.getEntityStateObj(entityId as string);
     const hasIconOverride = is.nonEmptyString(curIcon);
     const srcPicture = this._hassProvider.getEntityProp(entityId as string, HA_CONTEXT.attributes.entityPicture);
@@ -1989,8 +2006,7 @@ class HABase extends HACore {
 
   _showBadge() {
     if (this.hasDisabledBadge) return;
-    // badgeInfo is ViewBase-only (never present on the template views).
-    const badgeInfo = (this._cardView as ViewBase).badgeInfo;
+    const badgeInfo = this._cardView.entityView?.badgeInfo;
     if (badgeInfo) {
       this._enableBadge(true);
       this._setBadgeIconColor(badgeInfo.icon, badgeInfo.color, badgeInfo.backgroundColor);
@@ -2087,7 +2103,7 @@ class HABase extends HACore {
   // explicitly cleared when a source resolves null, so it can't leave the
   // OTHER source's earlier value stuck on screen.
   #repaintBadge() {
-    if (!is.nullish((this._cardView as ViewBase).badgeInfo)) return; // alert -> cancel custom badge
+    if (!is.nullish(this._cardView.entityView?.badgeInfo)) return; // alert -> cancel custom badge
     const icon = this.#badgeIconValue;
     const color = this.#badgeIconObjectColor ?? this.#badgeColorFieldValue;
     this.#jinjaStateBadge.icon = icon !== null;
@@ -2214,12 +2230,28 @@ class HABase extends HACore {
     // Defensive: only apply while the option is still in { jinja: "..." } mode:
     // guards against a push landing as the user switches the mode chips away.
     if (!is.nonEmptyString(getJinja(this._cardView.config))) return;
-    // jinjaMinValue/jinjaMaxValue live on ViewBase, the other four on ViewCore.
+    // Four of the six props live on ViewBase, the watermark pair on ViewCore.
     const view = this._cardView as ViewBase;
     const value = toNumberOrNull(content);
-    if (value === view[viewProp]) return;
+    const key = JINJA_NUMBER_KEY[viewProp];
+    // A result that is no number (an 'unavailable' state) fails like a refusal.
+    const failure = value === null ? '' : null;
+    if (value === view[viewProp] && failure === view.jinjaFailure(key)) return;
     view[viewProp] = value;
+    view.setJinjaFailure(key, failure);
     repaint();
+  }
+
+  _onJinjaFailure(key: string, message: string) {
+    if (!Object.values(JINJA_NUMBER_KEY).includes(key)) return super._onJinjaFailure(key, message);
+    this._cardView.setJinjaFailure(key, message);
+    if (key.startsWith('alert_when')) this._applyAlertClasses();
+    else if (key.startsWith('watermark')) this._updateCSS();
+    else {
+      this._cardView.refresh(this.hass as HomeAssistant);
+      this._updateCSS();
+      this._processStandardFields();
+    }
   }
 
   // GitHub-label-style status pill, shared by `status_label` Jinja

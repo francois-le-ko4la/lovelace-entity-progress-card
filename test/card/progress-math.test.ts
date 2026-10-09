@@ -1,7 +1,6 @@
 /*
- * The math on its own, built straight from an input. progress-calc.test.ts
- * asserts the same formulas through the class that assembles that input - the
- * two layers this split exists to separate.
+ * The math on its own, built straight from an input. progress-display.test.ts
+ * covers how that input is resolved and how the result is printed.
  */
 
 import { test, describe } from 'node:test';

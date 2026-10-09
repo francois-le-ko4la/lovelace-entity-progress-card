@@ -26,16 +26,19 @@ const valueKindOf = (entityId: string, attribute: unknown): ValueKind => {
   return deviceClass === HA_CONTEXT.deviceClasses.duration && !is.nonEmptyString(attribute) ? 'duration' : 'default';
 };
 
-// This class's own #value stays genuinely `any` on purpose: an entity's
-// value is polymorphic per domain (number, string, timer duration...), same
-// rationale as EntityState.attributes in hass-provider.ts - not the same
-// case as HomeAssistant/EntityState's own envelope fields, which do have one
-// stable shape worth modeling.
+// What an entity reads as, by value kind: a timer runs on its own clock, a
+// counter or number carries its own range, anything else is one number.
+type Reading =
+  | { kind: 'timer'; current: number; min: number; max: number; state: string | null; startedAt: number | null }
+  | { kind: 'ranged'; current: number; min: unknown; max: unknown }
+  | { kind: 'scalar'; value: number };
+
+const scalarReading = (value: number): Reading => ({ kind: 'scalar', value });
+
 class EntityHelper {
   #hassProvider: HassProviderSingleton = HassProviderSingleton.getInstance();
   #isValid = false;
-  // skipcq: JS-0323 -- entity value is polymorphic (num/str/timer/object)
-  #value: any = {};
+  #reading: Reading = scalarReading(0);
   #entityId: string | null = null;
   #attribute: string | null = null;
   #color: string | null = null;
@@ -67,7 +70,7 @@ class EntityHelper {
     this.#nameTokens = null;
     this.#valueKind = null;
     this.#defaultColor = undefined;
-    this.#value = 0;
+    this.#reading = scalarReading(0);
     this.#domain = HassProviderSingleton.getEntityDomain(newValue);
     this.#isValid = this.#hassProvider.hasEntity(this.#entity);
   }
@@ -76,13 +79,10 @@ class EntityHelper {
     return this.#entityId;
   }
 
-  // Every other method below only ever runs after entityId has been set (the
-  // setter is always the first thing called on a fresh EntityHelper - see
-  // EntityOrValue.set value / EntityCollectionHelper.addEntity) - this getter
-  // documents and enforces that precondition once, instead of a bare
-  // `this.#entityId!` at every hassProvider call site.
+  // A card without an entity (Template) holds an unbound helper: '' matches
+  // nothing in hass, so every read answers its empty default.
   get #entity(): string {
-    return assertDefined(this.#entityId, 'EntityHelper method called before entityId was set');
+    return this.#entityId ?? '';
   }
 
   set attribute(newValue: string | null) {
@@ -134,9 +134,15 @@ class EntityHelper {
     return this.#stateContent;
   }
 
-  // skipcq: JS-0323 -- polymorphic entity value (see #value)
-  get value(): any {
-    return this.#isValid ? this.#value : 0;
+  get reading(): Reading {
+    return this.#isValid ? this.#reading : scalarReading(0);
+  }
+
+  // The one number the entity stands for; null when it is not finite.
+  get current(): number | null {
+    const reading = this.reading;
+    const current = reading.kind === 'scalar' ? reading.value : reading.current;
+    return is.number(current) ? current : null;
   }
 
   get state(): string | null {
@@ -149,6 +155,10 @@ class EntityHelper {
 
   get isAvailable(): boolean {
     return this.#hassProvider.isEntityAvailable(this.#entity);
+  }
+
+  get isUsable(): boolean {
+    return this.#entityId !== null && (this.isAvailable || this.isValid);
   }
 
   get attributes(): Record<string, number> {
@@ -257,6 +267,7 @@ class EntityHelper {
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
 
   refresh() {
+    if (this.#entityId === null) return;
     this.#defaultColor = undefined;
     this.#isValid = this.#hassProvider.hasEntity(this.#entity);
 
@@ -283,21 +294,22 @@ class EntityHelper {
     const mapping = this.#percentMapping;
     this.#attribute = this.#attribute || (mapping?.attribute ?? null);
     if (!this.#attribute) {
-      this.#value = parseFloat(this.#state as string) || 0;
+      this.#reading = scalarReading(parseFloat(this.#state as string) || 0);
       return;
     }
 
     const attrValue = this.#hassProvider.getEntityAttribute(this.#entity, this.#attribute);
 
     if (is.numericString(attrValue) || is.number(attrValue)) {
-      this.#value = parseFloat(String(attrValue));
+      let value = parseFloat(String(attrValue));
       // Only the domain's own default attribute carries the declared scale -
       // any other attribute the user picks is read as-is.
       if (mapping?.scale && this.#attribute === mapping.attribute) {
-        this.#value = (100 * this.#value) / mapping.scale;
+        value = (100 * value) / mapping.scale;
       }
+      this.#reading = scalarReading(value);
     } else {
-      this.#value = 0;
+      this.#reading = scalarReading(0);
       this.#isValid = false;
     }
   }
@@ -312,7 +324,7 @@ class EntityHelper {
         // is running) - just the generic [0, 100] placeholder range.
         // Pre-multiplied so the shared `/ CARD.config.msFactor` below cancels
         // out to that same [0, 100] range instead of collapsing it to
-        // [0, 0.1], which sent anything reading this.#value (e.g. a
+        // [0, 0.1], which sent anything reading the reading (e.g. a
         // watermark's high/low position) wildly out of bounds.
         elapsed = CARD.config.value.min * CARD.config.msFactor;
         duration = CARD.config.value.max * CARD.config.msFactor;
@@ -342,7 +354,8 @@ class EntityHelper {
       default:
         throw new Error('Timer entity - Unknown case');
     }
-    this.#value = {
+    this.#reading = {
+      kind: 'timer',
       current: elapsed / CARD.config.msFactor,
       min: CARD.config.value.min,
       max: duration / CARD.config.msFactor,
@@ -353,7 +366,8 @@ class EntityHelper {
 
   _manageRangedEntity() {
     const [min, max] = assertDefined(domainProfile(this.#domain).range, `EntityHelper: no range for '${this.#domain}'`);
-    this.#value = {
+    this.#reading = {
+      kind: 'ranged',
       current: parseFloat(this.#state as string),
       min: this.#hassProvider.getEntityAttribute(this.#entity, min),
       max: this.#hassProvider.getEntityAttribute(this.#entity, max),
@@ -367,7 +381,7 @@ class EntityHelper {
     // undefined), so the guard never matched and a missing unit crashed in
     // durationToSeconds
     const seconds = is.nullish(unit) ? null : NumberFormatter.durationToSeconds(value, unit);
-    this.#value = seconds ?? 0;
+    this.#reading = scalarReading(seconds ?? 0);
     this.#isValid = seconds !== null;
   }
 }
@@ -381,4 +395,4 @@ const hasUsableHistory = (entity: unknown, attribute?: unknown): entity is strin
   !KINDS_WITHOUT_HISTORY.has(valueKindOf(entity, attribute));
 
 export { EntityHelper, hasUsableHistory };
-export type { NameToken };
+export type { Reading };

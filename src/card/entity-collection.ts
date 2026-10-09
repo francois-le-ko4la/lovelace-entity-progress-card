@@ -4,7 +4,6 @@
  */
 
 import { CARD_CONTEXT } from '../utils/parameters.js';
-import { is } from '../utils/common-checks.js';
 import { traceInstance } from '../utils/log.js';
 import { ThemeManager } from './theme-manager.js';
 import { EntityHelper } from './entity-helper.js';
@@ -25,8 +24,7 @@ class EntityCollectionHelper {
   }
 
   static #numericValue(helper: EntityHelper): number {
-    const value = helper.value;
-    return is.number(value) ? value : (value?.current ?? 0);
+    return helper.current ?? 0;
   }
 
   // Width/share math always wants a magnitude - a negative raw value must never

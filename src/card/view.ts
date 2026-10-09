@@ -9,7 +9,7 @@ import { resolveDisplayUnit, resolveDisplayDecimal } from '../utils/display-defa
 import type { LovelaceConfig, Config } from '../utils/types.js';
 import { is, assertDefined } from '../utils/common-checks.js';
 import {
-  entityOf,
+  jinjaOf,
   markShown,
   peakMarkShown,
   markValue,
@@ -29,8 +29,28 @@ import {
 } from './schema.js';
 import { cloneValue } from '../utils/browser-support.js';
 import { traceInstance } from '../utils/log.js';
-import { ProgressMath } from './progress-math.js';
-import { PercentHelper, ThemeManager, EntityCollectionHelper, EntityOrValue } from './value-helpers.js';
+import { ProgressMath, resolveProgressInput, type ProgressSettings, type RawProgress } from './progress-math.js';
+import {
+  formatProgress,
+  hasTimerOrFlexTimerUnit,
+  valueForThemes,
+  type Progress,
+  type ProgressDisplay,
+} from './progress-display.js';
+import { UnitHelper } from './value-primitives.js';
+import {
+  boundFrom,
+  boundState,
+  boundUsable,
+  boundValue,
+  isEntityBound,
+  isFaultState,
+  refreshBound,
+  usableBoundValue,
+  type Bound,
+} from './bound-value.js';
+import { ThemeManager, EntityCollectionHelper } from './value-helpers.js';
+import { EntityHelper, type Reading } from './entity-helper.js';
 import { TrendTracker, type TrendBasis } from './trend-tracker.js';
 import { PeakTracker } from './peak-tracker.js';
 import { HassProviderSingleton, type HomeAssistant } from '../utils/hass-provider.js';
@@ -96,6 +116,15 @@ type ResolvedPeakMark = {
 
 type BarStackEntityConfig = NonNullable<NonNullable<CardShape['bar_stack']>['entities']>[number];
 
+type ProgressConfig = Omit<ProgressDisplay, 'unit' | 'isTimer'> & {
+  settings: ProgressSettings;
+  hasDisabledUnit: boolean;
+};
+type ProgressResolved = { raw: RawProgress; unit: string; isTimer: boolean };
+
+// `jinja`: a failed Jinja field's message ('' if none); absent for an entity.
+type EntityFault = { role: 'entity' | 'max_value' | 'min_value'; state: string; jinja?: string };
+
 // Shared by ViewBase.themeDivergingGradient/ViewCore's own
 // templateThemeDivergingGradient below - center_zero's two independent
 // per-arm theme gradients, differing only in how each resolves its own
@@ -114,7 +143,7 @@ const buildDivergingGradient = (params: {
   const { theme, signedPercent, mode, defaultColor, isVertical, isSegmented, posWindow, negWindow, valueRange } =
     params;
   // Capped at 100, not just floored at 0 - a raw/Jinja percent isn't bounded
-  // the way ProgressCalc's own division is; posSize/negSize feed
+  // the way ProgressMath's own division is; posSize/negSize feed
   // --stack-size-pos/-neg directly, and a value above 1 there pushes the
   // fill past .half's own overflow: hidden instead of just filling it.
   const posFill = Math.min(100, Math.max(0, signedPercent));
@@ -165,44 +194,27 @@ const buildDivergingGradient = (params: {
  * const hasShape = cardView.hasVisibleShape;
  * const isClickable = cardView.hasClickableCard;
  */
-class ViewCore {
+abstract class ViewCore {
   _hassProvider = HassProviderSingleton.getInstance();
   _trendTracker: TrendTracker | null = null;
   _trendEntityId: string | null = null;
   // `declare`: ViewCore is never instantiated, every subclass assigns its own.
   declare _configHelper: BaseConfigHelper;
-  _currentValue = new EntityOrValue();
-  _lowValue = new EntityOrValue();
-  _highValue = new EntityOrValue();
-  // alert_when doesn't exist in the template schema, so these stay unset
-  // (isAlertActive short-circuits on `!this.config?.alert_when` before ever
-  // reading them) for ViewCore-only instances - declared here rather than on
-  // ViewBase because isAlertActive/alertAnimation below are read
-  // polymorphically through the shared _cardView reference (see
-  // HACore._addBaseClasses), not just from card/badge.
-  _aboveValue = new EntityOrValue();
-  _belowValue = new EntityOrValue();
-  // alert_when.above/.below resolved from a Jinja subscription; null = no
-  // override
-  #jinjaAlertAbove: number | null = null;
-  #jinjaAlertBelow: number | null = null;
+  _currentValue = new EntityHelper();
+  _lowValue: Bound = null;
+  _highValue: Bound = null;
   // alert_when.jinja (Advanced mode) resolved trigger - true/an override
   // object mean active, false/empty/null mean inactive or not pushed yet.
   #jinjaAlertResult: boolean | Record<string, unknown> | null = null;
+  // Numeric Jinja fields Home Assistant could not render, by option key: its
+  // message, or '' when there is none (a result that is no number).
+  #jinjaFailures = new Map<string, string>();
   // watermark.low/.high resolved from a Jinja subscription; null = no
-  // override. Declared here (not ViewBase) for the same
-  // read-polymorphically-through-_cardView reason as jinjaAlertAbove/Below
-  // above - ViewCore's own watermark getter below reads these directly, and
-  // Template (ViewCore's own direct subclass) needs to write to them too.
+  // override. Template writes them too.
   #jinjaWatermarkLow: number | null = null;
   #jinjaWatermarkHigh: number | null = null;
-  // icon_animation: { effect, jinja } mode - the jinja-resolved boolean that
-  // decides whether `effect` plays, overriding HABase._iconAnimationStyle's
-  // automatic entity-based detection. null = not in that mode, or not
-  // resolved yet - declared here (not ViewBase) for the same
-  // read-polymorphically-through-_cardView reason as jinjaAlertAbove/Below
-  // above, since icon_animation applies to Template cards too (unlike
-  // alert_when).
+  // icon_animation { effect, jinja }: the resolved boolean deciding whether
+  // `effect` plays. null = not in that mode, or not resolved yet.
   #jinjaIconAnimationActive: boolean | null = null;
   // hide's Jinja-resolved state (see hasComponentHiddenFlag/setResolvedHide
   // below) - null means "no push has landed yet, fall back to config.hide"
@@ -212,19 +224,6 @@ class ViewCore {
   // What a host (the Multi Feature) takes off this card whatever hide says,
   // Jinja included - see forceHidden.
   #forcedHide = new Set<string>();
-  // Template's own theme support (percent: true themes only). Declared here
-  // rather than ViewBase (which has its own separate #theme) since
-  // CardTemplateView/BadgeTemplateView are ViewCore's direct siblings of
-  // ViewBase, not descendants - this is the shared spot both reach. Inert on
-  // ViewBase's own subclasses.
-  #templateTheme = new ThemeManager();
-  // Template's own plain color/bar_color Jinja (no theme active) - see
-  // barColor/iconColor below. cards.ts's own handlers write straight to CSS
-  // via _dom.setStyle only, so without caching it here too, status_label's
-  // color_source: 'bar'/'icon' fallback had nothing to read - same class of
-  // gap #templateTheme closes for the theme case.
-  #templateColorValue: string | null = null;
-  #templateBarColorValue: string | null = null;
 
   constructor() {
     traceInstance('ViewCore', CARD_CONTEXT.debug.instances);
@@ -238,17 +237,13 @@ class ViewCore {
     }
 
     this._configHelper.config = config;
-    Object.assign(this._currentValue, {
-      value: this._configHelper.config.entity,
-      stateContent: this._configHelper.stateContent,
-    });
-    // jinja mode is fed by the template subscription, not EntityOrValue - see
-    // _applyWatermarkValues.
+    this.resetJinjaFailures();
+    this._bindEntity();
+    // jinja mode is fed by the template subscription, not the entity helper -
+    // see _applyWatermarkValues.
     ViewCore._applyWatermarkValues(this, this._configHelper.config?.watermark as WatermarkConfig | undefined);
     this.#jinjaIconAnimationActive = null;
     this.#resolvedHide = null;
-    this.#templateColorValue = null;
-    this.#templateBarColorValue = null;
   }
 
   get config(): Config {
@@ -276,40 +271,27 @@ class ViewCore {
     return is.number(this.config.bar_segments) && this.config.bar_segments >= 2;
   }
 
-  // The value-config shape (number | {entity, attribute} | {jinja}) of max/min,
-  // watermark and alert_when. Jinja resolves elsewhere (#jinjaMaxValue…): null.
-  static _resolveValueConfig(
-    cfg: number | { entity?: string; attribute?: string; jinja?: string } | null | undefined,
-    fallback: number | null,
-  ): { value: number | string | null; attribute?: string } {
-    const isObj = is.plainObject(cfg);
-    const obj = cfg as { entity?: string; attribute?: string; jinja?: string };
-    return {
-      value: isObj ? (obj.jinja ? null : (obj.entity ?? fallback)) : ((cfg as number | null) ?? fallback),
-      attribute: isObj ? obj.attribute : undefined,
-    };
-  }
-
   // Shared by ViewCore/ViewBase's own `set config` - watermark.low/.high
   // resolved into _lowValue/_highValue, jinja overrides reset to null.
   static _applyWatermarkValues(view: ViewCore, watermark: WatermarkConfig | undefined) {
-    Object.assign(
-      view._lowValue,
-      ViewCore._resolveValueConfig(markValue(watermark?.low, SCHEMA_DEFAULTS.watermark.low), null),
-    );
+    view._lowValue = boundFrom(markValue(watermark?.low, SCHEMA_DEFAULTS.watermark.low), null);
     view.jinjaWatermarkLow = null;
-    Object.assign(
-      view._highValue,
-      ViewCore._resolveValueConfig(markValue(watermark?.high, SCHEMA_DEFAULTS.watermark.high), null),
-    );
+    view._highValue = boundFrom(markValue(watermark?.high, SCHEMA_DEFAULTS.watermark.high), null);
     view.jinjaWatermarkHigh = null;
+  }
+
+  _bindEntity() {
+    const { entity } = this._configHelper.config;
+    this._currentValue = new EntityHelper();
+    if (is.string(entity)) this._currentValue.entityId = entity;
+    this._currentValue.stateContent = this._configHelper.stateContent ?? [];
   }
 
   refresh(hass: HomeAssistant) {
     this._hassProvider.hass = hass;
     this._currentValue.refresh();
-    this._lowValue.refresh();
-    this._highValue.refresh();
+    refreshBound(this._lowValue);
+    refreshBound(this._highValue);
     // Computed once per refresh instead of live in isBatteryCharging: with
     // battery_adaptive, a single refresh reads it 3x (resolvedTheme +
     // icon-anim-battery-charging + its -shifted variant), each a same-device
@@ -329,6 +311,10 @@ class ViewCore {
   get entity(): string | null {
     return this.config?.entity ?? null;
   }
+
+  // The entity pipeline (peak marker, trend, badge, messages), null on a
+  // template view that has none.
+  readonly entityView: ViewBase | null = null;
 
   // icon_animation: an enum name | { effect, jinja } - resolves either shape
   // to the effect actually chosen (see schema.ts's enumOrJinjaTrigger and
@@ -471,33 +457,11 @@ class ViewCore {
     return ThemeManager.adaptColor(this._entityDefaultColor());
   }
 
-  // Template precedence, on purpose unlike ViewBase: theme, then color, then
-  // the entity - the user's Jinja can test availability itself.
-  // Reading it here (not just from _managePercent's one-off push) is what
-  // makes every other repaint (_updateCSS on every hass update) see the
-  // themed color too, not just right after a percent Jinja push.
-  get barColor(): string | null {
-    if (this._configHelper.config.theme) return ThemeManager.adaptColor(this.templateThemeBarColor);
-    if (this._configHelper.config.bar_color) return this.#templateBarColorValue;
-    return this.entity ? this._getEntityColor() : null;
-  }
+  abstract readonly icon: string | null;
 
-  get iconColor(): string | null {
-    if (this._configHelper.config.theme) return ThemeManager.adaptColor(this.templateThemeIconColor);
-    if (this._configHelper.config.color) return this.#templateColorValue;
-    return this.entity ? this._getEntityColor() : null;
-  }
+  abstract get barColor(): string | null;
 
-  // Called from cards.ts's own color/bar_color Jinja handlers, right
-  // alongside (not instead of) their existing _dom.setStyle - see
-  // #templateColorValue/-BarColorValue's own comment above.
-  setTemplateColorValue(value: string | null) {
-    this.#templateColorValue = value;
-  }
-
-  setTemplateBarColorValue(value: string | null) {
-    this.#templateBarColorValue = value;
-  }
+  abstract get iconColor(): string | null;
 
   get hasClickableIcon(): boolean {
     return ViewCore.#hasAction(this._configHelper.action.icon);
@@ -546,14 +510,16 @@ class ViewCore {
     jinjaHigh,
     lowValue,
     highValue,
+    usable,
     toPos,
   }: {
     watermark: WatermarkConfig;
     jinjaLow: number | null;
     jinjaHigh: number | null;
-    lowValue: unknown;
-    highValue: unknown;
-    toPos: (value: unknown, side: WatermarkSide) => number;
+    lowValue: number | null;
+    highValue: number | null;
+    usable: Record<WatermarkSide, boolean>;
+    toPos: (value: number | null, side: WatermarkSide) => number;
   }): ResolvedWatermark {
     // type/opacity carry no schema default (see WatermarkConfig) - applied
     // here from SCHEMA_DEFAULTS.watermark instead.
@@ -564,9 +530,9 @@ class ViewCore {
     const resolveMark = (
       side: WatermarkSide,
       jinjaOverride: number | null,
-      resolvedValue: unknown,
+      resolvedValue: number | null,
     ): ResolvedWatermarkMark => ({
-      shown: markShown(watermark[side]),
+      shown: markShown(watermark[side]) && usable[side],
       value: toPos(jinjaOverride ?? resolvedValue, side),
       type: (field(side, 'type') ?? globalType) as WatermarkType,
       opacity: (field(side, 'opacity') ?? globalOpacity) as number,
@@ -591,15 +557,24 @@ class ViewCore {
     // 50 + value/2 recenter percent itself gets in _managePercent, though -
     // without it a mark landed in the wrong half of the bar.
     const isCenterZero = Boolean(this.config.center_zero);
-    const toPos = (value: unknown) => (isCenterZero ? 50 + (value as number) / 2 : (value as number));
+    const toPos = (value: number | null) => (isCenterZero ? 50 + (value as number) / 2 : (value as number));
     return ViewCore._buildResolvedWatermark({
       watermark,
       jinjaLow: this.#jinjaWatermarkLow,
       jinjaHigh: this.#jinjaWatermarkHigh,
-      lowValue: this._lowValue.value,
-      highValue: this._highValue.value,
+      lowValue: boundValue(this._lowValue),
+      highValue: boundValue(this._highValue),
+      usable: this._usableMarks,
       toPos,
     });
+  }
+
+  // A mark whose entity or Jinja is in a fault state is dropped; the bar stays.
+  get _usableMarks(): Record<WatermarkSide, boolean> {
+    return {
+      low: boundUsable(this._lowValue) && this.jinjaFailure('watermark.low') === null,
+      high: boundUsable(this._highValue) && this.jinjaFailure('watermark.high') === null,
+    };
   }
 
   // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
@@ -651,7 +626,7 @@ class ViewCore {
   // icon_animation needs a domain with a real working state (fan spinning,
   // media playing): a battery sensor's numeric state would animate forever.
   get isEntityActive(): boolean {
-    if (!this._currentValue.isAvailable) return false;
+    if (!this._currentValue.isUsable) return false;
     const domain = HassProviderSingleton.getEntityDomain(this.entity);
     const traits = domainProfile(domain);
     const state = String(this._currentValue.state ?? '').toLowerCase();
@@ -728,92 +703,6 @@ class ViewCore {
     return ViewCore.#BATTERY_ADAPTIVE_THEMES[this.isBatteryCharging ? 'charging' : 'discharging'];
   }
 
-  // ─── Template's own theme support (percent themes only) ───────────────────
-  // setTemplateThemeValue is only reached from _managePercent's own
-  // `if (config.theme)` branch, not wired into the shared set config above.
-  // #templateTheme.value stays memoized at the last-pushed percent, so
-  // barColor/iconColor read the right color on *any* repaint - without this,
-  // a plain hass update used to repaint and revert to the untheme'd default.
-
-  setTemplateThemeValue(percent: number) {
-    this.#templateTheme.value = percent;
-  }
-
-  // Re-resolved on every read, not just cached at setTemplateThemeValue's
-  // push - resolvedTheme's battery_adaptive branch depends on
-  // isBatteryCharging, which can flip without percent itself changing
-  // (plugging in a charger while the reading briefly holds steady).
-  // Reconfiguring costs a few property assignments only, cheap enough to
-  // redo on every read instead of tracking a separate "did it change" flag.
-  #refreshTemplateTheme() {
-    this.#templateTheme.configure({ theme: this.resolvedTheme, customTheme: undefined, interpolate: false });
-  }
-
-  // null when no theme is configured (ThemeManager.iconColor/barColor
-  // resolve to null then) - barColor/iconColor above fall back to the plain
-  // color/bar_color Jinja fields in that case, same shape as ViewBase.
-  // iconColor's own `theme.iconColor || config.color` (theme wins when both
-  // apply).
-  get templateThemeIconColor(): string | null {
-    this.#refreshTemplateTheme();
-    return this.#templateTheme.iconColor;
-  }
-
-  get templateThemeBarColor(): string | null {
-    this.#refreshTemplateTheme();
-    return this.#templateTheme.barColor;
-  }
-
-  // bar_color_mode's gradient equivalent of ViewBase.colorGradient, same
-  // buildGradient this class's own templateThemeIconColor/-BarColor read
-  // through #templateTheme - stands down for center_zero (templateTheme
-  // DivergingGradient below owns that case instead), same convention as
-  // colorGradient/themeDivergingGradient.
-  get templateThemeGradient(): string | null {
-    if (!this._configHelper.config.theme || this._configHelper.config.center_zero) return null;
-    this.#refreshTemplateTheme();
-    return this.#templateTheme.buildGradient(
-      this.#templateTheme.value,
-      this._configHelper.config.bar_color_mode ?? 'auto',
-      {
-        isVertical: this.isVerticalBar,
-        isSegmented: this.isSegmented,
-        isRing: this.isRing,
-      },
-    );
-  }
-
-  // center_zero's own equivalent of templateThemeGradient above - mirrors
-  // ViewBase.themeDivergingGradient, but Template has no min_value/max_value
-  // to derive a zeroPercent from: its percent field is -100..100 by
-  // convention under center_zero, so zero sits at the fixed midpoint (50)
-  // for a regular theme; a signed theme still spans -100..100 as one scale.
-  get templateThemeDivergingGradient() {
-    if (!this._configHelper.config.theme || !this._configHelper.config.center_zero) return null;
-    this.#refreshTemplateTheme();
-    const mode = this._configHelper.config.bar_color_mode ?? 'auto';
-    const [posWindow, negWindow]: [[number, number], [number, number]] = this.#templateTheme.isSigned
-      ? [
-          [0, 100],
-          [0, -100],
-        ]
-      : [
-          [50, 100],
-          [50, 0],
-        ];
-    return buildDivergingGradient({
-      theme: this.#templateTheme,
-      signedPercent: this.#templateTheme.value,
-      mode,
-      defaultColor: null,
-      isVertical: this.isVerticalBar,
-      isSegmented: this.isSegmented,
-      posWindow,
-      negWindow,
-      valueRange: null,
-    });
-  }
-
   // epb-icon-charge's clip-path is calibrated to the plain "mdi:battery"
   // outline. MDI's charging/bluetooth battery variants (battery-charging-60,
   // battery-bluetooth...) draw a bolt or bluetooth glyph that shifts the
@@ -848,22 +737,6 @@ class ViewCore {
     return this.isEntityActive || ViewCore.#entityOrSameDevice(this.entity as string, ViewCore.#sensorReportsWashing);
   }
 
-  get jinjaAlertAbove(): number | null {
-    return this.#jinjaAlertAbove;
-  }
-
-  set jinjaAlertAbove(value: number | null) {
-    this.#jinjaAlertAbove = value;
-  }
-
-  get jinjaAlertBelow(): number | null {
-    return this.#jinjaAlertBelow;
-  }
-
-  set jinjaAlertBelow(value: number | null) {
-    this.#jinjaAlertBelow = value;
-  }
-
   get hasJinjaAlertWhen(): boolean {
     return is.nonEmptyString(this.config?.alert_when?.jinja);
   }
@@ -874,6 +747,19 @@ class ViewCore {
 
   set jinjaAlertResult(value: unknown) {
     this.#jinjaAlertResult = is.boolean(value) || is.plainObject(value) ? value : null;
+  }
+
+  jinjaFailure(key: string): string | null {
+    return this.#jinjaFailures.get(key) ?? null;
+  }
+
+  setJinjaFailure(key: string, message: string | null) {
+    if (message === null) this.#jinjaFailures.delete(key);
+    else this.#jinjaFailures.set(key, message);
+  }
+
+  resetJinjaFailures() {
+    this.#jinjaFailures.clear();
   }
 
   get jinjaWatermarkLow(): number | null {
@@ -892,29 +778,12 @@ class ViewCore {
     this.#jinjaWatermarkHigh = value;
   }
 
-  /**
-   * alert_when thresholds are expressed in the entity's native unit (like
-   * watermark.low/high) - above/below resolve the same number (legacy) |
-   * { entity, attribute } | { jinja } shape as watermark.low/high (see
-   * _aboveValue/_belowValue, set from ViewBase.set config since alert_when
-   * isn't in the template schema).
-   */
+  // Advanced mode: the trigger IS the jinja result - true or an override
+  // object both mean active. The above/below thresholds are ViewBase's.
   get isAlertActive(): boolean {
-    const alert = this.config?.alert_when;
-    if (!alert) return false;
-    // Advanced mode: the trigger IS the jinja result, above/below never
-    // consulted - true or an override object both mean active.
-    if (this.hasJinjaAlertWhen) {
-      const result = this.#jinjaAlertResult;
-      return result === true || is.plainObject(result);
-    }
-    if (!this._currentValue.isAvailable) return false;
-    const raw = this._currentValue.value;
-    const value = is.number(raw) ? raw : raw?.current;
-    if (!is.number(value)) return false;
-    const above = this.#jinjaAlertAbove ?? this._aboveValue.value;
-    const below = this.#jinjaAlertBelow ?? this._belowValue.value;
-    return (is.number(above) && value > above) || (is.number(below) && value < below);
+    if (!this.hasJinjaAlertWhen) return false;
+    const result = this.#jinjaAlertResult;
+    return result === true || is.plainObject(result);
   }
 
   // Any key can be omitted - each resolved getter below falls back to config.
@@ -1051,17 +920,67 @@ class ViewCore {
  * const tickAt = cardView.nextTickAt(Date.now());
  */
 class ViewBase extends ViewCore {
-  #percentHelper = new PercentHelper();
+  // The stable half comes from the config, the resolved half from each
+  // refresh; #progress is rebuilt from both whenever either changes.
+  #progressConfig: ProgressConfig = {
+    settings: { scale: undefined, centerZero: null },
+    hasDisabledUnit: false,
+    unitSpacing: CARD.config.unit.unitSpacing.auto,
+    unitPosition: CARD.config.unit.unitPosition.after,
+    compact: false,
+    sign: false,
+  };
+  #progressResolved: ProgressResolved = {
+    raw: { current: undefined, min: undefined, max: undefined, decimal: undefined, reversed: CARD.config.reverse },
+    unit: CARD.config.unit.default,
+    isTimer: false,
+  };
+  #progress = ViewBase.#buildProgress(this.#progressConfig, this.#progressResolved);
   #theme = new ThemeManager();
-  #maxValue = new EntityOrValue();
-  #minValue = new EntityOrValue();
+  #maxValue: Bound = null;
+  #minValue: Bound = null;
   // min_value/max_value resolved from a Jinja subscription (standard cards);
   // null = no override
   #jinjaMinValue: number | null = null;
   #jinjaMaxValue: number | null = null;
   #entityCollection = new EntityCollectionHelper();
+  // alert_when.above/.below: not in the template schema, which only has the
+  // Jinja trigger.
+  _aboveValue: Bound = null;
+  _belowValue: Bound = null;
+  // resolved from a Jinja subscription; null = no override
+  #jinjaAlertAbove: number | null = null;
+  #jinjaAlertBelow: number | null = null;
+  readonly entityView: ViewBase = this;
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
+
+  get jinjaAlertAbove(): number | null {
+    return this.#jinjaAlertAbove;
+  }
+
+  set jinjaAlertAbove(value: number | null) {
+    this.#jinjaAlertAbove = value;
+  }
+
+  get jinjaAlertBelow(): number | null {
+    return this.#jinjaAlertBelow;
+  }
+
+  set jinjaAlertBelow(value: number | null) {
+    this.#jinjaAlertBelow = value;
+  }
+
+  // Thresholds are in the entity's native unit, in watermark.low/high's shapes.
+  get isAlertActive(): boolean {
+    if (!this.config?.alert_when || this.hasJinjaAlertWhen) return super.isAlertActive;
+    if (!this._currentValue.isUsable || isFaultState(this._currentValue.state)) return false;
+    const value = this._currentValue.current;
+    if (!is.number(value)) return false;
+    const above = this.#jinjaAlertAbove ?? usableBoundValue(this._aboveValue);
+    const below = this.#jinjaAlertBelow ?? usableBoundValue(this._belowValue);
+    return (is.number(above) && value > above) || (is.number(below) && value < below);
+  }
 
   get hasValidatedConfig(): boolean {
     return this._configHelper.isValid;
@@ -1077,6 +996,7 @@ class ViewBase extends ViewCore {
     }
 
     this._configHelper.config = config;
+    this.resetJinjaFailures();
 
     const centerZero = this._configHelper.config.centerZero;
 
@@ -1112,56 +1032,48 @@ class ViewBase extends ViewCore {
       }
     }
 
-    this.#percentHelper.configure({
-      unitSpacing: this._configHelper.config.unit_spacing ?? CARD.config.unit.unitSpacing.auto,
-      // disable_unit is deprecated (folded into hide: ['unit', ...] by
-      // _customizeConfig) but left untouched, and thus still checked here, when
-      // hide is a Jinja template.
-      hasDisabledUnit:
+    this.#progressConfig = {
+      settings: {
+        scale: this._configHelper.config.bar_scale,
+        centerZero: centerZero.enabled
+          ? { zeroValue: centerZero.zeroValue, growthPercent: centerZero.growthPercent }
+          : null,
+      },
+      // disable_unit is folded into hide by _customizeConfig, except when hide
+      // is a Jinja template.
+      hasDisabledUnit: Boolean(
         this._configHelper.config.disable_unit ||
         this.hasComponentHiddenFlag(CARD.style.dynamic.hiddenComponent.unit.label),
-      isCenterZero: centerZero.enabled,
-      zeroValue: centerZero.zeroValue,
-      growthPercent: centerZero.growthPercent,
-      scale: this._configHelper.config.bar_scale,
-      compact: this._configHelper.config.value_compact,
-      sign: this._configHelper.config.value_sign,
+      ),
+      unitSpacing: this._configHelper.config.unit_spacing ?? CARD.config.unit.unitSpacing.auto,
       unitPosition: this._configHelper.config.unit_position ?? CARD.config.unit.unitPosition.after,
-    });
+      compact: this._configHelper.config.value_compact ?? false,
+      sign: this._configHelper.config.value_sign ?? false,
+    };
+    this.#progress = ViewBase.#buildProgress(this.#progressConfig, this.#progressResolved);
 
     this.#configureTheme();
 
-    Object.assign(this._currentValue, {
-      value: this._configHelper.config.entity,
-      nameTokens: this._configHelper.config.name,
-      stateContent: this._configHelper.stateContent,
-    });
+    this._bindEntity();
+    this._currentValue.nameTokens = this._configHelper.config.name;
 
     if (this._currentValue.valueKind === 'timer') {
-      this.#maxValue.value = CARD.config.value.max;
+      this.#maxValue = CARD.config.value.max;
     } else {
       this._currentValue.attribute = this._configHelper.config.attribute ?? null;
-      // max_value/min_value: number (legacy) | {value} | {entity, attribute} |
-      // {jinja}. Jinja mode is fed by the template subscription
-      // (#jinjaMaxValue/#jinjaMinValue), not by EntityOrValue.
-      Object.assign(
-        this.#maxValue,
-        ViewCore._resolveValueConfig(this._configHelper.config.max_value, CARD.config.value.max),
-      );
+      // Jinja mode is fed by #jinjaMaxValue/#jinjaMinValue: no bound.
+      this.#maxValue = boundFrom(this._configHelper.config.max_value, CARD.config.value.max);
       this.#jinjaMaxValue = null;
-      Object.assign(this.#minValue, ViewCore._resolveValueConfig(this._configHelper.config.min_value, null));
+      this.#minValue = boundFrom(this._configHelper.config.min_value, null);
       this.#jinjaMinValue = null;
     }
     // Wired for timers too, unlike attribute/min/max (which a timer overrides).
     ViewCore._applyWatermarkValues(this, this._configHelper.config?.watermark as WatermarkConfig | undefined);
     // alert_when.above/.below: same shape and reasoning as watermark low/high
     // above - alert_when isn't overridden by the timer path either.
-    // #jinjaAlertAbove/#jinjaAlertBelow live on ViewCore since isAlertActive
-    // reads them polymorphically through the shared _cardView reference,
-    // reset via the public setter rather than the private field.
-    Object.assign(this._aboveValue, ViewCore._resolveValueConfig(this._configHelper.config?.alert_when?.above, null));
+    this._aboveValue = boundFrom(this._configHelper.config?.alert_when?.above, null);
     this.jinjaAlertAbove = null;
-    Object.assign(this._belowValue, ViewCore._resolveValueConfig(this._configHelper.config?.alert_when?.below, null));
+    this._belowValue = boundFrom(this._configHelper.config?.alert_when?.below, null);
     this.jinjaAlertBelow = null;
     this.jinjaAlertResult = null;
   }
@@ -1170,55 +1082,59 @@ class ViewBase extends ViewCore {
     return this._configHelper.config;
   }
 
-  #hasState(state: string | null): boolean {
-    const toEVal = [this._currentValue, this.#maxValue];
-    if (this.hasWatermark) toEVal.push(this._lowValue, this._highValue);
-    if (this.config?.alert_when) toEVal.push(this._aboveValue, this._belowValue);
-    return toEVal.some((v) => v.state === state);
+  // The entities the bar cannot be drawn without, blamed in this order. The
+  // watermark and alert_when ones only lose their own mark or alert.
+  get faultyEntity(): EntityFault | null {
+    const own = this._currentValue.state;
+    if (isFaultState(own)) return { role: 'entity', state: own };
+    return this.#faultyRange('max_value', this.#maxValue) ?? this.#faultyRange('min_value', this.#minValue);
   }
 
-  get isUnknown(): boolean {
-    return this.#hasState(HA_CONTEXT.entity.state.unknown);
+  // A timer runs on its own range: its min_value/max_value are not read.
+  #faultyRange(role: 'max_value' | 'min_value', bound: Bound): EntityFault | null {
+    if (this._currentValue.valueKind === 'timer') return null;
+    const state = boundState(bound);
+    if (isFaultState(state)) return { role, state };
+    const jinja = this.jinjaFailure(role);
+    return jinja === null ? null : { role, state: HA_CONTEXT.entity.state.unavailable, jinja };
   }
 
-  get isUnavailable(): boolean {
-    return this.#hasState(HA_CONTEXT.entity.state.unavailable);
-  }
-
-  get isNotFound(): boolean {
-    return this.#hasState(HA_CONTEXT.entity.state.notFound);
-  }
-
-  get isAvailable(): boolean {
-    // note: this used to test `this._configHelper.maxValue`, a getter that
-    // never existed (always undefined), silently disabling the max-entity
-    // availability check.
-    const minIsEntity = is.nonEmptyString(entityOf(this._configHelper.config?.min_value));
-    // Entity-mode only, like min_value/max_value above: in Jinja mode,
-    // EntityOrValue never has an active helper (that value is resolved
-    // separately via the template subscription, see #jinjaWatermarkLow/High),
-    // so .isAvailable is always false there by construction - it must not
-    // count against the card's own availability, or a Jinja watermark/alert
-    // threshold would permanently hide the whole card.
-    return !(
-      !this._currentValue.isAvailable ||
-      (!this.#maxValue.isAvailable && is.nonEmptyString(entityOf(this._configHelper.config?.max_value))) ||
-      (!this.#minValue.isAvailable && minIsEntity) ||
-      (!this._lowValue.isAvailable &&
-        is.nonEmptyString(
-          entityOf(markValue(this._configHelper.config?.watermark?.low, SCHEMA_DEFAULTS.watermark.low)),
-        )) ||
-      (!this._highValue.isAvailable &&
-        is.nonEmptyString(
-          entityOf(markValue(this._configHelper.config?.watermark?.high, SCHEMA_DEFAULTS.watermark.high)),
-        )) ||
-      (!this._aboveValue.isAvailable && is.nonEmptyString(entityOf(this._configHelper.config?.alert_when?.above))) ||
-      (!this._belowValue.isAvailable && is.nonEmptyString(entityOf(this._configHelper.config?.alert_when?.below)))
+  // The range is Jinja and HA has not answered yet: the card waits.
+  get #isRangePending(): boolean {
+    if (this._currentValue.valueKind === 'timer') return false;
+    const { min_value: min, max_value: max } = this._configHelper.config;
+    return (
+      (is.nonEmptyString(jinjaOf(max)) && this.#jinjaMaxValue === null && this.jinjaFailure('max_value') === null) ||
+      (is.nonEmptyString(jinjaOf(min)) && this.#jinjaMinValue === null && this.jinjaFailure('min_value') === null)
     );
   }
 
+  get isUnknown(): boolean {
+    return this.faultyEntity?.state === HA_CONTEXT.entity.state.unknown;
+  }
+
+  get isUnavailable(): boolean {
+    return this.faultyEntity?.state === HA_CONTEXT.entity.state.unavailable;
+  }
+
+  get isNotFound(): boolean {
+    return this.faultyEntity?.state === HA_CONTEXT.entity.state.notFound;
+  }
+
+  get isAvailable(): boolean {
+    return this._currentValue.isUsable && this.faultyEntity === null && !this.#isRangePending;
+  }
+
   get hasStandardEntityError(): boolean {
-    return this.isUnavailable || this.isNotFound || this.isUnknown;
+    return this.faultyEntity !== null;
+  }
+
+  // The state the card shows in place of its value, naming a bound's entity.
+  #faultLabel({ role, state, jinja }: EntityFault): string | null {
+    if (jinja !== undefined) return `${role} · JINJA ${jinja || 'unavailable'}`;
+    if (role === 'entity') return this._currentValue.formatedEntityState;
+    const bound = role === 'max_value' ? this.#maxValue : this.#minValue;
+    return isEntityBound(bound) ? `${bound.name || bound.entityId} · ${bound.formatedEntityState || state}` : state;
   }
 
   // ─── Getters for card ─────────────────────────────────────────────────────
@@ -1251,11 +1167,11 @@ class ViewBase extends ViewCore {
     // stacked/proportional case is handled separately by divergingBarStack (its
     // own CSS variables, two independent arms) - this path only owns the
     // non-centered multi-segment gradient and the plain fallback.
-    return this.hasEntityCollection && this.#entityCollection.mode !== 'net' && !this.#percentHelper.isCenterZero
+    return this.hasEntityCollection && this.#entityCollection.mode !== 'net' && !this.#isCenterZero
       ? this.#entityCollection.getEntitiesColor(
           curColor,
           this.percent / 100,
-          this.#percentHelper.max - this.#percentHelper.min,
+          this.#progress.input.max - this.#progress.input.min,
           this.isVerticalBar,
         )
       : curColor;
@@ -1266,28 +1182,25 @@ class ViewBase extends ViewCore {
   // applicable, so callers can tell whether to apply or clear the dedicated CSS
   // variables.
   get divergingBarStack() {
-    if (!this.isAvailable || !this.#percentHelper.isCenterZero) return null;
+    const { min, max, centerZero } = this.#progress.input;
+    if (!this.isAvailable || !centerZero) return null;
     if (!this.hasEntityCollection || this.#entityCollection.mode === 'net') return null;
     return this.#entityCollection.getDivergingGradients(
       this.#curBarColor(),
-      {
-        min: this.#percentHelper.min,
-        max: this.#percentHelper.max,
-        zeroValue: this.#percentHelper.zeroValue,
-      },
+      { min, max, zeroValue: centerZero.zeroValue },
       this.isVerticalBar,
     );
   }
 
   get colorGradient(): string | null {
-    if (!this.isAvailable || this.#percentHelper.isCenterZero) return null;
+    if (!this.isAvailable || this.#isCenterZero) return null;
     return this.#theme.buildGradient(
-      this.#percentHelper.percent ?? 0,
+      this.#progress.math.percent ?? 0,
       this._configHelper.config.bar_color_mode ?? 'auto',
       {
         defaultColor: this._currentValue.defaultColor || null,
         isVertical: this.isVerticalBar,
-        valueRange: { min: this.#percentHelper.min, max: this.#percentHelper.max },
+        valueRange: { min: this.#progress.input.min, max: this.#progress.input.max },
         isSegmented: this.isSegmented,
         isRing: this.isRing,
       },
@@ -1302,8 +1215,10 @@ class ViewBase extends ViewCore {
   // only falls back to this when divergingBarStack doesn't already own the
   // CSS variables.
   get themeDivergingGradient() {
-    if (!this.isAvailable || !this.#percentHelper.isCenterZero) return null;
-    const { min, max, zeroValue, percent } = this.#percentHelper;
+    const { min, max, centerZero } = this.#progress.input;
+    if (!this.isAvailable || !centerZero) return null;
+    const { zeroValue } = centerZero;
+    const { percent } = this.#progress.math;
     if (max === min) return null;
     const zeroPercent = ((zeroValue - min) / (max - min)) * 100;
     const mode = this._configHelper.config.bar_color_mode ?? 'auto';
@@ -1335,24 +1250,32 @@ class ViewBase extends ViewCore {
 
   // What EPB.doctor.inspect() shows: the value and range the bar is drawn from.
   get drawnFrom(): { value: number; min: number; max: number; unit: string; theme: string | undefined } {
-    const { current: value, min, max, unit } = this.#percentHelper;
-    return { value, min, max, unit, theme: this.resolvedTheme };
+    const { current: value, min, max } = this.#progress.input;
+    return { value, min, max, unit: this.#progress.display.unit.value, theme: this.resolvedTheme };
+  }
+
+  get #isCenterZero(): boolean {
+    return this.#progress.input.centerZero !== null;
   }
 
   get percent(): number {
     if (!this.isAvailable) return 0;
-    return ProgressMath.clampPercent(this.#percentHelper.percent ?? 0, this.#percentHelper.isCenterZero);
+    return ProgressMath.clampPercent(this.#progress.math.percent ?? 0, this.#isCenterZero);
   }
 
   getTrend(): string {
-    return super.getTrend(this.#percentHelper.percent ?? 0);
+    return super.getTrend(this.#progress.math.percent ?? 0);
   }
 
   // Reuses the same min/max/center-zero math as the live percent, applied to
   // an arbitrary raw value - lets trend_indicator's history seeding (Card
   // only, HACore) reconstruct past percent from HA's own state history.
   percentForRawValue(value: number): number {
-    return this.#percentHelper.calcWatermark(value);
+    return this.#watermarkPosition(value);
+  }
+
+  #watermarkPosition(value: number | null): number {
+    return this.#progress.math.watermarkFor(value ?? 0);
   }
 
   // peak_marker (Card only): seeded from history by HACore, then fed on every
@@ -1376,8 +1299,8 @@ class ViewBase extends ViewCore {
 
   #updatePeakMarker() {
     if (!this.#peakTracker) return;
-    const current = this._currentValue.value;
-    if (is.number(current)) this.#peakTracker.push(current);
+    const { reading } = this._currentValue;
+    if (reading.kind === 'scalar' && is.number(reading.value)) this.#peakTracker.push(reading.value);
     const peaks = this.#peakTracker.peaks();
     this.#peakMarker = peaks && {
       min: this.percentForRawValue(peaks.min),
@@ -1421,10 +1344,11 @@ class ViewBase extends ViewCore {
   }
 
   get secondaryInfoMain(): string | null {
-    if (
-      this.hasStandardEntityError ||
-      (this._currentValue.valueKind === 'timer' && this._currentValue.value.state === HA_CONTEXT.entity.state.idle)
-    )
+    const fault = this.faultyEntity;
+    if (fault) return this.#faultLabel(fault);
+    if (this.#isRangePending) return '';
+    const { reading } = this._currentValue;
+    if (reading.kind === 'timer' && reading.state === HA_CONTEXT.entity.state.idle)
       return this._currentValue.formatedEntityState;
 
     const additionalInfo = this._currentValue.stateContentToString;
@@ -1432,7 +1356,7 @@ class ViewBase extends ViewCore {
     const valueInfo =
       this._currentValue.valueKind === 'duration' && !this._configHelper.config.unit
         ? this._currentValue.formatedEntityState
-        : this.#percentHelper.toString();
+        : formatProgress(this.#progress);
 
     return additionalInfo === '' ? valueInfo : [additionalInfo, valueInfo].join(CARD.config.separator);
   }
@@ -1447,11 +1371,11 @@ class ViewBase extends ViewCore {
     if (this.isNotFound) return CARD.style.icon.badge.notFound;
     if (this.isUnavailable) return CARD.style.icon.badge.unavailable;
 
-    if (this._currentValue.valueKind === 'timer') {
-      const { state } = this._currentValue.value;
+    const { reading } = this._currentValue;
+    if (reading.kind === 'timer') {
       const { paused, active } = HA_CONTEXT.entity.state;
-      if (state === paused) return CARD.style.icon.badge.timer.paused;
-      if (state === active) return CARD.style.icon.badge.timer.active;
+      if (reading.state === paused) return CARD.style.icon.badge.timer.paused;
+      if (reading.state === active) return CARD.style.icon.badge.timer.active;
     }
     return null;
   }
@@ -1461,8 +1385,10 @@ class ViewBase extends ViewCore {
   }
 
   get timerIsReversed(): boolean {
+    const { reading } = this._currentValue;
     return (
-      this._configHelper.config.reverse !== false && this._currentValue.value.state !== HA_CONTEXT.entity.state.idle
+      this._configHelper.config.reverse !== false &&
+      !(reading.kind === 'timer' && reading.state === HA_CONTEXT.entity.state.idle)
     );
   }
 
@@ -1480,20 +1406,20 @@ class ViewBase extends ViewCore {
     // already a position), but under center_zero a position still needs the
     // same 50 + value/2 recenter calcWatermark itself applies - same bug as
     // ViewCore's own watermark getter, fixed there for the same reason.
-    const toPos = (v: unknown, side: WatermarkSide) => {
-      const raw = v as number | { current: number } | null | undefined;
-      if (isTimer) return is.number(raw) ? raw : (raw?.current ?? 0);
+    const toPos = (raw: number | null, side: WatermarkSide) => {
+      if (isTimer) return raw ?? 0;
       const as = MARK_FACTORIZATION.watermark.resolve({ watermark }, side, 'as');
-      if (as !== 'percent') return this.#percentHelper.calcWatermark(raw);
-      const value = is.number(raw) ? raw : (raw?.current ?? 0);
-      return this.#percentHelper.isCenterZero ? 50 + value / 2 : value;
+      if (as !== 'percent') return this.#watermarkPosition(raw);
+      const value = raw ?? 0;
+      return this.#isCenterZero ? 50 + value / 2 : value;
     };
     return ViewCore._buildResolvedWatermark({
       watermark,
       jinjaLow: this.jinjaWatermarkLow,
       jinjaHigh: this.jinjaWatermarkHigh,
-      lowValue: this._lowValue.value,
-      highValue: this._highValue.value,
+      lowValue: boundValue(this._lowValue),
+      highValue: boundValue(this._highValue),
+      usable: this._usableMarks,
       toPos,
     });
   }
@@ -1506,10 +1432,7 @@ class ViewBase extends ViewCore {
 
   refresh(hass: HomeAssistant) {
     super.refresh(hass); // _hassProvider, _currentValue, _lowValue, _highValue
-    this.#maxValue.refresh();
-    this.#minValue.refresh();
-    this._aboveValue.refresh();
-    this._belowValue.refresh();
+    for (const bound of [this.#maxValue, this.#minValue, this._aboveValue, this._belowValue]) refreshBound(bound);
     this._configHelper.checkConfig();
     this.#entityCollection.refreshAll();
 
@@ -1534,65 +1457,75 @@ class ViewBase extends ViewCore {
   }
 
   #deriveFromCurrentValue() {
-    this.#updatePercentHelper();
+    this.#updateProgress();
     this.#updatePeakMarker();
-    this.#theme.value =
-      this.#percentHelper.valueForThemes(this.#theme.isCustomTheme, this.#theme.isBasedOnPercentage) ?? 0;
+    this.#theme.value = valueForThemes(this.#progress, this.#theme.isCustomTheme, this.#theme.isBasedOnPercentage) ?? 0;
   }
 
   // ─── PRIVATE METHODS ──────────────────────────────────────────────────────
 
-  #updatePercentHelper() {
+  static #buildProgress(
+    { settings, hasDisabledUnit, ...display }: ProgressConfig,
+    { raw, unit, isTimer }: ProgressResolved,
+  ): Progress {
+    const input = resolveProgressInput(raw, settings);
+    const unitHelper = new UnitHelper();
+    unitHelper.value = unit;
+    unitHelper.isDisabled = hasDisabledUnit;
+    return { input, math: new ProgressMath(input), display: { ...display, unit: unitHelper, isTimer } };
+  }
+
+  #updateProgress() {
     const currentUnit = this.#getCurrentUnit();
-    this.#percentHelper.updateResolved(this.#resolvedValues(), {
+    const { reversed, ...values } = this.#resolvedValues();
+    this.#progressResolved = {
+      raw: {
+        ...values,
+        decimal: this.#getCurrentDecimal(currentUnit),
+        reversed: reversed ?? this.#progressResolved.raw.reversed,
+      },
       unit: currentUnit,
-      decimal: this.#getCurrentDecimal(currentUnit),
       isTimer: this._currentValue.valueKind === 'timer' || this._currentValue.valueKind === 'duration',
-    });
+    };
+    this.#progress = ViewBase.#buildProgress(this.#progressConfig, this.#progressResolved);
   }
 
   // Which value/min/max the bar runs on, by entity kind. Returned rather than
   // written into the helper: one caller assembles, one call applies.
   #resolvedValues(): { current: unknown; min: unknown; max: unknown; reversed?: boolean } {
-    if (this._currentValue.valueKind === 'timer') return this.#timerValues();
-    if (this._currentValue.valueKind === 'counter' || this._currentValue.valueKind === 'number') {
-      return this.#counterValues();
-    }
+    const { reading } = this._currentValue;
+    if (reading.kind === 'timer') return this.#timerValues(reading);
+    if (reading.kind === 'ranged') return this.#counterValues(reading);
     return this.#stdValues();
   }
 
-  #timerValues() {
-    return {
-      reversed: this.timerIsReversed,
-      current: this._currentValue.value.current,
-      min: this._currentValue.value.min,
-      max: this._currentValue.value.max,
-    };
+  #timerValues({ current, min, max }: Extract<Reading, { kind: 'timer' }>) {
+    return { reversed: this.timerIsReversed, current, min, max };
   }
 
   // A counter and a number carry their own min/max, and those are the right
   // default - but only a default: an explicit min_value/max_value used to be
   // dropped here, leaving no way to scale such an entity at all (#143).
-  #counterValues() {
+  #counterValues(reading: Extract<Reading, { kind: 'ranged' }>) {
     const wasSet = (key: string) => this._configHelper.wasSetByUser(key);
-    const max = wasSet('max_value') ? this.#effectiveMax : this._currentValue.value.max;
+    const max = wasSet('max_value') ? this.#effectiveMax : reading.max;
     return {
-      current: this._currentValue.value.current,
+      current: reading.current,
       min: wasSet('min_value')
         ? this.#effectiveMin
-        : ProgressMath.ownRangeMin(this._currentValue.value.min, max, this._configHelper.config.centerZero),
+        : ProgressMath.ownRangeMin(reading.min, max, this._configHelper.config.centerZero),
       max,
     };
   }
 
-  // A Jinja push first, then the configured entity's value (its `current`, for
-  // a counter or a number) or the plain number.
-  get #effectiveMin(): unknown {
-    return this.#jinjaMinValue ?? this.#minValue.value?.current ?? this.#minValue.value;
+  // A Jinja push first, then the configured entity's `current` or the plain
+  // number.
+  get #effectiveMin(): number | null {
+    return this.#jinjaMinValue ?? boundValue(this.#minValue);
   }
 
-  get #effectiveMax(): unknown {
-    return this.#jinjaMaxValue ?? this.#maxValue.value?.current ?? this.#maxValue.value;
+  get #effectiveMax(): number | null {
+    return this.#jinjaMaxValue ?? boundValue(this.#maxValue);
   }
 
   #stdValues() {
@@ -1603,13 +1536,12 @@ class ViewBase extends ViewCore {
     // EntityCollectionHelper.getNetValue). Without center_zero, both modes keep
     // the plain magnitude sum, matching what the bar itself visually adds up
     // to.
-    const useNetValue =
-      this.hasEntityCollection && (this.#entityCollection.mode === 'net' || this.#percentHelper.isCenterZero);
+    const useNetValue = this.hasEntityCollection && (this.#entityCollection.mode === 'net' || this.#isCenterZero);
     const currentValue = this.hasEntityCollection
       ? useNetValue
         ? this.#entityCollection.getNetValue()
         : this.#entityCollection.getTotalValue()
-      : this._currentValue.value;
+      : this._currentValue.current;
     return {
       current: currentValue,
       min: this.#effectiveMin,
@@ -1657,13 +1589,15 @@ class ViewBase extends ViewCore {
   // Its value turns on the timer's own clock: at each whole step for a
   // countdown, which truncates, half a step in for any other number (rounds).
   #timerTickAt(now: number): number {
-    const { startedAt, max } = (this._currentValue.value ?? {}) as { startedAt?: number; max?: number };
-    const helper = this.#percentHelper;
-    const perUnitMs = helper.unit === CARD.config.unit.default ? ((max ?? 0) * 1000) / 100 : 1000;
-    const step = perUnitMs / 10 ** helper.decimal;
+    const { reading } = this._currentValue;
+    const timer = reading.kind === 'timer' ? reading : null;
+    const startedAt = timer?.startedAt;
+    const perUnitMs =
+      this.#progress.display.unit.value === CARD.config.unit.default ? ((timer?.max ?? 0) * 1000) / 100 : 1000;
+    const step = perUnitMs / 10 ** this.#progress.input.decimal;
     const origin = is.number(startedAt) ? startedAt : 0;
     // Not Math.max: an unreadable duration (NaN) still ticks by the second.
-    return nextOnGrid(now, origin, step > 1000 ? step : 1000, helper.hasTimerOrFlexTimerUnit ? 0 : 0.5);
+    return nextOnGrid(now, origin, step > 1000 ? step : 1000, hasTimerOrFlexTimerUnit(this.#progress) ? 0 : 0.5);
   }
 
   #relativeTickAt(now: number): number[] {
@@ -1687,7 +1621,7 @@ class ViewBase extends ViewCore {
   }
 
   #getCurrentUnit(): string {
-    return resolveDisplayUnit(this._configHelper.config.unit, this.#maxValue.isEntity, this._currentValue.unit);
+    return resolveDisplayUnit(this._configHelper.config.unit, isEntityBound(this.#maxValue), this._currentValue.unit);
   }
 
   #getCurrentDecimal(currentUnit: string): number {
@@ -1700,6 +1634,114 @@ class ViewBase extends ViewCore {
     });
   }
 }
+
+// What a Template view adds over ViewCore: its percent-based theme and the
+// last color Jinja pushes, which cards.ts writes straight to CSS.
+abstract class TemplateViewBase extends ViewCore {
+  icon: string | null = null;
+  #templateTheme = new ThemeManager();
+  #templateColorValue: string | null = null;
+  #templateBarColorValue: string | null = null;
+
+  set config(config: LovelaceConfig) {
+    super.config = config;
+    this.#templateColorValue = null;
+    this.#templateBarColorValue = null;
+  }
+
+  get config(): Config {
+    return super.config;
+  }
+
+  // Theme, then color, then the entity: unlike ViewBase, the user's Jinja can
+  // test availability itself. Read on every repaint, not only after a push.
+  get barColor(): string | null {
+    if (this._configHelper.config.theme) return ThemeManager.adaptColor(this.templateThemeBarColor);
+    if (this._configHelper.config.bar_color) return this.#templateBarColorValue;
+    return this.entity ? this._getEntityColor() : null;
+  }
+
+  get iconColor(): string | null {
+    if (this._configHelper.config.theme) return ThemeManager.adaptColor(this.templateThemeIconColor);
+    if (this._configHelper.config.color) return this.#templateColorValue;
+    return this.entity ? this._getEntityColor() : null;
+  }
+
+  setTemplateColorValue(value: string | null) {
+    this.#templateColorValue = value;
+  }
+
+  setTemplateBarColorValue(value: string | null) {
+    this.#templateBarColorValue = value;
+  }
+
+  // Only reached from _managePercent's `if (config.theme)` branch. The value
+  // stays memoized, so a plain hass update repaints the themed color.
+  setTemplateThemeValue(percent: number) {
+    this.#templateTheme.value = percent;
+  }
+
+  // Re-resolved on every read: battery_adaptive can flip with isBatteryCharging
+  // while the percent holds steady.
+  #refreshTemplateTheme() {
+    this.#templateTheme.configure({ theme: this.resolvedTheme, customTheme: undefined, interpolate: false });
+  }
+
+  // null when no theme is configured.
+  get templateThemeIconColor(): string | null {
+    this.#refreshTemplateTheme();
+    return this.#templateTheme.iconColor;
+  }
+
+  get templateThemeBarColor(): string | null {
+    this.#refreshTemplateTheme();
+    return this.#templateTheme.barColor;
+  }
+
+  // The gradient twin of ViewBase.colorGradient; center_zero has its own below.
+  get templateThemeGradient(): string | null {
+    if (!this._configHelper.config.theme || this._configHelper.config.center_zero) return null;
+    this.#refreshTemplateTheme();
+    return this.#templateTheme.buildGradient(
+      this.#templateTheme.value,
+      this._configHelper.config.bar_color_mode ?? 'auto',
+      {
+        isVertical: this.isVerticalBar,
+        isSegmented: this.isSegmented,
+        isRing: this.isRing,
+      },
+    );
+  }
+
+  // No min_value/max_value to derive a zeroPercent from: percent is -100..100
+  // under center_zero, so zero sits at 50 (a signed theme spans -100..100).
+  get templateThemeDivergingGradient() {
+    if (!this._configHelper.config.theme || !this._configHelper.config.center_zero) return null;
+    this.#refreshTemplateTheme();
+    const mode = this._configHelper.config.bar_color_mode ?? 'auto';
+    const [posWindow, negWindow]: [[number, number], [number, number]] = this.#templateTheme.isSigned
+      ? [
+          [0, 100],
+          [0, -100],
+        ]
+      : [
+          [50, 100],
+          [50, 0],
+        ];
+    return buildDivergingGradient({
+      theme: this.#templateTheme,
+      signedPercent: this.#templateTheme.value,
+      mode,
+      defaultColor: null,
+      isVertical: this.isVerticalBar,
+      isSegmented: this.isSegmented,
+      posWindow,
+      negWindow,
+      valueRange: null,
+    });
+  }
+}
+
 class CardView extends ViewBase {
   _configHelper = new CardConfigHelper();
 }
@@ -1712,23 +1754,17 @@ class FeatureView extends ViewBase {
   _configHelper = new FeatureConfigHelper();
 }
 
-class CardTemplateView extends ViewCore {
+class CardTemplateView extends TemplateViewBase {
   _configHelper = new TemplateConfigHelper();
-  icon: string | null = null;
 }
 
-class BadgeTemplateView extends ViewCore {
+class BadgeTemplateView extends TemplateViewBase {
   _configHelper = new BadgeTemplateConfigHelper();
-  icon: string | null = null;
 }
 
-// CardTemplateView and BadgeTemplateView are siblings (both extend ViewCore
-// directly, neither extends the other), so there's no single concrete class
-// to name for EntityProgressTemplateBase's own `_cardView` (which is assigned
-// either one) - this names just the extra surface both actually add over
-// ViewCore, the same way ViewBase names the extra surface CardView/
-// BadgeView/FeatureView share.
-type TemplateView = ViewCore & { icon: string | null };
+// CardTemplateView and BadgeTemplateView are siblings: this names what
+// EntityProgressTemplateBase's `_cardView` holds, whichever of the two.
+type TemplateView = TemplateViewBase;
 
 export { ViewCore };
 export { ViewBase };

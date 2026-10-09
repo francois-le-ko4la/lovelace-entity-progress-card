@@ -18,6 +18,14 @@ toggle like its tile card.
 - **Toggle mechanism**: the default [`icon_tap_action`][xyz_action] now aligns
   with the tile card's behavior.
 
+#### Unavailable entities and failed Jinja, handled alike
+
+- When the card's entity, a [`min_value`][min_value] or a
+  [`max_value`][max_value] is unavailable, or its Jinja template fails, the bar
+  stops and the line names the cause.
+- An unavailable [`watermark`][watermark] or [`alert_when`][alert_when] entity
+  only drops its own mark or threshold.
+
 #### Default colors follow your Home Assistant theme
 
 - Every domain Home Assistant colors now gets its color here too: locks, media
@@ -29,11 +37,16 @@ toggle like its tile card.
 - **[`icon_animation`][icon_animation]** follows Home Assistant's idea of an
   active state per domain: a media player no longer animates while idle or
   paused, a lawn mower animates while mowing.
+- **[`alert_when`][alert_when]** `above`/`below` fed by a timer, counter or
+  number entity now use its value; they used to be ignored.
 
 ### 🐛 Fixes
 
 - **A `binary_sensor` with `device_class: light`** no longer takes the color of
   a lit bulb.
+- An unavailable **[`min_value`][min_value]** entity or a failed Jinja range no
+  longer draws a wrong bar silently; **[`alert_when`][alert_when]** and a Jinja
+  **[`watermark`][watermark]** no longer react to a 0 that is not a value.
 
 > We care about getting the details right — but even so, something here might
 > have slipped through. You don't need to be a developer to notice it. If
@@ -51,6 +64,18 @@ toggle like its tile card.
 - **Toggle mechanism**: the default [`icon_tap_action`][xyz_action] now aligns
   with the tile card's behavior.
 
+#### Unavailable entities and failed Jinja, handled alike
+
+- **`entity`, [`min_value`][min_value], [`max_value`][max_value]**: unavailable,
+  unknown or not found — or a failed Jinja template — stops the bar (0 %,
+  disabled color) and the line names the cause: `sensor.limit · Unavailable`,
+  `max_value · JINJA unavailable`, or Home Assistant's own message. A Jinja
+  range shows no value until Home Assistant has answered.
+- **[`watermark`][watermark], [`alert_when`][alert_when]**: an unavailable
+  entity or a failed Jinja there drops only its own mark or threshold.
+- `EPB.doctor.cards()` names the entity: `⏳ unavailable (max_value)`. Full
+  behavior in [Troubleshooting](docs/troubleshooting.md#unavailable-entities).
+
 #### Default colors follow your Home Assistant theme
 
 - The default color is Home Assistant's `--state-*-color` for the entity's
@@ -65,6 +90,8 @@ toggle like its tile card.
 - **[`icon_animation`][icon_animation]** uses Home Assistant's per-domain
   inactive states (`state_active.ts`) instead of one shared list; a
   `media_player` in `idle`/`paused` no longer animates; `lawn_mower` animates.
+- **[`alert_when`][alert_when]** `above`/`below` fed by a timer, counter or
+  number entity now use its value; they used to be ignored.
 
 ### 🐛 Fixes
 
@@ -72,6 +99,11 @@ toggle like its tile card.
   medium (30 and 70 were one step lower).
 - **`binary_sensor` with `device_class: light`** no longer gets the light
   domain's color.
+- **[`min_value`][min_value]** entity: unavailable, it read 0 without notice.
+- **[`max_value`][max_value]**, **[`min_value`][min_value]** in Jinja: an error
+  drew the bar on the default range.
+- **[`alert_when`][alert_when]** no longer triggers on the 0 of an unavailable
+  entity; a **[`watermark`][watermark]** in Jinja error no longer lands at 0 %.
 
 ### 🧹 Under the hood
 
@@ -79,6 +111,15 @@ toggle like its tile card.
   domains and battery steps, each pinned to its source file.
 - Unused constants and helpers removed (dead `HA_CONTEXT`/`CARD` keys,
   `ResourceManager`/`DOMHelper`/`EntityOrValue` members).
+- Progress calculation and formatting rebuilt as immutable functions; range and
+  threshold ends decided once from the config (`ProgressCalc`, `PercentHelper`,
+  `ValueHelper`, `DecimalHelper` removed).
+- `EntityOrValue` removed: the card's entity is an `EntityHelper`, unbound
+  without `entity`; its polymorphic `value` is now a typed `reading` and
+  `current` (`EPB.doctor` shows the `reading`).
+- `ViewCore` is abstract: alert thresholds moved to `ViewBase`, the percent
+  theme and pushed colors to `TemplateViewBase`, and `entityView` replaces the
+  `as ViewBase` casts in `HACore`/`HABase`.
 
 ## 1.6.3
 

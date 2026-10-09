@@ -16,8 +16,9 @@ type InspectedView = {
   isNotFound?: boolean;
   isUnavailable?: boolean;
   isUnknown?: boolean;
+  faultyEntity?: { role: string; jinja?: string } | null;
   drawnFrom?: Node;
-  _currentValue?: { value?: unknown; state?: unknown };
+  _currentValue?: { reading?: unknown; state?: unknown };
 };
 
 const OUR_TAGS = new Set(Object.values(META.types).map(({ typeName }) => suffixedName(typeName)));
@@ -79,9 +80,12 @@ const configStateOf = (view: InspectedView, cleanup: Cleanup): string => {
 
 const entityStateOf = (view: InspectedView): string => {
   if (!is.string(view.config?.entity)) return '';
-  if (view.isNotFound) return '🚫 not found';
-  if (view.isUnavailable) return '⏳ unavailable';
-  if (view.isUnknown) return '❓ unknown';
+  const fault = view.faultyEntity;
+  const blamed =
+    fault && fault.role !== 'entity' ? ` (${fault.role}${fault.jinja === undefined ? '' : ', Jinja'})` : '';
+  if (view.isNotFound) return `🚫 not found${blamed}`;
+  if (view.isUnavailable) return `⏳ unavailable${blamed}`;
+  if (view.isUnknown) return `❓ unknown${blamed}`;
   return '✅ ok';
 };
 
@@ -98,7 +102,7 @@ const rowOf = (card: HTMLElement) => {
     type: card.localName,
     entity: is.string(config.entity) ? config.entity : '',
     name: safely(() => view.name ?? ''),
-    value: safely(() => view._currentValue?.value ?? ''),
+    value: safely(() => view._currentValue?.reading ?? ''),
     percent: safely(() => (is.number(view.percent) ? Math.round(view.percent * 10) / 10 : '')),
     config: safely(() => configStateOf(view, cleanup)),
     'entity state': safely(() => entityStateOf(view)),

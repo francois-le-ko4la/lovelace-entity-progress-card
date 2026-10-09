@@ -37,13 +37,13 @@ _Tests_ (files in `test/`) count the files naming the option, not uses.
 
 | Option | Card | Template | Badge | Badge Tpl | Feature | Multi Card | Multi Feat. | Default | Readers | Examples | Demo | Tests |
 | :-- | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-- | :-: | :-: | :-: | :-: |
-| [`alert_when`](configuration.md#alert_when) | ✅ | ✅ | ✅ | ✅ | · | ✅ | · | — | 7 | 13 | 26 | 4 |
-| [`attribute`](configuration.md#attribute) | ✅ | · | ✅ | · | ✅ | · | · | — | 14 | 2 | 2 | 10 |
+| [`alert_when`](configuration.md#alert_when) | ✅ | ✅ | ✅ | ✅ | · | ✅ | · | — | 8 | 13 | 26 | 4 |
+| [`attribute`](configuration.md#attribute) | ✅ | · | ✅ | · | ✅ | · | · | — | 14 | 2 | 2 | 11 |
 | [`badge_color`](configuration.md#badge_color) | ✅ | ✅ | · | · | · | ✅ | · | — | 4 | 3 | 4 | 2 |
 | [`badge_icon`](configuration.md#badge_icon) | ✅ | ✅ | · | · | · | ✅ | · | — | 4 | 3 | 4 | 3 |
 | [`bar_aligned`](configuration.md#bar_aligned) ¹ | 📝 | 📝 | · | · | · | ✅ | ✅ | `false` | 5 | 2 | 1 | 3 |
 | [`bar_color`](configuration.md#bar_color) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — | 5 | 18 | 45 | 4 |
-| [`bar_color_mode`](configuration.md#bar_color_mode) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | `auto` | 5 | 11 | 78 | 1 |
+| [`bar_color_mode`](configuration.md#bar_color_mode) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | `auto` | 5 | 11 | 78 | 2 |
 | [`bar_effect`](configuration.md#bar_effect) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — | 5 | 4 | 24 | 1 |
 | [`bar_max_width`](configuration.md#bar_max_width) | ✅ | ✅ | · | · | · | ✅ | ✅ | — | 4 | 1 | 1 | 3 |
 | [`bar_orientation`](configuration.md#bar_orientation) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | `ltr` | 3 | 3 | 13 | 1 |
@@ -51,18 +51,18 @@ _Tests_ (files in `test/`) count the files naming the option, not uses.
 | [`bar_scale`](configuration.md#bar_scale) | ✅ | · | ✅ | · | ✅ | ✅ | ✅ | `linear` | 2 | 1 | 1 | 0 |
 | [`bar_segments`](configuration.md#bar_segments) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — | 6 | 2 | 5 | 2 |
 | [`bar_single_line`](configuration.md#bar_single_line) | ✅ | ✅ | · | · | · | · | · | `false` | 2 | 1 | 2 | 3 |
-| [`bar_size`](configuration.md#bar_size) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | `small` | 7 | 14 | 97 | 7 |
+| [`bar_size`](configuration.md#bar_size) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | `small` | 7 | 14 | 97 | 8 |
 | [`bar_stack`](configuration.md#bar_stack) | ✅ | · | ✅ | · | ✅ | ✅ | ✅ | — | 8 | 10 | 14 | 3 |
 | [`center_zero`](configuration.md#center_zero) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | `false` | 11 | 11 | 53 | 7 |
-| [`color`](configuration.md#color) | ✅ | ✅ | ✅ | ✅ | · | ✅ | ✅ | — | 15 | 8 | 21 | 11 |
+| [`color`](configuration.md#color) | ✅ | ✅ | ✅ | ✅ | · | ✅ | ✅ | — | 15 | 8 | 21 | 12 |
 | [`custom_info`](configuration.md#custom_info) | ✅ | · | ✅ | · | · | ✅ | ✅ | — | 4 | 2 | 15 | 3 |
 | [`custom_theme`](configuration.md#custom_theme) | ✅ | · | ✅ | · | ✅ | ✅ | ✅ | — | 4 | 6 | 12 | 3 |
 | [`decimal`](configuration.md#decimal) | ✅ | · | ✅ | · | · | ✅ | ✅ | — | 8 | 9 | 33 | 8 |
 | [`density`](configuration.md#density) | ✅ | ✅ | · | · | · | · | · | `default` | 7 | 5 | 19 | 3 |
 | [`disable_unit`](configuration.md#disable_unit) ¹ | 📝 | · | 📝 | · | · | 📝 | 📝 | `false` | 3 | 1 | 0 | 9 |
 | [`double_tap_action`](configuration.md#xyz_action) | ✅ | ✅ | ✅ | ✅ | · | ✅ | ✅ | `{"action":"none"}` | 2 | 0 | 4 | 0 |
-| [`entities`](configuration.md#entities) | · | · | · | · | · | ✅ | ✅ | — | 11 | 9 | 13 | 24 |
-| [`entity`](configuration.md#entity) | ✅ | ✅ | ✅ | ✅ | ✅ | · | · | — | 30 | 123 | 517 | 45 |
+| [`entities`](configuration.md#entities) | · | · | · | · | · | ✅ | ✅ | — | 11 | 9 | 13 | 25 |
+| [`entity`](configuration.md#entity) | ✅ | ✅ | ✅ | ✅ | ✅ | · | · | — | 29 | 123 | 517 | 46 |
 | [`fast_refresh`](configuration.md#fast_refresh) | · | ✅ | · | ✅ | · | · | · | `false` | 2 | 2 | 4 | 0 |
 | [`force_circular_background`](configuration.md#force_circular_background) | ✅ | ✅ | · | · | · | ✅ | · | `false` | 3 | 2 | 7 | 0 |
 | [`frameless`](configuration.md#frameless) | ✅ | ✅ | ✅ | ✅ | · | · | · | `false` | 5 | 4 | 23 | 3 |
@@ -73,34 +73,34 @@ _Tests_ (files in `test/`) count the files naming the option, not uses.
 | [`icon_animation`](configuration.md#icon_animation) | ✅ | ✅ | · | · | · | ✅ | ✅ | — | 7 | 10 | 28 | 1 |
 | [`icon_double_tap_action`](configuration.md#xyz_action) | ✅ | ✅ | · | · | · | ✅ | · | `{"action":"none"}` | 1 | 0 | 1 | 0 |
 | [`icon_hold_action`](configuration.md#xyz_action) | ✅ | ✅ | · | · | · | ✅ | · | `{"action":"none"}` | 1 | 0 | 1 | 0 |
-| [`icon_tap_action`](configuration.md#xyz_action) | ✅ | ✅ | · | · | · | ✅ | · | `{"action":"none"}` | 2 | 5 | 8 | 1 |
+| [`icon_tap_action`](configuration.md#xyz_action) | ✅ | ✅ | · | · | · | ✅ | · | `{"action":"none"}` | 1 | 5 | 8 | 1 |
 | [`interpolate`](configuration.md#interpolate) | ✅ | · | ✅ | · | ✅ | ✅ | ✅ | `false` | 4 | 2 | 1 | 2 |
-| [`layout`](configuration.md#layout) ¹ | ✅ | ✅ | ➖ | ➖ | ➖ | · | · | `horizontal` | 9 | 7 | 116 | 7 |
+| [`layout`](configuration.md#layout) ¹ | ✅ | ✅ | ➖ | ➖ | ➖ | · | · | `horizontal` | 9 | 7 | 116 | 8 |
 | [`marginless`](configuration.md#marginless) | ✅ | ✅ | ✅ | ✅ | · | · | · | `false` | 5 | 3 | 18 | 1 |
 | [`max_value`](configuration.md#max_value) | ✅ | · | ✅ | · | ✅ | ✅ | ✅ | `100` | 10 | 27 | 86 | 6 |
 | [`min_value`](configuration.md#min_value) | ✅ | · | ✅ | · | ✅ | ✅ | ✅ | — | 9 | 14 | 47 | 7 |
 | [`min_width`](configuration.md#min_width) | ✅ | ✅ | ✅ | ✅ | · | · | · | — | 3 | 1 | 1 | 0 |
 | [`multiline`](configuration.md#multiline) | ✅ | ✅ | · | · | · | · | · | `false` | 7 | 1 | 3 | 1 |
-| [`name`](configuration.md#name) | ✅ | ✅ | ✅ | ✅ | · | · | · | — | 26 | 24 | 440 | 27 |
+| [`name`](configuration.md#name) | ✅ | ✅ | ✅ | ✅ | · | · | · | — | 25 | 24 | 440 | 28 |
 | [`name_info`](configuration.md#name_info) | ✅ | · | ✅ | · | · | ✅ | ✅ | — | 3 | 4 | 2 | 3 |
 | [`peak_marker`](configuration.md#peak_marker) | ✅ | · | · | · | ✅ | ✅ | ✅ | `{"window":7200,"type":"line","opacity":0.8,"line_size":"1px"}` | 9 | 4 | 13 | 13 |
 | [`percent`](configuration.md#percent) | · | ✅ | · | ✅ | · | · | · | — | 16 | 5 | 17 | 10 |
-| [`reverse`](configuration.md#reverse) | ✅ | · | ✅ | · | · | ✅ | ✅ | `false` | 6 | 2 | 3 | 1 |
+| [`reverse`](configuration.md#reverse) | ✅ | · | ✅ | · | · | ✅ | ✅ | `false` | 5 | 2 | 3 | 1 |
 | [`reverse_secondary_info_row`](configuration.md#reverse_secondary_info_row) | ✅ | ✅ | ✅ | ✅ | · | ✅ | ✅ | `false` | 3 | 2 | 2 | 3 |
-| [`rows`](configuration.md#rows) | · | · | · | · | · | ✅ | · | — | 10 | 1 | 0 | 13 |
+| [`rows`](configuration.md#rows) | · | · | · | · | · | ✅ | · | — | 10 | 1 | 0 | 14 |
 | [`secondary`](configuration.md#secondary) | · | ✅ | · | ✅ | · | · | · | — | 8 | 7 | 13 | 4 |
 | [`state_content`](configuration.md#state_content) | ✅ | · | ✅ | · | · | ✅ | ✅ | — | 3 | 2 | 8 | 3 |
-| [`status_label`](configuration.md#status_label) | ✅ | ✅ | · | · | · | ✅ | · | `{"position":"right","color_source":"bar"}` | 5 | 3 | 29 | 2 |
+| [`status_label`](configuration.md#status_label) | ✅ | ✅ | · | · | · | ✅ | · | `{"position":"right","color_source":"bar"}` | 4 | 3 | 29 | 2 |
 | [`tap_action`](configuration.md#xyz_action) | ✅ | ✅ | ✅ | ✅ | · | ✅ | ✅ | `{"action":"more-info"}` | 3 | 5 | 15 | 1 |
 | [`text_shadow`](configuration.md#text_shadow) | ✅ | ✅ | · | · | · | ✅ | ✅ | `false` | 2 | 1 | 2 | 2 |
-| [`theme`](configuration.md#theme) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — | 16 | 19 | 134 | 9 |
+| [`theme`](configuration.md#theme) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — | 16 | 19 | 134 | 11 |
 | [`trend_indicator`](configuration.md#trend_indicator) | ✅ | ✅ | · | · | · | ✅ | · | `{"basis":"average","threshold":0,"colored":false}` | 6 | 3 | 6 | 6 |
-| [`unit`](configuration.md#unit) | ✅ | · | ✅ | · | · | ✅ | ✅ | — | 18 | 8 | 22 | 15 |
+| [`unit`](configuration.md#unit) | ✅ | · | ✅ | · | · | ✅ | ✅ | — | 17 | 8 | 22 | 15 |
 | [`unit_position`](configuration.md#unit_position) | ✅ | · | ✅ | · | · | ✅ | ✅ | `after` | 2 | 2 | 2 | 1 |
 | [`unit_spacing`](configuration.md#unit_spacing) | ✅ | · | ✅ | · | · | ✅ | ✅ | `auto` | 2 | 3 | 5 | 2 |
 | [`value_compact`](configuration.md#value_compact) | ✅ | · | ✅ | · | · | ✅ | ✅ | `false` | 2 | 2 | 3 | 1 |
 | [`value_sign`](configuration.md#value_sign) | ✅ | · | ✅ | · | · | ✅ | ✅ | `false` | 2 | 2 | 2 | 1 |
-| [`watermark`](configuration.md#watermark) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | `{"low":20,"high":80,"line_size":"1px","as":"auto"}` | 11 | 7 | 25 | 8 |
+| [`watermark`](configuration.md#watermark) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | `{"low":20,"high":80,"line_size":"1px","as":"auto"}` | 12 | 7 | 25 | 8 |
 
 ## Notes
 

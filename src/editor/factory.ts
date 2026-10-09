@@ -347,7 +347,7 @@ const valueField = (
   const modeFields = valueModeField(
     modeType,
     (c) => c[key],
-    (c, v) => ({ [key]: v }),
+    (_config, v) => ({ [key]: v }),
     key,
   );
   return {
@@ -1328,9 +1328,9 @@ const EditorFactory = {
       ? {
           // No interpolate here (Template has no such field - schema.ts's
           // own template schema never declared one, unlike Card/Feature) -
-          // ViewCore.templateThemeGradient/-DivergingGradient don't support
-          // it either. custom_theme doesn't exist on Template (see theme()'s
-          // own comment above), so showIf only ever checks c.theme.
+          // TemplateViewBase's templateThemeGradient/-DivergingGradient don't
+          // support it either. custom_theme doesn't exist on Template (see
+          // theme()'s own comment above), so showIf only ever checks c.theme.
           bar_color_mode: EditorFieldsType.select('bar_color_mode', {
             showIf: (c: LovelaceConfig) => !is.nullish(c.theme),
           }),

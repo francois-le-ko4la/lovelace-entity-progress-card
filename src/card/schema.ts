@@ -27,7 +27,7 @@ type Validator<T = unknown> = (value: unknown, path?: Path) => T;
 // max_value/watermark.low/.high/alert_when.above/.below) - flattened
 // (entity/attribute/jinja all optional siblings on one object) rather than
 // the discriminated union the validator itself actually checks, matching
-// ViewCore._resolveValueConfig's own pre-existing parameter shape. Exported
+// boundFrom's own parameter shape. Exported
 // so consumers can read one sub-field without re-deriving the same
 // union-narrowing check each time (see entityOf/attributeOf/jinjaOf below).
 type ValueConfig = number | { entity?: string; attribute?: string; jinja?: string } | undefined;
@@ -665,7 +665,7 @@ const types = {
   // Shared by min_value/max_value/watermark.low/.high: number (fixed) |
   // { entity, attribute } | { jinja } - explicit shape, not sniffing a
   // scalar. Exposed flattened, not as the discriminated union the validator
-  // actually checks - matches ViewCore._resolveValueConfig's own shape,
+  // actually checks - matches boundFrom's own shape,
   // which every consumer already reads through.
   numericEntityOrJinja: (): Validator<ValueConfig> =>
     types.union(
@@ -1556,7 +1556,7 @@ const YamlSchemaFactory = {
         bar_orientation: types.enumsWithDefault(BAR_ORIENTATIONS, 'ltr'),
         bar_color_mode: types.enumsWithDefault(BAR_COLOR_MODES, 'auto'),
         // Only engages outside center_zero with a well-formed positive range
-        // (min > 0, max > min) — ProgressCalc.isLogScale falls back to linear
+        // (min > 0, max > min) — ProgressMath.isLogScale falls back to linear
         // otherwise, so an invalid combination degrades quietly instead of
         // producing NaN.
         bar_scale: types.enumsWithDefault(BAR_SCALES, 'linear'),

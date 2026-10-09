@@ -629,7 +629,7 @@ class CardConfigHelper extends BaseConfigHelper {
     // when hide is a Jinja template (a string): merging into user-authored
     // template logic isn't possible, so disable_unit is left untouched and the
     // runtime keeps honoring it as a fallback (see ViewBase's
-    // #percentHelper.configure call, hasDisabledUnit).
+    // #progressConfig, hasDisabledUnit).
     if (config?.disable_unit === true && !is.jinja(config?.hide)) {
       const currentHide = is.array(config.hide) ? config.hide : [];
       normalized = {

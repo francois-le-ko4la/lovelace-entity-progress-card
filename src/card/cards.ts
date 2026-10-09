@@ -136,13 +136,13 @@ class EntityProgressCardBase extends HABase {
   ) {
     this._applyJinjaNumber(content, getJinja, viewProp, () => {
       if (viewProp === 'jinjaMinValue' || viewProp === 'jinjaMaxValue') {
-        // min/max feed #percentHelper (via refresh) - both the bar's own CSS
+        // min/max feed the view's progress (via refresh) - the bar's own CSS
         // and secondaryInfoMain (the "45%" label) derive from it.
         this._cardView.refresh(this.hass as HomeAssistant);
         this._updateCSS();
         this._processStandardFields();
       } else {
-        // isAlertActive only feeds _alertStyle - no #percentHelper, bar CSS or
+        // isAlertActive only feeds _alertStyle - no progress, bar CSS or
         // label involvement, and no need to re-walk the other class layers.
         this._applyAlertClasses();
       }
@@ -479,7 +479,7 @@ class EntityProgressTemplateBase extends HABase {
       percent: () => this._managePercent(content),
       ...this._watermarkJinjaHandlers(content),
       // Cached (not just written to CSS) so status_label.color_source: 'icon'
-      // has something to read - see ViewCore.iconColor/setTemplateColorValue.
+      // has something to read - see TemplateViewBase.setTemplateColorValue.
       color: () =>
         this._renderTemplateColor(
           content,

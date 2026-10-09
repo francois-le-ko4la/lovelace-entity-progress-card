@@ -119,7 +119,7 @@ describe('valueKind - how value, min and max are read', () => {
   }
 
   test('input_number reads its own min and max', () => {
-    assert.deepEqual(helperFor(INPUT_NUMBER).value, { current: 5, min: 0, max: 10 });
+    assert.deepEqual(helperFor(INPUT_NUMBER).reading, { kind: 'ranged', current: 5, min: 0, max: 10 });
   });
 });
 
