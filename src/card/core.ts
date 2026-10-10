@@ -846,9 +846,11 @@ class HACore extends HTMLElement {
       [this.baseClass, true],
       ...Object.values(CARD.layout.orientations).map((o): [string, boolean] => [o.label, config.layout === o.label]),
       ...BAR_SIZES.map((size): [string, boolean] => [size, config.bar_size === size]),
+      // down is up mirrored (styles.ts): it keeps every .up-orientation rule.
       ...Object.values(orientationClasses).map((cls): [string, boolean] => [
         cls,
-        orientationClasses[config.bar_orientation as string] === cls,
+        orientationClasses[config.bar_orientation as string] === cls ||
+          (cls === orientationClasses.up && config.bar_orientation === 'down'),
       ]),
       [CARD.style.dynamic.progressBar.centerZero, Boolean(config.center_zero)],
       ['rainbow-full-bar', config.bar_color_mode === 'rainbow_full'],
@@ -978,11 +980,19 @@ class HACore extends HTMLElement {
   ) {
     const cardKey = CARD.htmlStructure.card.element;
 
-    const fillColor = gradient ?? barColor;
+    // down: the gradients are built for up, and run the other way.
+    const flip = (value: string | null): string | null =>
+      value && this._cardView.isDownBar
+        ? value.replace(/to (top|bottom)/g, (way) => (way === 'to top' ? 'to bottom' : 'to top'))
+        : value;
+    const fillColor = flip(gradient) ?? barColor;
     if (fillColor !== null) this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.color.var, fillColor);
     if (iconColor !== null) this._dom.setStyle(cardKey, CARD.style.dynamic.iconAndShape.color.var, iconColor);
 
-    this._applyDivergingBarStackCSS(cardKey, diverging);
+    this._applyDivergingBarStackCSS(
+      cardKey,
+      diverging && { ...diverging, posGradient: flip(diverging.posGradient), negGradient: flip(diverging.negGradient) },
+    );
 
     if (progressValue !== null) {
       this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.value.var, progressValue);
@@ -1674,12 +1684,15 @@ class HABase extends HACore {
   }
 
   // bar_ring: the arc left after the gap is a ratio of the circle, for the
-  // calc()s of styles.ts; an unset ring removes both vars (setStyle never unsets).
+  // calc()s of styles.ts; an unset ring removes its vars (setStyle never unsets).
+  // Under center_zero, `start` places the zero and the arc is centred on it.
   #applyRingGeometry(cardKey: string) {
     const { start = 0, gap = 0 } = this._cardView.config.bar_ring ?? {};
     const openArc = Math.min(Math.max(gap, 0), RING_MAX_GAP);
+    const arcStart = this._cardView.config.center_zero ? start - (360 - openArc) / 2 : start;
     const vars: [string, CacheValue, boolean][] = [
-      ['--ring-start', `${start}deg`, start !== 0],
+      ['--ring-start', `${arcStart}deg`, arcStart !== 0],
+      ['--ring-axis', `${start}deg`, start !== 0],
       ['--ring-span-ratio', 1 - openArc / 360, openArc > 0],
     ];
     vars.forEach(([prop, value, isSet]) => {

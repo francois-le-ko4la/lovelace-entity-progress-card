@@ -178,7 +178,9 @@
         "ltr": "Слева надесно",
         "rtl": "Сдесна налево",
         "up": "Нагоре",
-        "down": "DOWN"
+        "down": "DOWN",
+        "clockwise": null,
+        "counterclockwise": null
       },
       "bar_position": {
         "background": "Позадина картице",

@@ -1848,10 +1848,12 @@ const EditorFactory = {
           }
         : {}),
       bar_orientation: EditorFieldsType.select('bar_orientation', {
-        // Badge/Badge Template have no bar_position/layout: 'up' never applies.
-        type: badge
-          ? 'bar_orientation_no_up'
-          : (c: LovelaceConfig) => (HAS_EFFECT.barOrientationUp(c) ? 'bar_orientation' : 'bar_orientation_no_up'),
+        // Around the icon the ring turns clockwise or not; Badge/Badge Template
+        // have no bar_position/layout besides it: 'up' never applies.
+        type: (c: LovelaceConfig) => {
+          if (c.bar_position === BAR_AROUND_ICON) return 'bar_orientation_ring';
+          return !badge && HAS_EFFECT.barOrientationUp(c) ? 'bar_orientation' : 'bar_orientation_no_up';
+        },
         width: 'half',
       }),
       bar_size: EditorFieldsType.select('bar_size', {

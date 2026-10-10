@@ -78,7 +78,7 @@ A modern Entity progress card for Home Assistant's Lovelace UI.
   of divs. Motion backs off automatically for anyone with "Reduce Motion" set
   system-wide. Tap, hold, double-tap — all native Home Assistant actions,
   nothing reinvented.
-- **39-language i18n**: editor and error messages localized, not just the
+- **41-language i18n**: editor and error messages localized, not just the
   README.
   <!-- markdownlint-disable-next-line MD013 -->
   🇸🇦 🇧🇩 🇨🇿 🇩🇰 🇩🇪 🇬🇷 🇬🇧 🇪🇸 🇫🇮 🇫🇷 🇮🇳 🇭🇷 🇮🇩 🇮🇹 🇯🇵 🇰🇷 🇲🇰 🇳🇴 (bokmål) 🇳🇱 🇵🇱 🇵🇹 🇷🇴 🇸🇪
@@ -239,7 +239,7 @@ The card is designed to work well for everyone, out of the box.
 🌟 Our goal is to make this card a seamless and intuitive tool for users
 worldwide, eliminating language barriers and ensuring proper data formatting for
 every region. The card defaults to the language set in the user's profile, and
-is translated into **39 languages**.
+is translated into **41 languages**.
 
 <details>
 <summary><strong>Full language list & number formatting (click to expand)</strong></summary>

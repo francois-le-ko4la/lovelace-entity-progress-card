@@ -201,14 +201,27 @@ const THEME_ALIASES: Record<string, string> = {
 const BAR_SIZES = Object.values(CARD.style.bar.sizeOptions);
 // No 'xlarge': it would demand a 42px bar inside a badge capped at ~36px.
 const BADGE_BAR_SIZES = ['xsmall', 'small', 'medium', 'large'];
-const BAR_ORIENTATIONS = ['ltr', 'rtl', 'up', 'down'];
+// A ring is turned clockwise or not: bar_position: icon imposes these two in place
+// of ltr/rtl, and anything else the other way round (translateOrientation).
+const RING_ORIENTATIONS = ['clockwise', 'counterclockwise'];
+const BAR_ORIENTATIONS = ['ltr', 'rtl', 'up', 'down', ...RING_ORIENTATIONS];
 // 'up'/'down' need .vertical.overlay, which Badge/Badge Template/Feature never get.
 const BAR_ORIENTATIONS_NO_UP = ['ltr', 'rtl'];
+const BAR_ORIENTATIONS_BADGE = [...BAR_ORIENTATIONS_NO_UP, ...RING_ORIENTATIONS];
 const BAR_POSITIONS = ['default', 'below', 'compact_below', 'top', 'bottom', 'overlay', 'background', 'icon'];
 // The bar drawn as a ring around the icon: nothing straight to mark or cut.
 const BAR_AROUND_ICON = 'icon';
 const BADGE_BAR_POSITIONS = ['default', BAR_AROUND_ICON];
 const hasStraightBar = (c: ConfigLike) => c.bar_position !== BAR_AROUND_ICON;
+const ORIENTATION_AROUND_ICON: Record<string, string> = { ltr: 'clockwise', rtl: 'counterclockwise' };
+const ORIENTATION_STRAIGHT: Record<string, string> = { clockwise: 'ltr', counterclockwise: 'rtl' };
+// The orientation a config's bar_position speaks: a value of the other family is
+// translated, anything else (up, down, unset) is left alone.
+const translateOrientation = (c: ConfigLike): unknown => {
+  const orientation = c.bar_orientation as string | undefined;
+  const table = hasStraightBar(c) ? ORIENTATION_STRAIGHT : ORIENTATION_AROUND_ICON;
+  return (orientation && table[orientation]) || orientation;
+};
 const FEATURE_BAR_POSITIONS = ['default', 'top', 'bottom'];
 // The positions density: compact leaves standing - not schema truth (the
 // schema accepts all of BAR_POSITIONS and rewrites to 'top' instead, see
@@ -286,7 +299,10 @@ const INERT_OPTIONS: InertOption[] = [
   { key: 'bar_max_width', hasEffect: HAS_EFFECT.barMaxWidth, fallback: undefined },
   {
     key: 'bar_orientation',
-    hasEffect: (c) => !['up', 'down'].includes(c.bar_orientation as string) || HAS_EFFECT.barOrientationUp(c),
+    hasEffect: (c) => {
+      if (['up', 'down'].includes(c.bar_orientation as string)) return HAS_EFFECT.barOrientationUp(c);
+      return !RING_ORIENTATIONS.includes(c.bar_orientation as string) || !hasStraightBar(c);
+    },
     fallback: 'ltr',
   },
   { key: 'text_shadow', hasEffect: HAS_EFFECT.textShadow, fallback: false },
@@ -296,8 +312,7 @@ const INERT_OPTIONS: InertOption[] = [
   { key: 'bar_ring', hasEffect: (c) => !hasStraightBar(c), fallback: undefined },
   { key: 'interpolate', hasEffect: HAS_EFFECT.interpolate, fallback: false },
   { key: 'reverse_secondary_info_row', hasEffect: HAS_EFFECT.reverseSecondaryInfoRow, fallback: false },
-  // A ring has no effect, stack or centre of its own (yet).
-  { key: 'center_zero', hasEffect: hasStraightBar, fallback: false },
+  // A ring has no effect or stack of its own (yet).
   { key: 'bar_effect', hasEffect: hasStraightBar, fallback: undefined },
   { key: 'bar_stack', hasEffect: hasStraightBar, fallback: undefined },
 ];
@@ -1116,6 +1131,10 @@ function struct<T>(
     }
   };
 
+  const applyOrientationRule = (result: Record<string, unknown>) => {
+    if (!is.nullish(result.bar_orientation)) result.bar_orientation = translateOrientation(result);
+  };
+
   const applyDensityRule = (result: Record<string, unknown>) => Object.assign(result, densityOverrides(result));
 
   // Same type in and out (T, not Record<string, unknown>) - every applyXxxRule
@@ -1133,7 +1152,11 @@ function struct<T>(
     applyStateColorRule(result);
     // Before bar_segments reads the colour mode it rewrites.
     applyRainbowFullRule(result);
+    // Twice: once so a ring value is not reset as inert outside a ring, once so
+    // the fallback an inert option leaves ('ltr') speaks the ring's words.
+    applyOrientationRule(result);
     applyInertOptionsRule(result);
+    applyOrientationRule(result);
 
     return result as T;
   };
@@ -1416,7 +1439,7 @@ const BADGE_DELETED_FIELDS = [
 const badgeOverrides = <T extends readonly string[]>(hideTargets: T) => ({
   // Its bar inline, or around its icon: no row to put it on top of.
   bar_position: types.enumsWithDefault(BADGE_BAR_POSITIONS, 'default'),
-  bar_orientation: types.enumsWithDefault(BAR_ORIENTATIONS_NO_UP, 'ltr'),
+  bar_orientation: types.enumsWithDefault(BAR_ORIENTATIONS_BADGE, 'ltr'),
   bar_size: types.enumsWithDefault(BADGE_BAR_SIZES, 'small'),
   hide: types.jinjaOrArrayWithValidatedElem(hideTargets),
   layout: types.enumsWithDefault(['horizontal'], 'horizontal'),
@@ -1570,8 +1593,8 @@ const YamlSchemaFactory = {
         bar_single_line: types.optionalBooleanWithDefault(false),
         bar_max_width: types.optionalString(),
         bar_segments: types.optionalNumber(),
-        // Degrees: start clockwise from the top, gap = the arc left open. Only
-        // bar_position: icon draws a ring (INERT_OPTIONS).
+        // Degrees: start clockwise from the top (the zero, under center_zero),
+        // gap = the arc left open. Only bar_position: icon draws a ring (INERT_OPTIONS).
         bar_ring: types.optional(
           types.object({
             start: types.optionalNumberWithDefault(0),
@@ -1855,6 +1878,7 @@ export { entityOf, attributeOf, jinjaOf };
 export { markInner, markShown, markValue, MARK_FIELDS, markIds, peakMarkShown, isMarkOverride };
 export type { MarkField, MarkFamily, MarkId, PeakPoint };
 export { statusLabelObj, rewrapStatusLabel };
+export { translateOrientation };
 export { THEME_ALIASES, rawThemeRange };
 // Each YamlSchemaFactory getter rebuilds its whole schema on access - cached
 // here so a caller can ask per field without paying for it every time.

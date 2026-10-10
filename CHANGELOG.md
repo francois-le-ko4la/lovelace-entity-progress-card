@@ -13,10 +13,33 @@ colors its own tiles use, from your theme, for every domain Home Assistant
 colors. Icons animate on the same rules Home Assistant applies, and tap to
 toggle like its tile card.
 
+### ✨ New
+
+- **[`bar_ring`][bar_ring]**: place where the ring around the icon starts and
+  leave part of it open, for a thermostat-like dial.  
+  ➡️ [Enhancement]: Ring position #144 (@addit248)
+- **Serbian**, in Cyrillic and Latin: 41 languages.  
+  ➡️ feat: add Serbian translations (Cyrillic & Latin) #145 (@cpmarexel2f)
+
 ### 🔧 Improvements
 
 - **Toggle mechanism**: the default [`icon_tap_action`][xyz_action] now aligns
   with the tile card's behavior.
+
+- **[`bar_orientation: down`][bar_orientation]** fills a vertical bar from the
+  top, the mirror of `up`.  
+  ➡️ [Enhancement]: Ring position #144 (@addit248)
+
+#### Around the icon, turn the ring and center it on zero
+
+- [`bar_orientation`][bar_orientation] takes `clockwise` or `counterclockwise`
+  for the ring; `ltr` and `rtl` read as the same, and the editor follows when
+  [`bar_position`][bar_position] changes.  
+  ➡️ [Enhancement]: Ring position #144 (@addit248)
+- [`center_zero`][center_zero] works on the ring: zero sits at its middle and
+  the value grows each way from it, marked by a line, and themes and
+  [`bar_color_mode`][bar_color_mode] follow both arms.  
+  ➡️ [Enhancement]: Ring position #144 (@addit248)
 
 #### Unavailable entities and failed Jinja, handled alike
 
@@ -69,10 +92,35 @@ toggle like its tile card.
 
 ## 1.6.4-rc1
 
+### ✨ New
+
+- **[`bar_ring`][bar_ring]** `start` (degrees clockwise from the top) and `gap`
+  (open arc in degrees, up to 330) shape the ring of
+  [`bar_position: icon`][bar_position].  
+  ➡️ [Enhancement]: Ring position #144 (@addit248)
+- **Serbian** (`sr` Cyrillic, `sr-Latn` Latin): 41 languages.  
+  ➡️ feat: add Serbian translations (Cyrillic & Latin) #145 (@cpmarexel2f)
+
 ### 🔧 Improvements
 
 - **Toggle mechanism**: the default [`icon_tap_action`][xyz_action] now aligns
   with the tile card's behavior.
+
+- **[`bar_orientation: down`][bar_orientation]** fills a vertical bar from the
+  top, the mirror of `up`: same conditions, same marks, segments and effects.  
+  ➡️ [Enhancement]: Ring position #144 (@addit248)
+
+#### Around the icon, turn the ring and center it on zero
+
+- [`bar_orientation`][bar_orientation] takes `clockwise` or `counterclockwise`
+  with the ring; `ltr` and `rtl` are read as those two, and the editor
+  translates between the families when [`bar_position`][bar_position] changes.  
+  ➡️ [Enhancement]: Ring position #144 (@addit248)
+- [`center_zero`][center_zero] works on the ring: zero sits at the middle of the
+  arc, and [`bar_ring`][bar_ring] `start` places it. A zero line marks it
+  (`--epb-zero-mark-color`, `--epb-zero-mark-width`); themes and `rainbow`,
+  `segment`, `rainbow_full` paint one conic gradient over both arms.  
+  ➡️ [Enhancement]: Ring position #144 (@addit248)
 
 #### Unavailable entities and failed Jinja, handled alike
 
@@ -7725,6 +7773,8 @@ experience:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#badge_icon
 [bar_segments]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_segments
+[bar_ring]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_ring
 [bar_single_line]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_single_line
 [frameless]:

@@ -102,6 +102,7 @@ const htmlStructure = {
     shape: { element: 'shape', class: 'shape' },
     // rainbow_full's value pill on the ring (bar_position: icon).
     ringMark: { element: 'div', class: 'ring-mark', extraAttr: ARIA_HIDDEN },
+    ringZero: { element: 'div', class: 'ring-zero', extraAttr: ARIA_HIDDEN },
     // What a screen reader reads in place of the bar: the ring sits in the
     // icon section, which is aria-hidden. Seen by nobody else (styles.ts).
     ringProgress: {
@@ -302,7 +303,14 @@ const style = {
       stackGradientNeg: { var: '--stack-gradient-neg' },
       stackSizePos: { var: '--stack-size-pos' },
       stackSizeNeg: { var: '--stack-size-neg' },
-      orientation: { rtl: 'rtl-orientation', ltr: 'ltr-orientation', up: 'up-orientation', down: 'down-orientation' },
+      orientation: {
+        rtl: 'rtl-orientation',
+        ltr: 'ltr-orientation',
+        up: 'up-orientation',
+        down: 'down-orientation',
+        clockwise: 'clockwise-orientation',
+        counterclockwise: 'counterclockwise-orientation',
+      },
       effect: {
         radius: { label: 'radius', class: 'progress-bar-effect-radius' },
         glass: { label: 'glass', class: 'progress-bar-effect-glass' },

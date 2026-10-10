@@ -178,7 +178,9 @@
         "ltr": "",
         "rtl": "",
         "up": "",
-        "down": ""
+        "down": "",
+        "clockwise": "",
+        "counterclockwise": ""
       },
       "bar_position": {
         "background": "",

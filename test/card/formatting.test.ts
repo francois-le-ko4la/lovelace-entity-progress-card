@@ -238,8 +238,8 @@ describe('unit spacing - every shipped language, against CLDR', () => {
     return votes.some(Boolean) ? null : false;
   };
 
-  test('all 39 languages are covered', () => {
-    assert.equal(LANGUAGES.length, 39);
+  test('all 41 languages are covered', () => {
+    assert.equal(LANGUAGES.length, 41);
   });
 
   test('% splits the set, and agrees with CLDR in every single language', () => {

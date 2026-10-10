@@ -47,7 +47,7 @@ _Tests_ (files in `test/`) count the files naming the option, not uses.
 | [`bar_color_mode`](configuration.md#bar_color_mode) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | `auto` | 5 | 11 | 78 | 2 |
 | [`bar_effect`](configuration.md#bar_effect) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — | 5 | 4 | 24 | 1 |
 | [`bar_max_width`](configuration.md#bar_max_width) | ✅ | ✅ | · | · | · | ✅ | ✅ | — | 4 | 1 | 1 | 3 |
-| [`bar_orientation`](configuration.md#bar_orientation) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | `ltr` | 3 | 3 | 13 | 1 |
+| [`bar_orientation`](configuration.md#bar_orientation) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | `ltr` | 4 | 3 | 13 | 1 |
 | [`bar_position`](configuration.md#bar_position) | ✅ | ✅ | ✅ | ✅ | ✅ | · | · | `default` | 8 | 6 | 67 | 10 |
 | [`bar_ring`](configuration.md#bar_ring) | ✅ | ✅ | ✅ | ✅ | · | ✅ | ✅ | — | 4 | 1 | 0 | 0 |
 | [`bar_scale`](configuration.md#bar_scale) | ✅ | · | ✅ | · | ✅ | ✅ | ✅ | `linear` | 2 | 1 | 1 | 0 |
@@ -87,7 +87,7 @@ _Tests_ (files in `test/`) count the files naming the option, not uses.
 | [`name_info`](configuration.md#name_info) | ✅ | · | ✅ | · | · | ✅ | ✅ | — | 3 | 4 | 2 | 3 |
 | [`peak_marker`](configuration.md#peak_marker) | ✅ | · | · | · | ✅ | ✅ | ✅ | `{"window":7200,"type":"line","opacity":0.8,"line_size":"1px"}` | 9 | 4 | 13 | 13 |
 | [`percent`](configuration.md#percent) | · | ✅ | · | ✅ | · | · | · | — | 16 | 5 | 17 | 10 |
-| [`reverse`](configuration.md#reverse) | ✅ | · | ✅ | · | · | ✅ | ✅ | `false` | 5 | 2 | 3 | 1 |
+| [`reverse`](configuration.md#reverse) | ✅ | · | ✅ | · | · | ✅ | ✅ | `false` | 6 | 2 | 3 | 1 |
 | [`reverse_secondary_info_row`](configuration.md#reverse_secondary_info_row) | ✅ | ✅ | ✅ | ✅ | · | ✅ | ✅ | `false` | 3 | 2 | 2 | 3 |
 | [`rows`](configuration.md#rows) | · | · | · | · | · | ✅ | · | — | 10 | 1 | 0 | 14 |
 | [`secondary`](configuration.md#secondary) | · | ✅ | · | ✅ | · | · | · | — | 8 | 7 | 13 | 4 |

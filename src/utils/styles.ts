@@ -20,6 +20,8 @@ const css = (strings: TemplateStringsArray, ...values: unknown[]): string =>
 // fragment instead of the same 3-class :is() list spelled out 8 times below.
 const BAR_EFFECT_GRADIENTS = `:is(.${CARD.style.dynamic.progressBar.effect.glass.class}, .${CARD.style.dynamic.progressBar.effect.gradient.class}, .${CARD.style.dynamic.progressBar.effect.gradientReverse.class})`;
 
+const DOWN_BAR = `.vertical-bar.${CARD.style.dynamic.progressBar.orientation.down}`;
+
 const CARD_CSS = css`
 /* =============================================================================
    PARAMS
@@ -684,6 +686,9 @@ ha-card.${CARD.style.dynamic.barAroundIcon} .${CARD.htmlStructure.elements.shape
      circle; what is left is the gap, painted over with the card's background. */
   --ring-span: calc(var(--ring-span-ratio, 1) * 360deg);
   --ring-fill: calc(var(${CARD.style.dynamic.ringValue.var}, 0) * var(--ring-span));
+  /* The filled arc runs from --ring-from to --ring-to. */
+  --ring-from: 0deg;
+  --ring-to: var(--ring-fill);
   --ring-gap-cover: conic-gradient(from var(--ring-start, 0deg), transparent var(--ring-span), var(--ha-card-background, var(--card-background-color)) 0);
   content: '';
   position: absolute;
@@ -694,11 +699,40 @@ ha-card.${CARD.style.dynamic.barAroundIcon} .${CARD.htmlStructure.elements.shape
      track is translucent, and the zones painted underneath showed through it. */
   background:
     var(--ring-gap-cover),
-    conic-gradient(from var(--ring-start, 0deg), transparent var(--ring-fill), var(--ring-track) 0),
-    conic-gradient(from var(--ring-start, 0deg), transparent var(--ring-fill), var(--ha-card-background, var(--card-background-color)) 0),
+    conic-gradient(from var(--ring-start, 0deg), var(--ring-track) var(--ring-from), transparent 0 var(--ring-to), var(--ring-track) 0),
+    conic-gradient(from var(--ring-start, 0deg), var(--ha-card-background, var(--card-background-color)) var(--ring-from), transparent 0 var(--ring-to), var(--ha-card-background, var(--card-background-color)) 0),
     var(--ring-paint);
   -webkit-mask: radial-gradient(farthest-side, transparent var(--ring-cut), #000 calc(var(--ring-cut) + 1px));
   mask: radial-gradient(farthest-side, transparent var(--ring-cut), #000 calc(var(--ring-cut) + 1px));
+}
+/* center_zero: the zero sits mid-arc, the signed value grows each way from it
+   by up to half the arc. */
+ha-card.${CARD.style.dynamic.barAroundIcon}.center-zero .${CARD.htmlStructure.elements.shape.class}::after {
+  --ring-half: calc(var(--ring-span) / 2);
+  --ring-from: calc(var(--ring-half) - max(var(${CARD.style.dynamic.ringValue.var}, 0) * -1, 0) * var(--ring-half));
+  --ring-to: calc(var(--ring-half) + max(var(${CARD.style.dynamic.ringValue.var}, 0), 0) * var(--ring-half));
+}
+ha-card.${CARD.style.dynamic.barAroundIcon}.center-zero {
+  --ring-center: 1;
+}
+.${CARD.htmlStructure.elements.ringZero.class} {
+  display: none;
+}
+/* The zero: a pill across the ring at the middle of the arc, like the bar's zero line. */
+ha-card.${CARD.style.dynamic.barAroundIcon}.center-zero .${CARD.htmlStructure.elements.ringZero.class} {
+  --ring-radius: calc(var(--current-shape-size) / 2 + var(--ring-offset) - var(--ring-width) / 2);
+  display: block;
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  top: 50%;
+  width: var(--epb-zero-mark-width, 1px);
+  height: calc(var(--ring-width) + 4px);
+  background: var(--epb-zero-mark-color, white);
+  pointer-events: none;
+  transform: translate(-50%, -50%)
+    rotate(calc((1 - var(--ring-flip, 1)) * var(--ring-axis, 0deg) + var(--ring-flip, 1) * (var(--ring-start, 0deg) + var(--ring-span-ratio, 1) * 180deg)))
+    translateY(calc(-1 * var(--ring-radius)));
 }
 /* Held at 0 until the first paint, like the bar's .inner: transition-ready
    then releases the value, and the ring fills from empty. On .shape, a real
@@ -740,11 +774,15 @@ ha-card.${CARD.style.dynamic.barAroundIcon}.rainbow-full-bar .${CARD.htmlStructu
     0 0 0 var(--mark-border-width) var(--epb-rainbow-marker-border-color, rgba(255, 255, 255, 0.9)),
     0 0 var(--mark-border-width) rgba(0, 0, 0, 0.35);
   opacity: var(--epb-rainbow-marker-opacity, 1);
-  transform: translate(-50%, -50%) rotate(calc(var(--ring-turn, 1) * (var(--ring-start, 0deg) + var(${CARD.style.dynamic.ringValue.var}, 0) * var(--ring-span-ratio, 1) * 360deg)))
+  transform: translate(-50%, -50%) rotate(calc((1 - var(--ring-flip, 1)) * var(--ring-axis, 0deg) + var(--ring-flip, 1) * (var(--ring-start, 0deg) + (var(--ring-center, 0) * 0.5 + var(${CARD.style.dynamic.ringValue.var}, 0) * (1 - var(--ring-center, 0) * 0.5)) * var(--ring-span-ratio, 1) * 360deg)))
     translateY(calc(-1 * var(--ring-radius)));
 }
-ha-card.${CARD.style.dynamic.barAroundIcon}.${CARD.style.dynamic.progressBar.orientation.rtl} {
-  --ring-turn: -1;
+/* counterclockwise: the ring is mirrored about its start axis. */
+ha-card.${CARD.style.dynamic.barAroundIcon} {
+  --ring-flip: var(--ring-rtl, 1);
+}
+ha-card.${CARD.style.dynamic.barAroundIcon}.${CARD.style.dynamic.progressBar.orientation.counterclockwise} {
+  --ring-rtl: -1;
 }
 /* bar_position: icon - the bar's marks, a layer each round the ring, carrying
    the bar's own shown/wm-* classes (core.ts). Zones are arcs, points pills. */
@@ -813,9 +851,9 @@ ha-card.${CARD.style.dynamic.barAroundIcon} :is(.${CARD.htmlStructure.elements.r
   -webkit-mask: radial-gradient(farthest-side, transparent var(--ring-cut), #000 calc(var(--ring-cut) + 1px));
   mask: radial-gradient(farthest-side, transparent var(--ring-cut), #000 calc(var(--ring-cut) + 1px));
 }
-ha-card.${CARD.style.dynamic.barAroundIcon}.${CARD.style.dynamic.progressBar.orientation.rtl}
+ha-card.${CARD.style.dynamic.barAroundIcon}
   :is(.${CARD.htmlStructure.elements.ringMarks.low.class}, .${CARD.htmlStructure.elements.ringMarks.high.class}, .${CARD.htmlStructure.elements.ringMarks.range.class}):is(.wm-area, .wm-blended, .wm-striped) {
-  transform: scaleX(-1);
+  transform: rotate(calc((1 - var(--ring-flip, 1)) * var(--ring-axis, 0deg))) scaleX(var(--ring-flip, 1));
 }
 /* A point: a pill across the ring at its angle - a line keeps its own width,
    triangle and round become the rainbow_full marker's pin. */
@@ -828,7 +866,7 @@ ha-card.${CARD.style.dynamic.barAroundIcon}
   height: calc(var(--ring-width) + 4px);
   border-radius: 999px;
   background: var(--ring-mark-color);
-  transform: translate(-50%, -50%) rotate(calc(var(--ring-turn, 1) * (var(--ring-start, 0deg) + var(--ring-mark-at) * var(--ring-span-ratio, 1) * 3.6deg)))
+  transform: translate(-50%, -50%) rotate(calc((1 - var(--ring-flip, 1)) * var(--ring-axis, 0deg) + var(--ring-flip, 1) * (var(--ring-start, 0deg) + var(--ring-mark-at) * var(--ring-span-ratio, 1) * 3.6deg)))
     translateY(calc(-1 * var(--ring-radius)));
 }
 ha-card.${CARD.style.dynamic.barAroundIcon}
@@ -847,10 +885,9 @@ ha-card.${CARD.style.dynamic.barAroundIcon}
   clip-path: inset(50%);
   white-space: nowrap;
 }
-/* rtl: counter-clockwise - the whole ring mirrored, zones included. */
-ha-card.${CARD.style.dynamic.barAroundIcon}.${CARD.style.dynamic.progressBar.orientation.rtl}
-  .${CARD.htmlStructure.elements.shape.class}::after {
-  transform: scaleX(-1);
+/* Counter-clockwise: the whole ring mirrored about its start axis, zones included. */
+ha-card.${CARD.style.dynamic.barAroundIcon} .${CARD.htmlStructure.elements.shape.class}::after {
+  transform: rotate(calc((1 - var(--ring-flip, 1)) * var(--ring-axis, 0deg))) scaleX(var(--ring-flip, 1));
 }
 
 /* A tinted disc drawn at 20% over a bar that covers the whole card just shows
@@ -1723,10 +1760,6 @@ ha-card.info-multiline {
    .bar is flex-centered in the container, so its own pixels are unchanged. */
 .${CARD.style.dynamic.progressBar.orientation.rtl} .${CARD.htmlStructure.elements.progressBar.container.class} {
   transform: scaleX(-1);
-}
-/* down: the vertical bar (up) mirrored top to bottom, same reason as rtl. */
-.${CARD.style.dynamic.progressBar.orientation.down} .${CARD.htmlStructure.elements.progressBar.container.class} {
-  transform: scaleY(-1);
 }
 
 /* === SEGMENTED BAR (bar_segments: N, HABase#_buildSegmentCells) ===
@@ -2630,13 +2663,17 @@ ha-card.info-multiline {
   --mark-width: calc(var(--peak-max-value, 100%) - var(--peak-min-value, 0%));
 }
 
+/* The horizontal rules above set the width from the value: a vertical zone
+   spans the whole bar instead. */
 .vertical-bar .${CARD.htmlStructure.elements.progressBar.lowWatermark.class}:is(.wm-area, .wm-blended, .wm-striped),
 .vertical-bar .${CARD.htmlStructure.elements.progressBar.minMarker.class}:is(.wm-area, .wm-blended, .wm-striped),
 .vertical-bar .${CARD.htmlStructure.elements.progressBar.averageMarker.class}:is(.wm-area, .wm-blended, .wm-striped) {
+  --mark-width: 100%;
   --mark-height: var(--wm-value);
 }
 .vertical-bar .${CARD.htmlStructure.elements.progressBar.highWatermark.class}:is(.wm-area, .wm-blended, .wm-striped),
 .vertical-bar .${CARD.htmlStructure.elements.progressBar.maxMarker.class}:is(.wm-area, .wm-blended, .wm-striped) {
+  --mark-width: 100%;
   --mark-bottom: var(--wm-value);
   --mark-height: calc(100% - var(--wm-value));
 }
@@ -2668,7 +2705,10 @@ ha-card.info-multiline {
   border: none;
   transform: none;
 }
+/* Across the whole bar: wm-line's horizontal width and left would leave a 1px dash. */
 .vertical-bar .mark.wm-line {
+  --mark-width: 100%;
+  --mark-left: 0;
   --mark-height: var(--wm-line-size);
   --mark-bottom: var(--wm-position);
 }
@@ -2717,6 +2757,105 @@ ha-card.info-multiline {
   border-top: calc(var(--wm-half-tri) + 1px) solid transparent;
   border-left: var(--wm-tri-size) solid var(--wm-color);
   border-bottom: var(--wm-half-tri) solid transparent;
+}
+
+/* =============================================================================
+   DOWN (bar_orientation: down) - up mirrored top to bottom, by anchors and
+   translate directions: a transform on .bar-container left the fill invisible
+   in some Firefox/HA setups. The vertical-bar rules above stay the reference.
+   ============================================================================= */
+${DOWN_BAR} .${CARD.htmlStructure.elements.progressBar.half.class}.positive-zone { top: auto; bottom: 0; }
+${DOWN_BAR} .${CARD.htmlStructure.elements.progressBar.half.class}.negative-zone { top: 0; bottom: auto; }
+
+${DOWN_BAR} .${CARD.htmlStructure.elements.progressBar.inner.class} { --inner-transform: translateY(-100%); }
+${DOWN_BAR}.transition-ready .${CARD.htmlStructure.elements.progressBar.inner.class} {
+  --inner-transform: translateY(calc((var(--inner-size, 0) - 1) * 100%));
+}
+${DOWN_BAR} .${CARD.htmlStructure.elements.progressBar.inner.class}.positive { --inner-border-radius: 0 0 var(--_r) var(--_r); }
+${DOWN_BAR}.${CARD.style.dynamic.progressBar.centerZero} .${CARD.htmlStructure.elements.progressBar.inner.class}.negative {
+  --inner-transform: translateY(100%);
+  --inner-border-radius: var(--_r) var(--_r) 0 0;
+}
+${DOWN_BAR}.${CARD.style.dynamic.progressBar.centerZero}.transition-ready .${CARD.htmlStructure.elements.progressBar.inner.class}.negative {
+  --inner-transform: translateY(calc((1 - var(--inner-size, 0)) * 100%));
+}
+
+${DOWN_BAR} .${CARD.htmlStructure.elements.progressBar.segments.class} { flex-direction: column; }
+${DOWN_BAR} .${CARD.htmlStructure.elements.progressBar.half.class}.negative-zone .${CARD.htmlStructure.elements.progressBar.segments.class} { flex-direction: column-reverse; }
+${DOWN_BAR} .${CARD.htmlStructure.elements.progressBar.segmentCell.class}::before {
+  background-position-y: calc(var(--segment-index, 0) / (var(--bar-segments, 2) - 1) * 100%);
+}
+${DOWN_BAR} .${CARD.htmlStructure.elements.progressBar.half.class}.negative-zone .${CARD.htmlStructure.elements.progressBar.segmentCell.class}::before {
+  background-position-y: calc((1 - var(--segment-index, 0) / (var(--bar-segments, 2) - 1)) * 100%);
+}
+${DOWN_BAR} .${CARD.htmlStructure.elements.progressBar.bar.class} > .${CARD.htmlStructure.elements.progressBar.segments.class} .${CARD.htmlStructure.elements.progressBar.segmentCell.class}::before,
+${DOWN_BAR} .${CARD.htmlStructure.elements.progressBar.half.class}.positive-zone .${CARD.htmlStructure.elements.progressBar.segmentCell.class}::before {
+  clip-path: inset(0 0 calc(100% - var(--segment-fill)) 0);
+}
+${DOWN_BAR} .${CARD.htmlStructure.elements.progressBar.half.class}.negative-zone .${CARD.htmlStructure.elements.progressBar.segmentCell.class}::before {
+  clip-path: inset(calc(100% - var(--segment-fill)) 0 0 0);
+}
+
+.vertical.down-orientation.${CARD.style.dynamic.progressBar.effect.glass.class} {
+  --progress-effect: linear-gradient(180deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+  --progress-effect-neg: linear-gradient(0deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+}
+.vertical.down-orientation.${CARD.style.dynamic.progressBar.effect.gradient.class},
+.vertical.down-orientation.${CARD.style.dynamic.progressBar.effect.gradientReverse.class} {
+  --progress-effect-gradient: var(--progress-effect-gradient-down-modern, linear-gradient(180deg, rgba(255, 255, 255, 0.4), transparent));
+  --progress-effect-gradient-rev: var(--progress-effect-gradient-rev-down-modern, linear-gradient(0deg, rgba(255, 255, 255, 0.4), transparent));
+}
+@supports (background: color-mix(in srgb, red, blue)) {
+  .vertical.down-orientation.${CARD.style.dynamic.progressBar.effect.gradient.class},
+  .vertical.down-orientation.${CARD.style.dynamic.progressBar.effect.gradientReverse.class} {
+    --progress-effect-gradient-down-modern: linear-gradient(
+      180deg,
+      color-mix(in srgb, white 40%, var(--progress-bar-color, var(--state-icon-color))),
+      var(--progress-bar-color, var(--state-icon-color))
+    );
+    --progress-effect-gradient-rev-down-modern: linear-gradient(
+      0deg,
+      color-mix(in srgb, white 40%, var(--progress-bar-color, var(--state-icon-color))),
+      var(--progress-bar-color, var(--state-icon-color))
+    );
+  }
+}
+${DOWN_BAR}${BAR_EFFECT_GRADIENTS} .${CARD.htmlStructure.elements.progressBar.inner.class}.positive::before { transform-origin: center bottom; }
+${DOWN_BAR}.${CARD.style.dynamic.progressBar.centerZero}${BAR_EFFECT_GRADIENTS} .${CARD.htmlStructure.elements.progressBar.inner.class}.negative::before { transform-origin: center top; }
+.vertical.down-orientation.${CARD.style.dynamic.progressBar.effect.shimmer.class} {
+  --shimmer-direction: 180deg;
+  --shimmer-animation: shimmer-ttb;
+}
+.vertical.down-orientation.${CARD.style.dynamic.progressBar.effect.shimmerReverse.class} {
+  --shimmer-direction: 180deg;
+  --shimmer-animation: shimmer-btt;
+}
+
+${DOWN_BAR} .mark {
+  --mark-top: 0;
+  --mark-bottom: auto;
+}
+${DOWN_BAR} .${CARD.htmlStructure.elements.progressBar.highWatermark.class}:is(.wm-area, .wm-blended, .wm-striped),
+${DOWN_BAR} .${CARD.htmlStructure.elements.progressBar.maxMarker.class}:is(.wm-area, .wm-blended, .wm-striped) {
+  --mark-top: var(--wm-value);
+  --mark-height: calc(100% - var(--wm-value));
+}
+${DOWN_BAR} .${CARD.htmlStructure.elements.progressBar.rangeMarker.class} {
+  --mark-top: var(--peak-min-value, 0%);
+  --mark-bottom: auto;
+}
+${DOWN_BAR} .mark.wm-line {
+  --mark-top: var(--wm-position);
+  --mark-bottom: auto;
+}
+${DOWN_BAR} .mark.wm-round {
+  --mark-top: var(--wm-value);
+  --mark-bottom: auto;
+  transform: translate(-50%, -50%);
+}
+${DOWN_BAR} .mark.wm-triangle {
+  --mark-top: calc(var(--wm-value) - var(--wm-half-tri));
+  --mark-bottom: auto;
 }
 
 /* =============================================================================

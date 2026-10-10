@@ -332,26 +332,7 @@ class ThemeManager {
       isRing?: boolean;
     } = {},
   ) {
-    const currentStyle = this.#currentStyle;
-    if (!this.#isValid || !currentStyle || mode === 'auto') return null;
-
-    // For linear themes, derive min/max boundaries by splitting 0–100% equally
-    // (already percentage-based by construction, no further conversion needed).
-    const toValuePercent = (v: number) =>
-      !this.#isLinear && !this.#isBasedOnPercentage && valueRange && valueRange.max !== valueRange.min
-        ? ((v - valueRange.min) / (valueRange.max - valueRange.min)) * 100
-        : v;
-    const fullStyle: ThemeZone[] = this.#isLinear
-      ? currentStyle.map((level, i, arr) => ({
-          ...level,
-          min: (i / arr.length) * 100,
-          max: ((i + 1) / arr.length) * 100,
-        }))
-      : currentStyle.map((level) => ({
-          ...level,
-          min: toValuePercent(level.min ?? 0),
-          max: toValuePercent(level.max ?? 100),
-        }));
+    if (!this.#isValid || !this.#currentStyle || mode === 'auto') return null;
 
     // rainbow_full paints the whole window, not just up to fillPercent - the
     // value is a moving marker instead (.rainbow-full-bar, styles.ts), so it
@@ -360,30 +341,9 @@ class ThemeManager {
     // rainbow).
     if (mode !== 'rainbow_full' && !isRing && !(fillPercent > 0)) return null;
 
+    const style = this.#armStyle(window, valueRange);
+    if (!style) return null;
     const [windowStart, windowEnd] = window;
-    // A degenerate window (center_zero_value pinned exactly to min/max, so
-    // one arm has zero range) would otherwise divide by zero here - the
-    // fillPercent > 0 guard above already keeps this unreachable today (that
-    // arm's fill is 0 whenever its window collapses), but this stays correct
-    // independently of that invariant holding.
-    if (windowEnd === windowStart) return null;
-    const toLocal = (globalPct: number) => ((globalPct - windowStart) / (windowEnd - windowStart)) * 100;
-    const style: ThemeZone[] = fullStyle
-      .map((level) => {
-        const localMin = toLocal(level.min ?? 0);
-        const localMax = toLocal(level.max ?? 100);
-        return {
-          ...level,
-          min: Math.max(0, Math.min(localMin, localMax)),
-          max: Math.min(100, Math.max(localMin, localMax)),
-        };
-      })
-      .filter((level) => (level.max ?? 0) > (level.min ?? 0))
-      // A reversed window can invert local position order (e.g. temperature's
-      // indigo ending up highest) - CSS gradient stops must be non-decreasing
-      // or the browser clamps past an out-of-order one. Sorting keeps them
-      // monotonic regardless of direction (no-op for a normal window).
-      .sort((a, b) => (a.min ?? 0) - (b.min ?? 0));
 
     // A reversed window (center_zero's negative arm) mirrors the gradient's
     // own CSS direction instead of re-deriving the stop logic per direction.
@@ -425,6 +385,97 @@ class ThemeManager {
 
   // center_zero's negative arm on a percent-scaled theme: below the first zone,
   // so the whole arm takes that zone's color.
+  // The theme's zones windowed to one arm's slice, as local 0-100% positions;
+  // null when the window is degenerate.
+  #armStyle(window: [number, number], valueRange: { min: number; max: number } | null): ThemeZone[] | null {
+    const currentStyle = this.#currentStyle;
+    if (!currentStyle) return null;
+    // For linear themes, derive min/max boundaries by splitting 0–100% equally
+    // (already percentage-based by construction, no further conversion needed).
+    const toValuePercent = (v: number) =>
+      !this.#isLinear && !this.#isBasedOnPercentage && valueRange && valueRange.max !== valueRange.min
+        ? ((v - valueRange.min) / (valueRange.max - valueRange.min)) * 100
+        : v;
+    const fullStyle: ThemeZone[] = this.#isLinear
+      ? currentStyle.map((level, i, arr) => ({
+          ...level,
+          min: (i / arr.length) * 100,
+          max: ((i + 1) / arr.length) * 100,
+        }))
+      : currentStyle.map((level) => ({
+          ...level,
+          min: toValuePercent(level.min ?? 0),
+          max: toValuePercent(level.max ?? 100),
+        }));
+
+    const [windowStart, windowEnd] = window;
+    // A degenerate window (center_zero_value pinned exactly to min/max, so one
+    // arm has zero range) would divide by zero here.
+    if (windowEnd === windowStart) return null;
+    const toLocal = (globalPct: number) => ((globalPct - windowStart) / (windowEnd - windowStart)) * 100;
+    return (
+      fullStyle
+        .map((level) => {
+          const localMin = toLocal(level.min ?? 0);
+          const localMax = toLocal(level.max ?? 100);
+          return {
+            ...level,
+            min: Math.max(0, Math.min(localMin, localMax)),
+            max: Math.min(100, Math.max(localMin, localMax)),
+          };
+        })
+        .filter((level) => (level.max ?? 0) > (level.min ?? 0))
+        // A reversed window can invert local position order (e.g. temperature's
+        // indigo ending up highest) - CSS gradient stops must be non-decreasing
+        // or the browser clamps past an out-of-order one. Sorting keeps them
+        // monotonic regardless of direction (no-op for a normal window).
+        .sort((a, b) => (a.min ?? 0) - (b.min ?? 0))
+    );
+  }
+
+  // center_zero on a ring: the negative arm fills the first half of the arc
+  // (from its far end to the zero), the positive arm the second. Every zone is
+  // painted, the track covers what is not filled (styles.ts).
+  buildRingDiverging(
+    mode: string,
+    {
+      defaultColor = null,
+      posWindow,
+      negWindow,
+      valueRange,
+      perArm,
+    }: {
+      defaultColor?: string | null;
+      posWindow: [number, number];
+      negWindow: [number, number];
+      valueRange: { min: number; max: number } | null;
+      perArm: boolean;
+    },
+  ): string | null {
+    const zones = this.#currentStyle;
+    if (!this.#isValid || !zones?.length || mode === 'auto') return null;
+    const at = (half: number) => (pos: number) =>
+      `calc(${(50 + half * (pos / 2)).toFixed(2)}% * var(--ring-span-ratio, 1))`;
+    const stopsOf = (style: ThemeZone[], position: (pos: number) => string) =>
+      mode === 'segment'
+        ? ThemeManager.#fullSegmentStops(style, defaultColor, position)
+        : ThemeManager.#fullRainbowStops(style, defaultColor, position);
+
+    const posStyle = this.#armStyle(perArm ? [0, 100] : posWindow, valueRange);
+    const posStops = posStyle?.length ? stopsOf(posStyle, at(1)) : [];
+    let negStops: string[] = [];
+    if (perArm) {
+      const [first] = [...zones].sort((a, b) => (a.min ?? 0) - (b.min ?? 0));
+      const color = ThemeManager.#zoneColor(first, defaultColor);
+      negStops = [`${color} ${at(-1)(100)}`, `${color} ${at(-1)(0)}`];
+    } else {
+      const negStyle = this.#armStyle(negWindow, valueRange);
+      if (negStyle?.length) negStops = stopsOf(negStyle, at(-1)).reverse();
+    }
+    const stops = [...negStops, ...posStops];
+    return stops.length > 0 ? `conic-gradient(from var(--ring-start, 0deg), ${stops.join(', ')})` : null;
+  }
+
   buildFloorGradient(fillPercent: number, mode: string, defaultColor: string | null = null): string | null {
     const zones = this.#currentStyle;
     if (!this.#isValid || !zones?.length || mode === 'auto') return null;

@@ -178,7 +178,9 @@
         "ltr": "Sleva nadesno",
         "rtl": "Sdesna nalevo",
         "up": "Nagore",
-        "down": "DOWN"
+        "down": "DOWN",
+        "clockwise": null,
+        "counterclockwise": null
       },
       "bar_position": {
         "background": "Pozadina kartice",

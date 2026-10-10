@@ -1805,7 +1805,8 @@ keeps its size and its text; only the straight bar goes.
   one outer size and the icon's circle gives way inside it; on a badge the ring
   goes around the icon, one step thicker than a card's at the same size.
   `xlarge` adds no row here.
-- [`bar_orientation`](#bar_orientation) `rtl` turns it counter-clockwise.
+- [`bar_orientation`](#bar_orientation) `counterclockwise` turns it
+  counter-clockwise.
 - [`bar_color`](#bar_color), [`theme`](#theme) and
   [`bar_color_mode`](#bar_color_mode) color it: `segment` and `rainbow` show
   each zone at its place round the ring, `rainbow_full` paints every zone all
@@ -1930,13 +1931,14 @@ Shapes the ring drawn by [`bar_position: icon`](#bar_position). It has no effect
 with any other `bar_position`.
 
 - `start` [Number] _(default: 0)_: where the ring begins, in degrees clockwise
-  from the top.
+  from the top. With [`center_zero`](#center_zero), it places the zero instead
+  and the arc is centred on it.
 - `gap` [Number] _(default: 0)_: the part of the circle left open, in degrees
   (capped at 330).
 
 The fill, the theme zones, the watermarks, the peak markers and the
-`rainbow_full` marker all follow the arc. [`bar_orientation`](#bar_orientation)
-`rtl` mirrors the whole ring, gap included.
+`rainbow_full` marker all follow the arc. The ring fills clockwise from `start`;
+[`bar_orientation`](#bar_orientation) `counterclockwise` reverses it.
 
 _Example_ (thermostat dial, open at the bottom):
 
@@ -2226,11 +2228,16 @@ bar_max_width: 100px
 [![Template OK][Template-OK]](#compatibility)
 [![Badge Template OK][BadgeTemplate-OK]](#compatibility)
 
-> **`bar_orientation`** [String] {`rtl`|`ltr`|`up`|`down`} _(optional, default:
+> **`bar_orientation`** [String]
+> {`rtl`|`ltr`|`up`|`down`|`clockwise`|`counterclockwise`} _(optional, default:
 > `ltr`)_
 
 Adjusts the progress bar direction to display from right to left. `up` fills a
 vertical bar from the bottom, `down` from the top.
+
+With [`bar_position: icon`](#bar_position), the ring takes `clockwise` (default)
+or `counterclockwise`; `ltr` and `rtl` are read as those two, and the editor
+translates between the two families when `bar_position` changes.
 
 This is especially useful for timers to visually represent the remaining time.
 
@@ -3005,7 +3012,7 @@ stays plain:
 
 A prefix already on the unit is carried rather than doubled: an entity reading
 `1500 kW` shows `1.5 MW`. SI prefixes are spelled the same in every language, so
-this reads identically in all 39.
+this reads identically in all 41.
 
 **Without a unit**, the number itself is abbreviated with your locale's own
 suffix: `1200` becomes `1.2K` in English, `1,2 k` in French, `1,2 тыс.` in

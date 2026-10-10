@@ -39,6 +39,7 @@ import {
   schemaOptions,
   ACTION_FIELDS,
   OPTIONS_WITHOUT_EFFECT,
+  translateOrientation,
   type WatermarkMark,
   type ValueConfig,
 } from '../card/schema.js';
@@ -144,6 +145,10 @@ const parkInertOptions = (config: LovelaceConfig): LovelaceConfig => {
   }
   return next;
 };
+
+// Switching to or from a ring carries the orientation over (ltr <-> clockwise).
+const translateRingOrientation = (config: LovelaceConfig): LovelaceConfig =>
+  is.nullish(config.bar_orientation) ? config : { ...config, bar_orientation: translateOrientation(config) };
 
 const assignOrUnset = <T extends object>(target: T, key: string, value: unknown): T => {
   const next = { ...target };
@@ -1082,7 +1087,7 @@ class EditorBase extends HTMLElement {
 
   // Last word on a config before it leaves: options without effect are parked.
   _settle(config: LovelaceConfig): LovelaceConfig {
-    return parkInertOptions(config);
+    return parkInertOptions(translateRingOrientation(config));
   }
 
   #sendConfig(rawConfig: LovelaceConfig) {

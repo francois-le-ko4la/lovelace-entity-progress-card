@@ -251,6 +251,10 @@ abstract class ViewCore {
 
   // The bar fills vertically (down: mirrored) in these two combinations - read by
   // HACore's vertical-bar class and by every gradient's direction, Template's included.
+  get isDownBar(): boolean {
+    return this.isVerticalBar && this.config.bar_orientation === 'down';
+  }
+
   get isVerticalBar(): boolean {
     return (
       (this.config.bar_orientation === 'up' || this.config.bar_orientation === 'down') &&
@@ -1192,7 +1196,8 @@ class ViewBase extends ViewCore {
   }
 
   get colorGradient(): string | null {
-    if (!this.isAvailable || this.#isCenterZero) return null;
+    if (!this.isAvailable) return null;
+    if (this.#isCenterZero) return this.isRing ? this.#ringDivergingGradient() : null;
     return this.#theme.buildGradient(
       this.#progress.math.percent ?? 0,
       this._configHelper.config.bar_color_mode ?? 'auto',
@@ -1214,26 +1219,12 @@ class ViewBase extends ViewCore {
   // only falls back to this when divergingBarStack doesn't already own the
   // CSS variables.
   get themeDivergingGradient() {
-    const { min, max, centerZero } = this.#progress.input;
-    if (!this.isAvailable || !centerZero) return null;
-    const { zeroValue } = centerZero;
+    const windows = this.#armWindows();
+    if (!windows) return null;
+    const { min, max } = this.#progress.input;
     const { percent } = this.#progress.math;
-    if (max === min) return null;
-    const zeroPercent = ((zeroValue - min) / (max - min)) * 100;
     const mode = this._configHelper.config.bar_color_mode ?? 'auto';
-    // A signed theme (critical_when_extreme_center and friends) already spans
-    // -100..100 as one continuous scale - [0, 100]/[0, -100] read its zone
-    // numbers directly. A regular theme instead windows against zeroPercent,
-    // mirroring the same zones onto each arm independently.
-    const [posWindow, negWindow]: [[number, number], [number, number]] = this.#theme.isSigned
-      ? [
-          [0, 100],
-          [0, -100],
-        ]
-      : [
-          [zeroPercent, 100],
-          [zeroPercent, 0],
-        ];
+    const [posWindow, negWindow] = windows;
     return buildDivergingGradient({
       theme: this.#theme,
       signedPercent: percent ?? 0,
@@ -1244,6 +1235,40 @@ class ViewBase extends ViewCore {
       posWindow,
       negWindow,
       valueRange: { min, max },
+    });
+  }
+
+  // center_zero's two arms, each as a window over the min_value/max_value scale.
+  #armWindows(): [[number, number], [number, number]] | null {
+    const { min, max, centerZero } = this.#progress.input;
+    if (!this.isAvailable || !centerZero || max === min) return null;
+    // A signed theme (critical_when_extreme_center and friends) already spans
+    // -100..100 as one continuous scale - [0, 100]/[0, -100] read its zone
+    // numbers directly. A regular theme instead windows against zeroPercent,
+    // mirroring the same zones onto each arm independently.
+    if (this.#theme.isSigned)
+      return [
+        [0, 100],
+        [0, -100],
+      ];
+    const zeroPercent = ((centerZero.zeroValue - min) / (max - min)) * 100;
+    return [
+      [zeroPercent, 100],
+      [zeroPercent, 0],
+    ];
+  }
+
+  // center_zero around the icon: one conic gradient over both arms.
+  #ringDivergingGradient(): string | null {
+    const windows = this.#armWindows();
+    if (!windows) return null;
+    const { min, max } = this.#progress.input;
+    return this.#theme.buildRingDiverging(this._configHelper.config.bar_color_mode ?? 'auto', {
+      defaultColor: this._currentValue.defaultColor || null,
+      posWindow: windows[0],
+      negWindow: windows[1],
+      valueRange: { min, max },
+      perArm: this.#theme.isPercentScaled,
     });
   }
 

@@ -276,7 +276,9 @@ const StructureElements = {
   ringLayers: () =>
     Object.values(CARD.htmlStructure.elements.ringMarks)
       .map((mark) => Element(mark).html())
-      .join('') + Element(CARD.htmlStructure.elements.ringMark).html(),
+      .join('') +
+    Element(CARD.htmlStructure.elements.ringMark).html() +
+    Element(CARD.htmlStructure.elements.ringZero).html(),
 
   iconSection: (options: StructureOptions = {}) =>
     Element(CARD.htmlStructure.sections.icon).html(StructureElements.iconAndShape(options) + StructureElements.badge()),

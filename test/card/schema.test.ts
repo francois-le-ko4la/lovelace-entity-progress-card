@@ -42,6 +42,26 @@ describe('config negotiation - an invalid value degrades to its default, never r
   });
 });
 
+describe('bar_orientation speaks the words of its bar_position', () => {
+  const orientationOf = (config: Record<string, unknown>) =>
+    (YamlSchemaFactory.card.validate({ entity: 'sensor.test', ...config }).config as { bar_orientation?: string })
+      ?.bar_orientation;
+
+  test('a ring turns ltr/rtl and the default into clockwise/counterclockwise', () => {
+    assert.equal(orientationOf({ bar_position: 'icon' }), 'clockwise');
+    assert.equal(orientationOf({ bar_position: 'icon', bar_orientation: 'rtl' }), 'counterclockwise');
+  });
+
+  test('a straight bar turns clockwise/counterclockwise back into ltr/rtl', () => {
+    assert.equal(orientationOf({ bar_orientation: 'clockwise' }), 'ltr');
+    assert.equal(orientationOf({ bar_orientation: 'counterclockwise' }), 'rtl');
+  });
+
+  test('up has no effect on a ring and leaves it clockwise', () => {
+    assert.equal(orientationOf({ bar_position: 'icon', bar_orientation: 'up' }), 'clockwise');
+  });
+});
+
 describe('YamlSchemaFactory.<type>.fieldDefault - real schema defaults, not a hand-copied table', () => {
   test('bar_orientation defaults to ltr on every type that has it', () => {
     assert.equal(YamlSchemaFactory.card.fieldDefault('bar_orientation'), 'ltr');
@@ -68,8 +88,21 @@ describe('YamlSchemaFactory.<type>.fieldDefault - real schema defaults, not a ha
 
 describe('YamlSchemaFactory.<type>.fieldOptions - allowed values read off the live validator', () => {
   test('the per-variant restriction is the schema itself, not a parallel list', () => {
-    assert.deepEqual(YamlSchemaFactory.badge.fieldOptions('bar_orientation'), ['ltr', 'rtl']);
-    assert.deepEqual(YamlSchemaFactory.card.fieldOptions('bar_orientation'), ['ltr', 'rtl', 'up', 'down']);
+    assert.deepEqual(YamlSchemaFactory.badge.fieldOptions('bar_orientation'), [
+      'ltr',
+      'rtl',
+      'clockwise',
+      'counterclockwise',
+    ]);
+    assert.deepEqual(YamlSchemaFactory.card.fieldOptions('bar_orientation'), [
+      'ltr',
+      'rtl',
+      'up',
+      'down',
+      'clockwise',
+      'counterclockwise',
+    ]);
+    assert.deepEqual(YamlSchemaFactory.feature.fieldOptions('bar_orientation'), ['ltr', 'rtl']);
     assert.deepEqual(YamlSchemaFactory.feature.fieldOptions('bar_position'), ['default', 'top', 'bottom']);
     assert.equal(YamlSchemaFactory.badge.fieldOptions('bar_size')?.includes('xlarge'), false);
     assert.equal(YamlSchemaFactory.card.fieldOptions('bar_size')?.includes('xlarge'), true);

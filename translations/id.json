@@ -178,7 +178,9 @@
         "ltr": "LTR",
         "rtl": "RTL",
         "up": "UP",
-        "down": null
+        "down": null,
+        "clockwise": null,
+        "counterclockwise": null
       },
       "bar_position": {
         "background": "Latar belakang kartu",

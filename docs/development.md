@@ -1135,7 +1135,7 @@ and a property test holds the invariant over random configs.
 
 ## Internationalization
 
-All user-visible strings live in two module-level constants — **39 languages**,
+All user-visible strings live in two module-level constants — **41 languages**,
 248 leaf keys:
 
 ```js
@@ -1292,7 +1292,7 @@ What the generated `src/utils/translations.js` exports, and who reads it:
 | ------------------------ | ------------------- | ------------------ |
 | `TRANSLATION_KEYS`       | yes                 | `hass-provider.ts` |
 | `EDITOR_KEY_START`       | yes                 | `hass-provider.ts` |
-| `TRANSLATIONS_CARD`      | yes, 39 languages   | `hass-provider.ts` |
+| `TRANSLATIONS_CARD`      | yes, 41 languages   | `hass-provider.ts` |
 | `TRANSLATIONS_EDITOR_EN` | yes, English only   | `hass-provider.ts` |
 | `TRANSLATIONS_EDITOR`    | **no**              | `scripts/build.js` |
 

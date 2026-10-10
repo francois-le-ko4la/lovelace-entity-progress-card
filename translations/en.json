@@ -178,7 +178,9 @@
         "ltr": "LTR",
         "rtl": "RTL",
         "up": "UP",
-        "down": "DOWN"
+        "down": "DOWN",
+        "clockwise": "Clockwise",
+        "counterclockwise": "Counterclockwise"
       },
       "bar_position": {
         "background": "Full card background",
