@@ -117,13 +117,13 @@ class EntityProgressCardBase extends HABase {
       badge_color: () => this._renderBadgeColor(content),
       custom_info: () => this._renderCustomInfo(content),
       name_info: () => this._renderNameInfo(content),
-      min_value: () => this._renderJinjaNumber(content, (c: Config) => jinjaOf(c.min_value), 'jinjaMinValue'),
-      max_value: () => this._renderJinjaNumber(content, (c: Config) => jinjaOf(c.max_value), 'jinjaMaxValue'),
+      min_value: () => this._renderJinjaNumber(content, (c: Config) => jinjaOf(c.min_value), 'minValue'),
+      max_value: () => this._renderJinjaNumber(content, (c: Config) => jinjaOf(c.max_value), 'maxValue'),
       ...this._watermarkJinjaHandlers(content),
       'alert_when.above': () =>
-        this._renderJinjaNumber(content, (c: Config) => jinjaOf(c.alert_when?.above), 'jinjaAlertAbove'),
+        this._renderJinjaNumber(content, (c: Config) => jinjaOf(c.alert_when?.above), 'alertAbove'),
       'alert_when.below': () =>
-        this._renderJinjaNumber(content, (c: Config) => jinjaOf(c.alert_when?.below), 'jinjaAlertBelow'),
+        this._renderJinjaNumber(content, (c: Config) => jinjaOf(c.alert_when?.below), 'alertBelow'),
     };
   }
 
@@ -132,10 +132,10 @@ class EntityProgressCardBase extends HABase {
   _renderJinjaNumber(
     content: unknown,
     getJinja: (c: Config) => string | undefined,
-    viewProp: 'jinjaMinValue' | 'jinjaMaxValue' | 'jinjaAlertAbove' | 'jinjaAlertBelow',
+    viewProp: 'minValue' | 'maxValue' | 'alertAbove' | 'alertBelow',
   ) {
     this._applyJinjaNumber(content, getJinja, viewProp, () => {
-      if (viewProp === 'jinjaMinValue' || viewProp === 'jinjaMaxValue') {
+      if (viewProp === 'minValue' || viewProp === 'maxValue') {
         // min/max feed the view's progress (via refresh) - the bar's own CSS
         // and secondaryInfoMain (the "45%" label) derive from it.
         this._cardView.refresh(this.hass as HomeAssistant);
@@ -424,10 +424,7 @@ class EntityProgressTemplateBase extends HABase {
   // refresh() would recompute nothing this tick could have changed, so it's
   // skipped entirely, not just trimmed like EntityProgressCardBase's override.
   _onAutoRefreshTick() {
-    const templates = this.validJinjaFields;
-    for (const [key, template] of Object.entries(templates)) {
-      if (is.nonEmptyString(template)) this._subscribeToTemplate(key, template, true);
-    }
+    this._jinjaSubscriptions.resubscribeAll();
   }
 
   // ─── CSS MANAGEMENT ───────────────────────────────────────────────────────
@@ -496,7 +493,7 @@ class EntityProgressTemplateBase extends HABase {
     // theme (percent: true only) wins outright when configured, same
     // precedence as ViewBase.iconColor's `theme.iconColor || config.color` -
     // deleted here rather than just guarded inside the handler, so
-    // validJinjaFields never subscribes to either while a theme is active,
+    // validFields never subscribes to either while a theme is active,
     // instead of maintaining two subscriptions whose result is thrown away.
     if (this._cardView.config.theme) {
       delete handlers.color;
@@ -618,7 +615,7 @@ class EntityProgressTemplateBadge extends EntityProgressTemplateBase {
 
   // Same reasoning as EntityProgressBadge's own override - schema.ts already
   // deletes badge_icon/badge_color from badgeTemplate's own schema (a badge
-  // has no badge of its own), so validJinjaFields never sees them regardless
+  // has no badge of its own), so validFields never sees them regardless
   // (there's no config value to subscribe to) - this just makes that
   // explicit here too instead of relying on the schema alone, matching the
   // standard Badge class.

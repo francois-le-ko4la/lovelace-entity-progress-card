@@ -1,6 +1,6 @@
 /*
  * theme.md lists the `state-*` color names a user can write. They are exactly
- * the variables HA defines, which the card mirrors in HA_CONTEXT.stateColorVars.
+ * the variables HA defines, mirrored in HA_CONTEXT.stateColorVars.
  */
 
 import { test } from 'node:test';

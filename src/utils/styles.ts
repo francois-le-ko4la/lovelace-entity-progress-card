@@ -2252,7 +2252,7 @@ ha-card.info-multiline {
   }
 }
 
-/* highlight: label - the status pill (HACore._applyAlertLabel) carries the
+/* highlight: label - the status pill (Alert, alert.ts) carries the
    alert, so the card's own border/background stays neutral here and blink/ping
    target .status-label. :not(.alert-label) on the rules above keeps this mode
    from also pulsing a border. --alert-color-final is inherited from

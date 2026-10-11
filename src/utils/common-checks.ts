@@ -136,7 +136,7 @@ function skipConstruct(value: string, from: number, kind: string): number {
 // A regex can't judge Jinja's delimiters: it can't tell "{{ '}}' " (unclosed)
 // from a closed tag, nor spot "{{ a }} {{ b". This walks the string once.
 // Delimiters only - HA stays the authority on syntax; this just skips a round
-// trip certain to fail (HACore._subscribeToTemplate).
+// trip certain to fail (JinjaSubscriptions.subscribe).
 function jinjaKind(value: unknown): 'none' | 'valid' | 'malformed' {
   if (typeof value !== 'string') return 'none';
   let i = 0;

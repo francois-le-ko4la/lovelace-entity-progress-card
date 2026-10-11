@@ -187,6 +187,10 @@ toggle like its tile card.
 - `ViewCore` is abstract: alert thresholds moved to `ViewBase`, the percent
   theme and pushed colors to `TemplateViewBase`, and `entityView` replaces the
   `as ViewBase` casts in `HACore`/`HABase`.
+- Status pill, `alert_when` painting, watermarks and peak marker moved out of
+  `HACore`/`HABase`/`ViewBase` into `StatusLabel`, `Alert`, `Marks` and
+  `PeakMarkerView`; one `watermark` getter replaces the `ViewCore`/`ViewBase`
+  pair.
 
 ## 1.6.3
 

@@ -20,7 +20,7 @@ type Connection = {
 };
 type Hass = Record<string, unknown> & { states: Record<string, Record<string, unknown>>; connection: Connection };
 
-// _processJinjaFields runs at most once per 300ms and catches up with a
+// JinjaSubscriptions.process runs at most once per 300ms and catches up with a
 // trailing pass on ResourceManager's own timer - real time, not happy-dom's.
 const TRAILING_PASS_MS = 350;
 const sleep = (ms: number) =>

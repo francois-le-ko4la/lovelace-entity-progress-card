@@ -555,7 +555,7 @@ class ThemeManager {
     return `${pos.toFixed(2)}%`;
   }
 
-  // A ring's arc is only part of the circle (bar_ring.gap): stops are scaled onto it.
+  // A ring's arc is part of the circle (bar_ring.gap): stops scale onto it.
   static #ringAt(pos: number): string {
     return `calc(${pos.toFixed(2)}% * var(--ring-span-ratio, 1))`;
   }

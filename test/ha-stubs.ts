@@ -51,8 +51,8 @@ installHaStubs();
 export { installHaStubs, PASSIVE_TAGS };
 
 // A hass object with just what a card reaches for on mount. `connection` is a
-// real EventTarget: HABase._watchWebSocket subscribes to its
-// 'disconnected'/'ready' events (see core.ts).
+// real EventTarget: JinjaSubscriptions.watch subscribes to its
+// 'disconnected'/'ready' events.
 // The one entity makeHass() defines. Tests mount against it by name, so it
 // belongs next to the fixture rather than being retyped in each file.
 const TEST_ENTITY = 'sensor.battery';

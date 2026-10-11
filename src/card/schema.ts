@@ -201,11 +201,11 @@ const THEME_ALIASES: Record<string, string> = {
 const BAR_SIZES = Object.values(CARD.style.bar.sizeOptions);
 // No 'xlarge': it would demand a 42px bar inside a badge capped at ~36px.
 const BADGE_BAR_SIZES = ['xsmall', 'small', 'medium', 'large'];
-// A ring is turned clockwise or not: bar_position: icon imposes these two in place
-// of ltr/rtl, and anything else the other way round (translateOrientation).
+// A ring is turned clockwise or not: bar_position: icon imposes these two in
+// place of ltr/rtl, and anything else the other way (translateOrientation).
 const RING_ORIENTATIONS = ['clockwise', 'counterclockwise'];
 const BAR_ORIENTATIONS = ['ltr', 'rtl', 'up', 'down', ...RING_ORIENTATIONS];
-// 'up'/'down' need .vertical.overlay, which Badge/Badge Template/Feature never get.
+// 'up'/'down' need .vertical.overlay, which Badge/Badge Template/Feature lack.
 const BAR_ORIENTATIONS_NO_UP = ['ltr', 'rtl'];
 const BAR_ORIENTATIONS_BADGE = [...BAR_ORIENTATIONS_NO_UP, ...RING_ORIENTATIONS];
 const BAR_POSITIONS = ['default', 'below', 'compact_below', 'top', 'bottom', 'overlay', 'background', 'icon'];
@@ -215,8 +215,8 @@ const BADGE_BAR_POSITIONS = ['default', BAR_AROUND_ICON];
 const hasStraightBar = (c: ConfigLike) => c.bar_position !== BAR_AROUND_ICON;
 const ORIENTATION_AROUND_ICON: Record<string, string> = { ltr: 'clockwise', rtl: 'counterclockwise' };
 const ORIENTATION_STRAIGHT: Record<string, string> = { clockwise: 'ltr', counterclockwise: 'rtl' };
-// The orientation a config's bar_position speaks: a value of the other family is
-// translated, anything else (up, down, unset) is left alone.
+// The orientation a config's bar_position speaks: a value of the other family
+// is translated, anything else (up, down, unset) is left alone.
 const translateOrientation = (c: ConfigLike): unknown => {
   const orientation = c.bar_orientation as string | undefined;
   const table = hasStraightBar(c) ? ORIENTATION_STRAIGHT : ORIENTATION_AROUND_ICON;
@@ -1594,7 +1594,8 @@ const YamlSchemaFactory = {
         bar_max_width: types.optionalString(),
         bar_segments: types.optionalNumber(),
         // Degrees: start clockwise from the top (the zero, under center_zero),
-        // gap = the arc left open. Only bar_position: icon draws a ring (INERT_OPTIONS).
+        // gap = the arc left open. Only bar_position: icon draws a ring
+        // (INERT_OPTIONS).
         bar_ring: types.optional(
           types.object({
             start: types.optionalNumberWithDefault(0),

@@ -87,7 +87,7 @@ class EntityProgressMultiBase extends HACore {
 
   // ─── LIFECYCLE ────────────────────────────────────────────────────────────
   // Overrides HACore's connectedCallback: no _updateDynamicElements /
-  // _handleHassUpdate / _watchWebSocket (all single-bar pipeline).
+  // _handleHassUpdate / WebSocket watching (all single-bar pipeline).
   connectedCallback() {
     this._ensureResourceManager();
     this.render();

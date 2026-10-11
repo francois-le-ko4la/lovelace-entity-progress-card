@@ -6,17 +6,14 @@
 
 import { VERSION, META, CARD_CONTEXT, suffixedName, HA_CONTEXT, CARD } from '../utils/parameters.js';
 import { CARD_CSS, getSharedStyleSheet } from '../utils/styles.js';
-import { is, assertDefined, toNumberOrNull, jinjaKind } from '../utils/common-checks.js';
+import { is, assertDefined, toNumberOrNull } from '../utils/common-checks.js';
 import { initLogger, cardNotice, type LoggerInstance } from '../utils/log.js';
 import { ObjStructure, ThemeManager, ChangeTracker } from './value-helpers.js';
 import { hasUsableHistory } from './entity-helper.js';
 import { HassProviderSingleton, loadEditor, type HomeAssistant, type EntityState } from '../utils/hass-provider.js';
-import { type ViewCore, type ViewBase, type ResolvedWatermark } from './view.js';
+import { type ViewCore, type ResolvedWatermark } from './view.js';
 import {
-  markInner,
-  type WatermarkMark,
   statusLabelObj,
-  jinjaOf,
   markValue,
   entityOf,
   type ValueConfig,
@@ -25,14 +22,15 @@ import {
   BAR_AROUND_ICON,
   BAR_SIZES,
   raisesRainbowFullRow,
-  MARK_TYPES,
-  MARK_ZONE_TYPES,
-  PEAK_RANGE_TYPE_DEFAULT,
   ICON_ANIMATIONS,
   OWN_TRIGGER_ANIMATIONS,
   HAS_EFFECT,
 } from './schema.js';
 import { ResourceManager, DOMHelper, ActionHelper } from './dom-helpers.js';
+import { JinjaSubscriptions } from './jinja-subscriptions.js';
+import { StatusLabel } from './status-label.js';
+import { Alert } from './alert.js';
+import { Marks } from './marks.js';
 import { joinAlignedRows } from './aligned-bars.js';
 import type { CacheValue } from './dom-helpers.js';
 import type { LovelaceConfig, Config } from '../utils/types.js';
@@ -54,22 +52,16 @@ type IconElement = HTMLImageElement | (HTMLElement & { hass: HomeAssistant | nul
 
 // Every Jinja-pushed numeric option, as named on the view - see
 // HABase._applyJinjaNumber.
-type JinjaNumberProp =
-  | 'jinjaMinValue'
-  | 'jinjaMaxValue'
-  | 'jinjaWatermarkLow'
-  | 'jinjaWatermarkHigh'
-  | 'jinjaAlertAbove'
-  | 'jinjaAlertBelow';
+type JinjaNumberProp = 'minValue' | 'maxValue' | 'watermarkLow' | 'watermarkHigh' | 'alertAbove' | 'alertBelow';
 
 // The option each one answers for, as the subscription is keyed.
 const JINJA_NUMBER_KEY: Record<JinjaNumberProp, string> = {
-  jinjaMinValue: 'min_value',
-  jinjaMaxValue: 'max_value',
-  jinjaWatermarkLow: 'watermark.low',
-  jinjaWatermarkHigh: 'watermark.high',
-  jinjaAlertAbove: 'alert_when.above',
-  jinjaAlertBelow: 'alert_when.below',
+  minValue: 'min_value',
+  maxValue: 'max_value',
+  watermarkLow: 'watermark.low',
+  watermarkHigh: 'watermark.high',
+  alertAbove: 'alert_when.above',
+  alertBelow: 'alert_when.below',
 };
 
 // HABase#_applyTrendVisuals's own icon-per-direction map - shared by every
@@ -150,18 +142,23 @@ class HACore extends HTMLElement {
   // is never instantiated, only its subclasses.
   declare _cardView: ViewCore;
   _dom = new DOMHelper();
+  _marks = new Marks({ view: () => this._cardView, dom: () => this._dom });
   _hassProvider = HassProviderSingleton.getInstance();
   _changeTracker = new ChangeTracker();
   #isRendered = false;
-  // CF5 - issue (perf) resolved - render_template subscriptions are push-based;
-  // tracking the signature (template + entity variable) of each live/in-flight
-  // subscription lets us skip the systematic unsubscribe/resubscribe cycle on
-  // every refresh
-  #templateSignatures = new Map<string, string>();
-  // Signatures HA has rejected as un-renderable. Keyed by field like the map
-  // above, so it holds one entry per Jinja field, not one per edit: any change
-  // to the template produces a new signature and retries by construction.
-  #failedSignatures = new Map<string, string>();
+  _jinjaSubscriptions = new JinjaSubscriptions({
+    hass: () => this.hass,
+    resourceManager: () => this._resourceManager,
+    isConnected: () => this.isConnected,
+    log: () => this._log,
+    ensureResourceManager: () => this._ensureResourceManager(),
+    config: () => this._cardView.config,
+    handlers: (content) => this._getJinjaHandlers(content),
+    canProcess: () => this._validateProcessJinjaFields(),
+    context: () => this._getTemplateContext(),
+    onFailure: (key, message) => this._onJinjaFailure(key, message),
+    report: (message, detail) => this.#reportTemplateFailure(message, detail),
+  });
 
   // ─── LIFECYCLE METHODS ────────────────────────────────────────────────────
   static get _loggedMethods() {
@@ -173,17 +170,11 @@ class HACore extends HTMLElement {
       'reset',
       'render',
       '_storeDOM',
-      '_handleWatermarkClasses',
       '_handleBarEffect',
       '_updateDynamicElements',
-      '_renderJinja',
       '_refreshBarEffect',
       '_createCardElements',
       '_buildStyle',
-      '_processJinjaFields',
-      '_subscribeToTemplate',
-      '_watchWebSocket',
-      '_unwatchWebSocket',
       '_validateProcessJinjaFields',
       '_startAutoRefresh',
       '_stopAutoRefresh',
@@ -230,7 +221,7 @@ class HACore extends HTMLElement {
     this._updateDynamicElements();
     if (this.hass) {
       this._handleHassUpdate();
-      this._watchWebSocket();
+      this._jinjaSubscriptions.watch();
     }
     this.#watchInterference();
     this.#syncAlignedBars();
@@ -239,8 +230,7 @@ class HACore extends HTMLElement {
   disconnectedCallback() {
     this._resourceManager?.cleanup();
     this._resourceManager = null;
-    this.#templateSignatures.clear(); // subscriptions died with cleanup() — allow resubscription on reconnect
-    this.#failedSignatures.clear();
+    this._jinjaSubscriptions.clear(); // subscriptions died with cleanup() — allow resubscription on reconnect
     this.#interferenceObserver?.disconnect();
     this.#interferenceObserver = null;
   }
@@ -331,7 +321,7 @@ class HACore extends HTMLElement {
   // For a host that removes parts of this card whatever its own hide says (the
   // Multi Feature). Called before setConfig, which builds the structure.
   forceHidden(targets: string[]): void {
-    this._cardView.forceHidden(targets);
+    this._cardView.jinjaState.forceHidden(targets);
   }
 
   setConfig(config: LovelaceConfig) {
@@ -341,6 +331,7 @@ class HACore extends HTMLElement {
 
     this._givenConfig = config;
     this._cardView.config = { ...config };
+    this._jinjaSubscriptions.invalidate();
     this._registerWatchedEntities();
     if (this.isRendered) this.reset(); // Card/Badge editor
     this.render(); // re-build the card
@@ -396,7 +387,7 @@ class HACore extends HTMLElement {
       this._handleHassUpdate();
     }
     this._ensureResourceManager();
-    if (!this._wsInitialized) this._watchWebSocket();
+    if (!this._jinjaSubscriptions.watching) this._jinjaSubscriptions.watch();
   }
 
   get hass(): HomeAssistant | null {
@@ -602,8 +593,8 @@ class HACore extends HTMLElement {
     // element.style is null when the shared constructed sheet is adopted
     this._shadow.replaceChildren(...(element.style ? [element.style, element.card] : [element.card]));
     this._storeDOM();
-    // After _storeDOM(): _handleWatermarkClasses/_handlePeakMarkerClasses set
-    // the shape class on the mark elements, which must be registered by then.
+    // After _storeDOM(): Marks sets the shape class on the mark elements, which
+    // must be registered by then.
     this._buildStyle();
     this._buildSegmentCells();
     this.#syncAlignedBars();
@@ -744,39 +735,9 @@ class HACore extends HTMLElement {
 
   _buildStyle() {
     this._addBaseClasses();
-    this._handleWatermarkClasses();
-    this._handlePeakMarkerClasses();
+    this._marks.watermarkClasses();
+    this._marks.peakMarkerClasses();
     this._handleBarEffect();
-  }
-
-  _handlePeakMarkerClasses() {
-    const marker = this._cardView.entityView?.peakMarker;
-    if (!marker) return;
-
-    const pb = CARD.htmlStructure.elements.progressBar;
-    const ring = CARD.htmlStructure.elements.ringMarks;
-    // The bar's mark and its ring twin: only one of them is ever built.
-    const markKeys = {
-      min: [pb.minMarker.class, ring.min.class],
-      max: [pb.maxMarker.class, ring.max.class],
-      avg: [pb.averageMarker.class, ring.avg.class],
-    };
-    (
-      [
-        ['min', marker.min],
-        ['max', marker.max],
-        ['avg', marker.average],
-      ] as const
-    ).forEach(([key, mark]) => {
-      for (const markKey of markKeys[key]) {
-        this._dom.toggleClass(markKey, CARD.style.dynamic.markShown, mark.shown);
-        this._applyMarkShape(markKey, mark.type, MARK_TYPES, SCHEMA_DEFAULTS.peakMarker.type);
-      }
-    });
-    for (const markKey of [pb.rangeMarker.class, ring.range.class]) {
-      this._dom.toggleClass(markKey, CARD.style.dynamic.markShown, marker.range.shown);
-      this._applyMarkShape(markKey, marker.range.type, MARK_ZONE_TYPES, PEAK_RANGE_TYPE_DEFAULT);
-    }
   }
 
   // N real fill cells per fillable half (bar_segments: N), not a divider
@@ -864,39 +825,6 @@ class HACore extends HTMLElement {
     this._toggleClasses(this._baseClassStyle);
   }
 
-  // The shape class sits on the mark itself, so one CSS rule per shape serves
-  // every family (watermark, peak_marker) instead of one per family x shape.
-  _applyMarkShape(markKey: string, type: string, shapes: readonly string[], fallback: string) {
-    const shape = shapes.includes(type) ? type : fallback;
-    // Every shape is toggled, not just the active one: toggleClass on its own
-    // would leave the previously applied shape's class behind.
-    for (const candidate of shapes) this._dom.toggleClass(markKey, `wm-${candidate}`, candidate === shape);
-  }
-
-  _handleWatermarkClasses() {
-    // Captured once so the null-check below actually narrows what the rest
-    // of this method reads - hasWatermark and watermark are two separate
-    // getter calls that TypeScript can't otherwise correlate.
-    const watermark = this._cardView.watermark;
-    if (!watermark) return;
-
-    const pb = CARD.htmlStructure.elements.progressBar;
-    const ring = CARD.htmlStructure.elements.ringMarks;
-    const shownClass = CARD.style.dynamic.markShown;
-    // The bar's mark and its ring twin: only one of them is ever built.
-    (
-      [
-        [[pb.highWatermark.class, ring.high.class], watermark.high],
-        [[pb.lowWatermark.class, ring.low.class], watermark.low],
-      ] as const
-    ).forEach(([keys, mark]) => {
-      for (const markKey of keys) {
-        this._dom.toggleClass(markKey, shownClass, mark.shown);
-        this._applyMarkShape(markKey, mark.type, MARK_TYPES, SCHEMA_DEFAULTS.watermark.type);
-      }
-    });
-  }
-
   // The editor (EntityProgressEffectChips) can only guard interactive
   // selection - Jinja/hand-written YAML bypasses it. Incompatible pairs
   // (glass/gradient(_reverse) vs. shimmer/shimmer_reverse share the same CSS
@@ -937,7 +865,7 @@ class HACore extends HTMLElement {
 
   _updateDynamicElements() {
     this._updateCSS();
-    this._processJinjaFields();
+    this._jinjaSubscriptions.process();
   }
 
   // ─── CSS MANAGEMENT ───────────────────────────────────────────────────────
@@ -958,10 +886,10 @@ class HACore extends HTMLElement {
       diverging: bar.divergingBarStack ?? bar.themeDivergingGradient,
     });
     this._applyWatermarkCSS(bar.hasWatermark ? bar.watermark : null);
-    this._applyPeakMarkerCSS(bar.peakMarker);
+    this._marks.peakMarkerCSS(bar.peakMarker);
     // History-seeded (async, after the initial _buildStyle() pass): the marks'
     // own shown class needs recomputing here too, not just at render() time.
-    this._handlePeakMarkerClasses();
+    this._marks.peakMarkerClasses();
   }
 
   _applyProgressCSS(
@@ -1024,128 +952,19 @@ class HACore extends HTMLElement {
     ).forEach(([varName, value]) => this._dom.setOrRemoveStyle(cardKey, varName, value));
   }
 
-  // Shared by _applyWatermarkCSS/_applyPeakMarkerCSS below - one mark's own
-  // value/opacity/color vars. The bare-number `-num` companion is read by
-  // the bar_segments position compensation (styles.ts), which needs a plain
-  // number, not a percentage it would have to divide back out.
-  _applyMarkCSS(
-    cardKey: string,
-    vars: { value: { var: string }; opacity: { var: string }; color: { var: string }; lineSize: { var: string } },
-    mark: { value: number; opacity: number; color?: string | null; line_size: string },
-  ) {
-    this._dom.setStyle(cardKey, vars.value.var, `${mark.value}%`);
-    this._dom.setStyle(cardKey, `${vars.value.var}-num`, mark.value);
-    this._dom.setStyle(cardKey, vars.opacity.var, mark.opacity);
-    this._dom.setStyle(cardKey, vars.lineSize.var, mark.line_size);
-    this._dom.setOrRemoveStyle(cardKey, vars.color.var, mark.color);
-  }
-
   _applyWatermarkCSS(watermark: ResolvedWatermark | null) {
-    if (!watermark) return;
-    const cardKey = CARD.htmlStructure.card.element;
-    const wm = CARD.style.dynamic.watermark;
-    (
-      [
-        [wm.low, watermark.low],
-        [wm.high, watermark.high],
-      ] as const
-    ).forEach(([vars, mark]) => this._applyMarkCSS(cardKey, vars, mark));
-    this._dom.setStyle(cardKey, wm.opacity.var, watermark.opacity);
-    this._dom.setStyle(cardKey, wm.lineSize.var, watermark.line_size);
-  }
-
-  _applyPeakMarkerCSS(marker: ViewBase['peakMarker']) {
-    if (!marker) return;
-    const cardKey = CARD.htmlStructure.card.element;
-    const pm = CARD.style.dynamic.peakMarker;
-    (
-      [
-        [pm.min, marker.min],
-        [pm.max, marker.max],
-        [pm.average, marker.average],
-      ] as const
-    ).forEach(([vars, mark]) => this._applyMarkCSS(cardKey, vars, mark));
-    this._dom.setStyle(cardKey, pm.lineSize.var, this._cardView.config.peak_marker?.line_size);
-    // Geometry excepted: the band reads --peak-min-value/--peak-max-value,
-    // both set just above whether their own mark is drawn or not.
-    this._dom.setStyle(cardKey, pm.range.opacity.var, marker.range.opacity);
-    this._dom.setOrRemoveStyle(cardKey, pm.range.color.var, marker.range.color);
+    this._marks.watermarkCSS(watermark);
   }
 
   // ─── JINJA TEMPLATE RENDERING ─────────────────────────────────────────────
-
-  get validJinjaFields(): Record<string, string> {
-    // Most Jinja-capable options are flat strings, but some (min_value,
-    // watermark.low/.high) use an explicit { jinja: "..." } map instead of
-    // sniffing a bare string - extract accordingly. watermark.low/.high can
-    // wrap that map one level deeper (types.watermarkMark) - markInner
-    // unwraps it, same as markValue elsewhere; every other key passes through.
-    // status_label's own shorthand (a bare string for { jinja: string })
-    // means the walk can hit a string before reaching the last segment -
-    // that string IS the target already, .jinja on it would be undefined.
-    const rawValueFor = (key: string) => {
-      const raw = key.includes('.')
-        ? key
-            .split('.')
-            .reduce<unknown>(
-              (obj, k) => (is.string(obj) ? obj : (obj as Record<string, unknown>)?.[k]),
-              this._cardView.config,
-            )
-        : this._cardView.config[key];
-      const unwrapped = markInner(raw as WatermarkMark);
-      return is.plainObject(unwrapped) ? (unwrapped.jinja ?? '') : unwrapped || '';
-    };
-    const handlers = this._getJinjaHandlers();
-    const result = Object.fromEntries(
-      Object.keys(handlers)
-        .map((key) => [key, rawValueFor(key)])
-        .filter(([, value]) => is.nonEmptyString(value)),
-    );
-    this._log?.debug('validJinjaFields: ', { handler: handlers, config: this._cardView.config, result });
-    return result;
-  }
 
   _getJinjaHandlers(content?: unknown): Record<string, () => void> {
     throw new Error(`${this.constructor.name} must implement _getJinjaHandlers(${content})`);
   }
 
-  // A multi-step script (e.g. turn an input_boolean on, then pick an
-  // input_select option) can make HA push one intermediate template result
-  // per entity change, not just the final settled one (issue #135). Debounced
-  // per key, not globally, via ResourceManager.setTimeout's existing
-  // cancel-and-replace-by-id (~80ms: short enough to feel instant, long
-  // enough to coalesce a script's back-to-back pushes into the last one).
-  _renderJinja(key: string, content: unknown) {
-    this._log?.debug('📎 HACore._renderJinja():', { key, content });
-    this._resourceManager?.setTimeout(() => this.#applyJinja(key, content), 80, `jinja-render-${key}`);
-  }
-
   // A Jinja field Home Assistant could not render; HABase decides what to do.
   _onJinjaFailure(key: string, message: string) {
     this._log?.debug('📎 HACore._onJinjaFailure():', { key, message });
-  }
-
-  #onJinjaMessage(key: string, msg: { result?: unknown; error?: unknown }) {
-    if (is.nullish(msg.error)) this._renderJinja(key, msg.result);
-    else this._onJinjaFailure(key, String(msg.error));
-  }
-
-  #applyJinja(key: string, content: unknown) {
-    const renderHandlers = this._getJinjaHandlers(content);
-    const handler = renderHandlers[key];
-
-    if (handler) {
-      // CF5 - issue (critical) resolved - an exception inside a render handler
-      // propagated into the WebSocket message callback; log it instead of
-      // crashing the card
-      try {
-        handler();
-      } catch (error) {
-        this._log?.error(`Jinja - render failed for ${key}:`, error);
-      }
-    } else {
-      console.error(`Jinja - Unknown case: ${key}`);
-    }
   }
 
   _refreshBarEffect(content: unknown) {
@@ -1160,54 +979,6 @@ class HACore extends HTMLElement {
 
   // ─── TEMPLATE PROCESSING ──────────────────────────────────────────────────
 
-  get _wsInitialized(): boolean {
-    return Boolean(
-      this._resourceManager?.has(CARD.network.disconnected) && this._resourceManager?.has(CARD.network.ready),
-    );
-  }
-
-  _unwatchWebSocket() {
-    if (!this._resourceManager) return;
-    this._resourceManager.remove(CARD.network.disconnected);
-    this._resourceManager.remove(CARD.network.ready);
-  }
-
-  _watchWebSocket() {
-    const { hass } = this;
-    // #87: conditionally hiding/re-showing the card (visibility + an
-    // input_text helper) could leave resourceManager or hass momentarily null.
-    if (!this._resourceManager || !hass) return;
-    this._unwatchWebSocket();
-    this._resourceManager.addEventListener(
-      hass.connection,
-      'disconnected',
-      () => {
-        this._log?.debug('🔌 WebSocket disconnected');
-        const templates = this.validJinjaFields;
-        for (const key of Object.keys(templates)) {
-          this._resourceManager?.remove(`template-${key}`);
-        }
-        this.#templateSignatures.clear(); // connection lost — all subscriptions are dead server-side
-        // A template that failed while HA was going down deserves another try.
-        this.#failedSignatures.clear();
-      },
-      { passive: true },
-      CARD.network.disconnected,
-    );
-
-    this._resourceManager.addEventListener(
-      hass.connection,
-      'ready',
-      () => {
-        this._log?.debug('🔁 WebSocket ready — reprocessing templates');
-        this._ensureResourceManager();
-        this._processJinjaFields();
-      },
-      { passive: true },
-      CARD.network.ready,
-    );
-  }
-
   _validateProcessJinjaFields(): boolean {
     return (
       Boolean(this._resourceManager) &&
@@ -1215,51 +986,11 @@ class HACore extends HTMLElement {
     );
   }
 
-  _processJinjaFields() {
-    if (!this._validateProcessJinjaFields()) {
-      this._log?.debug('❌ Jinja processing skipped - validation failed');
-      return;
-    }
-
-    this._log?.debug('✅ Processing Jinja fields');
-
-    this._resourceManager?.throttleDebounce(
-      () => {
-        const templates = this.validJinjaFields;
-        this.#cleanupOrphanTemplates(templates);
-        for (const [key, template] of Object.entries(templates)) {
-          if (is.nonEmptyString(template)) this._subscribeToTemplate(key, template);
-        }
-      },
-      300,
-      'jinjaProcess',
-    );
-  }
-
-  // CF5 - issue (perf) resolved - a Jinja field removed from the config left
-  // its subscription alive (pushing results into a DOM that no longer expects
-  // them) until disconnect; drop subscriptions whose key is no longer
-  // configured
-  #cleanupOrphanTemplates(templates: Record<string, string>) {
-    for (const subscriptionKey of [...this.#templateSignatures.keys()]) {
-      const key = subscriptionKey.slice('template-'.length);
-      if (!is.nonEmptyString(templates[key])) {
-        this._resourceManager?.remove(subscriptionKey);
-        this.#templateSignatures.delete(subscriptionKey);
-      }
-    }
-  }
-
   _getTemplateContext(): { entity?: string } {
     const entity = this._cardView?.config?.entity;
     return entity ? { entity } : {};
   }
 
-  // HA sends code 'template_error' for two different things (core's
-  // websocket_api/commands.py): a real TemplateError, and a render that blew
-  // its time budget. Only the first is deterministic - a timeout can pass on a
-  // less busy instance, so it stays retryable. Any other code (disconnection,
-  // timeout, unknown command) is transient by nature.
   // HA sets both on the element itself when it renders a card in an editor
   // preview or the card picker (frontend's hui-card.ts / hui-badge.ts), so a
   // half-typed template is expected there and must not shout on every
@@ -1276,109 +1007,6 @@ class HACore extends HTMLElement {
   #reportTemplateFailure(message: string, detail?: unknown) {
     if (this.#isPreview) this._log?.debug(message, detail);
     else cardNotice(message);
-  }
-
-  static #isTemplateError(error: unknown): boolean {
-    const { code, message } = (error ?? {}) as { code?: string; message?: string };
-    return code === 'template_error' && !String(message ?? '').includes('Exceeded maximum execution time');
-  }
-
-  async _subscribeToTemplate(key: string, template: string, force = false) {
-    this._log?.debug('📎 HACore._subscribeToTemplate:', { key, template });
-    const subscriptionKey = `template-${key}`;
-
-    const { hass } = this;
-    if (!hass?.connection?.connected) {
-      this._log?.debug(`[Template ${key}] WebSocket not connected, skipping subscription.`);
-      return;
-    }
-    this._log?.debug('network ok...');
-
-    if (!this._resourceManager) {
-      this._log?.debug(`[Template ${key}] ResourceManager is null, skipping subscription.`);
-      return;
-    }
-
-    // CF5 - issue (perf) resolved - subscriptions are push-based: skip when an
-    // identical one is live or in-flight. Reserving the signature before the
-    // await also fixes a race where two overlapping calls created a duplicate
-    // (orphan) subscription. `force` (see _onAutoRefreshTick) bypasses this
-    // dedup on purpose - HA push for a now()/utcnow() template does not repeat
-    // every second on its own (issue #127), so ticking the countdown means
-    // creating a fresh subscription with the same signature.
-    const signature = `${template}\u0000${this._getTemplateContext().entity ?? ''}`;
-    if (!force && this.#templateSignatures.get(subscriptionKey) === signature) {
-      this._log?.debug(`[Template ${key}] Identical subscription live or in-flight, skipping.`);
-      return;
-    }
-    // HA already refused this exact template: re-sending it on every hass
-    // update would fail identically, once per update. Editing the template
-    // changes the signature, which lifts the block on its own.
-    if (this.#failedSignatures.get(subscriptionKey) === signature) {
-      this._log?.debug(`[Template ${key}] Rejected by HA and unchanged since, skipping.`);
-      return;
-    }
-    // An unclosed delimiter can only be refused: recorded like an HA rejection
-    // so it is reported once and never re-sent until the template changes.
-    if (jinjaKind(template) === 'malformed') {
-      this.#failedSignatures.set(subscriptionKey, signature);
-      this._onJinjaFailure(key, 'unclosed delimiter');
-      this.#reportTemplateFailure(
-        `${key}: the Jinja template has an unclosed delimiter and was not sent to Home Assistant. ` +
-          'Please close it ({{ ... }}, {% ... %} or {# ... #}). This field stays empty until the template changes.',
-        template,
-      );
-      return;
-    }
-    this.#templateSignatures.set(subscriptionKey, signature);
-
-    try {
-      this._log?.debug('key:', key);
-      this._log?.debug('template:', template);
-
-      const unsub = await hass.connection.subscribeMessage(
-        (msg: unknown) => this.#onJinjaMessage(key, msg as { result?: unknown; error?: unknown }),
-        {
-          type: HA_CONTEXT.ws.renderTemplate,
-          template,
-          variables: this._getTemplateContext(),
-        },
-      );
-
-      if (this.#templateSignatures.get(subscriptionKey) !== signature) {
-        // A newer subscription attempt superseded this one while we awaited.
-        unsub();
-        return;
-      }
-      if (!this._resourceManager) {
-        this._log?.debug(`[Template ${key}] ResourceManager became null during subscription, cleaning up.`);
-        unsub();
-        this.#templateSignatures.delete(subscriptionKey);
-        return;
-      } else if (!this.isConnected) {
-        unsub();
-        this.#templateSignatures.delete(subscriptionKey);
-        return;
-      } else {
-        this._resourceManager.remove(subscriptionKey);
-        this._resourceManager.addSubscription(unsub, subscriptionKey);
-      }
-    } catch (error) {
-      // Allow a retry on the next processing cycle.
-      if (this.#templateSignatures.get(subscriptionKey) === signature) this.#templateSignatures.delete(subscriptionKey);
-      // Only a template-level rejection is deterministic: the same string will
-      // fail the same way forever. A transport failure (HA restarting, socket
-      // dropped) must stay retryable, or a valid template dies for the session.
-      if (HACore.#isTemplateError(error)) {
-        this.#failedSignatures.set(subscriptionKey, signature);
-        this._onJinjaFailure(key, (error as { message?: string })?.message ?? String(error));
-      }
-      this.#reportTemplateFailure(
-        `${key}: Home Assistant rejected the Jinja template (${(error as { message?: string })?.message ?? error}). ` +
-          'Please check its syntax. This field stays empty until the template changes.',
-        error,
-      );
-    }
   }
 }
 
@@ -1424,17 +1052,14 @@ class HABase extends HACore {
   #badgeIconObjectColor: string | null = null;
   #badgeColorFieldValue: string | null = null;
   #lastMessage: { content: string; sev: string } | null = null;
-  // status_label's last-resolved state; null text = no push landed yet.
-  // Cached so _repaintStatusLabel can refresh the pill's bar color on every
-  // _updateDynamicElements pass, not just when a Jinja push lands - on
-  // Template, barColor only settles once percent's own push arrives, and
-  // status_label may never push again after that, so without this cache the
-  // pill could get stuck on whichever color won that one race.
-  _lastStatusLabelText: string | null = null;
-  _lastStatusLabelColor: string | null = null;
-  // Last (text, color) actually painted - skips _paintLabel's forced reflow
-  // when neither changed, so an unrelated setConfig doesn't repaint the pill.
-  #lastPaintedLabel: { text: string; color: string } | null = null;
+  #statusLabel = new StatusLabel(() => this._dom);
+  #alert = new Alert({
+    view: () => this._cardView,
+    dom: () => this._dom,
+    toggleClasses: (style) => this._toggleClasses(style),
+    statusLabel: this.#statusLabel,
+    repaintStatusLabel: () => this._repaintStatusLabel(),
+  });
 
   // ─── LIFECYCLE METHODS ────────────────────────────────────────────────────
 
@@ -1482,8 +1107,7 @@ class HABase extends HACore {
     this.#badgeIconValue = null;
     this.#badgeIconObjectColor = null;
     this.#badgeColorFieldValue = null;
-    this._lastStatusLabelText = null;
-    this._lastStatusLabelColor = null;
+    this.#statusLabel.clearStatus();
   }
 
   connectedCallback() {
@@ -1566,7 +1190,7 @@ class HABase extends HACore {
   reset() {
     super.reset(); // #isRendered, _dom.destroy(), shadowRoot.innerHTML
     this._icon = null;
-    this.#lastPaintedLabel = null;
+    this.#statusLabel.forgetPaint();
   }
 
   // ─── ERROR MESSAGE MANAGEMENT ─────────────────────────────────────────────
@@ -1683,9 +1307,8 @@ class HABase extends HACore {
     this.#applyRingGeometry(cardKey);
   }
 
-  // bar_ring: the arc left after the gap is a ratio of the circle, for the
-  // calc()s of styles.ts; an unset ring removes its vars (setStyle never unsets).
-  // Under center_zero, `start` places the zero and the arc is centred on it.
+  // bar_ring: the arc left after the gap, as a ratio of the circle (styles.ts);
+  // an unset ring removes its vars. Under center_zero, `start` places the zero.
   #applyRingGeometry(cardKey: string) {
     const { start = 0, gap = 0 } = this._cardView.config.bar_ring ?? {};
     const openArc = Math.min(Math.max(gap, 0), RING_MAX_GAP);
@@ -1723,11 +1346,11 @@ class HABase extends HACore {
     const effect = this._cardView.iconAnimationEffect;
     // icon_animation: { effect, jinja } mode - once pushed, the resolved
     // boolean fully replaces automatic entity-based detection. Fix:
-    // `jinjaIconAnimationActive === null` used to mean both "not in jinja
+    // `iconAnimationActive === null` used to mean both "not in jinja
     // mode" and "no push yet", falling back to autoDetect either way.
     // hasJinjaIconAnimation checks the *config*, not the cache, so jinja
     // mode disengages autoDetect immediately, default false until the push.
-    const override = this._cardView.jinjaIconAnimationActive;
+    const override = this._cardView.jinjaState.iconAnimationActive;
     const active = (autoDetect: () => boolean): boolean =>
       this._cardView.hasJinjaIconAnimation ? (override ?? false) : autoDetect();
     return new Map<string, boolean>([
@@ -1763,16 +1386,6 @@ class HABase extends HACore {
     ]);
   }
 
-  get _alertStyle(): Map<string, boolean> {
-    return new Map([
-      ['alert-active', this._cardView.isAlertActive],
-      ['alert-background', this._cardView.isAlertActive && this._cardView.resolvedAlertHighlight === 'background'],
-      ['alert-label', this._cardView.isAlertActive && this._cardView.resolvedAlertHighlight === 'label'],
-      ['alert-anim-blink', this._cardView.isAlertActive && this._cardView.alertAnimation === 'blink'],
-      ['alert-anim-ping', this._cardView.isAlertActive && this._cardView.alertAnimation === 'ping'],
-    ]);
-  }
-
   _applyStaticClasses() {
     this._toggleClasses(this._staticStyle);
   }
@@ -1782,15 +1395,7 @@ class HABase extends HACore {
   }
 
   _applyAlertClasses() {
-    this._toggleClasses(this._alertStyle);
-    this._applyAlertLabel();
-    // Re-applied here too (not just _addBaseParameter's one-time build pass)
-    // so Advanced mode's color override reaches border/background on push.
-    this._dom.setStyle(
-      CARD.htmlStructure.card.element,
-      '--alert-color',
-      ThemeManager.adaptColor(this._cardView.resolvedAlertColor),
-    );
+    this.#alert.apply();
   }
 
   // Bridgehead used by a full render/refresh - re-applies all three layers.
@@ -1822,7 +1427,7 @@ class HABase extends HACore {
       const items = (is.array(jinjaContent) ? jinjaContent : String(jinjaContent).split(','))
         .map((s: unknown) => String(s).trim())
         .filter(Boolean);
-      this._cardView.setResolvedHide(items);
+      this._cardView.jinjaState.setResolvedHide(items);
     }
 
     this.hiddenComponents.forEach((component) => {
@@ -1847,7 +1452,7 @@ class HABase extends HACore {
     // state-driven (icon_animation active state, entity error), and toggleClass
     // is value-cached so unchanged classes cost nothing.
     this._applyConditionalClasses();
-    this._processJinjaFields();
+    this._jinjaSubscriptions.process();
     this._processStandardFields();
   }
 
@@ -2206,7 +1811,7 @@ class HABase extends HACore {
       },
       icon_animation: () => this._renderIconAnimationWhen(content),
       'status_label.jinja': () => this._renderLabel(content),
-      'alert_when.jinja': () => this._renderAlertWhenJinja(content),
+      'alert_when.jinja': () => this.#alert.receiveJinja(content),
     };
   }
 
@@ -2219,36 +1824,12 @@ class HABase extends HACore {
     return handlers;
   }
 
-  // Advanced mode's own trigger (see schema.ts's alert_when.jinja) - shared
-  // by every variant, unlike above/below (_renderJinjaNumber, Card-only).
-  _renderAlertWhenJinja(content: unknown) {
-    if (!this._cardView.hasJinjaAlertWhen) return;
-    this._cardView.jinjaAlertResult = content;
-    this._applyAlertClasses();
-  }
-
   // Shared by EntityProgressCardBase/EntityProgressTemplateBase's own
   // _getJinjaHandlers below.
   _watermarkJinjaHandlers(content: unknown): Record<string, () => void> {
-    // Watermark position is resolved directly in _updateCSS
-    // (_applyWatermarkCSS) from the view's own watermark getter.
-    const repaint = () => this._updateCSS();
-    return {
-      'watermark.low': () =>
-        this._applyJinjaNumber(
-          content,
-          (c: Config) => jinjaOf(markValue(c.watermark?.low, SCHEMA_DEFAULTS.watermark.low)),
-          'jinjaWatermarkLow',
-          repaint,
-        ),
-      'watermark.high': () =>
-        this._applyJinjaNumber(
-          content,
-          (c: Config) => jinjaOf(markValue(c.watermark?.high, SCHEMA_DEFAULTS.watermark.high)),
-          'jinjaWatermarkHigh',
-          repaint,
-        ),
-    };
+    return Marks.jinjaHandlers((getJinja, viewProp) =>
+      this._applyJinjaNumber(content, getJinja, viewProp, () => this._updateCSS()),
+    );
   }
 
   // Every Jinja-pushed number shares this guard/parse/skip-if-unchanged -
@@ -2262,21 +1843,20 @@ class HABase extends HACore {
     // Defensive: only apply while the option is still in { jinja: "..." } mode:
     // guards against a push landing as the user switches the mode chips away.
     if (!is.nonEmptyString(getJinja(this._cardView.config))) return;
-    // Four of the six props live on ViewBase, the watermark pair on ViewCore.
-    const view = this._cardView as ViewBase;
+    const state = this._cardView.jinjaState;
     const value = toNumberOrNull(content);
     const key = JINJA_NUMBER_KEY[viewProp];
     // A result that is no number (an 'unavailable' state) fails like a refusal.
     const failure = value === null ? '' : null;
-    if (value === view[viewProp] && failure === view.jinjaFailure(key)) return;
-    view[viewProp] = value;
-    view.setJinjaFailure(key, failure);
+    if (value === state[viewProp] && failure === state.failure(key)) return;
+    state[viewProp] = value;
+    state.setFailure(key, failure);
     repaint();
   }
 
   _onJinjaFailure(key: string, message: string) {
     if (!Object.values(JINJA_NUMBER_KEY).includes(key)) return super._onJinjaFailure(key, message);
-    this._cardView.setJinjaFailure(key, message);
+    this._cardView.jinjaState.setFailure(key, message);
     if (key.startsWith('alert_when')) this._applyAlertClasses();
     else if (key.startsWith('watermark')) this._updateCSS();
     else {
@@ -2286,93 +1866,26 @@ class HABase extends HACore {
     }
   }
 
-  // GitHub-label-style status pill, shared by `status_label` Jinja
-  // (_renderLabel) and alert_when.highlight: 'label' (_applyAlertLabel).
-  // background/border/text color follow GitHub's Primer recipe for issue
-  // labels (ThemeManager.labelColorComponents). outline-color is a scratch
-  // property, not a real style choice: assigning the raw color to it lets
-  // the browser normalize it into rgb(...) for parsing, then it's removed.
-  _paintLabel(text: string, color: string) {
-    if (this.#lastPaintedLabel?.text === text && this.#lastPaintedLabel?.color === color) return;
-    const key = CARD.htmlStructure.elements.label.class;
-    this._dom.setText(key, text);
-    const el = this._dom.get(key);
-    if (!el || !text) return;
-    el.style.setProperty('outline-color', color);
-    const components = ThemeManager.labelColorComponents(getComputedStyle(el).outlineColor);
-    el.style.removeProperty('outline-color');
-    // setConfig renders before HA inserts the card, and getComputedStyle reads
-    // nothing useful on a detached element - so the very first paint resolves
-    // no components. Recording the cache only once they land keeps that
-    // attempt retryable; recording it up front left the pill on its grey
-    // fallback for good, since every later call matched the cache and bailed.
-    if (!components) return;
-    this.#lastPaintedLabel = { text, color };
-    const label = CARD.style.dynamic.label;
-    el.style.setProperty(label.r.var, String(components.r));
-    el.style.setProperty(label.g.var, String(components.g));
-    el.style.setProperty(label.b.var, String(components.b));
-    el.style.setProperty(label.h.var, String(components.h));
-    el.style.setProperty(label.s.var, String(components.s));
-    el.style.setProperty(label.l.var, String(components.l));
-  }
-
   _renderLabel(content: unknown) {
     this._log?.debug('📎 HACore._renderLabel():', { content });
-    // alert_when.highlight: 'label' owns the pill while configured this
-    // way (see _applyAlertLabel) - a plain `label` Jinja alongside it would
-    // otherwise fight over the same element on every refresh.
-    if (this._cardView.isAlertActive && this._cardView.resolvedAlertHighlight === 'label') return;
-    // Native dict return (docs/configuration.md's Jinja "Returning a native
-    // type") - `{{ {'label': 'hot', 'color': '#ff0000'} }}` lets one
-    // template drive both. `_lastStatusLabelColor` null = no override,
-    // _repaintStatusLabel falls back to the bar's own color.
-    if (is.plainObject(content)) {
-      this._lastStatusLabelText = String(content.label ?? '').trim();
-      // is.nonEmptyString, not is.string - an explicit but empty `color: ''`
-      // must fall back too (adaptColor('') returns '' as-is, and _repaint
-      // StatusLabel's own `?? fallbackColor` wouldn't have caught that, only
-      // a real null/undefined).
-      this._lastStatusLabelColor = ThemeManager.adaptColor(is.nonEmptyString(content.color) ? content.color : null);
-    } else {
-      this._lastStatusLabelText = String(content ?? '').trim();
-      this._lastStatusLabelColor = null;
-    }
+    if (this.#statusLabel.alertOwns) return;
+    this.#statusLabel.receive(content);
     this._repaintStatusLabel();
   }
 
-  // Called again from _updateDynamicElements (HABase's own override, the
-  // only one) on every refresh, and from _managePercent/color/bar_color's
-  // own pushes (cards.ts) - not just from _renderLabel's own push above. See
-  // _lastStatusLabelText's own comment for why the pill needs repainting
-  // outside a status_label push too.
+  // Also called on every refresh and from cards.ts's color pushes, not just
+  // from _renderLabel: status_label may never push again after percent settles.
   _repaintStatusLabel() {
-    if (this._cardView.isAlertActive && this._cardView.resolvedAlertHighlight === 'label') return;
-    if (this._lastStatusLabelText === null) return;
-    // status_label.color_source picks which of the two the pill falls back
-    // to when its own `jinja` doesn't return an explicit {label, color} -
-    // 'bar' by default (see schema.ts's own comment on why).
+    if (this.#statusLabel.alertOwns) return;
+    const text = this.#statusLabel.text;
+    if (text === null) return;
+    // status_label.color_source picks the fallback when its `jinja` returns no
+    // explicit {label, color}: 'bar' by default (see schema.ts).
     const fallbackColor =
       statusLabelObj(this._cardView.config?.status_label).color_source === 'icon'
         ? this._cardView.iconColor
         : this._cardView.barColor;
-    const color = this._lastStatusLabelColor ?? fallbackColor ?? CARD.style.color.default;
-    this._paintLabel(this._lastStatusLabelText, color);
-  }
-
-  // resolvedAlertLabel/Color already fold in Advanced mode's own override.
-  // Inactive: hands the pill back to status_label instead of blanking it
-  // (CF5-adjacent fix - the pill used to stay alert-owned even once idle).
-  _applyAlertLabel() {
-    if (this._cardView.resolvedAlertHighlight !== 'label') return;
-    if (!this._cardView.isAlertActive) {
-      this._repaintStatusLabel();
-      return;
-    }
-    this._paintLabel(
-      this._cardView.resolvedAlertLabel.trim(),
-      ThemeManager.adaptColor(this._cardView.resolvedAlertColor) ?? CARD.style.color.default,
-    );
+    this.#statusLabel.paint(text, this.#statusLabel.color ?? fallbackColor ?? CARD.style.color.default);
   }
 
   _renderIconAnimationWhen(content: unknown) {
@@ -2381,7 +1894,7 @@ class HABase extends HACore {
     // mode - guards against a push arriving right as the user switches modes
     // (mirrors EntityProgressCardBase._renderJinjaNumber).
     if (!this._cardView.hasJinjaIconAnimation) return;
-    this._cardView.jinjaIconAnimationActive = content;
+    this._cardView.jinjaState.setIconAnimationActive(content);
     // Every other Jinja setter re-applies its own changed layer - this one
     // didn't, so the value only took effect once something else re-ran
     // _applyIconAnimationClasses. Template has no incidental refresh to

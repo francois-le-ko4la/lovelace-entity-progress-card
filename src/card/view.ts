@@ -11,19 +11,15 @@ import { is, assertDefined } from '../utils/common-checks.js';
 import {
   jinjaOf,
   markShown,
-  peakMarkShown,
   markValue,
   MARK_FACTORIZATION,
   type MarkField,
-  type PeakPoint,
   SCHEMA_DEFAULTS,
-  PEAK_RANGE_TYPE_DEFAULT,
   DENSITY_COMPACT_BAR_POSITIONS,
   raisesRainbowFullRow,
   BAR_AROUND_ICON,
   HAS_EFFECT,
   OWN_TRIGGER_ANIMATIONS,
-  type PeakMark,
   YamlSchemaFactory,
   type Infer,
 } from './schema.js';
@@ -50,9 +46,10 @@ import {
   type Bound,
 } from './bound-value.js';
 import { ThemeManager, EntityCollectionHelper } from './value-helpers.js';
+import { JinjaState } from './jinja-state.js';
 import { EntityHelper, type Reading } from './entity-helper.js';
 import { TrendTracker, type TrendBasis } from './trend-tracker.js';
-import { PeakTracker } from './peak-tracker.js';
+import { PeakMarkerView, type ResolvedPeakMarker } from './peak-marker-view.js';
 import { HassProviderSingleton, type HomeAssistant } from '../utils/hass-provider.js';
 import { domainProfile, isStateActive } from './ha-state.js';
 import { nextOnGrid, relativeAge } from '../utils/clock.js';
@@ -74,7 +71,7 @@ type WatermarkType = 'blended' | 'area' | 'striped' | 'triangle' | 'round' | 'li
 type WatermarkSide = 'low' | 'high';
 
 // What ViewCore/ViewBase's `watermark` getter resolves each side to -
-// consumed by HACore._applyWatermarkCSS/_handleWatermarkClasses (core.ts).
+// consumed by Marks (marks.ts).
 // type/opacity are never undefined here (unlike WatermarkConfig's own) -
 // the getter always resolves them against SCHEMA_DEFAULTS.watermark first.
 type ResolvedWatermarkMark = {
@@ -91,27 +88,6 @@ type ResolvedWatermark = {
   opacity: number;
   type: WatermarkType;
   line_size: string;
-};
-
-type PeakMarkType = 'line' | 'round' | 'triangle' | 'blended' | 'area' | 'striped';
-type PeakZoneType = 'area' | 'blended' | 'striped';
-// peak_marker.range - no value of its own: it spans min to max. The family's
-// own `type` can't be its fallback (a line is not a zone), so 'area' is.
-type ResolvedPeakZone = {
-  shown: boolean;
-  type: PeakZoneType;
-  opacity: number;
-  color: string | null;
-};
-// One resolved peak_marker.min/.max/.average - shown=false still carries a
-// type/opacity/value so callers never need an extra null-check per field.
-type ResolvedPeakMark = {
-  shown: boolean;
-  type: PeakMarkType;
-  opacity: number;
-  color: string | null;
-  line_size: string;
-  value: number;
 };
 
 type BarStackEntityConfig = NonNullable<NonNullable<CardShape['bar_stack']>['entities']>[number];
@@ -202,27 +178,9 @@ abstract class ViewCore {
   _currentValue = new EntityHelper();
   _lowValue: Bound = null;
   _highValue: Bound = null;
-  // alert_when.jinja (Advanced mode) resolved trigger - true/an override
-  // object mean active, false/empty/null mean inactive or not pushed yet.
-  #jinjaAlertResult: boolean | Record<string, unknown> | null = null;
-  // Numeric Jinja fields Home Assistant could not render, by option key: its
-  // message, or '' when there is none (a result that is no number).
-  #jinjaFailures = new Map<string, string>();
-  // watermark.low/.high resolved from a Jinja subscription; null = no
-  // override. Template writes them too.
-  #jinjaWatermarkLow: number | null = null;
-  #jinjaWatermarkHigh: number | null = null;
-  // icon_animation { effect, jinja }: the resolved boolean deciding whether
-  // `effect` plays. null = not in that mode, or not resolved yet.
-  #jinjaIconAnimationActive: boolean | null = null;
-  // hide's Jinja-resolved state (see hasComponentHiddenFlag/setResolvedHide
-  // below) - null means "no push has landed yet, fall back to config.hide"
-  // (also what a plain static hide: [...] array stays at forever, since
-  // nothing ever calls setResolvedHide for it).
-  #resolvedHide: Set<string> | null = null;
-  // What a host (the Multi Feature) takes off this card whatever hide says,
-  // Jinja included - see forceHidden.
-  #forcedHide = new Set<string>();
+  // Numbers pushed for min/max, alert above/below and watermark low/high.
+  // Template writes the watermark pair too.
+  readonly jinjaState = new JinjaState();
 
   constructor() {
     traceInstance('ViewCore', CARD_CONTEXT.debug.instances);
@@ -236,21 +194,21 @@ abstract class ViewCore {
     }
 
     this._configHelper.config = config;
-    this.resetJinjaFailures();
+    this.jinjaState.resetCommon();
+    this.jinjaState.resetAlert();
     this._bindEntity();
     // jinja mode is fed by the template subscription, not the entity helper -
     // see _applyWatermarkValues.
     ViewCore._applyWatermarkValues(this, this._configHelper.config?.watermark as WatermarkConfig | undefined);
-    this.#jinjaIconAnimationActive = null;
-    this.#resolvedHide = null;
+    this.jinjaState.resetHideAndIcon();
   }
 
   get config(): Config {
     return this._configHelper.config;
   }
 
-  // The bar fills vertically (down: mirrored) in these two combinations - read by
-  // HACore's vertical-bar class and by every gradient's direction, Template's included.
+  // Vertical fill (down: mirrored) - read by HACore's vertical-bar class and by
+  // every gradient's direction, Template's included.
   get isDownBar(): boolean {
     return this.isVerticalBar && this.config.bar_orientation === 'down';
   }
@@ -278,9 +236,7 @@ abstract class ViewCore {
   // resolved into _lowValue/_highValue, jinja overrides reset to null.
   static _applyWatermarkValues(view: ViewCore, watermark: WatermarkConfig | undefined) {
     view._lowValue = boundFrom(markValue(watermark?.low, SCHEMA_DEFAULTS.watermark.low), null);
-    view.jinjaWatermarkLow = null;
     view._highValue = boundFrom(markValue(watermark?.high, SCHEMA_DEFAULTS.watermark.high), null);
-    view.jinjaWatermarkHigh = null;
   }
 
   _bindEntity() {
@@ -322,7 +278,7 @@ abstract class ViewCore {
   // icon_animation: an enum name | { effect, jinja } - resolves either shape
   // to the effect actually chosen (see schema.ts's enumOrJinjaTrigger and
   // HABase._iconAnimationStyle, the sole consumer of both this and
-  // jinjaIconAnimationActive below).
+  // jinjaState.iconAnimationActive).
   get iconAnimationEffect(): string | null {
     const raw = this.config?.icon_animation;
     if (is.plainObject(raw)) return (raw as { effect?: string }).effect ?? null;
@@ -332,7 +288,7 @@ abstract class ViewCore {
   // Whether { effect, jinja } mode is configured at all, regardless of
   // whether a push has resolved yet - see HABase._iconAnimationStyle's own
   // comment on why this needs to be checked separately from
-  // jinjaIconAnimationActive === null (which also means "no push yet",
+  // jinjaState.iconAnimationActive === null (which also means "no push yet",
   // not just "not in that mode").
   get hasJinjaIconAnimation(): boolean {
     const raw = this.config?.icon_animation;
@@ -346,14 +302,6 @@ abstract class ViewCore {
     const animationReadsDevice =
       !this.hasJinjaIconAnimation && effect !== null && OWN_TRIGGER_ANIMATIONS.includes(effect);
     return animationReadsDevice || this.config?.theme === 'battery_adaptive';
-  }
-
-  get jinjaIconAnimationActive(): boolean | null {
-    return this.#jinjaIconAnimationActive;
-  }
-
-  set jinjaIconAnimationActive(value: unknown) {
-    this.#jinjaIconAnimationActive = is.boolean(value) ? value : null;
   }
 
   // Shared by ViewBase and the template views (CardTemplateView/
@@ -554,29 +502,29 @@ abstract class ViewCore {
   get watermark(): ResolvedWatermark | null {
     const watermark = this.config.watermark as WatermarkConfig | undefined;
     if (!watermark) return null;
-    // No full toPos/calcWatermark here (unlike ViewBase's override below) - a
-    // ViewCore-direct instance (Template) has no min_value/max_value to
-    // project onto, so `as` is moot. center_zero still needs the same
-    // 50 + value/2 recenter percent itself gets in _managePercent, though -
-    // without it a mark landed in the wrong half of the bar.
-    const isCenterZero = Boolean(this.config.center_zero);
-    const toPos = (value: number | null) => (isCenterZero ? 50 + (value as number) / 2 : (value as number));
     return ViewCore._buildResolvedWatermark({
       watermark,
-      jinjaLow: this.#jinjaWatermarkLow,
-      jinjaHigh: this.#jinjaWatermarkHigh,
+      jinjaLow: this.jinjaState.watermarkLow,
+      jinjaHigh: this.jinjaState.watermarkHigh,
       lowValue: boundValue(this._lowValue),
       highValue: boundValue(this._highValue),
       usable: this._usableMarks,
-      toPos,
+      toPos: this._markToPos(),
     });
+  }
+
+  // Template has no min/max to project onto, so `as` is moot; center_zero still
+  // needs percent's 50 + value/2 recenter or a mark lands in the wrong half.
+  _markToPos(): (value: number | null, side: WatermarkSide) => number {
+    const isCenterZero = Boolean(this.config.center_zero);
+    return (value) => (isCenterZero ? 50 + (value as number) / 2 : (value as number));
   }
 
   // A mark whose entity or Jinja is in a fault state is dropped; the bar stays.
   get _usableMarks(): Record<WatermarkSide, boolean> {
     return {
-      low: boundUsable(this._lowValue) && this.jinjaFailure('watermark.low') === null,
-      high: boundUsable(this._highValue) && this.jinjaFailure('watermark.high') === null,
+      low: boundUsable(this._lowValue) && this.jinjaState.failure('watermark.low') === null,
+      high: boundUsable(this._highValue) && this.jinjaState.failure('watermark.high') === null,
     };
   }
 
@@ -744,54 +692,17 @@ abstract class ViewCore {
     return is.nonEmptyString(this.config?.alert_when?.jinja);
   }
 
-  get jinjaAlertResult(): boolean | Record<string, unknown> | null {
-    return this.#jinjaAlertResult;
-  }
-
-  set jinjaAlertResult(value: unknown) {
-    this.#jinjaAlertResult = is.boolean(value) || is.plainObject(value) ? value : null;
-  }
-
-  jinjaFailure(key: string): string | null {
-    return this.#jinjaFailures.get(key) ?? null;
-  }
-
-  setJinjaFailure(key: string, message: string | null) {
-    if (message === null) this.#jinjaFailures.delete(key);
-    else this.#jinjaFailures.set(key, message);
-  }
-
-  resetJinjaFailures() {
-    this.#jinjaFailures.clear();
-  }
-
-  get jinjaWatermarkLow(): number | null {
-    return this.#jinjaWatermarkLow;
-  }
-
-  set jinjaWatermarkLow(value: number | null) {
-    this.#jinjaWatermarkLow = value;
-  }
-
-  get jinjaWatermarkHigh(): number | null {
-    return this.#jinjaWatermarkHigh;
-  }
-
-  set jinjaWatermarkHigh(value: number | null) {
-    this.#jinjaWatermarkHigh = value;
-  }
-
   // Advanced mode: the trigger IS the jinja result - true or an override
   // object both mean active. The above/below thresholds are ViewBase's.
   get isAlertActive(): boolean {
     if (!this.hasJinjaAlertWhen) return false;
-    const result = this.#jinjaAlertResult;
+    const result = this.jinjaState.alertResult;
     return result === true || is.plainObject(result);
   }
 
   // Any key can be omitted - each resolved getter below falls back to config.
   get #alertOverride(): Record<string, unknown> {
-    return is.plainObject(this.#jinjaAlertResult) ? this.#jinjaAlertResult : {};
+    return is.plainObject(this.jinjaState.alertResult) ? this.jinjaState.alertResult : {};
   }
 
   // An Advanced-mode override wins over the config; each caller brings its own
@@ -828,8 +739,8 @@ abstract class ViewCore {
   }
 
   // Single source of truth for "is X currently hidden": static `hide: [...]`
-  // and Jinja `hide: "{{ ... }}"` alike (#resolvedHide caches a Jinja push,
-  // config.hide covers the static-array case). density: compact + layout:
+  // and Jinja `hide: "{{ ... }}"` alike (jinjaState.resolvedHide caches a Jinja
+  // push, config.hide covers the static-array case). density: compact + layout:
   // vertical forces name/secondary_info hidden ahead of both, unconditionally
   // - no room left for them at a single grid row (applyDensityRule).
   // A Jinja `hide` can flip on any push, so its components have to stay in the
@@ -837,11 +748,14 @@ abstract class ViewCore {
   // time setConfig runs, so the structure can leave them out entirely instead
   // of building them only to display: none them.
   isStaticallyHidden(component: string): boolean {
-    return this.#forcedHide.has(component) || (!is.jinja(this.config?.hide) && this.hasComponentHiddenFlag(component));
+    return (
+      this.jinjaState.forcedHide.has(component) ||
+      (!is.jinja(this.config?.hide) && this.hasComponentHiddenFlag(component))
+    );
   }
 
   hasComponentHiddenFlag(component: string): boolean {
-    if (this.#forcedHide.has(component)) return true;
+    if (this.jinjaState.forcedHide.has(component)) return true;
     if (
       this.config?.density === 'compact' &&
       this.config.layout === CARD.layout.orientations.vertical.label &&
@@ -849,16 +763,8 @@ abstract class ViewCore {
         component === CARD.style.dynamic.hiddenComponent.secondary_info.label)
     )
       return true;
-    if (this.#resolvedHide) return this.#resolvedHide.has(component);
+    if (this.jinjaState.resolvedHide) return this.jinjaState.resolvedHide.has(component);
     return is.array(this.config?.hide) && this.config.hide.some((target) => target === component);
-  }
-
-  setResolvedHide(items: string[]): void {
-    this.#resolvedHide = new Set(items);
-  }
-
-  forceHidden(targets: string[]): void {
-    this.#forcedHide = new Set(targets);
   }
 
   // Takes the whole bag: tap/hold/doubleTap is the shape _configHelper.action
@@ -942,37 +848,14 @@ class ViewBase extends ViewCore {
   #theme = new ThemeManager();
   #maxValue: Bound = null;
   #minValue: Bound = null;
-  // min_value/max_value resolved from a Jinja subscription (standard cards);
-  // null = no override
-  #jinjaMinValue: number | null = null;
-  #jinjaMaxValue: number | null = null;
   #entityCollection = new EntityCollectionHelper();
   // alert_when.above/.below: not in the template schema, which only has the
   // Jinja trigger.
   _aboveValue: Bound = null;
   _belowValue: Bound = null;
-  // resolved from a Jinja subscription; null = no override
-  #jinjaAlertAbove: number | null = null;
-  #jinjaAlertBelow: number | null = null;
   readonly entityView: ViewBase = this;
 
   // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
-
-  get jinjaAlertAbove(): number | null {
-    return this.#jinjaAlertAbove;
-  }
-
-  set jinjaAlertAbove(value: number | null) {
-    this.#jinjaAlertAbove = value;
-  }
-
-  get jinjaAlertBelow(): number | null {
-    return this.#jinjaAlertBelow;
-  }
-
-  set jinjaAlertBelow(value: number | null) {
-    this.#jinjaAlertBelow = value;
-  }
 
   // Thresholds are in the entity's native unit, in watermark.low/high's shapes.
   get isAlertActive(): boolean {
@@ -980,8 +863,8 @@ class ViewBase extends ViewCore {
     if (!this._currentValue.isUsable || isFaultState(this._currentValue.state)) return false;
     const value = this._currentValue.current;
     if (!is.number(value)) return false;
-    const above = this.#jinjaAlertAbove ?? usableBoundValue(this._aboveValue);
-    const below = this.#jinjaAlertBelow ?? usableBoundValue(this._belowValue);
+    const above = this.jinjaState.alertAbove ?? usableBoundValue(this._aboveValue);
+    const below = this.jinjaState.alertBelow ?? usableBoundValue(this._belowValue);
     return (is.number(above) && value > above) || (is.number(below) && value < below);
   }
 
@@ -999,7 +882,9 @@ class ViewBase extends ViewCore {
     }
 
     this._configHelper.config = config;
-    this.resetJinjaFailures();
+    this.jinjaState.resetCommon();
+    this.jinjaState.resetAlert();
+    this.jinjaState.resetHideAndIcon();
 
     const centerZero = this._configHelper.config.centerZero;
 
@@ -1064,21 +949,17 @@ class ViewBase extends ViewCore {
       this.#maxValue = CARD.config.value.max;
     } else {
       this._currentValue.attribute = this._configHelper.config.attribute ?? null;
-      // Jinja mode is fed by #jinjaMaxValue/#jinjaMinValue: no bound.
+      // Jinja mode is fed by jinjaState: no bound.
       this.#maxValue = boundFrom(this._configHelper.config.max_value, CARD.config.value.max);
-      this.#jinjaMaxValue = null;
       this.#minValue = boundFrom(this._configHelper.config.min_value, null);
-      this.#jinjaMinValue = null;
+      this.jinjaState.resetBounds();
     }
     // Wired for timers too, unlike attribute/min/max (which a timer overrides).
     ViewCore._applyWatermarkValues(this, this._configHelper.config?.watermark as WatermarkConfig | undefined);
     // alert_when.above/.below: same shape and reasoning as watermark low/high
     // above - alert_when isn't overridden by the timer path either.
     this._aboveValue = boundFrom(this._configHelper.config?.alert_when?.above, null);
-    this.jinjaAlertAbove = null;
     this._belowValue = boundFrom(this._configHelper.config?.alert_when?.below, null);
-    this.jinjaAlertBelow = null;
-    this.jinjaAlertResult = null;
   }
 
   get config(): Config {
@@ -1098,7 +979,7 @@ class ViewBase extends ViewCore {
     if (this._currentValue.valueKind === 'timer') return null;
     const state = boundState(bound);
     if (isFaultState(state)) return { role, state };
-    const jinja = this.jinjaFailure(role);
+    const jinja = this.jinjaState.failure(role);
     return jinja === null ? null : { role, state: HA_CONTEXT.entity.state.unavailable, jinja };
   }
 
@@ -1107,8 +988,12 @@ class ViewBase extends ViewCore {
     if (this._currentValue.valueKind === 'timer') return false;
     const { min_value: min, max_value: max } = this._configHelper.config;
     return (
-      (is.nonEmptyString(jinjaOf(max)) && this.#jinjaMaxValue === null && this.jinjaFailure('max_value') === null) ||
-      (is.nonEmptyString(jinjaOf(min)) && this.#jinjaMinValue === null && this.jinjaFailure('min_value') === null)
+      (is.nonEmptyString(jinjaOf(max)) &&
+        this.jinjaState.maxValue === null &&
+        this.jinjaState.failure('max_value') === null) ||
+      (is.nonEmptyString(jinjaOf(min)) &&
+        this.jinjaState.minValue === null &&
+        this.jinjaState.failure('min_value') === null)
     );
   }
 
@@ -1238,7 +1123,7 @@ class ViewBase extends ViewCore {
     });
   }
 
-  // center_zero's two arms, each as a window over the min_value/max_value scale.
+  // center_zero's two arms, each as a window over the min/max_value scale.
   #armWindows(): [[number, number], [number, number]] | null {
     const { min, max, centerZero } = this.#progress.input;
     if (!this.isAvailable || !centerZero || max === min) return null;
@@ -1302,69 +1187,22 @@ class ViewBase extends ViewCore {
     return this.#progress.math.watermarkFor(value ?? 0);
   }
 
-  // peak_marker (Card only): seeded from history by HACore, then fed on every
-  // refresh; #peakMarker holds the resulting positions, in percent.
-  #peakTracker: PeakTracker | null = null;
-  #peakMarker: { min: number; max: number; average: number } | null = null;
+  #peak = new PeakMarkerView({
+    config: () => this.config.peak_marker,
+    reading: () => this._currentValue.reading,
+    toPercent: (rawValue) => this.percentForRawValue(rawValue),
+  });
 
   seedPeakMarker(points: { t: number; value: number }[]) {
-    const window = (this.config.peak_marker as { window?: unknown } | undefined)?.window;
-    if (!is.number(window)) return;
-    this.#peakTracker = new PeakTracker(window * 1000);
-    this.#peakTracker.seed(points);
-    this.#updatePeakMarker();
+    this.#peak.seed(points);
   }
 
-  // Before a re-seed: a previous entity's or window's marks must not linger.
   clearPeakMarker() {
-    this.#peakTracker = null;
-    this.#peakMarker = null;
+    this.#peak.clear();
   }
 
-  #updatePeakMarker() {
-    if (!this.#peakTracker) return;
-    const { reading } = this._currentValue;
-    if (reading.kind === 'scalar' && is.number(reading.value)) this.#peakTracker.push(reading.value);
-    const peaks = this.#peakTracker.peaks();
-    this.#peakMarker = peaks && {
-      min: this.percentForRawValue(peaks.min),
-      max: this.percentForRawValue(peaks.max),
-      average: this.percentForRawValue(peaks.average),
-    };
-  }
-
-  get peakMarker(): {
-    min: ResolvedPeakMark;
-    max: ResolvedPeakMark;
-    average: ResolvedPeakMark;
-    range: ResolvedPeakZone;
-  } | null {
-    if (!this.#peakMarker || !is.plainObject(this.config.peak_marker)) return null;
-    const config = this.config.peak_marker;
-    // The same table and resolver as the watermark above (MARK_FIELDS): a
-    // peak mark differs only in existing solely once set.
-    const field = (key: string, name: MarkField) =>
-      MARK_FACTORIZATION.peak_marker.resolve({ peak_marker: config }, key, name);
-    const color = (key: string) => ThemeManager.adaptColor((field(key, 'color') as string | undefined) ?? null);
-    const resolve = (key: PeakPoint, value: number): ResolvedPeakMark => ({
-      shown: peakMarkShown(config[key] as PeakMark),
-      value,
-      type: field(key, 'type') as PeakMarkType,
-      opacity: field(key, 'opacity') as number,
-      line_size: field(key, 'line_size') as string,
-      color: color(key),
-    });
-    return {
-      min: resolve('min', this.#peakMarker.min),
-      max: resolve('max', this.#peakMarker.max),
-      average: resolve('average', this.#peakMarker.average),
-      range: {
-        shown: peakMarkShown(config.range as PeakMark),
-        type: (field('range', 'type') ?? PEAK_RANGE_TYPE_DEFAULT) as PeakZoneType,
-        opacity: field('range', 'opacity') as number,
-        color: color('range'),
-      },
-    };
+  get peakMarker(): ResolvedPeakMarker | null {
+    return this.#peak.resolved;
   }
 
   get secondaryInfoMain(): string | null {
@@ -1416,36 +1254,20 @@ class ViewBase extends ViewCore {
     );
   }
 
-  get watermark(): ResolvedWatermark | null {
+  _markToPos(): (value: number | null, side: WatermarkSide) => number {
     const watermark = this.config.watermark as WatermarkConfig | undefined;
-    if (!watermark) return null;
-    // A timer's own `max` isn't a stable scale the way a sensor's min/max is
-    // - it's the running instance's actual duration (idle uses a [0, 100]
-    // placeholder, see ViewCore#manageTimerEntity), so a raw watermark value
-    // means a different position every run. 'auto' resolves to 'percent'
-    // behavior for timers instead, so the configured value stays a stable
-    // percentage regardless of how long any given run happens to be.
+    // A timer's `max` is the running instance's duration, so a raw value would
+    // mean a different position every run: timers read it as a percentage.
     const isTimer = this._currentValue.valueKind === 'timer';
-    // as: 'percent' skips calcWatermark's min/max projection (the value is
-    // already a position), but under center_zero a position still needs the
-    // same 50 + value/2 recenter calcWatermark itself applies - same bug as
-    // ViewCore's own watermark getter, fixed there for the same reason.
-    const toPos = (raw: number | null, side: WatermarkSide) => {
+    return (raw, side) => {
       if (isTimer) return raw ?? 0;
       const as = MARK_FACTORIZATION.watermark.resolve({ watermark }, side, 'as');
       if (as !== 'percent') return this.#watermarkPosition(raw);
+      // as: 'percent' skips the min/max projection but still needs the
+      // center_zero recenter.
       const value = raw ?? 0;
       return this.#isCenterZero ? 50 + value / 2 : value;
     };
-    return ViewCore._buildResolvedWatermark({
-      watermark,
-      jinjaLow: this.jinjaWatermarkLow,
-      jinjaHigh: this.jinjaWatermarkHigh,
-      lowValue: boundValue(this._lowValue),
-      highValue: boundValue(this._highValue),
-      usable: this._usableMarks,
-      toPos,
-    });
   }
 
   get hasEntityCollection(): boolean {
@@ -1482,7 +1304,7 @@ class ViewBase extends ViewCore {
 
   #deriveFromCurrentValue() {
     this.#updateProgress();
-    this.#updatePeakMarker();
+    this.#peak.update();
     this.#theme.value = valueForThemes(this.#progress, this.#theme.isCustomTheme, this.#theme.isBasedOnPercentage) ?? 0;
   }
 
@@ -1545,11 +1367,11 @@ class ViewBase extends ViewCore {
   // A Jinja push first, then the configured entity's `current` or the plain
   // number.
   get #effectiveMin(): number | null {
-    return this.#jinjaMinValue ?? boundValue(this.#minValue);
+    return this.jinjaState.minValue ?? boundValue(this.#minValue);
   }
 
   get #effectiveMax(): number | null {
-    return this.#jinjaMaxValue ?? boundValue(this.#maxValue);
+    return this.jinjaState.maxValue ?? boundValue(this.#maxValue);
   }
 
   #stdValues() {
@@ -1573,22 +1395,6 @@ class ViewBase extends ViewCore {
     };
   }
 
-  get jinjaMinValue(): number | null {
-    return this.#jinjaMinValue;
-  }
-
-  set jinjaMinValue(value: number | null) {
-    this.#jinjaMinValue = value;
-  }
-
-  get jinjaMaxValue(): number | null {
-    return this.#jinjaMaxValue;
-  }
-
-  set jinjaMaxValue(value: number | null) {
-    this.#jinjaMaxValue = value;
-  }
-
   // A sliding window moves all the time: re-read once a minute, sooner if
   // shorter.
   static #slideTickAt(now: number, windowSeconds: unknown): number[] {
@@ -1601,7 +1407,7 @@ class ViewBase extends ViewCore {
     if (this.isActiveTimer) return this.#timerTickAt(now);
     const trend = this.config.trend_indicator;
     const deadlines = [
-      ...(this.#peakTracker
+      ...(this.#peak.seeded
         ? ViewBase.#slideTickAt(now, (this.config.peak_marker as { window?: unknown })?.window)
         : []),
       ...(is.plainObject(trend) ? ViewBase.#slideTickAt(now, trend.window) : []),

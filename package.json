@@ -12,7 +12,9 @@
   },
   "scripts": {
     "check:syntax": "find src -name '*.js' -print0 | xargs -0 -n1 node --check",
-    "lint": "eslint \"src/**/*.{js,ts}\" \"test/**/*.{js,ts}\"",
+    "lint": "npm run lint:src && npm run lint:test",
+    "lint:src": "eslint \"src/**/*.{js,ts}\"",
+    "lint:test": "eslint \"test/**/*.{js,ts}\"",
     "type-check": "tsc",
     "type-check:test": "tsc -p test/tsconfig.json",
     "i18n:validate": "node scripts/translations.js validate",

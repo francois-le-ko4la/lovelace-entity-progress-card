@@ -12,6 +12,8 @@ import {
   YamlSchemaFactory,
 } from '../../src/card/schema.js';
 
+const ENTITY = 'sensor.test';
+
 describe('entityOf/attributeOf/jinjaOf', () => {
   test('read their own sub-field off an {entity, attribute} object', () => {
     const cfg = { entity: 'sensor.battery', attribute: 'level' };
@@ -36,7 +38,7 @@ describe('entityOf/attributeOf/jinjaOf', () => {
 
 describe('config negotiation - an invalid value degrades to its default, never rejected', () => {
   test('an invalid bar_orientation falls back to ltr but keeps the config valid', () => {
-    const result = YamlSchemaFactory.card.validate({ entity: 'sensor.test', bar_orientation: 'up' });
+    const result = YamlSchemaFactory.card.validate({ entity: ENTITY, bar_orientation: 'up' });
     assert.equal(result.isValid, true);
     assert.equal((result.config as { bar_orientation?: string })?.bar_orientation, 'ltr');
   });
@@ -44,7 +46,7 @@ describe('config negotiation - an invalid value degrades to its default, never r
 
 describe('bar_orientation speaks the words of its bar_position', () => {
   const orientationOf = (config: Record<string, unknown>) =>
-    (YamlSchemaFactory.card.validate({ entity: 'sensor.test', ...config }).config as { bar_orientation?: string })
+    (YamlSchemaFactory.card.validate({ entity: ENTITY, ...config }).config as { bar_orientation?: string })
       ?.bar_orientation;
 
   test('a ring turns ltr/rtl and the default into clockwise/counterclockwise', () => {
@@ -136,7 +138,7 @@ describe('YamlSchemaFactory.<type>.fieldOptions - allowed values read off the li
 
 describe('YamlSchemaFactory.card.validate - end-to-end shape', () => {
   test('accepts a minimal config with just an entity', () => {
-    const result = YamlSchemaFactory.card.validate({ entity: 'sensor.test' });
+    const result = YamlSchemaFactory.card.validate({ entity: ENTITY });
     assert.equal(result.isValid, true);
   });
 
