@@ -14,13 +14,17 @@ import assert from 'node:assert/strict';
 
 import { flushFrames } from '../../dom-setup.js';
 import { makeHass, TEST_ENTITY } from '../../ha-stubs.js';
+import { HassProviderSingleton, type HomeAssistant } from '../../../src/utils/hass-provider.js';
 import '../../../src/index.js';
 
 type CardEl = HTMLElement & { setConfig?: (c: unknown) => void; hass?: unknown };
 
+const CARD_TYPE = 'custom:entity-progress-card';
+const CARD_TAG = 'entity-progress-card';
+
 const mount = async (extra: Record<string, unknown>) => {
-  const el = document.createElement('entity-progress-card') as CardEl;
-  el.setConfig?.({ type: 'custom:entity-progress-card', entity: TEST_ENTITY, ...extra });
+  const el = document.createElement(CARD_TAG) as CardEl;
+  el.setConfig?.({ type: CARD_TYPE, entity: TEST_ENTITY, ...extra });
   document.body.appendChild(el);
   el.hass = makeHass();
   await flushFrames();
@@ -69,6 +73,56 @@ describe('hide: static drops the subtree, Jinja keeps it', () => {
   });
 });
 
+type Push = (message: { result: unknown }) => void;
+type Hass = Record<string, unknown> & { connection: Record<string, unknown> };
+
+const HIDE = '{{ hide }}';
+const RENDER_MS = 120;
+const sleep = (ms: number) =>
+  new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+
+// What a Jinja hide returns is read as a list, or as a comma-separated string.
+describe('hide: a Jinja result becomes the hidden components', () => {
+  const pushed = async (result: unknown) => {
+    const pushes = new Map<string, Push>();
+    const hass = makeHass() as Hass;
+    hass.connection.connected = true;
+    hass.connection.subscribeMessage = (callback: Push, message: { template: string }) => {
+      pushes.set(message.template, callback);
+      return Promise.resolve(() => undefined);
+    };
+    HassProviderSingleton.getInstance().hass = hass as unknown as HomeAssistant;
+    const el = document.createElement(CARD_TAG) as CardEl;
+    el.setConfig?.({ type: CARD_TYPE, entity: TEST_ENTITY, hide: HIDE });
+    document.body.appendChild(el);
+    el.hass = hass;
+    await flushFrames();
+    pushes.get(HIDE)?.({ result });
+    await sleep(RENDER_MS);
+    await flushFrames();
+    const card = (el.shadowRoot as ShadowRoot).querySelector('ha-card') as HTMLElement;
+    return ['icon', 'name', 'secondary-info'].filter((name) => card.classList.contains(`hide-${name}`));
+  };
+
+  test('a comma-separated string, spaces trimmed', async () => {
+    assert.deepEqual(await pushed('icon, name'), ['icon', 'name']);
+  });
+
+  test('a native list', async () => {
+    assert.deepEqual(await pushed(['icon', 'name']), ['icon', 'name']);
+  });
+
+  test('blanks and padding in a list are dropped', async () => {
+    assert.deepEqual(await pushed([' icon ', '', 'name']), ['icon', 'name']);
+  });
+
+  test('an empty string hides nothing', async () => {
+    assert.deepEqual(await pushed(''), []);
+  });
+});
+
 type RowEl = HTMLElement & { _cardView?: { config: { hide?: unknown } } };
 
 // A Multi Feature row never draws the shape, whatever its own hide says - a
@@ -88,7 +142,7 @@ describe('a Multi Feature row keeps its own hide and still drops the shape', () 
     el.hass = makeHass();
     await flushFrames();
     await flushFrames();
-    const rows = [...(el.shadowRoot as ShadowRoot).querySelectorAll('entity-progress-card')] as RowEl[];
+    const rows = [...(el.shadowRoot as ShadowRoot).querySelectorAll(CARD_TAG)] as RowEl[];
     assert.equal(rows.length, 2, 'both rows should have been built');
     assert.equal(rows[0]._cardView?.config.hide, jinjaHide, 'the Jinja hide must reach the row untouched');
     assert.deepEqual(rows[1]._cardView?.config.hide, ['icon'], 'a static hide gains no forced target');

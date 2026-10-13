@@ -5,7 +5,8 @@ import { CARD } from '../utils/parameters.js';
 import { SCHEMA_DEFAULTS, MARK_TYPES, MARK_ZONE_TYPES, PEAK_RANGE_TYPE_DEFAULT, jinjaOf, markValue } from './schema.js';
 import type { Config } from '../utils/types.js';
 import type { DOMHelper } from './dom-helpers.js';
-import type { ViewBase, ViewCore, ResolvedWatermark } from './view.js';
+import type { ViewBase, ViewCore } from './view.js';
+import type { ResolvedWatermark } from './watermark-view.js';
 
 type MarkDeps = {
   view: () => ViewCore;

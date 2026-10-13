@@ -132,6 +132,19 @@ describe('a static hide takes its own fields out of the editor', () => {
     });
   }
 
+  // The ring only has fields behind bar_position: icon, which the empty config
+  // above never reaches.
+  test('hide: [progress_bar] takes the ring fields with it', () => {
+    const tree = EditorFactory.build({ template: false, badge: false }) as unknown as FieldTree;
+    const ring = { bar_position: 'icon' };
+    const before = [...visibleFields(tree, ring)].filter((name) => name.startsWith('bar_ring.'));
+    const after = [...visibleFields(tree, { ...ring, hide: ['progress_bar'] })].filter((name) =>
+      name.startsWith('bar_ring.'),
+    );
+    assert.ok(before.length > 0, 'the ring fields should show with bar_position: icon');
+    assert.deepEqual(after, [], `still shown with the bar hidden: ${after.join(', ')}`);
+  });
+
   test('a Jinja hide gates nothing - its result is unknowable here', () => {
     const tree = EditorFactory.build({ template: false, badge: false }) as unknown as FieldTree;
     const shown = visibleFields(tree, { hide: '{{ 1 }}' });

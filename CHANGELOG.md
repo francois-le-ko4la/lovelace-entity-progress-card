@@ -80,6 +80,9 @@ toggle like its tile card.
   `battery_adaptive`, …): the positive arm shows the whole theme instead of its
   upper half, and the negative arm takes the first zone's color. Themes in raw
   units (`temperature`) are unchanged.
+- **[`hide: progress_bar`][hide]** hides the ring of
+  [`bar_position: icon`][bar_position] too; the editor drops the ring options
+  with it.
 
 > We care about getting the details right — but even so, something here might
 > have slipped through. You don't need to be a developer to notice it. If
@@ -171,6 +174,9 @@ toggle like its tile card.
 - **[`center_zero`][center_zero]** with a percentage theme (`critical_when_low`,
   `battery_adaptive`, …): each arm reads its own 0–100%; the negative arm takes
   the first zone's color. Themes in raw units (`temperature`) are unchanged.
+- **[`hide`][hide]** `progress_bar` with [`bar_position: icon`][bar_position]:
+  the ring is hidden too; the editor parks `bar_position` and hides the
+  `bar_ring` fields, and the config audit reports it as without effect.
 
 ### 🧹 Under the hood
 
@@ -188,9 +194,17 @@ toggle like its tile card.
   theme and pushed colors to `TemplateViewBase`, and `entityView` replaces the
   `as ViewBase` casts in `HACore`/`HABase`.
 - Status pill, `alert_when` painting, watermarks and peak marker moved out of
-  `HACore`/`HABase`/`ViewBase` into `StatusLabel`, `Alert`, `Marks` and
-  `PeakMarkerView`; one `watermark` getter replaces the `ViewCore`/`ViewBase`
-  pair.
+  `HACore`/`HABase`/`ViewBase` into `StatusLabel`, `Alert`, `Marks`,
+  `PeakMarkerView` and `WatermarkView`; `AlertBounds` holds the thresholds; one
+  `watermark` getter replaces the `ViewCore`/`ViewBase` pair.
+- The compact + vertical forced `hide` has one source, read by the card and the
+  editor chips.
+- The Multi cards share one constructed stylesheet across instances, like the
+  other cards.
+- `schema.ts`, `view.ts`, `core.ts`, `config-helpers.ts` and `factory.ts` split
+  into the `schema/`, `view/`, `core/`, `config-helpers/` and `editor/fields` +
+  `editor/groups` folders; the old paths re-export them.
+- The editor's field construction moved from `EditorBase` into `FieldBuilder`.
 
 ## 1.6.3
 

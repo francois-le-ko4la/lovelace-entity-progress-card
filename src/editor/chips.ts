@@ -9,6 +9,7 @@ import { CHIPS_HOST_STYLE } from '../utils/styles.js';
 import { is } from '../utils/common-checks.js';
 import { defineElement } from '../utils/register.js';
 import type { LovelaceConfig } from '../utils/types.js';
+import { densityForcedHide } from '../card/schema.js';
 
 /**
  * Shared base for the editor's chip-based selector custom elements: builds
@@ -242,11 +243,10 @@ class EntityProgressHideChips extends MultiSelectChipsBase {
     this._buildChipSet(this.#items, (value) => this.#toggle(value));
   }
 
-  // density: compact + layout: vertical forces name/secondary_info hidden
-  // regardless of this field (ViewCore.hasComponentHiddenFlag) - shown here
-  // as forced-on/locked so the chips don't silently disagree with the render.
+  // Locked on, as the card hides them whatever this field says (the same
+  // densityForcedHide the view reads).
   #forcedItems(): string[] {
-    return this._config.density === 'compact' && this._config.layout === 'vertical' ? ['name', 'secondary_info'] : [];
+    return densityForcedHide(this._config);
   }
 
   // value/unit only ever affect text rendered *inside* secondary_info's own

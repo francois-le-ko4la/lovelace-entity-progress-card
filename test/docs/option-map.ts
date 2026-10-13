@@ -175,6 +175,20 @@ const defaultText = (value: unknown) => {
   return `\`${typeof value === 'object' ? JSON.stringify(value) : String(value)}\``.replace(/\|/g, '\\|');
 };
 
+const statusOf = (row: Row) => {
+  const missing = (
+    [
+      ['Readers', row.readers],
+      ['Examples', row.examples],
+      ['Demo', row.demo],
+      ['Tests', row.tests],
+    ] as const
+  )
+    .filter(([, count]) => count === 0)
+    .map(([name]) => name);
+  return missing.length ? `⚠️ ${missing.join(', ')}` : '✅';
+};
+
 const gapsOf = (rows: Row[]) => ({
   'Editor field missing': rows.filter((row) => !NOTES[row.key] && Object.values(row.states).includes('yaml')),
   'No section in configuration.md': rows.filter((row) => !row.section),
@@ -214,12 +228,22 @@ function render(rows: Row[]): string {
     '✅ in the editor · 📝 YAML only · ➖ a single value, nothing to edit ·',
     '· not accepted. _Readers_ (files in `src/card` and `src/utils`) and',
     '_Tests_ (files in `test/`) count the files naming the option, not uses.',
+    '_Status_ is ✅ when all four counts are above zero, else ⚠️ and the zeros.',
     '',
   );
-  const header = ['Option', ...VARIANTS.map(([, label]) => label), 'Default', 'Readers', 'Examples', 'Demo', 'Tests'];
+  const header = [
+    'Option',
+    ...VARIANTS.map(([, label]) => label),
+    'Default',
+    'Readers',
+    'Examples',
+    'Demo',
+    'Tests',
+    'Status',
+  ];
   out.push(
     `| ${header.join(' | ')} |`,
-    `| ${header.map((_, index) => (index === 0 || index === 8 ? ':--' : ':-:')).join(' | ')} |`,
+    `| ${header.map((_, index) => (index === 0 || index === 8 || index === 13 ? ':--' : ':-:')).join(' | ')} |`,
   );
   for (const row of rows) {
     const name = row.section ? `[\`${row.key}\`](configuration.md#${row.section})` : `\`${row.key}\``;
@@ -231,6 +255,7 @@ function render(rows: Row[]): string {
       row.examples,
       row.demo,
       row.tests,
+      statusOf(row),
     ];
     out.push(`| ${cells.join(' | ')} |`);
   }
@@ -242,4 +267,9 @@ function render(rows: Row[]): string {
 
 const optionMap = (): string => render(collect());
 
-export { optionMap, OPTION_MAP };
+// The four counts move with every mention; only the Status they imply is
+// compared, so the file goes stale when an option changes status.
+const withoutCounts = (text: string): string =>
+  text.replace(/\| \d+ \| \d+ \| \d+ \| \d+ \| ([^|]*) \|$/gm, '| # | # | # | # | $1 |');
+
+export { optionMap, withoutCounts, OPTION_MAP };

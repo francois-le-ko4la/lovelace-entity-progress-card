@@ -112,6 +112,14 @@ describe('notesByPath - each note at the key it is about, for the issue report Y
     assert.deepEqual(Object.fromEntries(notes), { bar_size: [NO_EFFECT] });
   });
 
+  test('a ring with its bar hidden has no effect, unless the hide is a template', () => {
+    const ring = { type: CARD, entity: 'sensor.x', bar_position: 'icon' };
+    const hidden = notesByPath({ ...ring, hide: ['progress_bar'] });
+    assert.deepEqual(Object.fromEntries(hidden), { bar_position: [NO_EFFECT] });
+    assert.equal(notesByPath({ ...ring, hide: "{{ ['progress_bar'] }}" }).size, 0, 'a template is unknowable');
+    assert.equal(notesByPath({ ...ring, hide: ['name'] }).size, 0, 'another target leaves the ring');
+  });
+
   test('a Multi on its default look: the note sits on the card itself', () => {
     const notes = notesByPath({ type: MULTI_CARD, entities: ['sensor.a'] });
     assert.match(notes.get('')?.[0] ?? '', /since 1\.6\.3/);

@@ -177,6 +177,12 @@ describe('an option with no effect is parked, not lost', () => {
     assert.equal((await write(POSITION, 'compact_below')).bar_position, 'compact_below');
   });
 
+  test('hiding the bar parks the ring, showing it again brings it back', async () => {
+    const { write } = await mountEditor(CARD_EDITOR, { type: CARD_TYPE, [POSITION]: 'icon' });
+    assert.equal(POSITION in (await write('hide', ['progress_bar'])), false);
+    assert.equal((await write('hide', [])).bar_position, 'icon');
+  });
+
   test('a value set anew in between wins over the parked one', async () => {
     const { write } = await mountEditor(CARD_EDITOR, { type: CARD_TYPE, [POSITION]: 'compact_below' });
     assert.equal(POSITION in (await write('layout', 'vertical')), false);

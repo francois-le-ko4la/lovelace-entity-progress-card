@@ -36,7 +36,12 @@ class JinjaState {
     this.iconAnimationActive = is.boolean(value) ? value : null;
   }
 
-  setResolvedHide(items: string[]) {
+  // CF5 - issue (critical) resolved - a native list crashed on .split(): list
+  // and comma-separated string results are normalized alike.
+  setResolvedHide(content: unknown) {
+    const items = (is.array(content) ? content : String(content).split(','))
+      .map((item: unknown) => String(item).trim())
+      .filter(Boolean);
     this.resolvedHide = new Set(items);
   }
 

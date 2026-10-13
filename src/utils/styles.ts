@@ -3132,6 +3132,14 @@ ha-card.vertical.below.rainbow-full-bar.rainbow-full-raised {
   flex-grow: 0;
 }
 
+/* bar_position: icon draws the bar as a ring on the shape, not as .bar. */
+ha-card.${CARD.style.dynamic.barAroundIcon}.${CARD.style.dynamic.hiddenComponent.progress_bar.class} .${CARD.htmlStructure.elements.shape.class}::after {
+  content: none;
+}
+ha-card.${CARD.style.dynamic.barAroundIcon}.${CARD.style.dynamic.hiddenComponent.progress_bar.class}:not(.progress-badge) .${CARD.htmlStructure.elements.shape.class} {
+  --current-shape-size: var(--shape-default-size);
+}
+
 /* Show elements when needed */
 .${CARD.style.dynamic.show}-${CARD.htmlStructure.elements.badge.container.class} .${CARD.htmlStructure.elements.badge.container.class} {
   display: flex;
@@ -3457,6 +3465,19 @@ const getSharedStyleSheet = (cssText: string): CSSStyleSheet | null => {
   return sheet;
 };
 
+// The shared sheet adopted by the shadow root, or - when the engine cannot
+// construct one - the per-instance <style> the caller has to insert.
+const adoptStyle = (shadow: ShadowRoot, cssText: string): HTMLStyleElement | null => {
+  const sheet = getSharedStyleSheet(cssText);
+  if (sheet) {
+    if (!shadow.adoptedStyleSheets.includes(sheet)) shadow.adoptedStyleSheets = [...shadow.adoptedStyleSheets, sheet];
+    return null;
+  }
+  const style = document.createElement('style');
+  style.textContent = cssText;
+  return style;
+};
+
 // Browser capability probe, independent of whether any card has been built yet
 // (CONSTRUCTED_SHEETS fills lazily on first render, so an empty map means "none
 // built", NOT "unsupported"). Mirrors getSharedStyleSheet's exact requirement:
@@ -3483,4 +3504,4 @@ export { CUSTOM_THEME_EDITOR_STYLE };
 export { EDITOR_BASE_STYLE };
 export { CONSTRUCTED_SHEETS };
 export { CONSTRUCTIBLE_STYLESHEETS };
-export { getSharedStyleSheet };
+export { adoptStyle };

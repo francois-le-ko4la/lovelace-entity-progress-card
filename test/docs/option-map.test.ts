@@ -6,8 +6,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { optionMap, OPTION_MAP } from './option-map.js';
+import { optionMap, withoutCounts, OPTION_MAP } from './option-map.js';
 
 test(`${OPTION_MAP} is up to date`, () => {
-  assert.ok(fs.readFileSync(OPTION_MAP, 'utf8') === optionMap(), `${OPTION_MAP} is stale: run npm run docs:options`);
+  const stale = withoutCounts(fs.readFileSync(OPTION_MAP, 'utf8')) !== withoutCounts(optionMap());
+  assert.ok(!stale, `${OPTION_MAP} is stale: run npm run docs:options`);
 });

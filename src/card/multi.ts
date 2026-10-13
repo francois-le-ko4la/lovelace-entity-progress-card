@@ -5,6 +5,7 @@
 
 import { CARD, HA_CONTEXT, META, suffixedName } from '../utils/parameters.js';
 import { is } from '../utils/common-checks.js';
+import { adoptStyle } from '../utils/styles.js';
 import { HACore } from './core.js';
 import { rowConfigsOf } from './multi-rows.js';
 import { MultiCardConfigHelper, MultiFeatureConfigHelper, type BaseConfigHelper } from './config-helpers.js';
@@ -29,9 +30,6 @@ const CARD_HEIGHT_VAR = CARD.style.dynamic.card.height.var;
 const shapedIconSize = (_per: number, shape: number) => Math.min(24, (shape * 2) / 3);
 const bareIconSize = (per: number) => Math.min(16, per);
 
-// Minimal own stylesheet (V1). TODO: fold into the shared constructed-sheet
-// path the cards use instead of a per-instance <style>.
-//
 // Bare rules (no wrapper) suit the Feature case: HA's tile feature row
 // already provides the horizontal inset and measures our natural height to
 // size the tile, so children just stack, no override needed.
@@ -127,11 +125,10 @@ class EntityProgressMultiBase extends HACore {
   render() {
     if (this.#rendered) return;
     this.#rendered = true;
-    const style = document.createElement('style');
-    style.textContent = MULTI_CSS;
+    const style = adoptStyle(this._shadow, MULTI_CSS);
     this._container = document.createElement('div');
     this._container.className = 'multi-container';
-    this._shadow.replaceChildren(style, this._wrapFrame(this._container));
+    this._shadow.replaceChildren(...(style ? [style] : []), this._wrapFrame(this._container));
     this.#buildChildren();
   }
 

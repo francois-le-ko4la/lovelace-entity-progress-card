@@ -113,8 +113,7 @@ class EntityProgressCardBase extends HABase {
   _getJinjaHandlers(content: unknown): Record<string, () => void> {
     return {
       ...this._baseJinjaHandlers(content),
-      badge_icon: () => this._renderBadgeIcon(content),
-      badge_color: () => this._renderBadgeColor(content),
+      ...this._badgeJinjaHandlers(content),
       custom_info: () => this._renderCustomInfo(content),
       name_info: () => this._renderNameInfo(content),
       min_value: () => this._renderJinjaNumber(content, (c: Config) => jinjaOf(c.min_value), 'minValue'),
@@ -187,15 +186,7 @@ class EntityProgressBadge extends EntityProgressCardBase {
   _cardView = new BadgeView();
   static _baseClass: string = META.types.badge.typeName;
   static _structureType = 'badge';
-
-  // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION ─────────────────────────────
-  // Derived from the Card map (minus the badge-only handlers) instead of
-  // hand-mirroring it: an earlier hand-maintained copy silently missed
-  // min_value for months (CF5, medium), so any handler added on the base class
-  // is now picked up here automatically by construction.
-  _getJinjaHandlers(content: unknown): Record<string, () => void> {
-    return HABase._stripBadgeHandlers(super._getJinjaHandlers(content));
-  }
+  static _hasInnerBadge = false;
 }
 
 /**
@@ -442,8 +433,7 @@ class EntityProgressTemplateBase extends HABase {
 
   _updateCSS() {
     this._applyProgressCSS(null, this.#templateColors);
-    const bar = this._cardView;
-    this._applyWatermarkCSS(bar.hasWatermark ? bar.watermark : null);
+    this._applyWatermarkCSS(this._cardView.watermark);
   }
 
   // ─── WATERMARK MANAGEMENT ─────────────────────────────────────────────────
@@ -468,8 +458,7 @@ class EntityProgressTemplateBase extends HABase {
   _getJinjaHandlers(content: unknown): Record<string, () => void> {
     const handlers: Record<string, () => void> = {
       ...this._baseJinjaHandlers(content),
-      badge_icon: () => this._renderBadgeIcon(content),
-      badge_color: () => this._renderBadgeColor(content),
+      ...this._badgeJinjaHandlers(content),
       name: () => this._renderName(content),
       secondary: () => this._renderSecondary(content),
       icon: () => this._showIcon(content),
@@ -611,17 +600,8 @@ class EntityProgressTemplateBadge extends EntityProgressTemplateBase {
   // A badge has no icon/name/secondary row - back to the bare stub.
   static _stubExtras: Record<string, unknown> = {};
   static _structureType = 'badge';
+  static _hasInnerBadge = false;
   _cardView: TemplateView = new BadgeTemplateView();
-
-  // Same reasoning as EntityProgressBadge's own override - schema.ts already
-  // deletes badge_icon/badge_color from badgeTemplate's own schema (a badge
-  // has no badge of its own), so validFields never sees them regardless
-  // (there's no config value to subscribe to) - this just makes that
-  // explicit here too instead of relying on the schema alone, matching the
-  // standard Badge class.
-  _getJinjaHandlers(content: unknown): Record<string, () => void> {
-    return HABase._stripBadgeHandlers(super._getJinjaHandlers(content));
-  }
 
   setConfig(config: LovelaceConfig) {
     super.setConfig(config);

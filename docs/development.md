@@ -508,10 +508,10 @@ history, then follow the live value.
 - **Who may ask**: `hasUsableHistory` (`entity-helper.ts`) — the same rule the
   editor uses to offer `peak_marker`: no attribute, no `timer`/`counter`, no
   `device_class: duration`.
-- **The request**: `_fetchHistory` sends one `history/history_during_period`
-  over the shared connection. Two features asking for the same window share one
-  in-flight call (`#inFlightHistoryFetches`), and `_seedFromHistory` drops a
-  reply whose entity, attribute or window changed while it was in flight.
+- **The request**: `HistorySeeding` (`history-seeding.ts`) sends one
+  `history/history_during_period` over the shared connection. Two features
+  asking for the same window share one in-flight call, and `seed` drops a reply
+  whose entity, attribute or window changed while it was in flight.
 - **The samples**: `SampleRing` keeps (time, value) pairs in growable typed
   arrays, not an object per reading — Float32 percents for `TrendTracker`,
   Float64 raw values for `PeakTracker` (min, max, time-weighted average). Both
@@ -851,9 +851,9 @@ Two more things come from the schema rather than a parallel table, through
 
 ### The schema holds every option rule
 
-`schema.ts` started as the validator. It is now where every rule about an option
-lives, and the card, the editor, the diagnostics and the docs all read it there
-instead of keeping their own copy:
+`schema.ts` (the `schema/` folder behind it) started as the validator. It is now
+where every rule about an option lives, and the card, the editor, the
+diagnostics and the docs all read it there instead of keeping their own copy:
 
 - **What each variant accepts**: its field list, shared by `.delete()`/
   `.extend()`. The editor offers exactly those fields (`editor-coverage.test`).
@@ -872,9 +872,9 @@ instead of keeping their own copy:
   compatibility badges and option tables, and every documented YAML example,
   against it; `docs/option-map.md` is generated from it.
 
-A new rule about an option goes in `schema.ts`, exported, never written in the
-card or the editor alone — two copies of one rule drift apart without a line of
-code in common to give them away.
+A new rule about an option goes in `schema/`, exported through `schema.ts`,
+never written in the card or the editor alone — two copies of one rule drift
+apart without a line of code in common to give them away.
 
 ## Security
 
@@ -1739,7 +1739,7 @@ reasoning survives a maintainer handoff instead of living only in chat history.
 
 | Area                 | Wired in                                | Traces                                                                        |
 | -------------------- | --------------------------------------- | ----------------------------------------------------------------------------- |
-| `card`               | `HACore`/`HABase` (`core.ts`)           | lifecycle (connect / disconnect / **adopted** / setConfig / refresh / render) |
+| `card`               | `HACore`/`HABase` (`core/`)             | lifecycle (connect / disconnect / **adopted** / setConfig / refresh / render) |
 | `editor`             | `EditorBase` (`editor/base.ts`)         | `setConfig` in, `config-changed` out                                          |
 | `interactionHandler` | `ActionHelper` (`dom-helpers.ts`)       | tap / hold / double-tap action resolution                                     |
 | `ressourceManager`   | `ResourceManager`/`DOMHelper`           | timers / listeners / subscriptions                                            |
