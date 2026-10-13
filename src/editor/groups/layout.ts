@@ -189,6 +189,17 @@ const cardSizeFields = (badge: boolean) => {
   };
 };
 
+// The schema's own densityOverrides (issue #134), applied the moment density
+// changes; a forced default is written as no key, like an emptied field.
+const applyDensityConstraints = (config: LovelaceConfig): LovelaceConfig => {
+  const next = { ...config };
+  for (const [key, value] of Object.entries(densityOverrides(config))) {
+    if (value === YamlSchemaFactory.card.fieldDefault(key)) Reflect.deleteProperty(next, key);
+    else next[key] = value;
+  }
+  return next;
+};
+
 const themeLayoutField = (badge: boolean) =>
   badge
     ? {}
@@ -240,17 +251,6 @@ const themeLayoutField = (badge: boolean) =>
           },
         },
       };
-
-// The schema's own densityOverrides (issue #134), applied the moment density
-// changes; a forced default is written as no key, like an emptied field.
-const applyDensityConstraints = (config: LovelaceConfig): LovelaceConfig => {
-  const next = { ...config };
-  for (const [key, value] of Object.entries(densityOverrides(config))) {
-    if (value === YamlSchemaFactory.card.fieldDefault(key)) Reflect.deleteProperty(next, key);
-    else next[key] = value;
-  }
-  return next;
-};
 
 // Also split out of theme(): frameless/marginless/height/min_width/layout
 // are the card's own sizing/shape, a different concern from its color/bar

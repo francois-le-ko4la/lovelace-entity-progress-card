@@ -737,7 +737,10 @@ class HABase extends HACore {
   }
 
   _onJinjaFailure(key: string, message: string) {
-    if (!Object.values(JINJA_NUMBER_KEY).includes(key)) return super._onJinjaFailure(key, message);
+    if (!Object.values(JINJA_NUMBER_KEY).includes(key)) {
+      super._onJinjaFailure(key, message);
+      return;
+    }
     this._cardView.jinjaState.setFailure(key, message);
     if (key.startsWith('alert_when')) this._applyAlertClasses();
     else if (key.startsWith('watermark')) this._updateCSS();

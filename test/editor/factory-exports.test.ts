@@ -1,6 +1,5 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import * as factory from '../../src/editor/factory.js';
 
 const MEMBERS = [
   'applyDensityConstraints',
@@ -37,10 +36,12 @@ const MEMBERS = [
   'trendIndicatorFields',
 ];
 
-test('factory.js keeps its public surface', () => {
+test('factory.js keeps its public surface', async () => {
+  const factory = await import('../../src/editor/factory.js');
   assert.deepEqual(Object.keys(factory).sort(), ['CONTEXT_ENTITY_KEY', 'EditorFactory', 'effectiveEntity']);
 });
 
-test('EditorFactory keeps its members', () => {
+test('EditorFactory keeps its members', async () => {
+  const factory = await import('../../src/editor/factory.js');
   assert.deepEqual(Object.keys(factory.EditorFactory).sort(), MEMBERS);
 });

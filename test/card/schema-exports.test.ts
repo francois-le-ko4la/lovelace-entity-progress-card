@@ -1,6 +1,5 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import * as schema from '../../src/card/schema.js';
 
 const PUBLIC_EXPORTS = [
   'ACTION_FIELDS',
@@ -43,6 +42,7 @@ const PUBLIC_EXPORTS = [
   'translateOrientation',
 ];
 
-test('schema.js keeps its public surface', () => {
+test('schema.js keeps its public surface', async () => {
+  const schema = await import('../../src/card/schema.js');
   assert.deepEqual(Object.keys(schema).sort(), PUBLIC_EXPORTS);
 });

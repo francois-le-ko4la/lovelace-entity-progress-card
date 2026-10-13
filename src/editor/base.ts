@@ -227,7 +227,8 @@ class EditorBase extends HTMLElement {
 
   // A feature's editor gets its host card's context (hui-element-editor.ts):
   // the entity the feature renders when it sets none of its own.
-  set context(context: { entity_id?: string } | undefined) {
+  // prettier-ignore
+  set context(context: { entity_id?: string } | undefined) { // skipcq: JS-0041 -- Home Assistant only writes it
     const inherited = context?.entity_id;
     if (inherited === this.#config[CONTEXT_ENTITY_KEY]) return;
     this.#config = { ...this.#config, [CONTEXT_ENTITY_KEY]: inherited };
