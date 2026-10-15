@@ -10,7 +10,7 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import { EditorFactory } from '../../src/editor/factory.js';
-import { schemaOptions, type SchemaVariant } from '../../src/card/schema.js';
+import { schemaOptions, type SchemaVariant } from '../../src/card/config/schema.js';
 
 const VARIANTS: SchemaVariant[] = ['card', 'badge', 'template', 'badgeTemplate', 'feature'];
 

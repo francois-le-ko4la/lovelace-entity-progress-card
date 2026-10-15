@@ -1,8 +1,8 @@
 import { type HideTarget } from '../../utils/parameters.js';
 import { is } from '../../utils/common-checks.js';
 import { type LovelaceConfig, type Config } from '../../utils/types.js';
-import { type SchemaVariant, markIds, type PeakPoint } from '../../card/schema.js';
-import { hasUsableHistory } from '../../card/entity-helper.js';
+import { type SchemaVariant, markIds, type PeakPoint } from '../../card/config/schema.js';
+import { hasUsableHistory } from '../../card/values/entity-helper.js';
 
 // hide's chips in the order the editor shows them; the set itself comes from
 // the schema (see hideChipsItems).
@@ -245,7 +245,7 @@ const draftToggle =
     };
   };
 
-// A tile feature with no entity of its own renders its tile's (cards.ts):
+// A tile feature with no entity of its own renders its tile's (features.ts):
 // EditorBase keeps that one under this key, which never reaches the YAML.
 const CONTEXT_ENTITY_KEY = '_context_entity';
 

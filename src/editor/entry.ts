@@ -11,7 +11,7 @@ import {
   EntityProgressFeatureEditor,
   EntityProgressMultiCardEditor,
   EntityProgressMultiFeatureEditor,
-} from './editors.js';
+} from './elements/editors.js';
 
 const EDITORS: Record<keyof typeof META.types, CustomElementConstructor> = {
   card: EntityProgressCardEditor,

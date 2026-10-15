@@ -4,7 +4,7 @@
  * min/max), `percent` (zones are already 0-100 vs raw values), and `signed`
  * (zones span -100..100, for center_zero's own signed percent scale - see
  * ThemeManager.isSigned/ViewBase.themeDivergingGradient). No logic, just
- * data - consumed by card/value-helpers.ts's ThemeManager.
+ * data - consumed by card/color/theme-manager.ts.
  */
 
 import { HA_CONTEXT, haColor } from './ha-context.js';
@@ -22,7 +22,7 @@ const CRITICAL_WHEN_LOW_ZONES = [
 ];
 
 const THEME = {
-  // Virtual theme, resolved by ViewCore.resolvedTheme (src/card/view.ts) to
+  // Virtual theme, resolved by resolvedTheme (src/card/view/base.ts) to
   // critical_when_extreme (charging) or critical_when_low (not charging)
   // before it ever reaches ThemeManager - these zones are only a fallback in
   // case that resolution is ever bypassed.

@@ -7,7 +7,7 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { YamlSchemaFactory } from '../../src/card/schema.js';
+import { YamlSchemaFactory } from '../../src/card/config/schema.js';
 
 const DOC = 'docs/configuration.md';
 const text = fs.readFileSync(DOC, 'utf8');

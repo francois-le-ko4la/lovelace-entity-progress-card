@@ -1,7 +1,7 @@
 import { HA_CONTEXT } from '../../utils/parameters.js';
 import { is } from '../../utils/common-checks.js';
 import { type LovelaceConfig } from '../../utils/types.js';
-import { HAS_EFFECT, BAR_AROUND_ICON } from '../../card/schema.js';
+import { HAS_EFFECT, BAR_AROUND_ICON } from '../../card/config/schema.js';
 import { EditorFieldsType, animationEffect, LABEL_POSITION, LABEL_COLOR, TITLE, cardVariant } from '../fields/base.js';
 import {
   circularBackgroundField,

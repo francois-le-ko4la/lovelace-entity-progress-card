@@ -1,7 +1,7 @@
 import { CARD, HA_CONTEXT } from '../../utils/parameters.js';
 import { is } from '../../utils/common-checks.js';
 import { type LovelaceConfig } from '../../utils/types.js';
-import { SCHEMA_DEFAULTS, HAS_EFFECT } from '../../card/schema.js';
+import { SCHEMA_DEFAULTS, HAS_EFFECT } from '../../card/config/schema.js';
 import {
   enabledToggleField,
   draftToggle,
@@ -40,7 +40,7 @@ const themeWatermarkFields = () => {
   };
 };
 
-// peak_marker: min/max/average from HA history (Card only, cards.ts's
+// peak_marker: min/max/average from HA history (Card only, cards/card-base.ts's
 // _seedPeakMarkerHistoryOnce) - toggle + window + the family's own global
 // cascade, then the 3 marks (peakMark).
 const peakMarkerFields = () => ({

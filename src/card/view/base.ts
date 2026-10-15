@@ -2,10 +2,10 @@ import { HA_CONTEXT, CARD } from '../../utils/parameters.js';
 import { resolveDisplayUnit, resolveDisplayDecimal } from '../../utils/display-defaults.js';
 import { type LovelaceConfig, type Config } from '../../utils/types.js';
 import { is, assertDefined } from '../../utils/common-checks.js';
-import { jinjaOf, MARK_FACTORIZATION } from '../schema.js';
-import { ProgressMath, resolveProgressInput } from '../progress-math.js';
-import { formatProgress, hasTimerOrFlexTimerUnit, valueForThemes, type Progress } from '../progress-display.js';
-import { UnitHelper } from '../value-primitives.js';
+import { jinjaOf, MARK_FACTORIZATION } from '../config/schema.js';
+import { ProgressMath, resolveProgressInput } from './progress-math.js';
+import { formatProgress, valueForThemes, type Progress } from './progress-display.js';
+import { UnitHelper } from '../values/unit-helper.js';
 import {
   boundFrom,
   boundState,
@@ -14,23 +14,24 @@ import {
   isFaultState,
   refreshBound,
   type Bound,
-} from '../bound-value.js';
-import { ThemeManager, EntityCollectionHelper } from '../value-helpers.js';
-import { type Reading } from '../entity-helper.js';
-import { PeakMarkerView, type ResolvedPeakMarker } from '../peak-marker-view.js';
-import { AlertBounds } from '../alert-bounds.js';
-import { type WatermarkConfig, type WatermarkSide } from '../watermark-view.js';
+} from './bound-value.js';
+import { ThemeManager } from '../color/theme-manager.js';
+import { EntityCollectionHelper } from '../values/entity-collection.js';
+import { type Reading } from '../values/entity-helper.js';
+import { PeakMarkerView, type ResolvedPeakMarker } from '../history/peak-marker-view.js';
+import { AlertBounds } from './alert-bounds.js';
+import { type WatermarkConfig, type WatermarkSide } from './watermark-view.js';
 import { type HomeAssistant } from '../../utils/hass-provider.js';
-import { nextOnGrid, relativeAge } from '../../utils/clock.js';
-import { CardConfigHelper, BadgeConfigHelper, FeatureConfigHelper } from '../config-helpers.js';
+import { CardConfigHelper, BadgeConfigHelper, FeatureConfigHelper } from '../config/config-helpers.js';
 import {
   ViewCore,
   type ProgressConfig,
   type ProgressResolved,
   type BarStackEntityConfig,
   type EntityFault,
-  buildDivergingGradient,
 } from './core.js';
+import { BarColors } from '../color/bar-colors.js';
+import { nextTickAt } from './base/tick-schedule.js';
 
 /**
  * A comprehensive base card view that extends ViewCore to manage all
@@ -296,120 +297,36 @@ class ViewBase extends ViewCore {
     );
   }
 
-  #curBarColor(): string | null {
-    return (
-      ThemeManager.adaptColor(this.#theme.barColor || this._configHelper.config.bar_color || null) ||
-      this._entityDefaultColor()
-    );
-  }
+  readonly #barColors = new BarColors({
+    progress: () => this.#progress,
+    theme: () => this.#theme,
+    collection: () => this.#entityCollection,
+    config: () => this._configHelper.config,
+    entityColor: () => this._currentValue.defaultColor || null,
+    fallbackColor: () => this._entityDefaultColor(),
+    percent: () => this.percent,
+    isAvailable: () => this.isAvailable,
+    isUnknown: () => this.isUnknown,
+    hasCollection: () => this.hasEntityCollection,
+    isVertical: () => this.isVerticalBar,
+    isSegmented: () => this.isSegmented,
+    isRing: () => this.isRing,
+  });
 
   get barColor(): string | null {
-    if (!this.isAvailable) return this.isUnknown ? CARD.style.color.default : CARD.style.color.disabled;
-    const curColor = this.#curBarColor();
-    // 'net' is always a single flat segment. The center_zero +
-    // stacked/proportional case is handled separately by divergingBarStack (its
-    // own CSS variables, two independent arms) - this path only owns the
-    // non-centered multi-segment gradient and the plain fallback.
-    return this.hasEntityCollection && this.#entityCollection.mode !== 'net' && !this.#isCenterZero
-      ? this.#entityCollection.getEntitiesColor(
-          curColor,
-          this.percent / 100,
-          this.#progress.input.max - this.#progress.input.min,
-          this.isVerticalBar,
-        )
-      : curColor;
+    return this.#barColors.barColor;
   }
 
-  // 'stacked'/'proportional' + center_zero: two independent per-arm gradients
-  // (see EntityCollectionHelper.getDivergingGradients). null when not
-  // applicable, so callers can tell whether to apply or clear the dedicated CSS
-  // variables.
   get divergingBarStack() {
-    const { min, max, centerZero } = this.#progress.input;
-    if (!this.isAvailable || !centerZero) return null;
-    if (!this.hasEntityCollection || this.#entityCollection.mode === 'net') return null;
-    return this.#entityCollection.getDivergingGradients(
-      this.#curBarColor(),
-      { min, max, zeroValue: centerZero.zeroValue },
-      this.isVerticalBar,
-    );
+    return this.#barColors.divergingBarStack;
   }
 
   get colorGradient(): string | null {
-    if (!this.isAvailable) return null;
-    if (this.#isCenterZero) return this.isRing ? this.#ringDivergingGradient() : null;
-    return this.#theme.buildGradient(
-      this.#progress.math.percent ?? 0,
-      this._configHelper.config.bar_color_mode ?? 'auto',
-      {
-        defaultColor: this._currentValue.defaultColor || null,
-        isVertical: this.isVerticalBar,
-        valueRange: { min: this.#progress.input.min, max: this.#progress.input.max },
-        isSegmented: this.isSegmented,
-        isRing: this.isRing,
-      },
-    );
+    return this.#barColors.colorGradient;
   }
 
-  // center_zero's own equivalent of divergingBarStack above: two independent
-  // per-arm theme gradients instead of one single-arm gradient, using the
-  // same ThemeManager.buildGradient colorGradient calls, windowed to each
-  // arm's own slice of the min_value/max_value scale. null when there's no
-  // active theme gradient (bar_color_mode: auto, or no theme) - _updateCSS
-  // only falls back to this when divergingBarStack doesn't already own the
-  // CSS variables.
   get themeDivergingGradient() {
-    const windows = this.#armWindows();
-    if (!windows) return null;
-    const { min, max } = this.#progress.input;
-    const { percent } = this.#progress.math;
-    const mode = this._configHelper.config.bar_color_mode ?? 'auto';
-    const [posWindow, negWindow] = windows;
-    return buildDivergingGradient({
-      theme: this.#theme,
-      signedPercent: percent ?? 0,
-      mode,
-      defaultColor: this._currentValue.defaultColor || null,
-      isVertical: this.isVerticalBar,
-      isSegmented: this.isSegmented,
-      posWindow,
-      negWindow,
-      valueRange: { min, max },
-    });
-  }
-
-  // center_zero's two arms, each as a window over the min/max_value scale.
-  #armWindows(): [[number, number], [number, number]] | null {
-    const { min, max, centerZero } = this.#progress.input;
-    if (!this.isAvailable || !centerZero || max === min) return null;
-    // A signed theme (critical_when_extreme_center and friends) already spans
-    // -100..100 as one continuous scale - [0, 100]/[0, -100] read its zone
-    // numbers directly. A regular theme instead windows against zeroPercent,
-    // mirroring the same zones onto each arm independently.
-    if (this.#theme.isSigned)
-      return [
-        [0, 100],
-        [0, -100],
-      ];
-    const zeroPercent = ((centerZero.zeroValue - min) / (max - min)) * 100;
-    return [
-      [zeroPercent, 100],
-      [zeroPercent, 0],
-    ];
-  }
-
-  // center_zero around the icon: one conic gradient over both arms.
-  #ringDivergingGradient(): string | null {
-    const windows = this.#armWindows();
-    if (!windows) return null;
-    const { min, max } = this.#progress.input;
-    return this.#theme.buildRingDiverging(this._configHelper.config.bar_color_mode ?? 'auto', {
-      defaultColor: this._currentValue.defaultColor || null,
-      posWindow: windows[0],
-      negWindow: windows[1],
-      valueRange: { min, max },
-      perArm: this.#theme.isPercentScaled,
-    });
+    return this.#barColors.themeDivergingGradient;
   }
 
   // What EPB.doctor.inspect() shows: the value and range the bar is drawn from.
@@ -651,49 +568,24 @@ class ViewBase extends ViewCore {
     };
   }
 
-  // A sliding window moves all the time: re-read once a minute, sooner if
-  // shorter.
-  static #slideTickAt(now: number, windowSeconds: unknown): number[] {
-    return is.number(windowSeconds) ? [nextOnGrid(now, 0, Math.min(60000, windowSeconds * 1000))] : [];
-  }
-
-  // The next instant something shown moves with no state change: a running
-  // timer's value, a relative time, a sliding window.
   nextTickAt(now: number): number | null {
-    if (this.isActiveTimer) return this.#timerTickAt(now);
-    const trend = this.config.trend_indicator;
-    const deadlines = [
-      ...(this.#peak.seeded
-        ? ViewBase.#slideTickAt(now, (this.config.peak_marker as { window?: unknown })?.window)
-        : []),
-      ...(is.plainObject(trend) ? ViewBase.#slideTickAt(now, trend.window) : []),
-      ...this.#relativeTickAt(now),
-    ];
-    return deadlines.length > 0 ? Math.min(...deadlines) : null;
+    return nextTickAt(now, {
+      isActiveTimer: this.isActiveTimer,
+      reading: this._currentValue.reading,
+      progress: this.#progress,
+      peakSeeded: this.#peak.seeded,
+      peakWindow: (this.config.peak_marker as { window?: unknown } | undefined)?.window,
+      trendWindow: is.plainObject(this.config.trend_indicator) ? this.config.trend_indicator.window : undefined,
+      stateTimestamps: () => this.#stateTimestamps(),
+    });
   }
 
-  // Its value turns on the timer's own clock: at each whole step for a
-  // countdown, which truncates, half a step in for any other number (rounds).
-  #timerTickAt(now: number): number {
-    const { reading } = this._currentValue;
-    const timer = reading.kind === 'timer' ? reading : null;
-    const startedAt = timer?.startedAt;
-    const perUnitMs =
-      this.#progress.display.unit.value === CARD.config.unit.default ? ((timer?.max ?? 0) * 1000) / 100 : 1000;
-    const step = perUnitMs / 10 ** this.#progress.input.decimal;
-    const origin = is.number(startedAt) ? startedAt : 0;
-    // Not Math.max: an unreadable duration (NaN) still ticks by the second.
-    return nextOnGrid(now, origin, step > 1000 ? step : 1000, hasTimerOrFlexTimerUnit(this.#progress) ? 0 : 0.5);
-  }
-
-  #relativeTickAt(now: number): number[] {
+  #stateTimestamps(): number[] {
     const entity = this.entity;
     if (!entity) return [];
     return (this._currentValue.stateContent ?? [])
       .filter((prop) => HA_CONTEXT.timestampProps.has(prop))
-      .map((prop) => Date.parse(this._hassProvider.getEntityProp<string>(entity, prop)))
-      .filter((since) => is.number(since))
-      .map((since) => since + relativeAge(now - since).changesAtMs);
+      .map((prop) => Date.parse(this._hassProvider.getEntityProp<string>(entity, prop)));
   }
 
   // Which config keys feed the theme, in one place: called on `set config`

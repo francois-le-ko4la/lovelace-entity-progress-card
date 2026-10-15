@@ -7,7 +7,7 @@ import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { flushFrames } from '../../dom-setup.js';
-import { DOMHelper, ResourceManager } from '../../../src/card/dom-helpers.js';
+import { DOMHelper, ResourceManager } from '../../../src/card/dom/dom-helpers.js';
 
 const KEY = 'label';
 

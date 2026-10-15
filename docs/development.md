@@ -115,6 +115,33 @@ Three gates, each named for when you run it. Each one contains the previous:
 └─────────────────────────────────────────────────────────────────┘
 ```
 
+### Source layout
+
+`src/card/` is split by what a module is. A part split off one class lives under
+it.
+
+| Folder         | Holds                                                                                                                            |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `elements/`    | The custom elements: `card-base`, `features`, `template-base`, `multi`.                                                          |
+| `core/`        | `HACore` (`core.ts`, its parts in `core/`) and `HABase` (`base.ts`, its parts in `base/`).                                       |
+| `view/`        | The views and what they resolve: `progress-math`, `watermark-view`, `bound-value`, `jinja-state`, …                              |
+| `config/`      | `schema.ts` + `schema/`, `config-helpers.ts` + `config-helpers/`, `factorization`, `multi-rows`.                                 |
+| `dom/`         | `dom-helpers`, `structure`, `marks`, `alert`, `badge-icon`, `status-label`, `aligned-bars`.                                      |
+| `values/`      | Entity and value helpers: `entity-helper`, `entity-collection`, `device-probes`, `formatting`, `ha-state`, `unit-helper`.        |
+| `color/`       | Theme and colour: `theme-manager`, `bar-colors` (bar colour and gradients from a view), `diverging-gradient`.                    |
+| `history/`     | What changes over time: `trend-tracker`, `peak-tracker`, `change-tracker`, `sample-ring`, `history-seeding`, `peak-marker-view`. |
+| `diagnostics/` | `doctor` and `card-audit` (`EPB.doctor`).                                                                                        |
+
+- A barrel (`schema.ts`, `config-helpers.ts`, `dom-helpers.ts`) sits next to its
+  folder and re-exports only that folder.
+- No other barrel: import a module from the file that defines it.
+- `test/card/<folder>/` mirrors `src/card/<folder>/`.
+
+`src/editor/` follows the same rule: `elements/` (`base`, `editors`, `chips`,
+`list-editors/`), `form/` (`field-builder`, `dom-helper`, `select-types`),
+`data/` (`yaml-writer`, `multi-cascade`, `issue-report`, `config-flow`),
+`fields/`, `groups/`; `entry.ts` and `factory.ts` stay at the root.
+
 ### Two files, one copy of each module
 
 Those layers ship in two files. The editors are the only part of the top layer
@@ -239,7 +266,7 @@ this is the diagram's "Config helpers + validation" layer; see
 | `EntityCollectionHelper`                                  | The `bar_stack` feature: `proportional` mode renormalizes shares against the combined total (a.k.a. "100% stacked"), `stacked` places each entity at its own position on the min/max scale, `net` reduces everything to one algebraic total. Width/share math always runs on `#magnitude` (`Math.abs`) - a raw negative value must never produce a negative width. An entity counts as negative (`net`'s sign, or the arm it lands in with `center_zero`) via `#isNegative`: marked `subtract`, **or** its own raw value is already negative - checking both instead of just flipping the sign on `subtract` avoids double-negating an already-negative value back to positive. With `center_zero`, `stacked`/`proportional` split by that same `#isNegative` into two independent arm gradients (`getDivergingGradients`) applied via dedicated CSS variables (`--stack-*`) instead of the single shared fill. |
 | `resolveProgressInput` / `progress-display.ts`            | Validates what a refresh resolves into a `ProgressInput` (a refused value falls back to its default); pure functions print it: unit, timer and locale formatting, theme value. The view holds the resulting `Progress` and rebuilds it on each refresh.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | `ProgressMath`                                            | The percentage formulas themselves (min/max, reversed, `bar_scale`, center-zero), immutable: the whole input comes in through the constructor, so no formula reads what it was not given. `resolveProgressInput` feeds it.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| `UnitHelper`                                              | `value-primitives.ts`: a unit and its display flag, held by the view.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `UnitHelper`                                              | `values/unit-helper.ts`: a unit and its display flag, held by the view.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | `ThemeManager`                                            | Built-in & custom themes: color/icon per value zone, `segment`/`rainbow` gradients, HA color name adaptation.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | `NumberFormatter`                                         | Value/unit/duration formatting (`Intl.NumberFormat`, timedelta parsing).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | `ObjStructure` + `StructureTemplates`/`StructureElements` | HTML structure factory: pure string builders + per-option `<template>` cache (see [Rendering](#rendering--performance)).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
@@ -258,7 +285,7 @@ this is the diagram's "Config helpers + validation" layer; see
 ### The Multi cards
 
 `entity-progress-multi-card` and `entity-progress-multi-feature`
-(`card/multi.ts`) render no bar of their own. Each row is a real
+(`card/elements/multi.ts`) render no bar of their own. Each row is a real
 `entity-progress-card`, created with `document.createElement` (synchronous, no
 `loadCardHelpers`) inside a `.multi-item` wrapper, and handed its own config and
 `hass`: it watches, refreshes, formats and opens its more-info by itself. The
@@ -283,9 +310,9 @@ through the child's own height variable.
 - **Bars line up** through `bar_aligned`, true by default here: a row knows it
   is one by its `.multi-item` parent (see
   [Rendering & performance](#rendering--performance)).
-- **The editor** is a list (`entity-progress-multi-row-editor`,
-  `list-editors.ts`) whose pencil opens a row editor — the card editor itself,
-  built by `EditorFactory.buildMultiRow` — and writes back through `MULTI_ROWS`.
+- **The editor** is a list (`entity-progress-multi-row-editor`, `list-editors/`)
+  whose pencil opens a row editor — the card editor itself, built by
+  `EditorFactory.buildMultiRow` — and writes back through `MULTI_ROWS`.
 
 ## Card lifecycle
 
@@ -561,8 +588,8 @@ Techniques used to keep N cards cheap on a dashboard that updates constantly:
    repaint. `contain: layout paint` bounds invalidation to the bar.
 6. **Push-based Jinja** with subscription dedup (next section) instead of
    polling or resubscribing.
-7. **`bar_aligned` only grows at once** (`card/aligned-bars.ts`). The column is
-   a single_line row's text, or the value beside a default-row bar
+7. **`bar_aligned` only grows at once** (`card/dom/aligned-bars.ts`). The column
+   is a single_line row's text, or the value beside a default-row bar
    (`HAS_EFFECT.barAligned`). A row joins its group at render - its Multi for
    `true`, the name otherwise - and leaves with its other resources. A text
    change (`MutationObserver`) measures that row alone: wider than the column,
@@ -972,10 +999,10 @@ progressive-disclosure "+" picker (confirmed by checking `ha-form`'s own
 `LOAD_ELEMENTS` registry — see the `entity-progress-action-picker` note above).
 For those, two class families follow the same template-method pattern:
 
-- `ChipsBase`/`SingleSelectChipsBase` (`chips.ts`) — chip sets and 2-mode
-  segmented pills.
-- `ListEditorBase` (`list-editors.ts`) — repeatable row editors (`bar_stack`
-  entities, `custom_theme` zones) and `EntityProgressActionPicker`.
+- `ChipsBase`/`SingleSelectChipsBase` (`editor/elements/chips.ts`) — chip sets
+  and 2-mode segmented pills.
+- `ListEditorBase` (`editor/elements/list-editors/`) — repeatable row editors
+  (`bar_stack` entities, `custom_theme` zones) and `EntityProgressActionPicker`.
 
 **Construction**: plain `HTMLElement` subclasses, their own shadow DOM, a
 build-once/render-on-`value`-change lifecycle, dispatching a
@@ -1111,14 +1138,14 @@ one implementation, five call sites.
 
 ### Shared values: one factorisation
 
-`card/factorization.ts` is the one rule for every "set once on top, exceptions
-below" level: the mark families (`MARK_FACTORIZATION`, built from schema.ts's
-`MARK_FIELDS` table) and the Multi's rows (`MULTI_ROWS`, `multi-cascade.ts`). A
-`Factorization` is stateless, built from a spec (where the shared values and
-items live, how an item reads and writes a key, which keys an item inherits,
-pins or owns, which items have a say). The card reads through `resolve` (an
-item's own value, else the shared one if it inherits); the editor writes through
-`setLocal`, which calls `settle`.
+`card/config/factorization.ts` is the one rule for every "set once on top,
+exceptions below" level: the mark families (`MARK_FACTORIZATION`, built from
+schema.ts's `MARK_FIELDS` table) and the Multi's rows (`MULTI_ROWS`,
+`editor/data/multi-cascade.ts`). A `Factorization` is stateless, built from a
+spec (where the shared values and items live, how an item reads and writes a
+key, which keys an item inherits, pins or owns, which items have a say). The
+card reads through `resolve` (an item's own value, else the shared one if it
+inherits); the editor writes through `setLocal`, which calls `settle`.
 
 `settle` moves where values are written, never what a shown item uses: the
 values in use are read first; a strict majority (at least 2 voters, or the only
@@ -1436,9 +1463,9 @@ Checklist for a new YAML option, in the order that avoids back-tracking:
 5. **Editor** — add the field to the relevant `static _fields` maps
    (`EditorFactory`), with `showIf` for conditional visibility and
    `onChange`/`onClear` if the YAML shape differs from the UI shape. A new
-   select type needs an entry in `SELECT_TYPES` (editor/base.ts) and an option
-   map in the translations. **Never restate the allowed values there**: point
-   the entry at the schema with `from(variant, field)` — dot paths work
+   select type needs an entry in `SELECT_TYPES` (editor/elements/base.ts) and an
+   option map in the translations. **Never restate the allowed values there**:
+   point the entry at the schema with `from(variant, field)` — dot paths work
    (`from('card', 'watermark.type')`) — so the dropdown lists exactly what that
    variant validates, in the enum's own order. Only a genuine editor-side
    restriction (offering less than the schema accepts, like
@@ -1506,10 +1533,10 @@ Checklist for a new YAML option, in the order that avoids back-tracking:
 - **Formatting**: `.prettierrc` applies to `src/**/*.{js,ts}` too (not just
   markdown) — `npm run format:js` / `format:js:check` / `format` (JS + MD).
   `embeddedLanguageFormatting: "off"` is deliberate: Prettier recognizes the
-  `css` identity tag in `src/utils/styles.ts` (see `scripts/build.js`'s CSS
-  resolve/minify pass) as CSS-in-JS and would otherwise reformat the CSS _text
-  itself_ inside every tagged template literal, producing a massive diff for a
-  purely cosmetic change. `src/utils/translations.js` is excluded via
+  `css` identity tag in `src/utils/styles/css-tag.ts` (see `scripts/build.js`'s
+  CSS resolve/minify pass) as CSS-in-JS and would otherwise reformat the CSS
+  _text itself_ inside every tagged template literal, producing a massive diff
+  for a purely cosmetic change. `src/utils/translations.js` is excluded via
   `.prettierignore` (its own generator serializes it, not Prettier — formatting
   it here would just drift back out of sync on the next `i18n:sync`).
 - **Generated docs**: `docs/option-map.md` is written by `npm run docs:options`
@@ -1737,16 +1764,16 @@ reasoning survives a maintainer handoff instead of living only in chat history.
 **Debug areas** (each traces via a `Logger` that wraps the class's
 `_loggedMethods` — `👉` / `✅` / `❌` with timing — or logs directly):
 
-| Area                 | Wired in                                | Traces                                                                        |
-| -------------------- | --------------------------------------- | ----------------------------------------------------------------------------- |
-| `card`               | `HACore`/`HABase` (`core/`)             | lifecycle (connect / disconnect / **adopted** / setConfig / refresh / render) |
-| `editor`             | `EditorBase` (`editor/base.ts`)         | `setConfig` in, `config-changed` out                                          |
-| `interactionHandler` | `ActionHelper` (`dom-helpers.ts`)       | tap / hold / double-tap action resolution                                     |
-| `ressourceManager`   | `ResourceManager`/`DOMHelper`           | timers / listeners / subscriptions                                            |
-| `hass`               | `HassProviderSingleton`                 | first hass (HA version, language, connection), language change                |
-| `registration`       | `RegistrationHelper` (`register.ts`)    | every `define` (ok/skipped) + `customCards` push, with timing                 |
-| `instances`          | value-helper + view class constructors  | per-class instantiation counter (`traceInstance`, leak probe)                 |
-| `interference`       | `HACore` `MutationObserver` on the host | external mutations of our own host element (card-mod &c)                      |
+| Area                 | Wired in                                 | Traces                                                                        |
+| -------------------- | ---------------------------------------- | ----------------------------------------------------------------------------- |
+| `card`               | `HACore`/`HABase` (`core/`)              | lifecycle (connect / disconnect / **adopted** / setConfig / refresh / render) |
+| `editor`             | `EditorBase` (`editor/elements/base.ts`) | `setConfig` in, `config-changed` out                                          |
+| `interactionHandler` | `ActionHelper` (`dom-helpers.ts`)        | tap / hold / double-tap action resolution                                     |
+| `ressourceManager`   | `ResourceManager`/`DOMHelper`            | timers / listeners / subscriptions                                            |
+| `hass`               | `HassProviderSingleton`                  | first hass (HA version, language, connection), language change                |
+| `registration`       | `RegistrationHelper` (`register.ts`)     | every `define` (ok/skipped) + `customCards` push, with timing                 |
+| `instances`          | value-helper + view class constructors   | per-class instantiation counter (`traceInstance`, leak probe)                 |
+| `interference`       | `HACore` `MutationObserver` on the host  | external mutations of our own host element (card-mod &c)                      |
 
 To add a debug area: add it to `DEBUG_DEFAULTS` and the `CARD_CONTEXT.debug`
 object (`parameters.ts`), the `CLEAN_DEBUG_DEFAULTS_BODY` literal
@@ -1768,12 +1795,13 @@ Other aids:
   (`currentHass`), and so does `EPB.doctor.audit()`, which lists every card, on
   every dashboard, with deprecated options or options without effect
   (`card-audit.ts`). `EPB.doctor.cards()` and `.inspect(n | $0)`
-  (`card/doctor.ts`) walk every shadow root for cards of ours, a Multi's rows
-  included; `inspect` climbs from any element inside a card to it, and reports
-  `ViewBase.drawnFrom` - the value and range the bar is drawn from.
+  (`card/diagnostics/doctor.ts`) walk every shadow root for cards of ours, a
+  Multi's rows included; `inspect` climbs from any element inside a card to it,
+  and reports `ViewBase.drawnFrom` - the value and range the bar is drawn from.
 - The editor's bug icon copies an issue report: `environmentReport()` (what
   `dump()` prints), then the YAML Home Assistant holds, written by
-  `yaml-writer.ts` with `notesByPath` comments. Multi rows don't offer it.
+  `editor/data/yaml-writer.ts` with `notesByPath` comments. Multi rows don't
+  offer it.
 - Logger and `?debug=instances` names are passed explicitly (`initLogger`,
   `traceInstance`), never read from `constructor.name`: the prod build minifies
   class names. An element passes its `localName` (the tag), a helper a literal;

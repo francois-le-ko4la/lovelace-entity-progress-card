@@ -9,6 +9,7 @@ import assert from 'node:assert/strict';
 
 import { flushFrames } from '../../dom-setup.js';
 import { makeHass, TEST_ENTITY } from '../../ha-stubs.js';
+import { ResourceManager } from '../../../src/card/dom/dom-helpers.js';
 import '../../../src/index.js';
 
 const TIMER = 'timer.laundry';
@@ -28,7 +29,6 @@ type CardEl = HTMLElement & {
   _cardView?: View;
   _onAutoRefreshTick?: () => void;
 };
-type Refreshable = { _startAutoRefresh: (...args: unknown[]) => unknown };
 
 const minutesAgo = (minutes: number) => new Date(Date.now() - minutes * MINUTE).toISOString();
 
@@ -150,11 +150,11 @@ describe('when the next tick lands', () => {
 
 describe('an earlier deadline takes over at once', () => {
   test('a relative time turning fresh re-arms the loop to its next second, once', async () => {
-    const proto = (customElements.get(CARD_TAG) as CustomElementConstructor).prototype as Refreshable;
-    const original = proto._startAutoRefresh;
+    const proto = ResourceManager.prototype;
+    const original = proto.setTimeout;
     let starts = 0;
-    proto._startAutoRefresh = function counted(this: unknown, ...args: unknown[]) {
-      starts++;
+    proto.setTimeout = function counted(this: ResourceManager, ...args: Parameters<typeof original>) {
+      if (args[2] === 'autoRefresh') starts++;
       return original.apply(this, args);
     };
     try {
@@ -171,7 +171,7 @@ describe('an earlier deadline takes over at once', () => {
       el.hass = fresh();
       assert.equal(starts, 1, 'a later deadline must not re-arm it again');
     } finally {
-      proto._startAutoRefresh = original;
+      proto.setTimeout = original;
     }
   });
 });

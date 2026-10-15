@@ -11,7 +11,7 @@ import { flushFrames } from '../../dom-setup.js';
 import { makeHass, TEST_ENTITY } from '../../ha-stubs.js';
 
 import '../../../src/index.js';
-import { joinAlignedRows, alignTiming } from '../../../src/card/aligned-bars.js';
+import { joinAlignedRows, alignTiming } from '../../../src/card/dom/aligned-bars.js';
 
 const ALIGN_VAR = '--current-align-width';
 const FLOOR_VAR = '--current-align-text-floor';

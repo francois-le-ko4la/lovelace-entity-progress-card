@@ -8,7 +8,7 @@ import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 
 import { EditorFactory } from '../../src/editor/factory.js';
-import { MARK_FIELDS } from '../../src/card/schema.js';
+import { MARK_FIELDS } from '../../src/card/config/schema.js';
 import { assertUndefined } from '../helpers.js';
 import { HassProviderSingleton } from '../../src/utils/hass-provider.js';
 import type { LovelaceConfig } from '../../src/utils/types.js';

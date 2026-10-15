@@ -10,7 +10,7 @@
 
 // Type-only, erased at compile time - the one exception to utils/ never
 // importing from card/.
-import type { Infer, YamlSchemaFactory } from '../card/schema.js';
+import type { Infer, YamlSchemaFactory } from '../card/config/schema.js';
 
 declare const lovelaceConfigBrand: unique symbol;
 // The config exactly as Lovelace hands it over - setConfig()'s own argument,

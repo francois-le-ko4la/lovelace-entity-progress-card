@@ -8,7 +8,7 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { YamlSchemaFactory, schemaOptions, type SchemaVariant } from '../../src/card/schema.js';
+import { YamlSchemaFactory, schemaOptions, type SchemaVariant } from '../../src/card/config/schema.js';
 import { EditorFactory } from '../../src/editor/factory.js';
 
 // YAML only, on purpose - each with the reason it has no field.

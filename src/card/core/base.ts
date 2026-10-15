@@ -1,17 +1,27 @@
 import { META, suffixedName, HA_CONTEXT, CARD } from '../../utils/parameters.js';
-import { is, assertDefined, toNumberOrNull } from '../../utils/common-checks.js';
-import { ThemeManager } from '../value-helpers.js';
-import { type HomeAssistant, type EntityState } from '../../utils/hass-provider.js';
-import { type ViewCore } from '../view.js';
-import { statusLabelObj, BAR_POSITIONS, BAR_AROUND_ICON, ICON_ANIMATIONS, OWN_TRIGGER_ANIMATIONS } from '../schema.js';
-import { ActionHelper, type CacheValue } from '../dom-helpers.js';
-import { StatusLabel } from '../status-label.js';
-import { BadgeIcon } from '../badge-icon.js';
-import { Alert } from '../alert.js';
-import { Marks } from '../marks.js';
+import { is, assertDefined } from '../../utils/common-checks.js';
+import { ThemeManager } from '../color/theme-manager.js';
+import { type HomeAssistant } from '../../utils/hass-provider.js';
+import { type ViewCore } from '../view/core.js';
+import {
+  statusLabelObj,
+  BAR_POSITIONS,
+  BAR_AROUND_ICON,
+  ICON_ANIMATIONS,
+  OWN_TRIGGER_ANIMATIONS,
+} from '../config/schema.js';
+import { ActionHelper, type CacheValue } from '../dom/dom-helpers.js';
+import { StatusLabel } from '../dom/status-label.js';
+import { BadgeIcon } from '../dom/badge-icon.js';
+import { IconManager } from './base/icon-manager.js';
+import { Alert } from '../dom/alert.js';
+import { Marks } from '../dom/marks.js';
 import { type LovelaceConfig, type Config } from '../../utils/types.js';
-import { type StructureOptions } from '../structure.js';
-import { HACore, type IconElement, RING_MAX_GAP, TREND_ICONS, type JinjaNumberProp, JINJA_NUMBER_KEY } from './core.js';
+import { type StructureOptions } from '../dom/structure.js';
+import { gridOptionsOf } from './base/layout.js';
+import { applyJinjaNumber } from './base/jinja-number.js';
+import { splitAtFirstBreak } from './base/split-break.js';
+import { HACore, RING_MAX_GAP, TREND_ICONS, type JinjaNumberProp, JINJA_NUMBER_KEY } from './core.js';
 
 /**
  * Extends HACore with entity rendering: icon, badge, shape, trend, hidden
@@ -38,7 +48,6 @@ class HABase extends HACore {
     CARD.style.dynamic.hiddenComponent.secondary_info,
     CARD.style.dynamic.hiddenComponent.progress_bar,
   ];
-  _icon: IconElement | null = null;
   // `declare`: every HABase subclass assigns its own real view (Card/Badge
   // for card types, CardTemplateView/BadgeTemplateView for template ones).
   declare _cardView: ViewCore;
@@ -46,6 +55,12 @@ class HABase extends HACore {
   // assigned unconditionally in the constructor below, for every HABase
   // instance.
   #badgeIcon = new BadgeIcon(() => this._dom);
+  #iconManager = new IconManager({
+    dom: () => this._dom,
+    hass: () => this.hass,
+    isConnected: () => this.isConnected,
+    log: () => this._log,
+  });
   #lastMessage: { content: string; sev: string } | null = null;
   #statusLabel = new StatusLabel(() => this._dom);
   #alert = new Alert({
@@ -62,10 +77,6 @@ class HABase extends HACore {
     return [
       ...super._loggedMethods,
       '_showIcon',
-      '_handleImgIcon',
-      '_handleStateIcon',
-      '_createStateObjIcon',
-      '_cleanupImgIcon',
       '_showBadge',
       '_manageShape',
       '_updateTrend',
@@ -149,20 +160,7 @@ class HABase extends HACore {
   // CARD.layout.gridColumnMultiplier.
   getGridOptions() {
     if (!this.#isSizeableCard) return undefined;
-    const { grid_rows, grid_min_rows, grid_max_rows, grid_columns, grid_min_columns, grid_max_columns } =
-      this._cardView.cardLayoutOptions;
-    const multiplier = CARD.layout.gridColumnMultiplier;
-    const gridOptions = {
-      rows: grid_rows,
-      min_rows: grid_min_rows,
-      columns: grid_columns * multiplier,
-      min_columns: grid_min_columns * multiplier,
-      // undefined (the default outside density: compact) means "no ceiling" -
-      // left out entirely rather than sent as columns/rows: undefined, so it
-      // reads the same to HA as never having been set at all.
-      ...(grid_max_rows !== undefined ? { max_rows: grid_max_rows } : {}),
-      ...(grid_max_columns !== undefined ? { max_columns: grid_max_columns * multiplier } : {}),
-    };
+    const gridOptions = gridOptionsOf(this._cardView);
     this._log?.debug('getGridOptions: ', gridOptions);
     return gridOptions;
   }
@@ -177,7 +175,7 @@ class HABase extends HACore {
 
   reset() {
     super.reset(); // #isRendered, _dom.destroy(), shadowRoot.innerHTML
-    this._icon = null;
+    this.#iconManager.reset();
     this.#statusLabel.forgetPaint();
   }
 
@@ -451,7 +449,7 @@ class HABase extends HACore {
     this._applyTrendVisuals(bar.getTrend());
   }
 
-  // Shared with EntityProgressTemplateBase's own _updateTrend (cards.ts).
+  // Shared with TemplateBase's own _updateTrend (template-base.ts).
   _applyTrendVisuals(direction: string) {
     this._dom.setAttribute(
       CARD.htmlStructure.elements.trendIndicator.icon.class,
@@ -471,105 +469,6 @@ class HABase extends HACore {
 
   // ─── ICON MANAGEMENT ──────────────────────────────────────────────────────
 
-  _createImgIcon(altText: string, className = 'custom-icon-img'): HTMLImageElement {
-    this._log?.debug('📎 HABase._createImgIcon():', { altText, className });
-
-    const img = document.createElement('img');
-    img.className = className;
-    img.decoding = 'async';
-    img.alt = altText;
-    return img;
-  }
-
-  _handleImgIcon(stateObj: EntityState | null, srcPicture: string) {
-    this._log?.debug('📎 HABase._handleImgIcon():', { stateObj, srcPicture });
-
-    const pictureAlt = (stateObj?.attributes?.friendly_name as string) || 'Entity picture';
-    const iconContainer = this._dom.get(CARD.htmlStructure.elements.icon.class);
-    if (!iconContainer) return;
-
-    if (this._icon?.tagName !== 'IMG') {
-      this._icon?.remove();
-      this._icon = this._createImgIcon(pictureAlt);
-      iconContainer.replaceChildren(this._icon);
-      this._dom.setStyle(CARD.htmlStructure.card.element, CARD.style.dynamic.iconAndShape.icon.size.var, '36px');
-    }
-
-    const img = this._icon as HTMLImageElement;
-    img.src = srcPicture;
-    img.alt = pictureAlt;
-  }
-
-  _createStateObjIcon(
-    stateObj: EntityState | null,
-    curIcon: string | null,
-    hasIconOverride: boolean,
-    hasPicture: boolean,
-  ): unknown {
-    this._log?.debug('📎 HABase._createStateObjIcon():', { stateObj, curIcon, hasIconOverride, hasPicture });
-
-    if (!stateObj) {
-      return this.isConnected
-        ? {
-            entity_id: 'sensor.dummy',
-            state: 'unknown',
-            attributes: {
-              icon: curIcon || HA_CONTEXT.icons.helpCircleOutline,
-              friendly_name: 'Unknown Entity',
-            },
-          }
-        : null;
-    }
-
-    if (!hasIconOverride && !hasPicture) {
-      return stateObj;
-    }
-    if (hasIconOverride) {
-      return {
-        entity_id: 'sensor.for_picture',
-        state: 'on',
-        attributes: {
-          icon: curIcon,
-        },
-      };
-    }
-
-    const attributes = { ...stateObj.attributes };
-    if (hasPicture && !hasIconOverride) {
-      delete attributes.entity_picture;
-    }
-
-    return {
-      ...stateObj,
-      attributes,
-    };
-  }
-
-  _cleanupImgIcon() {
-    if (this._icon?.tagName === 'IMG') {
-      this._icon.remove();
-      this._icon = null;
-    }
-  }
-
-  _handleStateIcon(iconContainer: HTMLElement, stateObjIcon: unknown) {
-    this._log?.debug('📎 HABase._handleStateIcon():', { iconContainer, stateObjIcon });
-
-    this._cleanupImgIcon();
-
-    if (!this._icon) {
-      this._icon = document.createElement('ha-state-icon') as HTMLElement & {
-        hass: HomeAssistant | null;
-        stateObj: unknown;
-      };
-      iconContainer.replaceChildren(this._icon);
-    }
-
-    const stateIcon = this._icon as HTMLElement & { hass: HomeAssistant | null; stateObj: unknown };
-    stateIcon.hass = this.hass;
-    stateIcon.stateObj = stateObjIcon;
-  }
-
   _showIcon() {
     if (!this._cardView) return;
 
@@ -585,12 +484,12 @@ class HABase extends HACore {
     if (!iconContainer) return;
 
     if (hasPicture && !hasIconOverride) {
-      this._handleImgIcon(stateObj, srcPicture);
+      this.#iconManager.showPicture(stateObj, srcPicture);
       return;
     }
 
-    const stateObjIcon = this._createStateObjIcon(stateObj, curIcon, hasIconOverride, hasPicture);
-    if (stateObjIcon) this._handleStateIcon(iconContainer, stateObjIcon);
+    const stateObjIcon = this.#iconManager.stateObjFor(stateObj, curIcon, hasIconOverride, hasPicture);
+    if (stateObjIcon) this.#iconManager.showState(iconContainer, stateObjIcon);
   }
 
   // ─── SHAPE MANAGEMENT ─────────────────────────────────────────────────────
@@ -722,18 +621,7 @@ class HABase extends HACore {
     viewProp: JinjaNumberProp,
     repaint: () => void,
   ) {
-    // Defensive: only apply while the option is still in { jinja: "..." } mode:
-    // guards against a push landing as the user switches the mode chips away.
-    if (!is.nonEmptyString(getJinja(this._cardView.config))) return;
-    const state = this._cardView.jinjaState;
-    const value = toNumberOrNull(content);
-    const key = JINJA_NUMBER_KEY[viewProp];
-    // A result that is no number (an 'unavailable' state) fails like a refusal.
-    const failure = value === null ? '' : null;
-    if (value === state[viewProp] && failure === state.failure(key)) return;
-    state[viewProp] = value;
-    state.setFailure(key, failure);
-    repaint();
+    applyJinjaNumber(this._cardView, content, getJinja, viewProp, repaint);
   }
 
   _onJinjaFailure(key: string, message: string) {
@@ -758,8 +646,8 @@ class HABase extends HACore {
     this._repaintStatusLabel();
   }
 
-  // Also called on every refresh and from cards.ts's color pushes, not just
-  // from _renderLabel: status_label may never push again after percent settles.
+  // Also run on every refresh and template color push: status_label may never
+  // push again once percent settles.
   _repaintStatusLabel() {
     if (this.#statusLabel.alertOwns) return;
     const text = this.#statusLabel.text;
@@ -793,67 +681,13 @@ class HABase extends HACore {
   // on the formatted HTML - a spacer would make extra-1 look non-empty forever.
   _renderSecondaryLines(content: unknown, format: (line: string, isSecond: boolean) => string) {
     const multiline = Boolean(this._cardView.config.multiline);
-    const [line1, line2] = this._splitAtFirstBreak(content);
+    const [line1, line2] = splitAtFirstBreak(content, multiline);
     const elements = CARD.htmlStructure.elements;
     this._dom.setHTML(elements.secondaryInfoExtra.class, format(line1, false));
     if (multiline) this._dom.setHTML(elements.secondaryInfoExtra2.class, format(line2 ?? '', true));
     this._secondaryInfoEmpty.extra1 = line1.trim() === '';
     this._secondaryInfoEmpty.extra2 = (line2 ?? '').trim() === '';
     this._updateSecondaryInfoWrapperVisibility();
-  }
-
-  static #BREAK_RE = /<br\s*\/?>/gi;
-
-  // Splits Jinja-sourced HTML at the first <br> - shared by _renderCustomInfo
-  // and _renderSecondary. `multiline` off: any <br> is stripped. On: only
-  // the first is kept, anything past a 2nd <br> is discarded. A tag
-  // straddling the break is re-wrapped on both halves via #domSplitOnce's
-  // ancestor cloning, not a naive string split (would orphan a tag).
-  _splitAtFirstBreak(content: unknown): [string, string | null] {
-    const html = String(content);
-    if (!this._cardView.config.multiline) return [html.replace(HABase.#BREAK_RE, ''), null];
-
-    const [before, afterRaw] = HABase.#domSplitOnce(html);
-    if (afterRaw === null) return [before, null];
-    const [after] = HABase.#domSplitOnce(afterRaw); // drop anything from a 2nd <br> onward
-    return [before, after];
-  }
-
-  // Single split at the first <br> element node, tree-aware: everything before
-  // it goes to `before`, everything after to `after`, each re-wrapped in a
-  // shallow clone of every ancestor it passed through so nested tags keep their
-  // attributes on both halves. Returns [html, null] when there is no <br> at
-  // all.
-  static #domSplitOnce(html: string): [string, string | null] {
-    // Own non-global literal on purpose: #BREAK_RE carries the /g flag for the
-    // .replace() call above, and .test() on a /g regex mutates lastIndex, which
-    // would corrupt the *next* call's match position (this runs twice per
-    // multiline render, back to back, for the 2nd-<br> check).
-    if (!/<br\s*\/?>/i.test(html)) return [html, null];
-
-    const root = new DOMParser().parseFromString(`<body>${html}</body>`, 'text/html').body;
-    let found = false;
-    const split = (node: Node): [Node, Node] => {
-      const before = node.cloneNode(false);
-      const after = node.cloneNode(false);
-      for (const child of Array.from(node.childNodes)) {
-        if (found) {
-          after.appendChild(child.cloneNode(true));
-        } else if (child.nodeName === 'BR') {
-          found = true;
-        } else if (child.nodeType === Node.ELEMENT_NODE) {
-          const [childBefore, childAfter] = split(child);
-          before.appendChild(childBefore);
-          if (found) after.appendChild(childAfter);
-        } else {
-          before.appendChild(child.cloneNode(true));
-        }
-      }
-      return [before, after];
-    };
-
-    const [before, after] = split(root);
-    return [(before as Element).innerHTML, (after as Element).innerHTML];
   }
 
   // ─── getStubConfig -> select entity ───────────────────────────────────────

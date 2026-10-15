@@ -1,6 +1,6 @@
 import { HA_CONTEXT } from '../../utils/parameters.js';
 import { type LovelaceConfig } from '../../utils/types.js';
-import { HAS_EFFECT } from '../../card/schema.js';
+import { HAS_EFFECT } from '../../card/config/schema.js';
 import {
   gateOnHide,
   EditorFieldsType,

@@ -6,7 +6,7 @@
 
 import fs from 'node:fs';
 import { load as loadYaml } from 'js-yaml';
-import { YamlSchemaFactory, schemaOptions, type SchemaVariant } from '../../src/card/schema.js';
+import { YamlSchemaFactory, schemaOptions, type SchemaVariant } from '../../src/card/config/schema.js';
 import { EditorFactory } from '../../src/editor/factory.js';
 import { collectCards, withoutElisions } from './card-configs.js';
 

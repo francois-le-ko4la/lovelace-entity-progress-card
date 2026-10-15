@@ -26,7 +26,7 @@ declare const hassBrand: unique symbol;
 // name at compile time that `Record<string, unknown>` alone never would; the
 // trailing `& Record<string, unknown>` keeps every other real HA field from
 // becoming a type error. Fields listed are exactly the ones grepped out of
-// this file, core.ts, and value-helpers.ts.
+// this file, core.ts, and theme-manager.ts.
 type EntityRegistryEntry = { name?: string; device_id?: string; area_id?: string } & Record<string, unknown>;
 type DeviceRegistryEntry = { name?: string; name_by_user?: string | null; area_id?: string } & Record<string, unknown>;
 type AreaRegistryEntry = { name?: string; floor_id?: string } & Record<string, unknown>;

@@ -1,7 +1,8 @@
 /*
- * A tile feature that sets no entity renders its tile's (cards.ts), and Home
- * Assistant hands the feature's editor that tile's context. The editor has to
- * judge by the same entity - peak_marker, attribute - without ever writing it.
+ * A tile feature that sets no entity renders its tile's (elements/features.ts),
+ * and Home Assistant hands the feature's editor that tile's context. The editor
+ * has to judge by the same entity - peak_marker, attribute - without ever
+ * writing it.
  */
 
 import { test, describe } from 'node:test';

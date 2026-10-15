@@ -2,7 +2,7 @@ import { CARD, HA_CONTEXT } from '../../utils/parameters.js';
 import { is } from '../../utils/common-checks.js';
 import { type LovelaceConfig } from '../../utils/types.js';
 import { parseLength, serializeLength, convertLengthValue } from '../../utils/length.js';
-import { DENSITY_MODES, HAS_EFFECT, YamlSchemaFactory, densityOverrides } from '../../card/schema.js';
+import { DENSITY_MODES, HAS_EFFECT, YamlSchemaFactory, densityOverrides } from '../../card/config/schema.js';
 import { EditorFieldsType, draftToggle, TITLE } from '../fields/base.js';
 
 // A CSS-length option (e.g. min_width) edited as a number+unit composite: a

@@ -11,7 +11,7 @@ import { flushFrames } from '../../dom-setup.js';
 import { makeHass, TEST_ENTITY } from '../../ha-stubs.js';
 
 import '../../../src/index.js';
-import { cards, inspect } from '../../../src/card/doctor.js';
+import { cards, inspect } from '../../../src/card/diagnostics/doctor.js';
 
 type CardEl = HTMLElement & { setConfig?: (c: unknown) => void; hass?: unknown };
 

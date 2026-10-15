@@ -1,0 +1,412 @@
+/*
+ * Builds the card's raw HTML markup: reusable element templates
+ * (StructureElements) and the full per-card-type structure templates
+ * (StructureTemplates) assembled from them.
+ */
+
+import { BAR_AROUND_ICON } from '../config/schema.js';
+import { CARD, CARD_CONTEXT, CONTENT_SLOT } from '../../utils/parameters.js';
+import { traceInstance } from '../../utils/log.js';
+
+// Shape of every CARD.htmlStructure.sections.*/elements.* entry actually
+// passed to Element() below (sections.ripple, the one entry with no `class`,
+// is never routed through here - StructureElements.ripple() is a hardcoded
+// string instead).
+type StructureElementSpec = {
+  element: string;
+  class: string;
+  id?: string;
+  extraAttr?: Record<string, string | number>;
+};
+
+// The options bag threaded through StructureElements/StructureTemplates -
+// every call site only ever fills in a subset of these (layout, barPosition,
+// barType, trendIndicator, hasLabel, multiline, barSingleLine), never all at
+// once.
+type StructureOptions = {
+  // Statically hidden subtrees, left out of the markup rather than built and
+  // hidden. The matching hide-* class still goes on the card: it carries the
+  // layout compensation (--current-content-width, --name-height), not just the
+  // display: none.
+  hideIcon?: boolean;
+  hideName?: boolean;
+  hideSecondaryInfo?: boolean;
+  singleLine?: boolean;
+  layout?: string;
+  barPosition?: string;
+  barType?: string;
+  trendIndicator?: boolean;
+  hasLabel?: boolean;
+  multiline?: boolean;
+  barSingleLine?: boolean;
+};
+
+const Element = (obj: StructureElementSpec, extraClass = '') => {
+  const className = `${obj.class} ${extraClass}`.trim();
+  const renderAttrs = (attrsObj: Record<string, string | number> = {}) =>
+    Object.entries(attrsObj)
+      .map(([key, value]) => `${key}="${value}"`)
+      .join(' ');
+
+  return {
+    tag: obj.element,
+    class: className,
+    html: (content = '', attrs: Record<string, string | number> = {}) => {
+      const allAttrs = { ...(obj.id ? { id: obj.id } : {}), ...(obj.extraAttr || {}), ...attrs };
+      return `<${obj.element} class="${className}" ${renderAttrs(allAttrs)}>${content}</${obj.element}>`;
+    },
+  };
+};
+
+// The nesting every secondary-info variant shares: an ellipsis wrapper around
+// the value, holding its own `extra` span plus the `main` one when the card
+// type has a slot for it.
+const infoLine = (extraEl: StructureElementSpec, showMain: boolean, extraClass = '') =>
+  Element(CARD.htmlStructure.elements.ellipsisWrapper, extraClass).html(
+    Element(CARD.htmlStructure.elements.secondaryInfoValue).html(
+      Element(extraEl).html() + (showMain ? Element(CARD.htmlStructure.elements.secondaryInfoMain).html() : ''),
+    ),
+  );
+
+const StructureElements = {
+  ripple: () => '<ha-ripple></ha-ripple>',
+  // A positional container holding nothing but the bar: the slot swap is the
+  // same for every position, only which container differs.
+  barContainer: (container: () => string, options: StructureOptions) =>
+    container().replace(CONTENT_SLOT, StructureElements.progressBar(options)),
+  // The card-level ripple lives in its own sibling div (see
+  // CARD.htmlStructure.sections.rippleZone) rather than as a bare direct
+  // child of .container - see that token's own comment for why.
+  container: (options: StructureOptions) =>
+    Element(CARD.htmlStructure.sections.rippleZone).html(StructureElements.ripple()) +
+    Element(CARD.htmlStructure.sections.container, options.layout).html(CONTENT_SLOT),
+  belowContainer: () => Element(CARD.htmlStructure.sections.belowContainer).html(CONTENT_SLOT),
+  topContainer: () => Element(CARD.htmlStructure.sections.topContainer).html(CONTENT_SLOT),
+  backgroundContainer: () => Element(CARD.htmlStructure.sections.backgroundContainer).html(CONTENT_SLOT),
+  bottomContainer: () => Element(CARD.htmlStructure.sections.bottomContainer).html(CONTENT_SLOT),
+
+  // No ripple here anymore (was: ripple() + icon()) - the icon's own click
+  // feedback is CSS-only now (opacity/scale on :hover/:active, gated by
+  // .clickable-icon - see styles.ts), same technique ha-tile-icon uses
+  // instead of a second <ha-ripple>. .shape re-enables pointer-events itself
+  // (also gated by .clickable-icon) so it still receives its own clicks
+  // rather than falling through to the card-level ripple underneath.
+  iconAndShape: (options: StructureOptions = {}) =>
+    Element(CARD.htmlStructure.elements.shape).html(
+      Element(CARD.htmlStructure.elements.icon).html() +
+        (options.barPosition === BAR_AROUND_ICON ? StructureElements.ringLayers() : ''),
+    ),
+  badge: () =>
+    Element(CARD.htmlStructure.elements.badge.container).html(Element(CARD.htmlStructure.elements.badge.icon).html()),
+  nameContent: (minimal = false) =>
+    Element(CARD.htmlStructure.elements.nameContent).html(
+      Element(CARD.htmlStructure.elements.ellipsisWrapper).html(
+        Element(CARD.htmlStructure.elements.nameValue).html(
+          Element(CARD.htmlStructure.elements.nameMain).html() +
+            (minimal ? '' : Element(CARD.htmlStructure.elements.nameExtra).html()),
+        ),
+      ),
+    ),
+  // One line of a multiline secondary-info block: line 1 is always extra-only
+  // (never a main, whatever the caller passes); line 2 adds the main span only
+  // when this card type actually has one (card/badge: yes, template: no slot at
+  // all - see StructureElements.secondaryInfoWrapperMinimal).
+  secondaryInfoLine: (index: 1 | 2, hasMain: boolean) =>
+    infoLine(
+      index === 1 ? CARD.htmlStructure.elements.secondaryInfoExtra : CARD.htmlStructure.elements.secondaryInfoExtra2,
+      index === 2 && hasMain,
+      `secondary-info-line-${index}`,
+    ),
+
+  secondaryInfoWrapperMultiline: (hasMain: boolean) =>
+    Element(CARD.htmlStructure.elements.secondaryInfoWrapper).html(
+      StructureElements.secondaryInfoLine(1, hasMain) + StructureElements.secondaryInfoLine(2, hasMain),
+    ),
+
+  // Single-line counterpart to secondaryInfoLine above - one wrapper instead
+  // of two stacked lines, and no per-line class.
+  secondaryInfoWrapperSingleLine: (hasMain: boolean) =>
+    Element(CARD.htmlStructure.elements.secondaryInfoWrapper).html(
+      infoLine(CARD.htmlStructure.elements.secondaryInfoExtra, hasMain),
+    ),
+
+  secondaryInfoWrapper: (options: StructureOptions = {}) =>
+    options.multiline
+      ? StructureElements.secondaryInfoWrapperMultiline(true)
+      : StructureElements.secondaryInfoWrapperSingleLine(true),
+
+  secondaryInfoWrapperMinimal: (options: StructureOptions = {}) =>
+    options.multiline
+      ? StructureElements.secondaryInfoWrapperMultiline(false)
+      : StructureElements.secondaryInfoWrapperSingleLine(false),
+
+  progressBar: (options: StructureOptions) => {
+    const extraClass = options.barPosition === 'overlay' ? 'overlay' : '';
+    const isCenterZero = options.barType === 'centerZero';
+    // bar_segments' cells are NOT built here: a variable number of real divs,
+    // built directly in JS (buildSegmentCells) after this static
+    // template is cloned in - this template is cached per unique options set,
+    // and bar_segments ranges freely, unlike every other option here.
+    const markClass = 'watermark mark';
+    const marks =
+      Element(CARD.htmlStructure.elements.progressBar.lowWatermark, markClass).html() +
+      Element(CARD.htmlStructure.elements.progressBar.highWatermark, markClass).html() +
+      Element(CARD.htmlStructure.elements.progressBar.rangeMarker, markClass).html() +
+      Element(CARD.htmlStructure.elements.progressBar.minMarker, markClass).html() +
+      Element(CARD.htmlStructure.elements.progressBar.maxMarker, markClass).html() +
+      Element(CARD.htmlStructure.elements.progressBar.averageMarker, markClass).html() +
+      (isCenterZero ? Element(CARD.htmlStructure.elements.progressBar.zeroMark, 'mark').html() : '');
+
+    const innerHtml = isCenterZero
+      ? Element(CARD.htmlStructure.elements.progressBar.half, 'negative-zone').html(
+          Element(CARD.htmlStructure.elements.progressBar.inner, 'negative').html(),
+        ) +
+        Element(CARD.htmlStructure.elements.progressBar.half, 'positive-zone').html(
+          Element(CARD.htmlStructure.elements.progressBar.inner, 'positive').html(),
+        ) +
+        marks
+      : Element(CARD.htmlStructure.elements.progressBar.inner, 'positive').html() + marks;
+
+    // valueMarker is a sibling of .bar, not one of the marks nested inside it
+    // (see the block above) - .bar has overflow: hidden (needed to clip the
+    // fill sweep/segments to its own thin frame), which would clip the
+    // marker down to the bar's own height too, drowning it at small
+    // bar_size. .bar-container has no such clipping, so the marker can be
+    // taller than the (possibly tiny) bar it marks and still read clearly.
+    return Element(CARD.htmlStructure.elements.progressBar.container, extraClass).html(
+      Element(
+        CARD.htmlStructure.elements.progressBar.bar,
+        isCenterZero ? CARD.style.dynamic.progressBar.centerZero : 'default',
+      ).html(innerHtml) + Element(CARD.htmlStructure.elements.progressBar.valueMarker, 'mark').html(),
+      isCenterZero ? { 'aria-valuemin': '-100' } : {},
+    );
+  },
+
+  createSecondaryInfo: (options: StructureOptions, secondaryInfoWrapperFn: (options: StructureOptions) => string) => {
+    const { layout = '', barPosition = '' } = options;
+    // Only the default position nests the bar inside .secondary-info; the
+    // other six used to be listed here, a copy of BAR_POSITIONS minus one.
+    const nestsBar = !barPosition || barPosition === 'default';
+    const excludedLayouts = ['vertical'];
+
+    // In a single row the bar is a sibling, never nested here (see
+    // createContent's `after` slot), so a statically hidden secondary-info has
+    // nothing left to hold - the box goes with it. Standing empty, it still
+    // took the row's gap next to the bar.
+    if (options.singleLine && options.hideSecondaryInfo) return '';
+
+    // Everywhere else only the wrapper goes: .secondary-info itself may be
+    // holding the progress bar (see the barPosition/layout test just below),
+    // and that is exactly what .hide-secondary-info targets in CSS too.
+    let content = options.hideSecondaryInfo ? '' : secondaryInfoWrapperFn(options);
+
+    if (!options.singleLine && nestsBar && !excludedLayouts.includes(layout)) {
+      content += StructureElements.progressBar(options);
+    }
+
+    return Element(CARD.htmlStructure.elements.secondaryInfo).html(content);
+  },
+
+  secondaryInfo: (options: StructureOptions) =>
+    StructureElements.createSecondaryInfo(options, StructureElements.secondaryInfoWrapper),
+
+  secondaryInfoMinimal: (options: StructureOptions) =>
+    StructureElements.createSecondaryInfo(options, StructureElements.secondaryInfoWrapperMinimal),
+
+  createContent: (options: StructureOptions, rightContent: string) => {
+    const isOverlay = options.barPosition === 'overlay';
+    const isSingleLine = options.barSingleLine;
+    const isVertical = options.layout === 'vertical';
+    const isSingleLineRow = Boolean(options.singleLine);
+    const barElsewhere = ['below', 'top', 'bottom', 'background', BAR_AROUND_ICON].includes(options.barPosition ?? '');
+
+    const extraClass =
+      (isOverlay ? ' overlay' : '') +
+      (isSingleLine ? ' single-line' : '') +
+      (isSingleLineRow ? ' single-line-row' : '');
+    const before = isOverlay ? StructureElements.progressBar(options) : '';
+    // Same slot vertical already uses: the bar sits after the content instead
+    // of inside secondary-info, which is what makes it a sibling on the row.
+    const after =
+      !isOverlay && !barElsewhere && (isVertical || isSingleLineRow) ? StructureElements.progressBar(options) : '';
+    const ringProgress =
+      options.barPosition === BAR_AROUND_ICON ? Element(CARD.htmlStructure.elements.ringProgress).html() : '';
+    const content = before + rightContent + after + ringProgress;
+
+    return Element(CARD.htmlStructure.sections.content, extraClass).html(content);
+  },
+
+  // bar_position: compact_below (#123) - name and secondary_info share one
+  // row (their own wrapper, see CARD.htmlStructure.sections.nameSecondaryRow),
+  // the bar becomes a separate sibling row below it - a real, explicit
+  // structural difference (like below/top/bottom/overlay), not a CSS
+  // rearrangement of the default DOM.
+  createContentBody: (
+    options: StructureOptions,
+    nameHtml: string,
+    secondaryInfoFn: (options: StructureOptions) => string,
+  ) => {
+    const body = (options.hideName ? '' : nameHtml) + secondaryInfoFn(options);
+    if (options.barPosition === 'compact_below') {
+      return Element(CARD.htmlStructure.sections.nameSecondaryRow).html(body) + StructureElements.progressBar(options);
+    }
+    // density: single_line wraps the same two in one box instead, so the row
+    // truncates once at its end rather than each group inside its own. With
+    // both statically hidden there is nothing to wrap, and an empty box is not
+    // free: it still claims its share of the row's gap.
+    if (!options.singleLine || body === '') return body;
+    return Element(CARD.htmlStructure.sections.infoRow).html(body);
+  },
+
+  contentFull: (options: StructureOptions) =>
+    StructureElements.createContent(
+      options,
+      StructureElements.createContentBody(options, StructureElements.nameContent(), StructureElements.secondaryInfo),
+    ),
+  contentMini: (options: StructureOptions) =>
+    StructureElements.createContent(
+      options,
+      StructureElements.createContentBody(
+        options,
+        StructureElements.nameContent(true),
+        StructureElements.secondaryInfoMinimal,
+      ),
+    ),
+
+  ringLayers: () =>
+    Object.values(CARD.htmlStructure.elements.ringMarks)
+      .map((mark) => Element(mark).html())
+      .join('') +
+    Element(CARD.htmlStructure.elements.ringMark).html() +
+    Element(CARD.htmlStructure.elements.ringZero).html(),
+
+  iconSection: (options: StructureOptions = {}) =>
+    Element(CARD.htmlStructure.sections.icon).html(StructureElements.iconAndShape(options) + StructureElements.badge()),
+  iconSectionWoBadge: (options: StructureOptions = {}) =>
+    Element(CARD.htmlStructure.sections.icon).html(StructureElements.iconAndShape(options)),
+
+  trendIndicator: (options: StructureOptions) =>
+    options.trendIndicator
+      ? Element(CARD.htmlStructure.elements.trendIndicator.container).html(
+          Element(CARD.htmlStructure.elements.trendIndicator.icon).html(),
+        )
+      : '',
+
+  label: (options: StructureOptions) => (options.hasLabel ? Element(CARD.htmlStructure.elements.label).html() : ''),
+
+  wrapWithBarPosition: (content: string, options: StructureOptions) => {
+    const { barPosition = '' } = options;
+    const wrap: Record<string, () => { before: string; after: string }> = {
+      top: () => ({ before: StructureElements.barContainer(StructureElements.topContainer, options), after: '' }),
+      bottom: () => ({ before: '', after: StructureElements.barContainer(StructureElements.bottomContainer, options) }),
+      below: () => ({ before: '', after: StructureElements.barContainer(StructureElements.belowContainer, options) }),
+      background: () => ({
+        before: '',
+        after: StructureElements.barContainer(StructureElements.backgroundContainer, options),
+      }),
+    };
+
+    const { before = '', after = '' } = wrap[barPosition]?.() ?? {};
+
+    return before + content + after;
+  },
+};
+
+// Shared by card/template below - identical assembly, only the content
+// function (contentFull vs contentMini) differs.
+const buildCardLike = (options: StructureOptions, contentFn: (options: StructureOptions) => string) =>
+  StructureElements.wrapWithBarPosition(
+    StructureElements.container(options).replace(
+      CONTENT_SLOT,
+      StructureElements.trendIndicator(options) +
+        StructureElements.label(options) +
+        (options.hideIcon ? '' : StructureElements.iconSection(options)) +
+        contentFn(options),
+    ),
+    options,
+  );
+
+const StructureTemplates = {
+  card: (options: StructureOptions = {}) => buildCardLike(options, StructureElements.contentFull),
+
+  badge: (options: StructureOptions = {}) => {
+    return StructureElements.container(options).replace(
+      CONTENT_SLOT,
+      (options.hideIcon ? '' : StructureElements.iconSectionWoBadge(options)) + StructureElements.contentFull(options),
+    );
+  },
+
+  template: (options: StructureOptions = {}) => buildCardLike(options, StructureElements.contentMini),
+  feature: (options: StructureOptions = {}) => {
+    const { barPosition = '' } = options;
+    const containers: Record<string, () => string> = {
+      top: () => StructureElements.barContainer(StructureElements.topContainer, options),
+      bottom: () => StructureElements.barContainer(StructureElements.bottomContainer, options),
+    };
+
+    return containers[barPosition]?.() ?? StructureElements.progressBar(options);
+  },
+};
+
+/**
+ * Builds and caches a card type's DOM structure (`StructureTemplates[
+ * cardType]`) as a `<template>`, cloned on each `render()`/`clone()` call
+ * instead of re-parsing `innerHTML` every time. Cached per unique structure
+ * options (barType, barPosition, layout, ...), since the markup only depends
+ * on those, not on the entity's live state.
+ */
+class ObjStructure {
+  // CF5 - issue (perf) resolved - card.innerHTML re-parsed the full HTML string
+  // on every render (each card creation, each editor keystroke). The structure
+  // is now built once per unique option set into a <template> and cloned
+  // (~5-10x faster than parsing). The DOM depends on the config's structure
+  // options (barType, barPosition, layout, ...), so the cache is keyed on the
+  // exact options object: any setConfig producing different structure options
+  // gets its own template, identical configs share one.
+  #templates = new Map<string, HTMLTemplateElement>();
+  _cardType: string;
+
+  constructor(cardType: string) {
+    this._cardType = cardType;
+    traceInstance('ObjStructure', CARD_CONTEXT.debug.instances);
+  }
+
+  // One instance per cardType, built the first time that shape is actually
+  // rendered - not eagerly per registered element class at module load, most
+  // of which a given dashboard never instantiates. A card/badge/template
+  // class only needs to say which shape it is; this resolves and caches the
+  // instance that actually builds it.
+  static #instances = new Map<string, ObjStructure>();
+
+  static forType(cardType: string): ObjStructure {
+    let instance = ObjStructure.#instances.get(cardType);
+    if (!instance) {
+      instance = new ObjStructure(cardType);
+      ObjStructure.#instances.set(cardType, instance);
+    }
+    return instance;
+  }
+
+  render(options: StructureOptions = {}): string {
+    return (StructureTemplates as Record<string, (options: StructureOptions) => string>)[this._cardType](options);
+  }
+
+  clone(options: StructureOptions = {}): Node {
+    // Options are small flat objects of primitives built in a fixed key order
+    // by each class's _structureOptions getter -> JSON is a stable cache key.
+    // Still bounded now that hideIcon/hideName join the enums and booleans:
+    // only the subtrees a static hide can drop are encoded, not every hide
+    // member, and a dashboard uses two or three of those combinations.
+    const key = JSON.stringify(options);
+    let tpl = this.#templates.get(key);
+    if (!tpl) {
+      tpl = document.createElement('template');
+      tpl.innerHTML = this.render(options);
+      this.#templates.set(key, tpl);
+    }
+    return tpl.content.cloneNode(true);
+  }
+}
+
+export { ObjStructure };
+export type { StructureOptions };

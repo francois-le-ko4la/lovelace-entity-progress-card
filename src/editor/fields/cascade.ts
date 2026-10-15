@@ -9,8 +9,8 @@ import {
   type MarkFamily,
   type MarkId,
   type PeakPoint,
-} from '../../card/schema.js';
-import { type Factorization } from '../../card/factorization.js';
+} from '../../card/config/schema.js';
+import { type Factorization } from '../../card/config/factorization.js';
 import { EditorFieldsType, LABEL_COLOR, PEAK_MARKS, peakMarkerOn, PEAK_SHARED_LABEL } from './base.js';
 import { nestedValueField } from './value.js';
 

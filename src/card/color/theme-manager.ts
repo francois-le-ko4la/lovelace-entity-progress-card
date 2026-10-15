@@ -1,0 +1,575 @@
+/*
+ * ThemeManager: resolves a theme/custom_theme into icon/bar colors and the
+ * segment/rainbow bar gradients.
+ */
+
+import { CARD, CARD_CONTEXT, HA_CONTEXT, THEME } from '../../utils/parameters.js';
+import { cssColorVar } from '../../utils/ha-context.js';
+import { assertDefined, has, is } from '../../utils/common-checks.js';
+import { traceInstance } from '../../utils/log.js';
+
+// Theme "zones" come from either the built-in THEME table (parameters.ts) or
+// a user's custom_theme YAML array - both are arrays of { min?, max?, color?,
+// icon_color?, bar_color?, icon? } with slightly different optional fields
+// (built-in entries always set icon/color, possibly to null; custom_theme
+// zones may omit any of them), unified here rather than as two interfaces.
+type ThemeZone = {
+  min?: number;
+  max?: number;
+  color?: string | null;
+  icon_color?: string;
+  bar_color?: string;
+  icon?: string | null;
+};
+
+type ClippedGradient = {
+  visible: ThemeZone[];
+  direction: string;
+  fillPercent: number;
+  offset: number;
+  filledEdge: string;
+  col: (level: ThemeZone) => string;
+  toElemPos: (pos: number) => string;
+};
+
+class ThemeManager {
+  #theme: string | null = null;
+  #icon: string | null = null;
+  #iconColor: string | null = null;
+  #barColor: string | null = null;
+  #value = 0;
+  #isValid = false;
+  #isLinear = false;
+  #isBasedOnPercentage = false;
+  #isSigned = false;
+  #isCustomTheme = false;
+  #currentStyle: ThemeZone[] | null = null;
+  #interpolate = false;
+
+  constructor() {
+    traceInstance('ThemeManager', CARD_CONTEXT.debug.instances);
+  }
+
+  // ─── PUBLIC GETTERS / SETTERS ─────────────────────────────────────────────
+
+  set theme(newTheme: unknown) {
+    if (is.nullish(newTheme) || !has.validKey(THEME, newTheme)) {
+      this.#reset();
+      return;
+    }
+    this.#isValid = true;
+    this.#theme = newTheme;
+    const preset = THEME[newTheme as keyof typeof THEME];
+    this.#currentStyle = preset.style;
+    this.#isLinear = preset.linear;
+    this.#isBasedOnPercentage = preset.percent;
+    this.#isSigned = preset.signed;
+    // The instance outlives a config edit (each view holds its own), so a
+    // built-in theme has to clear what a previous custom_theme set - the
+    // customTheme setter below returns early when there is nothing to apply.
+    this.#isCustomTheme = false;
+  }
+
+  get theme(): string | null {
+    return this.#theme;
+  }
+
+  // Only a presence/shape check: per-zone validity (numeric min < max, sorted)
+  // is already guaranteed by the schema's customTheme validator, the sole path
+  // a config reaches here through — see BaseConfigHelper.set config.
+  set customTheme(newTheme: unknown) {
+    if (!is.nonEmptyArray(newTheme)) return;
+    this.#theme = CARD.theme.default;
+    this.#currentStyle = newTheme as ThemeZone[];
+    this.#isValid = true;
+    this.#isLinear = false;
+    this.#isCustomTheme = true;
+  }
+
+  get customTheme(): ThemeZone[] | null {
+    return this.#currentStyle;
+  }
+
+  get isLinear(): boolean {
+    return this.#isLinear;
+  }
+
+  get isBasedOnPercentage(): boolean {
+    return this.#isBasedOnPercentage;
+  }
+
+  // Only true for a signed built-in theme (e.g. critical_when_extreme_center)
+  // - zones span -100..100 as one scale (ViewBase.themeDivergingGradient).
+  // Not reset in set customTheme, same as isBasedOnPercentage above - custom
+  // zones are never this shape.
+  get isSigned(): boolean {
+    return this.#isSigned;
+  }
+
+  // Zones are 0-100% of an arm, not raw units: each center_zero arm reads them
+  // as they are.
+  get isPercentScaled(): boolean {
+    return !this.#isSigned && (this.#isLinear || this.#isBasedOnPercentage);
+  }
+
+  get isCustomTheme(): boolean {
+    return this.#isCustomTheme;
+  }
+
+  get isValid(): boolean {
+    return this.#isValid;
+  }
+
+  set value(newValue: number) {
+    this.#value = newValue;
+    this.#refresh();
+  }
+
+  get value(): number {
+    return this.#value;
+  }
+
+  get icon(): string | null {
+    return this.#icon;
+  }
+
+  get iconColor(): string | null {
+    return this.#iconColor;
+  }
+
+  get barColor(): string | null {
+    return this.#barColor;
+  }
+
+  // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
+
+  configure({ theme, customTheme, interpolate }: { theme: unknown; customTheme: unknown; interpolate: unknown }) {
+    this.theme = theme;
+    this.customTheme = customTheme;
+    this.#interpolate = Boolean(interpolate);
+  }
+
+  // ─── PRIVATE METHODS ──────────────────────────────────────────────────────
+
+  #reset() {
+    this.#icon = null;
+    this.#barColor = null;
+    this.#iconColor = null;
+    this.#theme = null;
+    this.#currentStyle = null;
+    this.#value = 0;
+    this.#isValid = false;
+    this.#isLinear = false;
+    this.#isBasedOnPercentage = false;
+    this.#isSigned = false;
+    this.#isCustomTheme = false;
+    this.#interpolate = false;
+  }
+
+  #refresh() {
+    if (!this.#isValid) return;
+    const applyStyle = this.isLinear ? this.#setLinearStyle : this.#setStyle;
+    applyStyle.call(this);
+  }
+
+  #setLinearStyle() {
+    // #refresh() only calls this when #isValid is true, which is only ever
+    // set alongside #currentStyle (see theme/customTheme setters).
+    const style = assertDefined(this.#currentStyle, 'ThemeManager.#setLinearStyle called with no #currentStyle');
+    const lastStep = style.length - 1;
+    const thresholdSize = CARD.config.value.max / lastStep;
+    const percentage = Math.max(0, Math.min(this.#value, CARD.config.value.max));
+    const index = Math.min(Math.floor(percentage / thresholdSize), lastStep);
+    const ratio = (percentage - index * thresholdSize) / thresholdSize;
+    this.#applyColors(style[index], style[index + 1] ?? null, ratio);
+  }
+
+  #setStyle() {
+    const style = assertDefined(this.#currentStyle, 'ThemeManager.#setStyle called with no #currentStyle');
+    let themeData: ThemeZone | null = null;
+    let nextThemeData: ThemeZone | null = null;
+    let ratio = 0;
+
+    if (this.#value >= (style[style.length - 1].max ?? Infinity)) {
+      themeData = style[style.length - 1];
+    } else if (this.#value < (style[0].min ?? -Infinity)) {
+      themeData = style[0];
+    } else {
+      // custom_theme zones no longer have to tile perfectly (gaps are
+      // tolerated), so a value can land in a gap between two of them —
+      // themeData then stays null and #applyColors disengages the theme for
+      // this render, deferring to whatever color source is next in priority
+      // (see CardView.iconColor/barColor).
+      const index = style.findIndex(
+        (level) => this.#value >= (level.min ?? -Infinity) && this.#value < (level.max ?? Infinity),
+      );
+      if (index !== -1) {
+        themeData = style[index];
+        nextThemeData = style[index + 1] ?? null;
+        ratio = (this.#value - (themeData.min ?? 0)) / ((themeData.max ?? 0) - (themeData.min ?? 0));
+      }
+    }
+
+    this.#applyColors(themeData, nextThemeData, ratio);
+  }
+
+  #applyColors(themeData: ThemeZone | null, nextThemeData: ThemeZone | null, ratio: number) {
+    if (!themeData) {
+      this.#icon = null;
+      this.#iconColor = null;
+      this.#barColor = null;
+      return;
+    }
+    this.#icon = themeData.icon || null;
+    this.#iconColor = this.#resolveColor('icon_color', themeData, nextThemeData, ratio);
+    this.#barColor = this.#resolveColor('bar_color', themeData, nextThemeData, ratio);
+  }
+
+  // Shared by #applyColors above - icon/bar only differ in which zone field
+  // they read, both falling back to the zone's plain color.
+  #resolveColor(
+    key: 'icon_color' | 'bar_color',
+    themeData: ThemeZone,
+    nextThemeData: ThemeZone | null,
+    ratio: number,
+  ): string | null {
+    const from = ThemeManager.adaptColor(themeData[key] || themeData.color || null);
+    if (!this.#interpolate || !nextThemeData) return from;
+    const to = ThemeManager.adaptColor(nextThemeData[key] || nextThemeData.color || null);
+    return ThemeManager.#interpolateColor(from, to, ratio);
+  }
+
+  static #interpolateColor(from: string | null, to: string | null, ratio: number): string | null {
+    if (!from || !to) return null;
+    const pct = Math.round(ratio * 100);
+    return `color-mix(in srgb, ${to} ${pct}%, ${from})`; // from/to already adapted
+  }
+  // ─── PUBLIC API METHODS ───────────────────────────────────────────────────
+
+  // Fill direction for every gradient: a vertical bar fills upward, a
+  // horizontal one rightward; `reversed` mirrors both (center_zero's arm).
+  static gradientDirection(isVertical: boolean, reversed = false): string {
+    if (reversed) return isVertical ? 'to bottom' : 'to left';
+    return isVertical ? 'to top' : 'to right';
+  }
+
+  static adaptColor(curColor: string | null): string | null {
+    if (!curColor) return curColor;
+    if (HA_CONTEXT.palette.has(curColor)) return cssColorVar(curColor);
+    const stateVar = `--${curColor}-color`;
+    return HA_CONTEXT.stateColorVars.has(stateVar) ? `var(${stateVar})` : curColor;
+  }
+
+  // Splits a resolved color into the r/g/b/h/s/l components styles.ts's
+  // label calc() math needs. Canvas, not a regex: interpolate: true's
+  // color-mix() stays unresolved in a computed-style readback, so
+  // getImageData is what actually evaluates it to concrete bytes.
+  static #probeCtx: CanvasRenderingContext2D | null = null;
+  static #UNRESOLVED_SENTINEL = '#010203'; // a color this project never produces
+
+  static labelColorComponents(
+    computedColor: string,
+  ): { r: number; g: number; b: number; h: number; s: number; l: number } | null {
+    ThemeManager.#probeCtx ??= document.createElement('canvas').getContext('2d');
+    const ctx = ThemeManager.#probeCtx;
+    if (!ctx) return null;
+    // Canvas drops an invalid fillStyle silently, so a surviving sentinel is
+    // the only way to tell a bad color apart from one that resolved.
+    ctx.fillStyle = ThemeManager.#UNRESOLVED_SENTINEL; // skipcq: JS-W1032 - the pair IS the probe
+    ctx.fillStyle = computedColor;
+    if (ctx.fillStyle === ThemeManager.#UNRESOLVED_SENTINEL) return null;
+    ctx.fillRect(0, 0, 1, 1);
+    const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+    return { r, g, b, ...ThemeManager.#rgbToHsl(r, g, b) };
+  }
+
+  static #rgbToHsl(r: number, g: number, b: number): { h: number; s: number; l: number } {
+    const [rNorm, gNorm, bNorm] = [r / 255, g / 255, b / 255];
+    const max = Math.max(rNorm, gNorm, bNorm);
+    const min = Math.min(rNorm, gNorm, bNorm);
+    const lightness = (max + min) / 2;
+    if (max === min) return { h: 0, s: 0, l: Math.round(lightness * 100) };
+
+    const delta = max - min;
+    const saturation = lightness > 0.5 ? delta / (2 - max - min) : delta / (max + min);
+    let hue: number;
+    switch (max) {
+      case rNorm:
+        hue = (gNorm - bNorm) / delta + (gNorm < bNorm ? 6 : 0);
+        break;
+      case gNorm:
+        hue = (bNorm - rNorm) / delta + 2;
+        break;
+      default:
+        hue = (rNorm - gNorm) / delta + 4;
+    }
+    return { h: Math.round(hue * 60), s: Math.round(saturation * 100), l: Math.round(lightness * 100) };
+  }
+
+  // `window`: [start,end] slice of the theme's 0-100 scale in view - a
+  // center_zero arm passes its own half (ViewBase.themeDivergingGradient),
+  // reversed for the negative arm. `valueRange`: the bar's own min/max, not
+  // the theme's - projects a raw-value theme's zone bounds onto the same
+  // 0-100% scale fillPercent uses (else compared as if already %, #129).
+  // `isRing`: bar_position: icon - every zone at its place round the circle,
+  // the track covering what isn't filled yet (styles.ts).
+  buildGradient(
+    fillPercent: number,
+    mode: string,
+    {
+      defaultColor = null,
+      isVertical = false,
+      window = [0, 100],
+      valueRange = null,
+      isSegmented = false,
+      isRing = false,
+    }: {
+      defaultColor?: string | null;
+      isVertical?: boolean;
+      window?: [number, number];
+      valueRange?: { min: number; max: number } | null;
+      isSegmented?: boolean;
+      isRing?: boolean;
+    } = {},
+  ) {
+    if (!this.#isValid || !this.#currentStyle || mode === 'auto') return null;
+
+    // rainbow_full paints the whole window, not just up to fillPercent - the
+    // value is a moving marker instead (.rainbow-full-bar, styles.ts), so it
+    // skips the guard below. The window/toLocal/style computation right after
+    // still applies to it (same center_zero per-arm windowing as segment/
+    // rainbow).
+    if (mode !== 'rainbow_full' && !isRing && !(fillPercent > 0)) return null;
+
+    const style = this.#armStyle(window, valueRange);
+    if (!style) return null;
+    const [windowStart, windowEnd] = window;
+
+    // A reversed window (center_zero's negative arm) mirrors the gradient's
+    // own CSS direction instead of re-deriving the stop logic per direction.
+    const isReversedWindow = windowEnd < windowStart;
+    const direction = ThemeManager.gradientDirection(isVertical, isReversedWindow);
+
+    // style is already windowed to this arm's own slice, so this works
+    // identically for a single-arm bar and each of center_zero's two arms.
+    if (isRing && style.length > 0) {
+      const stops =
+        mode === 'segment'
+          ? ThemeManager.#fullSegmentStops(style, defaultColor, ThemeManager.#ringAt)
+          : ThemeManager.#fullRainbowStops(style, defaultColor, ThemeManager.#ringAt);
+      return `conic-gradient(from var(--ring-start, 0deg), ${stops.join(', ')})`;
+    }
+    if (mode === 'rainbow_full') {
+      return ThemeManager.#buildFullRainbowGradient(style, defaultColor, direction);
+    }
+
+    const visible = style.filter((level) => (level.min ?? 0) < fillPercent);
+    if (visible.length === 0) return null;
+
+    // .inner reveals via translateX(-(100-fillPercent)%), so element position
+    // = container position + offset (vertical-bar: same via translateY).
+    // bar_segments has no .inner to shift - each cell windows this gradient
+    // by its own true position, so offset is 0 there.
+    const offset = isSegmented ? 0 : 100 - fillPercent;
+    // '100%' below pins a stop to .inner's shifted edge (= fillPercent) -
+    // segmented has no such edge, so it needs the real position instead.
+    const filledEdge = isSegmented ? `${fillPercent.toFixed(2)}%` : '100%';
+
+    const col = (level: ThemeZone) => ThemeManager.#zoneColor(level, defaultColor);
+    const toElemPos = (pos: number) => `${(pos + offset).toFixed(2)}%`;
+    const gradient: ClippedGradient = { visible, direction, fillPercent, offset, filledEdge, col, toElemPos };
+    if (mode === 'segment') return ThemeManager.#buildSegmentGradient(gradient);
+    if (mode === 'rainbow') return ThemeManager.#buildRainbowGradient(gradient);
+    return null;
+  }
+
+  // center_zero's negative arm on a percent-scaled theme: below the first zone,
+  // so the whole arm takes that zone's color.
+  // The theme's zones windowed to one arm's slice, as local 0-100% positions;
+  // null when the window is degenerate.
+  #armStyle(window: [number, number], valueRange: { min: number; max: number } | null): ThemeZone[] | null {
+    const currentStyle = this.#currentStyle;
+    if (!currentStyle) return null;
+    // For linear themes, derive min/max boundaries by splitting 0–100% equally
+    // (already percentage-based by construction, no further conversion needed).
+    const toValuePercent = (v: number) =>
+      !this.#isLinear && !this.#isBasedOnPercentage && valueRange && valueRange.max !== valueRange.min
+        ? ((v - valueRange.min) / (valueRange.max - valueRange.min)) * 100
+        : v;
+    const fullStyle: ThemeZone[] = this.#isLinear
+      ? currentStyle.map((level, i, arr) => ({
+          ...level,
+          min: (i / arr.length) * 100,
+          max: ((i + 1) / arr.length) * 100,
+        }))
+      : currentStyle.map((level) => ({
+          ...level,
+          min: toValuePercent(level.min ?? 0),
+          max: toValuePercent(level.max ?? 100),
+        }));
+
+    const [windowStart, windowEnd] = window;
+    // A degenerate window (center_zero_value pinned exactly to min/max, so one
+    // arm has zero range) would divide by zero here.
+    if (windowEnd === windowStart) return null;
+    const toLocal = (globalPct: number) => ((globalPct - windowStart) / (windowEnd - windowStart)) * 100;
+    return (
+      fullStyle
+        .map((level) => {
+          const localMin = toLocal(level.min ?? 0);
+          const localMax = toLocal(level.max ?? 100);
+          return {
+            ...level,
+            min: Math.max(0, Math.min(localMin, localMax)),
+            max: Math.min(100, Math.max(localMin, localMax)),
+          };
+        })
+        .filter((level) => (level.max ?? 0) > (level.min ?? 0))
+        // A reversed window can invert local position order (e.g. temperature's
+        // indigo ending up highest) - CSS gradient stops must be non-decreasing
+        // or the browser clamps past an out-of-order one. Sorting keeps them
+        // monotonic regardless of direction (no-op for a normal window).
+        .sort((a, b) => (a.min ?? 0) - (b.min ?? 0))
+    );
+  }
+
+  // center_zero on a ring: the negative arm fills the first half of the arc
+  // (from its far end to the zero), the positive arm the second. Every zone is
+  // painted, the track covers what is not filled (styles.ts).
+  buildRingDiverging(
+    mode: string,
+    {
+      defaultColor = null,
+      posWindow,
+      negWindow,
+      valueRange,
+      perArm,
+    }: {
+      defaultColor?: string | null;
+      posWindow: [number, number];
+      negWindow: [number, number];
+      valueRange: { min: number; max: number } | null;
+      perArm: boolean;
+    },
+  ): string | null {
+    const zones = this.#currentStyle;
+    if (!this.#isValid || !zones?.length || mode === 'auto') return null;
+    const at = (half: number) => (pos: number) =>
+      `calc(${(50 + half * (pos / 2)).toFixed(2)}% * var(--ring-span-ratio, 1))`;
+    const stopsOf = (style: ThemeZone[], position: (pos: number) => string) =>
+      mode === 'segment'
+        ? ThemeManager.#fullSegmentStops(style, defaultColor, position)
+        : ThemeManager.#fullRainbowStops(style, defaultColor, position);
+
+    const posStyle = this.#armStyle(perArm ? [0, 100] : posWindow, valueRange);
+    const posStops = posStyle?.length ? stopsOf(posStyle, at(1)) : [];
+    let negStops: string[] = [];
+    if (perArm) {
+      const [first] = [...zones].sort((a, b) => (a.min ?? 0) - (b.min ?? 0));
+      const color = ThemeManager.#zoneColor(first, defaultColor);
+      negStops = [`${color} ${at(-1)(100)}`, `${color} ${at(-1)(0)}`];
+    } else {
+      const negStyle = this.#armStyle(negWindow, valueRange);
+      if (negStyle?.length) negStops = stopsOf(negStyle, at(-1)).reverse();
+    }
+    const stops = [...negStops, ...posStops];
+    return stops.length > 0 ? `conic-gradient(from var(--ring-start, 0deg), ${stops.join(', ')})` : null;
+  }
+
+  buildFloorGradient(fillPercent: number, mode: string, defaultColor: string | null = null): string | null {
+    const zones = this.#currentStyle;
+    if (!this.#isValid || !zones?.length || mode === 'auto') return null;
+    if (mode !== 'rainbow_full' && !(fillPercent > 0)) return null;
+    const [first] = [...zones].sort((a, b) => (a.min ?? 0) - (b.min ?? 0));
+    const color = ThemeManager.#zoneColor(first, defaultColor);
+    return `linear-gradient(${color}, ${color})`;
+  }
+
+  // Shared by #buildSegmentGradient/#buildRainbowGradient/
+  // #buildFullRainbowGradient below - a zone's own bar/color, falling back to
+  // defaultColor then the plain default.
+  static #zoneColor(level: ThemeZone, defaultColor: string | null): string {
+    return ThemeManager.adaptColor(level.bar_color || level.color || null) || defaultColor || CARD.style.color.default;
+  }
+
+  static #buildSegmentGradient({
+    visible,
+    direction,
+    fillPercent,
+    filledEdge,
+    col,
+    toElemPos,
+  }: ClippedGradient): string {
+    const stops = visible.flatMap((level, i) => {
+      const start = i === 0 ? '0%' : toElemPos(level.min ?? 0);
+      const end = (level.max ?? 0) >= fillPercent ? filledEdge : toElemPos(level.max ?? 0);
+      return [`${col(level)} ${start}`, `${col(level)} ${end}`];
+    });
+    return `linear-gradient(${direction}, ${stops.join(', ')})`;
+  }
+
+  // Stops at each zone's midpoint, not its start - last one uses fillPercent.
+  static #buildRainbowGradient({
+    visible,
+    direction,
+    fillPercent,
+    offset,
+    filledEdge,
+    col,
+    toElemPos,
+  }: ClippedGradient): string {
+    const first = col(visible[0]);
+    const stops = [`${first} 0%`];
+    if (offset > 0) stops.push(`${first} ${offset.toFixed(2)}%`);
+    visible.forEach((level, i) => {
+      const start = level.min ?? 0;
+      const end = i === visible.length - 1 ? fillPercent : (level.max ?? 100);
+      stops.push(`${col(level)} ${toElemPos((start + end) / 2)}`);
+    });
+    stops.push(`${col(visible[visible.length - 1])} ${filledEdge}`);
+    return `linear-gradient(${direction}, ${stops.join(', ')})`;
+  }
+
+  // rainbow_full's gradient: every zone in `style` laid out edge-to-edge,
+  // same "hold, then fade" shape as 'rainbow' above, just unclipped by
+  // fillPercent since the whole window is always shown. `style` is already
+  // windowed and `direction` already accounts for a reversed window (shared
+  // with segment/rainbow), so this needs no window/direction logic of its own.
+  static #buildFullRainbowGradient(style: ThemeZone[], defaultColor: string | null, direction: string): string | null {
+    if (style.length === 0) return null;
+    return `linear-gradient(${direction}, ${ThemeManager.#fullRainbowStops(style, defaultColor).join(', ')})`;
+  }
+
+  static #fullRainbowStops(style: ThemeZone[], defaultColor: string | null, at = ThemeManager.#percentAt): string[] {
+    const col = (level: ThemeZone) => ThemeManager.#zoneColor(level, defaultColor);
+    const stops = [`${col(style[0])} ${at(0)}`];
+    style.forEach((level) => {
+      const mid = ((level.min ?? 0) + (level.max ?? 100)) / 2;
+      stops.push(`${col(level)} ${at(mid)}`);
+    });
+    stops.push(`${col(style[style.length - 1])} ${at(100)}`);
+    return stops;
+  }
+
+  static #percentAt(pos: number): string {
+    return `${pos.toFixed(2)}%`;
+  }
+
+  // A ring's arc is part of the circle (bar_ring.gap): stops scale onto it.
+  static #ringAt(pos: number): string {
+    return `calc(${pos.toFixed(2)}% * var(--ring-span-ratio, 1))`;
+  }
+
+  // segment's hard edges, over the whole track: the first zone reaches back
+  // to 0 and the last one on to 100, so no gap is left uncoloured.
+  static #fullSegmentStops(style: ThemeZone[], defaultColor: string | null, at = ThemeManager.#percentAt): string[] {
+    const col = (level: ThemeZone) => ThemeManager.#zoneColor(level, defaultColor);
+    return style.flatMap((level, i) => {
+      const start = i === 0 ? 0 : (level.min ?? 0);
+      const end = i === style.length - 1 ? 100 : (level.max ?? 100);
+      return [`${col(level)} ${at(start)}`, `${col(level)} ${at(end)}`];
+    });
+  }
+}
+
+export { ThemeManager };

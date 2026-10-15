@@ -7,7 +7,7 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { YamlSchemaFactory, schemaOptions, AGGREGATOR_FIELDS, type SchemaVariant } from '../../src/card/schema.js';
+import { YamlSchemaFactory, schemaOptions, AGGREGATOR_FIELDS, type SchemaVariant } from '../../src/card/config/schema.js';
 import { DEPRECATED_KEYS } from './card-configs.js';
 
 const COOKBOOK = 'docs/cookbook.md';

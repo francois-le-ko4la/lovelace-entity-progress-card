@@ -413,7 +413,7 @@ script:
 
 # Percentage + a `battery_charging` attribute on the SAME entity - the shape
 # icon_animation: battery_charging / theme: battery_adaptive look for (see
-# ViewCore.#CHARGING_ATTRIBUTES in src/card/view.ts). input_number can't carry
+# ViewCore.#entityReportsCharging in src/card/view/core.ts). input_number can't carry
 # custom attributes, hence a template sensor mirroring it instead. Toggle
 # input_boolean.epb_demo_charging to see it switch live.
 template:

@@ -2,10 +2,11 @@ import { VERSION, META, CARD_CONTEXT, suffixedName, HA_CONTEXT, CARD } from '../
 import { CARD_CSS, adoptStyle } from '../../utils/styles.js';
 import { is } from '../../utils/common-checks.js';
 import { initLogger, cardNotice, type LoggerInstance } from '../../utils/log.js';
-import { ObjStructure, ChangeTracker } from '../value-helpers.js';
+import { ObjStructure } from '../dom/structure.js';
+import { ChangeTracker } from '../history/change-tracker.js';
 import { HassProviderSingleton, loadEditor, type HomeAssistant } from '../../utils/hass-provider.js';
-import { type ViewCore } from '../view.js';
-import { type ResolvedWatermark } from '../watermark-view.js';
+import { type ViewCore } from '../view/core.js';
+import { type ResolvedWatermark } from '../view/watermark-view.js';
 import {
   markValue,
   entityOf,
@@ -13,29 +14,18 @@ import {
   SCHEMA_DEFAULTS,
   BAR_SIZES,
   raisesRainbowFullRow,
-  HAS_EFFECT,
-} from '../schema.js';
-import { ResourceManager, DOMHelper, ActionHelper, type CacheValue } from '../dom-helpers.js';
-import { JinjaSubscriptions } from '../jinja-subscriptions.js';
-import { HistorySeeding, type HistoryPoint } from '../history-seeding.js';
-import { Marks } from '../marks.js';
-import { joinAlignedRows } from '../aligned-bars.js';
+} from '../config/schema.js';
+import { ResourceManager, DOMHelper, ActionHelper } from '../dom/dom-helpers.js';
+import { JinjaSubscriptions } from './core/jinja-subscriptions.js';
+import { HistorySeeding, type HistoryPoint } from '../history/history-seeding.js';
+import { Marks } from '../dom/marks.js';
+import { buildSegmentCells, applyProgressCSS, type ProgressCssOptions } from './core/bar-css.js';
+import { AutoRefresh } from './core/auto-refresh.js';
+import { applyBarEffects, barEffectsOf } from './core/bar-effect.js';
+import { syncAlignedBars } from './core/aligned-bars-sync.js';
+import { watchInterference } from './core/interference.js';
 import { type LovelaceConfig } from '../../utils/types.js';
-import { type StructureOptions } from '../structure.js';
-
-// ViewBase.divergingBarStack's return shape (see view.ts). Exported -
-// cards.ts's own _renderPercentCSS forwards the same shape (ViewCore.
-// templateThemeDivergingGradient) through to _applyProgressCSS below.
-type DivergingGradients = {
-  posGradient: string | null;
-  negGradient: string | null;
-  posSize: number;
-  negSize: number;
-};
-
-// The icon element _showIcon()/_handleImgIcon()/_handleStateIcon() manage:
-// either a plain <img> (entity_picture) or a <ha-state-icon> (hass/stateObj).
-type IconElement = HTMLImageElement | (HTMLElement & { hass: HomeAssistant | null; stateObj: unknown });
+import { type StructureOptions } from '../dom/structure.js';
 
 // Every Jinja-pushed numeric option, as named on the view - see
 // HABase._applyJinjaNumber.
@@ -59,8 +49,6 @@ const TREND_ICONS: Record<string, string> = {
   flat: HA_CONTEXT.icons.equalBox,
   error: HA_CONTEXT.icons.progressQuestion,
 };
-
-const ALIGNED_BARS_ID = 'alignedBars';
 
 // bar_ring.gap is capped so a sliver of arc always remains.
 const RING_MAX_GAP = 330;
@@ -163,8 +151,6 @@ class HACore extends HTMLElement {
       '_createCardElements',
       '_buildStyle',
       '_validateProcessJinjaFields',
-      '_startAutoRefresh',
-      '_stopAutoRefresh',
       '_seedPeakMarkerHistoryOnce',
       '_seedFromHistory',
       // abstract
@@ -209,7 +195,9 @@ class HACore extends HTMLElement {
       this._handleHassUpdate();
       this._jinjaSubscriptions.watch();
     }
-    this.#watchInterference();
+    if (CARD_CONTEXT.debug.interference && !this.#interferenceObserver) {
+      this.#interferenceObserver = watchInterference(this);
+    }
     this.#syncAlignedBars();
   }
 
@@ -229,73 +217,17 @@ class HACore extends HTMLElement {
     this._log?.debug('adoptedCallback — element moved into a different document');
   }
 
-  // ?debug=interference: watch our own host element for attribute mutations
-  // we didn't make - the fingerprint of another module (card-mod &c) styling/
-  // marking our card from the outside. Only ever created when the flag is on,
-  // so it's zero cost otherwise. Scoped to host attributes (card-mod's usual
-  // entry point); it can't see a reparent of the host itself - adoptedCallback
-  // above covers the cross-document case.
   #interferenceObserver: MutationObserver | null = null;
 
-  #watchInterference() {
-    if (!CARD_CONTEXT.debug.interference || this.#interferenceObserver) return;
-    this.#interferenceObserver = new MutationObserver((mutations) => {
-      for (const mutation of mutations) {
-        if (mutation.type !== 'attributes') continue;
-        const attr = mutation.attributeName ?? '';
-        console.debug(
-          `[interference] <${this.localName}> attribute "${attr}" changed externally: "${mutation.oldValue}" → "${this.getAttribute(attr)}"`,
-        );
-      }
-    });
-    this.#interferenceObserver.observe(this, { attributes: true, attributeOldValue: true });
-  }
-
-  // Rebuilt with every render: the text it watches is a new one each time.
   #syncAlignedBars() {
     if (!this.isConnected || !this._resourceManager) return;
-    const config = this._cardView.config;
-    // A name gathers every card carrying it; true, the rows of one Multi - a
-    // row is told it is one by the wrapper it sits in.
-    const inMulti = this.parentElement?.classList.contains(CARD.style.dynamic.multiItem);
-    const setting = config.bar_aligned;
-    const group = is.nonEmptyString(setting) ? setting : setting === true && inMulti ? this.getRootNode() : null;
-    const singleLine = config.density === 'single_line';
-    const { infoRow: rowText } = CARD.htmlStructure.sections;
-    const { secondaryInfoWrapper: valueText } = CARD.htmlStructure.elements;
-    const column =
-      group && HAS_EFFECT.barAligned(config)
-        ? this._shadow.querySelector<HTMLElement>(`.${singleLine ? rowText.class : valueText.class}`)
-        : null;
-    const row = singleLine
-      ? column?.closest<HTMLElement>(`.${CARD.style.dynamic.singleLineRow}`)
-      : column?.parentElement;
-    if (!group || !column || !row) {
-      this._resourceManager.remove(ALIGNED_BARS_ID);
-      return;
-    }
-    const rows = joinAlignedRows(group, {
-      measure: () => {
-        // Layout px, like cap: a rect is post-transform (HA's dialog zooms in).
-        const scale = row.getBoundingClientRect().width / row.offsetWidth || 1;
-        return column.getBoundingClientRect().width / scale;
-      },
-      cap: () => row.clientWidth / 2,
-      apply: (width) => {
-        const card = CARD.htmlStructure.card.element;
-        this._dom.setStyleNow(card, CARD.style.dynamic.alignWidth.var, width);
-        this._dom.setStyleNow(card, CARD.style.dynamic.alignTextFloor.var, width ? '0px' : '');
-      },
+    syncAlignedBars({
+      element: this,
+      shadow: this._shadow,
+      config: this._cardView.config,
+      resourceManager: this._resourceManager,
+      dom: this._dom,
     });
-    const texts = new MutationObserver(rows.textChanged);
-    texts.observe(column, { characterData: true, childList: true, subtree: true });
-    const size = new ResizeObserver(rows.resized);
-    size.observe(row);
-    this._resourceManager.add(() => {
-      texts.disconnect();
-      size.disconnect();
-      rows.leave();
-    }, ALIGNED_BARS_ID);
   }
 
   _ensureResourceManager() {
@@ -390,43 +322,19 @@ class HACore extends HTMLElement {
   }
 
   // ─── AUTO-REFRESH MANAGEMENT ──────────────────────────────────────────────
-  // What moves with no state change gets a local tick: one setTimeout to the
-  // view's nextTickAt. On HACore, not HABase, so Features have it too.
-  #tickAt: number | null = null;
-
-  _startAutoRefresh(at: number) {
-    if (!this._resourceManager) return;
-    this.#tickAt = at;
-    this._resourceManager.setTimeout(() => this.#onTickDue(at), at - Date.now(), 'autoRefresh');
-  }
-
-  // A timer firing a hair early, while the text would still read the old value,
-  // only re-arms - from the clock, so one set back re-grids instead of waiting.
-  #onTickDue(at: number) {
-    if (Date.now() >= at) this._onAutoRefreshTick();
-    this._manageAutoRefresh();
-  }
+  #autoRefresh = new AutoRefresh({
+    view: () => this._cardView,
+    resourceManager: () => this._resourceManager,
+    onTick: () => this._onAutoRefreshTick(),
+  });
 
   _onAutoRefreshTick() {
     this._cardView.refreshClock();
     this._updateCSS();
   }
 
-  _stopAutoRefresh() {
-    this.#tickAt = null;
-    if (this._resourceManager) this._resourceManager.remove('autoRefresh');
-  }
-
-  // After every hass update and every tick. An earlier deadline - a relative
-  // time turning fresh - re-arms at once; a later one waits for the armed tick.
-  // CF5 - issue (major) resolved - set hass calls _handleHassUpdate before
-  // _ensureResourceManager: with an active timer entity and hass assigned
-  // before connectedCallback (standard Lovelace order), _resourceManager was
-  // still null and .has() crashed.
   _manageAutoRefresh() {
-    const at = this._cardView.nextTickAt(Date.now());
-    if (!is.number(at)) this._stopAutoRefresh();
-    else if (!this._resourceManager?.has('autoRefresh') || at < (this.#tickAt ?? Infinity)) this._startAutoRefresh(at);
+    this.#autoRefresh.manage();
   }
 
   #history = new HistorySeeding({
@@ -503,7 +411,7 @@ class HACore extends HTMLElement {
     // After _storeDOM(): Marks sets the shape class on the mark elements, which
     // must be registered by then.
     this._buildStyle();
-    this._buildSegmentCells();
+    buildSegmentCells({ view: this._cardView, dom: this._dom, shadow: this._shadow });
     this.#syncAlignedBars();
     requestAnimationFrame(() => {
       this._dom.addClass(CARD.htmlStructure.card.element, 'transition-ready');
@@ -635,55 +543,6 @@ class HACore extends HTMLElement {
     this._handleBarEffect();
   }
 
-  // N real fill cells per fillable half (bar_segments: N), not a divider
-  // layer painted over the fill (see CHANGELOG.md - that approach kept
-  // clipping through markers across two prior rebuilds). Built once per
-  // render(); each cell's own fill is pure CSS off --progress-bar-value.
-  _buildSegmentCells() {
-    const active = this._cardView.isSegmented;
-    const count = this._cardView.config.bar_segments as number;
-    const isCenterZero = Boolean(this._cardView.config.center_zero);
-    const rounded = active ? Math.round(count) : 0;
-    // .bar-segmented itself only still matters for .bar's own border-radius
-    // reset and hiding .inner below (styles.ts) - everything else keys off
-    // the cell elements' own presence now, not this class.
-    this._dom.toggleClass(CARD.htmlStructure.card.element, 'bar-segmented', active);
-    if (!active) return;
-    const containerSpec = CARD.htmlStructure.elements.progressBar.segments;
-    // center_zero: one independent N-cell row per arm (.bar-half), off that
-    // arm's own --arm-fill (styles.ts). --bar-segments always goes on .bar
-    // itself though, never a .bar-half - it's the only ancestor a mark and
-    // every cell both share (a mark is .bar's own child, not arm-nested).
-    const halfSpec = CARD.htmlStructure.elements.progressBar.half;
-    const bars = this._shadow.querySelectorAll<HTMLElement>(
-      `.${CSS.escape(CARD.htmlStructure.elements.progressBar.bar.class)}`,
-    );
-    const cellSpec = CARD.htmlStructure.elements.progressBar.segmentCell;
-    bars.forEach((bar) => {
-      bar.style.setProperty('--bar-segments', String(rounded));
-      const targets = isCenterZero ? Array.from(bar.querySelectorAll(`.${CSS.escape(halfSpec.class)}`)) : [bar];
-      targets.forEach((target) => {
-        const container = document.createElement(containerSpec.element);
-        container.className = containerSpec.class;
-        Object.entries(containerSpec.extraAttr ?? {}).forEach(([key, value]) =>
-          container.setAttribute(key, String(value)),
-        );
-        for (let i = 0; i < rounded; i += 1) {
-          const cell = document.createElement(cellSpec.element);
-          cell.className = cellSpec.class;
-          Object.entries(cellSpec.extraAttr ?? {}).forEach(([key, value]) => cell.setAttribute(key, String(value)));
-          cell.style.setProperty('--segment-index', String(i));
-          container.appendChild(cell);
-        }
-        // Before .inner/marks, not appended after: each cell now paints an
-        // opaque track-color base across its own whole width (styles.ts), so
-        // appending last would once again cover a mark landing on it - DOM
-        // order is what keeps marks on top now, same as before this feature.
-        target.insertBefore(container, target.firstChild);
-      });
-    });
-  }
-
   // Shared by every _baseClassStyle-style getter below (HABase's own
   // extends it via `...super._baseClassStyle`, same pattern as _staticStyle)
   // - toggling per the map, unlike a plain addClass, correctly drops a class
@@ -720,40 +579,9 @@ class HACore extends HTMLElement {
     this._toggleClasses(this._baseClassStyle);
   }
 
-  // The editor (EntityProgressEffectChips) can only guard interactive
-  // selection - Jinja/hand-written YAML bypasses it. Incompatible pairs
-  // (glass/gradient(_reverse) vs. shimmer/shimmer_reverse share the same CSS
-  // custom property) don't error, they just silently drop one depending on
-  // stylesheet order - this mirrors that exclusion explicitly here,
-  // first-requested-wins.
-  static #resolveEffectConflicts(labels: string[]): string[] {
-    const incompatible: Record<string, string[]> = CARD.style.dynamic.progressBar.effectIncompatibilities;
-    const kept: string[] = [];
-    for (const label of labels) {
-      if (kept.some((keptLabel) => incompatible[keptLabel]?.includes(label))) continue;
-      kept.push(label);
-    }
-    return kept;
-  }
-
   _handleBarEffect(jinjaEffect: string[] | null = null) {
     this._log?.debug('📎 HACore _handleBarEffect(jinjaEffect)', jinjaEffect);
-
-    if (!this._cardView.barEffectsEnabled) return;
-    const isJinja = is.jinja(this._cardView.config.bar_effect);
-    if (isJinja && !jinjaEffect) return;
-
-    const requested = isJinja
-      ? (jinjaEffect ?? [])
-      : is.array(this._cardView.config.bar_effect)
-        ? (this._cardView.config.bar_effect as string[])
-        : [];
-    const resolved = HACore.#resolveEffectConflicts(requested);
-
-    const effects = Object.values(CARD.style.dynamic.progressBar.effect);
-    effects.forEach((effect) => {
-      this._dom.toggleClass(CARD.htmlStructure.card.element, effect.class, resolved.includes(effect.label));
-    });
+    applyBarEffects({ view: this._cardView, dom: this._dom }, jinjaEffect);
   }
 
   // ─── DYNAMIC ELEMENTS UPDATE ──────────────────────────────────────────────
@@ -788,64 +616,8 @@ class HACore extends HTMLElement {
     this._marks.peakMarkerClasses();
   }
 
-  _applyProgressCSS(
-    progressValue: number | null,
-    {
-      barColor = null,
-      iconColor = null,
-      gradient = null,
-      diverging = null,
-    }: {
-      barColor?: string | null;
-      iconColor?: string | null;
-      gradient?: string | null;
-      diverging?: DivergingGradients | null;
-    } = {},
-  ) {
-    const cardKey = CARD.htmlStructure.card.element;
-
-    // down: the gradients are built for up, and run the other way.
-    const flip = (value: string | null): string | null =>
-      value && this._cardView.isDownBar
-        ? value.replace(/to (top|bottom)/g, (way) => (way === 'to top' ? 'to bottom' : 'to top'))
-        : value;
-    const fillColor = flip(gradient) ?? barColor;
-    if (fillColor !== null) this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.color.var, fillColor);
-    if (iconColor !== null) this._dom.setStyle(cardKey, CARD.style.dynamic.iconAndShape.color.var, iconColor);
-
-    this._applyDivergingBarStackCSS(
-      cardKey,
-      diverging && { ...diverging, posGradient: flip(diverging.posGradient), negGradient: flip(diverging.negGradient) },
-    );
-
-    if (progressValue !== null) {
-      this._dom.setStyle(cardKey, CARD.style.dynamic.progressBar.value.var, progressValue);
-      // The bar's, or the ring's stand-in: only one of them is ever built.
-      for (const key of [
-        CARD.htmlStructure.elements.progressBar.container.class,
-        CARD.htmlStructure.elements.ringProgress.class,
-      ]) {
-        this._dom.setAttribute(key, 'aria-valuenow', Math.round(progressValue * 100));
-      }
-    }
-  }
-
-  // bar_stack 'stacked'/'proportional' + center_zero: two independent per-arm
-  // gradients/sizes (see ViewBase.divergingBarStack). Explicitly removed (not
-  // left stale) when not applicable - setStyle() never unsets a value on its
-  // own once written.
-  _applyDivergingBarStackCSS(cardKey: string, diverging: DivergingGradients | null) {
-    const pb = CARD.style.dynamic.progressBar;
-    // Nullish (no bar_stack, or one arm with no gradient) removes; a size of 0
-    // is a real value and must still be written.
-    (
-      [
-        [pb.stackGradientPos.var, diverging?.posGradient],
-        [pb.stackGradientNeg.var, diverging?.negGradient],
-        [pb.stackSizePos.var, diverging?.posSize],
-        [pb.stackSizeNeg.var, diverging?.negSize],
-      ] as [string, CacheValue][]
-    ).forEach(([varName, value]) => this._dom.setOrRemoveStyle(cardKey, varName, value));
+  _applyProgressCSS(progressValue: number | null, options: ProgressCssOptions = {}) {
+    applyProgressCSS({ view: this._cardView, dom: this._dom }, progressValue, options);
   }
 
   _applyWatermarkCSS(watermark: ResolvedWatermark | null) {
@@ -865,12 +637,7 @@ class HACore extends HTMLElement {
 
   _refreshBarEffect(content: unknown) {
     this._log?.debug('📎 HACore._refreshBarEffect():', { content });
-    // CF5 - issue (critical) resolved - render_template returns native types: a
-    // template yielding a list (e.g. {{ ['glass'] }}) crashed on .split()
-    const jinjaEffect = (is.array(content) ? content : String(content ?? '').split(',')).map((s: unknown) =>
-      String(s).trim(),
-    );
-    this._handleBarEffect(jinjaEffect);
+    this._handleBarEffect(barEffectsOf(content));
   }
 
   // ─── TEMPLATE PROCESSING ──────────────────────────────────────────────────
@@ -907,4 +674,4 @@ class HACore extends HTMLElement {
 }
 
 export { JINJA_NUMBER_KEY, TREND_ICONS, RING_MAX_GAP, HACore };
-export type { DivergingGradients, IconElement, JinjaNumberProp };
+export type { JinjaNumberProp };

@@ -1,8 +1,8 @@
 import { ALERT_ABOVE_ENTITY_PATH, ALERT_BELOW_ENTITY_PATH } from '../../utils/parameters.js';
 import { is } from '../../utils/common-checks.js';
 import { type LovelaceConfig } from '../../utils/types.js';
-import { statusLabelObj, rewrapStatusLabel, HAS_EFFECT, BAR_AROUND_ICON } from '../../card/schema.js';
-import { resolveCenterZero } from '../../card/config-helpers.js';
+import { statusLabelObj, rewrapStatusLabel, HAS_EFFECT, BAR_AROUND_ICON } from '../../card/config/schema.js';
+import { resolveCenterZero } from '../../card/config/config-helpers.js';
 import { nestedValueField } from './value.js';
 import {
   isAlertSimple,

@@ -1,10 +1,11 @@
 import { type LovelaceConfig, type Config } from '../../utils/types.js';
-import { ThemeManager } from '../value-helpers.js';
-import { TemplateConfigHelper, BadgeTemplateConfigHelper } from '../config-helpers.js';
-import { ViewCore, buildDivergingGradient } from './core.js';
+import { ThemeManager } from '../color/theme-manager.js';
+import { TemplateConfigHelper, BadgeTemplateConfigHelper } from '../config/config-helpers.js';
+import { ViewCore } from './core.js';
+import { buildDivergingGradient } from '../color/diverging-gradient.js';
 
 // What a Template view adds over ViewCore: its percent-based theme and the
-// last color Jinja pushes, which cards.ts writes straight to CSS.
+// last color Jinja pushes, which cards/template-base.ts writes straight to CSS.
 abstract class TemplateViewBase extends ViewCore {
   icon: string | null = null;
   #templateTheme = new ThemeManager();

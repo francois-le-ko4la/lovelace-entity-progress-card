@@ -24,6 +24,7 @@ const BROWSER_GLOBALS = [
   'Node',
   'ShadowRoot',
   'DocumentFragment',
+  'DOMParser',
   'CSSStyleSheet',
   'CSS',
   'CustomEvent',

@@ -10,7 +10,7 @@ import {
   markInner,
   type ValueConfig,
   type WatermarkMark,
-} from '../../card/schema.js';
+} from '../../card/config/schema.js';
 import { toCamel, SHARED_VALUE_LABEL, EditorFieldsType, LABEL_ATTRIBUTE } from './base.js';
 
 type ValueSource = 'standard' | 'entity' | 'jinja';

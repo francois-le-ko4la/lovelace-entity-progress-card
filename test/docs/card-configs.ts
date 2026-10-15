@@ -3,7 +3,7 @@
 // pipeline the card runs (_customizeConfig, then the schema), and must come
 // out still carrying every option it declared.
 
-import { YamlSchemaFactory, type SchemaVariant } from '../../src/card/schema.js';
+import { YamlSchemaFactory, type SchemaVariant } from '../../src/card/config/schema.js';
 import {
   CardConfigHelper,
   BadgeConfigHelper,
@@ -13,7 +13,7 @@ import {
   MultiCardConfigHelper,
   MultiFeatureConfigHelper,
   type BaseConfigHelper,
-} from '../../src/card/config-helpers.js';
+} from '../../src/card/config/config-helpers.js';
 import { META } from '../../src/utils/meta.js';
 import type { LovelaceConfig } from '../../src/utils/types.js';
 

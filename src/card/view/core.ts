@@ -2,28 +2,27 @@ import { HA_CONTEXT, CARD, CARD_CONTEXT } from '../../utils/parameters.js';
 import { type LovelaceConfig, type Config } from '../../utils/types.js';
 import { is } from '../../utils/common-checks.js';
 import {
-  DENSITY_COMPACT_BAR_POSITIONS,
   densityForcedHide,
-  raisesRainbowFullRow,
   BAR_AROUND_ICON,
   HAS_EFFECT,
   OWN_TRIGGER_ANIMATIONS,
   YamlSchemaFactory,
   type Infer,
-} from '../schema.js';
-import { cloneValue } from '../../utils/browser-support.js';
+} from '../config/schema.js';
 import { traceInstance } from '../../utils/log.js';
-import { type ProgressSettings, type RawProgress } from '../progress-math.js';
-import { type ProgressDisplay } from '../progress-display.js';
-import { ThemeManager } from '../value-helpers.js';
-import { JinjaState } from '../jinja-state.js';
-import { EntityHelper } from '../entity-helper.js';
-import { TrendTracker, type TrendBasis } from '../trend-tracker.js';
-import { WatermarkView, type ResolvedWatermark, type WatermarkConfig, type WatermarkSide } from '../watermark-view.js';
+import { type ProgressSettings, type RawProgress } from './progress-math.js';
+import { type ProgressDisplay } from './progress-display.js';
+import { ThemeManager } from '../color/theme-manager.js';
+import { JinjaState } from './jinja-state.js';
+import { EntityHelper } from '../values/entity-helper.js';
+import { TrendTracker, trendTrackerOptions } from '../history/trend-tracker.js';
+import { computeIsBatteryCharging, isWashingSensorActive } from '../values/device-probes.js';
+import { cardLayoutOptions, cardSize, minGridColumns, minGridRows, type GridInputs } from './core/grid-layout.js';
+import { WatermarkView, type ResolvedWatermark, type WatermarkConfig, type WatermarkSide } from './watermark-view.js';
 import { HassProviderSingleton, type HomeAssistant } from '../../utils/hass-provider.js';
-import { domainProfile, isStateActive } from '../ha-state.js';
+import { domainProfile, isStateActive } from '../values/ha-state.js';
 import { nextOnGrid } from '../../utils/clock.js';
-import { BaseConfigHelper, type ActionBag } from '../config-helpers.js';
+import { BaseConfigHelper, type ActionBag } from '../config/config-helpers.js';
 import type { ViewBase } from './base.js';
 
 // The validated shapes, read off the schema rather than restated: a field the
@@ -41,46 +40,6 @@ type ProgressResolved = { raw: RawProgress; unit: string; isTimer: boolean };
 
 // `jinja`: a failed Jinja field's message ('' if none); absent for an entity.
 type EntityFault = { role: 'entity' | 'max_value' | 'min_value'; state: string; jinja?: string };
-
-// Shared by ViewBase.themeDivergingGradient/ViewCore's own
-// templateThemeDivergingGradient below - center_zero's two independent
-// per-arm theme gradients, differing only in how each resolves its own
-// window/valueRange/defaultColor.
-const buildDivergingGradient = (params: {
-  theme: ThemeManager;
-  signedPercent: number;
-  mode: string;
-  defaultColor: string | null;
-  isVertical: boolean;
-  isSegmented: boolean;
-  posWindow: [number, number];
-  negWindow: [number, number];
-  valueRange: { min: number; max: number } | null;
-}) => {
-  const { theme, signedPercent, mode, defaultColor, isVertical, isSegmented, posWindow, negWindow, valueRange } =
-    params;
-  // Capped at 100, not just floored at 0 - a raw/Jinja percent isn't bounded
-  // the way ProgressMath's own division is; posSize/negSize feed
-  // --stack-size-pos/-neg directly, and a value above 1 there pushes the
-  // fill past .half's own overflow: hidden instead of just filling it.
-  const posFill = Math.min(100, Math.max(0, signedPercent));
-  const negFill = Math.min(100, Math.max(0, -signedPercent));
-  // A percent-scaled theme reads each arm's own 0-100%: the positive arm shows
-  // its zones as they are, the negative one sits below the first zone.
-  const perArm = theme.isPercentScaled;
-  const posGradient = theme.buildGradient(posFill, mode, {
-    defaultColor,
-    isVertical,
-    window: perArm ? [0, 100] : posWindow,
-    valueRange,
-    isSegmented,
-  });
-  const negGradient = perArm
-    ? theme.buildFloorGradient(negFill, mode, defaultColor)
-    : theme.buildGradient(negFill, mode, { defaultColor, isVertical, window: negWindow, valueRange, isSegmented });
-  if (!posGradient && !negGradient) return null;
-  return { posGradient, negGradient, posSize: posFill / 100, negSize: negFill / 100 };
-};
 
 /**
  * A view class for rendering minimal cards in a user interface. This class
@@ -170,7 +129,7 @@ abstract class ViewCore {
     return this.config.bar_position === BAR_AROUND_ICON;
   }
 
-  // When bar_segments renders real cells: HACore#_buildSegmentCells and the
+  // When bar_segments renders real cells: buildSegmentCells and the
   // gradients both read this one rule.
   get isSegmented(): boolean {
     return is.number(this.config.bar_segments) && this.config.bar_segments >= 2;
@@ -194,7 +153,7 @@ abstract class ViewCore {
     // read the result, or every card would pay for it on every hass update.
     this.#isBatteryChargingCache =
       this.iconAnimationEffect === 'battery_charging' || this.config?.theme === 'battery_adaptive'
-        ? ViewCore.#computeIsBatteryCharging(this.entity as string)
+        ? computeIsBatteryCharging(this.entity as string)
         : false;
   }
 
@@ -232,7 +191,7 @@ abstract class ViewCore {
   }
 
   // The detections that read a status entity on the card's device instead of
-  // its own entity (#entityOrSameDevice): the ChangeTracker watches those too.
+  // its own entity (device-probes.ts): the ChangeTracker watches those too.
   get readsSameDevice(): boolean {
     const effect = this.iconAnimationEffect;
     const animationReadsDevice =
@@ -257,80 +216,28 @@ abstract class ViewCore {
     return this.config?.fast_refresh ? nextOnGrid(now, 0, 1000) : null;
   }
 
+  get #gridInputs(): GridInputs {
+    return {
+      config: this.config,
+      isHidden: (component) => this.hasComponentHiddenFlag(component),
+      isRing: this.isRing,
+    };
+  }
+
   get cardSize(): number {
-    return this.config
-      ? (CARD.layout.orientations[this.config.layout as keyof typeof CARD.layout.orientations]?.grid?.grid_rows ?? 1)
-      : CARD.layout.orientations.horizontal.grid.grid_rows;
+    return cardSize(this.config);
   }
 
-  // issue #133 - a hidden icon needing an extra row for bar_size: xlarge (or
-  // bar_position: below) was a case the old ternary never composed with:
-  // `hidden ? 1 : base + extraRow` let the hidden branch's flat 1
-  // short-circuit extraRow entirely. Hiding the icon only changes the
-  // *base* row count, never whether bar_size/bar_position need one more.
-  //
-  // Single source of truth for both consumers: HA's Sections grid
-  // (cardLayoutOptions → getGridOptions) *and* HABase._addBaseParameter's
-  // CSS min-height fallback (Masonry, embedded cards). Before this was
-  // extracted, the CSS fallback had its own static formula, so the same
-  // #133 squeeze could happen outside Sections, just unreported.
   get minGridRows(): number {
-    if (!this.config) return CARD.layout.orientations.horizontal.grid.grid_min_rows;
-    const layout = CARD.layout.orientations[this.config.layout as keyof typeof CARD.layout.orientations];
-    // top/bottom/background overlay the bar on the icon row instead of
-    // giving it one of their own (see styles.ts's .content display:none
-    // rule, same three positions) - name+secondary_info both hidden then
-    // leaves a single icon row to show, same as hide: icon itself.
-    const contentCollapsed =
-      this.config.layout === CARD.layout.orientations.vertical.label &&
-      DENSITY_COMPACT_BAR_POSITIONS.includes(this.config.bar_position ?? '') &&
-      this.hasComponentHiddenFlag(CARD.style.dynamic.hiddenComponent.name.label) &&
-      this.hasComponentHiddenFlag(CARD.style.dynamic.hiddenComponent.secondary_info.label);
-    const baseRows =
-      this.hasComponentHiddenFlag(CARD.style.dynamic.hiddenComponent.icon.label) || contentCollapsed
-        ? 1
-        : layout.grid.grid_min_rows;
-    const needsExtraRow =
-      // Around the icon, xlarge is a thicker ring, not a taller bar row.
-      (this.config.bar_size === CARD.style.bar.sizeOptions.xlarge && !this.isRing) ||
-      (this.config.layout === 'horizontal' && this.config.bar_position === 'below') ||
-      (this.config.layout === 'vertical' &&
-        ['default', 'below'].includes(this.config.bar_position ?? '') &&
-        this.config.bar_size !== CARD.style.bar.sizeOptions.small &&
-        this.config.bar_size !== CARD.style.bar.sizeOptions.xsmall) ||
-      raisesRainbowFullRow(this.config);
-    return baseRows + (needsExtraRow ? 1 : 0);
+    return minGridRows(this.#gridInputs);
   }
 
-  // issue #134: a compact-density card only needs 1 column's worth of width
-  // (reported as 6/12 before gridColumnMultiplier) - no layout check needed,
-  // vertical's own grid_min_columns is already 1 regardless of density.
   get minGridColumns(): number {
-    if (!this.config) return CARD.layout.orientations.horizontal.grid.grid_min_columns;
-    const layout = CARD.layout.orientations[this.config.layout as keyof typeof CARD.layout.orientations];
-    if (this.config.density === 'compact') {
-      return 1;
-    }
-    return layout.grid.grid_min_columns;
+    return minGridColumns(this.config);
   }
 
   get cardLayoutOptions() {
-    if (!this.config) return CARD.layout.orientations.horizontal.grid;
-    const layout = cloneValue(CARD.layout.orientations[this.config.layout as keyof typeof CARD.layout.orientations]);
-    layout.grid.grid_min_rows = this.minGridRows;
-    layout.grid.grid_min_columns = this.minGridColumns;
-    // density: compact pins the card to its smallest useful size outright -
-    // default *and* ceiling, not just a narrower floor. Without a max,
-    // Sections still lets it be dragged back out wider/taller by hand. A
-    // card with its own explicit `grid_options` keeps it regardless - same
-    // "explicit wins" precedent as `height`.
-    if (this.config.density === 'compact') {
-      layout.grid.grid_rows = this.minGridRows;
-      layout.grid.grid_columns = this.minGridColumns;
-      layout.grid.grid_max_rows = this.minGridRows;
-      layout.grid.grid_max_columns = this.minGridColumns;
-    }
-    return layout.grid;
+    return cardLayoutOptions(this.#gridInputs);
   }
 
   // The entity's HA state color, or the card default when HA gives none.
@@ -425,25 +332,9 @@ abstract class ViewCore {
   #ensureTrendTracker(): TrendTracker {
     const entity = this.config?.entity ?? null;
     if (this._trendTracker && this._trendEntityId === entity) return this._trendTracker;
-    this._trendTracker = new TrendTracker(ViewCore.#trendTrackerOptions(this.config?.trend_indicator));
+    this._trendTracker = new TrendTracker(trendTrackerOptions(this.config?.trend_indicator));
     this._trendEntityId = entity;
     return this._trendTracker;
-  }
-
-  static #trendTrackerOptions(config: unknown): {
-    windowMs: number | null;
-    basis: TrendBasis;
-    thresholdPoints: number;
-  } {
-    if (!is.plainObject(config)) {
-      return { windowMs: null, basis: 'average', thresholdPoints: CARD.config.trendIndicator.defaultThreshold };
-    }
-    const windowSeconds = config.window;
-    return {
-      windowMs: is.number(windowSeconds) ? windowSeconds * 1000 : null,
-      basis: (config.basis as TrendBasis) ?? 'average',
-      thresholdPoints: is.number(config.threshold) ? config.threshold : 0,
-    };
   }
 
   // icon_animation needs a domain with a real working state (fan spinning,
@@ -460,50 +351,6 @@ abstract class ViewCore {
       !traits.stillStates?.includes(state) &&
       isStateActive(domain, state)
     );
-  }
-
-  // EV integrations tend to report charging as the entity's own state, in
-  // one of two shapes: a text status sensor (Tesla Fleet's
-  // sensor.<car>_charging_state === 'charging') or, more canonically, a
-  // binary_sensor with device_class: battery_charging (BYD's "is_charging",
-  // 'on' means charging). The device_class check keeps a bare 'on' from
-  // matching any unrelated on/off entity.
-  // The card's own entity first - a same-device sibling must never shadow a
-  // signal already present on it - then every entity of that device. Shared
-  // by the charging and washing probes, which differ only in the question
-  // they ask; availability is the strategy's business, not theirs.
-  static #entityOrSameDevice(
-    entity: string,
-    probe: (hassProvider: HassProviderSingleton, entityId: string) => boolean,
-  ): boolean {
-    const hassProvider = HassProviderSingleton.getInstance();
-    const ask = (id: string) => hassProvider.isEntityAvailable(id) && probe(hassProvider, id);
-    return ask(entity) || hassProvider.getSameDeviceEntities(entity).some(ask);
-  }
-
-  static #entityReportsCharging(hassProvider: HassProviderSingleton, entityId: string): boolean {
-    const state = String(hassProvider.getEntityProp(entityId, 'state') ?? '').toLowerCase();
-    if (HA_CONTEXT.integrations.charging.states.has(state)) return true;
-    if (
-      state === HA_CONTEXT.entity.state.on &&
-      hassProvider.getEntityProp(entityId, HA_CONTEXT.attributes.deviceClass) ===
-        HA_CONTEXT.deviceClasses.batteryCharging
-    )
-      return true;
-    return HA_CONTEXT.integrations.charging.attributes.some((attr) => {
-      const value = hassProvider.getEntityAttribute(entityId, attr);
-      return value === true || String(value).toLowerCase() === 'charging';
-    });
-  }
-
-  // Trust the card's own `entity` first - a same-device sibling should never
-  // shadow a signal already present on it. Falls back to scanning every
-  // same-device entity (not just ones with "charg" in the id) for
-  // integrations that split percentage and charging status: HA's Companion
-  // App is the case that forced this - its charging entity is named
-  // battery_state, no "charg" substring, but state is plain 'charging'.
-  static #computeIsBatteryCharging(entity: string): boolean {
-    return ViewCore.#entityOrSameDevice(entity, ViewCore.#entityReportsCharging);
   }
 
   #isBatteryChargingCache = false;
@@ -539,25 +386,13 @@ abstract class ViewCore {
     return is.nonEmptyString(icon) && /-charging-|-bluetooth$/i.test(icon);
   }
 
-  // Home Connect's sensor.<appliance>_operation_state uses 'run', Miele's
-  // sensor.<appliance>_status uses 'in_use' - both plain `sensor` entities,
-  // which isEntityActive's domain gate deliberately excludes (see
-  // HA_CONTEXT.domainProfiles). Checked in addition to, not instead of,
-  // isEntityActive, so a binary_sensor/switch-based washing setup (e.g. a
-  // smart-plug power monitor) keeps working exactly as before.
-  static #sensorReportsWashing(hassProvider: HassProviderSingleton, entityId: string): boolean {
-    if (HassProviderSingleton.getEntityDomain(entityId) !== HA_CONTEXT.domains.sensor) return false;
-    const state = String(hassProvider.getEntityProp(entityId, 'state') ?? '').toLowerCase();
-    return HA_CONTEXT.integrations.washing.states.has(state);
-  }
-
   // Same split as isBatteryCharging: the card's `entity` is usually the
   // progress value (Home Connect's program_progress %, Miele's elapsed_time),
   // not the status sensor carrying 'run'/'in_use' - a different entity on
   // the same device. No shared entity_id keyword across brands to filter on,
   // so the fallback checks every same-device sensor's state, not its name.
   get isWashingMachineActive(): boolean {
-    return this.isEntityActive || ViewCore.#entityOrSameDevice(this.entity as string, ViewCore.#sensorReportsWashing);
+    return this.isEntityActive || isWashingSensorActive(this.entity as string);
   }
 
   get hasJinjaAlertWhen(): boolean {
@@ -640,5 +475,5 @@ abstract class ViewCore {
   }
 }
 
-export { buildDivergingGradient, ViewCore };
+export { ViewCore };
 export type { BarStackEntityConfig, ProgressConfig, ProgressResolved, EntityFault };

@@ -164,7 +164,7 @@ const htmlStructure = {
       bar: { element: 'div', class: 'progress-bar', extraAttr: ARIA_HIDDEN },
       half: { element: 'div', class: 'bar-half', extraAttr: ARIA_HIDDEN },
       inner: { element: 'div', class: 'inner', extraAttr: ARIA_HIDDEN },
-      // Built in JS (HABase#_buildSegmentCells), not the static template.
+      // Built in JS (buildSegmentCells), not the static template.
       // segments: one flex row per fillable half; segmentCell: its N cells.
       segments: { element: 'div', class: 'bar-segments', extraAttr: ARIA_HIDDEN },
       segmentCell: { element: 'div', class: 'segment-cell', extraAttr: ARIA_HIDDEN },

@@ -9,7 +9,7 @@ import assert from 'node:assert/strict';
 
 import { parseDuration, serializeDuration } from '../../src/utils/duration.js';
 import { parseLength, serializeLength } from '../../src/utils/length.js';
-import { YamlSchemaFactory } from '../../src/card/schema.js';
+import { YamlSchemaFactory } from '../../src/card/config/schema.js';
 import { assertUndefined } from '../helpers.js';
 
 const DURATION_UNITS = ['s', 'min', 'h', 'd'];

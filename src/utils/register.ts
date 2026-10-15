@@ -27,7 +27,7 @@ interface Component {
 const registrationLog = Logger.create('EPB-registration', CARD_CONTEXT.debug.registration ? SEV.debug : SEV.info);
 
 // Shared by RegistrationHelper and the standalone editor sub-components
-// (chips.ts/list-editors.ts) that self-register at module top-level: an
+// (chips.ts/list-editors/) that self-register at module top-level: an
 // uncaught throw here happens during module evaluation, not inside a card's
 // lifecycle - in a bundled build, everything after it in evaluation order
 // never runs. The !customElements.get(...) guard covers "already

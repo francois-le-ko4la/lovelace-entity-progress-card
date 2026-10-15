@@ -15,7 +15,7 @@ import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { load as loadYaml } from 'js-yaml';
-import { auditDashboard } from '../../src/card/card-audit.js';
+import { auditDashboard } from '../../src/card/diagnostics/card-audit.js';
 import { collectCards, droppedOptions } from './card-configs.js';
 
 const FILES = ['docs/demo-dashboard.yaml', 'docs/demo-dashboard-dev.yaml'];

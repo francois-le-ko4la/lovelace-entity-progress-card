@@ -103,6 +103,37 @@ function evalInFile(code) {
   }
 }
 
+// The top-level declarations a block interpolates by name (`${NAME}`), as
+// source, dependencies first - null when one is not a plain template literal.
+// Lets a block resolve without evaluating the whole file before it, whose
+// earlier code (the editor's host table) cannot run at build time.
+function interpolatedDeclarations(expr, before, seen = new Set()) {
+  const declarations = [];
+  for (const [, name] of expr.matchAll(/\$\{\s*(\w+)\s*\}/g)) {
+    if (seen.has(name)) continue;
+    seen.add(name);
+    const head = [...before.matchAll(new RegExp(`(?:const|let|var)\\s+${name}\\s*=\\s*(?:css)?\\\``, 'g'))].pop();
+    if (!head) return null;
+    const contentStart = head.index + head[0].length;
+    const end = findTemplateLiteralEnd(before, contentStart) + 1;
+    const declaration = before.slice(head.index, end);
+    const nested = interpolatedDeclarations(declaration, before.slice(0, head.index), seen);
+    if (nested === null) return null;
+    declarations.push(...nested, `${declaration};`);
+  }
+  return declarations;
+}
+
+function resolveFromDeclarations(expr, before) {
+  const declarations = interpolatedDeclarations(expr, before);
+  if (!declarations?.length) return null;
+  try {
+    return evalInFile(`${CSS_TAG_SHIM}\n${declarations.join('\n')}\nmodule.exports = ${expr};\n`);
+  } catch {
+    return null;
+  }
+}
+
 function minifyCss(css, minify) {
   return minify ? esbuild.transformSync(css, { loader: 'css', minify: true }).code.trim() : css.trim();
 }
@@ -144,10 +175,13 @@ function resolveCssBlocks(src, minify = true) {
     const literalEnd = contentEnd + 1; // include the closing backtick
     const fullExpr = src.slice(tagStart, literalEnd); // css`...`
 
-    let resolved = null;
+    let resolved;
     try {
       resolved = evalInFile(`${CSS_TAG_SHIM}\nmodule.exports = ${fullExpr};\n`);
     } catch {
+      resolved = resolveFromDeclarations(fullExpr, src.slice(0, tagStart));
+    }
+    if (resolved === null) {
       // esbuild's bundler rewrites top-level `const`/`let` declarations to
       // `var` when it concatenates modules - match all three so the
       // fallback still finds the variable name.

@@ -5,16 +5,12 @@ import { META, CARD_CONTEXT, CARD, suffixedName } from './utils/parameters.js';
 import { RegistrationHelper } from './utils/register.js';
 import { resolveEntitySuggestion } from './utils/entity-suggestions.js';
 import { installDiagnostic, CONSOLE_GLOBAL, consoleHelper } from './utils/diagnostic.js';
-import { audit } from './card/card-audit.js';
-import { cards, inspect } from './card/doctor.js';
-import {
-  EntityProgressCard,
-  EntityProgressBadge,
-  EntityProgressFeatures,
-  EntityProgressTemplateCard,
-  EntityProgressTemplateBadge,
-} from './card/cards.js';
-import { EntityProgressMultiCard, EntityProgressMultiFeature } from './card/multi.js';
+import { audit } from './card/diagnostics/card-audit.js';
+import { cards, inspect } from './card/diagnostics/doctor.js';
+import { EntityProgressCard, EntityProgressBadge } from './card/elements/card-base.js';
+import { EntityProgressFeatures } from './card/elements/features.js';
+import { EntityProgressTemplateCard, EntityProgressTemplateBadge } from './card/elements/template-base.js';
+import { EntityProgressMultiCard, EntityProgressMultiFeature } from './card/elements/multi.js';
 
 function registerComponents(): void {
   RegistrationHelper.registerCard(

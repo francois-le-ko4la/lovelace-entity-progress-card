@@ -2,8 +2,8 @@ import { HA_CONTEXT } from '../../utils/parameters.js';
 import { is } from '../../utils/common-checks.js';
 import { HassProviderSingleton } from '../../utils/hass-provider.js';
 import { type LovelaceConfig, type Config } from '../../utils/types.js';
-import { schemaOptions, type SchemaVariant } from '../../card/schema.js';
-import { domainProfile } from '../../card/ha-state.js';
+import { schemaOptions, type SchemaVariant } from '../../card/config/schema.js';
+import { domainProfile } from '../../card/values/ha-state.js';
 import {
   EditorFieldsType,
   LABEL_ATTRIBUTE,

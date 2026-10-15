@@ -201,9 +201,11 @@ toggle like its tile card.
   editor chips.
 - The Multi cards share one constructed stylesheet across instances, like the
   other cards.
-- `schema.ts`, `view.ts`, `core.ts`, `config-helpers.ts` and `factory.ts` split
-  into the `schema/`, `view/`, `core/`, `config-helpers/` and `editor/fields` +
-  `editor/groups` folders; the old paths re-export them.
+- `schema.ts`, `view.ts`, `core.ts`, `config-helpers.ts`, `dom-helpers.ts` and
+  `factory.ts` split into folders, the old paths removed; `color/` and
+  `history/` group the theme and trend code, the editor sorts into `elements/`,
+  `form/`, `data/`, `fields/` and `groups/`; the largest files are split.
+- The editor styles ship in the editor bundle instead of the card's (−5.7 KB).
 - The editor's field construction moved from `EditorBase` into `FieldBuilder`.
 
 ## 1.6.3

@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import { flushFrames } from '../../dom-setup.js';
 import { makeHass, TEST_ENTITY } from '../../ha-stubs.js';
 import { EditorFactory } from '../../../src/editor/factory.js';
-import { EntityProgressHideChips } from '../../../src/editor/chips.js';
+import { EntityProgressHideChips } from '../../../src/editor/elements/chips.js';
 import '../../../src/index.js';
 
 type CardEl = HTMLElement & { setConfig?: (c: unknown) => void; hass?: unknown };
