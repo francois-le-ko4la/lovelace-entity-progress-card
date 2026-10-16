@@ -12,7 +12,6 @@ type AlertDeps = {
   dom: () => DOMHelper;
   toggleClasses: (style: Map<string, boolean>) => void;
   statusLabel: StatusLabel;
-  repaintStatusLabel: () => void;
 };
 
 export class Alert {
@@ -67,7 +66,7 @@ export class Alert {
     }
     if (!view.isAlertActive) {
       statusLabel.release();
-      this.#deps.repaintStatusLabel();
+      statusLabel.repaint();
       return;
     }
     statusLabel.claim(

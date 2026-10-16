@@ -1,5 +1,5 @@
 import { is } from '../../utils/common-checks.js';
-import { HA_CONTEXT } from '../../utils/parameters.js';
+import { CARD, HA_CONTEXT } from '../../utils/parameters.js';
 import { EntityHelper } from '../values/entity-helper.js';
 
 // A min/max/watermark/alert_when end: a number, an entity, or nothing (unset,
@@ -34,6 +34,13 @@ const isFaultState = (state: string | null): state is string => {
   return state === unavailable || state === unknown || state === notFound;
 };
 
+// The fixed colour of an unreadable entity; `unknown` keeps its own colour.
+const faultColor = (state: string | null): string | null => {
+  const { unavailable, notFound } = HA_CONTEXT.entity.state;
+  if (state === unavailable) return CARD.style.color.unavailable;
+  return state === notFound ? CARD.style.color.notFound : null;
+};
+
 // Only an entity can be in a fault state: a number or nothing is always usable.
 const boundUsable = (bound: Bound): boolean => !isEntityBound(bound) || !isFaultState(bound.state);
 
@@ -44,5 +51,15 @@ function refreshBound(bound: Bound): void {
   if (isEntityBound(bound)) bound.refresh();
 }
 
-export { boundFrom, boundValue, boundState, boundUsable, usableBoundValue, isFaultState, refreshBound, isEntityBound };
+export {
+  boundFrom,
+  boundValue,
+  boundState,
+  boundUsable,
+  usableBoundValue,
+  isFaultState,
+  faultColor,
+  refreshBound,
+  isEntityBound,
+};
 export type { Bound };

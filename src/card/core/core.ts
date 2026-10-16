@@ -6,6 +6,7 @@ import { ObjStructure } from '../dom/structure.js';
 import { ChangeTracker } from '../history/change-tracker.js';
 import { HassProviderSingleton, loadEditor, type HomeAssistant } from '../../utils/hass-provider.js';
 import { type ViewCore } from '../view/core.js';
+import { type ViewBase } from '../view/base.js';
 import { type ResolvedWatermark } from '../view/watermark-view.js';
 import {
   markValue,
@@ -115,7 +116,7 @@ class HACore extends HTMLElement {
   // CardTemplateView/BadgeTemplateView - ViewCore (not a union, not `any`)
   // is the widest type accurate for all of them. `declare`: HACore itself
   // is never instantiated, only its subclasses.
-  declare _cardView: ViewCore;
+  declare _cardView: ViewCore<ViewBase>;
   _dom = new DOMHelper();
   _marks = new Marks({ view: () => this._cardView, dom: () => this._dom });
   _hassProvider = HassProviderSingleton.getInstance();

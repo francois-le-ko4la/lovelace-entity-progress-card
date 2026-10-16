@@ -4,10 +4,13 @@
 import { CARD } from '../../utils/parameters.js';
 import { is } from '../../utils/common-checks.js';
 import { ThemeManager } from '../color/theme-manager.js';
+import { statusLabelObj } from '../config/schema.js';
+import type { ViewCore } from '../view/core.js';
 import type { DOMHelper } from './dom-helpers.js';
 
 export class StatusLabel {
   readonly #dom: () => DOMHelper;
+  readonly #view: () => ViewCore;
   // Null text = no push landed yet. Cached so the pill's bar color can refresh
   // on every pass: status_label may never push again after percent settles.
   #text: string | null = null;
@@ -18,8 +21,9 @@ export class StatusLabel {
   // Skips paint's forced reflow when neither text nor color changed.
   #painted: { text: string; color: string } | null = null;
 
-  constructor(dom: () => DOMHelper) {
+  constructor(dom: () => DOMHelper, view: () => ViewCore) {
     this.#dom = dom;
+    this.#view = view;
   }
 
   get text(): string | null {
@@ -45,6 +49,22 @@ export class StatusLabel {
 
   get alertOwns(): boolean {
     return this.#alertOwns;
+  }
+
+  render(content: unknown) {
+    if (this.#alertOwns) return;
+    this.receive(content);
+    this.repaint();
+  }
+
+  // status_label.color_source picks the fallback when its `jinja` returns no
+  // explicit {label, color}: 'bar' by default (see schema.ts).
+  repaint() {
+    if (this.#alertOwns || this.#text === null) return;
+    const view = this.#view();
+    const fallbackColor =
+      statusLabelObj(view.config?.status_label).color_source === 'icon' ? view.iconColor : view.barColor;
+    this.paint(this.#text, this.#color ?? fallbackColor ?? CARD.style.color.default);
   }
 
   claim(text: string, color: string) {

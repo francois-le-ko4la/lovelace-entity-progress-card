@@ -6,7 +6,7 @@ import { buildDivergingGradient } from '../color/diverging-gradient.js';
 
 // What a Template view adds over ViewCore: its percent-based theme and the
 // last color Jinja pushes, which cards/template-base.ts writes straight to CSS.
-abstract class TemplateViewBase extends ViewCore {
+abstract class TemplateViewBase extends ViewCore<null> {
   icon: string | null = null;
   #templateTheme = new ThemeManager();
   #templateColorValue: string | null = null;

@@ -43,7 +43,6 @@ export {
   type WatermarkMark,
   type PeakMark,
 } from './schema/marks.js';
-export { type NameTokenType } from './schema/types.js';
 export {
   translateOrientation,
   HAS_EFFECT,

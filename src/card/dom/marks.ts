@@ -17,7 +17,7 @@ import type { ViewCore } from '../view/core.js';
 import type { ResolvedWatermark } from '../view/watermark-view.js';
 
 type MarkDeps = {
-  view: () => ViewCore;
+  view: () => ViewCore<ViewBase>;
   dom: () => DOMHelper;
 };
 

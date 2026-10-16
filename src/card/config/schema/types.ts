@@ -1,6 +1,7 @@
 import { SEV } from '../../../utils/parameters.js';
 import { is } from '../../../utils/common-checks.js';
 import { NumberFormatter } from '../../values/formatting.js';
+import type { NameTokenType } from '../../values/entity-helper.js';
 import { DURATION_RE } from '../../../utils/duration.js';
 import {
   validateType,
@@ -545,9 +546,6 @@ const types = {
 // reusable combinator, a one-off derived schema) so it doesn't need
 // types.name to exist as a literal property on an object TS otherwise infers
 // as closed/sealed once every entry lives in one literal.
-// EntityHelper._nameResolver is keyed off this too: a token added here with
-// no resolver there is a compile error, not a silently dropped part of a name.
-type NameTokenType = 'text' | 'entity' | 'device' | 'area' | 'floor';
 
 const nameItem = types.discriminatedUnion('type', {
   text: types.object({
@@ -580,4 +578,3 @@ const barAligned = (defaultVal: boolean) =>
   types.optionalWithDefault(types.union(types.boolean, types.string), defaultVal);
 
 export { types, nameValidator, barAligned };
-export type { NameTokenType };

@@ -3,6 +3,7 @@ import { is, assertDefined } from '../../utils/common-checks.js';
 import { ThemeManager } from '../color/theme-manager.js';
 import { type HomeAssistant } from '../../utils/hass-provider.js';
 import { type ViewCore } from '../view/core.js';
+import { type ViewBase } from '../view/base.js';
 import {
   statusLabelObj,
   BAR_POSITIONS,
@@ -50,7 +51,7 @@ class HABase extends HACore {
   ];
   // `declare`: every HABase subclass assigns its own real view (Card/Badge
   // for card types, CardTemplateView/BadgeTemplateView for template ones).
-  declare _cardView: ViewCore;
+  declare _cardView: ViewCore<ViewBase>;
   // _actionHelper itself inherited from HACore (nullable there) - always
   // assigned unconditionally in the constructor below, for every HABase
   // instance.
@@ -62,13 +63,15 @@ class HABase extends HACore {
     log: () => this._log,
   });
   #lastMessage: { content: string; sev: string } | null = null;
-  #statusLabel = new StatusLabel(() => this._dom);
+  #statusLabel = new StatusLabel(
+    () => this._dom,
+    () => this._cardView,
+  );
   #alert = new Alert({
     view: () => this._cardView,
     dom: () => this._dom,
     toggleClasses: (style) => this._toggleClasses(style),
     statusLabel: this.#statusLabel,
-    repaintStatusLabel: () => this._repaintStatusLabel(),
   });
 
   // ─── LIFECYCLE METHODS ────────────────────────────────────────────────────
@@ -641,24 +644,13 @@ class HABase extends HACore {
 
   _renderLabel(content: unknown) {
     this._log?.debug('📎 HACore._renderLabel():', { content });
-    if (this.#statusLabel.alertOwns) return;
-    this.#statusLabel.receive(content);
-    this._repaintStatusLabel();
+    this.#statusLabel.render(content);
   }
 
   // Also run on every refresh and template color push: status_label may never
   // push again once percent settles.
   _repaintStatusLabel() {
-    if (this.#statusLabel.alertOwns) return;
-    const text = this.#statusLabel.text;
-    if (text === null) return;
-    // status_label.color_source picks the fallback when its `jinja` returns no
-    // explicit {label, color}: 'bar' by default (see schema.ts).
-    const fallbackColor =
-      statusLabelObj(this._cardView.config?.status_label).color_source === 'icon'
-        ? this._cardView.iconColor
-        : this._cardView.barColor;
-    this.#statusLabel.paint(text, this.#statusLabel.color ?? fallbackColor ?? CARD.style.color.default);
+    this.#statusLabel.repaint();
   }
 
   _renderIconAnimationWhen(content: unknown) {

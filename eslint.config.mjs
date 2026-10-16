@@ -2,7 +2,7 @@ import globals from 'globals';
 import js from '@eslint/js';
 import compat from 'eslint-plugin-compat';
 import sonarjs from 'eslint-plugin-sonarjs';
-import importX from 'eslint-plugin-import-x';
+import importX, { createNodeResolver } from 'eslint-plugin-import-x';
 import tsParser from '@typescript-eslint/parser';
 import tsPlugin from '@typescript-eslint/eslint-plugin';
 
@@ -75,6 +75,26 @@ const sharedRules = {
   }],
 };
 
+// Folder -> the folders above it, which it must not import. Bottom-up:
+// utils < values < config < color < history < view < dom < core < elements.
+const CARD_ABOVE = {
+  config: ['color', 'history', 'view', 'dom', 'core', 'elements', 'diagnostics'],
+  values: ['config', 'color', 'history', 'view', 'dom', 'core', 'elements', 'diagnostics'],
+  color: ['history', 'view', 'dom', 'core', 'elements', 'diagnostics'],
+  history: ['view', 'dom', 'core', 'elements', 'diagnostics'],
+  view: ['dom', 'core', 'elements', 'diagnostics'],
+  dom: ['core', 'elements', 'diagnostics'],
+  core: ['elements', 'diagnostics'],
+  diagnostics: ['elements'],
+};
+const LAYER_ZONES = [
+  { target: ['./src/utils/!(types).*', './src/utils/styles'], from: ['./src/card', './src/editor'] },
+  ...Object.entries(CARD_ABOVE).flatMap(([folder, above]) => [
+    { target: `./src/card/${folder}`, from: above.map((name) => `./src/card/${name}`) },
+  ]),
+  { target: './src/card', from: './src/editor' },
+];
+
 export default [
   // Global ignore (a config object with only `ignores`, no `files`, applies
   // to every block in this array) - dist/ is esbuild's own build output
@@ -138,6 +158,22 @@ export default [
       'no-undef': 'off',
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+    },
+  },
+
+  // Layer rule (docs/development.md#object-architecture): a folder never
+  // imports from one above it. utils/types.ts is exempt: it derives Config
+  // from the schema.
+  {
+    files: ['src/**/*.ts'],
+    plugins: { 'import-x': importX },
+    settings: {
+      'import-x/resolver-next': [
+        createNodeResolver({ extensions: ['.ts', '.js'], extensionAlias: { '.js': ['.ts', '.js'] } }),
+      ],
+    },
+    rules: {
+      'import-x/no-restricted-paths': ['error', { zones: LAYER_ZONES }],
     },
   },
 

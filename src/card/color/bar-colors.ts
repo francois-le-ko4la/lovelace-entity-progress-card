@@ -1,12 +1,16 @@
 import { CARD } from '../../utils/parameters.js';
 import { type Config } from '../../utils/types.js';
 import { ThemeManager } from './theme-manager.js';
-import { type EntityCollectionHelper } from '../values/entity-collection.js';
-import { type Progress } from '../view/progress-display.js';
+import { type EntityCollectionHelper } from './entity-collection.js';
 import { buildDivergingGradient } from './diverging-gradient.js';
 
+type BarProgress = {
+  input: { min: number; max: number; centerZero: { zeroValue: number } | null };
+  math: { percent: number | null };
+};
+
 type BarColorsDeps = {
-  progress: () => Progress;
+  progress: () => BarProgress;
   theme: () => ThemeManager;
   collection: () => EntityCollectionHelper;
   config: () => Pick<Config, 'bar_color' | 'bar_color_mode'>;

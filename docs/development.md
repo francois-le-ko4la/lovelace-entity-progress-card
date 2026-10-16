@@ -120,21 +120,24 @@ Three gates, each named for when you run it. Each one contains the previous:
 `src/card/` is split by what a module is. A part split off one class lives under
 it.
 
-| Folder         | Holds                                                                                                                            |
-| -------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `elements/`    | The custom elements: `card-base`, `features`, `template-base`, `multi`.                                                          |
-| `core/`        | `HACore` (`core.ts`, its parts in `core/`) and `HABase` (`base.ts`, its parts in `base/`).                                       |
-| `view/`        | The views and what they resolve: `progress-math`, `watermark-view`, `bound-value`, `jinja-state`, …                              |
-| `config/`      | `schema.ts` + `schema/`, `config-helpers.ts` + `config-helpers/`, `factorization`, `multi-rows`.                                 |
-| `dom/`         | `dom-helpers`, `structure`, `marks`, `alert`, `badge-icon`, `status-label`, `aligned-bars`.                                      |
-| `values/`      | Entity and value helpers: `entity-helper`, `entity-collection`, `device-probes`, `formatting`, `ha-state`, `unit-helper`.        |
-| `color/`       | Theme and colour: `theme-manager`, `bar-colors` (bar colour and gradients from a view), `diverging-gradient`.                    |
-| `history/`     | What changes over time: `trend-tracker`, `peak-tracker`, `change-tracker`, `sample-ring`, `history-seeding`, `peak-marker-view`. |
-| `diagnostics/` | `doctor` and `card-audit` (`EPB.doctor`).                                                                                        |
+| Folder         | Holds                                                                                                                              |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `elements/`    | The custom elements: `card-base`, `features`, `template-base`, `multi`.                                                            |
+| `core/`        | `HACore` (`core.ts`, its parts in `core/`) and `HABase` (`base.ts`, its parts in `base/`).                                         |
+| `view/`        | The views and what they resolve: `progress-math`, `watermark-view`, `bound-value`, `jinja-state`, …                                |
+| `config/`      | `schema.ts` + `schema/`, `config-helpers.ts` + `config-helpers/`, `factorization`, `multi-rows`.                                   |
+| `dom/`         | `dom-helpers`, `structure`, `marks`, `alert`, `badge-icon`, `status-label`, `aligned-bars`.                                        |
+| `values/`      | Entity and value helpers: `entity-helper`, `device-probes`, `formatting`, `ha-state`, `unit-helper`.                               |
+| `color/`       | Theme and colour: `theme-manager`, `bar-colors` (bar colour and gradients from a view), `entity-collection`, `diverging-gradient`. |
+| `history/`     | What changes over time: `trend-tracker`, `peak-tracker`, `change-tracker`, `sample-ring`, `history-seeding`, `peak-marker-view`.   |
+| `diagnostics/` | `doctor` and `card-audit` (`EPB.doctor`).                                                                                          |
 
 - A barrel (`schema.ts`, `config-helpers.ts`, `dom-helpers.ts`) sits next to its
   folder and re-exports only that folder.
 - No other barrel: import a module from the file that defines it.
+- Layers, bottom-up: `utils`, `values`, `config`, `color`, `history`, `view`,
+  `dom`, `core`, `elements`; ESLint (`import-x/no-restricted-paths`) rejects an
+  import from a higher folder, and `card/` never imports `editor/`.
 - `test/card/<folder>/` mirrors `src/card/<folder>/`.
 
 `src/editor/` follows the same rule: `elements/` (`base`, `editors`, `chips`,

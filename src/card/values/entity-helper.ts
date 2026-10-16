@@ -10,7 +10,10 @@ import { traceInstance } from '../../utils/log.js';
 import { HassProviderSingleton } from '../../utils/hass-provider.js';
 import { NumberFormatter } from './formatting.js';
 import { domainProfile, stateColor } from './ha-state.js';
-import type { NameTokenType } from '../config/schema.js';
+
+// The schema's `name` validator is keyed off this too: a token added here with
+// no resolver below is a compile error, not a silently dropped part of a name.
+type NameTokenType = 'text' | 'entity' | 'device' | 'area' | 'floor';
 
 // One entry of the `name` config option's composition array (see
 // EditorFieldsType.entityName / types.stateContent in schema.ts).
@@ -395,4 +398,4 @@ const hasUsableHistory = (entity: unknown, attribute?: unknown): entity is strin
   !KINDS_WITHOUT_HISTORY.has(valueKindOf(entity, attribute));
 
 export { EntityHelper, hasUsableHistory };
-export type { Reading };
+export type { Reading, NameTokenType };

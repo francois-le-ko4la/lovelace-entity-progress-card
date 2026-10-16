@@ -13,6 +13,7 @@ import { traceInstance } from '../../utils/log.js';
 import { type ProgressSettings, type RawProgress } from './progress-math.js';
 import { type ProgressDisplay } from './progress-display.js';
 import { ThemeManager } from '../color/theme-manager.js';
+import { faultColor } from './bound-value.js';
 import { JinjaState } from './jinja-state.js';
 import { EntityHelper } from '../values/entity-helper.js';
 import { TrendTracker, trendTrackerOptions } from '../history/trend-tracker.js';
@@ -23,7 +24,6 @@ import { HassProviderSingleton, type HomeAssistant } from '../../utils/hass-prov
 import { domainProfile, isStateActive } from '../values/ha-state.js';
 import { nextOnGrid } from '../../utils/clock.js';
 import { BaseConfigHelper, type ActionBag } from '../config/config-helpers.js';
-import type { ViewBase } from './base.js';
 
 // The validated shapes, read off the schema rather than restated: a field the
 // schema gains is in the type the same day (watermark.as once was not).
@@ -69,7 +69,7 @@ type EntityFault = { role: 'entity' | 'max_value' | 'min_value'; state: string; 
  * const hasShape = cardView.hasVisibleShape;
  * const isClickable = cardView.hasClickableCard;
  */
-abstract class ViewCore {
+abstract class ViewCore<E = unknown> {
   _hassProvider = HassProviderSingleton.getInstance();
   _trendTracker: TrendTracker | null = null;
   _trendEntityId: string | null = null;
@@ -168,7 +168,7 @@ abstract class ViewCore {
 
   // The entity pipeline (peak marker, trend, badge, messages), null on a
   // template view that has none.
-  readonly entityView: ViewBase | null = null;
+  readonly entityView: E | null = null;
 
   // icon_animation: an enum name | { effect, jinja } - resolves either shape
   // to the effect actually chosen (see schema.ts's enumOrJinjaTrigger and
@@ -246,8 +246,8 @@ abstract class ViewCore {
   }
 
   _getEntityColor(): string | null {
-    if (this._currentValue.state === HA_CONTEXT.entity.state.unavailable) return CARD.style.color.unavailable;
-    if (this._currentValue.state === HA_CONTEXT.entity.state.notFound) return CARD.style.color.notFound;
+    const fault = faultColor(this._currentValue.state);
+    if (fault) return fault;
     return ThemeManager.adaptColor(this._entityDefaultColor());
   }
 

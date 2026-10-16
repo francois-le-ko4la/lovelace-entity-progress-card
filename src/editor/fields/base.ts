@@ -290,6 +290,8 @@ const badgeShown = (c: LovelaceConfig) => Boolean(c.badge_icon) || Boolean(c.bad
 
 export {
   gateOnHide,
+  HIDE_DEPENDENTS,
+  BAR_MARK_PREFIXES,
   TITLE,
   MARKER_SECTIONS,
   FEATURE_ROW_DROPPED_SECTIONS,

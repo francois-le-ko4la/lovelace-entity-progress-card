@@ -10,6 +10,7 @@ import assert from 'node:assert/strict';
 import { flushFrames } from '../../dom-setup.js';
 import { makeHass, TEST_ENTITY } from '../../ha-stubs.js';
 import { HassProviderSingleton, type HomeAssistant } from '../../../src/utils/hass-provider.js';
+import { ThemeManager } from '../../../src/card/color/theme-manager.js';
 import '../../../src/index.js';
 
 type CardEl = HTMLElement & { setConfig?: (c: unknown) => void; hass?: unknown };
@@ -80,6 +81,38 @@ describe('the status pill', () => {
     await push(STATUS, 'hot');
     await reconfigure({});
     assert.equal(pill(), '');
+  });
+});
+
+// happy-dom does not resolve outline-color, so the colour the pill asked to
+// paint is read where paint hands it to ThemeManager.
+describe('the pill colour without an explicit colour', () => {
+  const paintedColor = async (colorSource?: string) => {
+    const seen: string[] = [];
+    const original = ThemeManager.labelColorComponents;
+    ThemeManager.labelColorComponents = (raw: string) => {
+      seen.push(raw);
+      return original.call(ThemeManager, raw);
+    };
+    try {
+      const { push } = await mount({
+        status_label: colorSource ? { jinja: STATUS, color_source: colorSource } : STATUS,
+        color: '#ff0000',
+        bar_color: '#0000ff',
+      });
+      await push(STATUS, 'hot');
+    } finally {
+      ThemeManager.labelColorComponents = original;
+    }
+    return seen.at(-1);
+  };
+
+  test('follows the bar by default', async () => {
+    assert.match(String(await paintedColor()), /0000ff|rgb\(0, 0, 255\)/i);
+  });
+
+  test('color_source: icon follows the icon', async () => {
+    assert.match(String(await paintedColor('icon')), /ff0000|rgb\(255, 0, 0\)/i);
   });
 });
 

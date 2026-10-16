@@ -5,8 +5,8 @@
 
 import { CARD_CONTEXT } from '../../utils/parameters.js';
 import { traceInstance } from '../../utils/log.js';
-import { ThemeManager } from '../color/theme-manager.js';
-import { EntityHelper } from './entity-helper.js';
+import { ThemeManager } from './theme-manager.js';
+import { EntityHelper } from '../values/entity-helper.js';
 
 type EntityCollectionAddEntityOptions = {
   attribute?: string | null;

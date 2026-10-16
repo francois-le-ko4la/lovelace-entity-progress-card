@@ -11,12 +11,13 @@ import {
   boundState,
   boundValue,
   isEntityBound,
+  faultColor,
   isFaultState,
   refreshBound,
   type Bound,
 } from './bound-value.js';
 import { ThemeManager } from '../color/theme-manager.js';
-import { EntityCollectionHelper } from '../values/entity-collection.js';
+import { EntityCollectionHelper } from '../color/entity-collection.js';
 import { type Reading } from '../values/entity-helper.js';
 import { PeakMarkerView, type ResolvedPeakMarker } from '../history/peak-marker-view.js';
 import { AlertBounds } from './alert-bounds.js';
@@ -88,7 +89,7 @@ import { nextTickAt } from './base/tick-schedule.js';
  * // When what the card shows next moves with no state change
  * const tickAt = cardView.nextTickAt(Date.now());
  */
-class ViewBase extends ViewCore {
+class ViewBase extends ViewCore<ViewBase> {
   // The stable half comes from the config, the resolved half from each
   // refresh; #progress is rebuilt from both whenever either changes.
   #progressConfig: ProgressConfig = {
@@ -289,8 +290,8 @@ class ViewBase extends ViewCore {
   }
 
   get iconColor(): string | null {
-    if (this.isUnavailable) return CARD.style.color.unavailable;
-    if (this.isNotFound) return CARD.style.color.notFound;
+    const fault = faultColor(this.faultyEntity?.state ?? null);
+    if (fault) return fault;
     return (
       ThemeManager.adaptColor(this.#theme.iconColor || this._configHelper.config.color || null) ||
       this._entityDefaultColor()

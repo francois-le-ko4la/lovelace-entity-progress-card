@@ -207,6 +207,12 @@ toggle like its tile card.
   `form/`, `data/`, `fields/` and `groups/`; the largest files are split.
 - The editor styles ship in the editor bundle instead of the card's (−5.7 KB).
 - The editor's field construction moved from `EditorBase` into `FieldBuilder`.
+- Import layers enforced by ESLint (`import-x/no-restricted-paths`);
+  `entity-collection` moved to `color/`.
+- `faultColor` shared by `ViewBase` and `ViewCore`; `ViewCore<E>` is generic;
+  `StatusLabel` owns its painting.
+- New tests: fault colors, `status_label` `color_source`, editor `hide` field
+  lists.
 
 ## 1.6.3
 
