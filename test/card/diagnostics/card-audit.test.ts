@@ -120,6 +120,14 @@ describe('notesByPath - each note at the key it is about, for the issue report Y
     assert.equal(notesByPath({ ...ring, hide: ['name'] }).size, 0, 'another target leaves the ring');
   });
 
+  test('a ring keeps bar_segments and bar_effect, and still has no bar_stack', () => {
+    const ring = { type: CARD, entity: 'sensor.x', bar_position: 'icon' };
+    const kept = notesByPath({ ...ring, bar_segments: 5, bar_effect: ['glass'] });
+    assert.equal(kept.size, 0, `unexpected notes: ${[...kept.keys()].join(', ')}`);
+    const stacked = notesByPath({ ...ring, bar_stack: { mode: 'net', entities: [{ entity: 'sensor.y' }] } });
+    assert.deepEqual(Object.fromEntries(stacked), { bar_stack: [NO_EFFECT] });
+  });
+
   test('a Multi on its default look: the note sits on the card itself', () => {
     const notes = notesByPath({ type: MULTI_CARD, entities: ['sensor.a'] });
     assert.match(notes.get('')?.[0] ?? '', /since 1\.6\.3/);

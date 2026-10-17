@@ -302,7 +302,10 @@ class HABase extends HACore {
     const { start = 0, gap = 0 } = this._cardView.config.bar_ring ?? {};
     const openArc = Math.min(Math.max(gap, 0), RING_MAX_GAP);
     const arcStart = this._cardView.config.center_zero ? start - (360 - openArc) / 2 : start;
+    const { isRing, isSegmented, config } = this._cardView;
+    const segments = Math.round(config.bar_segments as number) * (config.center_zero ? 2 : 1);
     const vars: [string, CacheValue, boolean][] = [
+      ['--ring-segments', segments, isRing && isSegmented],
       ['--ring-start', `${arcStart}deg`, arcStart !== 0],
       ['--ring-axis', `${start}deg`, start !== 0],
       ['--ring-span-ratio', 1 - openArc / 360, openArc > 0],

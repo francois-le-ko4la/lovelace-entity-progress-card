@@ -1816,9 +1816,12 @@ keeps its size and its text; only the straight bar goes.
   `blended` read as `area`, `triangle` and `round` as the same pin.
 - It fills from empty when the card appears and follows each change, like the
   bar.
-- [`center_zero`](#center_zero), [`bar_stack`](#bar_stack),
-  [`bar_effect`](#bar_effect) and [`bar_segments`](#bar_segments) have no effect
-  here yet.
+- [`center_zero`](#center_zero) puts the zero at the middle of the arc.
+- [`bar_segments`](#bar_segments) cuts the arc into blocks (with `center_zero`,
+  that many per arm).
+- [`bar_effect`](#bar_effect) takes `glass`, `gradient` and `gradient_reverse`;
+  `radius` and `shimmer` are not offered here.
+- [`bar_stack`](#bar_stack) has no effect here yet.
 
 ```yaml
 type: custom:entity-progress-card

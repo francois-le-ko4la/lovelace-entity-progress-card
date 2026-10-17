@@ -40,6 +40,12 @@ toggle like its tile card.
   the value grows each way from it, marked by a line, and themes and
   [`bar_color_mode`][bar_color_mode] follow both arms.  
   ➡️ [Enhancement]: Ring position #144 (@addit248)
+- [`bar_segments`][bar_segments] cuts the ring into blocks (that many per arm
+  with `center_zero`).  
+  ➡️ [Enhancement]: Ring position #144 (@addit248)
+- [`bar_effect`][bar_effect] `glass`, `gradient` and `gradient_reverse` work on
+  the ring.  
+  ➡️ [Enhancement]: Ring position #144 (@addit248)
 
 #### Unavailable entities and failed Jinja, handled alike
 
@@ -84,6 +90,11 @@ toggle like its tile card.
   [`bar_position: icon`][bar_position] too; the editor drops the ring options
   with it.
 
+### 📚 Documentation
+
+- Cookbook: a Mushroom Template card hosting a Multi-Feature (printer ink
+  levels).
+
 > We care about getting the details right — but even so, something here might
 > have slipped through. You don't need to be a developer to notice it. If
 > something feels off, that's reason enough. Open a [GitHub issue]. Or say hi on
@@ -123,6 +134,12 @@ toggle like its tile card.
   arc, and [`bar_ring`][bar_ring] `start` places it. A zero line marks it
   (`--epb-zero-mark-color`, `--epb-zero-mark-width`); themes and `rainbow`,
   `segment`, `rainbow_full` paint one conic gradient over both arms.  
+  ➡️ [Enhancement]: Ring position #144 (@addit248)
+- [`bar_segments`][bar_segments] cuts the ring into blocks (that many per arm
+  with `center_zero`).  
+  ➡️ [Enhancement]: Ring position #144 (@addit248)
+- [`bar_effect`][bar_effect] `glass`, `gradient` and `gradient_reverse` work on
+  the ring.  
   ➡️ [Enhancement]: Ring position #144 (@addit248)
 
 #### Unavailable entities and failed Jinja, handled alike
@@ -177,6 +194,11 @@ toggle like its tile card.
 - **[`hide`][hide]** `progress_bar` with [`bar_position: icon`][bar_position]:
   the ring is hidden too; the editor parks `bar_position` and hides the
   `bar_ring` fields, and the config audit reports it as without effect.
+
+### 📚 Documentation
+
+- Cookbook: a Mushroom Template card hosting a Multi-Feature (printer ink
+  levels).
 
 ### 🧹 Under the hood
 
@@ -7799,6 +7821,8 @@ experience:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#badge_icon
 [bar_segments]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_segments
+[bar_effect]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_effect
 [bar_ring]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_ring
 [bar_single_line]:

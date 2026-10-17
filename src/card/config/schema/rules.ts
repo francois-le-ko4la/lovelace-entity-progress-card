@@ -59,7 +59,7 @@ const HAS_EFFECT = {
   barColorMode: hasTheme,
   interpolate: (c: ConfigLike) => hasTheme(c) && (is.nullish(c.bar_color_mode) || c.bar_color_mode === 'auto'),
   // Neither has a single fill fraction for cells to cut into.
-  barSegments: (c: ConfigLike) => c.bar_color_mode !== 'rainbow_full' && !hasStack(c) && hasStraightBar(c),
+  barSegments: (c: ConfigLike) => c.bar_color_mode !== 'rainbow_full' && !hasStack(c),
   // A text column beside the bar: a single_line row's, or the value next to a
   // default-row bar. bar_max_width pins the bar instead.
   barAligned: (c: ConfigLike) => !c.bar_max_width && (c.density === 'single_line' || HAS_EFFECT.barMaxWidth(c)),
@@ -116,8 +116,7 @@ const INERT_OPTIONS: InertOption[] = [
   { key: 'bar_ring', hasEffect: (c) => !hasStraightBar(c), fallback: undefined },
   { key: 'interpolate', hasEffect: HAS_EFFECT.interpolate, fallback: false },
   { key: 'reverse_secondary_info_row', hasEffect: HAS_EFFECT.reverseSecondaryInfoRow, fallback: false },
-  // A ring has no effect or stack of its own (yet).
-  { key: 'bar_effect', hasEffect: hasStraightBar, fallback: undefined },
+  // A ring has no stack of its own (yet).
   { key: 'bar_stack', hasEffect: hasStraightBar, fallback: undefined },
 ];
 

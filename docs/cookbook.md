@@ -67,6 +67,7 @@ cross-variant compatibility badges).
     - [Living room — full rainbow, centered, with a status pill](#showcase-living-room)
     - [Garage — a pulsing alert on a vertical thermometer](#showcase-garage)
     - [Energy — two bars and a net balance, in one Tile feature](#showcase-energy)
+    - [Printer — ink levels in a Mushroom Template card](#showcase-printer)
   - 🧺
     [The Laundry Mystery: Decoding Washer Entities Across Brands](#laundry-mystery)
   - 🌀
@@ -2268,6 +2269,93 @@ Each Multi row prints its own value, and the Multi holds those values in one
 column ([`bar_aligned`](configuration.md#bar_aligned), on by default) so the two
 bars start at the same x whatever the reading — `900 W` and `1600 W` are not the
 same width.
+
+[🔼 Back to top]
+
+<a id="showcase-printer"></a>
+
+#### Printer — ink levels in a Mushroom Template card
+
+<br />
+<details>
+<summary>Show YAML</summary>
+
+```yaml
+type: custom:mushroom-template-card
+entity: device_tracker.printer
+primary: Printer
+secondary: |-
+  {% if is_state('sensor.printer', 'idle') %}
+    Idle
+  {% elif is_state('sensor.printer', 'printing') %}
+    Printing
+  {% elif is_state('sensor.printer', 'unavailable') %}
+    Unavailable
+  {% else %}
+    {{ states('sensor.printer') }}
+  {% endif %}
+icon: |-
+  {% if is_state('sensor.printer', 'unavailable') %}
+    mdi:printer-off
+  {% else %}
+    mdi:printer
+  {% endif %}
+color: |-
+  {% if is_state('sensor.printer', 'unavailable') %}
+    disabled
+  {% else %}
+    amber
+  {% endif %}
+badge_icon: |-
+  {% set black = states('sensor.printer_black_ink') | int(0) %}
+  {% set color = states('sensor.printer_color_ink') | int(0) %}
+  {% set paper = states('sensor.printer_paper') | int(0) %}
+  {% if paper == 1 or paper == 13 %}
+    mdi:tray-alert
+  {% elif black < 10 or color < 10 %}
+    mdi:water
+  {% else %}
+    mdi:home
+  {% endif %}
+badge_color: |-
+  {% set black = states('sensor.printer_black_ink') | int(0) %}
+  {% set color = states('sensor.printer_color_ink') | int(0) %}
+  {% set paper = states('sensor.printer_paper') | int(0) %}
+  {% if paper == 1 %}
+    orange
+  {% elif paper == 13 %}
+    red
+  {% elif black < 10 or color < 10 %}
+    orange
+  {% else %}
+    green
+  {% endif %}
+tap_action:
+  action: none
+hold_action:
+  action: none
+double_tap_action:
+  action: none
+features:
+  - type: custom:entity-progress-multi-feature
+    entities:
+      - entity: sensor.printer_black_ink
+        bar_color: black
+      - entity: sensor.printer_color_ink
+        bar_color: purple
+features_position: bottom
+grid_options:
+  columns: 12
+  rows: 2
+```
+
+</details>
+<br />
+
+A third-party card can host our features too: the Mushroom Template card takes
+an [`entity-progress-multi-feature`](#multi) under its content
+(`features_position: bottom`), one bar per cartridge. The badge is the
+template's own — it turns orange under 10 % ink or on a paper fault.
 
 [🔼 Back to top]
 

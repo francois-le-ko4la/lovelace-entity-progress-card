@@ -108,12 +108,38 @@ ha-card.${CARD.style.dynamic.barAroundIcon} .${CARD.htmlStructure.elements.shape
   /* Past the value: the track, over the card's own opaque background - a theme's
      track is translucent, and the zones painted underneath showed through it. */
   background:
+    var(--ring-gaps, none),
     var(--ring-gap-cover),
     conic-gradient(from var(--ring-start, 0deg), var(--ring-track) var(--ring-from), transparent 0 var(--ring-to), var(--ring-track) 0),
     conic-gradient(from var(--ring-start, 0deg), var(--ha-card-background, var(--card-background-color)) var(--ring-from), transparent 0 var(--ring-to), var(--ha-card-background, var(--card-background-color)) 0),
+    var(--ring-effect, none),
     var(--ring-paint);
   -webkit-mask: radial-gradient(farthest-side, transparent var(--ring-cut), #000 calc(var(--ring-cut) + 1px));
   mask: radial-gradient(farthest-side, transparent var(--ring-cut), #000 calc(var(--ring-cut) + 1px));
+}
+/* bar_segments: the arc cut into --ring-segments blocks, each gap a wedge of the
+   card's background over fill and track alike (center_zero: N per arm). */
+ha-card.${CARD.style.dynamic.barAroundIcon}.bar-segmented .${CARD.htmlStructure.elements.shape.class}::after {
+  --ring-segment: calc(var(--ring-span) / var(--ring-segments, 1));
+  --ring-half-gap: calc(var(--ring-segment) * 0.1);
+  --ring-gaps: repeating-conic-gradient(
+    from var(--ring-start, 0deg),
+    var(--ha-card-background, var(--card-background-color)) 0 var(--ring-half-gap),
+    transparent 0 calc(var(--ring-segment) - var(--ring-half-gap)),
+    var(--ha-card-background, var(--card-background-color)) 0 var(--ring-segment)
+  );
+}
+/* bar_effect: a white sweep along the filled arc. glass lets the track show
+   through, like the bar's transparent .inner. */
+ha-card.${CARD.style.dynamic.barAroundIcon}.${CARD.style.dynamic.progressBar.effect.glass.class} .${CARD.htmlStructure.elements.shape.class}::after {
+  --ring-paint: var(--ring-track);
+  --ring-effect: conic-gradient(from var(--ring-start, 0deg), rgba(255, 255, 255, 0.3) var(--ring-from), rgba(255, 255, 255, 0.1) var(--ring-to), transparent 0);
+}
+ha-card.${CARD.style.dynamic.barAroundIcon}.${CARD.style.dynamic.progressBar.effect.gradient.class} .${CARD.htmlStructure.elements.shape.class}::after {
+  --ring-effect: conic-gradient(from var(--ring-start, 0deg), rgba(255, 255, 255, 0.4) var(--ring-from), transparent var(--ring-to));
+}
+ha-card.${CARD.style.dynamic.barAroundIcon}.${CARD.style.dynamic.progressBar.effect.gradientReverse.class} .${CARD.htmlStructure.elements.shape.class}::after {
+  --ring-effect: conic-gradient(from var(--ring-start, 0deg), transparent var(--ring-from), rgba(255, 255, 255, 0.4) var(--ring-to));
 }
 /* center_zero: the zero sits mid-arc, the signed value grows each way from it
    by up to half the arc. */

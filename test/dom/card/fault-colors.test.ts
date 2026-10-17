@@ -20,7 +20,7 @@ type Hass = Record<string, unknown> & { states: Record<string, Record<string, un
 
 const mount = async (tag: string, config: Record<string, unknown>, hassState: string | null) => {
   const hass = makeHass() as Hass;
-  if (hassState === null) delete hass.states[TEST_ENTITY];
+  if (hassState === null) Reflect.deleteProperty(hass.states, TEST_ENTITY);
   else hass.states[TEST_ENTITY] = { ...hass.states[TEST_ENTITY], state: hassState };
   HassProviderSingleton.getInstance().hass = hass as unknown as HomeAssistant;
 
