@@ -44,6 +44,21 @@ describe('config negotiation - an invalid value degrades to its default, never r
   });
 });
 
+describe('text_effect', () => {
+  const effectOf = (value: unknown) =>
+    (YamlSchemaFactory.card.validate({ entity: ENTITY, bar_position: 'overlay', text_effect: value }).config as {
+      text_effect?: string;
+    })?.text_effect;
+
+  test('keeps every listed value', () => {
+    ['none', 'shadow', 'halo', 'outline', 'plate', 'contrast'].forEach((value) => assert.equal(effectOf(value), value));
+  });
+
+  test('an unknown value falls back to none', () => {
+    assert.equal(effectOf('glow') ?? 'none', 'none');
+  });
+});
+
 describe('bar_orientation speaks the words of its bar_position', () => {
   const orientationOf = (config: Record<string, unknown>) =>
     (YamlSchemaFactory.card.validate({ entity: ENTITY, ...config }).config as { bar_orientation?: string })

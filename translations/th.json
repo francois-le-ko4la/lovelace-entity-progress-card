@@ -91,7 +91,7 @@
         "color_source": "แหล่งสี",
         "toggle": "ป้ายสถานะ"
       },
-      "text_shadow": "เพิ่มเงาให้ข้อความ",
+      "text_effect": "เอฟเฟกต์ข้อความ",
       "trend_indicator": {
         "window_toggle": "ใช้ช่วงเวลา",
         "basis": "พื้นฐานการเปรียบเทียบ",
@@ -202,6 +202,14 @@
         "small": "เล็ก",
         "xlarge": "ใหญ่พิเศษ",
         "xsmall": "เล็กพิเศษ"
+      },
+      "text_effect": {
+        "none": "ไม่มี",
+        "shadow": "เงา",
+        "halo": "แสงเรือง",
+        "outline": "เส้นขอบ",
+        "plate": "แผ่นรอง",
+        "contrast": "คอนทราสต์อัตโนมัติ"
       },
       "bar_stack_mode": {
         "net": "สุทธิ",

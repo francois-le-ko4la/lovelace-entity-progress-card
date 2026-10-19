@@ -91,7 +91,7 @@
         "color_source": "Bron van kleur",
         "toggle": "Statuslabel"
       },
-      "text_shadow": "Tekstschaduw toevoegen",
+      "text_effect": "Teksteffect",
       "trend_indicator": {
         "window_toggle": "Tijdvenster gebruiken",
         "basis": "Vergelijkingsbasis",
@@ -202,6 +202,14 @@
         "small": "Klein",
         "xlarge": "Extra groot",
         "xsmall": "Extra klein"
+      },
+      "text_effect": {
+        "none": "Geen",
+        "shadow": "Schaduw",
+        "halo": "Halo",
+        "outline": "Omlijning",
+        "plate": "Plaat",
+        "contrast": "Automatisch contrast"
       },
       "bar_stack_mode": {
         "net": "Netto",

@@ -1,5 +1,6 @@
 import { environmentReport } from '../../utils/diagnostic.js';
 import { notesByPath } from '../../card/diagnostics/card-audit.js';
+import { drawnOfPreview } from '../../card/diagnostics/doctor.js';
 import { toYaml } from './yaml-writer.js';
 import type { LovelaceConfig } from '../../utils/types.js';
 
@@ -11,10 +12,20 @@ const BUG_ICON_PATH =
 
 // Ready to paste into a GitHub issue: the environment dump() prints, then the
 // card's YAML with its deprecated options and options without effect marked.
-const issueReport = (config: LovelaceConfig): string =>
-  [`${FENCE}text`, environmentReport(), FENCE, '', `${FENCE}yaml`, toYaml(config, notesByPath(config)), FENCE, ''].join(
-    '\n',
-  );
+const issueReport = (config: LovelaceConfig, editor: HTMLElement): string => {
+  const drawn = drawnOfPreview(editor);
+  return [
+    `${FENCE}text`,
+    environmentReport(),
+    FENCE,
+    '',
+    `${FENCE}yaml`,
+    toYaml(config, notesByPath(config)),
+    ...(drawn ? [`# drawn from: ${drawn}`] : []),
+    FENCE,
+    '',
+  ].join('\n');
+};
 
 // navigator.clipboard only exists over https: plain http falls back to a
 // selected textarea, as Home Assistant's own copyToClipboard does.

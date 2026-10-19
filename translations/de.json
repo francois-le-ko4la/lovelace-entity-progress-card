@@ -91,7 +91,7 @@
         "color_source": "Farbquelle",
         "toggle": "Statusbeschriftung"
       },
-      "text_shadow": "Textschatten hinzufügen",
+      "text_effect": "Texteffekt",
       "trend_indicator": {
         "window_toggle": "Zeitfenster verwenden",
         "basis": "Vergleichsbasis",
@@ -202,6 +202,14 @@
         "small": "Klein",
         "xlarge": "Extra groß",
         "xsmall": "Extra klein"
+      },
+      "text_effect": {
+        "none": "Keiner",
+        "shadow": "Schatten",
+        "halo": "Halo",
+        "outline": "Umriss",
+        "plate": "Unterlage",
+        "contrast": "Automatischer Kontrast"
       },
       "bar_stack_mode": {
         "net": "Netto",

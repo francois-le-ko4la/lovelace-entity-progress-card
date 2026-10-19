@@ -91,7 +91,7 @@
         "color_source": "مصدر اللون",
         "toggle": "تسمية الحالة"
       },
-      "text_shadow": "إضافة ظل للنص",
+      "text_effect": "تأثير النص",
       "trend_indicator": {
         "window_toggle": "استخدام نافذة زمنية",
         "basis": "أساس المقارنة",
@@ -202,6 +202,14 @@
         "small": "صغيرة",
         "xlarge": "كبيرة جدًا",
         "xsmall": "صغير جدًا"
+      },
+      "text_effect": {
+        "none": "بدون",
+        "shadow": "ظل",
+        "halo": "هالة",
+        "outline": "حدود",
+        "plate": "لوحة",
+        "contrast": "تباين تلقائي"
       },
       "bar_stack_mode": {
         "net": "صافي",

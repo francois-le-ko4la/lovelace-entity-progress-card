@@ -1803,8 +1803,9 @@ Other aids:
   and reports `ViewBase.drawnFrom` - the value and range the bar is drawn from.
 - The editor's bug icon copies an issue report: `environmentReport()` (what
   `dump()` prints), then the YAML Home Assistant holds, written by
-  `editor/data/yaml-writer.ts` with `notesByPath` comments. Multi rows don't
-  offer it.
+  `editor/data/yaml-writer.ts` with `notesByPath` comments and a `# drawn from:`
+  line read off the dialog's preview (`drawnOfPreview`). Multi rows don't offer
+  it.
 - Logger and `?debug=instances` names are passed explicitly (`initLogger`,
   `traceInstance`), never read from `constructor.name`: the prod build minifies
   class names. An element passes its `localName` (the tag), a helper a literal;

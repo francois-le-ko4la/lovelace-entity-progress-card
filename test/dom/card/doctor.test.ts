@@ -62,6 +62,15 @@ describe('EPB.doctor - the cards on this page', () => {
     assert.deepEqual([drawnFrom.value, drawnFrom.min, drawnFrom.max], [42, 0, 100]);
   });
 
+  test('inspect() sums up what the bar is drawn from on one line, empty when nothing computes', async () => {
+    const missing = mount(CARD, { entity: 'sensor.missing' });
+    const flat = mount(CARD, { entity: TEST_ENTITY, min_value: 50, max_value: 50 });
+    await flushFrames();
+    assert.equal(inspect(card)?.drawn, 'min 0 · max 100 · value 42 · 42%');
+    assert.equal(inspect(missing)?.drawn, '');
+    assert.equal(inspect(flat)?.drawn, '');
+  });
+
   test('inspect() takes the number cards() lists, and says so when nothing matches', () => {
     assert.ok(inspect(cards().indexOf(card))?.element === card, 'inspect(n) reached another element');
     assert.equal(inspect(document.body), null);

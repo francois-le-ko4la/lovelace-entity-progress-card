@@ -91,7 +91,7 @@
         "color_source": "Izvor boje",
         "toggle": "Oznaka statusa"
       },
-      "text_shadow": "Dodaj sjenu tekstu",
+      "text_effect": "Efekt teksta",
       "trend_indicator": {
         "window_toggle": "Koristi vremenski prozor",
         "basis": "Osnova usporedbe",
@@ -202,6 +202,14 @@
         "small": "Mala",
         "xlarge": "Vrlo velika",
         "xsmall": "Vrlo malo"
+      },
+      "text_effect": {
+        "none": "Nijedan",
+        "shadow": "Sjena",
+        "halo": "Halo",
+        "outline": "Obrub",
+        "plate": "Podloga",
+        "contrast": "Automatski kontrast"
       },
       "bar_stack_mode": {
         "net": "Neto",

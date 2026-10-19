@@ -40,6 +40,7 @@ const DEPRECATED_KEYS = new Set([
   'navigate_to',
   'show_more_info',
   'disable_unit',
+  'text_shadow',
   'max_value_attribute',
 ]);
 

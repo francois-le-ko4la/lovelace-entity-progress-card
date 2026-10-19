@@ -81,6 +81,9 @@ const PEAK_RANGE_TYPE_DEFAULT = 'area';
 
 const MARK_ZONE_TYPES = ['area', 'blended', 'striped'];
 
+// 'contrast' picks black or white text from the bar colour under the fill end.
+const TEXT_EFFECTS = ['none', 'shadow', 'halo', 'outline', 'plate', 'contrast'];
+
 const ALERT_HIGHLIGHTS = ['border', 'background', 'label'];
 
 const ALERT_ANIMATIONS = ['static', 'blink', 'ping'];
@@ -148,6 +151,7 @@ const BADGE_DELETED_FIELDS = [
   'bar_max_width',
   'bar_single_line',
   'text_shadow',
+  'text_effect',
   // Design choice, not dead CSS: an arrow icon or a status pill doesn't read at
   // --ha-badge-size (~36px), and peak_marker's history seeding is Card-only.
   'trend_indicator',
@@ -182,6 +186,7 @@ export {
   PEAK_WINDOW_DEFAULT,
   PEAK_RANGE_TYPE_DEFAULT,
   MARK_ZONE_TYPES,
+  TEXT_EFFECTS,
   ALERT_HIGHLIGHTS,
   ALERT_ANIMATIONS,
   ICON_ANIMATIONS,

@@ -17,7 +17,7 @@ type InspectedView = {
   isUnavailable?: boolean;
   isUnknown?: boolean;
   faultyEntity?: { role: string; jinja?: string } | null;
-  drawnFrom?: Node;
+  drawnFrom?: { value: number; min: number; max: number };
   _currentValue?: { reading?: unknown; state?: unknown };
 };
 
@@ -94,6 +94,25 @@ const detailsOf = (view: InspectedView, cleanup: Cleanup): string => {
   return [...(message ? [message] : []), ...(cleanup ? notesOf(cleanup) : [])].join('; ');
 };
 
+// Empty when there is nothing to compute: no percent (template view), an
+// entity without a state or a degenerate range.
+const drawnOf = (view: InspectedView): string => {
+  const drawn = view.drawnFrom;
+  if (view.isNotFound || view.isUnavailable || view.isUnknown) return '';
+  if (!drawn || !is.number(view.percent) || drawn.min === drawn.max) return '';
+  return `min ${drawn.min} · max ${drawn.max} · value ${drawn.value} · ${Math.round(view.percent * 10) / 10}%`;
+};
+
+// What the debug button of the editor adds to its report: the preview card of
+// the dialog the editor sits in. Empty when there is no such dialog.
+const drawnOfPreview = (editor: HTMLElement): string => {
+  let root = editor.getRootNode();
+  while (root instanceof ShadowRoot && root.host.localName !== 'hui-dialog-edit-card') root = root.host.getRootNode();
+  if (!(root instanceof ShadowRoot)) return '';
+  const [preview] = collect(root, []);
+  return preview ? (safely(() => drawnOf(viewOf(preview))) as string) : '';
+};
+
 const rowOf = (card: HTMLElement) => {
   const view = viewOf(card);
   const cleanup = cleanupOfCard(card);
@@ -104,6 +123,7 @@ const rowOf = (card: HTMLElement) => {
     name: safely(() => view.name ?? ''),
     value: safely(() => view._currentValue?.reading ?? ''),
     percent: safely(() => (is.number(view.percent) ? Math.round(view.percent * 10) / 10 : '')),
+    drawn: safely(() => drawnOf(view)),
     config: safely(() => configStateOf(view, cleanup)),
     'entity state': safely(() => entityStateOf(view)),
     details: safely(() => detailsOf(view, cleanup)),
@@ -137,4 +157,4 @@ const inspect = (target: unknown): Node | null => {
   return report;
 };
 
-export { cards, inspect };
+export { cards, inspect, drawnOfPreview };

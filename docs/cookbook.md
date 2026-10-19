@@ -232,7 +232,7 @@ work out on its own.
 | `trend_indicator`            | string (optional)         | `false`                   | Displays trend icons.                 | [Config Ref.][config-trend_indicator]            |
 | `peak_marker`                | Map (optional)            | —                         | Min/max/average marks from history    | [Config Ref.][config-peak_marker]                |
 | `status_label`               | string/Map (optional)     | —                         | Status pill on the card               | [Config Ref.][config-status_label]               |
-| `text_shadow`                | boolean (optional)        | `false`                   | Display a text shadow (overlay)       | [Config Ref.][config-text_shadow]                |
+| `text_effect`                | string (optional)         | `none`                    | Text readability effect (overlay)     | [Config Ref.][config-text_effect]                |
 | `density`                    | string (optional)         | `default`                 | Smaller footprint preset              | [Config Ref.][config-density]                    |
 | `layout`                     | string (optional)         | `horizontal`              | Layout direction                      | [Config Ref.][config-layout]                     |
 | `frameless`                  | boolean (optional)        | `false`                   | Remove card frame                     | [Config Ref.][config-frameless]                  |
@@ -291,8 +291,13 @@ external entity via `max_value`.
 **A pulsing alert on threshold** — the card reacts on its own, no template
 needed:
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/alert-pulsing-01448d.gif" alt="A pulsing alert on threshold" height="110px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/alert-pulsing-dark-55b731.gif">
+  <img src="images/alert-pulsing-light-fbd411.gif"
+    alt="A pulsing alert on threshold"
+    height="110px"/>
+</picture>
 
 <details>
 <summary>Show YAML</summary>
@@ -316,8 +321,13 @@ alert_when:
 **Three circuits, one bar** — combine several sensors toward one shared target
 with [`bar_stack`](configuration.md#bar_stack):
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/bar-stack-circuits-bab9d0.png" alt="Three circuits, one bar" height="84px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/bar-stack-circuits-dark-740b64.png">
+  <img src="images/bar-stack-circuits-light-27f256.png"
+    alt="Three circuits, one bar"
+    height="84px"/>
+</picture>
 
 <br />
 <details>
@@ -344,8 +354,13 @@ bar_stack:
 
 **Basic usage**:
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/rgb-c19eda.png" alt="Example RVB" height="84px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/rgb-dark-6333fb.png">
+  <img src="images/rgb-light-fe5a2f.png"
+    alt="Example RVB"
+    height="84px"/>
+</picture>
 
 <br />
 <details>
@@ -367,8 +382,13 @@ icon_tap_action:
 
 **Grid option and vertical layout**:
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/rgb-vertical-923b8e.png" alt="Example vertical" height="180px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/rgb-vertical-dark-62f252.png">
+  <img src="images/rgb-vertical-light-260a94.png"
+    alt="Example vertical"
+    height="180px"/>
+</picture>
 
 <br />
 <details>
@@ -394,8 +414,13 @@ grid_options:
 
 **Battery dashboard**, leveraging theme capabilities and `auto-entities`:
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/battery-dashboard-2caf40.png" alt="battery dashboard" height="372px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/battery-dashboard-dark-39f350.png">
+  <img src="images/battery-dashboard-light-bb2098.png"
+    alt="battery dashboard"
+    height="372px"/>
+</picture>
 
 <br />
 <details>
@@ -430,8 +455,13 @@ sort:
 
 **Litter box** — a percentage based on a minimum and maximum quantity:
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/litter-box-3398f2.png" alt="Litter box" height="84px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/litter-box-dark-31d741.png">
+  <img src="images/litter-box-light-325102.png"
+    alt="Litter box"
+    height="84px"/>
+</picture>
 
 <br />
 <details>
@@ -454,8 +484,13 @@ grid_options:
 
 **`card_mod` / animation** — dynamic animations on the icon:
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/rgb-loop-727b23.gif" alt="RVB icon animation" height="84px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/rgb-loop-dark-14a99a.gif">
+  <img src="images/rgb-loop-light-9993e1.gif"
+    alt="RVB icon animation"
+    height="84px"/>
+</picture>
 
 <br />
 <details>
@@ -496,8 +531,13 @@ card_mod:
 combined with `auto-entities` for dynamic listing and
 [`frameless`](configuration.md#frameless) to strip borders and shadows:
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/stack-311445.gif" alt="Stack" height="372px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/stack-dark-0010ff.gif">
+  <img src="images/stack-light-11c5dd.gif"
+    alt="Stack"
+    height="372px"/>
+</picture>
 
 <br />
 <details>
@@ -537,8 +577,13 @@ cards:
 **Native `vertical-stack`** - no custom card needed, just a `tile` and an
 `entity-progress-card` on the same entity in one block:
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/vertical-stack-3f1dc5.png" alt="Native vertical-stack" height="180px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/vertical-stack-dark-01e7c0.png">
+  <img src="images/vertical-stack-light-a96601.png"
+    alt="Native vertical-stack"
+    height="180px"/>
+</picture>
 
 <br />
 <details>
@@ -564,8 +609,13 @@ cards:
 **Native `entities`** - drop it in as one row among regular entities, no wrapper
 needed:
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/native-entities-99fa09.png" alt="Native entities" height="270px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/native-entities-dark-df506c.png">
+  <img src="images/native-entities-light-ceaee5.png"
+    alt="Native entities"
+    height="270px"/>
+</picture>
 
 <br />
 <details>
@@ -590,16 +640,26 @@ entities:
 > `height` wins outright inside any of these containers - set it explicitly
 > (e.g. `height: 100px`) to break out of the container's own sizing.
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/native-height-override-f1a98b.png" alt="height override" height="360px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/native-height-override-dark-708f79.png">
+  <img src="images/native-height-override-light-007f89.png"
+    alt="height override"
+    height="360px"/>
+</picture>
 <br />
 <br />
 
 **Native `grid`** - `marginless`/`frameless` fuse the cells into a single
 seamless block:
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/native-grid-01a668.png" alt="Native grid" height="60px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/native-grid-dark-f3c8b9.png">
+  <img src="images/native-grid-light-3aac7e.png"
+    alt="Native grid"
+    height="60px"/>
+</picture>
 
 <br />
 <details>
@@ -710,7 +770,7 @@ fixed min/max.
 | `force_circular_background`  | boolean (optional)        | Force icon circle background.                                                  | [Config Ref.][config-force_circular_background]  |
 | `trend_indicator`            | string (optional)         | Displays trend icons.                                                          | [Config Ref.][config-trend_indicator]            |
 | `status_label`               | string/Map (optional)     | Status pill on the card                                                        | [Config Ref.][config-status_label]               |
-| `text_shadow`                | boolean (optional)        | Display a text shadow (overlay)                                                | [Config Ref.][config-text_shadow]                |
+| `text_effect`                | string (optional)         | Text readability effect (`shadow`, `halo`, `outline`, `plate`, `contrast`).    | [Config Ref.][config-text_effect]                |
 | `density`                    | string (optional)         | Smaller footprint preset (`default`, `compact`, `single_line`).                | [Config Ref.][config-density]                    |
 | `layout`                     | string (optional)         | Adjust the overall layout (e.g., `horizontal`, `vertical`).                    | [Config Ref.][config-layout]                     |
 | `frameless`                  | boolean (optional)        | Remove the default card border and background for a seamless, flat appearance. | [Config Ref.][config-frameless]                  |
@@ -738,8 +798,13 @@ See [Full Configuration Reference][FCR].
 
 #### 🧪 Getting Started
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/template-card-simple-2fea13.png" alt="Template Card simple example" height="84px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/template-card-simple-dark-24df96.png">
+  <img src="images/template-card-simple-light-3090b8.png"
+    alt="Template Card simple example"
+    height="84px"/>
+</picture>
 
 <br />
 <details>
@@ -885,8 +950,13 @@ See [Full Configuration Reference][FCR]. We use the same syntax as the card.
 
 #### 🧪 Getting Started
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/kitchen-fan-d5f812.png" alt="Badge simple example" height="51px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/kitchen-fan-dark-8d4006.png">
+  <img src="images/kitchen-fan-light-95093c.png"
+    alt="Badge simple example"
+    height="51px"/>
+</picture>
 
 <br />
 <details>
@@ -905,8 +975,13 @@ icon: mdi:air-conditioner
 
 **With a theme and a bar effect** — same idea, dressed up for a header view:
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/badge-shimmer-ccd8e5.gif" alt="Badge with theme and bar effect" height="51px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/badge-shimmer-dark-0dba36.gif">
+  <img src="images/badge-shimmer-light-c6e0c5.gif"
+    alt="Badge with theme and bar effect"
+    height="51px"/>
+</picture>
 
 <br />
 <details>
@@ -993,8 +1068,13 @@ See [Full Configuration Reference][FCR].
 
 #### 🧪 Getting Started
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/demo-light-bc22e5.png" alt="Badge Template simple example" height="51px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/demo-light-dark-f90346.png">
+  <img src="images/demo-light-light-355d4b.png"
+    alt="Badge Template simple example"
+    height="51px"/>
+</picture>
 
 <br />
 <details>
@@ -1024,8 +1104,13 @@ percent: |-
 
 **Color escalation** — three-way severity, computed entirely in Jinja:
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/disk-usage-446aa0.png" alt="Badge Template color escalation" height="51px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/disk-usage-dark-53ff18.png">
+  <img src="images/disk-usage-light-6b1be5.png"
+    alt="Badge Template color escalation"
+    height="51px"/>
+</picture>
 
 <br />
 <details>
@@ -1113,8 +1198,13 @@ See [Full Configuration Reference][FCR].
 
 #### 🧪 Getting Started
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/tile-feature-simple-78945d.png" alt="Tile Feature simple example" height="180px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/tile-feature-simple-dark-afbffe.png">
+  <img src="images/tile-feature-simple-light-074ff9.png"
+    alt="Tile Feature simple example"
+    height="180px"/>
+</picture>
 
 <br />
 <details>
@@ -1134,8 +1224,13 @@ features:
 **Overlay mode** — anchor the bar to the top or bottom of the tile without
 increasing the card height:
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/tile-feature-overlay-c4c389.png" alt="Tile Feature overlay mode" height="84px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/tile-feature-overlay-dark-b70696.png">
+  <img src="images/tile-feature-overlay-light-3e3795.png"
+    alt="Tile Feature overlay mode"
+    height="84px"/>
+</picture>
 
 <br />
 <details>
@@ -1232,8 +1327,13 @@ See [Full Configuration Reference][FCR].
 
 **Standalone card**:
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/multi-card-standalone-986754.png" alt="Multi-Card standalone" height="276px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/multi-card-standalone-dark-bca4bc.png">
+  <img src="images/multi-card-standalone-light-beebee.png"
+    alt="Multi-Card standalone"
+    height="276px"/>
+</picture>
 
 <br />
 <details>
@@ -1262,8 +1362,13 @@ entities:
 
 **Inside a Tile card**:
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/multi-feature-tile-eb03cb.png" alt="Multi-Feature inside a Tile card" height="180px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/multi-feature-tile-dark-d6bcb5.png">
+  <img src="images/multi-feature-tile-light-6cae22.png"
+    alt="Multi-Feature inside a Tile card"
+    height="180px"/>
+</picture>
 
 <br />
 <details>
@@ -1347,8 +1452,13 @@ already:
 
 #### `bar_effect`: shimmer, gradient, glass, radius
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/effect-shimmer-57acac.gif" alt="bar_effect showcase" height="84px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/effect-shimmer-dark-e9015b.gif">
+  <img src="images/effect-shimmer-light-359803.gif"
+    alt="bar_effect showcase"
+    height="84px"/>
+</picture>
 
 A light sweep loops continuously across the bar — the "still working" cue for
 anything long-running. Combinable (`[radius, shimmer]`), reversible
@@ -1375,8 +1485,13 @@ See [`bar_effect`](configuration.md#bar_effect) for the full list.
 
 #### `bar_segments`: discrete blocks instead of a continuous fill
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/effect-bar-segments-538b1c.png" alt="bar_segments" height="84px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/effect-bar-segments-dark-57a697.png">
+  <img src="images/effect-bar-segments-light-bcb482.png"
+    alt="bar_segments"
+    height="84px"/>
+</picture>
 
 Battery-cell style — both the track and the fill are split into blocks, gaps
 visible on both the empty and filled portions:
@@ -1399,8 +1514,13 @@ Works with any orientation, size, or color mode/effect.
 
 #### `interpolate`: smooth color transitions between zones
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/effect-interpolate-d9fddb.png" alt="interpolate" height="84px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/effect-interpolate-dark-58644a.png">
+  <img src="images/effect-interpolate-light-132ff7.png"
+    alt="interpolate"
+    height="84px"/>
+</picture>
 
 Without it, `custom_theme` zones cut sharply from one color to the next. With
 it, the color blends smoothly as the value crosses each boundary:
@@ -1428,8 +1548,13 @@ custom_theme:
 
 #### `force_circular_background`: the icon's circle, always on
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/effect-force-circular-background-5a016e.png" alt="force_circular_background" height="84px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/effect-force-circular-background-dark-71f31a.png">
+  <img src="images/effect-force-circular-background-light-3bd067.png"
+    alt="force_circular_background"
+    height="84px"/>
+</picture>
 
 The opposite of [`hide: [shape]`](#effect-hide-shape) — forces the circular
 background behind the icon regardless of HA version, entity domain, or action
@@ -1451,8 +1576,13 @@ force_circular_background: true
 
 #### `icon_animation`: washing_machine, battery_charging, spin, ping…
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/effect-icon-animation-36be67.gif" alt="icon_animation showcase" height="180px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/effect-icon-animation-dark-478027.gif">
+  <img src="images/effect-icon-animation-light-3071e5.gif"
+    alt="icon_animation showcase"
+    height="180px"/>
+</picture>
 
 The icon itself reacts to what the entity is actually doing. `washing_machine`
 and `battery_charging` check the entity's own domain-specific status, no config
@@ -1511,8 +1641,13 @@ Pair `icon_animation: battery_charging` with
 [`theme: battery_adaptive`](configuration.md#theme) and the **bar** reacts too,
 not just the icon - both read the same `battery_charging` attribute:
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/battery-charging-2b3371.gif" alt="theme: battery_adaptive" height="84px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/battery-charging-dark-004c7c.gif">
+  <img src="images/battery-charging-light-926b55.gif"
+    alt="theme: battery_adaptive"
+    height="84px"/>
+</picture>
 
 <br />
 <details>
@@ -1535,8 +1670,13 @@ icon_animation: battery_charging
 
 #### `alert_when`: the card reacts on its own
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/alert-pulsing-01448d.gif" alt="alert_when ping" height="110px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/alert-pulsing-dark-55b731.gif">
+  <img src="images/alert-pulsing-light-fbd411.gif"
+    alt="alert_when ping"
+    height="110px"/>
+</picture>
 
 A ring bursts around the card the moment a threshold is crossed — impossible to
 miss on a wall-mounted dashboard, no `card_mod` needed.
@@ -1564,8 +1704,13 @@ alert_when:
 pill instead of touching the border/background — a fixed piece of text that only
 shows up while the alert is actually active:
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/effect-alert-label-bd7304.gif" alt="alert_when highlight: label" height="180px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/effect-alert-label-dark-84f1c4.gif">
+  <img src="images/effect-alert-label-light-e8e8a4.gif"
+    alt="alert_when highlight: label"
+    height="180px"/>
+</picture>
 
 <br />
 <details>
@@ -1654,15 +1799,25 @@ the same entity-or-Jinja pattern applied to thresholds that don't alert.
 
 #### `watermark`: markers without leaving the bar
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/effect-watermark-fd9bb1.png" alt="watermark types" height="84px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/effect-watermark-dark-68f3ff.png">
+  <img src="images/effect-watermark-light-d3101b.png"
+    alt="watermark types"
+    height="84px"/>
+</picture>
 
 Low/high reference lines drawn directly on the bar — six styles
 (`blended`/`area`/`striped`/`triangle`/`round`/`line`), each reading differently
 at a glance:
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/all-watermark-fe72b5.png" alt="all watermark types" height="276px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/all-watermark-dark-94af50.png">
+  <img src="images/all-watermark-light-8c880c.png"
+    alt="all watermark types"
+    height="276px"/>
+</picture>
 
 <br />
 <details>
@@ -1693,8 +1848,13 @@ the other five (`blended`, `area`, `triangle`, `round`, `line`) each look like.
 
 #### `bar_color_mode: segment`: theme zones as distinct blocks
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/effect-segment-05b802.png" alt="bar_color_mode: segment" height="84px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/effect-segment-dark-d18794.png">
+  <img src="images/effect-segment-light-7bc4c0.png"
+    alt="bar_color_mode: segment"
+    height="84px"/>
+</picture>
 
 Each theme zone renders as its own colored block, visible up to the current
 value — useful to see at a glance how far through each zone the entity has
@@ -1720,8 +1880,13 @@ bar_color_mode: segment
 
 #### `bar_color_mode: rainbow_full`: the whole theme, always visible
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/effect-segment-05b802.png" alt="bar_color_mode: segment" height="84px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/effect-segment-dark-d18794.png">
+  <img src="images/effect-segment-light-7bc4c0.png"
+    alt="bar_color_mode: segment"
+    height="84px"/>
+</picture>
 
 The track shows the theme's complete gradient end to end, with a marker sliding
 along it — useful when the zones themselves matter more than how full the bar
@@ -1750,8 +1915,13 @@ See [`bar_color_mode`](configuration.md#bar_color_mode) for `segment` and plain
 
 #### `status_label`: a GitHub-style pill, colored automatically
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/effect-status-label-42bb19.png" alt="status_label" height="180px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/effect-status-label-dark-bff5a0.png">
+  <img src="images/effect-status-label-light-de7ec5.png"
+    alt="status_label"
+    height="180px"/>
+</picture>
 
 A short piece of text — `glacial`, `scorching`, `ok` — with no color to pick
 yourself: the pill's background/border/text are derived from whatever color the
@@ -1792,8 +1962,13 @@ object form and `color_source`.
 
 #### `trend_indicator`: which way the value is moving
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/effect-trend-23f24d.png" alt="trend_indicator" height="84px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/effect-trend-dark-b83afd.png">
+  <img src="images/effect-trend-light-287c61.png"
+    alt="trend_indicator"
+    height="84px"/>
+</picture>
 
 A small chevron in the top-right corner — up, down, or flat. Shares that corner
 with `status_label`, which wins if both are set:
@@ -1814,8 +1989,13 @@ trend_indicator: true
 
 #### `peak_marker`: min/max/average, right on the bar
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/effect-peak-marker-7a9940.png" alt="peak_marker" height="84px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/effect-peak-marker-dark-97d0f3.png">
+  <img src="images/effect-peak-marker-light-f865e5.png"
+    alt="peak_marker"
+    height="84px"/>
+</picture>
 
 Marks the minimum, maximum, and average value seen over a time window, directly
 on the bar — Card only. Each mark is opt-in: `true` (top-level
@@ -1844,8 +2024,13 @@ peak_marker:
 
 #### `custom_theme`: your own color zones
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/effect-custom-theme-141803.png" alt="custom_theme" height="84px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/effect-custom-theme-dark-6d2b7d.png">
+  <img src="images/effect-custom-theme-light-b752be.png"
+    alt="custom_theme"
+    height="84px"/>
+</picture>
 
 Not every value fits a built-in theme. Define your own value-range → color (+
 icon) rules directly:
@@ -1878,8 +2063,13 @@ custom_theme:
 
 #### `bar_stack`: several entities, one bar
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/effect-bar-stack-c3f837.png" alt="bar_stack" height="84px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/effect-bar-stack-dark-e151fb.png">
+  <img src="images/effect-bar-stack-light-448549.png"
+    alt="bar_stack"
+    height="84px"/>
+</picture>
 
 Three modes, three different questions answered:
 
@@ -1948,8 +2138,13 @@ auto-shaded colors.
 
 #### `center_zero`: bidirectional bars
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/effect-center-zero-f79a50.png" alt="center_zero" height="84px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/effect-center-zero-dark-0d72cb.png">
+  <img src="images/effect-center-zero-light-a8e3ec.png"
+    alt="center_zero"
+    height="84px"/>
+</picture>
 
 For anything that fluctuates around a baseline — a power balance, a temperature
 delta — the bar grows from the center instead of from an edge:
@@ -1976,8 +2171,13 @@ mode, which combines naturally with it.
 
 #### `hide: [shape]`: drop the icon's circular background
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/effect-hide-shape-d412c4.png" alt="hide: shape" height="84px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/effect-hide-shape-dark-45efd2.png">
+  <img src="images/effect-hide-shape-light-2122fe.png"
+    alt="hide: shape"
+    height="84px"/>
+</picture>
 
 For a flatter look, without `card_mod`:
 <details>
@@ -2001,8 +2201,13 @@ Same result, via CSS instead of YAML: the
 
 #### `density: compact`: the smallest useful footprint, either layout
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/effect-density-compact-c28fb5.png" alt="density: compact" height="84px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/effect-density-compact-dark-8bf5ed.png">
+  <img src="images/effect-density-compact-light-0ffec8.png"
+    alt="density: compact"
+    height="84px"/>
+</picture>
 
 One option, two shapes depending on [`layout`](configuration.md#layout):
 `horizontal` narrows the card to a single column, name and value still shown;
@@ -2045,8 +2250,13 @@ how the number itself is shown.
 
 #### `unit_position`: currency-style values
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/format-unit-position-f21a41.png" alt="unit_position" height="84px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/format-unit-position-dark-9baaba.png">
+  <img src="images/format-unit-position-light-a19e85.png"
+    alt="unit_position"
+    height="84px"/>
+</picture>
 
 <br />
 <details>
@@ -2071,8 +2281,13 @@ unit_spacing: no-space
 
 #### `value_compact`: abbreviate large numbers
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/format-value-compact-dab07d.png" alt="value_compact" height="84px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/format-value-compact-dark-206465.png">
+  <img src="images/format-value-compact-light-6cca54.png"
+    alt="value_compact"
+    height="84px"/>
+</picture>
 
 <br />
 <details>
@@ -2097,8 +2312,13 @@ trimmed (`1.2k`, not `1.20k`).
 
 #### `value_sign`: force an explicit +/-
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/format-value-sign-04b3eb.png" alt="value_sign" height="84px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/format-value-sign-dark-6cad82.png">
+  <img src="images/format-value-sign-light-760ff1.png"
+    alt="value_sign"
+    height="84px"/>
+</picture>
 
 <br />
 <details>
@@ -2143,8 +2363,13 @@ exactly how three of its cards are put together.
 
 #### Living room — full rainbow, centered, with a status pill
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/showcase-living-room-465669.png" alt="Living room" height="180px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/showcase-living-room-dark-f82ca7.png">
+  <img src="images/showcase-living-room-light-3cc099.png"
+    alt="Living room"
+    height="180px"/>
+</picture>
 
 <br />
 <details>
@@ -2179,8 +2404,13 @@ condition needed for a fixed label.
 
 #### Garage — a pulsing alert on a vertical thermometer
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/showcase-garage-a680e0.gif" alt="Garage" height="276px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/showcase-garage-dark-f30a6e.gif">
+  <img src="images/showcase-garage-light-3e9dac.gif"
+    alt="Garage"
+    height="276px"/>
+</picture>
 
 <br />
 <details>
@@ -2217,8 +2447,13 @@ Same `rainbow_full` idea as Living room, this time
 
 #### Energy — two bars and a net balance, in one Tile feature
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/showcase-energy-39aae8.png" alt="Energy" height="276px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/showcase-energy-dark-6f38c2.png">
+  <img src="images/showcase-energy-light-f38c8f.png"
+    alt="Energy"
+    height="276px"/>
+</picture>
 
 <br />
 <details>
@@ -2275,6 +2510,14 @@ same width.
 <a id="showcase-printer"></a>
 
 #### Printer — ink levels in a Mushroom Template card
+
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/printer-dark-408ef3.png">
+  <img src="images/printer-light-32de1e.png"
+    alt="A Mushroom Template card with two ink-level bars"
+    height="120px"/>
+</picture>
 
 <br />
 <details>
@@ -2874,8 +3117,13 @@ templates to show:
 - 🖱️ tap_action Opens the standard more-info view for the sun.sun entity when
   tapped.
 
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="images/follow-the-sun-c44e1c.gif" alt="Follow the Sun" height="84px"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/follow-the-sun-dark-7c98fe.gif">
+  <img src="images/follow-the-sun-light-286564.gif"
+    alt="Follow the Sun"
+    height="84px"/>
+</picture>
 
 <br />
 <details>
@@ -2896,6 +3144,7 @@ name: >
     Sun information not available
   {% endif %}
 entity: sun.sun
+fast_refresh: true
 bar_color: |
   {% if states('sun.sun') == 'below_horizon' %}
     lightgray
@@ -2961,7 +3210,7 @@ percent: >
 tap_action:
   action: more-info
 grid_options:
-  columns: 12
+  columns: 6
   rows: 1
 ```
 
@@ -3045,8 +3294,8 @@ track solar cycles from your dashboard.
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#trend_indicator
 [config-peak_marker]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#peak_marker
-[config-text_shadow]:
-  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#text_shadow
+[config-text_effect]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#text_effect
 [config-density]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#density
 [config-layout]:

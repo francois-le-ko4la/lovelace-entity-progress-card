@@ -385,7 +385,7 @@ const HA_CONTEXT = {
   stateActivity: STATE_ACTIVITY,
   toggleDomains: TOGGLE_DOMAINS,
   domainProfiles: DOMAIN_PROFILES,
-  domains: { sensor: 'sensor', group: 'group' },
+  domains: { sensor: 'sensor', group: 'group', light: 'light' },
   deviceClasses: { duration: 'duration', battery: 'battery', batteryCharging: 'battery_charging' },
   // Entity state-object properties and attributes the card reads by name.
   attributes: {
@@ -397,6 +397,7 @@ const HA_CONTEXT = {
     entityPicture: 'entity_picture',
     // a group's members
     entityId: 'entity_id',
+    rgbColor: 'rgb_color',
     timer: { duration: 'duration', remaining: 'remaining', finishesAt: 'finishes_at' },
   },
   // WebSocket message types the card sends.

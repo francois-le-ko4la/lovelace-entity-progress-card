@@ -1,6 +1,8 @@
 import { CARD, MIN_VALUE_ENTITY_PATH, MAX_VALUE_ENTITY_PATH } from '../../utils/parameters.js';
 import { is } from '../../utils/common-checks.js';
-import { type LovelaceConfig } from '../../utils/types.js';
+import { type LovelaceConfig, type Config } from '../../utils/types.js';
+import { ownRangeOf } from '../../card/values/entity-helper.js';
+import { ProgressMath } from '../../card/view/progress-math.js';
 import { parseDuration, serializeDuration } from '../../utils/duration.js';
 import {
   entityOf,
@@ -81,11 +83,28 @@ const valueModeField = (
   };
 };
 
-const valueField = (
-  key: 'min_value' | 'max_value',
-  entityPath: string,
-  numberOverrides: Record<string, unknown> = {},
-) => {
+// What the card draws from when min_value/max_value is unset: the entity's own
+// range (input_number, number, counter, through the card's own ownRangeOf and
+// ProgressMath.ownRangeMin), else the negotiated config's (center_zero moves
+// the default min to -max), else the card's default.
+const unsetBoundOf = (config: LovelaceConfig, negotiated: Config, key: 'min_value' | 'max_value'): number => {
+  const side = key === 'min_value' ? 'min' : 'max';
+  const negotiatedBound = negotiated?.[key];
+  const fallback = is.number(negotiatedBound) ? negotiatedBound : CARD.config.value[side];
+  const own = ownRangeOf(config.entity);
+  if (!own) return fallback;
+  const bound =
+    side === 'max'
+      ? own.max
+      : ProgressMath.ownRangeMin(
+          own.min,
+          is.number(config.max_value) ? config.max_value : unsetBoundOf(config, negotiated, 'max_value'),
+          negotiated?.centerZero ?? { enabled: false, zeroValue: 0 },
+        );
+  return is.number(bound) ? bound : fallback;
+};
+
+const valueField = (key: 'min_value' | 'max_value', entityPath: string) => {
   const modeType = `${key}_mode`;
   const attrType = `${toCamel(key)}Attribute`;
   const modeFields = valueModeField(
@@ -102,7 +121,14 @@ const valueField = (
     [key]: EditorFieldsType.number(key, {
       noLabel: true,
       showIf: (c: LovelaceConfig) => valueSourceOf(c[key]) === 'standard',
-      ...numberOverrides,
+      // Empty until the user types one: the greyed hint is the range in use.
+      placeholder: (c: LovelaceConfig, negotiated: Config) => String(unsetBoundOf(c, negotiated, key)),
+      virtual: true,
+      resolveVirtual: (c: LovelaceConfig) => (is.number(c[key]) ? c[key] : ''),
+      onVirtualChange: (value: number | '', config: LovelaceConfig) => ({
+        ...config,
+        [key]: is.number(value) ? value : undefined,
+      }),
     }),
     [entityPath]: EditorFieldsType.entity(entityPath, {
       noLabel: true,
@@ -124,7 +150,7 @@ const valueField = (
 };
 
 const valueRangeFields = () => ({
-  ...valueField('min_value', MIN_VALUE_ENTITY_PATH, { default: CARD.config.value.min }),
+  ...valueField('min_value', MIN_VALUE_ENTITY_PATH),
   ...valueField('max_value', MAX_VALUE_ENTITY_PATH),
 });
 

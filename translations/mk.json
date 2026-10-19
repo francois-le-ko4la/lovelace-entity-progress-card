@@ -91,7 +91,7 @@
         "color_source": "Извор на бојата",
         "toggle": "Ознака на статус"
       },
-      "text_shadow": "Додај сенка на текст",
+      "text_effect": "Ефект на текст",
       "trend_indicator": {
         "window_toggle": "Користи временски прозорец",
         "basis": "Основа за споредба",
@@ -202,6 +202,14 @@
         "small": "Мала",
         "xlarge": "Многу голема",
         "xsmall": "Многу мало"
+      },
+      "text_effect": {
+        "none": "Нема",
+        "shadow": "Сенка",
+        "halo": "Хало",
+        "outline": "Контура",
+        "plate": "Плочка",
+        "contrast": "Автоматски контраст"
       },
       "bar_stack_mode": {
         "net": "Нето",

@@ -69,7 +69,7 @@ const ISOLATED_KEYS: ReadonlySet<string> = new Set([
   'bar_segments',
   'bar_single_line',
   'interpolate',
-  'text_shadow',
+  'text_effect',
   'reverse',
   'reverse_secondary_info_row',
   'force_circular_background',

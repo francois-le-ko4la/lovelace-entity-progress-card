@@ -91,7 +91,7 @@
         "color_source": "Zdroj barvy",
         "toggle": "Popisek stavu"
       },
-      "text_shadow": "Přidat stín textu",
+      "text_effect": "Efekt textu",
       "trend_indicator": {
         "window_toggle": "Použít časové okno",
         "basis": "Základ porovnání",
@@ -202,6 +202,14 @@
         "small": "Malá",
         "xlarge": "Extra velká",
         "xsmall": "Velmi malé"
+      },
+      "text_effect": {
+        "none": "Žádný",
+        "shadow": "Stín",
+        "halo": "Svatozář",
+        "outline": "Obrys",
+        "plate": "Podložka",
+        "contrast": "Automatický kontrast"
       },
       "bar_stack_mode": {
         "net": "Čistý",

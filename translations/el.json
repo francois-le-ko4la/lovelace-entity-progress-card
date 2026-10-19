@@ -91,7 +91,7 @@
         "color_source": "Πηγή χρώματος",
         "toggle": "Ετικέτα κατάστασης"
       },
-      "text_shadow": "Προσθήκη σκιάς στο κείμενο",
+      "text_effect": "Εφέ κειμένου",
       "trend_indicator": {
         "window_toggle": "Χρήση χρονικού παραθύρου",
         "basis": "Βάση σύγκρισης",
@@ -202,6 +202,14 @@
         "small": "Μικρή",
         "xlarge": "Πολύ μεγάλη",
         "xsmall": "Πολύ μικρό"
+      },
+      "text_effect": {
+        "none": "Κανένα",
+        "shadow": "Σκιά",
+        "halo": "Άλω",
+        "outline": "Περίγραμμα",
+        "plate": "Πλάκα",
+        "contrast": "Αυτόματη αντίθεση"
       },
       "bar_stack_mode": {
         "net": "Καθαρό",

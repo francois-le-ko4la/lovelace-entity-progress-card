@@ -91,7 +91,7 @@
         "color_source": "Värin lähde",
         "toggle": "Tilamerkintä"
       },
-      "text_shadow": "Lisää tekstivarjo",
+      "text_effect": "Tekstitehoste",
       "trend_indicator": {
         "window_toggle": "Käytä aikaikkunaa",
         "basis": "Vertailuperuste",
@@ -202,6 +202,14 @@
         "small": "Pieni",
         "xlarge": "Erittäin suuri",
         "xsmall": "Erittäin pieni"
+      },
+      "text_effect": {
+        "none": "Ei mitään",
+        "shadow": "Varjo",
+        "halo": "Hehku",
+        "outline": "Ääriviiva",
+        "plate": "Tausta",
+        "contrast": "Automaattinen kontrasti"
       },
       "bar_stack_mode": {
         "net": "Netto",

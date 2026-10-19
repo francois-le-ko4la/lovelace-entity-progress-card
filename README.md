@@ -14,7 +14,7 @@ A modern Entity progress card for Home Assistant's Lovelace UI.
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/thumbnail-c81470.png" alt="thumbnail" width="100%" style="max-width: 1200px;"/>
 
 <!-- markdownlint-disable-next-line MD013 -->
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/showcase-loop-3d6a2b.gif" alt="Entity Progress Card Showcase" width="100%" style="max-width: 1200px;" />
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/showcase-loop-363fce.gif" alt="Entity Progress Card Showcase" width="100%" style="max-width: 1200px;" />
 
 > Thousands of Home Assistant dashboards run this card, every day. On a
 > wall-mounted tablet. A phone. A screen that never turns off.
@@ -166,8 +166,12 @@ then declare it as a resource:
 
 1. Open Home Assistant's native "Add Card" picker and search for your entity.
 
-   <!-- markdownlint-disable-next-line MD013 -->
-   <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/card-picker-ae26f6.png" alt="Entity-first card picker" width="700"/>
+   <!-- markdownlint-disable MD013 -->
+   <picture>
+     <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/card-picker-dark-6af7b9.png">
+     <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/card-picker-light-44464a.png" alt="Entity-first card picker" width="700"/>
+   </picture>
+   <!-- markdownlint-enable MD013 -->
 
 2. Click **Entity Progress Card** — it's already there, pre-filled.
 3. Enjoy.
@@ -178,7 +182,12 @@ then declare it as a resource:
 No YAML here either — every option gets its own field, styled straight from Home
 Assistant's own design tokens.
 
-![Editor](https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/editor-c42d62.png)
+<!-- markdownlint-disable MD013 -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/editor-dark-72b347.png">
+  <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/editor-light-36372c.png" alt="Editor" width="700"/>
+</picture>
+<!-- markdownlint-enable MD013 -->
 
 </details>
 

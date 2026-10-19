@@ -91,7 +91,7 @@
         "color_source": "রঙের উৎস",
         "toggle": "স্ট্যাটাস লেবেল"
       },
-      "text_shadow": "টেক্সটে ছায়া যোগ করুন",
+      "text_effect": "টেক্সট ইফেক্ট",
       "trend_indicator": {
         "window_toggle": "সময় উইন্ডো ব্যবহার করুন",
         "basis": "তুলনার ভিত্তি",
@@ -202,6 +202,14 @@
         "small": "ছোট",
         "xlarge": "অতিরিক্ত বড়",
         "xsmall": "অতি ছোট"
+      },
+      "text_effect": {
+        "none": "কোনোটি নয়",
+        "shadow": "ছায়া",
+        "halo": "হ্যালো",
+        "outline": "আউটলাইন",
+        "plate": "প্লেট",
+        "contrast": "স্বয়ংক্রিয় কনট্রাস্ট"
       },
       "bar_stack_mode": {
         "net": "নিট",

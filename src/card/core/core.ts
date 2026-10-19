@@ -20,6 +20,7 @@ import { ResourceManager, DOMHelper, ActionHelper } from '../dom/dom-helpers.js'
 import { JinjaSubscriptions } from './core/jinja-subscriptions.js';
 import { HistorySeeding, type HistoryPoint } from '../history/history-seeding.js';
 import { Marks } from '../dom/marks.js';
+import { TextContrast } from '../dom/text-contrast.js';
 import { buildSegmentCells, applyProgressCSS, type ProgressCssOptions } from './core/bar-css.js';
 import { AutoRefresh } from './core/auto-refresh.js';
 import { applyBarEffects, barEffectsOf } from './core/bar-effect.js';
@@ -119,6 +120,10 @@ class HACore extends HTMLElement {
   declare _cardView: ViewCore<ViewBase>;
   _dom = new DOMHelper();
   _marks = new Marks({ view: () => this._cardView, dom: () => this._dom });
+  _textContrast = new TextContrast(
+    () => this._dom,
+    () => this._cardView,
+  );
   _hassProvider = HassProviderSingleton.getInstance();
   _changeTracker = new ChangeTracker();
   #isRendered = false;
@@ -599,16 +604,18 @@ class HACore extends HTMLElement {
   _updateCSS() {
     const bar = this._cardView.entityView;
     if (!bar) return;
+    const gradient = bar.colorGradient;
     this._applyProgressCSS(bar.percent / 100, {
       barColor: bar.barColor,
       // Feature has no icon, but rainbow_full's value-mark pill still reads
       // --icon-and-shape-color for its fill (styles.ts).
       iconColor: bar.iconColor,
-      gradient: bar.colorGradient,
+      gradient,
       // bar_stack's entity-driven gradient wins; themeDivergingGradient is
       // center_zero's fallback when no bar_stack drives the two arms.
       diverging: bar.divergingBarStack ?? bar.themeDivergingGradient,
     });
+    this._textContrast.apply(gradient, bar.barColor, `${this.hass?.themes?.theme}|${this.hass?.themes?.darkMode}`);
     this._applyWatermarkCSS(bar.watermark);
     this._marks.watermarkClasses();
     this._marks.peakMarkerCSS(bar.peakMarker);

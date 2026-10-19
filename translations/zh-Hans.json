@@ -91,7 +91,7 @@
         "color_source": "颜色来源",
         "toggle": "状态标签"
       },
-      "text_shadow": "添加文本阴影",
+      "text_effect": "文字效果",
       "trend_indicator": {
         "window_toggle": "使用时间窗口",
         "basis": "比较基准",
@@ -202,6 +202,14 @@
         "small": "小",
         "xlarge": "超大",
         "xsmall": "超小"
+      },
+      "text_effect": {
+        "none": "无",
+        "shadow": "阴影",
+        "halo": "光晕",
+        "outline": "描边",
+        "plate": "底板",
+        "contrast": "自动对比"
       },
       "bar_stack_mode": {
         "net": "净值",

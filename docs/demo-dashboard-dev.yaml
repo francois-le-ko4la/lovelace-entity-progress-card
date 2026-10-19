@@ -271,6 +271,11 @@ views:
     icon: mdi:image-frame
     path: epb-showcase
     type: sections
+    header:
+      card:
+        type: markdown
+        content: '# <ha-icon icon="mdi:progress-helper"></ha-icon> Entity Progress Card Showcase'
+        text_only: true
     max_columns: 2
     sections:
       - type: grid
@@ -555,6 +560,10 @@ views:
           - type: custom:entity-progress-card-dev
             entity: climate.epb_demo_thermostat
             name: Thermostat
+            bar_position: icon
+            bar_size: large
+            min_value: 0
+            max_value: 40
     badges:
       - type: custom:entity-progress-badge-dev
         entity: input_number.epb_demo_theme_95
@@ -840,7 +849,7 @@ views:
               (`multiline` + `custom_info`), a small aside next to the name
               (`name_info`), flipping the secondary-info row's order, and
               text placed directly over the bar (`bar_position: background`/
-              `overlay` + `text_shadow`/`bar_single_line`).
+              `overlay` + `text_effect`/`bar_single_line`).
               {% endraw %}
             grid_options:
               columns: 12
@@ -878,10 +887,53 @@ views:
             name_info: '{% if states(entity) | float < 20 %}⚠️ low{% endif %}'
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
-            name: 'bar_position: background + text_shadow'
+            name: 'bar_position: background + text_effect: shadow'
             bar_position: background
-            text_shadow: true
+            text_effect: shadow
             color: white
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: 'text_effect: halo'
+            bar_position: overlay
+            text_effect: halo
+            bar_color: yellow
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: 'text_effect: outline'
+            bar_position: overlay
+            text_effect: outline
+            bar_color: yellow
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: 'text_effect: plate'
+            bar_position: overlay
+            text_effect: plate
+            bar_color: yellow
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: 'text_effect: contrast (yellow)'
+            bar_position: overlay
+            text_effect: contrast
+            bar_color: yellow
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: 'text_effect: contrast (lime)'
+            bar_position: overlay
+            text_effect: contrast
+            bar_color: lime
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: 'text_effect: contrast (cyan)'
+            bar_position: overlay
+            text_effect: contrast
+            bar_color: cyan
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: 'text_effect: contrast (theme gradient)'
+            bar_position: overlay
+            text_effect: contrast
+            theme: optimal_when_high
+            bar_color_mode: rainbow
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
             name: 'bar_position: overlay + bar_single_line'
@@ -7102,6 +7154,32 @@ views:
               high: 80
               disable_low: true
               disable_high: false
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'text_shadow (replaced by text_effect)'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card-dev
+              entity: input_number.epb_demo_battery
+              bar_position: overlay
+              text_shadow: true
+              ```
+              Migrated to `text_effect: shadow`; `text_shadow: false` is
+              dropped. Check: shadow rendered, deprecation warning, Migrate
+              config writes `text_effect: shadow`.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: 'text_shadow: true'
+            bar_position: overlay
+            text_shadow: true
     show_icon_and_title: true
     cards: []
   - title: EP Demo - Cookbook examples
@@ -7140,6 +7218,7 @@ views:
                 Sun information not available
               {% endif %}
             entity: sun.sun
+            fast_refresh: true
             bar_color: |
               {% if states('sun.sun') == 'below_horizon' %}
                 lightgray
@@ -7205,7 +7284,7 @@ views:
             tap_action:
               action: more-info
             grid_options:
-              columns: 12
+              columns: 6
               rows: 1
       - type: grid
         cards:
@@ -9390,7 +9469,7 @@ views:
             unit: °C
             bar_position: overlay
             bar_single_line: true
-            text_shadow: true
+            text_effect: shadow
             custom_theme:
               - min: -20
                 max: 25

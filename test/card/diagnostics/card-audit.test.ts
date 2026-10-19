@@ -4,7 +4,7 @@ import { auditDashboard, notesByPath } from '../../../src/card/diagnostics/card-
 
 const CARD = 'custom:entity-progress-card';
 const MULTI_CARD = 'custom:entity-progress-multi-card';
-const TEXT_SHADOW = 'no effect: text_shadow';
+const TEXT_SHADOW = 'no effect: text_effect';
 const NO_EFFECT = 'no effect';
 
 // A dashboard as Home Assistant hands it over: views, stacks, sections, tiles.
@@ -18,7 +18,7 @@ const DASHBOARD = {
         { type: CARD, entity: 'sensor.compact', bar_position: 'compact_below' },
         {
           type: 'vertical-stack',
-          cards: [{ type: CARD, entity: 'sensor.stacked', disable_unit: true, text_shadow: true }],
+          cards: [{ type: CARD, entity: 'sensor.stacked', disable_unit: true, text_effect: 'shadow' }],
         },
       ],
     },
@@ -35,7 +35,7 @@ const DASHBOARD = {
             {
               type: MULTI_CARD,
               value_position: 'right',
-              entities: ['sensor.first', { entity: 'sensor.second', text_shadow: true }],
+              entities: ['sensor.first', { entity: 'sensor.second', text_effect: 'shadow' }],
             },
           ],
         },
@@ -43,7 +43,7 @@ const DASHBOARD = {
     },
     {
       title: '',
-      cards: [{ type: CARD, entity: 'sensor.untitled', text_shadow: true }],
+      cards: [{ type: CARD, entity: 'sensor.untitled', text_effect: 'shadow' }],
     },
   ],
 };
@@ -87,14 +87,14 @@ describe('auditDashboard - what a card carries without needing it, wherever it s
 
 describe('notesByPath - each note at the key it is about, for the issue report YAML', () => {
   test('a card: its own keys', () => {
-    const notes = notesByPath({ type: CARD, entity: 'sensor.x', disable_unit: true, text_shadow: true });
-    assert.deepEqual(Object.fromEntries(notes), { disable_unit: ['deprecated'], text_shadow: [NO_EFFECT] });
+    const notes = notesByPath({ type: CARD, entity: 'sensor.x', disable_unit: true, text_effect: 'shadow' });
+    assert.deepEqual(Object.fromEntries(notes), { disable_unit: ['deprecated'], text_effect: [NO_EFFECT] });
   });
 
   test('a Multi: a row sets it, or the shared level holds it for the rows it reaches', () => {
     const notes = notesByPath({
       type: MULTI_CARD,
-      text_shadow: true,
+      text_effect: 'shadow',
       entities: [
         { entity: 'sensor.a', show_value: false },
         'sensor.b',
@@ -103,7 +103,7 @@ describe('notesByPath - each note at the key it is about, for the issue report Y
     });
     assert.deepEqual(Object.fromEntries(notes), {
       'entities.0.show_value': ['deprecated'],
-      text_shadow: ['no effect on row 1, 2'],
+      text_effect: ['no effect on row 1, 2'],
     });
   });
 

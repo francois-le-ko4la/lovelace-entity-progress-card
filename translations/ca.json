@@ -91,7 +91,7 @@
         "color_source": "Font del color",
         "toggle": "Etiqueta d'estat"
       },
-      "text_shadow": "Afegir ombra al text",
+      "text_effect": "Efecte del text",
       "trend_indicator": {
         "window_toggle": "Utilitza una finestra de temps",
         "basis": "Base de comparació",
@@ -202,6 +202,14 @@
         "small": "Petita",
         "xlarge": "Extra gran",
         "xsmall": "Molt petit"
+      },
+      "text_effect": {
+        "none": "Cap",
+        "shadow": "Ombra",
+        "halo": "Halo",
+        "outline": "Contorn",
+        "plate": "Placa",
+        "contrast": "Contrast automàtic"
       },
       "bar_stack_mode": {
         "net": "Net",

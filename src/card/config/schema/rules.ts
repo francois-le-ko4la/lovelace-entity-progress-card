@@ -52,7 +52,7 @@ const HAS_EFFECT = {
   // layout: vertical forces the secondary-info row into a column.
   reverseSecondaryInfoRow: isDefaultRow,
   barSingleLine: (c: ConfigLike) => c.bar_position === 'overlay',
-  textShadow: (c: ConfigLike) => c.bar_position === 'overlay' || c.bar_position === 'background',
+  textEffect: (c: ConfigLike) => c.bar_position === 'overlay' || c.bar_position === 'background',
   // Vertical already stacks name/secondary_info narrowly.
   compactBelow: (c: ConfigLike) => (c.layout ?? HORIZONTAL) === HORIZONTAL,
   // center_zero included: themeDivergingGradient reprojects the zones per arm.
@@ -109,7 +109,7 @@ const INERT_OPTIONS: InertOption[] = [
     },
     fallback: 'ltr',
   },
-  { key: 'text_shadow', hasEffect: HAS_EFFECT.textShadow, fallback: false },
+  { key: 'text_effect', hasEffect: HAS_EFFECT.textEffect, fallback: 'none' },
   // Before interpolate, which reads the colour mode it settles.
   { key: 'bar_color_mode', hasEffect: HAS_EFFECT.barColorMode, fallback: 'auto' },
   { key: 'bar_segments', hasEffect: HAS_EFFECT.barSegments, fallback: undefined },

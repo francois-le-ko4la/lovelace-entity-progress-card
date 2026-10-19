@@ -21,7 +21,7 @@ type HeaderDeps = {
 
 // What Home Assistant holds, not the form's state: the YAML the user has.
 const copyIssueReport = async ({ host, shadow, hassProvider, lastConfig }: HeaderDeps) => {
-  if (!(await copyText(issueReport(lastConfig()), shadow))) return;
+  if (!(await copyText(issueReport(lastConfig(), host), shadow))) return;
   const message = hassProvider.localizeGroup(EDITOR_FIELD_NS)?.issue_report_copied ?? 'Copied to clipboard';
   host.dispatchEvent(
     new CustomEvent(HA_CONTEXT.events.notification, { detail: { message }, bubbles: true, composed: true }),

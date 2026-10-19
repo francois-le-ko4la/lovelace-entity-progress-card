@@ -91,7 +91,7 @@
         "color_source": "",
         "toggle": ""
       },
-      "text_shadow": "",
+      "text_effect": "",
       "trend_indicator": {
         "window_toggle": "",
         "basis": "",
@@ -202,6 +202,14 @@
         "small": "",
         "xlarge": "",
         "xsmall": ""
+      },
+      "text_effect": {
+        "none": "",
+        "shadow": "",
+        "halo": "",
+        "outline": "",
+        "plate": "",
+        "contrast": ""
       },
       "bar_stack_mode": {
         "net": "",

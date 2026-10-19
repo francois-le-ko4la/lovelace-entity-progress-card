@@ -29,6 +29,15 @@ const valueKindOf = (entityId: string, attribute: unknown): ValueKind => {
   return deviceClass === HA_CONTEXT.deviceClasses.duration && !is.nonEmptyString(attribute) ? 'duration' : 'default';
 };
 
+// The range an entity carries itself (input_number, number, counter), shared by
+// the card's reading and the editor's min_value/max_value hint.
+const ownRangeOf = (entityId: unknown): { min: unknown; max: unknown } | null => {
+  const range = domainProfile(HassProviderSingleton.getEntityDomain(entityId)).range;
+  if (!range || !is.string(entityId)) return null;
+  const hass = HassProviderSingleton.getInstance();
+  return { min: hass.getEntityAttribute(entityId, range[0]), max: hass.getEntityAttribute(entityId, range[1]) };
+};
+
 // What an entity reads as, by value kind: a timer runs on its own clock, a
 // counter or number carries its own range, anything else is one number.
 type Reading =
@@ -249,6 +258,7 @@ class EntityHelper {
               this.#hassProvider.getEntityProp<string>(this.#entity, HA_CONTEXT.attributes.deviceClass) ?? null,
               this.#state,
               this.#hassProvider.getEntityAttribute<unknown>(this.#entity, HA_CONTEXT.attributes.entityId),
+              this.#hassProvider.getEntityAttribute<unknown>(this.#entity, HA_CONTEXT.attributes.rgbColor),
             );
     }
     return this.#defaultColor;
@@ -368,13 +378,8 @@ class EntityHelper {
   }
 
   _manageRangedEntity() {
-    const [min, max] = assertDefined(domainProfile(this.#domain).range, `EntityHelper: no range for '${this.#domain}'`);
-    this.#reading = {
-      kind: 'ranged',
-      current: parseFloat(this.#state as string),
-      min: this.#hassProvider.getEntityAttribute(this.#entity, min),
-      max: this.#hassProvider.getEntityAttribute(this.#entity, max),
-    };
+    const { min, max } = assertDefined(ownRangeOf(this.#entity), `EntityHelper: no range for '${this.#domain}'`);
+    this.#reading = { kind: 'ranged', current: parseFloat(this.#state as string), min, max };
   }
 
   _manageDurationEntity() {
@@ -397,5 +402,5 @@ const hasUsableHistory = (entity: unknown, attribute?: unknown): entity is strin
   !is.nonEmptyString(attribute) &&
   !KINDS_WITHOUT_HISTORY.has(valueKindOf(entity, attribute));
 
-export { EntityHelper, hasUsableHistory };
+export { EntityHelper, hasUsableHistory, ownRangeOf };
 export type { Reading, NameTokenType };

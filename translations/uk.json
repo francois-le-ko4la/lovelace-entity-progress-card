@@ -91,7 +91,7 @@
         "color_source": "Джерело кольору",
         "toggle": "Мітка стану"
       },
-      "text_shadow": "Додати тінь до тексту",
+      "text_effect": "Ефект тексту",
       "trend_indicator": {
         "window_toggle": "Використати часове вікно",
         "basis": "Основа порівняння",
@@ -202,6 +202,14 @@
         "small": "Мала",
         "xlarge": "Дуже велика",
         "xsmall": "Дуже малий"
+      },
+      "text_effect": {
+        "none": "Немає",
+        "shadow": "Тінь",
+        "halo": "Німб",
+        "outline": "Контур",
+        "plate": "Підкладка",
+        "contrast": "Автоконтраст"
       },
       "bar_stack_mode": {
         "net": "Нетто",

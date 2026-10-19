@@ -91,7 +91,7 @@
         "color_source": "Vir barve",
         "toggle": "Oznaka stanja"
       },
-      "text_shadow": "Dodaj senco besedila",
+      "text_effect": "Učinek besedila",
       "trend_indicator": {
         "window_toggle": "Uporabi časovno okno",
         "basis": "Osnova primerjave",
@@ -202,6 +202,14 @@
         "small": "Majhna",
         "xlarge": "Zelo velika",
         "xsmall": "Zelo majhno"
+      },
+      "text_effect": {
+        "none": "Brez",
+        "shadow": "Senca",
+        "halo": "Svetlobni sij",
+        "outline": "Obris",
+        "plate": "Podlaga",
+        "contrast": "Samodejni kontrast"
       },
       "bar_stack_mode": {
         "net": "Neto",

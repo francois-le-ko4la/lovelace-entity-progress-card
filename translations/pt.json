@@ -91,7 +91,7 @@
         "color_source": "Origem da cor",
         "toggle": "Rótulo de estado"
       },
-      "text_shadow": "Adicionar sombra ao texto",
+      "text_effect": "Efeito do texto",
       "trend_indicator": {
         "window_toggle": "Usar uma janela de tempo",
         "basis": "Base de comparação",
@@ -202,6 +202,14 @@
         "small": "Pequena",
         "xlarge": "Extra grande",
         "xsmall": "Muito pequeno"
+      },
+      "text_effect": {
+        "none": "Nenhum",
+        "shadow": "Sombra",
+        "halo": "Halo",
+        "outline": "Contorno",
+        "plate": "Placa",
+        "contrast": "Contraste automático"
       },
       "bar_stack_mode": {
         "net": "Líquido",

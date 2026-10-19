@@ -185,7 +185,7 @@ it's written. If you already wrote the new option next to the old one, the new
 one is what counts: the old one is simply removed.
 
 The same button shows up for an option that has no effect where it is set —
-`text_shadow` on a bar that isn't `overlay` or `background`, a `bar_color_mode`
+`text_effect` on a bar that isn't `overlay` or `background`, a `bar_color_mode`
 without a theme. The click takes it out of your YAML; undo the change that made
 it pointless while the editor is still open, and it comes back as it was.
 
@@ -350,7 +350,8 @@ Some issues aren't a bug — the browser is simply below the supported version.
 The quickest way: open the card in the visual editor and click the bug icon in
 its top-left corner. It copies a report ready to paste into your issue — the
 diagnostic below, then the card's YAML with its deprecated options and options
-without effect marked. On a Multi card, use the icon on the card itself, not on
+without effect marked, and a `# drawn from:` comment with the range and value
+the bar is drawn from. On a Multi card, use the icon on the card itself, not on
 one of its rows.
 
 #### 🩺 Run the built-in diagnostic
@@ -374,7 +375,8 @@ To look at one card in particular, `EPB.doctor.cards()` lists the cards on the
 page, numbered, each with a `config` state (`✅ ok`, `❌ invalid`,
 `⚠️ deprecated`, `🧹 no effect`, `🎨 new look`) and an `entity state` (`✅ ok`,
 `⏳ unavailable`, `❓ unknown`, `🚫 not found`), the exact findings in
-`details`. `EPB.doctor.inspect(2)` shows one of them — or
+`details`, and a `drawn` line (`min 0 · max 100 · value 42 · 42%`) when the bar
+has a range to compute. `EPB.doctor.inspect(2)` shows one of them — or
 `EPB.doctor.inspect($0)` after picking it in the DevTools' Elements tab — with
 the value and the range its bar is drawn from, and the config it ended up with.
 

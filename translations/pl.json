@@ -91,7 +91,7 @@
         "color_source": "Źródło koloru",
         "toggle": "Etykieta stanu"
       },
-      "text_shadow": "Dodaj cień tekstu",
+      "text_effect": "Efekt tekstu",
       "trend_indicator": {
         "window_toggle": "Użyj okna czasowego",
         "basis": "Podstawa porównania",
@@ -202,6 +202,14 @@
         "small": "Mała",
         "xlarge": "Bardzo duża",
         "xsmall": "Bardzo mały"
+      },
+      "text_effect": {
+        "none": "Brak",
+        "shadow": "Cień",
+        "halo": "Aureola",
+        "outline": "Obrys",
+        "plate": "Podkładka",
+        "contrast": "Automatyczny kontrast"
       },
       "bar_stack_mode": {
         "net": "Netto",

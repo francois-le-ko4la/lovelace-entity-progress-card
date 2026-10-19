@@ -20,6 +20,7 @@ const PUBLIC_EXPORTS = [
   'PEAK_RANGE_TYPE_DEFAULT',
   'ROW_IDENTITY_FIELDS',
   'SCHEMA_DEFAULTS',
+  'TEXT_EFFECTS',
   'THEME_ALIASES',
   'YamlSchemaFactory',
   'attributeOf',

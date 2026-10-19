@@ -507,9 +507,67 @@ ha-card.horizontal.compact_below .${CARD.htmlStructure.elements.progressBar.cont
   --text-font-size: var(--ha-font-size-m);
 }
 
-:is(.overlay, .background).text-shadow :is(.${CARD.htmlStructure.elements.nameValue.class},
-                    .${CARD.htmlStructure.elements.secondaryInfoValue.class}) {
-  --text-shadow: 1px 1px 2px var(--card-background-color);
+/* text_effect: only overlay/background draw text over the bar (HAS_EFFECT.textEffect).
+   Hooks: --epb-text-effect-color / -size / -blur. */
+:is(.overlay, .background):is(.text-effect-shadow, .text-effect-halo, .text-effect-outline, .text-effect-plate)
+  :is(.${CARD.htmlStructure.elements.nameValue.class}, .${CARD.htmlStructure.elements.secondaryInfoValue.class}) {
+  --text-effect-color: var(--epb-text-effect-color, var(--card-background-color));
+  --text-effect-size: var(--epb-text-effect-size, 1px);
+}
+
+:is(.overlay, .background).text-effect-shadow
+  :is(.${CARD.htmlStructure.elements.nameValue.class}, .${CARD.htmlStructure.elements.secondaryInfoValue.class}) {
+  --text-shadow: 1px 1px var(--epb-text-effect-blur, 2px) var(--text-effect-color);
+}
+
+/* outline is the halo with no blur: -webkit-text-stroke needs paint-order to
+   stay under the glyph, which HTML text lacks before Chrome 123. */
+:is(.overlay, .background):is(.text-effect-halo, .text-effect-outline)
+  :is(.${CARD.htmlStructure.elements.nameValue.class}, .${CARD.htmlStructure.elements.secondaryInfoValue.class}) {
+  --halo-blur: var(--epb-text-effect-blur, 1px);
+  --text-shadow:
+    var(--text-effect-size) 0 var(--halo-blur) var(--text-effect-color),
+    calc(var(--text-effect-size) * -1) 0 var(--halo-blur) var(--text-effect-color),
+    0 var(--text-effect-size) var(--halo-blur) var(--text-effect-color),
+    0 calc(var(--text-effect-size) * -1) var(--halo-blur) var(--text-effect-color),
+    var(--text-effect-size) var(--text-effect-size) var(--halo-blur) var(--text-effect-color),
+    calc(var(--text-effect-size) * -1) calc(var(--text-effect-size) * -1) var(--halo-blur) var(--text-effect-color),
+    var(--text-effect-size) calc(var(--text-effect-size) * -1) var(--halo-blur) var(--text-effect-color),
+    calc(var(--text-effect-size) * -1) var(--text-effect-size) var(--halo-blur) var(--text-effect-color);
+}
+
+:is(.overlay, .background).text-effect-outline
+  :is(.${CARD.htmlStructure.elements.nameValue.class}, .${CARD.htmlStructure.elements.secondaryInfoValue.class}) {
+  --halo-blur: 0px;
+}
+
+:is(.overlay, .background).text-effect-plate
+  :is(.${CARD.htmlStructure.elements.nameValue.class}, .${CARD.htmlStructure.elements.secondaryInfoValue.class}) {
+  background: var(--text-effect-color);
+  border-radius: 999px;
+  box-sizing: border-box;
+  max-width: 100%;
+  padding-inline: 0.5em;
+  width: fit-content;
+}
+
+@supports (background: color-mix(in srgb, red, blue)) {
+  :is(.overlay, .background).text-effect-plate
+    :is(.${CARD.htmlStructure.elements.nameValue.class}, .${CARD.htmlStructure.elements.secondaryInfoValue.class}) {
+    background: color-mix(in srgb, var(--text-effect-color) 70%, transparent);
+  }
+}
+
+/* The pill hugs its text, so a centred layout has to centre the pill itself. */
+:is(.overlay, .background).${CARD.layout.orientations.vertical.label}.text-effect-plate
+  :is(.${CARD.htmlStructure.elements.nameValue.class}, .${CARD.htmlStructure.elements.secondaryInfoValue.class}) {
+  margin-inline: auto;
+}
+
+/* --text-contrast-color is written by TextContrast; unset, the text keeps its own colour. */
+:is(.overlay, .background).text-effect-contrast
+  :is(.${CARD.htmlStructure.elements.nameValue.class}, .${CARD.htmlStructure.elements.secondaryInfoValue.class}) {
+  color: var(${CARD.style.dynamic.textContrast.color.var}, var(--text-color));
 }
 
 /* === SECONDARY INFO === */

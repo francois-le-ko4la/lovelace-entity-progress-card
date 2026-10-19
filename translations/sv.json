@@ -91,7 +91,7 @@
         "color_source": "Färgkälla",
         "toggle": "Statusetikett"
       },
-      "text_shadow": "Lägg till textskugga",
+      "text_effect": "Texteffekt",
       "trend_indicator": {
         "window_toggle": "Använd ett tidsfönster",
         "basis": "Jämförelsebas",
@@ -202,6 +202,14 @@
         "small": "Liten",
         "xlarge": "Extra stor",
         "xsmall": "Extra liten"
+      },
+      "text_effect": {
+        "none": "Ingen",
+        "shadow": "Skugga",
+        "halo": "Gloria",
+        "outline": "Kontur",
+        "plate": "Platta",
+        "contrast": "Automatisk kontrast"
       },
       "bar_stack_mode": {
         "net": "Netto",

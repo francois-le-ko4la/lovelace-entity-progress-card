@@ -2618,16 +2618,34 @@ status_label:
 
 [🔼 Back to top]
 
-#### `text_shadow`
+#### `text_effect`
 
 [![Card OK][Card-OK]](#compatibility)
 [![Template OK][Template-OK]](#compatibility)
 
-> **`text_shadow`** [Boolean] _(optional, default: false)_
+> **`text_effect`** [String] ➡️ {`none` | `shadow` | `halo` | `outline` |
+> `plate` | `contrast`} _(optional, default: `none`)_
 
-Displays a shadow behind the text when [`bar_position`](#bar_position) is set to
-`overlay` or `background`, improving readability over colored or gradient
-backgrounds.
+Keeps the text readable over the bar when [`bar_position`](#bar_position) is
+`overlay` or `background`; set elsewhere, it has no effect.
+
+| Value      | Look                                                        |
+| ---------- | ----------------------------------------------------------- |
+| `none`     | Plain text.                                                 |
+| `shadow`   | Soft drop shadow.                                           |
+| `halo`     | Even glow around each glyph.                                |
+| `outline`  | Stroke around each glyph.                                   |
+| `plate`    | Translucent pill behind the text.                           |
+| `contrast` | Black or white text, from the bar color under the fill end. |
+
+`contrast` overrides the text color (`--epb-name-color`, `--epb-detail-color`).
+With a theme gradient (`bar_color_mode: segment` or `rainbow`), it reads the
+color at the end of the fill, so the text flips as the value crosses the
+light/dark threshold.
+
+Style hooks (`shadow`, `halo`, `outline`, `plate`): `--epb-text-effect-color`
+(default: the card background), `--epb-text-effect-size` (default: `1px`) and
+`--epb-text-effect-blur`.
 
 _Example_:
 
@@ -2636,12 +2654,28 @@ type: custom:entity-progress-card
 entity: sensor.temperature
 ····
 bar_position: overlay
-text_shadow: true
+text_effect: halo
 ```
 
 _Default value_:
 
-- `false`
+- `none`
+
+[🔼 Back to top]
+
+#### `text_shadow`
+
+[![Card OK][Card-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+
+> **`text_shadow`** [Boolean] _(optional, default: `false`)_
+
+> [!IMPORTANT]
+>
+> **Deprecated since 1.6.4** (a console warning is logged) — use
+> [`text_effect: shadow`](#text_effect) instead. `text_shadow: true` is
+> automatically migrated for the session, `false` is dropped. See [Deprecated >
+> Options].
 
 [🔼 Back to top]
 
@@ -3935,7 +3969,7 @@ available for Templates as well:
 | `force_circular_background`  | boolean (optional)        | `false`      | Force icon circle background         | [Config Ref.](#force_circular_background)  |
 | `trend_indicator`            | string (optional)         | `false`      | Displays trend icons.                | [Config Ref.](#trend_indicator)            |
 | `status_label`               | string/Map (optional)     | —            | Status pill on the card              | [Config Ref.](#status_label)               |
-| `text_shadow`                | boolean (optional)        | `false`      | Display a text shadow (overlay)      | [Config Ref.](#text_shadow)                |
+| `text_effect`                | string (optional)         | `none`       | Text readability effect (overlay)    | [Config Ref.](#text_effect)                |
 | `density`                    | string (optional)         | `default`    | Smaller footprint preset             | [Config Ref.](#density)                    |
 | `layout`                     | string (optional)         | `horizontal` | Layout direction                     | [Config Ref.](#layout)                     |
 | `frameless`                  | boolean (optional)        | `false`      | Remove card frame                    | [Config Ref.](#frameless)                  |

@@ -13,11 +13,23 @@ colors its own tiles use, from your theme, for every domain Home Assistant
 colors. Icons animate on the same rules Home Assistant applies, and tap to
 toggle like its tile card.
 
+### ⚠️ Breaking Changes
+
+#### `text_shadow` becomes `text_effect`
+
+You can update right away — no extra action needed on your part.
+[`text_shadow`][text_shadow] is replaced by [`text_effect`][text_effect]:
+`text_shadow: true` is read as `text_effect: shadow`, `false` is dropped.
+Existing configs keep working as-is; the editor's **Migrate config** button
+updates them whenever you like.
+
 ### ✨ New
 
 - **[`bar_ring`][bar_ring]**: place where the ring around the icon starts and
   leave part of it open, for a thermostat-like dial.  
   ➡️ [Enhancement]: Ring position #144 (@addit248)
+- **[`text_effect`][text_effect]**: `shadow`, `halo`, `outline`, `plate` or
+  `contrast` keeps the text readable over an `overlay` or `background` bar.
 - **Serbian**, in Cyrillic and Latin: 41 languages.  
   ➡️ feat: add Serbian translations (Cyrillic & Latin) #145 (@cpmarexel2f)
 
@@ -68,9 +80,16 @@ toggle like its tile card.
   paused, a lawn mower animates while mowing.
 - **[`alert_when`][alert_when]** `above`/`below` fed by a timer, counter or
   number entity now use its value; they used to be ignored.
+- The editor's debug button adds the range the bar is drawn from (min, max,
+  value, %) under the card's YAML.
+- **A `light` that reports a color** (`rgb_color`) takes that color, like the
+  tile does (lifted when too pale), instead of the amber state color.
 
 ### 🐛 Fixes
 
+- **[`min_value`][min_value]** and **[`max_value`][max_value]** hint the range
+  the bar uses in the editor: the entity's own (`input_number`, `number`,
+  `counter`), else the card's default, instead of always 0 and 100.
 - **A `binary_sensor` with `device_class: light`** no longer takes the color of
   a lit bulb.
 - An unavailable **[`min_value`][min_value]** entity or a failed Jinja range no
@@ -94,6 +113,8 @@ toggle like its tile card.
 
 - Cookbook: a Mushroom Template card hosting a Multi-Feature (printer ink
   levels).
+- Docs images follow your theme: every cookbook, theme and README screenshot has
+  a light and a dark version, with transparent corners.
 
 > We care about getting the details right — but even so, something here might
 > have slipped through. You don't need to be a developer to notice it. If
@@ -103,6 +124,42 @@ toggle like its tile card.
 
 ➡️ **Full Changelog**:
 <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/compare/1.6.3...1.6.4>
+
+## 1.6.4-rc2
+
+### ⚠️ Breaking Changes
+
+#### `text_shadow` becomes `text_effect`
+
+You can update right away — no extra action needed on your part.
+`text_shadow: true` migrates to `text_effect: shadow` (Card, Template, Multi
+rows), `false` is dropped, and a `text_effect` already written wins. Existing
+configs keep working untouched; **Migrate config** rewrites them.
+
+### ✨ New
+
+- **[`text_effect`][text_effect]** `shadow`, `halo`, `outline`, `plate` or
+  `contrast` (black or white text from the bar color at the fill end), over an
+  `overlay` or `background` bar; style hooks `--epb-text-effect-color`,
+  `--epb-text-effect-size`, `--epb-text-effect-blur`.
+
+### 🔧 Improvements
+
+- The editor's debug button adds the range the bar is drawn from (min, max,
+  value, %) under the card's YAML.
+- **A `light` that reports a color** (`rgb_color`) takes that color, like the
+  tile does (lifted when too pale), instead of the amber state color.
+
+### 🐛 Fixes
+
+- **[`min_value`][min_value]** and **[`max_value`][max_value]** hint the range
+  the bar uses in the editor: the entity's own (`input_number`, `number`,
+  `counter`), else the card's default, instead of always 0 and 100.
+
+### 📚 Documentation
+
+- Docs images follow your theme: every cookbook, theme and README screenshot has
+  a light and a dark version, with transparent corners.
 
 ## 1.6.4-rc1
 
@@ -7863,6 +7920,8 @@ experience:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_orientation
 [text_shadow]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#text_shadow
+[text_effect]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#text_effect
 [interpolate]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#interpolate
 [unit_spacing]:

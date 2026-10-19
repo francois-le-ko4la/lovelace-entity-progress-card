@@ -70,6 +70,7 @@ const SELECT_TYPES: Record<string, string | [group: string, keys: readonly strin
   bar_color_mode: ['bar_color_mode', from('card', 'bar_color_mode')],
   bar_scale: ['bar_scale', from('card', 'bar_scale')],
   icon_animation: ['icon_animation', from('card', 'icon_animation')],
+  text_effect: ['text_effect', from('card', 'text_effect')],
   alert_highlight: ['alert_highlight', from('card', 'alert_when.highlight')],
   alert_animation: ['alert_animation', from('card', 'alert_when.animation')],
   label_position: ['label_position', from('card', 'status_label.position')],

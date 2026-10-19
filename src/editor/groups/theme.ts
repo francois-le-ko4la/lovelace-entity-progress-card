@@ -192,11 +192,11 @@ const themeSingleLineShadowFields = (badge: boolean) =>
   badge
     ? {}
     : {
-        // Both full width (the default): text_shadow shows alone under
+        // Both full width (the default): text_effect shows alone under
         // 'background', where bar_single_line does not - and a half-width
-        // toggle alone on its row only reads as a hole beside a long label.
+        // field alone on its row only reads as a hole beside a long label.
         bar_single_line: EditorFieldsType.toggle('bar_single_line', { showIf: HAS_EFFECT.barSingleLine }),
-        text_shadow: EditorFieldsType.toggle('text_shadow', { showIf: HAS_EFFECT.textShadow }),
+        text_effect: EditorFieldsType.select('text_effect', { showIf: HAS_EFFECT.textEffect }),
       };
 
 // What the color pickers give way to: a custom theme counts from the moment
@@ -234,7 +234,7 @@ const themeBarSizingFields = (template: boolean, badge: boolean) => {
       ...badgeRestrictedType(badge, 'bar_size_no_xlarge'),
       width: 'half',
       // Shown, it always sits next to bar_segments: bar_single_line and
-      // text_shadow need the very positions it is hidden in.
+      // text_effect need the very positions it is hidden in.
       showIf: HAS_EFFECT.barSize,
     }),
     bar_color: EditorFieldsType.templateOrType('bar_color', template, 'color_state_default', {

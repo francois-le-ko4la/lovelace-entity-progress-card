@@ -91,7 +91,7 @@
         "color_source": "Color source",
         "toggle": "Status label"
       },
-      "text_shadow": "Add text shadow",
+      "text_effect": "Text effect",
       "trend_indicator": {
         "window_toggle": "Use a time window",
         "basis": "Comparison basis",
@@ -202,6 +202,14 @@
         "small": "Small",
         "xlarge": "Extra Large",
         "xsmall": "Extra Small"
+      },
+      "text_effect": {
+        "none": "None",
+        "shadow": "Shadow",
+        "halo": "Halo",
+        "outline": "Outline",
+        "plate": "Plate",
+        "contrast": "Auto contrast"
       },
       "bar_stack_mode": {
         "net": "Net",

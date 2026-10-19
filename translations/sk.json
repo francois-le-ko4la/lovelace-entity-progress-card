@@ -91,7 +91,7 @@
         "color_source": "Zdroj farby",
         "toggle": "Popisok stavu"
       },
-      "text_shadow": "Pridať tieň textu",
+      "text_effect": "Efekt textu",
       "trend_indicator": {
         "window_toggle": "Použiť časové okno",
         "basis": "Základ porovnania",
@@ -202,6 +202,14 @@
         "small": "Malá",
         "xlarge": "Veľmi veľká",
         "xsmall": "Veľmi malé"
+      },
+      "text_effect": {
+        "none": "Žiadny",
+        "shadow": "Tieň",
+        "halo": "Svätožiara",
+        "outline": "Obrys",
+        "plate": "Podložka",
+        "contrast": "Automatický kontrast"
       },
       "bar_stack_mode": {
         "net": "Čistý",

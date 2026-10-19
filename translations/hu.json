@@ -91,7 +91,7 @@
         "color_source": "Szín forrása",
         "toggle": "Állapotcímke"
       },
-      "text_shadow": "Szöveg árnyék hozzáadása",
+      "text_effect": "Szövegeffektus",
       "trend_indicator": {
         "window_toggle": "Időablak használata",
         "basis": "Összehasonlítási alap",
@@ -202,6 +202,14 @@
         "small": "Kicsi",
         "xlarge": "Nagyon nagy",
         "xsmall": "Extra kicsi"
+      },
+      "text_effect": {
+        "none": "Nincs",
+        "shadow": "Árnyék",
+        "halo": "Glória",
+        "outline": "Körvonal",
+        "plate": "Háttérlap",
+        "contrast": "Automatikus kontraszt"
       },
       "bar_stack_mode": {
         "net": "Nettó",

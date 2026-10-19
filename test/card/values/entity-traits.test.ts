@@ -17,6 +17,10 @@ import { stateColorName } from '../../../src/utils/ha-context.js';
 const entities: Record<string, { state: string; attributes?: Record<string, unknown> }> = {
   'light.on': { state: 'on', attributes: { brightness: 255 } },
   'light.off': { state: 'off' },
+  'light.red': { state: 'on', attributes: { rgb_color: [255, 0, 0] } },
+  'light.pastel': { state: 'on', attributes: { rgb_color: [255, 200, 200] } },
+  'light.white': { state: 'on', attributes: { rgb_color: [255, 255, 255] } },
+  'light.broken': { state: 'on', attributes: { rgb_color: 'red' } },
   'cover.open': { state: 'open', attributes: { current_position: 0 } },
   'cover.closed': { state: 'closed', attributes: { current_position: 0 } },
   'fan.on': { state: 'on', attributes: { percentage: 0 } },
@@ -76,6 +80,11 @@ describe('defaultColor - HA state colors, first defined variable wins', () => {
   const cases: [string, string | null][] = [
     ['light.on', cssVar('light', 'active')],
     ['light.off', INACTIVE],
+    // the tile's rule: the light's own color, lifted when too pale to read
+    ['light.red', '#ff0000'],
+    ['light.pastel', '#ff9999'],
+    ['light.white', '#e1e1e1'],
+    ['light.broken', cssVar('light', 'active')],
     ['cover.open', cssVar('cover', 'active')],
     ['cover.closed', INACTIVE],
     ['fan.on', cssVar('fan', 'active')],

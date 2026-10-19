@@ -91,7 +91,7 @@
         "color_source": "Krāsas avots",
         "toggle": "Statusa etiķete"
       },
-      "text_shadow": "Pievienot teksta ēnu",
+      "text_effect": "Teksta efekts",
       "trend_indicator": {
         "window_toggle": "Izmantot laika logu",
         "basis": "Salīdzinājuma pamats",
@@ -202,6 +202,14 @@
         "small": "Mazs",
         "xlarge": "Ļoti liels",
         "xsmall": "Ļoti mazs"
+      },
+      "text_effect": {
+        "none": "Nav",
+        "shadow": "Ēna",
+        "halo": "Oreols",
+        "outline": "Kontūra līnija",
+        "plate": "Plāksne",
+        "contrast": "Automātisks kontrasts"
       },
       "bar_stack_mode": {
         "net": "Neto",

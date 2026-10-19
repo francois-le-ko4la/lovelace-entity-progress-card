@@ -52,7 +52,7 @@ const BAR_FIELDS = [
   'bar_segments',
   'bar_scale',
   'bar_single_line',
-  'text_shadow',
+  'text_effect',
   'interpolate',
   'bar_max_width_toggle',
   'bar_max_width',

@@ -14,6 +14,7 @@ import { EditorFactory } from '../../src/editor/factory.js';
 // YAML only, on purpose - each with the reason it has no field.
 const YAML_ONLY: Record<string, string> = {
   disable_unit: 'deprecated: Migrate config rewrites it',
+  text_shadow: 'deprecated: Migrate config rewrites it as text_effect',
   bar_aligned: 'a card is aligned by name, written in YAML; the Multi form has the toggle',
 };
 

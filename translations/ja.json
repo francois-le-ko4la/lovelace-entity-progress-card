@@ -91,7 +91,7 @@
         "color_source": "色のソース",
         "toggle": "ステータスラベル"
       },
-      "text_shadow": "テキストに影を追加",
+      "text_effect": "テキスト効果",
       "trend_indicator": {
         "window_toggle": "時間ウィンドウを使用",
         "basis": "比較基準",
@@ -202,6 +202,14 @@
         "small": "小",
         "xlarge": "特大",
         "xsmall": "極小"
+      },
+      "text_effect": {
+        "none": "なし",
+        "shadow": "影",
+        "halo": "ハロー",
+        "outline": "縁取り",
+        "plate": "プレート",
+        "contrast": "自動コントラスト"
       },
       "bar_stack_mode": {
         "net": "正味",

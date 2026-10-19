@@ -46,6 +46,7 @@ type HomeAssistant = {
   devices: Record<string, DeviceRegistryEntry>;
   areas: Record<string, AreaRegistryEntry>;
   floors: Record<string, FloorRegistryEntry>;
+  themes?: { theme?: string; darkMode?: boolean } & Record<string, unknown>;
   // Optional on purpose: HA always provides it, but a key it cannot resolve
   // returns '' (their localize.ts), which is what resolveLabel above leans on.
   localize?: (key: string, ...args: unknown[]) => string;

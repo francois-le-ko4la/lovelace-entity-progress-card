@@ -91,7 +91,7 @@
         "color_source": "Farvekilde",
         "toggle": "Statusmærkat"
       },
-      "text_shadow": "Tilføj tekstskygge",
+      "text_effect": "Teksteffekt",
       "trend_indicator": {
         "window_toggle": "Brug et tidsvindue",
         "basis": "Sammenligningsgrundlag",
@@ -202,6 +202,14 @@
         "small": "Lille",
         "xlarge": "Ekstra stor",
         "xsmall": "Ekstra lille"
+      },
+      "text_effect": {
+        "none": "Ingen",
+        "shadow": "Skygge",
+        "halo": "Glorie",
+        "outline": "Kontur",
+        "plate": "Plade",
+        "contrast": "Automatisk kontrast"
       },
       "bar_stack_mode": {
         "net": "Netto",

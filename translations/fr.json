@@ -91,7 +91,7 @@
         "color_source": "Source de la couleur",
         "toggle": "Étiquette de statut"
       },
-      "text_shadow": "Ajouter une ombre au texte",
+      "text_effect": "Effet sur le texte",
       "trend_indicator": {
         "window_toggle": "Utiliser une fenêtre temporelle",
         "basis": "Base de comparaison",
@@ -202,6 +202,14 @@
         "small": "Petite",
         "xlarge": "Très grande",
         "xsmall": "Très petite"
+      },
+      "text_effect": {
+        "none": "Aucun",
+        "shadow": "Ombre",
+        "halo": "Halo",
+        "outline": "Contour",
+        "plate": "Pastille",
+        "contrast": "Contraste auto"
       },
       "bar_stack_mode": {
         "net": "Net",

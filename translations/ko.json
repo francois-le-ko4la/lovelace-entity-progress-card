@@ -91,7 +91,7 @@
         "color_source": "색상 소스",
         "toggle": "상태 레이블"
       },
-      "text_shadow": "텍스트 그림자 추가",
+      "text_effect": "텍스트 효과",
       "trend_indicator": {
         "window_toggle": "시간 창 사용",
         "basis": "비교 기준",
@@ -202,6 +202,14 @@
         "small": "작은",
         "xlarge": "매우 큰",
         "xsmall": "아주 작음"
+      },
+      "text_effect": {
+        "none": "없음",
+        "shadow": "그림자",
+        "halo": "후광",
+        "outline": "윤곽선",
+        "plate": "플레이트",
+        "contrast": "자동 대비"
       },
       "bar_stack_mode": {
         "net": "순",

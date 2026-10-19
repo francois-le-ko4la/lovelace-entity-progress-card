@@ -91,7 +91,7 @@
         "color_source": "Sursa culorii",
         "toggle": "Etichetă de stare"
       },
-      "text_shadow": "Adaugă umbră textului",
+      "text_effect": "Efect text",
       "trend_indicator": {
         "window_toggle": "Folosește o fereastră de timp",
         "basis": "Bază de comparație",
@@ -202,6 +202,14 @@
         "small": "Mică",
         "xlarge": "Foarte mare",
         "xsmall": "Foarte mic"
+      },
+      "text_effect": {
+        "none": "Niciunul",
+        "shadow": "Umbră",
+        "halo": "Halo",
+        "outline": "Contur",
+        "plate": "Placă",
+        "contrast": "Contrast automat"
       },
       "bar_stack_mode": {
         "net": "Net",

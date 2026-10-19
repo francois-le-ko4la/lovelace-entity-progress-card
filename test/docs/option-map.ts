@@ -40,6 +40,7 @@ const FORMS: Record<string, unknown> = {
 const NOTES: Record<string, string> = {
   disable_unit:
     "Deprecated: migrates to `hide: [unit]`. Kept in the schema only for a Jinja `hide`, which the migration can't edit.",
+  text_shadow: 'Deprecated: migrates to `text_effect: shadow`; no editor field writes it.',
   layout: 'Badge, Badge Template and Feature accept a single value: nothing to choose.',
   bar_aligned: 'Card and Template take a group name, written in YAML. The Multi variants get a toggle.',
 };

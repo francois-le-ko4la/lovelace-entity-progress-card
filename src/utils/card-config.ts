@@ -290,6 +290,9 @@ const style = {
     trendIndicator: {
       color: { var: '--trend-icon-color' },
     },
+    textContrast: {
+      color: { var: '--text-contrast-color' },
+    },
     progressBar: {
       color: { var: '--progress-bar-color', default: STATE_ICON_COLOR },
       value: { var: '--progress-bar-value' },

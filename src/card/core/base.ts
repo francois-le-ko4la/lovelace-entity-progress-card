@@ -7,6 +7,7 @@ import { type ViewBase } from '../view/base.js';
 import {
   statusLabelObj,
   BAR_POSITIONS,
+  TEXT_EFFECTS,
   BAR_AROUND_ICON,
   ICON_ANIMATIONS,
   OWN_TRIGGER_ANIMATIONS,
@@ -256,7 +257,10 @@ class HABase extends HACore {
       // A pinned bar makes the text the flexible half - the CSS can't branch
       // on a variable being set, so the config says it here.
       ['bar-max-width', Boolean(config.bar_max_width)],
-      ['text-shadow', Boolean(config.text_shadow)],
+      ...TEXT_EFFECTS.filter((effect) => effect !== 'none').map((effect): [string, boolean] => [
+        `text-effect-${effect}`,
+        config.text_effect === effect,
+      ]),
       ['label-left', statusLabelObj(config.status_label).position === 'left'],
     ]);
   }

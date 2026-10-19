@@ -60,6 +60,39 @@ describe('CardConfigHelper._migrateLegacyOptions - deprecated YAML shapes', () =
   });
 });
 
+describe('text_shadow migrates to text_effect', () => {
+  type Migrated = { text_shadow?: unknown; text_effect?: unknown; entities?: Migrated[] };
+  const migrate = (raw: Record<string, unknown>, helper = CardConfigHelper) =>
+    helper._migrateLegacyOptions(asConfig({ entity: TEST_ENTITY, ...raw })) as Migrated;
+
+  test('true becomes shadow', () => {
+    const migrated = migrate({ text_shadow: true });
+    assert.equal(migrated.text_effect, 'shadow');
+    assertUndefined(migrated.text_shadow);
+  });
+
+  test('false is dropped', () => {
+    const migrated = migrate({ text_shadow: false });
+    assertUndefined(migrated.text_effect);
+    assertUndefined(migrated.text_shadow);
+  });
+
+  test('a text_effect already written wins', () => {
+    const migrated = migrate({ text_shadow: true, text_effect: 'halo' });
+    assert.equal(migrated.text_effect, 'halo');
+    assertUndefined(migrated.text_shadow);
+  });
+
+  test('Template reaches it through the base helper', () => {
+    assert.equal(migrate({ text_shadow: true }, BaseConfigHelper as typeof CardConfigHelper).text_effect, 'shadow');
+  });
+
+  test('a Multi row migrates on its own', () => {
+    const migrated = migrate({ entities: [{ entity: EXTRA_ENTITY, text_shadow: true }] });
+    assert.equal(migrated.entities?.[0].text_effect, 'shadow');
+  });
+});
+
 // EntityHelper normalizes a scaled attribute to 0-100 on its own, so a
 // max_value repeating that native scale divided the fill a second time - a
 // light at full brightness rendered 39%.

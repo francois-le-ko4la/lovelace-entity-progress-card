@@ -223,10 +223,13 @@ your interface with minimal effort.
 
 ### 🔌 Battery (adapts to charging state)
 
-<img
-  src="images/theme-battery-adaptive-52b29a.png"
-  alt="theme: battery_adaptive example" height="84"
-/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/theme-battery-adaptive-dark-9509c1.png">
+  <img src="images/theme-battery-adaptive-light-b70ee1.png"
+    alt="theme: battery_adaptive example"
+    height="84"/>
+</picture>
 
 A virtual theme, not a fixed set of zones: it checks whether the entity is
 currently charging - the same signal `icon_animation: battery_charging` already
@@ -260,10 +263,13 @@ theme: battery_adaptive
 
 ### 🪫 Critical when low (Battery...)
 
-<img
-  src="images/theme-critical-low-e3c0fa.png"
-  alt="theme: critical_when_low example" height="320"
-/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/theme-critical-low-dark-dbf8b1.png">
+  <img src="images/theme-critical-low-light-6df2e8.png"
+    alt="theme: critical_when_low example"
+    height="320"/>
+</picture>
 
 The "Critical when Low" theme targets values that only become a problem near
 zero, and are otherwise fine across a wide range - a battery level, for
@@ -307,10 +313,13 @@ theme: critical_when_low
 
 ### 💽 Optimal when low
 
-<img
-  src="images/theme-optimal-low-59ca00.png"
-  alt="theme: optimal_when_low example" height="320"
-/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/theme-optimal-low-dark-c676a3.png">
+  <img src="images/theme-optimal-low-light-7b1203.png"
+    alt="theme: optimal_when_low example"
+    height="320"/>
+</picture>
 
 The "Optimal when Low" parameter is particularly valuable for monitoring systems
 or components that perform best when their values are at a lower level. For
@@ -354,10 +363,13 @@ theme: optimal_when_low
 
 ### 🔥 Critical when high (CPU, RAM, disk usage...)
 
-<img
-  src="images/theme-critical-high-9ab8fb.png"
-  alt="theme: critical_when_high example" height="320"
-/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/theme-critical-high-dark-a473f3.png">
+  <img src="images/theme-critical-high-light-d40664.png"
+    alt="theme: critical_when_high example"
+    height="320"/>
+</picture>
 
 The mirror of `critical_when_low`: a metric that is fine across a wide low range
 and only becomes a problem near 100% - CPU load, RAM or disk usage, for
@@ -399,10 +411,13 @@ theme: critical_when_high
 
 ### 🔋 Optimal when high
 
-<img
-  src="images/theme-optimal-high-c1e953.png"
-  alt="theme: optimal_when_high example" height="320"
-/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/theme-optimal-high-dark-95f174.png">
+  <img src="images/theme-optimal-high-light-ea6d23.png"
+    alt="theme: optimal_when_high example"
+    height="320"/>
+</picture>
 
 The "Optimal when High" parameter is particularly useful in cases where the
 system or component in question performs best at higher values. For instance, in
@@ -448,10 +463,13 @@ theme: optimal_when_high
 
 ### 🎯 Critical when extreme (Tank level, deviation...)
 
-<img
-  src="images/theme-critical-extreme-ab54c6.png"
-  alt="theme: critical_when_extreme example" height="320"
-/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/theme-critical-extreme-dark-c8644b.png">
+  <img src="images/theme-critical-extreme-light-d2d29f.png"
+    alt="theme: critical_when_extreme example"
+    height="320"/>
+</picture>
 
 The combination of `critical_when_low` and `critical_when_high`: both ends of
 the range are a problem, and the middle is a wide, comfortable "green" band - a
@@ -497,10 +515,13 @@ theme: critical_when_extreme
 
 ### 🎯 Critical when extreme, centered (`center_zero`)
 
-<img
-  src="images/theme-critical-extreme-center-e918cc.png"
-  alt="theme: critical_when_extreme_center example" height="84"
-/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/theme-critical-extreme-center-dark-466609.png">
+  <img src="images/theme-critical-extreme-center-light-0c848a.png"
+    alt="theme: critical_when_extreme_center example"
+    height="84"/>
+</picture>
 
 `critical_when_extreme`'s own shape, but built for
 [`center_zero`](configuration.md#center_zero) specifically: one continuous scale
@@ -552,10 +573,13 @@ theme: critical_when_extreme_center
 
 ### 💡 Light
 
-<img
-  src="images/theme-light-bcf481.png"
-  alt="theme: light example" height="320"
-/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/theme-light-dark-d902d7.png">
+  <img src="images/theme-light-light-347fff.png"
+    alt="theme: light example"
+    height="320"/>
+</picture>
 
 The `light` configuration, designed by
 [@harmonie-durrant](https://github.com/harmonie-durrant), defines how different
@@ -601,10 +625,13 @@ icon_tap_action:
 
 ### 🌡️ Temperature
 
-<img
-  src="images/theme-temperature-42e372.png"
-  alt="theme: temperature example" height="320"
-/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/theme-temperature-dark-6d4d36.png">
+  <img src="images/theme-temperature-light-8e7bfe.png"
+    alt="theme: temperature example"
+    height="320"/>
+</picture>
 
 We can use `min_value` and `max_value` to define the range of values we want to
 represent with our color gradient. We use predefined intervals, each associated
@@ -657,10 +684,13 @@ icon_tap_action:
 
 ### 💧 Humidity
 
-<img
-  src="images/theme-humidity-f7ee02.png"
-  alt="theme: humidity example" height="320"
-/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/theme-humidity-dark-40868c.png">
+  <img src="images/theme-humidity-light-1d9e3b.png"
+    alt="theme: humidity example"
+    height="320"/>
+</picture>
 
 The `humidity` configuration defines how different humidity levels are
 represented with colors and icons. Unlike a linear gradient, this system uses
@@ -708,10 +738,13 @@ icon_tap_action:
 
 ### 🦠 VOC
 
-<img
-  src="images/theme-voc-e130da.png"
-  alt="theme: voc example" height="320"
-/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/theme-voc-dark-a31be6.png">
+  <img src="images/theme-voc-light-3eb117.png"
+    alt="theme: voc example"
+    height="320"/>
+</picture>
 
 The `voc` configuration defines how different levels of volatile organic
 compounds (VOCs) are represented using colors and icons. Instead of a linear
@@ -770,10 +803,13 @@ icon_tap_action:
 
 ### 🦠 PM 2.5
 
-<img
-  src="images/theme-pm-db1279.png"
-  alt="theme: pm25 example" height="320"
-/>
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/theme-pm-dark-2e34bc.png">
+  <img src="images/theme-pm-light-cbd961.png"
+    alt="theme: pm25 example"
+    height="320"/>
+</picture>
 
 The `pm25` configuration defines how different concentrations of fine
 particulate matter (PM2.5) are represented using colors and icons. Rather than a

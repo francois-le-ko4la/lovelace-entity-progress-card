@@ -91,7 +91,7 @@
         "color_source": "Fargekilde",
         "toggle": "Statusmerkelapp"
       },
-      "text_shadow": "Legg til tekstskygge",
+      "text_effect": "Teksteffekt",
       "trend_indicator": {
         "window_toggle": "Bruk et tidsvindu",
         "basis": "Sammenligningsgrunnlag",
@@ -202,6 +202,14 @@
         "small": "Liten",
         "xlarge": "Ekstra stor",
         "xsmall": "Ekstra liten"
+      },
+      "text_effect": {
+        "none": "Ingen",
+        "shadow": "Skygge",
+        "halo": "Glorie",
+        "outline": "Omriss",
+        "plate": "Plate",
+        "contrast": "Automatisk kontrast"
       },
       "bar_stack_mode": {
         "net": "Netto",

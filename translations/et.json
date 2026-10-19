@@ -91,7 +91,7 @@
         "color_source": "Värvi allikas",
         "toggle": "Oleku silt"
       },
-      "text_shadow": "Lisa teksti vari",
+      "text_effect": "Teksti efekt",
       "trend_indicator": {
         "window_toggle": "Kasuta ajaakent",
         "basis": "Võrdlusalus",
@@ -202,6 +202,14 @@
         "small": "Väike",
         "xlarge": "Väga suur",
         "xsmall": "Väga väike"
+      },
+      "text_effect": {
+        "none": "Puudub",
+        "shadow": "Vari",
+        "halo": "Halo",
+        "outline": "Kontuur",
+        "plate": "Alus",
+        "contrast": "Automaatne kontrast"
       },
       "bar_stack_mode": {
         "net": "Neto",

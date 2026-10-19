@@ -98,6 +98,7 @@ const DEPRECATED_OPTIONS: Record<string, (config: LovelaceConfig) => boolean> = 
     WATERMARK_SIDES.some((side) => hasLegacyWatermarkValue(config, side) || hasLegacyWatermarkMarkKeys(config, side)),
   max_value: (config) => is.nonEmptyString(config?.max_value),
   disable_unit: (config) => config?.disable_unit !== undefined,
+  text_shadow: (config) => setOnCardOrRow(config, 'text_shadow'),
   additions: (config) => is.array(config?.additions),
   icon_animation: (config) => config?.icon_animation === 'none',
   native_scale_max_value: (config) => nativeScaleMaxValue(config) !== null,
@@ -262,7 +263,9 @@ class BaseConfigHelper {
   // with Card (see #140). CardConfigHelper's override calls this too, then
   // layers its own extra migrations on top.
   static _migrateLegacyOptions(config: LovelaceConfig): LovelaceConfig {
-    return BaseConfigHelper._migrateIconAnimationNone(BaseConfigHelper._migrateWatermarkOptions(config));
+    return BaseConfigHelper._migrateTextShadow(
+      BaseConfigHelper._migrateIconAnimationNone(BaseConfigHelper._migrateWatermarkOptions(config)),
+    );
   }
 
   // icon_animation: none was the literal default until 1.6.1; nothing produces
@@ -270,6 +273,17 @@ class BaseConfigHelper {
   static _migrateIconAnimationNone(config: LovelaceConfig): LovelaceConfig {
     if (config?.icon_animation !== 'none') return config;
     return { ...config, icon_animation: undefined };
+  }
+
+  // true was the only visible state; false was the default. Settable on a row
+  // too, hence both levels.
+  static _migrateTextShadow(config: LovelaceConfig): LovelaceConfig {
+    if (!DEPRECATED_OPTIONS.text_shadow(config)) return config;
+    return BaseConfigHelper._atBothLevels(config, (level) => {
+      const { text_shadow: shadow, ...rest } = level;
+      if (shadow !== true || rest.text_effect !== undefined) return rest;
+      return { ...rest, text_effect: 'shadow' };
+    });
   }
 
   // Both migrations below rewrite an option that was settable on the card and
@@ -433,6 +447,8 @@ class BaseConfigHelper {
     // entities list of bar_stack, alongside a mode ('stacked' by default,
     // 'proportional' preserves the legacy renormalized-total behavior exactly -
     // see CardConfigHelper._customizeConfig.
+    if (DEPRECATED_OPTIONS.text_shadow(config))
+      BaseConfigHelper.#warnDeprecated('text_shadow', "Please migrate to text_effect: 'shadow'.");
     if (DEPRECATED_OPTIONS.additions(config))
       BaseConfigHelper.#warnDeprecated(
         'additions',

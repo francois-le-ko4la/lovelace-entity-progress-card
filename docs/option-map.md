@@ -21,13 +21,14 @@ None.
 `bar_scale`, `double_tap_action`, `fast_refresh`, `force_circular_background`,
 `hold_action`, `icon_double_tap_action`, `icon_hold_action`, `min_width`
 
-### Not on the demo dashboard (3)
+### Not on the demo dashboard (4)
 
-`bar_ring`, `disable_unit`, `rows`
+`bar_ring`, `disable_unit`, `rows`, `text_shadow`
 
-### No YAML example in the docs (4)
+### No YAML example in the docs (5)
 
-`double_tap_action`, `hold_action`, `icon_double_tap_action`, `icon_hold_action`
+`double_tap_action`, `hold_action`, `icon_double_tap_action`,
+`icon_hold_action`, `text_shadow`
 
 ## Matrix
 
@@ -38,71 +39,72 @@ _Status_ is ✅ when all four counts are above zero, else ⚠️ and the zeros.
 
 | Option | Card | Template | Badge | Badge Tpl | Feature | Multi Card | Multi Feat. | Default | Readers | Examples | Demo | Tests | Status |
 | :-- | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-- | :-: | :-: | :-: | :-: | :-- |
-| [`alert_when`](configuration.md#alert_when) | ✅ | ✅ | ✅ | ✅ | · | ✅ | · | — | 11 | 13 | 26 | 6 | ✅ |
-| [`attribute`](configuration.md#attribute) | ✅ | · | ✅ | · | ✅ | · | · | — | 16 | 2 | 2 | 13 | ✅ |
-| [`badge_color`](configuration.md#badge_color) | ✅ | ✅ | · | · | · | ✅ | · | — | 4 | 3 | 4 | 3 | ✅ |
-| [`badge_icon`](configuration.md#badge_icon) | ✅ | ✅ | · | · | · | ✅ | · | — | 4 | 3 | 4 | 4 | ✅ |
-| [`bar_aligned`](configuration.md#bar_aligned) ¹ | 📝 | 📝 | · | · | · | ✅ | ✅ | `false` | 5 | 2 | 1 | 3 | ✅ |
-| [`bar_color`](configuration.md#bar_color) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — | 4 | 18 | 45 | 4 | ✅ |
-| [`bar_color_mode`](configuration.md#bar_color_mode) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | `auto` | 5 | 11 | 78 | 2 | ✅ |
-| [`bar_effect`](configuration.md#bar_effect) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — | 5 | 4 | 24 | 2 | ✅ |
-| [`bar_max_width`](configuration.md#bar_max_width) | ✅ | ✅ | · | · | · | ✅ | ✅ | — | 4 | 1 | 1 | 3 | ✅ |
-| [`bar_orientation`](configuration.md#bar_orientation) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | `ltr` | 4 | 3 | 13 | 1 | ✅ |
-| [`bar_position`](configuration.md#bar_position) | ✅ | ✅ | ✅ | ✅ | ✅ | · | · | `default` | 8 | 6 | 67 | 10 | ✅ |
-| [`bar_ring`](configuration.md#bar_ring) | ✅ | ✅ | ✅ | ✅ | · | ✅ | ✅ | — | 4 | 1 | 0 | 1 | ⚠️ Demo |
+| [`alert_when`](configuration.md#alert_when) | ✅ | ✅ | ✅ | ✅ | · | ✅ | · | — | 16 | 13 | 26 | 7 | ✅ |
+| [`attribute`](configuration.md#attribute) | ✅ | · | ✅ | · | ✅ | · | · | — | 22 | 2 | 2 | 13 | ✅ |
+| [`badge_color`](configuration.md#badge_color) | ✅ | ✅ | · | · | · | ✅ | · | — | 6 | 3 | 4 | 3 | ✅ |
+| [`badge_icon`](configuration.md#badge_icon) | ✅ | ✅ | · | · | · | ✅ | · | — | 6 | 3 | 4 | 4 | ✅ |
+| [`bar_aligned`](configuration.md#bar_aligned) ¹ | 📝 | 📝 | · | · | · | ✅ | ✅ | `false` | 6 | 2 | 1 | 3 | ✅ |
+| [`bar_color`](configuration.md#bar_color) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — | 7 | 19 | 51 | 5 | ✅ |
+| [`bar_color_mode`](configuration.md#bar_color_mode) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | `auto` | 8 | 11 | 79 | 2 | ✅ |
+| [`bar_effect`](configuration.md#bar_effect) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — | 8 | 4 | 24 | 3 | ✅ |
+| [`bar_max_width`](configuration.md#bar_max_width) | ✅ | ✅ | · | · | · | ✅ | ✅ | — | 6 | 1 | 1 | 3 | ✅ |
+| [`bar_orientation`](configuration.md#bar_orientation) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | `ltr` | 6 | 3 | 13 | 1 | ✅ |
+| [`bar_position`](configuration.md#bar_position) | ✅ | ✅ | ✅ | ✅ | ✅ | · | · | `default` | 17 | 6 | 74 | 10 | ✅ |
+| [`bar_ring`](configuration.md#bar_ring) | ✅ | ✅ | ✅ | ✅ | · | ✅ | ✅ | — | 6 | 1 | 0 | 1 | ⚠️ Demo |
 | [`bar_scale`](configuration.md#bar_scale) | ✅ | · | ✅ | · | ✅ | ✅ | ✅ | `linear` | 2 | 1 | 1 | 0 | ⚠️ Tests |
-| [`bar_segments`](configuration.md#bar_segments) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — | 7 | 2 | 5 | 2 | ✅ |
-| [`bar_single_line`](configuration.md#bar_single_line) | ✅ | ✅ | · | · | · | · | · | `false` | 2 | 1 | 2 | 3 | ✅ |
-| [`bar_size`](configuration.md#bar_size) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | `small` | 7 | 14 | 97 | 8 | ✅ |
-| [`bar_stack`](configuration.md#bar_stack) | ✅ | · | ✅ | · | ✅ | ✅ | ✅ | — | 8 | 10 | 14 | 3 | ✅ |
-| [`center_zero`](configuration.md#center_zero) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | `false` | 11 | 11 | 53 | 9 | ✅ |
-| [`color`](configuration.md#color) | ✅ | ✅ | ✅ | ✅ | · | ✅ | ✅ | — | 20 | 8 | 21 | 14 | ✅ |
+| [`bar_segments`](configuration.md#bar_segments) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — | 12 | 2 | 5 | 3 | ✅ |
+| [`bar_single_line`](configuration.md#bar_single_line) | ✅ | ✅ | · | · | · | · | · | `false` | 4 | 1 | 2 | 3 | ✅ |
+| [`bar_size`](configuration.md#bar_size) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | `small` | 12 | 14 | 97 | 8 | ✅ |
+| [`bar_stack`](configuration.md#bar_stack) | ✅ | · | ✅ | · | ✅ | ✅ | ✅ | — | 14 | 10 | 14 | 4 | ✅ |
+| [`center_zero`](configuration.md#center_zero) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | `false` | 22 | 11 | 53 | 9 | ✅ |
+| [`color`](configuration.md#color) | ✅ | ✅ | ✅ | ✅ | · | ✅ | ✅ | — | 45 | 8 | 21 | 16 | ✅ |
 | [`custom_info`](configuration.md#custom_info) | ✅ | · | ✅ | · | · | ✅ | ✅ | — | 4 | 2 | 15 | 3 | ✅ |
-| [`custom_theme`](configuration.md#custom_theme) | ✅ | · | ✅ | · | ✅ | ✅ | ✅ | — | 4 | 6 | 12 | 3 | ✅ |
-| [`decimal`](configuration.md#decimal) | ✅ | · | ✅ | · | · | ✅ | ✅ | — | 8 | 9 | 33 | 8 | ✅ |
-| [`density`](configuration.md#density) | ✅ | ✅ | · | · | · | · | · | `default` | 7 | 5 | 19 | 4 | ✅ |
-| [`disable_unit`](configuration.md#disable_unit) ¹ | 📝 | · | 📝 | · | · | 📝 | 📝 | `false` | 3 | 1 | 0 | 9 | ⚠️ Demo |
-| [`double_tap_action`](configuration.md#xyz_action) | ✅ | ✅ | ✅ | ✅ | · | ✅ | ✅ | `{"action":"none"}` | 2 | 0 | 4 | 0 | ⚠️ Examples, Tests |
-| [`entities`](configuration.md#entities) | · | · | · | · | · | ✅ | ✅ | — | 11 | 9 | 13 | 25 | ✅ |
-| [`entity`](configuration.md#entity) | ✅ | ✅ | ✅ | ✅ | ✅ | · | · | — | 32 | 124 | 517 | 52 | ✅ |
+| [`custom_theme`](configuration.md#custom_theme) | ✅ | · | ✅ | · | ✅ | ✅ | ✅ | — | 6 | 6 | 12 | 3 | ✅ |
+| [`decimal`](configuration.md#decimal) | ✅ | · | ✅ | · | · | ✅ | ✅ | — | 11 | 9 | 33 | 8 | ✅ |
+| [`density`](configuration.md#density) | ✅ | ✅ | · | · | · | · | · | `default` | 11 | 5 | 19 | 4 | ✅ |
+| [`disable_unit`](configuration.md#disable_unit) ¹ | 📝 | · | 📝 | · | · | 📝 | 📝 | `false` | 5 | 1 | 0 | 9 | ⚠️ Demo |
+| [`double_tap_action`](configuration.md#xyz_action) | ✅ | ✅ | ✅ | ✅ | · | ✅ | ✅ | `{"action":"none"}` | 3 | 0 | 4 | 0 | ⚠️ Examples, Tests |
+| [`entities`](configuration.md#entities) | · | · | · | · | · | ✅ | ✅ | — | 23 | 10 | 13 | 26 | ✅ |
+| [`entity`](configuration.md#entity) | ✅ | ✅ | ✅ | ✅ | ✅ | · | · | — | 52 | 125 | 524 | 55 | ✅ |
 | [`fast_refresh`](configuration.md#fast_refresh) | · | ✅ | · | ✅ | · | · | · | `false` | 2 | 2 | 4 | 0 | ⚠️ Tests |
-| [`force_circular_background`](configuration.md#force_circular_background) | ✅ | ✅ | · | · | · | ✅ | · | `false` | 3 | 2 | 7 | 0 | ⚠️ Tests |
-| [`frameless`](configuration.md#frameless) | ✅ | ✅ | ✅ | ✅ | · | · | · | `false` | 5 | 4 | 23 | 3 | ✅ |
-| [`height`](configuration.md#height) | ✅ | ✅ | · | · | · | · | · | — | 9 | 3 | 31 | 2 | ✅ |
-| [`hide`](configuration.md#hide) | ✅ | ✅ | ✅ | ✅ | · | ✅ | ✅ | `["icon","name"]` | 10 | 9 | 55 | 13 | ✅ |
-| [`hold_action`](configuration.md#xyz_action) | ✅ | ✅ | ✅ | ✅ | · | ✅ | ✅ | `{"action":"none"}` | 2 | 0 | 4 | 0 | ⚠️ Examples, Tests |
-| [`icon`](configuration.md#icon) | ✅ | ✅ | ✅ | ✅ | · | · | · | — | 18 | 18 | 45 | 14 | ✅ |
-| [`icon_animation`](configuration.md#icon_animation) | ✅ | ✅ | · | · | · | ✅ | ✅ | — | 8 | 10 | 28 | 2 | ✅ |
-| [`icon_double_tap_action`](configuration.md#xyz_action) | ✅ | ✅ | · | · | · | ✅ | · | `{"action":"none"}` | 1 | 0 | 1 | 0 | ⚠️ Examples, Tests |
-| [`icon_hold_action`](configuration.md#xyz_action) | ✅ | ✅ | · | · | · | ✅ | · | `{"action":"none"}` | 1 | 0 | 1 | 0 | ⚠️ Examples, Tests |
-| [`icon_tap_action`](configuration.md#xyz_action) | ✅ | ✅ | · | · | · | ✅ | · | `{"action":"none"}` | 1 | 5 | 8 | 1 | ✅ |
-| [`interpolate`](configuration.md#interpolate) | ✅ | · | ✅ | · | ✅ | ✅ | ✅ | `false` | 4 | 2 | 1 | 2 | ✅ |
-| [`layout`](configuration.md#layout) ¹ | ✅ | ✅ | ➖ | ➖ | ➖ | · | · | `horizontal` | 9 | 7 | 116 | 9 | ✅ |
-| [`marginless`](configuration.md#marginless) | ✅ | ✅ | ✅ | ✅ | · | · | · | `false` | 5 | 3 | 18 | 1 | ✅ |
-| [`max_value`](configuration.md#max_value) | ✅ | · | ✅ | · | ✅ | ✅ | ✅ | `100` | 10 | 27 | 88 | 8 | ✅ |
-| [`min_value`](configuration.md#min_value) | ✅ | · | ✅ | · | ✅ | ✅ | ✅ | — | 10 | 14 | 49 | 9 | ✅ |
-| [`min_width`](configuration.md#min_width) | ✅ | ✅ | ✅ | ✅ | · | · | · | — | 3 | 1 | 1 | 0 | ⚠️ Tests |
-| [`multiline`](configuration.md#multiline) | ✅ | ✅ | · | · | · | · | · | `false` | 7 | 1 | 3 | 1 | ✅ |
-| [`name`](configuration.md#name) | ✅ | ✅ | ✅ | ✅ | · | · | · | — | 26 | 24 | 440 | 31 | ✅ |
+| [`force_circular_background`](configuration.md#force_circular_background) | ✅ | ✅ | · | · | · | ✅ | · | `false` | 4 | 2 | 7 | 0 | ⚠️ Tests |
+| [`frameless`](configuration.md#frameless) | ✅ | ✅ | ✅ | ✅ | · | · | · | `false` | 6 | 4 | 23 | 3 | ✅ |
+| [`height`](configuration.md#height) | ✅ | ✅ | · | · | · | · | · | — | 23 | 3 | 31 | 2 | ✅ |
+| [`hide`](configuration.md#hide) | ✅ | ✅ | ✅ | ✅ | · | ✅ | ✅ | `["icon","name"]` | 16 | 9 | 55 | 14 | ✅ |
+| [`hold_action`](configuration.md#xyz_action) | ✅ | ✅ | ✅ | ✅ | · | ✅ | ✅ | `{"action":"none"}` | 3 | 0 | 4 | 0 | ⚠️ Examples, Tests |
+| [`icon`](configuration.md#icon) | ✅ | ✅ | ✅ | ✅ | · | · | · | — | 42 | 18 | 45 | 17 | ✅ |
+| [`icon_animation`](configuration.md#icon_animation) | ✅ | ✅ | · | · | · | ✅ | ✅ | — | 11 | 10 | 28 | 2 | ✅ |
+| [`icon_double_tap_action`](configuration.md#xyz_action) | ✅ | ✅ | · | · | · | ✅ | · | `{"action":"none"}` | 2 | 0 | 1 | 0 | ⚠️ Examples, Tests |
+| [`icon_hold_action`](configuration.md#xyz_action) | ✅ | ✅ | · | · | · | ✅ | · | `{"action":"none"}` | 2 | 0 | 1 | 0 | ⚠️ Examples, Tests |
+| [`icon_tap_action`](configuration.md#xyz_action) | ✅ | ✅ | · | · | · | ✅ | · | `{"action":"none"}` | 3 | 5 | 8 | 1 | ✅ |
+| [`interpolate`](configuration.md#interpolate) | ✅ | · | ✅ | · | ✅ | ✅ | ✅ | `false` | 6 | 2 | 1 | 2 | ✅ |
+| [`layout`](configuration.md#layout) ¹ | ✅ | ✅ | ➖ | ➖ | ➖ | · | · | `horizontal` | 21 | 7 | 116 | 10 | ✅ |
+| [`marginless`](configuration.md#marginless) | ✅ | ✅ | ✅ | ✅ | · | · | · | `false` | 7 | 3 | 18 | 1 | ✅ |
+| [`max_value`](configuration.md#max_value) | ✅ | · | ✅ | · | ✅ | ✅ | ✅ | `100` | 17 | 27 | 88 | 8 | ✅ |
+| [`min_value`](configuration.md#min_value) | ✅ | · | ✅ | · | ✅ | ✅ | ✅ | — | 16 | 14 | 49 | 9 | ✅ |
+| [`min_width`](configuration.md#min_width) | ✅ | ✅ | ✅ | ✅ | · | · | · | — | 4 | 1 | 1 | 0 | ⚠️ Tests |
+| [`multiline`](configuration.md#multiline) | ✅ | ✅ | · | · | · | · | · | `false` | 11 | 1 | 3 | 2 | ✅ |
+| [`name`](configuration.md#name) | ✅ | ✅ | ✅ | ✅ | · | · | · | — | 46 | 24 | 447 | 32 | ✅ |
 | [`name_info`](configuration.md#name_info) | ✅ | · | ✅ | · | · | ✅ | ✅ | — | 3 | 4 | 2 | 4 | ✅ |
-| [`peak_marker`](configuration.md#peak_marker) | ✅ | · | · | · | ✅ | ✅ | ✅ | `{"window":7200,"type":"line","opacity":0.8,"line_size":"1px"}` | 12 | 4 | 13 | 13 | ✅ |
-| [`percent`](configuration.md#percent) | · | ✅ | · | ✅ | · | · | · | — | 17 | 5 | 17 | 12 | ✅ |
-| [`reverse`](configuration.md#reverse) | ✅ | · | ✅ | · | · | ✅ | ✅ | `false` | 6 | 2 | 3 | 1 | ✅ |
-| [`reverse_secondary_info_row`](configuration.md#reverse_secondary_info_row) | ✅ | ✅ | ✅ | ✅ | · | ✅ | ✅ | `false` | 3 | 2 | 2 | 3 | ✅ |
-| [`rows`](configuration.md#rows) | · | · | · | · | · | ✅ | · | — | 10 | 1 | 0 | 14 | ⚠️ Demo |
-| [`secondary`](configuration.md#secondary) | · | ✅ | · | ✅ | · | · | · | — | 8 | 7 | 13 | 4 | ✅ |
-| [`state_content`](configuration.md#state_content) | ✅ | · | ✅ | · | · | ✅ | ✅ | — | 3 | 2 | 8 | 3 | ✅ |
-| [`status_label`](configuration.md#status_label) | ✅ | ✅ | · | · | · | ✅ | · | `{"position":"right","color_source":"bar"}` | 7 | 3 | 29 | 4 | ✅ |
-| [`tap_action`](configuration.md#xyz_action) | ✅ | ✅ | ✅ | ✅ | · | ✅ | ✅ | `{"action":"more-info"}` | 3 | 5 | 15 | 1 | ✅ |
-| [`text_shadow`](configuration.md#text_shadow) | ✅ | ✅ | · | · | · | ✅ | ✅ | `false` | 2 | 1 | 2 | 2 | ✅ |
-| [`theme`](configuration.md#theme) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — | 17 | 19 | 134 | 11 | ✅ |
-| [`trend_indicator`](configuration.md#trend_indicator) | ✅ | ✅ | · | · | · | ✅ | · | `{"basis":"average","threshold":0,"colored":false}` | 7 | 3 | 6 | 6 | ✅ |
-| [`unit`](configuration.md#unit) | ✅ | · | ✅ | · | · | ✅ | ✅ | — | 17 | 8 | 22 | 16 | ✅ |
-| [`unit_position`](configuration.md#unit_position) | ✅ | · | ✅ | · | · | ✅ | ✅ | `after` | 2 | 2 | 2 | 1 | ✅ |
-| [`unit_spacing`](configuration.md#unit_spacing) | ✅ | · | ✅ | · | · | ✅ | ✅ | `auto` | 2 | 3 | 5 | 2 | ✅ |
-| [`value_compact`](configuration.md#value_compact) | ✅ | · | ✅ | · | · | ✅ | ✅ | `false` | 2 | 2 | 3 | 1 | ✅ |
-| [`value_sign`](configuration.md#value_sign) | ✅ | · | ✅ | · | · | ✅ | ✅ | `false` | 2 | 2 | 2 | 1 | ✅ |
-| [`watermark`](configuration.md#watermark) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | `{"low":20,"high":80,"line_size":"1px","as":"auto"}` | 15 | 7 | 25 | 10 | ✅ |
+| [`peak_marker`](configuration.md#peak_marker) | ✅ | · | · | · | ✅ | ✅ | ✅ | `{"window":7200,"type":"line","opacity":0.8,"line_size":"1px"}` | 20 | 4 | 13 | 13 | ✅ |
+| [`percent`](configuration.md#percent) | · | ✅ | · | ✅ | · | · | · | — | 25 | 5 | 17 | 13 | ✅ |
+| [`reverse`](configuration.md#reverse) | ✅ | · | ✅ | · | · | ✅ | ✅ | `false` | 9 | 2 | 3 | 1 | ✅ |
+| [`reverse_secondary_info_row`](configuration.md#reverse_secondary_info_row) | ✅ | ✅ | ✅ | ✅ | · | ✅ | ✅ | `false` | 4 | 2 | 2 | 3 | ✅ |
+| [`rows`](configuration.md#rows) | · | · | · | · | · | ✅ | · | — | 20 | 1 | 0 | 14 | ⚠️ Demo |
+| [`secondary`](configuration.md#secondary) | · | ✅ | · | ✅ | · | · | · | — | 13 | 7 | 13 | 5 | ✅ |
+| [`state_content`](configuration.md#state_content) | ✅ | · | ✅ | · | · | ✅ | ✅ | — | 4 | 2 | 8 | 3 | ✅ |
+| [`status_label`](configuration.md#status_label) | ✅ | ✅ | · | · | · | ✅ | · | `{"position":"right","color_source":"bar"}` | 11 | 3 | 29 | 4 | ✅ |
+| [`tap_action`](configuration.md#xyz_action) | ✅ | ✅ | ✅ | ✅ | · | ✅ | ✅ | `{"action":"more-info"}` | 5 | 5 | 15 | 1 | ✅ |
+| [`text_effect`](configuration.md#text_effect) | ✅ | ✅ | · | · | · | ✅ | ✅ | `none` | 8 | 1 | 9 | 6 | ✅ |
+| [`text_shadow`](configuration.md#text_shadow) ¹ | 📝 | 📝 | · | · | · | 📝 | 📝 | `false` | 3 | 0 | 0 | 4 | ⚠️ Examples, Demo |
+| [`theme`](configuration.md#theme) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | — | 38 | 19 | 135 | 13 | ✅ |
+| [`trend_indicator`](configuration.md#trend_indicator) | ✅ | ✅ | · | · | · | ✅ | · | `{"basis":"average","threshold":0,"colored":false}` | 15 | 3 | 6 | 6 | ✅ |
+| [`unit`](configuration.md#unit) | ✅ | · | ✅ | · | · | ✅ | ✅ | — | 25 | 8 | 22 | 16 | ✅ |
+| [`unit_position`](configuration.md#unit_position) | ✅ | · | ✅ | · | · | ✅ | ✅ | `after` | 3 | 2 | 2 | 1 | ✅ |
+| [`unit_spacing`](configuration.md#unit_spacing) | ✅ | · | ✅ | · | · | ✅ | ✅ | `auto` | 3 | 3 | 5 | 2 | ✅ |
+| [`value_compact`](configuration.md#value_compact) | ✅ | · | ✅ | · | · | ✅ | ✅ | `false` | 3 | 2 | 3 | 1 | ✅ |
+| [`value_sign`](configuration.md#value_sign) | ✅ | · | ✅ | · | · | ✅ | ✅ | `false` | 3 | 2 | 2 | 1 | ✅ |
+| [`watermark`](configuration.md#watermark) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | `{"low":20,"high":80,"line_size":"1px","as":"auto"}` | 26 | 7 | 25 | 11 | ✅ |
 
 ## Notes
 
@@ -110,6 +112,8 @@ _Status_ is ✅ when all four counts are above zero, else ⚠️ and the zeros.
 
 - `disable_unit`: Deprecated: migrates to `hide: [unit]`. Kept in the schema
   only for a Jinja `hide`, which the migration can't edit.
+- `text_shadow`: Deprecated: migrates to `text_effect: shadow`; no editor
+  field writes it.
 - `layout`: Badge, Badge Template and Feature accept a single value: nothing
   to choose.
 - `bar_aligned`: Card and Template take a group name, written in YAML. The

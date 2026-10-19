@@ -91,7 +91,7 @@
         "color_source": "Origine del colore",
         "toggle": "Etichetta di stato"
       },
-      "text_shadow": "Aggiungi ombra al testo",
+      "text_effect": "Effetto testo",
       "trend_indicator": {
         "window_toggle": "Usa una finestra temporale",
         "basis": "Base di confronto",
@@ -202,6 +202,14 @@
         "small": "Piccola",
         "xlarge": "Extra grande",
         "xsmall": "Molto piccolo"
+      },
+      "text_effect": {
+        "none": "Nessuno",
+        "shadow": "Ombra",
+        "halo": "Alone",
+        "outline": "Contorno",
+        "plate": "Targa",
+        "contrast": "Contrasto automatico"
       },
       "bar_stack_mode": {
         "net": "Netto",

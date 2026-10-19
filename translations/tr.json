@@ -91,7 +91,7 @@
         "color_source": "Renk kaynağı",
         "toggle": "Durum etiketi"
       },
-      "text_shadow": "Metne gölge ekle",
+      "text_effect": "Metin efekti",
       "trend_indicator": {
         "window_toggle": "Zaman penceresi kullan",
         "basis": "Karşılaştırma temeli",
@@ -202,6 +202,14 @@
         "small": "Küçük",
         "xlarge": "Çok büyük",
         "xsmall": "Ekstra küçük"
+      },
+      "text_effect": {
+        "none": "Yok",
+        "shadow": "Gölge",
+        "halo": "Hale",
+        "outline": "Çerçeve",
+        "plate": "Plaka",
+        "contrast": "Otomatik kontrast"
       },
       "bar_stack_mode": {
         "net": "Net",

@@ -17,7 +17,7 @@ import '../../../src/index.js';
 import '../../../src/editor/entry.js';
 
 type EditorEl = HTMLElement & { setConfig?: (c: unknown) => void; hass?: unknown };
-type FieldEl = HTMLElement & { value?: unknown };
+type FieldEl = HTMLElement & { value?: unknown; placeholder?: unknown };
 type SentConfig = Record<string, unknown>;
 
 const CARD_EDITOR = 'entity-progress-card-editor';
@@ -58,7 +58,7 @@ const mountEditor = async (tag: string, config: Record<string, unknown>) => {
   return { field, write };
 };
 
-describe('min_value under center_zero shows what the card will draw from', () => {
+describe('an unset min_value hints what the card will draw from', () => {
   const cases: { label: string; config: Record<string, unknown>; min: number }[] = [
     { label: 'mirrors a numeric max_value', config: { center_zero: true, max_value: 30 }, min: -30 },
     {
@@ -74,7 +74,8 @@ describe('min_value under center_zero shows what the card will draw from', () =>
     for (const { label, config, min } of cases) {
       test(`${tag}: ${label}`, async () => {
         const { field } = await mountEditor(tag, config);
-        assert.equal(field('min_value').value, min);
+        assert.equal(field('min_value').value, '');
+        assert.equal(field('min_value').placeholder, String(min));
       });
     }
   }
@@ -151,7 +152,7 @@ describe('an emptied field unsets its option', () => {
 // An option that loses its effect leaves the YAML but not the session: parked,
 // and back as soon as it has an effect again (schema.ts's INERT_OPTIONS).
 describe('an option with no effect is parked, not lost', () => {
-  const TEXT_SHADOW = 'text_shadow';
+  const TEXT_EFFECT = 'text_effect';
   const POSITION = 'bar_position';
 
   test('a theme taken away and put back brings its colour mode back', async () => {
@@ -166,10 +167,14 @@ describe('an option with no effect is parked, not lost', () => {
     assert.equal((await write('theme', PRESET)).bar_color_mode, SEGMENT);
   });
 
-  test('overlay → default → overlay keeps text_shadow', async () => {
-    const { write } = await mountEditor(CARD_EDITOR, { type: CARD_TYPE, [POSITION]: 'overlay', [TEXT_SHADOW]: true });
-    assert.equal(TEXT_SHADOW in (await write(POSITION, 'default')), false);
-    assert.equal((await write(POSITION, 'overlay')).text_shadow, true);
+  test('overlay → default → overlay keeps text_effect', async () => {
+    const { write } = await mountEditor(CARD_EDITOR, {
+      type: CARD_TYPE,
+      [POSITION]: 'overlay',
+      [TEXT_EFFECT]: 'shadow',
+    });
+    assert.equal(TEXT_EFFECT in (await write(POSITION, 'default')), false);
+    assert.equal((await write(POSITION, 'overlay')).text_effect, 'shadow');
   });
 
   test('compact_below holds on a card that never wrote its layout', async () => {
@@ -220,15 +225,15 @@ describe('a density takes over what shares its row', () => {
 describe('an option the card would reset is not offered', () => {
   const tree = EditorFactory.build({ template: false, badge: false }) as unknown as FieldTree;
   const shows = (config: Record<string, unknown>, field: string) => visibleFields(tree, config).has(field);
-  const TEXT_SHADOW = 'text_shadow';
+  const TEXT_EFFECT = 'text_effect';
   const MAX_WIDTH = 'bar_max_width_toggle';
 
-  test('overlay and background decide bar_single_line and text_shadow', () => {
+  test('overlay and background decide bar_single_line and text_effect', () => {
     assert.equal(shows({ bar_position: 'overlay' }, 'bar_single_line'), true);
-    assert.equal(shows({ bar_position: 'overlay' }, TEXT_SHADOW), true);
+    assert.equal(shows({ bar_position: 'overlay' }, TEXT_EFFECT), true);
     assert.equal(shows({ bar_position: BACKGROUND }, 'bar_single_line'), false);
-    assert.equal(shows({ bar_position: BACKGROUND }, TEXT_SHADOW), true);
-    assert.equal(shows({ bar_position: 'default' }, TEXT_SHADOW), false);
+    assert.equal(shows({ bar_position: BACKGROUND }, TEXT_EFFECT), true);
+    assert.equal(shows({ bar_position: 'default' }, TEXT_EFFECT), false);
   });
 
   test('bar_size is gone where the position sets the thickness', () => {
@@ -267,14 +272,18 @@ describe('Migrate config clears what made it appear', () => {
   const MIGRATE = '_migrate_config';
 
   test('an option without effect shows the button, and the click clears it', async () => {
-    const { field, write } = await mountEditor(CARD_EDITOR, { type: CARD_TYPE, text_shadow: true });
-    assert.notEqual(field(MIGRATE).style.display, 'none', 'text_shadow off overlay should offer a clean-up');
-    assert.equal('text_shadow' in (await write(MIGRATE, true)), false);
+    const { field, write } = await mountEditor(CARD_EDITOR, { type: CARD_TYPE, text_effect: 'shadow' });
+    assert.notEqual(field(MIGRATE).style.display, 'none', 'text_effect off overlay should offer a clean-up');
+    assert.equal('text_effect' in (await write(MIGRATE, true)), false);
     assert.equal(field(MIGRATE).style.display, 'none');
   });
 
   test('a clean card offers nothing to migrate', async () => {
-    const { field } = await mountEditor(CARD_EDITOR, { type: CARD_TYPE, bar_position: 'overlay', text_shadow: true });
+    const { field } = await mountEditor(CARD_EDITOR, {
+      type: CARD_TYPE,
+      bar_position: 'overlay',
+      text_effect: 'shadow',
+    });
     assert.equal(field(MIGRATE).style.display, 'none');
   });
 

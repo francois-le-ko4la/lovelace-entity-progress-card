@@ -91,7 +91,7 @@
         "color_source": "顏色來源",
         "toggle": "狀態標籤"
       },
-      "text_shadow": "文字陰影",
+      "text_effect": "文字效果",
       "trend_indicator": {
         "window_toggle": "使用時間窗口",
         "basis": "比較基準",
@@ -202,6 +202,14 @@
         "small": "小",
         "xlarge": "特大",
         "xsmall": "超小"
+      },
+      "text_effect": {
+        "none": "無",
+        "shadow": "陰影",
+        "halo": "光暈",
+        "outline": "描邊",
+        "plate": "底板",
+        "contrast": "自動對比"
       },
       "bar_stack_mode": {
         "net": "淨值",

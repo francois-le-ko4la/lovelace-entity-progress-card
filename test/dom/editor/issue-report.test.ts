@@ -47,6 +47,36 @@ describe('the editor header copies an issue report', () => {
     assert.match(copied, /\ndisable_unit: true {2}# deprecated\n/);
   });
 
+  test("the range the preview draws from closes the YAML, only inside the editor's dialog", async () => {
+    const copy = async (el: EditorEl) => {
+      const toast = new Promise<unknown>((resolve) => {
+        el.addEventListener('hass-notification', resolve, { once: true });
+      });
+      bugIconOf(el)?.click();
+      await toast;
+      return navigator.clipboard.readText();
+    };
+    const alone = await mountEditor('entity-progress-card-editor', { type: 'custom:entity-progress-card' });
+    assert.doesNotMatch(await copy(alone), /drawn from/);
+
+    const dialog = document.createElement('hui-dialog-edit-card');
+    const root = dialog.attachShadow({ mode: 'open' });
+    document.body.appendChild(dialog);
+    const preview = document.createElement('entity-progress-card') as HTMLElement & {
+      setConfig?: (c: unknown) => void;
+      hass?: unknown;
+    };
+    preview.setConfig?.({ type: 'custom:entity-progress-card', entity: TEST_ENTITY });
+    root.appendChild(preview);
+    preview.hass = makeHass();
+    const editor = document.createElement('entity-progress-card-editor') as EditorEl;
+    editor.hass = makeHass();
+    editor.setConfig?.({ type: 'custom:entity-progress-card', entity: TEST_ENTITY });
+    root.appendChild(editor);
+    await flushFrames();
+    assert.match(await copy(editor), /\n# drawn from: min 0 · max 100 · value 42 · 42%\n```\n$/);
+  });
+
   test('a Multi offers it, one of its rows does not', async () => {
     const multi = await mountEditor('entity-progress-multi-card-editor', {
       type: 'custom:entity-progress-multi-card',

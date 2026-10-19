@@ -20,6 +20,7 @@ import {
   ICON_ANIMATIONS,
   DENSITY_MODES,
   ALERT_HIGHLIGHTS,
+  TEXT_EFFECTS,
   ALERT_ANIMATIONS,
   BAR_STACK_MODES,
   BADGE_DELETED_FIELDS,
@@ -149,6 +150,7 @@ const YamlSchemaFactory = {
           'trend_indicator',
           'status_label',
           'text_shadow',
+          'text_effect',
           'hide',
           'name_info',
           'custom_info',
@@ -285,7 +287,9 @@ const YamlSchemaFactory = {
         // Mutually exclusive with trend_indicator (HAS_EFFECT.trendIndicator):
         // both occupy the same top corner - position picks which side.
         status_label: types.statusLabel(),
+        // Deprecated: _migrateTextShadow turns it into text_effect.
         text_shadow: types.optionalBooleanWithDefault(false),
+        text_effect: types.enumsWithDefault(TEXT_EFFECTS, 'none'),
 
         // ─── Visibility & Content ───────────────────────────────────────────
         hide: types.jinjaOrArrayWithValidatedElem(HIDE_TARGETS),
@@ -444,6 +448,7 @@ const YamlSchemaFactory = {
         'trend_indicator',
         'status_label',
         'text_shadow',
+        'text_effect',
         'hide',
         'badge_icon',
         'badge_color',

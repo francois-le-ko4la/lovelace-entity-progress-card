@@ -91,7 +91,7 @@
         "color_source": "रंग स्रोत",
         "toggle": "स्थिति लेबल"
       },
-      "text_shadow": "टेक्स्ट में छाया जोड़ें",
+      "text_effect": "टेक्स्ट प्रभाव",
       "trend_indicator": {
         "window_toggle": "समय विंडो का उपयोग करें",
         "basis": "तुलना आधार",
@@ -202,6 +202,14 @@
         "small": "छोटी",
         "xlarge": "अतिरिक्त बड़ी",
         "xsmall": "अतिरिक्त छोटा"
+      },
+      "text_effect": {
+        "none": "कोई नहीं",
+        "shadow": "छाया",
+        "halo": "हेलो",
+        "outline": "आउटलाइन",
+        "plate": "प्लेट",
+        "contrast": "स्वतः कंट्रास्ट"
       },
       "bar_stack_mode": {
         "net": "नेट",

@@ -91,7 +91,7 @@
         "color_source": "Spalvos šaltinis",
         "toggle": "Būsenos etiketė"
       },
-      "text_shadow": "Pridėti teksto šešėlį",
+      "text_effect": "Teksto efektas",
       "trend_indicator": {
         "window_toggle": "Naudoti laiko langą",
         "basis": "Palyginimo pagrindas",
@@ -202,6 +202,14 @@
         "small": "Maža",
         "xlarge": "Labai didelė",
         "xsmall": "Ypač mažas"
+      },
+      "text_effect": {
+        "none": "Nėra",
+        "shadow": "Šešėlis",
+        "halo": "Aureolė",
+        "outline": "Kontūras",
+        "plate": "Plokštė",
+        "contrast": "Automatinis kontrastas"
       },
       "bar_stack_mode": {
         "net": "Grynasis",

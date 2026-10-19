@@ -91,7 +91,7 @@
         "color_source": "Nguồn màu",
         "toggle": "Nhãn trạng thái"
       },
-      "text_shadow": "Thêm bóng cho văn bản",
+      "text_effect": "Hiệu ứng văn bản",
       "trend_indicator": {
         "window_toggle": "Dùng cửa sổ thời gian",
         "basis": "Cơ sở so sánh",
@@ -202,6 +202,14 @@
         "small": "Nhỏ",
         "xlarge": "Rất lớn",
         "xsmall": "Cực nhỏ"
+      },
+      "text_effect": {
+        "none": "Không",
+        "shadow": "Đổ bóng",
+        "halo": "Quầng sáng",
+        "outline": "Viền chữ",
+        "plate": "Nền chữ",
+        "contrast": "Tương phản tự động"
       },
       "bar_stack_mode": {
         "net": "Ròng",
