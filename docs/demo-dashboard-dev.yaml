@@ -8314,12 +8314,12 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: '✨ bar_color_mode: segment / rainbow_full (Cookbook - visual effects)'
+            heading: '✨ bar_color_mode: segment (Cookbook - visual effects)'
             heading_style: title
           - type: markdown
             content: |
               {% raw %}
-              📁 `effect-segment.png` (left) / `effect-rainbow.gif` (right)
+              📁 `effect-segment.png`
               {% endraw %}
             grid_options:
               columns: 12
@@ -8330,6 +8330,19 @@ views:
             theme: temperature
             max_value: 40
             bar_color_mode: segment
+      - type: grid
+        cards:
+          - type: heading
+            heading: '✨ bar_color_mode: rainbow_full (Cookbook - visual effects)'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              📁 `effect-rainbow-full.png`
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 1
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_temperature
             name: rainbow_full

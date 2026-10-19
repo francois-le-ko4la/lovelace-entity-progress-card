@@ -169,7 +169,7 @@ then declare it as a resource:
    <!-- markdownlint-disable MD013 -->
    <picture>
      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/card-picker-dark-6af7b9.png">
-     <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/card-picker-light-44464a.png" alt="Entity-first card picker" width="700"/>
+     <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/card-picker-light-20ef0c.png" alt="Entity-first card picker" width="700"/>
    </picture>
    <!-- markdownlint-enable MD013 -->
 
@@ -185,7 +185,7 @@ Assistant's own design tokens.
 <!-- markdownlint-disable MD013 -->
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/editor-dark-72b347.png">
-  <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/editor-light-36372c.png" alt="Editor" width="700"/>
+  <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/editor-light-9b37ad.png" alt="Editor" width="700"/>
 </picture>
 <!-- markdownlint-enable MD013 -->
 

@@ -228,7 +228,7 @@ your interface with minimal effort.
     srcset="images/theme-battery-adaptive-dark-9509c1.png">
   <img src="images/theme-battery-adaptive-light-b70ee1.png"
     alt="theme: battery_adaptive example"
-    height="84"/>
+    width="750"/>
 </picture>
 
 A virtual theme, not a fixed set of zones: it checks whether the entity is
@@ -268,7 +268,7 @@ theme: battery_adaptive
     srcset="images/theme-critical-low-dark-dbf8b1.png">
   <img src="images/theme-critical-low-light-6df2e8.png"
     alt="theme: critical_when_low example"
-    height="320"/>
+    width="750"/>
 </picture>
 
 The "Critical when Low" theme targets values that only become a problem near
@@ -318,7 +318,7 @@ theme: critical_when_low
     srcset="images/theme-optimal-low-dark-c676a3.png">
   <img src="images/theme-optimal-low-light-7b1203.png"
     alt="theme: optimal_when_low example"
-    height="320"/>
+    width="750"/>
 </picture>
 
 The "Optimal when Low" parameter is particularly valuable for monitoring systems
@@ -368,7 +368,7 @@ theme: optimal_when_low
     srcset="images/theme-critical-high-dark-a473f3.png">
   <img src="images/theme-critical-high-light-d40664.png"
     alt="theme: critical_when_high example"
-    height="320"/>
+    width="750"/>
 </picture>
 
 The mirror of `critical_when_low`: a metric that is fine across a wide low range
@@ -416,7 +416,7 @@ theme: critical_when_high
     srcset="images/theme-optimal-high-dark-95f174.png">
   <img src="images/theme-optimal-high-light-ea6d23.png"
     alt="theme: optimal_when_high example"
-    height="320"/>
+    width="750"/>
 </picture>
 
 The "Optimal when High" parameter is particularly useful in cases where the
@@ -468,7 +468,7 @@ theme: optimal_when_high
     srcset="images/theme-critical-extreme-dark-c8644b.png">
   <img src="images/theme-critical-extreme-light-d2d29f.png"
     alt="theme: critical_when_extreme example"
-    height="320"/>
+    width="750"/>
 </picture>
 
 The combination of `critical_when_low` and `critical_when_high`: both ends of
@@ -520,7 +520,7 @@ theme: critical_when_extreme
     srcset="images/theme-critical-extreme-center-dark-466609.png">
   <img src="images/theme-critical-extreme-center-light-0c848a.png"
     alt="theme: critical_when_extreme_center example"
-    height="84"/>
+    width="750"/>
 </picture>
 
 `critical_when_extreme`'s own shape, but built for
@@ -578,7 +578,7 @@ theme: critical_when_extreme_center
     srcset="images/theme-light-dark-d902d7.png">
   <img src="images/theme-light-light-347fff.png"
     alt="theme: light example"
-    height="320"/>
+    width="750"/>
 </picture>
 
 The `light` configuration, designed by
@@ -630,7 +630,7 @@ icon_tap_action:
     srcset="images/theme-temperature-dark-6d4d36.png">
   <img src="images/theme-temperature-light-8e7bfe.png"
     alt="theme: temperature example"
-    height="320"/>
+    width="750"/>
 </picture>
 
 We can use `min_value` and `max_value` to define the range of values we want to
@@ -689,7 +689,7 @@ icon_tap_action:
     srcset="images/theme-humidity-dark-40868c.png">
   <img src="images/theme-humidity-light-1d9e3b.png"
     alt="theme: humidity example"
-    height="320"/>
+    width="750"/>
 </picture>
 
 The `humidity` configuration defines how different humidity levels are
@@ -743,7 +743,7 @@ icon_tap_action:
     srcset="images/theme-voc-dark-a31be6.png">
   <img src="images/theme-voc-light-3eb117.png"
     alt="theme: voc example"
-    height="320"/>
+    width="750"/>
 </picture>
 
 The `voc` configuration defines how different levels of volatile organic
@@ -808,7 +808,7 @@ icon_tap_action:
     srcset="images/theme-pm-dark-2e34bc.png">
   <img src="images/theme-pm-light-cbd961.png"
     alt="theme: pm25 example"
-    height="320"/>
+    width="750"/>
 </picture>
 
 The `pm25` configuration defines how different concentrations of fine
