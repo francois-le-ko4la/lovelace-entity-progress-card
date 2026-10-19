@@ -28,6 +28,9 @@ concurrency:
   group: validate-js-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   # The job list is derived from the `check:github` npm script, never written
   # out here - a check added to the gate cannot be silently missing from CI.
@@ -38,8 +41,8 @@ jobs:
       checks: ${{ steps.derive.outputs.checks }}
       chain: ${{ steps.derive.outputs.chain }}
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: '24'
       - id: derive
@@ -57,8 +60,8 @@ jobs:
       matrix:
         check: ${{ fromJson(needs.matrix.outputs.checks) }}
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: '24'
           cache: 'npm'
@@ -72,8 +75,8 @@ jobs:
     needs: matrix
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: '24'
           cache: 'npm'

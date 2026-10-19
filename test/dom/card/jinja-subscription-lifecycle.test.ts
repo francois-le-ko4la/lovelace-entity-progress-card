@@ -36,8 +36,8 @@ const sleep = (ms: number) =>
   });
 
 const NAME_INFO = 'name_info';
-const A = "{{ 'a' }}";
-const B = "{{ 'b' }}";
+const TEMPLATE_A = "{{ 'a' }}";
+const TEMPLATE_B = "{{ 'b' }}";
 
 const mount = async (config: Record<string, unknown>, subscribe: (template: string) => Promise<() => void>) => {
   const sent: string[] = [];
@@ -94,23 +94,24 @@ const mount = async (config: Record<string, unknown>, subscribe: (template: stri
 };
 
 const ok = () => Promise.resolve(() => undefined);
-const refused = () => Promise.reject({ code: 'template_error', message: 'bad template' });
+const refused = () => Promise.reject(Object.assign(new Error('bad template'), { code: 'template_error' }));
 
 describe('a refused template', () => {
   test('is not sent again until it changes', async () => {
     mock.method(console, 'warn', () => undefined);
-    const { sent, refresh, reconfigure } = await mount({ [NAME_INFO]: A }, refused);
-    assert.deepEqual(sent, [A]);
+    const { sent, refresh, reconfigure } = await mount({ [NAME_INFO]: TEMPLATE_A }, refused);
+    assert.deepEqual(sent, [TEMPLATE_A]);
     await refresh();
-    assert.deepEqual(sent, [A], 'an unchanged refused template must not be re-sent');
-    await reconfigure({ [NAME_INFO]: B });
-    assert.deepEqual(sent, [A, B], 'editing the template lifts the block');
+    assert.deepEqual(sent, [TEMPLATE_A], 'an unchanged refused template must not be re-sent');
+    await reconfigure({ [NAME_INFO]: TEMPLATE_B });
+    assert.deepEqual(sent, [TEMPLATE_A, TEMPLATE_B], 'editing the template lifts the block');
     mock.restoreAll();
   });
 
   test('a transport failure stays retryable', async () => {
     mock.method(console, 'warn', () => undefined);
-    const { sent, refresh } = await mount({ [NAME_INFO]: A }, () => Promise.reject(new Error('socket dropped')));
+    const dropped = () => Promise.reject(new Error('socket dropped'));
+    const { sent, refresh } = await mount({ [NAME_INFO]: TEMPLATE_A }, dropped);
     const before = sent.length;
     await refresh();
     assert.ok(sent.length > before, 'a transport error must be retried on the next pass');
@@ -130,7 +131,7 @@ describe('a refused template', () => {
 describe('subscription upkeep', () => {
   test('a field removed from the config drops its subscription', async () => {
     let unsubscribed = 0;
-    const { reconfigure } = await mount({ [NAME_INFO]: A }, () =>
+    const { reconfigure } = await mount({ [NAME_INFO]: TEMPLATE_A }, () =>
       Promise.resolve(() => {
         unsubscribed++;
       }),
@@ -141,17 +142,17 @@ describe('subscription upkeep', () => {
   });
 
   test('resubscribing all fields sends an identical template again', async () => {
-    const { el, sent } = await mount({ [NAME_INFO]: A }, ok);
+    const { el, sent } = await mount({ [NAME_INFO]: TEMPLATE_A }, ok);
     el._jinjaSubscriptions?.resubscribeAll();
-    assert.deepEqual(sent, [A, A]);
+    assert.deepEqual(sent, [TEMPLATE_A, TEMPLATE_A]);
   });
 
   test('disconnected then ready subscribes every field again', async () => {
-    const { hass, sent } = await mount({ [NAME_INFO]: A }, ok);
+    const { hass, sent } = await mount({ [NAME_INFO]: TEMPLATE_A }, ok);
     hass.connection.emit('disconnected');
     hass.connection.emit('ready');
     await flushFrames();
     await sleep(TRAILING_PASS_MS);
-    assert.deepEqual(sent, [A, A]);
+    assert.deepEqual(sent, [TEMPLATE_A, TEMPLATE_A]);
   });
 });

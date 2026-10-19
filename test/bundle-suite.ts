@@ -24,6 +24,8 @@ import { assertUndefined } from './helpers.js';
 // happens in src/index.ts, which this file deliberately never loads).
 import { META, VERSION } from '../src/utils/parameters.js';
 
+const DIAGNOSTIC_HEADER = /[=]{3} Entity Progress Card — diagnostic [=]{3}/u;
+
 type CardClass = CustomElementConstructor & { getConfigElement?: () => Promise<HTMLElement | null> };
 
 const describeBundle = (file: string) => {
@@ -74,11 +76,11 @@ const describeBundle = (file: string) => {
       };
       assert.equal(helper.version, VERSION);
       assert.match(helper.help(), /EPB\.doctor\.audit\(\)/);
-      assert.match(helper.doctor.dump(), /=== Entity Progress Card — diagnostic ===/u);
+      assert.match(helper.doctor.dump(), DIAGNOSTIC_HEADER);
       assert.equal(typeof helper.doctor.audit, 'function');
       assert.equal(Object.getOwnPropertyDescriptor(window, 'EPB')?.writable, false);
       const legacy = globals.EPB_DIAG as { dump: () => string };
-      assert.match(legacy.dump(), /=== Entity Progress Card — diagnostic ===/u);
+      assert.match(legacy.dump(), DIAGNOSTIC_HEADER);
     });
 
     // The editor reads its shared modules off this table: nothing may swap it.

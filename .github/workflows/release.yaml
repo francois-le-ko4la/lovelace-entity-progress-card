@@ -9,12 +9,12 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           # Full history: the preflight below resolves origin/main to prove the
           # tag sits on it, which a shallow checkout makes impossible.
           fetch-depth: 0
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: '24'
           cache: 'npm'
@@ -29,7 +29,7 @@ jobs:
       - name: Full pre-release gate
         run: npm run check:github
       - name: Upload to Release
-        uses: svenstaro/upload-release-action@v2
+        uses: svenstaro/upload-release-action@29e53e917877a24fad85510ded594ab3c9ca12de # v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           # The bundle plus the editor file and its per-language translation

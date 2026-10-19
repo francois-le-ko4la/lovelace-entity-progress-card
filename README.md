@@ -1,20 +1,18 @@
 # Lovelace Entity Progress Card
 
-[![Home Assistant][ha-badge]][repo-link] [![JavaScript][js-badge]][repo-link]
+[![Home Assistant][ha-badge]][repo-link] [![HACS Custom][hacs-badge]][hacs-link]
 [![Latest stable release][release-badge]][release-link]
-[![License][license-badge]][GPL-3.0 license] [![CI][ci-badge]][ci-link]
-[![HACS Custom][hacs-badge]][hacs-link]
-[![HACS validation][hacs-ci-badge]][hacs-ci-link]
-[![DeepSource][deepsource-badge]][deepsource-link]
+[![License][license-badge]][GPL-3.0 license]
 [![Discord][discord-badge]][discord-link]
 
 A modern Entity progress card for Home Assistant's Lovelace UI.
-
+<div>
 <!-- markdownlint-disable-next-line MD013 -->
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/thumbnail-c81470.png" alt="thumbnail" width="100%" style="max-width: 1200px;"/>
-
+<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/thumbnail-c81470.png" alt="thumbnail" width="100%" style="max-width: 1200px;" align="top" />
 <!-- markdownlint-disable-next-line MD013 -->
 <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/showcase-loop-363fce.gif" alt="Entity Progress Card Showcase" width="100%" style="max-width: 1200px;" />
+</div>
+<br />
 
 > Thousands of Home Assistant dashboards run this card, every day. On a
 > wall-mounted tablet. A phone. A screen that never turns off.
@@ -98,8 +96,6 @@ A modern Entity progress card for Home Assistant's Lovelace UI.
 |      `2024.0+`      |         `98+`          |       `98+`        |          `94+`           |        `15.4+`         |        `84+`         |
 | Full visual effects |         `111+`         |       `111+`       |          `113+`          |        `16.2+`         |        `97+`         |
 
-> [!IMPORTANT]
->
 > Ensure your Home Assistant instance is up to date to support this custom card.
 >
 > The first row is the functional minimum — the card loads and works. A handful
@@ -149,6 +145,8 @@ then declare it as a resource:
 - Type: `JavaScript Module`
 - Save, then reload the browser cache (**`CTRL`** + **`F5`** or clear cache)
 
+</details>
+
 > [!NOTE]
 >
 > The release also carries the visual editor, `entity-progress-card-editor.js`,
@@ -157,8 +155,6 @@ then declare it as a resource:
 > without the editor, Home Assistant offers its YAML editor instead; without the
 > language file, the visual editor falls back to English. The cards themselves
 > work and stay translated either way, and HACS brings these files down for you.
-
-</details>
 
 ## 📝 Usage
 
@@ -291,8 +287,8 @@ We strive to make this card as inclusive as possible, with support for:
 | 🇧🇷                                                                                                                                                            | pt-BR   | Portuguese / Português (Brazil)                   |
 | 🇷🇴                                                                                                                                                            | ro      | Romanian / Română                                 |
 | 🇷🇺                                                                                                                                                            | ru      | Russian / Русский                                 |
-| RS                                                                                                                                                            | sr      | Serbian (Cyrillic) / Српски (Ћирилица)            |
-| RS                                                                                                                                                            | sr-Latn | Serbian (Latin) / Srpski (Latinica)               |
+| 🇷🇸                                                                                                                                                            | sr      | Serbian (Cyrillic) / Српски (Ћирилица)            |
+| 🇷🇸                                                                                                                                                            | sr-Latn | Serbian (Latin) / Srpski (Latinica)               |
 | 🇸🇰                                                                                                                                                            | sk      | Slovak / Slovenský                                |
 | 🇸🇮                                                                                                                                                            | sl      | Slovene / Slovenščina                             |
 | 🇸🇪                                                                                                                                                            | sv      | Swedish / Svenska                                 |
@@ -332,6 +328,26 @@ compatibility.
 
 Need help? Find solutions and important updates in the [Errors, Deprecations &
 Troubleshooting Guide].
+
+## 🧪 Code quality
+
+[![CI][ci-badge]][ci-link] [![HACS validation][hacs-ci-badge]][hacs-ci-link]
+[![DeepSource][deepsource-badge]][deepsource-link]
+[![Dependabot][dependabot-badge]][dependabot-link]
+[![TypeScript strict][ts-badge]][ts-link]
+[![Code style: Prettier][prettier-badge]][prettier-link]
+
+Every push runs the lint, type-check, tests and build; releases run the same
+gate. [DeepSource](https://deepsource.com) reviews the code, and Dependabot
+keeps the GitHub Actions up to date.
+
+**Tooling**: [TypeScript][ts-link] · [esbuild](https://esbuild.github.io) ·
+[ESLint](https://eslint.org) with
+[SonarJS](https://github.com/SonarSource/SonarJS) · [Prettier][prettier-link] ·
+[knip](https://knip.dev) ·
+[markdownlint](https://github.com/DavidAnson/markdownlint) ·
+[happy-dom](https://github.com/capricorn86/happy-dom) ·
+[es-check](https://github.com/yowainwright/es-check)
 
 ## 👥 Contributing
 
@@ -401,8 +417,6 @@ This project is licensed under the [GPL-3.0 license].
 
 [ha-badge]:
   https://img.shields.io/badge/Home%20Assistant-blue?style=flat&logo=homeassistant&logoColor=white&color=blue
-[js-badge]:
-  https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=Javascript&logoColor=black&color=%23F7DF1E
 [discord-badge]:
   https://img.shields.io/badge/Discord-%235865F2?style=flat&logo=Discord&logoColor=white&color=%235865F2
 [hacs-badge]: https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=flat
@@ -416,6 +430,12 @@ This project is licensed under the [GPL-3.0 license].
   https://img.shields.io/github/actions/workflow/status/francois-le-ko4la/lovelace-entity-progress-card/validate-hacs.yaml?label=HACS%20validation&style=flat
 [deepsource-badge]:
   https://app.deepsource.com/gh/francois-le-ko4la/lovelace-entity-progress-card.svg/?label=active+issues
+[dependabot-badge]:
+  https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fraw.githubusercontent.com%2Ffrancois-le-ko4la%2Flovelace-entity-progress-card%2Fmain%2F.github%2Fdependabot.yml&query=%24.updates%5B0%5D.schedule.interval&label=Dependabot&logo=dependabot&style=flat
+[ts-badge]:
+  https://img.shields.io/badge/TypeScript-strict-3178C6?style=flat&logo=typescript&logoColor=white
+[prettier-badge]:
+  https://img.shields.io/badge/code%20style-prettier-ff69b4?style=flat&logo=prettier&logoColor=white
 [repo-link]: https://github.com/francois-le-ko4la/lovelace-entity-progress-card
 [hacs-link]: https://hacs.xyz
 [release-link]:
@@ -426,6 +446,10 @@ This project is licensed under the [GPL-3.0 license].
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/actions/workflows/validate-hacs.yaml
 [deepsource-link]:
   https://app.deepsource.com/gh/francois-le-ko4la/lovelace-entity-progress-card/
+[dependabot-link]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/.github/dependabot.yml
+[ts-link]: https://www.typescriptlang.org
+[prettier-link]: https://prettier.io
 [GPL-3.0 license]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/LICENSE
 [discord-link]: https://discord.gg/tyMQ2SfyNG
