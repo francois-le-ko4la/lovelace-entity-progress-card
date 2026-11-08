@@ -150,6 +150,10 @@ class EntityHelper {
     this.#durationUnit = newValue;
   }
 
+  get durationUnit(): string | null {
+    return this.#durationUnit;
+  }
+
   set nameTokens(tok: unknown) {
     this.#nameTokens = is.nonEmptyArray(tok) ? (tok as NameToken[]) : null;
   }

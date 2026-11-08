@@ -95,7 +95,9 @@ function bootstrap(): void {
   // noRegistration renders nothing, so the EPB.doctor.dump() cue never reaches
   // the reporter - emit the report automatically right after the banner (#108).
   if (CARD_CONTEXT.noRegistration) {
-    void consoleHelper()?.doctor.dump();
+    consoleHelper()
+      ?.doctor.dump()
+      .catch(() => undefined);
   }
 }
 

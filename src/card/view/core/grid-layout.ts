@@ -23,34 +23,6 @@ const orientationOf = (config: Config) =>
 const cardSize = (config: Config | undefined): number =>
   config ? (orientationOf(config)?.grid?.grid_rows ?? 1) : CARD.layout.orientations.horizontal.grid.grid_rows;
 
-// issue #133: hiding the icon changes the base rows only, never the extra one
-// bar_size/bar_position need. Feeds Sections and HABase's CSS min-height.
-const minGridRows = ({ config, isHidden, isRing }: GridInputs): number => {
-  if (!config) return CARD.layout.orientations.horizontal.grid.grid_min_rows;
-  const layout = orientationOf(config);
-  const { hiddenComponent } = CARD.style.dynamic;
-  // top/bottom/background/icon keep the bar off .content (styles .content
-  // display:none): name and secondary_info hidden leave one icon row.
-  const contentCollapsed =
-    config.layout === CARD.layout.orientations.vertical.label &&
-    DENSITY_COMPACT_BAR_POSITIONS.includes(config.bar_position ?? '') &&
-    isHidden(hiddenComponent.name.label) &&
-    isHidden(hiddenComponent.secondary_info.label);
-  const baseRows = isHidden(hiddenComponent.icon.label) || contentCollapsed ? 1 : layout.grid.grid_min_rows;
-  const needsExtraRow =
-    // Around the icon, xlarge is a thicker ring, not a taller bar row.
-    (config.bar_size === CARD.style.bar.sizeOptions.xlarge && !isRing) ||
-    (config.layout === 'horizontal' && config.bar_position === 'below') ||
-    (config.layout === 'vertical' &&
-      ['default', 'below'].includes(config.bar_position ?? '') &&
-      config.bar_size !== CARD.style.bar.sizeOptions.small &&
-      config.bar_size !== CARD.style.bar.sizeOptions.xsmall) ||
-    // An upright bar in the stack needs a height of its own.
-    (contentShape(config) === 'stack' && contentHoldsBar(config) && isUpright(config)) ||
-    raisesRainbowFullRow(config);
-  return Math.max(baseRows + (needsExtraRow ? 1 : 0), orderedStackRows(config, isHidden));
-};
-
 // Rows an ordered stack's lines fill, icon above, a below bar under, an overlay
 // bar behind (0 for a position not measured).
 const orderedStackRows = (config: Config, isHidden: (component: string) => boolean): number => {
@@ -78,6 +50,34 @@ const orderedStackRows = (config: Config, isHidden: (component: string) => boole
     (isHidden(CARD.style.dynamic.hiddenComponent.icon.label) ? 0 : px.icon) +
     content;
   return Math.ceil((height + rowPitch.gap) / (rowPitch.row + rowPitch.gap));
+};
+
+// issue #133: hiding the icon changes the base rows only, never the extra one
+// bar_size/bar_position need. Feeds Sections and HABase's CSS min-height.
+const minGridRows = ({ config, isHidden, isRing }: GridInputs): number => {
+  if (!config) return CARD.layout.orientations.horizontal.grid.grid_min_rows;
+  const layout = orientationOf(config);
+  const { hiddenComponent } = CARD.style.dynamic;
+  // top/bottom/background/icon keep the bar off .content (styles .content
+  // display:none): name and secondary_info hidden leave one icon row.
+  const contentCollapsed =
+    config.layout === CARD.layout.orientations.vertical.label &&
+    DENSITY_COMPACT_BAR_POSITIONS.includes(config.bar_position ?? '') &&
+    isHidden(hiddenComponent.name.label) &&
+    isHidden(hiddenComponent.secondary_info.label);
+  const baseRows = isHidden(hiddenComponent.icon.label) || contentCollapsed ? 1 : layout.grid.grid_min_rows;
+  const needsExtraRow =
+    // Around the icon, xlarge is a thicker ring, not a taller bar row.
+    (config.bar_size === CARD.style.bar.sizeOptions.xlarge && !isRing) ||
+    (config.layout === 'horizontal' && config.bar_position === 'below') ||
+    (config.layout === 'vertical' &&
+      ['default', 'below'].includes(config.bar_position ?? '') &&
+      config.bar_size !== CARD.style.bar.sizeOptions.small &&
+      config.bar_size !== CARD.style.bar.sizeOptions.xsmall) ||
+    // An upright bar in the stack needs a height of its own.
+    (contentShape(config) === 'stack' && contentHoldsBar(config) && isUpright(config)) ||
+    raisesRainbowFullRow(config);
+  return Math.max(baseRows + (needsExtraRow ? 1 : 0), orderedStackRows(config, isHidden));
 };
 
 // issue #134: a compact card needs one column of width.

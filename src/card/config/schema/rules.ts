@@ -43,6 +43,24 @@ const isDefaultRow = (c: ConfigLike) =>
 const STACK_DENSITIES = ['default', 'single_column'];
 const isStackDensity = (c: ConfigLike) => STACK_DENSITIES.includes((c.density as string | undefined) ?? 'default');
 
+// What a density forces: single_line a horizontal row holding the bar,
+// single_column a vertical stack, bar upright; compact keeps it off the text.
+const densityOverrides = (c: ConfigLike): ConfigLike => {
+  if (c.density === 'single_line') return { layout: HORIZONTAL, bar_position: 'default', multiline: false };
+  if (c.density === 'single_column')
+    return {
+      layout: CARD.layout.orientations.vertical.label,
+      bar_position: c.bar_position === 'overlay' ? 'overlay' : 'default',
+      bar_orientation: c.bar_orientation === 'down' ? 'down' : 'up',
+      multiline: false,
+    };
+  if (c.density !== 'compact') return {};
+  return {
+    ...(DENSITY_COMPACT_BAR_POSITIONS.includes(c.bar_position as string) ? {} : { bar_position: 'top' }),
+    multiline: false,
+  };
+};
+
 // A raw config read as its density shapes it: single_column says vertical
 // without a layout key.
 const settled = (c: ConfigLike): ConfigLike => ({ ...c, ...densityOverrides(c) });
@@ -178,24 +196,6 @@ const HAS_EFFECT = {
   barAligned: (c: ConfigLike) => !c.bar_max_width && (c.density === 'single_line' || HAS_EFFECT.barMaxWidth(c)),
   // Both take the top-right corner: a whole Jinja template outranks a toggle.
   trendIndicator: (c: ConfigLike) => !is.nonEmptyString(statusLabelObj(c.status_label).jinja),
-};
-
-// What a density forces: single_line a horizontal row holding the bar,
-// single_column a vertical stack, bar upright; compact keeps it off the text.
-const densityOverrides = (c: ConfigLike): ConfigLike => {
-  if (c.density === 'single_line') return { layout: HORIZONTAL, bar_position: 'default', multiline: false };
-  if (c.density === 'single_column')
-    return {
-      layout: CARD.layout.orientations.vertical.label,
-      bar_position: c.bar_position === 'overlay' ? 'overlay' : 'default',
-      bar_orientation: c.bar_orientation === 'down' ? 'down' : 'up',
-      multiline: false,
-    };
-  if (c.density !== 'compact') return {};
-  return {
-    ...(DENSITY_COMPACT_BAR_POSITIONS.includes(c.bar_position as string) ? {} : { bar_position: 'top' }),
-    multiline: false,
-  };
 };
 
 // The hide targets compact + vertical takes off whatever hide says: the card
