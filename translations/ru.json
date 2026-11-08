@@ -47,8 +47,9 @@
       "bar_effect_mode": "Эффект на полосе",
       "bar_max_width_toggle": "Макс. ширина полосы",
       "bar_orientation": "Ориентация",
-      "bar_ring_start": null,
-      "bar_ring_gap": null,
+      "bar_ring_start": "Начало кольца",
+      "bar_ring_gap": "Разрыв кольца",
+      "bar_ring_softness": "Мягкость края кольца",
       "bar_scale": "Масштаб",
       "bar_segments": "Сегменты",
       "bar_single_line": "Одна строка",
@@ -59,6 +60,13 @@
       "center_zero": "Ноль по центру",
       "center_zero_growth_percent": "Процент роста",
       "center_zero_value": "Центральное значение",
+      "content_order": "Порядок содержимого",
+      "content_order_line_1": "Строка 1",
+      "content_order_line_2": "Строка 2",
+      "content_order_line_3": "Строка 3",
+      "content_order_line_4": "Строка 4",
+      "content_order_line_5": "Строка 5",
+      "content_order_line_6": "Строка 6",
       "custom_info": "Дополнительная информация",
       "custom_theme": "Зоны пользовательской темы",
       "density": "Плотность",
@@ -216,9 +224,14 @@
         "proportional": "Пропорционально",
         "stacked": "Стек"
       },
+      "content_order": {
+        "info": "Информация",
+        "value": "Значение"
+      },
       "density": {
         "compact": "Компактно",
         "single_line": "Одна строка",
+        "single_column": "Один столбец",
         "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
       },
       "enabled_disabled_mode": {
@@ -231,6 +244,7 @@
       },
       "hide": {
         "secondary_info": "Доп. информация",
+        "info": "Информация",
         "value": "Значение"
       },
       "icon_animation": {

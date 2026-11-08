@@ -434,7 +434,6 @@ const HA_CONTEXT = {
     state: {
       unavailable: 'unavailable',
       unknown: 'unknown',
-      notFound: 'notFound',
       idle: 'idle',
       active: 'active',
       paused: 'paused',

@@ -47,8 +47,9 @@
       "bar_effect_mode": "Çubuk efekti",
       "bar_max_width_toggle": "Maks. çubuk genişliği",
       "bar_orientation": "Yön",
-      "bar_ring_start": null,
-      "bar_ring_gap": null,
+      "bar_ring_start": "Halka başlangıcı",
+      "bar_ring_gap": "Halka boşluğu",
+      "bar_ring_softness": "Halka kenarı yumuşaklığı",
       "bar_scale": "Ölçek",
       "bar_segments": "Segmentler",
       "bar_single_line": "Tek satır",
@@ -59,6 +60,13 @@
       "center_zero": "Нуль по центру",
       "center_zero_growth_percent": "Büyüme yüzdesi",
       "center_zero_value": "Merkez değeri",
+      "content_order": "İçerik sırası",
+      "content_order_line_1": "Satır 1",
+      "content_order_line_2": "Satır 2",
+      "content_order_line_3": "Satır 3",
+      "content_order_line_4": "Satır 4",
+      "content_order_line_5": "Satır 5",
+      "content_order_line_6": "Satır 6",
       "custom_info": "Özel ikincil bilgi",
       "custom_theme": "Özel tema bölgeleri",
       "density": "Yoğunluk",
@@ -216,9 +224,14 @@
         "proportional": "Orantılı",
         "stacked": "Yığılmış"
       },
+      "content_order": {
+        "info": "Bilgi",
+        "value": "Değer"
+      },
       "density": {
         "compact": "Kompakt",
         "single_line": "Tek satır",
+        "single_column": "Tek sütun",
         "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
       },
       "enabled_disabled_mode": {
@@ -231,6 +244,7 @@
       },
       "hide": {
         "secondary_info": "İkincil bilgi",
+        "info": "Bilgi",
         "value": "Değer"
       },
       "icon_animation": {

@@ -15,7 +15,14 @@ import {
   type ErrorLike,
   withOptions,
 } from './errors.js';
-import { THEME_ALIASES, MARK_TYPES, MARK_ZONE_TYPES, PEAK_WINDOW_DEFAULT } from './enums.js';
+import {
+  THEME_ALIASES,
+  MARK_TYPES,
+  MARK_ZONE_TYPES,
+  PEAK_WINDOW_DEFAULT,
+  completeOrder,
+  completeLines,
+} from './enums.js';
 import { type ValueConfig, nestValueShapeUnderValue, type WatermarkMark } from './marks.js';
 
 const types = {
@@ -223,6 +230,23 @@ const types = {
     // Same as jinjaOrArrayWithValidatedElem below: fieldOptions() reads this
     // to build the editor list, so the array-only form has to carry it too.
     return Object.assign(fn, { allowedValues });
+  },
+
+  // A flat list, or a list of lines (horizontal): the layout reads which.
+  orderedTokens: (tokens: readonly string[]): Validator<string[] | string[][]> => {
+    const listed = types.arrayWithValidatedElem(tokens);
+    const fn = (value: unknown, path: Path = []) => {
+      if (is.array(value) && value.some(is.array)) {
+        const lines = value.map((line, index) => {
+          const valid = listed(is.array(line) ? line : [line], [...path, index]);
+          return valid === (SKIP_PROPERTY as unknown) ? [] : (valid as string[]);
+        });
+        return completeLines(lines, tokens);
+      }
+      const valid = listed(value, path);
+      return valid === (SKIP_PROPERTY as unknown) ? valid : completeOrder(valid, tokens);
+    };
+    return Object.assign(fn, { allowedValues: tokens });
   },
 
   jinjaOrArrayWithValidatedElem: <T extends readonly unknown[]>(allowedValues: T): Validator<string | T[number][]> => {

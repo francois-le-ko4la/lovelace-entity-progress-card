@@ -214,6 +214,12 @@ const NumberFormatter = {
     return factor === undefined ? null : value * factor;
   },
 
+  convertDurationUnit(value: number, from: string, to: string): number | null {
+    const seconds = NumberFormatter.durationToSeconds(value, from);
+    const secondsPerTarget = NumberFormatter.durationToSeconds(1, to);
+    return seconds === null || !secondsPerTarget ? null : seconds / secondsPerTarget;
+  },
+
   convertDuration(duration: unknown): number {
     // CF5 - issue (critical) resolved - timer attributes (duration/remaining)
     // can be missing during HA startup; null.split() crashed the card

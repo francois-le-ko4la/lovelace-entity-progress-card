@@ -188,8 +188,8 @@ class EditorBase extends HTMLElement {
       }),
     );
 
-    for (const [section, def] of Object.entries((this.constructor as typeof EditorBase)._fields)) {
-      container.appendChild(this.#fields.buildExpansionPanel(section, def));
+    for (const def of Object.values((this.constructor as typeof EditorBase)._fields)) {
+      container.appendChild(this.#fields.buildExpansionPanel(def));
     }
 
     this.#shadow.append(style, container);
@@ -292,6 +292,8 @@ class EditorBase extends HTMLElement {
   #handleVirtualField(def: FieldDef, value: unknown) {
     if (!def.onVirtualChange) return;
     const newConfig = def.onVirtualChange(value, { ...this.#config });
+    // null refuses the change: the control already shows it, so it is reset.
+    if (newConfig === null) this.#dom.resetValue(def.name, def.resolveVirtual?.(this.#config));
     if (newConfig) {
       this.#config = newConfig;
       // Update ourselves (next frame): HA may skip calling setConfig back if

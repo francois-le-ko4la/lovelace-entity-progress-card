@@ -76,8 +76,11 @@ class EntityCollectionHelper {
     this.#entities.push(helper);
   }
 
-  refreshAll() {
-    this.#entities.forEach((helper) => helper.refresh());
+  refreshAll(durationUnit: string | null) {
+    this.#entities.forEach((helper) => {
+      helper.durationUnit = durationUnit;
+      helper.refresh();
+    });
   }
 
   // Plain magnitude sum, mode-agnostic - the fill amount for

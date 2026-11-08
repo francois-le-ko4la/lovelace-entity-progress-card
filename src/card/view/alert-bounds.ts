@@ -25,9 +25,9 @@ export class AlertBounds {
     this.#below = boundFrom(alertWhen?.below, null);
   }
 
-  refresh() {
-    refreshBound(this.#above);
-    refreshBound(this.#below);
+  refresh(durationUnit: string | null) {
+    refreshBound(this.#above, durationUnit);
+    refreshBound(this.#below, durationUnit);
   }
 
   // In the entity's native unit; a Jinja push wins over the configured bound.

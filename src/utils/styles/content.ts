@@ -134,6 +134,7 @@ ha-card.${CARD.style.dynamic.hiddenComponent.name.class}.secondary-info-blank
   display: none;
 }
 
+
 /* .ellipsis-wrapper's own width: 100% would pin the text at whatever is left
    after the bar's floor, however short it is; here it is a flex item and the
    bar takes what the text doesn't. The line-height comes back from the
@@ -391,6 +392,115 @@ ha-card.horizontal.compact_below .${CARD.htmlStructure.elements.progressBar.cont
   min-width: unset;
 }
 
+/* === CONTENT_ORDER === A line sets the text (the name's first, the detail's
+   after); a group of texts (createOrderedBody) carries it, as the detail did. */
+.${CARD.htmlStructure.sections.contentLine.class} {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  --text-color: var(--epb-detail-color, var(--primary-text-color));
+  --text-font-size: var(--epb-detail-font-size, var(--current-row-detail-font-size, var(--ha-font-size-s)));
+  --text-font-weight: var(--epb-detail-font-weight, var(--ha-font-weight-body));
+  --text-height: var(--detail-height);
+  --text-line-height: max(var(--detail-height), 1.2em);
+  --text-letter-spacing: var(--epb-detail-letter-spacing, var(--detail-letter-spacing));
+}
+/* Mixed font sizes on the name's line: baseline, as compact_below's row. */
+.${CARD.htmlStructure.sections.contentLine.class}.lead {
+  align-items: baseline;
+  --text-color: var(--epb-name-color, var(--primary-text-color));
+  --text-font-size: var(--epb-name-font-size, var(--ha-font-size-m));
+  --text-font-weight: var(--epb-name-font-weight, var(--ha-font-weight-medium));
+  --text-height: var(--name-height);
+  --text-line-height: max(var(--name-height), 1.2em);
+  --text-letter-spacing: var(--epb-name-letter-spacing, var(--name-letter-spacing));
+}
+.${CARD.htmlStructure.sections.contentLine.class} > .${CARD.htmlStructure.elements.progressBar.container.class} {
+  align-self: center;
+}
+.${CARD.htmlStructure.sections.contentLine.class} > * + * {
+  margin-inline-start: min(var(--spacing), 6%);
+}
+/* One run of text, one ellipsis at its end. */
+.${CARD.htmlStructure.sections.contentGroup.class} {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--text-color);
+  font-size: var(--text-font-size);
+  font-weight: var(--text-font-weight);
+  line-height: var(--text-line-height);
+  letter-spacing: var(--text-letter-spacing);
+  text-shadow: var(--text-shadow);
+}
+/* Beside a bar, the texts leave it its share, as the detail did. */
+ha-card.horizontal .${CARD.htmlStructure.sections.contentLine.class}.with-bar > .${CARD.htmlStructure.sections.contentGroup.class} {
+  min-width: var(${CARD.style.dynamic.alignTextFloor.var}, min(45px, 25%));
+  max-width: 60%;
+}
+/* bar_aligned: the text block before the bar is the measured column. */
+ha-card.horizontal .${CARD.htmlStructure.sections.contentLine.class}.with-bar > .${CARD.htmlStructure.sections.contentGroup.class}:first-child {
+  width: var(${CARD.style.dynamic.alignWidth.var}, auto);
+}
+/* single_line: the row is its one line. bar_max_width pins the bar, the text
+   takes the rest (as .info-row). */
+.${CARD.style.dynamic.singleLineRow} > .${CARD.htmlStructure.sections.contentLine.class} {
+  flex: 1 1 auto;
+}
+ha-card.bar-max-width .${CARD.style.dynamic.singleLineRow} .${CARD.htmlStructure.sections.contentLine.class} > .${CARD.htmlStructure.sections.contentGroup.class}:first-child {
+  flex-grow: 1;
+  max-width: none;
+}
+/* After the bar, texts hug the right edge: no floor to leave a gap behind. */
+ha-card.horizontal .${CARD.htmlStructure.sections.contentLine.class}.with-bar > .${CARD.htmlStructure.elements.progressBar.container.class} ~ .${CARD.htmlStructure.sections.contentGroup.class} {
+  min-width: 0;
+  text-align: end;
+}
+/* A value closing the first line: at its right end, never cut. */
+.${CARD.htmlStructure.sections.contentGroup.class}.value-end {
+  flex-shrink: 0;
+}
+ha-card.horizontal .${CARD.htmlStructure.sections.contentGroup.class}.value-end {
+  margin-inline-start: auto;
+  padding-inline-start: min(var(--spacing), 6%);
+}
+/* A blank text, or a group left with none, takes no room. */
+.${CARD.htmlStructure.sections.contentLine.class} :is([data-block], .${CARD.htmlStructure.sections.contentGroup.class}):empty {
+  display: none;
+}
+.${CARD.htmlStructure.sections.contentGroup.class} > [data-block]:not(:empty) ~ [data-block]:not(:empty)::before {
+  content: '${CARD.config.separator}';
+  white-space: pre;
+}
+/* Over the bar (z-index, as the groups have) and clear of its rounded ends. */
+.overlay .${CARD.htmlStructure.sections.contentLine.class} {
+  z-index: 1;
+  padding-inline: 7px 10px;
+}
+.vertical.up-orientation.overlay .${CARD.htmlStructure.sections.contentLine.class} {
+  padding-inline: 0;
+}
+ha-card.vertical .${CARD.htmlStructure.sections.contentLine.class} {
+  justify-content: center;
+}
+.${CARD.htmlStructure.elements.infoLines.class} {
+  display: inline-flex;
+  flex-direction: column;
+  vertical-align: middle;
+}
+.${CARD.htmlStructure.elements.infoLines.class} > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+ha-card.info-multiline .${CARD.htmlStructure.elements.infoLines.class} > span {
+  height: 10px;
+  font-size: 10px;
+  line-height: 0.95;
+}
+
 .${CARD.layout.orientations.vertical.label} {
   --group-justify-content: center;
   --group-width: 100%;
@@ -426,6 +536,15 @@ ha-card.horizontal.compact_below .${CARD.htmlStructure.elements.progressBar.cont
 
 .ellipsis-wrapper span {
   display: inline;
+}
+
+/* " · " between two texts of a line, a blank one skipped (:empty): name and
+   name_info, custom_info and the value. */
+.${CARD.htmlStructure.elements.nameMain.class}:not(:empty) + .${CARD.htmlStructure.elements.nameExtra.class}:not(:empty)::before,
+:is(.${CARD.htmlStructure.elements.secondaryInfoExtra.class}, .${CARD.htmlStructure.elements.secondaryInfoExtra2.class}):not(:empty)
+  + .${CARD.htmlStructure.elements.secondaryInfoMain.class}:not(:empty)::before {
+  content: '${CARD.config.separator}';
+  white-space: pre;
 }
 
 .${CARD.htmlStructure.elements.nameValue.class},
@@ -510,20 +629,20 @@ ha-card.horizontal.compact_below .${CARD.htmlStructure.elements.progressBar.cont
 /* text_effect: only overlay/background draw text over the bar (HAS_EFFECT.textEffect).
    Hooks: --epb-text-effect-color / -size / -blur. */
 :is(.overlay, .background):is(.text-effect-shadow, .text-effect-halo, .text-effect-outline, .text-effect-plate)
-  :is(.${CARD.htmlStructure.elements.nameValue.class}, .${CARD.htmlStructure.elements.secondaryInfoValue.class}) {
+  :is(.${CARD.htmlStructure.elements.nameValue.class}, .${CARD.htmlStructure.elements.secondaryInfoValue.class}, .${CARD.htmlStructure.sections.contentGroup.class}) {
   --text-effect-color: var(--epb-text-effect-color, var(--card-background-color));
   --text-effect-size: var(--epb-text-effect-size, 1px);
 }
 
 :is(.overlay, .background).text-effect-shadow
-  :is(.${CARD.htmlStructure.elements.nameValue.class}, .${CARD.htmlStructure.elements.secondaryInfoValue.class}) {
+  :is(.${CARD.htmlStructure.elements.nameValue.class}, .${CARD.htmlStructure.elements.secondaryInfoValue.class}, .${CARD.htmlStructure.sections.contentGroup.class}) {
   --text-shadow: 1px 1px var(--epb-text-effect-blur, 2px) var(--text-effect-color);
 }
 
 /* outline is the halo with no blur: -webkit-text-stroke needs paint-order to
    stay under the glyph, which HTML text lacks before Chrome 123. */
 :is(.overlay, .background):is(.text-effect-halo, .text-effect-outline)
-  :is(.${CARD.htmlStructure.elements.nameValue.class}, .${CARD.htmlStructure.elements.secondaryInfoValue.class}) {
+  :is(.${CARD.htmlStructure.elements.nameValue.class}, .${CARD.htmlStructure.elements.secondaryInfoValue.class}, .${CARD.htmlStructure.sections.contentGroup.class}) {
   --halo-blur: var(--epb-text-effect-blur, 1px);
   --text-shadow:
     var(--text-effect-size) 0 var(--halo-blur) var(--text-effect-color),
@@ -537,12 +656,12 @@ ha-card.horizontal.compact_below .${CARD.htmlStructure.elements.progressBar.cont
 }
 
 :is(.overlay, .background).text-effect-outline
-  :is(.${CARD.htmlStructure.elements.nameValue.class}, .${CARD.htmlStructure.elements.secondaryInfoValue.class}) {
+  :is(.${CARD.htmlStructure.elements.nameValue.class}, .${CARD.htmlStructure.elements.secondaryInfoValue.class}, .${CARD.htmlStructure.sections.contentGroup.class}) {
   --halo-blur: 0px;
 }
 
 :is(.overlay, .background).text-effect-plate
-  :is(.${CARD.htmlStructure.elements.nameValue.class}, .${CARD.htmlStructure.elements.secondaryInfoValue.class}) {
+  :is(.${CARD.htmlStructure.elements.nameValue.class}, .${CARD.htmlStructure.elements.secondaryInfoValue.class}, .${CARD.htmlStructure.sections.contentGroup.class}) {
   background: var(--text-effect-color);
   border-radius: 999px;
   box-sizing: border-box;
@@ -553,20 +672,20 @@ ha-card.horizontal.compact_below .${CARD.htmlStructure.elements.progressBar.cont
 
 @supports (background: color-mix(in srgb, red, blue)) {
   :is(.overlay, .background).text-effect-plate
-    :is(.${CARD.htmlStructure.elements.nameValue.class}, .${CARD.htmlStructure.elements.secondaryInfoValue.class}) {
+    :is(.${CARD.htmlStructure.elements.nameValue.class}, .${CARD.htmlStructure.elements.secondaryInfoValue.class}, .${CARD.htmlStructure.sections.contentGroup.class}) {
     background: color-mix(in srgb, var(--text-effect-color) 70%, transparent);
   }
 }
 
 /* The pill hugs its text, so a centred layout has to centre the pill itself. */
 :is(.overlay, .background).${CARD.layout.orientations.vertical.label}.text-effect-plate
-  :is(.${CARD.htmlStructure.elements.nameValue.class}, .${CARD.htmlStructure.elements.secondaryInfoValue.class}) {
+  :is(.${CARD.htmlStructure.elements.nameValue.class}, .${CARD.htmlStructure.elements.secondaryInfoValue.class}, .${CARD.htmlStructure.sections.contentGroup.class}) {
   margin-inline: auto;
 }
 
 /* --text-contrast-color is written by TextContrast; unset, the text keeps its own colour. */
 :is(.overlay, .background).text-effect-contrast
-  :is(.${CARD.htmlStructure.elements.nameValue.class}, .${CARD.htmlStructure.elements.secondaryInfoValue.class}) {
+  :is(.${CARD.htmlStructure.elements.nameValue.class}, .${CARD.htmlStructure.elements.secondaryInfoValue.class}, .${CARD.htmlStructure.sections.contentGroup.class}) {
   color: var(${CARD.style.dynamic.textContrast.color.var}, var(--text-color));
 }
 

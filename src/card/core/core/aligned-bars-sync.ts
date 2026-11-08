@@ -1,7 +1,7 @@
 import { CARD } from '../../../utils/parameters.js';
 import { is } from '../../../utils/common-checks.js';
 import { type ViewCore } from '../../view/core.js';
-import { HAS_EFFECT } from '../../config/schema.js';
+import { HAS_EFFECT, contentOrderKey } from '../../config/schema.js';
 import { type ResourceManager, type DOMHelper } from '../../dom/dom-helpers.js';
 import { joinAlignedRows } from '../../dom/aligned-bars.js';
 
@@ -23,13 +23,18 @@ const syncAlignedBars = ({ element, shadow, config, resourceManager, dom }: Alig
   const setting = config.bar_aligned;
   const group = is.nonEmptyString(setting) ? setting : setting === true && inMulti ? element.getRootNode() : null;
   const singleLine = config.density === 'single_line';
-  const { infoRow: rowText } = CARD.htmlStructure.sections;
+  const { infoRow: rowText, contentLine, contentGroup } = CARD.htmlStructure.sections;
   const { secondaryInfoWrapper: valueText } = CARD.htmlStructure.elements;
-  const column =
-    group && HAS_EFFECT.barAligned(config)
-      ? shadow.querySelector<HTMLElement>(`.${singleLine ? rowText.class : valueText.class}`)
-      : null;
-  const row = singleLine ? column?.closest<HTMLElement>(`.${CARD.style.dynamic.singleLineRow}`) : column?.parentElement;
+  // Ordered, the column is the text block before the bar: none when it leads.
+  const ordered = contentOrderKey(config) !== undefined;
+  const columnSelector =
+    (ordered && `.${contentLine.class}.with-bar > .${contentGroup.class}:first-child`) ||
+    `.${singleLine ? rowText.class : valueText.class}`;
+  const column = group && HAS_EFFECT.barAligned(config) ? shadow.querySelector<HTMLElement>(columnSelector) : null;
+  const row =
+    singleLine && !ordered
+      ? column?.closest<HTMLElement>(`.${CARD.style.dynamic.singleLineRow}`)
+      : column?.parentElement;
   if (!group || !column || !row) {
     resourceManager.remove(ALIGNED_BARS_ID);
     return;

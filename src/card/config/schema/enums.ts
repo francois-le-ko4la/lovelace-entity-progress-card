@@ -44,13 +44,14 @@ const FEATURE_BAR_POSITIONS = ['default', 'top', 'bottom'];
 // schema accepts all of BAR_POSITIONS and rewrites to 'top' instead, see
 // applyDensityRule), so the editor and the view share this list rather than
 // deriving one.
-const DENSITY_COMPACT_BAR_POSITIONS = ['top', 'bottom', 'background'];
+const DENSITY_COMPACT_BAR_POSITIONS = ['top', 'bottom', 'background', 'icon'];
 
 const HORIZONTAL = CARD.layout.orientations.horizontal.label;
 
 // 'single_line' lays icon, name, secondary and bar out as four siblings on one
 // row - a shape only 'horizontal' has, hence the forcing in applyDensityRule.
-const DENSITY_MODES = ['default', 'compact', 'single_line'];
+// 'single_column' is its vertical twin: the stack, its bar upright.
+const DENSITY_MODES = ['default', 'compact', 'single_line', 'single_column'];
 
 const BAR_COLOR_MODES = ['auto', 'segment', 'rainbow', 'rainbow_full'];
 
@@ -117,6 +118,47 @@ const hideTargetsWithout = (...absent: string[]) => HIDE_TARGETS.filter((target)
 // absent from both aggregator schemas.
 const ROW_IDENTITY_FIELDS = ['entity', 'attribute', 'name', 'icon'] as const;
 
+// content_order's tokens, in the default order: the stack as it always was.
+const CONTENT_ORDER_TOKENS = ['name', 'name_info', 'info', 'state_content', 'value', 'bar'];
+
+// Template has no name_info or state_content, and no value slot of its own.
+const TEMPLATE_CONTENT_ORDER_TOKENS = CONTENT_ORDER_TOKENS.filter(
+  (token) => !['name_info', 'state_content', 'value'].includes(token),
+);
+
+// Tokens that share a host's text: [token, host, side]. Hosts come first, so a
+// missing value is placed before the state_content that leans on it.
+const SATELLITES: [token: string, host: string, side: 1 | -1][] = [
+  ['value', 'info', 1],
+  ['name_info', 'name', 1],
+  ['state_content', 'value', -1],
+];
+
+// A partial list is a whole order: a missing token goes next to its host, else
+// closes the last line; a missing bar opens its own, as the default draws it.
+// An empty line keeps its place (a chip row per line).
+const completeLines = (lines: readonly (readonly string[])[], tokens: readonly string[]): string[][] => {
+  const seen = new Set<string>();
+  const kept = lines.map((line) =>
+    line.filter((token) => tokens.includes(token) && !seen.has(token) && Boolean(seen.add(token))),
+  );
+  if (kept.length === 0) kept.push([]);
+  const last = kept[kept.length - 1];
+  const satellites = SATELLITES.filter(([token]) => tokens.includes(token) && !seen.has(token));
+  const barMissing = tokens.includes('bar') && !seen.has('bar');
+  last.push(...tokens.filter((token) => token !== 'bar' && !seen.has(token) && !satellites.some(([s]) => s === token)));
+  for (const [token, host, side] of satellites) {
+    const line = kept.find((candidate) => candidate.includes(host)) ?? last;
+    const at = line.indexOf(host);
+    line.splice(at === -1 ? line.length : at + (side === 1 ? 1 : 0), 0, token);
+  }
+  if (barMissing) kept.push(['bar']);
+  return kept;
+};
+
+const completeOrder = (listed: readonly string[], tokens: readonly string[]): string[] =>
+  completeLines([listed], tokens).flat();
+
 // The aggregator's own keys: never a row's.
 const AGGREGATOR_FIELDS = ['entities', 'rows', 'type'] as const;
 
@@ -147,6 +189,7 @@ const BADGE_DELETED_FIELDS = [
   'icon_hold_action',
   'icon_double_tap_action',
   'multiline',
+  'content_order',
   'icon_animation',
   'bar_max_width',
   'bar_single_line',
@@ -197,4 +240,8 @@ export {
   AGGREGATOR_FIELDS,
   VALUE_TEXT_FIELDS,
   BADGE_DELETED_FIELDS,
+  CONTENT_ORDER_TOKENS,
+  TEMPLATE_CONTENT_ORDER_TOKENS,
+  completeOrder,
+  completeLines,
 };

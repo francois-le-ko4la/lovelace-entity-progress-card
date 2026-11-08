@@ -47,8 +47,9 @@
       "bar_effect_mode": "বারের প্রভাব",
       "bar_max_width_toggle": "বারের সর্বোচ্চ প্রস্থ",
       "bar_orientation": "দিক",
-      "bar_ring_start": null,
-      "bar_ring_gap": null,
+      "bar_ring_start": "রিংয়ের শুরু",
+      "bar_ring_gap": "রিংয়ের ফাঁক",
+      "bar_ring_softness": "রিংয়ের প্রান্তের কোমলতা",
       "bar_scale": "স্কেল",
       "bar_segments": "অংশ",
       "bar_single_line": "এক লাইনে",
@@ -59,6 +60,13 @@
       "center_zero": "মাঝে শূন্য",
       "center_zero_growth_percent": "প্রবৃদ্ধির শতাংশ",
       "center_zero_value": "কেন্দ্রীয় মান",
+      "content_order": "বিষয়বস্তুর ক্রম",
+      "content_order_line_1": "লাইন 1",
+      "content_order_line_2": "লাইন 2",
+      "content_order_line_3": "লাইন 3",
+      "content_order_line_4": "লাইন 4",
+      "content_order_line_5": "লাইন 5",
+      "content_order_line_6": "লাইন 6",
       "custom_info": "কাস্টম সেকেন্ডারি তথ্য",
       "custom_theme": "কাস্টম থিম জোন",
       "density": "ঘনত্ব",
@@ -216,9 +224,14 @@
         "proportional": "আনুপাতিক",
         "stacked": "স্ট্যাকড"
       },
+      "content_order": {
+        "info": "তথ্য",
+        "value": "মান"
+      },
       "density": {
         "compact": "কমপ্যাক্ট",
         "single_line": "এক লাইনে",
+        "single_column": "এক কলামে",
         "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
       },
       "enabled_disabled_mode": {
@@ -231,6 +244,7 @@
       },
       "hide": {
         "secondary_info": "দ্বিতীয় তথ্য",
+        "info": "তথ্য",
         "value": "মান"
       },
       "icon_animation": {

@@ -8,7 +8,7 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { EntityHelper, hasUsableHistory } from '../../../src/card/values/entity-helper.js';
+import { EntityHelper, durationFactorOf, hasUsableHistory } from '../../../src/card/values/entity-helper.js';
 import { isStateActive, isToggleDomain } from '../../../src/card/values/ha-state.js';
 import { HassProviderSingleton } from '../../../src/utils/hass-provider.js';
 import { isToggleDomainEntity } from '../../../src/card/config/schema.js';
@@ -39,6 +39,7 @@ const entities: Record<string, { state: string; attributes?: Record<string, unkn
   'sensor.battery_high': { state: '70', attributes: { device_class: 'battery' } },
   'sensor.temperature': { state: '21', attributes: { device_class: 'temperature' } },
   'sensor.uptime': { state: '42', attributes: { device_class: 'duration', unit_of_measurement: 's' } },
+  'sensor.filter_left': { state: '132', attributes: { unit_of_measurement: 'h' } },
   'binary_sensor.daylight': { state: 'on', attributes: { device_class: 'light' } },
   'binary_sensor.gas': { state: 'on', attributes: { device_class: 'gas' } },
   'lock.front': { state: 'locked' },
@@ -73,6 +74,8 @@ const helperFor = (entityId: string, attribute?: string): EntityHelper => {
 const cssVar = (...parts: string[]) => `var(${stateColorName(...parts)})`;
 const ACTIVE = cssVar('active');
 const UPTIME = 'sensor.uptime';
+const FILTER_LEFT = 'sensor.filter_left';
+const TEMPERATURE = 'sensor.temperature';
 const INPUT_NUMBER = 'input_number.level';
 const INACTIVE = cssVar('inactive');
 
@@ -98,7 +101,7 @@ describe('defaultColor - HA state colors, first defined variable wins', () => {
     ['sensor.battery_low', cssVar('sensor', 'battery', 'low')],
     ['sensor.battery_medium', cssVar('sensor', 'battery', 'medium')],
     ['sensor.battery_high', cssVar('sensor', 'battery', 'high')],
-    ['sensor.temperature', null],
+    [TEMPERATURE, null],
     ['binary_sensor.daylight', cssVar('binary_sensor', 'active')],
     ['binary_sensor.gas', cssVar('binary_sensor', 'gas', 'on')],
     ['lock.front', cssVar('lock', 'locked')],
@@ -119,7 +122,8 @@ describe('valueKind - how value, min and max are read', () => {
     [INPUT_NUMBER, 'number'],
     [UPTIME, 'duration'],
     [UPTIME, 'default', 'unit_of_measurement'],
-    ['sensor.temperature', 'default'],
+    [FILTER_LEFT, 'duration'],
+    [TEMPERATURE, 'default'],
     ['light.on', 'default'],
   ];
   for (const [entityId, expected, attribute] of cases) {
@@ -130,6 +134,18 @@ describe('valueKind - how value, min and max are read', () => {
   test('input_number reads its own min and max', () => {
     assert.deepEqual(helperFor(INPUT_NUMBER).reading, { kind: 'ranged', current: 5, min: 0, max: 10 });
   });
+});
+
+describe('durationFactorOf - a recorded duration brought to the working unit', () => {
+  const cases: [string, string | undefined, number][] = [
+    [FILTER_LEFT, 'min', 60],
+    [FILTER_LEFT, 'timer', 3600],
+    [FILTER_LEFT, '%', 1],
+    [TEMPERATURE, 'min', 1],
+  ];
+  for (const [entityId, unit, expected] of cases) {
+    test(`${entityId} as ${unit}`, () => assert.equal(durationFactorOf(entityId, unit), expected));
+  }
 });
 
 describe('isStateActive - HA state_active.ts', () => {

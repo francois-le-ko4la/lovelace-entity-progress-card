@@ -47,8 +47,9 @@
       "bar_effect_mode": "进度条效果",
       "bar_max_width_toggle": "进度条最大宽度",
       "bar_orientation": "方向",
-      "bar_ring_start": null,
-      "bar_ring_gap": null,
+      "bar_ring_start": "圆环起点",
+      "bar_ring_gap": "圆环缺口",
+      "bar_ring_softness": "圆环边缘柔和度",
       "bar_scale": "比例",
       "bar_segments": "分段",
       "bar_single_line": "单行",
@@ -59,6 +60,13 @@
       "center_zero": "中心為零",
       "center_zero_growth_percent": "增长百分比",
       "center_zero_value": "中心值",
+      "content_order": "内容顺序",
+      "content_order_line_1": "第1行",
+      "content_order_line_2": "第2行",
+      "content_order_line_3": "第3行",
+      "content_order_line_4": "第4行",
+      "content_order_line_5": "第5行",
+      "content_order_line_6": "第6行",
       "custom_info": "自定义次要信息",
       "custom_theme": "自定义主题区域",
       "density": "密度",
@@ -216,9 +224,14 @@
         "proportional": "按比例",
         "stacked": "堆叠"
       },
+      "content_order": {
+        "info": "信息",
+        "value": "数值"
+      },
       "density": {
         "compact": "紧凑",
         "single_line": "单行",
+        "single_column": "单列",
         "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
       },
       "enabled_disabled_mode": {
@@ -231,6 +244,7 @@
       },
       "hide": {
         "secondary_info": "次要信息",
+        "info": "信息",
         "value": "数值"
       },
       "icon_animation": {

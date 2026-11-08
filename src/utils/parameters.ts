@@ -13,7 +13,7 @@
 
 import { VERSION, META } from './meta.js';
 import { HA_CONTEXT } from './ha-context.js';
-import { CARD, HIDE_TARGETS, type HideTarget } from './card-config.js';
+import { CARD, HIDE_TARGETS, TEXT_HIDE_GROUP, type HideTarget } from './card-config.js';
 import { THEME, THEME_KEYS, PERCENT_THEME_KEYS } from './card-themes.js';
 
 // Injected by scripts/build.js - see development.md's Logging & debugging
@@ -70,8 +70,8 @@ const MODULE_PARAMS = (() => {
 
 // Committed/shipped debug baseline - kept a plain all-false literal so
 // scripts/check-release-flags.js can verify (and scripts/build.js --prod can
-// force) it in a release. A ?debug= query only ever turns flags ON at
-// runtime; it never rewrites this.
+// force) it in a release. A ?debug= query or EPB.debug() only ever turns
+// flags ON at runtime; neither rewrites this.
 const DEBUG_DEFAULTS = {
   card: false,
   editor: false,
@@ -83,21 +83,6 @@ const DEBUG_DEFAULTS = {
   interference: false,
 };
 
-const DEBUG_AREAS = new Set(
-  (MODULE_PARAMS.get('debug') ?? '')
-    .split(',')
-    .map((area) => area.trim())
-    .filter(Boolean),
-);
-const debugOn = (area: keyof typeof DEBUG_DEFAULTS): boolean =>
-  DEBUG_DEFAULTS[area] || DEBUG_AREAS.has('all') || DEBUG_AREAS.has(area);
-
-// Derived from DEBUG_DEFAULTS's own keys so a new debug area only needs
-// adding there, not duplicated here too.
-const resolvedDebug = Object.fromEntries(
-  (Object.keys(DEBUG_DEFAULTS) as (keyof typeof DEBUG_DEFAULTS)[]).map((area) => [area, debugOn(area)]),
-) as Record<keyof typeof DEBUG_DEFAULTS, boolean>;
-
 const DEV_MODE = __EPB_DEV_BUILD__ || MODULE_PARAMS.get('dev') === 'true';
 
 // ?suffix=rc registers every element under a -rc name, beside an untouched
@@ -108,10 +93,38 @@ const suffixOf = (params: URLSearchParams, dev: boolean): string => {
   if (SUFFIX_PATTERN.test(asked)) return asked;
   return dev ? 'dev' : '';
 };
+const SUFFIX = suffixOf(MODULE_PARAMS, DEV_MODE);
+
+const areasOf = (list: string | null): string[] =>
+  (list ?? '')
+    .split(',')
+    .map((area) => area.trim())
+    .filter(Boolean);
+// EPB.debug('card,editor') keeps areas across reloads, per copy (suffix):
+// merged with ?debug= at load, read once like it.
+const DEBUG_STORAGE_KEY = `epb-debug${SUFFIX ? `-${SUFFIX}` : ''}`;
+const storedDebug = (): string | null => {
+  try {
+    return localStorage.getItem(DEBUG_STORAGE_KEY);
+  } catch {
+    return null;
+  }
+};
+const URL_DEBUG_AREAS = areasOf(MODULE_PARAMS.get('debug'));
+const STORED_DEBUG_AREAS = areasOf(storedDebug());
+const DEBUG_AREAS = new Set([...URL_DEBUG_AREAS, ...STORED_DEBUG_AREAS]);
+const debugOn = (area: keyof typeof DEBUG_DEFAULTS): boolean =>
+  DEBUG_DEFAULTS[area] || DEBUG_AREAS.has('all') || DEBUG_AREAS.has(area);
+
+// Derived from DEBUG_DEFAULTS's own keys so a new debug area only needs
+// adding there, not duplicated here too.
+const resolvedDebug = Object.fromEntries(
+  (Object.keys(DEBUG_DEFAULTS) as (keyof typeof DEBUG_DEFAULTS)[]).map((area) => [area, debugOn(area)]),
+) as Record<keyof typeof DEBUG_DEFAULTS, boolean>;
 
 const CARD_CONTEXT = {
   dev: DEV_MODE,
-  suffix: suffixOf(MODULE_PARAMS, DEV_MODE),
+  suffix: SUFFIX,
   classicScript: IS_CLASSIC_SCRIPT,
   // ?noRegistration loads the whole module (banner, EPB, everything) but
   // defines zero custom elements and pushes nothing to customCards/Badges/
@@ -120,6 +133,9 @@ const CARD_CONTEXT = {
   // the mere act of loading the bundle. URL-derived only, off unless asked.
   noRegistration: MODULE_PARAMS.has('noRegistration'),
   debug: resolvedDebug,
+  // Where the debug areas came from, for the banner's way to turn them off.
+  debugSource: { url: URL_DEBUG_AREAS.length > 0, stored: STORED_DEBUG_AREAS.length > 0 },
+  debugStorageKey: DEBUG_STORAGE_KEY,
   // Where this bundle was served from, and under which name: the editor and
   // its translation files sit next to it (see sidecarUrl).
   moduleUrl: MODULE_URL,
@@ -160,7 +176,7 @@ export { CARD_CONTEXT };
 export { suffixedName, isBundleEntry, scriptUrlFromStack, suffixOf };
 export { HA_CONTEXT };
 export { CARD };
-export { HIDE_TARGETS };
+export { HIDE_TARGETS, TEXT_HIDE_GROUP };
 export type { HideTarget };
 export { THEME };
 export { THEME_KEYS };

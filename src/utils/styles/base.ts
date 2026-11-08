@@ -121,6 +121,12 @@ ${CARD.htmlStructure.card.element} {
   border-width: 0;
 }
 
+/* No frame to round: the radius only clipped a text in a corner (a Multi
+   column's last line). A real property, for border-width's reason above. */
+.${CARD.style.dynamic.frameless} {
+  border-radius: 0;
+}
+
 /* The same frost, painted where no variable can reach it: a glass theme
    (card_mod) decorates ha-card::before and ::after, so a nested card inherits
    chrome meant for a top-level one. !important because those rules carry it too,

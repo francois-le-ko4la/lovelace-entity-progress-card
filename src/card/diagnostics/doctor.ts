@@ -1,9 +1,13 @@
-// EPB.doctor.cards() and .inspect(): the cards of ours on this page, through
-// every shadow root, and what one of them made of its config.
+// EPB.doctor.cards(), .inspect(), .jinja(), .history() and .copy(): the cards
+// of ours on this page, through every shadow root, and what one of them made
+// of its config.
 
 import { META, suffixedName } from '../../utils/parameters.js';
 import { is } from '../../utils/common-checks.js';
-import { cleanupOf, notesOf } from './card-audit.js';
+import { environmentReport } from '../../utils/diagnostic.js';
+import type { LovelaceConfig } from '../../utils/types.js';
+import { cleanupOf, notesByPath, notesOf } from './card-audit.js';
+import { toYaml } from './yaml-writer.js';
 
 type Node = Record<string, unknown>;
 // Read loosely: a template view has no percent, an unrendered card no view.
@@ -19,6 +23,13 @@ type InspectedView = {
   faultyEntity?: { role: string; jinja?: string } | null;
   drawnFrom?: { value: number; min: number; max: number };
   _currentValue?: { reading?: unknown; state?: unknown };
+  peakSamples?: Sample[];
+  _trendTracker?: { samples: Sample[] } | null;
+};
+type Sample = { t: number; value: number };
+type InspectedCard = HTMLElement & {
+  _givenConfig?: Node | null;
+  _jinjaSubscriptions?: { diagnose: () => Node[] };
 };
 
 const OUR_TAGS = new Set(Object.values(META.types).map(({ typeName }) => suffixedName(typeName)));
@@ -138,13 +149,80 @@ const cards = (): HTMLElement[] => {
   return found;
 };
 
+const FENCE = '```';
+
+// Ready to paste into a GitHub issue: the environment dump() prints, then the
+// card's YAML with its deprecated options and options without effect marked.
+const issueReportFor = (config: LovelaceConfig, drawn: string): string =>
+  [
+    `${FENCE}text`,
+    environmentReport(),
+    FENCE,
+    '',
+    `${FENCE}yaml`,
+    toYaml(config, notesByPath(config)),
+    ...(drawn ? [`# drawn from: ${drawn}`] : []),
+    FENCE,
+    '',
+  ].join('\n');
+
+const cardAt = (target: unknown): InspectedCard | null => {
+  const card = is.number(target) ? (collect(document, [])[target] ?? null) : hostCardOf(target);
+  if (!card) console.warn('No card of ours there - doctor.cards() lists them, by number.');
+  return card;
+};
+
+const jinja = (target: unknown): Node[] | null => {
+  const card = cardAt(target);
+  if (!card) return null;
+  const rows = card._jinjaSubscriptions?.diagnose() ?? [];
+  // eslint-disable-next-line no-console -- a console command's own table
+  if (rows.length > 0) console.table(rows);
+  else console.info('No Jinja field in this card.');
+  return rows;
+};
+
+const samplesTable = (samples: Sample[]) =>
+  samples.map(({ t, value }) => ({ time: new Date(t).toLocaleString(), value }));
+
+// trend_indicator's samples are percents, peak_marker's the raw readings.
+const history = (target: unknown): Node | null => {
+  const card = cardAt(target);
+  if (!card) return null;
+  const view = viewOf(card);
+  const report = {
+    trend: samplesTable(view._trendTracker?.samples ?? []),
+    peak: samplesTable(view.peakSamples ?? []),
+  };
+  console.info(`trend_indicator: ${report.trend.length} sample(s), %`);
+  // eslint-disable-next-line no-console -- a console command's own table
+  if (report.trend.length > 0) console.table(report.trend);
+  console.info(`peak_marker: ${report.peak.length} sample(s), raw values`);
+  // eslint-disable-next-line no-console -- a console command's own table
+  if (report.peak.length > 0) console.table(report.peak);
+  return report;
+};
+
+// From the console, the page has no focus: the clipboard refuses, and the
+// report stays printed and returned, for DevTools' own copy($_).
+const copy = (target: unknown): string | null => {
+  const card = cardAt(target);
+  if (!card) return null;
+  const view = viewOf(card);
+  const config = (card._givenConfig ?? view.config ?? {}) as LovelaceConfig;
+  const report = issueReportFor(config, safely(() => drawnOf(view)) as string);
+  console.info(report);
+  navigator.clipboard?.writeText(report).then(
+    () => console.info('Copied to the clipboard.'),
+    () => console.info('Not copied (the page needs focus): run copy($_) right after this command.'),
+  );
+  return report;
+};
+
 const inspect = (target: unknown): Node | null => {
   const all = collect(document, []);
-  const card = is.number(target) ? (all[target] ?? null) : hostCardOf(target);
-  if (!card) {
-    console.warn('No card of ours there - doctor.cards() lists them, by number.');
-    return null;
-  }
+  const card = cardAt(target);
+  if (!card) return null;
   const view = viewOf(card);
   const report: Node = {
     index: all.indexOf(card),
@@ -157,4 +235,4 @@ const inspect = (target: unknown): Node | null => {
   return report;
 };
 
-export { cards, inspect, drawnOfPreview };
+export { cards, inspect, jinja, history, copy, drawnOfPreview, issueReportFor };

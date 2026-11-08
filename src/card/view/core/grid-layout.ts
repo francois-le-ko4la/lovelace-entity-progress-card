@@ -1,7 +1,15 @@
 import { CARD } from '../../../utils/parameters.js';
 import { type Config } from '../../../utils/types.js';
 import { cloneValue } from '../../../utils/browser-support.js';
-import { DENSITY_COMPACT_BAR_POSITIONS, raisesRainbowFullRow } from '../../config/schema.js';
+import {
+  DENSITY_COMPACT_BAR_POSITIONS,
+  contentHoldsBar,
+  contentKeyLines,
+  contentOrderKey,
+  contentShape,
+  isUpright,
+  raisesRainbowFullRow,
+} from '../../config/schema.js';
 
 type GridInputs = {
   config: Config | undefined;
@@ -21,7 +29,7 @@ const minGridRows = ({ config, isHidden, isRing }: GridInputs): number => {
   if (!config) return CARD.layout.orientations.horizontal.grid.grid_min_rows;
   const layout = orientationOf(config);
   const { hiddenComponent } = CARD.style.dynamic;
-  // top/bottom/background overlay the bar on the icon row (styles .content
+  // top/bottom/background/icon keep the bar off .content (styles .content
   // display:none): name and secondary_info hidden leave one icon row.
   const contentCollapsed =
     config.layout === CARD.layout.orientations.vertical.label &&
@@ -37,8 +45,39 @@ const minGridRows = ({ config, isHidden, isRing }: GridInputs): number => {
       ['default', 'below'].includes(config.bar_position ?? '') &&
       config.bar_size !== CARD.style.bar.sizeOptions.small &&
       config.bar_size !== CARD.style.bar.sizeOptions.xsmall) ||
+    // An upright bar in the stack needs a height of its own.
+    (contentShape(config) === 'stack' && contentHoldsBar(config) && isUpright(config)) ||
     raisesRainbowFullRow(config);
-  return baseRows + (needsExtraRow ? 1 : 0);
+  return Math.max(baseRows + (needsExtraRow ? 1 : 0), orderedStackRows(config, isHidden));
+};
+
+// Rows an ordered stack's lines fill, icon above, a below bar under, an overlay
+// bar behind (0 for a position not measured).
+const orderedStackRows = (config: Config, isHidden: (component: string) => boolean): number => {
+  const below = config.bar_position === 'below';
+  const overlay = config.bar_position === 'overlay';
+  const inText = contentHoldsBar(config);
+  const upright = isUpright(config);
+  if (contentShape(config) !== 'stack' || !(inText || below || overlay)) return 0;
+  const lines = contentKeyLines(contentOrderKey(config)).filter((line) => line.length > 0);
+  if (lines.length === 0) return 0;
+  const { stackHeights: px, rowPitch } = CARD.layout;
+  const bar = upright ? px.uprightBar : (px.bar[config.bar_size ?? CARD.style.bar.sizeOptions.small] ?? px.bar.small);
+  const lineHeight = (line: string[], index: number) => {
+    const text = index === 0 ? px.nameLine : px.detailLine;
+    if (!line.includes('bar')) return text;
+    return line.length === 1 ? bar : Math.max(text, bar);
+  };
+  const texts = lines.reduce((sum, line, index) => sum + lineHeight(line, index), 0);
+  // An upright bar spaces the stack's rows.
+  const gaps = inText && upright ? (lines.length - 1) * px.uprightGap : 0;
+  const content = (overlay && Math.max(px.overlayBar, texts)) || (below ? texts + px.belowGap + bar : texts + gaps);
+  const height =
+    px.frame +
+    (inText && !upright ? px.defaultPaddingTop : 0) +
+    (isHidden(CARD.style.dynamic.hiddenComponent.icon.label) ? 0 : px.icon) +
+    content;
+  return Math.ceil((height + rowPitch.gap) / (rowPitch.row + rowPitch.gap));
 };
 
 // issue #134: a compact card needs one column of width.

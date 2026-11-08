@@ -47,8 +47,9 @@
       "bar_effect_mode": "Juostos efektas",
       "bar_max_width_toggle": "Maks. juostos plotis",
       "bar_orientation": "Orientacija",
-      "bar_ring_start": null,
-      "bar_ring_gap": null,
+      "bar_ring_start": "Žiedo pradžia",
+      "bar_ring_gap": "Žiedo tarpas",
+      "bar_ring_softness": "Žiedo krašto švelnumas",
       "bar_scale": "Skalė",
       "bar_segments": "Segmentai",
       "bar_single_line": "Viena eilutė",
@@ -59,6 +60,13 @@
       "center_zero": "Nulis centre",
       "center_zero_growth_percent": "Augimo procentas",
       "center_zero_value": "Centro reikšmė",
+      "content_order": "Turinio tvarka",
+      "content_order_line_1": "Eilutė 1",
+      "content_order_line_2": "Eilutė 2",
+      "content_order_line_3": "Eilutė 3",
+      "content_order_line_4": "Eilutė 4",
+      "content_order_line_5": "Eilutė 5",
+      "content_order_line_6": "Eilutė 6",
       "custom_info": "Pasirinktinė papildoma informacija",
       "custom_theme": "Pasirinktinės temos zonos",
       "density": "Tankis",
@@ -216,9 +224,14 @@
         "proportional": "Proporcingas",
         "stacked": "Sukrautas"
       },
+      "content_order": {
+        "info": "Informacija",
+        "value": "Reikšmė"
+      },
       "density": {
         "compact": "Kompaktiškas",
         "single_line": "Viena eilutė",
+        "single_column": "Vienas stulpelis",
         "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
       },
       "enabled_disabled_mode": {
@@ -231,6 +244,7 @@
       },
       "hide": {
         "secondary_info": "Papildoma info",
+        "info": "Informacija",
         "value": "Reikšmė"
       },
       "icon_animation": {

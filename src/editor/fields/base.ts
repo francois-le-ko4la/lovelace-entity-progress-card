@@ -75,6 +75,9 @@ const HIDE_DEPENDENTS: Record<HideTarget, string[]> = {
   secondary_info: [...VALUE_FIELDS, ...UNIT_FIELDS, 'state_content', 'custom_info', 'reverse_secondary_info_row'],
   // Marks are painted ON the bar - watermark and peak_marker leave with it.
   progress_bar: BAR_FIELDS,
+  name_info: ['name_info'],
+  info: ['custom_info'],
+  state_content: ['state_content'],
 };
 
 // field name -> the hide targets that leave it nothing to do.
@@ -146,15 +149,17 @@ const HIDE_DISPLAY_ORDER: readonly HideTarget[] = [
   'icon',
   'shape',
   'name',
+  'name_info',
   'value',
   'unit',
   'secondary_info',
+  'info',
+  'state_content',
   'progress_bar',
 ];
 
-// The two densities that collapse the card to a single row, and so leave
-// multiline nothing to wrap onto.
-const DENSITY_SINGLE_ROW = ['compact', 'single_line'];
+// The densities densityOverrides clears multiline for.
+const DENSITY_SINGLE_ROW = ['compact', 'single_line', 'single_column'];
 
 // Field definitions are heterogeneous option bags (showIf/resolveVirtual/
 // onVirtualChange/width/target/... vary per field) - kept as `Record<string,

@@ -47,8 +47,9 @@
       "bar_effect_mode": "Palkin efekti",
       "bar_max_width_toggle": "Palkin enimmäisleveys",
       "bar_orientation": "Suunta",
-      "bar_ring_start": null,
-      "bar_ring_gap": null,
+      "bar_ring_start": "Renkaan alku",
+      "bar_ring_gap": "Renkaan aukko",
+      "bar_ring_softness": "Renkaan reunan pehmeys",
       "bar_scale": "Asteikko",
       "bar_segments": "Segmentit",
       "bar_single_line": "Yksi rivi",
@@ -59,6 +60,13 @@
       "center_zero": "Nolla keskellä",
       "center_zero_growth_percent": "Kasvuprosentti",
       "center_zero_value": "Keskiarvo",
+      "content_order": "Sisällön järjestys",
+      "content_order_line_1": "Rivi 1",
+      "content_order_line_2": "Rivi 2",
+      "content_order_line_3": "Rivi 3",
+      "content_order_line_4": "Rivi 4",
+      "content_order_line_5": "Rivi 5",
+      "content_order_line_6": "Rivi 6",
       "custom_info": "Mukautettu toissijainen tieto",
       "custom_theme": "Mukautetun teeman vyöhykkeet",
       "density": "Tiheys",
@@ -216,9 +224,14 @@
         "proportional": "Suhteellinen",
         "stacked": "Pinottu"
       },
+      "content_order": {
+        "info": "Tiedot",
+        "value": "Arvo"
+      },
       "density": {
         "compact": "Kompakti",
         "single_line": "Yksi rivi",
+        "single_column": "Yksi sarake",
         "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
       },
       "enabled_disabled_mode": {
@@ -231,6 +244,7 @@
       },
       "hide": {
         "secondary_info": "Lisätiedot",
+        "info": "Tiedot",
         "value": "Arvo"
       },
       "icon_animation": {

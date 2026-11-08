@@ -67,20 +67,20 @@ const describeBundle = (file: string) => {
       });
     }
 
-    test('exposes the EPB console helper, EPB_DIAG kept as its alias', () => {
+    test('exposes the EPB console helper, EPB_DIAG kept as its alias', async () => {
       const globals = window as unknown as Record<string, unknown>;
       const helper = globals.EPB as {
         version: string;
         help: () => string;
-        doctor: { dump: () => string; audit: () => Promise<string> };
+        doctor: { dump: () => Promise<string>; audit: () => Promise<string> };
       };
       assert.equal(helper.version, VERSION);
       assert.match(helper.help(), /EPB\.doctor\.audit\(\)/);
-      assert.match(helper.doctor.dump(), DIAGNOSTIC_HEADER);
+      assert.match(await helper.doctor.dump(), DIAGNOSTIC_HEADER);
       assert.equal(typeof helper.doctor.audit, 'function');
       assert.equal(Object.getOwnPropertyDescriptor(window, 'EPB')?.writable, false);
-      const legacy = globals.EPB_DIAG as { dump: () => string };
-      assert.match(legacy.dump(), DIAGNOSTIC_HEADER);
+      const legacy = globals.EPB_DIAG as { dump: () => Promise<string> };
+      assert.match(await legacy.dump(), DIAGNOSTIC_HEADER);
     });
 
     // The editor reads its shared modules off this table: nothing may swap it.

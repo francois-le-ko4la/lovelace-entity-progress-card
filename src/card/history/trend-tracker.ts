@@ -44,6 +44,11 @@ class TrendTracker {
     this.#evict(now);
   }
 
+  // value: a percent.
+  get samples(): { t: number; value: number }[] {
+    return this.#ring.toSamples();
+  }
+
   get hasEnoughData(): boolean {
     return this.#ring.size >= 2;
   }

@@ -22,6 +22,10 @@ export {
   ROW_IDENTITY_FIELDS,
   AGGREGATOR_FIELDS,
   PEAK_RANGE_TYPE_DEFAULT,
+  CONTENT_ORDER_TOKENS,
+  TEMPLATE_CONTENT_ORDER_TOKENS,
+  completeOrder,
+  completeLines,
 } from './schema/enums.js';
 export {
   type ValueConfig,
@@ -46,6 +50,16 @@ export {
 } from './schema/marks.js';
 export {
   translateOrientation,
+  isUpright,
+  contentShape,
+  contentHoldsBar,
+  contentOrderKey,
+  hideTargetOf,
+  isHiddenToken,
+  contentKeyLines,
+  defaultLines,
+  readLines,
+  type ContentShape,
   HAS_EFFECT,
   raisesRainbowFullRow,
   densityOverrides,

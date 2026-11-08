@@ -63,9 +63,9 @@ export class WatermarkView {
     };
   }
 
-  refresh() {
-    refreshBound(this.#bounds.low);
-    refreshBound(this.#bounds.high);
+  refresh(durationUnit: string | null) {
+    refreshBound(this.#bounds.low, durationUnit);
+    refreshBound(this.#bounds.high, durationUnit);
   }
 
   // A mark whose entity or Jinja is in a fault state is dropped; the bar stays.

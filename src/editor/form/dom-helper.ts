@@ -87,6 +87,19 @@ class EditorDOMHelper extends DOMHelper {
     });
   }
 
+  // An ha-input-chip removes its own node: emptied first, Lit rebuilds every
+  // chip instead of trusting the parts it still holds.
+  resetValue(name: string, value: unknown) {
+    this.enqueue(name, 'value', () => {
+      const el = this._domElements.get(name);
+      if (!el) return;
+      el.value = [];
+      requestAnimationFrame(() => {
+        el.value = value;
+      });
+    });
+  }
+
   // ─── Visibility ───────────────────────────────────────────────────────────
 
   /**

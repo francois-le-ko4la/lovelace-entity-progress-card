@@ -1,6 +1,8 @@
 import { css } from './css-tag.js';
 import { CARD } from '../parameters.js';
 
+const px = CARD.layout.stackHeights;
+
 const PARAMS_CSS = css`
 /* =============================================================================
    PARAMS
@@ -18,21 +20,21 @@ const PARAMS_CSS = css`
   --badge-size: 16px;
   --badge-icon-size: 12px;
   --badge-offset: -3px;
-  --progress-size-xs: 6px;
-  --progress-size-s: 8px;
-  --progress-size-m: 12px;
-  --progress-size-l: 16px;
-  --progress-size-xl: 42px;
-  --progress-size-overlay: 36px;
+  --progress-size-xs: ${px.bar.xsmall}px;
+  --progress-size-s: ${px.bar.small}px;
+  --progress-size-m: ${px.bar.medium}px;
+  --progress-size-l: ${px.bar.large}px;
+  --progress-size-xl: ${px.bar.xlarge}px;
+  --progress-size-overlay: ${px.overlayBar}px;
 
   /* === HEIGHT VARIABLES === */
-  --name-height: 20px;
+  --name-height: ${px.nameLine}px;
   /* --current-row-* is the slot a host that owns its children's box writes
      into (EntityProgressMultiBase._distributeHeight, multi.ts): a Multi row
      gets its whole height imposed, so the icon, its shape and the text line
      have to be derived from it rather than standing at the card's own
      defaults. Behind --epb-*, never in front: a user override still wins. */
-  --detail-height: var(--current-row-detail-height, 16px);
+  --detail-height: var(--current-row-detail-height, ${px.detailLine}px);
   --entities-height: 22.4px;
   --vertical-name-large-height: 18px;
   /* The row the bar is centred in, fixed in horizontal whatever bar_size is -

@@ -47,8 +47,9 @@
       "bar_effect_mode": "Ефекат траке",
       "bar_max_width_toggle": "Максимална ширина траке",
       "bar_orientation": "Оријентација",
-      "bar_ring_start": "Ring start",
-      "bar_ring_gap": "Ring gap",
+      "bar_ring_start": "Почетак прстена",
+      "bar_ring_gap": "Отвор прстена",
+      "bar_ring_softness": "Мекоћа ивице прстена",
       "bar_scale": "Скала",
       "bar_segments": "Сегменти",
       "bar_single_line": "У једном реду",
@@ -59,6 +60,13 @@
       "center_zero": "Нула у центру",
       "center_zero_growth_percent": "Проценат раста",
       "center_zero_value": "Вредност у центру",
+      "content_order": "Редослед садржаја",
+      "content_order_line_1": "Ред 1",
+      "content_order_line_2": "Ред 2",
+      "content_order_line_3": "Ред 3",
+      "content_order_line_4": "Ред 4",
+      "content_order_line_5": "Ред 5",
+      "content_order_line_6": "Ред 6",
       "custom_info": "Прилагођене додатне информације",
       "custom_theme": "Прилагођене зоне теме",
       "density": "Густина",
@@ -216,9 +224,14 @@
         "proportional": "Пропорционално",
         "stacked": "Наслагано"
       },
+      "content_order": {
+        "info": "Информације",
+        "value": "Вредност"
+      },
       "density": {
         "compact": "Компактно",
         "single_line": "У једном реду",
+        "single_column": "У једној колони",
         "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
       },
       "enabled_disabled_mode": {
@@ -231,6 +244,7 @@
       },
       "hide": {
         "secondary_info": "Додатне информације",
+        "info": "Информације",
         "value": "Вредност"
       },
       "icon_animation": {

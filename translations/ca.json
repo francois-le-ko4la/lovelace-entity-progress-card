@@ -47,8 +47,9 @@
       "bar_effect_mode": "Efecte de la barra",
       "bar_max_width_toggle": "Amplada màxima de la barra",
       "bar_orientation": "Orientació",
-      "bar_ring_start": null,
-      "bar_ring_gap": null,
+      "bar_ring_start": "Inici de l'anell",
+      "bar_ring_gap": "Obertura de l'anell",
+      "bar_ring_softness": "Suavitat de la vora de l'anell",
       "bar_scale": "Escala",
       "bar_segments": "Segments",
       "bar_single_line": "Una línia",
@@ -59,6 +60,13 @@
       "center_zero": "Zero al centre",
       "center_zero_growth_percent": "Percentatge de creixement",
       "center_zero_value": "Valor de centratge",
+      "content_order": "Ordre del contingut",
+      "content_order_line_1": "Línia 1",
+      "content_order_line_2": "Línia 2",
+      "content_order_line_3": "Línia 3",
+      "content_order_line_4": "Línia 4",
+      "content_order_line_5": "Línia 5",
+      "content_order_line_6": "Línia 6",
       "custom_info": "Informació addicional (secundària)",
       "custom_theme": "Zones de tema personalitzat",
       "density": "Densitat",
@@ -216,9 +224,14 @@
         "proportional": "Proporcional",
         "stacked": "Apilat"
       },
+      "content_order": {
+        "info": "Informació",
+        "value": "Valor"
+      },
       "density": {
         "compact": "Compacte",
         "single_line": "Una línia",
+        "single_column": "Una columna",
         "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
       },
       "enabled_disabled_mode": {
@@ -231,6 +244,7 @@
       },
       "hide": {
         "secondary_info": "Info secundària",
+        "info": "Informació",
         "value": "Valor"
       },
       "icon_animation": {

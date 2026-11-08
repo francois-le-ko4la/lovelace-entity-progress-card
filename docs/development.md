@@ -142,8 +142,8 @@ it.
 
 `src/editor/` follows the same rule: `elements/` (`base`, `editors`, `chips`,
 `list-editors/`), `form/` (`field-builder`, `dom-helper`, `select-types`),
-`data/` (`yaml-writer`, `multi-cascade`, `issue-report`, `config-flow`),
-`fields/`, `groups/`; `entry.ts` and `factory.ts` stay at the root.
+`data/` (`multi-cascade`, `issue-report`, `config-flow`), `fields/`, `groups/`;
+`entry.ts` and `factory.ts` stay at the root.
 
 ### Two files, one copy of each module
 
@@ -262,8 +262,8 @@ this is the diagram's "Config helpers + validation" layer; see
 | --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `HassProviderSingleton`                                   | Single access point to the `hass` object: entity props, attributes, names/areas/floors, localization, locale-aware formatting. Shared by all cards on the page.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | `ChangeTracker`                                           | Per-card filter deciding whether a `hass` update concerns this card (reference comparison of watched entities' state objects).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| `EntityHelper`                                            | Wraps one entity (unbound when the card has none): its value kind (`timer`, `counter`, `number`, `duration`, `default`, from `HA_CONTEXT.domains` then the device class), value extraction, validity/availability, default color (resolved once per refresh).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| `hasUsableHistory`                                        | The one rule for what the recorder keeps a usable numeric history of (no attribute, no `timer`/`counter`/`duration` value kind): the card fetches history by it, the editor offers `peak_marker` by it.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `EntityHelper`                                            | Wraps one entity (unbound when the card has none): its value kind (`timer`, `counter`, `number`, `duration`, `default`, from `HA_CONTEXT.domains` then the device class or a time unit), value extraction, validity/availability, default color (resolved once per refresh).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `hasUsableHistory`                                        | The one rule for what the recorder keeps a usable numeric history of (no attribute, no `timer`/`counter` value kind): the card fetches history by it, the editor offers `peak_marker` by it.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | `boundFrom` / `boundValue` / `boundUsable`                | `bound-value.ts`: a `min_value`/`max_value`/`watermark`/`alert_when` end - a number, an `EntityHelper` or `null` (unset, or fed by Jinja) - decided once from the config; `null` and numbers are never in a fault state.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | `ha-state.ts`                                             | HA's own reading of a domain/state pair, over the `HA_CONTEXT` mirrors of HA frontend/core: `isStateActive` (`state_active.ts`), `stateColor` (`state_color.ts`: the first `--state-*-color` candidate HA's themes define wins, cached per domain/device class/state, battery and group rules included), `isToggleDomain` (where the tile card icon toggles by default), `domainTraits` (our own per-domain value kind, percent attribute, animation).                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | `EntityCollectionHelper`                                  | The `bar_stack` feature: `proportional` mode renormalizes shares against the combined total (a.k.a. "100% stacked"), `stacked` places each entity at its own position on the min/max scale, `net` reduces everything to one algebraic total. Width/share math always runs on `#magnitude` (`Math.abs`) - a raw negative value must never produce a negative width. An entity counts as negative (`net`'s sign, or the arm it lands in with `center_zero`) via `#isNegative`: marked `subtract`, **or** its own raw value is already negative - checking both instead of just flipping the sign on `subtract` avoids double-negating an already-negative value back to positive. With `center_zero`, `stacked`/`proportional` split by that same `#isNegative` into two independent arm gradients (`getDivergingGradients`) applied via dedicated CSS variables (`--stack-*`) instead of the single shared fill. |
@@ -297,8 +297,15 @@ through the child's own height variable.
 
 - **A row's config**: `rowConfigsOf` (`multi-rows.ts`) merges the top level into
   each row ([Shared values](#shared-values-one-factorisation)) and `toRowConfig`
-  imposes the row shape — `density: single_line`, `frameless`, `marginless` —
-  which the row schemas therefore leave out. `bar_size` defaults to `small`.
+  imposes the row shape — `frameless`, `marginless` and a density — which the
+  row schemas therefore leave out. `bar_size` defaults to `small`.
+- **Rows or columns**: the Multi-Card's `layout` and `bar_position` are not
+  aggregator fields. They reach the rows like any shared option, and `rowShape`
+  reads them: `horizontal` makes each row `density: single_line`; `vertical`
+  makes each one `single_column`, with the card's `bar_position` (`default` or
+  `overlay`) winning over the row's. Columns sit side by side, each the full
+  height, without `rowMetrics`; `rows` defaults to a vertical card's plus one.
+  The Feature has no `layout`: always rows.
 - **Validation**: the aggregator's own keys (`AGGREGATOR_FIELDS`: `entities`,
   `rows`) by its schema; each row by the full card schema, in its child. A row
   identity (`ROW_IDENTITY_FIELDS`: `entity`, `attribute`, `name`, `icon`) is
@@ -536,8 +543,8 @@ subscriptions across reconnections (HA restart, network loss).
 history, then follow the live value.
 
 - **Who may ask**: `hasUsableHistory` (`entity-helper.ts`) — the same rule the
-  editor uses to offer `peak_marker`: no attribute, no `timer`/`counter`, no
-  `device_class: duration`.
+  editor uses to offer `peak_marker`: no attribute, no `timer`/`counter`. A
+  duration's points are converted to the card's working unit.
 - **The request**: `HistorySeeding` (`history-seeding.ts`) sends one
   `history/history_during_period` over the shared connection. Two features
   asking for the same window share one in-flight call, and `seed` drops a reply
@@ -891,7 +898,9 @@ diagnostics and the docs all read it there instead of keeping their own copy:
   `fieldOptions` — the sections above.
 - **Where an option has an effect**: `HAS_EFFECT` and `INERT_OPTIONS` (with the
   fallback an inert option gets back), and `densityOverrides` (what a density
-  imposes). `postProcess` applies them to the negotiated config, the editor
+  imposes). A rule reading a raw config (`contentShape`, `HAS_EFFECT`) reads it
+  through `densityOverrides` first (`settled`): a raw `single_column` has no
+  `layout` yet. `postProcess` applies them to the negotiated config, the editor
   hides and parks a field by them, and `card-audit.ts` reports "no effect" by
   them — in `EPB.doctor` and the issue report.
 - **Marks**: `MARK_FIELDS`, which mark has which field and whether it inherits
@@ -1719,10 +1728,12 @@ reasoning survives a maintainer handoff instead of living only in chat history.
   share one host table (its key is fixed at build time), so the second one's
   editors never register.
 - **debug** (`?debug=area1,area2`, or `?debug=all`) turns on per-area console
-  logging at runtime, no rebuild, and works against the shipped file too. The
-  committed baseline is `DEBUG_DEFAULTS` (all-`false`) — `?debug=` only ever
-  turns flags _on_. `check-release-flags.js` verifies `DEBUG_DEFAULTS` is
-  all-false and `build:prod` re-forces it, so verbose logging can't ship.
+  logging at runtime, no rebuild, and works against the shipped file too.
+  `EPB.debug('a,b')` saves areas in `localStorage` (one key per suffix), merged
+  with `?debug=` at load; flags are read once, so a change waits for a reload.
+  The committed baseline is `DEBUG_DEFAULTS` (all-`false`) — both only ever turn
+  flags _on_. `check-release-flags.js` verifies `DEBUG_DEFAULTS` is all-false
+  and `build:prod` re-forces it, so verbose logging can't ship.
 - **`?noRegistration`** loads the whole module (banner, `EPB`, everything) but
   defines zero custom elements and pushes nothing to
   `customCards`/`Badges`/`Features` — a diagnostic knob for telling apart "the
@@ -1801,11 +1812,17 @@ Other aids:
   (`card/diagnostics/doctor.ts`) walk every shadow root for cards of ours, a
   Multi's rows included; `inspect` climbs from any element inside a card to it,
   and reports `ViewBase.drawnFrom` - the value and range the bar is drawn from.
-- The editor's bug icon copies an issue report: `environmentReport()` (what
-  `dump()` prints), then the YAML Home Assistant holds, written by
-  `editor/data/yaml-writer.ts` with `notesByPath` comments and a `# drawn from:`
-  line read off the dialog's preview (`drawnOfPreview`). Multi rows don't offer
-  it.
+  `.jinja()` lists a card's Jinja fields with HA's last answer
+  (`JinjaSubscriptions.diagnose`), `.history()` the samples of its trend and
+  peak trackers. `dump()` is async: it adds a SHA-256 of both files, fetched
+  again.
+- The editor's bug icon copies an issue report (`issueReportFor`, doctor.ts):
+  `environmentReport()` (what `dump()` prints, without the digests: Safari
+  refuses a clipboard write after an await), then the YAML Home Assistant holds,
+  written by `card/diagnostics/yaml-writer.ts` with `notesByPath` comments and a
+  `# drawn from:` line read off the dialog's preview (`drawnOfPreview`). Multi
+  rows don't offer it. `EPB.doctor.copy(n | $0)` builds the same report from the
+  console, hence the writer in the bundle.
 - Logger and `?debug=instances` names are passed explicitly (`initLogger`,
   `traceInstance`), never read from `constructor.name`: the prod build minifies
   class names. An element passes its `localName` (the tag), a helper a literal;

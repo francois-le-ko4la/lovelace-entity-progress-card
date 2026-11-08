@@ -12,6 +12,9 @@ import { makeHass, TEST_ENTITY } from '../../ha-stubs.js';
 import '../../../src/index.js';
 import '../../../src/editor/entry.js';
 
+const EDITOR_TAG = 'entity-progress-card-editor';
+const CARD_TYPE = 'custom:entity-progress-card';
+
 type EditorEl = HTMLElement & { setConfig?: (c: unknown) => void; hass?: unknown };
 
 const mountEditor = async (tag: string, config: Record<string, unknown>) => {
@@ -27,8 +30,8 @@ const bugIconOf = (el: EditorEl) => el.shadowRoot?.querySelector<HTMLElement>('.
 
 describe('the editor header copies an issue report', () => {
   test('the card: environment, then the YAML with a deprecated option marked', async () => {
-    const el = await mountEditor('entity-progress-card-editor', {
-      type: 'custom:entity-progress-card',
+    const el = await mountEditor(EDITOR_TAG, {
+      type: CARD_TYPE,
       disable_unit: true,
     });
     const icon = bugIconOf(el);
@@ -56,7 +59,7 @@ describe('the editor header copies an issue report', () => {
       await toast;
       return navigator.clipboard.readText();
     };
-    const alone = await mountEditor('entity-progress-card-editor', { type: 'custom:entity-progress-card' });
+    const alone = await mountEditor(EDITOR_TAG, { type: CARD_TYPE });
     assert.doesNotMatch(await copy(alone), /drawn from/);
 
     const dialog = document.createElement('hui-dialog-edit-card');
@@ -66,12 +69,12 @@ describe('the editor header copies an issue report', () => {
       setConfig?: (c: unknown) => void;
       hass?: unknown;
     };
-    preview.setConfig?.({ type: 'custom:entity-progress-card', entity: TEST_ENTITY });
+    preview.setConfig?.({ type: CARD_TYPE, entity: TEST_ENTITY });
     root.appendChild(preview);
     preview.hass = makeHass();
-    const editor = document.createElement('entity-progress-card-editor') as EditorEl;
+    const editor = document.createElement(EDITOR_TAG) as EditorEl;
     editor.hass = makeHass();
-    editor.setConfig?.({ type: 'custom:entity-progress-card', entity: TEST_ENTITY });
+    editor.setConfig?.({ type: CARD_TYPE, entity: TEST_ENTITY });
     root.appendChild(editor);
     await flushFrames();
     assert.match(await copy(editor), /\n# drawn from: min 0 · max 100 · value 42 · 42%\n```\n$/);

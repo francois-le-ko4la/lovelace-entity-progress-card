@@ -3501,7 +3501,7 @@ views:
               still shown); vertical has no matching narrow shape, so
               `name`/`secondary_info` are forced hidden instead, down to a
               single grid row. Either way `bar_position` is restricted to
-              `top`/`bottom`/`background`, and `multiline` cleared for you
+              `top`/`bottom`/`background`/`icon`, and `multiline` cleared for you
               (editor included - fields stop being offered instead of
               silently reverting on save). `status_label`/`trend_indicator`
               still work as usual. Cards below have no `grid_options` of
@@ -3545,6 +3545,11 @@ views:
             color: white
           - type: custom:entity-progress-card-dev
             entity: input_number.epb_demo_battery
+            name: 'compact + icon'
+            density: compact
+            bar_position: icon
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
             name: 'compact + status_label'
             density: compact
             bar_position: bottom
@@ -3570,6 +3575,12 @@ views:
             layout: vertical
             bar_position: background
             color: white
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: 'compact + vertical + icon'
+            density: compact
+            layout: vertical
+            bar_position: icon
         column_span: 2
       - type: grid
         cards:
@@ -3676,6 +3687,146 @@ views:
       - type: grid
         cards:
           - type: heading
+            heading: 'density: single_column — icon, texts and an upright bar in one column'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card
+              entity: input_number.epb_demo_battery
+              density: single_column
+              ```
+              The vertical twin of `single_line`: `layout` is forced to
+              `vertical`, the bar stands upright under the texts
+              (`bar_position: default`) or behind them (`overlay`),
+              filling from the bottom (`up`) or the top (`down`).
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: 'single_column'
+            density: single_column
+            grid_options:
+              columns: 3
+              rows: 3
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '+ down'
+            density: single_column
+            bar_orientation: down
+            grid_options:
+              columns: 3
+              rows: 3
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '+ overlay'
+            density: single_column
+            bar_position: overlay
+            grid_options:
+              columns: 3
+              rows: 3
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: '+ watermark'
+            density: single_column
+            watermark:
+              low: 20
+              high: 80
+            grid_options:
+              columns: 3
+              rows: 3
+        column_span: 2
+      - type: grid
+        cards:
+          - type: heading
+            heading: 'content_order — place each text and the bar on a line'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:entity-progress-card
+              entity: input_number.epb_demo_battery
+              custom_info: Door
+              content_order:
+                - [info, value]
+                - [name, bar]
+              ```
+              A list of lines of `name`, `name_info`, `info`,
+              `state_content`, `value` and `bar`. Left-out blocks join
+              their host; `hide` removes one. Vertical stacks the lines
+              (the card grows a row with them), `compact_below` orders the
+              line over the bar, `single_line` the one row.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 3
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: 'horizontal'
+            custom_info: Door
+            content_order:
+              - [info, value]
+              - [name, bar]
+            grid_options:
+              columns: 12
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: 'vertical'
+            layout: vertical
+            custom_info: Door
+            content_order:
+              - [name]
+              - [info]
+              - [value]
+              - [bar]
+            grid_options:
+              columns: 6
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: 'compact_below'
+            bar_position: compact_below
+            content_order:
+              - [value, name]
+            grid_options:
+              columns: 12
+              rows: 1
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: 'single_line'
+            density: single_line
+            content_order:
+              - [value, bar, name]
+            grid_options:
+              columns: 12
+              rows: 1
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: 'name_info'
+            name_info: shown
+            content_order:
+              - [name_info, name]
+              - [value, bar]
+            grid_options:
+              columns: 6
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: 'name_info hidden'
+            name_info: shown
+            hide:
+              - name_info
+            content_order:
+              - [name_info, name]
+              - [value, bar]
+            grid_options:
+              columns: 6
+        column_span: 2
+      - type: grid
+        cards:
+          - type: heading
             heading: 'bar_position: icon — a ring around the icon'
             heading_style: title
           - type: markdown
@@ -3746,6 +3897,26 @@ views:
             grid_options:
               columns: 6
               rows: 2
+          - type: custom:entity-progress-card-dev
+            entity: sensor.epb_demo_battery_ev
+            name: 'bar_ring.softness: 0'
+            bar_size: xlarge
+            bar_position: icon
+            bar_ring:
+              softness: 0
+            grid_options:
+              columns: 6
+              rows: 1
+          - type: custom:entity-progress-card-dev
+            entity: sensor.epb_demo_battery_ev
+            name: 'bar_ring.softness: 4'
+            bar_size: xlarge
+            bar_position: icon
+            bar_ring:
+              softness: 4
+            grid_options:
+              columns: 6
+              rows: 1
         column_span: 2
     badges:
       - type: custom:entity-progress-badge-dev
@@ -3935,6 +4106,58 @@ views:
               min_columns: 4
               columns: 6
               rows: 2
+          - type: heading
+            heading: 'content_order - each row ordered like a single_line card'
+            heading_style: subtitle
+            grid_options:
+              columns: full
+          - type: custom:entity-progress-multi-card-dev
+            content_order:
+              - [value, name, bar]
+            hide: []
+            bar_size: xsmall
+            entities:
+              - entity: input_number.epb_demo_printer_ink_black
+                bar_color: black
+              - entity: input_number.epb_demo_printer_ink_cyan
+                bar_color: cyan
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: heading
+            heading: 'layout: vertical - the rows become columns'
+            heading_style: subtitle
+            grid_options:
+              columns: full
+          - type: custom:entity-progress-multi-card-dev
+            layout: vertical
+            hide: []
+            entities:
+              - entity: input_number.epb_demo_printer_ink_black
+                bar_color: black
+              - entity: input_number.epb_demo_printer_ink_cyan
+                bar_color: cyan
+              - entity: input_number.epb_demo_printer_ink_magenta
+                bar_color: magenta
+              - entity: input_number.epb_demo_printer_ink_yellow
+                bar_color: yellow
+            grid_options:
+              columns: 6
+          - type: custom:entity-progress-multi-card-dev
+            layout: vertical
+            hide: []
+            bar_position: overlay
+            entities:
+              - entity: input_number.epb_demo_printer_ink_black
+                bar_color: black
+              - entity: input_number.epb_demo_printer_ink_cyan
+                bar_color: cyan
+              - entity: input_number.epb_demo_printer_ink_magenta
+                bar_color: magenta
+              - entity: input_number.epb_demo_printer_ink_yellow
+                bar_color: yellow
+            grid_options:
+              columns: 6
       - type: grid
         cards:
           - type: heading
@@ -8179,6 +8402,60 @@ views:
       - type: grid
         cards:
           - type: heading
+            heading: '✨ bar_ring (Cookbook - visual effects)'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              📁 `effect-bar-ring.png`
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 1
+          - type: custom:entity-progress-card-dev
+            entity: sensor.epb_demo_battery_ev
+            name: 'start 225 · gap 90'
+            bar_position: icon
+            bar_ring:
+              start: 225
+              gap: 90
+            grid_options:
+              columns: 6
+              rows: 1
+          - type: custom:entity-progress-card-dev
+            entity: sensor.epb_demo_battery_ev
+            name: '+ bar_segments: 5'
+            bar_position: icon
+            bar_segments: 5
+            bar_ring:
+              start: 225
+              gap: 90
+            grid_options:
+              columns: 6
+              rows: 1
+          - type: custom:entity-progress-card-dev
+            entity: sensor.epb_demo_battery_ev
+            name: 'softness: 0'
+            bar_position: icon
+            bar_size: xlarge
+            bar_ring:
+              softness: 0
+            grid_options:
+              columns: 6
+              rows: 1
+          - type: custom:entity-progress-card-dev
+            entity: sensor.epb_demo_battery_ev
+            name: 'softness: 4'
+            bar_position: icon
+            bar_size: xlarge
+            bar_ring:
+              softness: 4
+            grid_options:
+              columns: 6
+              rows: 1
+      - type: grid
+        cards:
+          - type: heading
             heading: '✨ interpolate (Cookbook - visual effects)'
             heading_style: title
           - type: markdown
@@ -9529,3 +9806,50 @@ views:
               columns: 6
               rows: 2
         column_span: 2
+      - type: grid
+        cards:
+          - type: heading
+            heading: Mushroom Template card hosting the feature
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              ```yaml
+              type: custom:mushroom-template-card
+              entity: sensor.epb_demo_battery_ev
+              primary: EV battery
+              icon: mdi:car-electric
+              features_position: bottom
+              features:
+                - type: custom:entity-progress-feature-dev
+                  theme: optimal_when_high
+                  bar_color_mode: rainbow
+              ```
+              A Mushroom Template card (v5) is a feature host like the
+              tile: the feature takes the card's entity when it sets none.
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 2
+          - type: custom:mushroom-template-card
+            entity: sensor.epb_demo_battery_ev
+            primary: EV battery
+            secondary: "{{ states(entity) }} %"
+            icon: mdi:car-electric
+            features_position: bottom
+            features:
+              - type: custom:entity-progress-feature-dev
+                theme: optimal_when_high
+                bar_color_mode: rainbow
+            grid_options:
+              columns: 6
+          - type: custom:mushroom-template-card
+            entity: sensor.epb_demo_battery_ev
+            primary: EV battery
+            icon: mdi:car-electric
+            features_position: inline
+            features:
+              - type: custom:entity-progress-feature-dev
+                theme: optimal_when_high
+            grid_options:
+              columns: 6

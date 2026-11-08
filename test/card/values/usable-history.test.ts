@@ -33,14 +33,12 @@ HassProviderSingleton.getInstance().hass = {
 } as never;
 
 describe('hasUsableHistory - what the recorder keeps a numeric history of', () => {
-  test('a sensor or a number does', () => {
-    assert.equal(hasUsableHistory(SENSOR), true);
-    assert.equal(hasUsableHistory('number.target'), true);
+  test('a sensor, a number or a duration does', () => {
+    for (const entity of [SENSOR, 'number.target', 'sensor.uptime']) assert.equal(hasUsableHistory(entity), true, entity);
   });
 
-  test('a timer, a counter or a duration does not', () => {
-    for (const entity of ['timer.laundry', 'counter.visits', 'sensor.uptime'])
-      assert.equal(hasUsableHistory(entity), false, entity);
+  test('a timer or a counter does not', () => {
+    for (const entity of ['timer.laundry', 'counter.visits']) assert.equal(hasUsableHistory(entity), false, entity);
   });
 
   test('an attribute does not, whatever its entity', () => {

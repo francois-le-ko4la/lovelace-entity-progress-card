@@ -89,6 +89,30 @@ const BAR_CSS = css`
   --bar-max-height: 100%;
 }
 
+/* An upright bar in the vertical stack: overlay up's column, its texts outside
+   it. It takes the height they leave; bar_size is inert here (HAS_EFFECT). */
+ha-card.vertical.default.vertical-bar {
+  --current-height-fallback: 100%;
+}
+ha-card.vertical.default.vertical-bar .${CARD.htmlStructure.sections.container.class} {
+  --current-container-padding-top: 0;
+}
+ha-card.vertical.default.vertical-bar .${CARD.htmlStructure.sections.content.class} {
+  --current-content-flex-grow: 1;
+  --current-content-height: auto;
+  --current-content-gap: calc(var(--spacing) / 2);
+  align-items: center;
+}
+ha-card.vertical.default.vertical-bar .${CARD.htmlStructure.elements.progressBar.container.class} {
+  width: var(--epb-progress-bar-size, 50%);
+  height: auto;
+  min-height: var(--progress-size-xl, 42px);
+}
+ha-card.vertical.default.vertical-bar .${CARD.htmlStructure.elements.progressBar.bar.class} {
+  --bar-height: 100%;
+  --bar-max-height: 100%;
+}
+
 /* ==== HALF ZONES (center-zero clipping containers) === */
 .${CARD.htmlStructure.elements.progressBar.half.class} {
   position: absolute;

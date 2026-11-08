@@ -47,8 +47,9 @@
       "bar_effect_mode": "Effekt på stapeln",
       "bar_max_width_toggle": "Max stapelbredd",
       "bar_orientation": "Riktning",
-      "bar_ring_start": null,
-      "bar_ring_gap": null,
+      "bar_ring_start": "Ringens start",
+      "bar_ring_gap": "Ringens öppning",
+      "bar_ring_softness": "Mjukhet i ringens kant",
       "bar_scale": "Skala",
       "bar_segments": "Segment",
       "bar_single_line": "En rad",
@@ -59,6 +60,13 @@
       "center_zero": "Noll i mitten",
       "center_zero_growth_percent": "Tillväxtprocent",
       "center_zero_value": "Centervärde",
+      "content_order": "Innehållsordning",
+      "content_order_line_1": "Rad 1",
+      "content_order_line_2": "Rad 2",
+      "content_order_line_3": "Rad 3",
+      "content_order_line_4": "Rad 4",
+      "content_order_line_5": "Rad 5",
+      "content_order_line_6": "Rad 6",
       "custom_info": "Anpassad sekundär info",
       "custom_theme": "Anpassade temazoner",
       "density": "Täthet",
@@ -216,9 +224,14 @@
         "proportional": "Proportionell",
         "stacked": "Staplad"
       },
+      "content_order": {
+        "info": "Info",
+        "value": "Värde"
+      },
       "density": {
         "compact": "Kompakt",
         "single_line": "En rad",
+        "single_column": "En kolumn",
         "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
       },
       "enabled_disabled_mode": {
@@ -231,6 +244,7 @@
       },
       "hide": {
         "secondary_info": "Sekundär info",
+        "info": "Info",
         "value": "Värde"
       },
       "icon_animation": {

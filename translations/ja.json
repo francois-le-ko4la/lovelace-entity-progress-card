@@ -47,8 +47,9 @@
       "bar_effect_mode": "バーのエフェクト",
       "bar_max_width_toggle": "バーの最大幅",
       "bar_orientation": "向き",
-      "bar_ring_start": null,
-      "bar_ring_gap": null,
+      "bar_ring_start": "リングの開始位置",
+      "bar_ring_gap": "リングの隙間",
+      "bar_ring_softness": "リング端のぼかし",
       "bar_scale": "スケール",
       "bar_segments": "セグメント",
       "bar_single_line": "1行表示",
@@ -59,6 +60,13 @@
       "center_zero": "ゼロを中央に",
       "center_zero_growth_percent": "成長率",
       "center_zero_value": "中心値",
+      "content_order": "コンテンツの順序",
+      "content_order_line_1": "第1行",
+      "content_order_line_2": "第2行",
+      "content_order_line_3": "第3行",
+      "content_order_line_4": "第4行",
+      "content_order_line_5": "第5行",
+      "content_order_line_6": "第6行",
       "custom_info": "カスタム補助情報",
       "custom_theme": "カスタムテーマゾーン",
       "density": "密度",
@@ -216,9 +224,14 @@
         "proportional": "比例",
         "stacked": "積み上げ"
       },
+      "content_order": {
+        "info": "情報",
+        "value": "値"
+      },
       "density": {
         "compact": "コンパクト",
         "single_line": "1行表示",
+        "single_column": "1列表示",
         "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
       },
       "enabled_disabled_mode": {
@@ -231,6 +244,7 @@
       },
       "hide": {
         "secondary_info": "補足情報",
+        "info": "情報",
         "value": "値"
       },
       "icon_animation": {

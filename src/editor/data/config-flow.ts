@@ -59,6 +59,7 @@ const ISOLATED_KEYS: ReadonlySet<string> = new Set([
   'secondary',
   'custom_info',
   'multiline',
+  'content_order',
   'unit_spacing',
   'decimal',
   'icon',

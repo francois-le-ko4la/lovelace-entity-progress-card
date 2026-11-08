@@ -49,6 +49,7 @@
       "bar_orientation": "",
       "bar_ring_start": "",
       "bar_ring_gap": "",
+      "bar_ring_softness": "",
       "bar_scale": "",
       "bar_segments": "",
       "bar_single_line": "",
@@ -59,6 +60,13 @@
       "center_zero": "",
       "center_zero_growth_percent": "",
       "center_zero_value": "",
+      "content_order": "",
+      "content_order_line_1": "",
+      "content_order_line_2": "",
+      "content_order_line_3": "",
+      "content_order_line_4": "",
+      "content_order_line_5": "",
+      "content_order_line_6": "",
       "custom_info": "",
       "custom_theme": "",
       "density": "",
@@ -216,9 +224,14 @@
         "proportional": "",
         "stacked": ""
       },
+      "content_order": {
+        "info": "",
+        "value": ""
+      },
       "density": {
         "compact": "",
         "single_line": "",
+        "single_column": "",
         "default": ""
       },
       "enabled_disabled_mode": {
@@ -231,6 +244,7 @@
       },
       "hide": {
         "secondary_info": "",
+        "info": "",
         "value": ""
       },
       "icon_animation": {

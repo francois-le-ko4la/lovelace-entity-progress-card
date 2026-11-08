@@ -57,6 +57,8 @@ const configBase = {
   },
   separator: ' · ',
   configError: 'Invalid config',
+  // State the card gives a missing entity; Home Assistant never reports it.
+  entityNotFound: 'notFound',
 };
 
 const htmlStructure = {
@@ -92,6 +94,10 @@ const htmlStructure = {
     // they can share one row, with the bar as a separate sibling row below
     // (see StructureElements.createContentBody).
     nameSecondaryRow: { element: 'div', class: 'name-secondary-row' },
+    // One of content_order's horizontal lines (createOrderedBody).
+    contentLine: { element: 'div', class: 'content-line' },
+    // Its run of consecutive texts: one width cap, one ellipsis.
+    contentGroup: { element: 'div', class: 'content-group' },
     // density: single_line only - wraps name+secondary_info so the whole row
     // truncates once, at its end, instead of each box ellipsing on its own
     // (see StructureElements.createContentBody and styles.ts's DENSITY block).
@@ -101,6 +107,8 @@ const htmlStructure = {
     icon: { element: 'div', class: 'icon' },
     shape: { element: 'shape', class: 'shape' },
     // rainbow_full's value pill on the ring (bar_position: icon).
+    // The ring's filled arc, over the track drawn by .shape::after.
+    ringFill: { element: 'div', class: 'ring-fill', extraAttr: ARIA_HIDDEN },
     ringMark: { element: 'div', class: 'ring-mark', extraAttr: ARIA_HIDDEN },
     ringZero: { element: 'div', class: 'ring-zero', extraAttr: ARIA_HIDDEN },
     // What a screen reader reads in place of the bar: the ring sits in the
@@ -110,6 +118,8 @@ const htmlStructure = {
       class: 'ring-progress',
       extraAttr: { role: 'progressbar', 'aria-valuemin': 0, 'aria-valuemax': 100, 'aria-valuenow': 0 },
     },
+    // Class every ring mark layer carries on top of its own.
+    ringLayer: { class: 'ring-layer' },
     // The bar's marks, one layer each round the ring: same shown/wm-* classes.
     ringMarks: {
       low: { element: 'div', class: 'ring-low', extraAttr: ARIA_HIDDEN },
@@ -142,6 +152,9 @@ const htmlStructure = {
     // overflow:hidden. A div lays out from the top like every other block.
     secondaryInfoValue: { element: 'div', class: 'secondary-info-value' },
     secondaryInfoMain: { element: 'span', class: 'secondary-info-main', id: 'entity-value' },
+    // content_order's own leaves: state_content's text, multiline info's lines.
+    secondaryInfoState: { element: 'span', class: 'secondary-info-state' },
+    infoLines: { element: 'div', class: 'info-lines' },
     // secondaryInfoExtra is "line 1": in single-line mode it's the only extra
     // span; in multiline mode it's always the first of the two stacked lines
     // (see StructureElements.secondaryInfoLine, which never gives line 1 a
@@ -197,8 +210,29 @@ const htmlStructure = {
 // hiddenComponent below, the schema's allowed values, the editor's per-target
 // field list and chip order - is typed off this one list, so adding a target
 // is a compile error wherever it isn't wired.
-const HIDE_TARGETS = ['icon', 'name', 'value', 'unit', 'secondary_info', 'progress_bar', 'shape'] as const;
+const HIDE_TARGETS = [
+  'icon',
+  'name',
+  'value',
+  'unit',
+  'secondary_info',
+  'progress_bar',
+  'shape',
+  'name_info',
+  'info',
+  'state_content',
+] as const;
 type HideTarget = (typeof HIDE_TARGETS)[number];
+
+// The group target that also hides each content_order text: the schema, the
+// ordered markup and its CSS all read this one table.
+const TEXT_HIDE_GROUP: Readonly<Record<string, Extract<HideTarget, 'name' | 'secondary_info'>>> = {
+  name: 'name',
+  name_info: 'name',
+  info: 'secondary_info',
+  state_content: 'secondary_info',
+  value: 'secondary_info',
+};
 
 // Every mark's CSS variables follow one naming scheme.
 const STATE_ICON_COLOR = haColor('state-icon');
@@ -378,6 +412,9 @@ const style = {
       value: { label: 'value' },
       unit: { label: 'unit' },
       progress_bar: { label: 'progress_bar', class: 'hide-progress-bar' },
+      name_info: { label: 'name_info' },
+      info: { label: 'info' },
+      state_content: { label: 'state_content' },
     } satisfies Record<HideTarget, { label: HideTarget; class?: string }>,
     // density: single_line - set on .content-section itself by
     // StructureElements.createContent, not on the card.
@@ -433,6 +470,22 @@ const layout = {
   // multiplies by this same factor - kept here so our own getGridOptions()
   // mirrors it instead of guessing.
   gridColumnMultiplier: 3,
+  // The stack's px, for content_order's extra rows; params.ts declares the bar
+  // sizes and text lines from here, the sums below mirror its rules.
+  stackHeights: {
+    frame: 22, // card padding and border
+    defaultPaddingTop: 8, // .vertical.default's container
+    belowGap: 10, // between the text and a below bar
+    overlayBar: 36, // whatever bar_size
+    uprightBar: 42, // an upright bar's floor in the stack
+    uprightGap: 5, // between the rows of a stack with an upright bar
+    icon: 46, // shape and the gap under it
+    nameLine: 20,
+    detailLine: 16,
+    bar: { xsmall: 6, small: 8, medium: 12, large: 16, xlarge: 42 } as Record<string, number>,
+  },
+  // A Sections row and the gap between two.
+  rowPitch: { row: 56, gap: 8 },
 };
 
 const theme = {
@@ -458,6 +511,7 @@ const consoleInfo = {
   devWarning: `${WARNING_PREFIX}DEV MODE: elements registered under "…-dev" type names, console helper EPB_DEV. Not for production dashboards. (this is the _dev.js build, or ?dev=true is set)`,
   debugWarning: `${WARNING_PREFIX}DEBUG logging ON for: `,
   debugWarningHint: ' — drop the ?debug query param to silence it.',
+  debugStoredHint: ' — saved in this browser; clear it with ',
   suffixWarning: `${WARNING_PREFIX}SIDE-BY-SIDE COPY: every element registered under the suffix `,
   noRegistrationWarning: `${WARNING_PREFIX}NO-REGISTRATION MODE: no custom element defined, cards of this type will NOT render. Diagnostic only (issue #108). Drop the ?noRegistration query param to restore.`,
   classicResourceWarning: `${WARNING_PREFIX}this resource is registered as a classic "JavaScript" type, deprecated by Home Assistant. Switch it to "JavaScript Module" (Settings → Dashboards → Resources): the classic type can freeze pop-ups such as browser_mod and is being phased out. See the troubleshooting guide.`,
@@ -477,5 +531,5 @@ const CARD = {
   console: consoleInfo,
 };
 
-export { CARD, HIDE_TARGETS };
+export { CARD, HIDE_TARGETS, TEXT_HIDE_GROUP };
 export type { HideTarget };

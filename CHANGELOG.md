@@ -23,6 +23,15 @@ You can update right away — no extra action needed on your part.
 Existing configs keep working as-is; the editor's **Migrate config** button
 updates them whenever you like.
 
+#### Duration sensors read in their own unit
+
+A sensor whose value is a duration (a filter's hours left, an uptime) — by its
+device class or by a time unit (`h`, `min`, `s`…) — is now read in its own unit:
+[`min_value`][min_value], [`max_value`][max_value], [`watermark`][watermark] and
+[`alert_when`][alert_when] numbers follow it (`max_value: 150` on a sensor in
+hours means 150 h), no longer seconds. A config that gave them in seconds needs
+them rewritten, or `unit: s`.
+
 ### ✨ New
 
 - **[`bar_ring`][bar_ring]**: place where the ring around the icon starts and
@@ -33,10 +42,45 @@ updates them whenever you like.
 - **Serbian**, in Cyrillic and Latin: 41 languages.  
   ➡️ feat: add Serbian translations (Cyrillic & Latin) #145 (@cpmarexel2f)
 
+#### 🧩 Arrange the texts and the bar with `content_order`
+
+- **[`content_order`][content_order]** places the name, its extra info, the
+  value, the secondary info, the state content and the bar line by line, in
+  `horizontal` and `vertical` layouts, on a `single_line` row and on the rows of
+  a Multi-Card or Multi-Feature; the editor builds it with one chip field per
+  line.
+- **[`hide`][hide]** takes `name_info`, `info` and `state_content` to hide one
+  text alone; removing a `content_order` chip in the editor writes it.
+
+#### 🧩 Single column, and Multi-Card in columns
+
+- **[`density: single_column`][density]** stacks the icon, the texts and an
+  upright bar in one column, the vertical twin of `single_line`.
+- **[`layout: vertical`][multi-layout]** turns a Multi-Card's rows into columns
+  side by side, the bar standing under the texts or, with
+  `bar_position: overlay`, behind them.
+
+#### 🩺 More from the console
+
+- **`EPB.doctor.jinja(2)`** shows a card's Jinja fields with Home Assistant's
+  last result or error; **`EPB.doctor.history(2)`** the samples behind its trend
+  indicator and peak marker.
+- **`EPB.doctor.copy(2)`** gives the editor's issue report for any card on the
+  page.
+- **`EPB.debug('card')`** keeps debug logging on in this browser across reloads;
+  `EPB.debug(false)` turns it off.
+- **`EPB.doctor.dump()`** names the resources of a duplicate load, and gives a
+  fingerprint of the files you run to compare with the release's.
+
 ### 🔧 Improvements
 
 - **Toggle mechanism**: the default [`icon_tap_action`][xyz_action] now aligns
   with the tile card's behavior.
+- **[`bar_orientation: up`][bar_orientation]** (or `down`) stands the bar
+  upright beside the texts of a `vertical` card; a value already set there,
+  ignored until now, takes effect.
+- **Texts side by side** are `·` apart: the name and [`name_info`][name_info],
+  [`custom_info`][custom_info] and the value.
 
 - **[`bar_orientation: down`][bar_orientation]** fills a vertical bar from the
   top, the mirror of `up`.  
@@ -58,6 +102,9 @@ updates them whenever you like.
 - [`bar_effect`][bar_effect] `glass`, `gradient` and `gradient_reverse` work on
   the ring.  
   ➡️ [Enhancement]: Ring position #144 (@addit248)
+- [`bar_ring`][bar_ring] `softness` sets the blend of the ring's inner edge, in
+  px (`0` for a crisp edge); `--epb-ring-softness` sets it for a whole theme.  
+  ➡️ [Feature]: Make the ring mask gradient width configurable #148 (@addit248)
 
 #### Unavailable entities and failed Jinja, handled alike
 
@@ -84,6 +131,13 @@ updates them whenever you like.
   value, %) under the card's YAML.
 - **A `light` that reports a color** (`rgb_color`) takes that color, like the
   tile does (lifted when too pale), instead of the amber state color.
+- **[`unit`][unit]** on a duration sensor converts it: `d`, `h`, `min`, `s` or
+  `ms` show the value in that unit, and the bounds are read in it.
+- **[`peak_marker`][peak_marker]** and **[`trend_indicator`][trend_indicator]**
+  windows work on duration sensors too.
+- **[`density: compact`][density]** accepts
+  [`bar_position: icon`][bar_position]: the ring around the icon, the icon alone
+  once `layout: vertical`.
 
 ### 🐛 Fixes
 
@@ -108,6 +162,12 @@ updates them whenever you like.
 - **[`hide: progress_bar`][hide]** hides the ring of
   [`bar_position: icon`][bar_position] too; the editor drops the ring options
   with it.
+- **[`bar_position: icon`][bar_position]** on a [`frameless`][frameless] or
+  translucent card: the track past the value no longer shows the bar color
+  through it.  
+  ➡️ [Bug]: Frameless affects segment dividers & gap #149 (@addit248)
+- **[`bar_position: icon`][bar_position]** with [`marginless`][marginless]: the
+  ring is no longer cut at the card's edge.
 
 ### 📚 Documentation
 
@@ -115,6 +175,13 @@ updates them whenever you like.
   levels).
 - Docs images follow your theme: every cookbook, theme and README screenshot has
   a light and a dark version, with transparent corners.
+- Demo dashboard: a Mushroom Template card hosting the Feature.
+- Cookbook: a `bar_ring` recipe (dial, segments, edge softness).
+
+### 🧹 Under the hood
+
+- The editor rebuilds its option labels only when the language changes.
+- The issue report is built by the card itself, so the console can make it too.
 
 > We care about getting the details right — but even so, something here might
 > have slipped through. You don't need to be a developer to notice it. If
@@ -124,6 +191,112 @@ updates them whenever you like.
 
 ➡️ **Full Changelog**:
 <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/compare/1.6.3...1.6.4>
+
+## 1.6.4-rc3
+
+### ⚠️ Breaking Changes
+
+#### Duration entities read in their own unit
+
+A duration entity (`device_class: duration`, or a time `unit_of_measurement`
+without it) is no longer converted to seconds: the card works in its
+`unit_of_measurement`. [`min_value`][min_value], [`max_value`][max_value],
+[`watermark`][watermark] and [`alert_when`][alert_when] numbers, and a duration
+entity used as a bound, are read in that unit. A config that gave them in
+seconds needs them rewritten, or `unit: s`.
+
+### ✨ New
+
+#### 🧩 Arrange the texts and the bar with `content_order`
+
+- **[`content_order`][content_order]**: a list of lines of `name`, `name_info`,
+  `value`, `info`, `state_content` and `bar` (`[[name, value], [info, bar]]`).
+  Applies to `horizontal` and `vertical` with `bar_position` `default`, `below`,
+  `top`, `bottom`, `overlay` or `background`, to `compact_below` (one line above
+  the bar) and to `density: single_line` (one row), Multi rows included (top
+  level or per row); ignored with `bar_position: icon` or `density: compact`.
+- Items left out are appended after the ones placed; an item with nothing to
+  show takes no room. The card's default row count grows with the lines.
+- [`bar_aligned`][bar_aligned] measures the text block before the bar;
+  [`reverse_secondary_info_row`][reverse_secondary_info_row] is ignored once an
+  order is set.
+- **[`hide`][hide]** takes `name_info`, `info` and `state_content`; the ✕ of a
+  chip adds the item to `hide` (left untouched when `hide` is Jinja), picking it
+  again removes it.
+
+#### 🧩 Single column, and Multi-Card in columns
+
+- **[`density: single_column`][density]**, the vertical twin of `single_line`:
+  forces `layout: vertical`, the bar upright under the texts
+  (`bar_position: default`) or behind them (`overlay`), `bar_orientation` `up`
+  or `down`, `multiline` off.
+- **[`layout: vertical`][multi-layout]** on a Multi-Card lines its rows up as
+  columns side by side, each a `single_column` card; `bar_position: overlay`
+  puts the bars behind the texts. A row's `bar_orientation: down` fills from the
+  top; `rows` defaults to 3.
+
+#### 🩺 More from the console
+
+- **`EPB.doctor.jinja(n | $0)`**: a card's Jinja fields, subscribed or not, with
+  Home Assistant's last result or error.
+- **`EPB.doctor.history(n | $0)`**: the samples behind `trend_indicator`
+  (percents) and `peak_marker` (raw values).
+- **`EPB.doctor.copy(n | $0)`**: the editor's issue report for that card,
+  printed, and copied when the page has focus (`copy($_)` otherwise).
+- **`EPB.debug('card,editor')`** keeps debug areas in `localStorage`, merged
+  with `?debug=` at load; `EPB.debug(false)` clears them, `EPB.debug()` shows
+  them, and the banner says where they come from.
+- **`EPB.doctor.dump()`** returns a promise: `duplicate load` lists the URLs
+  loaded, and `sha-256` lines give 12 hex digits of the card and editor files
+  (HTTPS only).
+
+### 🔧 Improvements
+
+- **[`bar_orientation`][bar_orientation]** `up`/`down` applies to `vertical`
+  with `bar_position: default`: an upright bar beside the texts, sized by the
+  column (`bar_size` ignored). A value set there before now takes effect.
+- **Texts side by side** (`name` · `name_info`, `custom_info` · value) are
+  separated by a CSS `·` instead of the `&nbsp;` spacers, on every card.
+- **[`unit`][unit]** on a duration entity converts it: `d`, `h`, `min`, `s` or
+  `ms` show the value in that unit and the bounds are read in it;
+  `timer`/`flextimer` read them in seconds.
+- **[`peak_marker`][peak_marker]** and **[`trend_indicator`][trend_indicator]**
+  windows read a duration's history, converted to the card's unit.
+- **[`density: compact`][density]** keeps [`bar_position: icon`][bar_position]
+  instead of rewriting it to `top`, in `horizontal` and `vertical`.
+- **[`bar_ring`][bar_ring]** `softness`: width of the ring's inner edge blend,
+  in px (default 1, `0` for a hard edge); theme hook `--epb-ring-softness`, the
+  YAML value wins. Editor field under the ring options.  
+  ➡️ [Feature]: Make the ring mask gradient width configurable #148 (@addit248)
+
+### 🐛 Fixes
+
+- **[`bar_ring`][bar_ring]** `gap` and **[`bar_segments`][bar_segments]** on the
+  ring stay empty on a [`frameless`][frameless] or translucent card instead of
+  showing the bar color.  
+  ➡️ [Bug]: Frameless affects segment dividers & gap #149 (@addit248)
+- **[`bar_position: icon`][bar_position]** on a [`frameless`][frameless] or
+  translucent card: the track past the value no longer shows the bar color
+  through it.  
+  ➡️ [Bug]: Frameless affects segment dividers & gap #149 (@addit248)
+- **[`bar_position: icon`][bar_position]** with [`marginless`][marginless]: the
+  ring is no longer cut at the card's edge; the icon section grows to the ring's
+  44px.
+
+### 📚 Documentation
+
+- Demo dashboard: a Mushroom Template card hosting `entity-progress-feature`, in
+  the Examples view.
+- Cookbook: a `bar_ring` recipe (dial, segments, edge softness).
+
+### 🧹 Under the hood
+
+- The editor reuses its option labels until the language changes, instead of
+  rebuilding them on every edit.
+- `yaml-writer` and the issue report text move from the editor file to the card
+  bundle (`card/diagnostics/`), for `EPB.doctor.copy()`.
+- The six ring mark layers share a `ring-layer` class; `notFound` moves from
+  `HA_CONTEXT.entity.state` to `CARD.config.entityNotFound`.
 
 ## 1.6.4-rc2
 
@@ -7848,6 +8021,10 @@ experience:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/demo-dashboard-dev.yaml
 [demo-dashboard-helpers.yaml]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/demo-dashboard-helpers.yaml
+[content_order]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#content_order
+[multi-layout]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#multi-layout
 [density]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#density
 [bar_aligned]:
@@ -7916,6 +8093,10 @@ experience:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#multiline
 [bar_max_width]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_max_width
+[name_info]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#name_info
+[custom_info]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#custom_info
 [bar_orientation]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_orientation
 [text_shadow]:

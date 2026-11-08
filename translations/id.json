@@ -47,8 +47,9 @@
       "bar_effect_mode": "Efek pada bilah",
       "bar_max_width_toggle": "Lebar maks. batang",
       "bar_orientation": "Orientasi",
-      "bar_ring_start": null,
-      "bar_ring_gap": null,
+      "bar_ring_start": "Awal cincin",
+      "bar_ring_gap": "Celah cincin",
+      "bar_ring_softness": "Kelembutan tepi cincin",
       "bar_scale": "Skala",
       "bar_segments": "Segmen",
       "bar_single_line": "Satu baris",
@@ -59,6 +60,13 @@
       "center_zero": "Nol di tengah",
       "center_zero_growth_percent": "Persentase pertumbuhan",
       "center_zero_value": "Nilai tengah",
+      "content_order": "Urutan konten",
+      "content_order_line_1": "Baris 1",
+      "content_order_line_2": "Baris 2",
+      "content_order_line_3": "Baris 3",
+      "content_order_line_4": "Baris 4",
+      "content_order_line_5": "Baris 5",
+      "content_order_line_6": "Baris 6",
       "custom_info": "Info sekunder kustom",
       "custom_theme": "Zona tema khusus",
       "density": "Kepadatan",
@@ -216,9 +224,14 @@
         "proportional": "Proporsional",
         "stacked": "Ditumpuk"
       },
+      "content_order": {
+        "info": "Info",
+        "value": "Nilai"
+      },
       "density": {
         "compact": "Ringkas",
         "single_line": "Satu baris",
+        "single_column": "Satu kolom",
         "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
       },
       "enabled_disabled_mode": {
@@ -231,6 +244,7 @@
       },
       "hide": {
         "secondary_info": "Info sekunder",
+        "info": "Info",
         "value": "Nilai"
       },
       "icon_animation": {

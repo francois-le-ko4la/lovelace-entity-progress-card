@@ -47,8 +47,9 @@
       "bar_effect_mode": "Ефект на смузі",
       "bar_max_width_toggle": "Макс. ширина смуги",
       "bar_orientation": "Орієнтація",
-      "bar_ring_start": null,
-      "bar_ring_gap": null,
+      "bar_ring_start": "Початок кільця",
+      "bar_ring_gap": "Розрив кільця",
+      "bar_ring_softness": "М'якість краю кільця",
       "bar_scale": "Масштаб",
       "bar_segments": "Сегменти",
       "bar_single_line": "Один рядок",
@@ -59,6 +60,13 @@
       "center_zero": "Không ở giữa",
       "center_zero_growth_percent": "Відсоток зростання",
       "center_zero_value": "Центральне значення",
+      "content_order": "Порядок вмісту",
+      "content_order_line_1": "Рядок 1",
+      "content_order_line_2": "Рядок 2",
+      "content_order_line_3": "Рядок 3",
+      "content_order_line_4": "Рядок 4",
+      "content_order_line_5": "Рядок 5",
+      "content_order_line_6": "Рядок 6",
       "custom_info": "Додаткова вторинна інформація",
       "custom_theme": "Зони власної теми",
       "density": "Щільність",
@@ -216,9 +224,14 @@
         "proportional": "Пропорційно",
         "stacked": "Стек"
       },
+      "content_order": {
+        "info": "Інформація",
+        "value": "Значення"
+      },
       "density": {
         "compact": "Компактно",
         "single_line": "Один рядок",
+        "single_column": "Один стовпець",
         "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
       },
       "enabled_disabled_mode": {
@@ -231,6 +244,7 @@
       },
       "hide": {
         "secondary_info": "Дод. інформація",
+        "info": "Інформація",
         "value": "Значення"
       },
       "icon_animation": {

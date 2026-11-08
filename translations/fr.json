@@ -47,8 +47,9 @@
       "bar_effect_mode": "Effet sur la barre",
       "bar_max_width_toggle": "Largeur max de la barre",
       "bar_orientation": "Orientation",
-      "bar_ring_start": null,
-      "bar_ring_gap": null,
+      "bar_ring_start": "Début de l'anneau",
+      "bar_ring_gap": "Ouverture de l'anneau",
+      "bar_ring_softness": "Douceur du bord de l'anneau",
       "bar_scale": "Échelle",
       "bar_segments": "Segments",
       "bar_single_line": "Une ligne",
@@ -59,6 +60,13 @@
       "center_zero": "Zéro au centre",
       "center_zero_growth_percent": "Pourcentage de croissance",
       "center_zero_value": "Valeur de centrage",
+      "content_order": "Ordre du contenu",
+      "content_order_line_1": "Ligne 1",
+      "content_order_line_2": "Ligne 2",
+      "content_order_line_3": "Ligne 3",
+      "content_order_line_4": "Ligne 4",
+      "content_order_line_5": "Ligne 5",
+      "content_order_line_6": "Ligne 6",
       "custom_info": "Info secondaire personnalisée",
       "custom_theme": "Zones de thème personnalisé",
       "density": "Densité",
@@ -216,9 +224,14 @@
         "proportional": "Proportionnel",
         "stacked": "Empilé"
       },
+      "content_order": {
+        "info": "Info",
+        "value": "Valeur"
+      },
       "density": {
         "compact": "Compact",
         "single_line": "Une ligne",
+        "single_column": "Une colonne",
         "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
       },
       "enabled_disabled_mode": {
@@ -231,6 +244,7 @@
       },
       "hide": {
         "secondary_info": "Info secondaire",
+        "info": "Info",
         "value": "Valeur"
       },
       "icon_animation": {

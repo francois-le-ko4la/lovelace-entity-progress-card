@@ -47,8 +47,9 @@
       "bar_effect_mode": "Efect pe bară",
       "bar_max_width_toggle": "Lățime max. a barei",
       "bar_orientation": "Orientare",
-      "bar_ring_start": null,
-      "bar_ring_gap": null,
+      "bar_ring_start": "Începutul inelului",
+      "bar_ring_gap": "Deschiderea inelului",
+      "bar_ring_softness": "Finețea marginii inelului",
       "bar_scale": "Scară",
       "bar_segments": "Segmente",
       "bar_single_line": "Un rând",
@@ -59,6 +60,13 @@
       "center_zero": "Zero la centru",
       "center_zero_growth_percent": "Procent de creștere",
       "center_zero_value": "Valoare centrală",
+      "content_order": "Ordinea conținutului",
+      "content_order_line_1": "Rândul 1",
+      "content_order_line_2": "Rândul 2",
+      "content_order_line_3": "Rândul 3",
+      "content_order_line_4": "Rândul 4",
+      "content_order_line_5": "Rândul 5",
+      "content_order_line_6": "Rândul 6",
       "custom_info": "Info secundară personalizată",
       "custom_theme": "Zone temă personalizată",
       "density": "Densitate",
@@ -216,9 +224,14 @@
         "proportional": "Proporțional",
         "stacked": "Stivuit"
       },
+      "content_order": {
+        "info": "Informații",
+        "value": "Valoare"
+      },
       "density": {
         "compact": "Compact",
         "single_line": "Un rând",
+        "single_column": "O coloană",
         "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
       },
       "enabled_disabled_mode": {
@@ -231,6 +244,7 @@
       },
       "hide": {
         "secondary_info": "Info secundară",
+        "info": "Informații",
         "value": "Valoare"
       },
       "icon_animation": {

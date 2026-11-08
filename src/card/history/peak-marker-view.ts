@@ -60,6 +60,10 @@ export class PeakMarkerView {
     return this.#tracker !== null;
   }
 
+  get samples(): { t: number; value: number }[] {
+    return this.#tracker?.samples ?? [];
+  }
+
   seed(points: { t: number; value: number }[]) {
     const window = (this.#deps.config() as { window?: unknown } | undefined)?.window;
     if (!is.number(window)) return;

@@ -46,6 +46,12 @@ describe('frameless - nothing of the card is left behind', () => {
   }
 });
 
+describe('no corner left to clip', () => {
+  test('a frameless card is square', () => {
+    assert.match(CARD_CSS, /(?:^|[^-\w])\.frameless\s*\{\s*border-radius:\s*0\s*;/);
+  });
+});
+
 describe('a decoration no variable can reach is dropped too', () => {
   // A glass theme paints ha-card::before and ::after, out of reach of every
   // --ha-card-* above; our sheet is adopted, so it cascades after card_mod's

@@ -26,7 +26,8 @@ export class TextContrast {
 
   #colorFor(fill: string | null, themeKey: string): string | null {
     if (!fill) return null;
-    // var()/color-mix() fills resolve differently per theme: the theme is part of the key.
+    // var()/color-mix() fills resolve differently per theme: the theme is part
+    // of the key.
     if (this.#resolved?.fill === fill && this.#resolved.themeKey === themeKey) return this.#resolved.color;
     const el = this.#dom().get(CARD.htmlStructure.card.element);
     if (!el) return null;

@@ -23,6 +23,8 @@ type ChildEl = HTMLElement & {
 // so setting it on the child host reaches its own ha-card.
 const CARD_HEIGHT_VAR = CARD.style.dynamic.card.height.var;
 
+const VERTICAL = CARD.layout.orientations.vertical.label;
+
 // 24 out of a 36px shape: the glyph's job is to sit inside the circle with
 // room to spare. Without a circle there is nothing to shrink for, so it takes
 // the same box as the text beside it - which is what makes the two read as one
@@ -49,7 +51,9 @@ const MULTI_CSS = `
   /* Homogeneous split, shared by both variants: every bar gets an equal slice
      of the container (whose height is imposed by the grid for the card, and
      derived as N x 42px rows for the feature - see _applySizing). */
-  .${CARD.style.dynamic.multiItem} { flex: 1 1 0; min-height: 0; overflow: hidden; }
+  .${CARD.style.dynamic.multiItem} { flex: 1 1 0; min-height: 0; min-width: 0; overflow: hidden; }
+  /* layout: vertical - the same equal split, across the width. */
+  .multi-container.${VERTICAL} { flex-direction: row; gap: var(--epb-spacing, 10px); }
   /* display: block, not just height: a custom element host defaults to
      inline, where height: 100% applies to nothing and each row adds a baseline
      gap - enough of them and the stack outgrows its container. */
@@ -69,6 +73,8 @@ const MULTI_CSS = `
        feature children have no padding, so the aggregator supplies the inset. */
     padding: 0 var(--epb-spacing, 10px);
   }
+  /* Columns are marginless cards too: their bars would touch the frame. */
+  ha-card.multi-card .multi-container.${VERTICAL} { padding: var(--epb-spacing, 10px); }
 `;
 
 class EntityProgressMultiBase extends HACore {
@@ -114,6 +120,10 @@ class EntityProgressMultiBase extends HACore {
 
   get #childConfigs(): LovelaceConfig[] {
     return rowConfigsOf(this.#config);
+  }
+
+  get #isColumns(): boolean {
+    return this.#config?.layout === VERTICAL;
   }
 
   static #computeStructureKey(config: LovelaceConfig): string {
@@ -203,14 +213,19 @@ class EntityProgressMultiBase extends HACore {
   // Equal slice of `total` px per child - shared with MultiCard's measured-
   // container sizing. A card stands at its own natural height otherwise, so
   // the slice has to be handed to it explicitly (see CARD_HEIGHT_VAR).
+  // Columns split the width instead: each stands the full height, at the
+  // card's own sizes.
   _distributeHeight(total: number) {
     const count = this._children.length;
     if (!total || count === 0) return;
-    const per = total / count;
+    const columns = this.#isColumns;
+    this._container?.classList.toggle(VERTICAL, columns);
+    const per = columns ? total : total / count;
     for (const child of this._children) {
       child.style.setProperty(CARD_HEIGHT_VAR, `${per}px`);
       for (const [name, value] of Object.entries(this.rowMetrics(per))) {
-        child.style.setProperty(name, value);
+        if (columns) child.style.removeProperty(name);
+        else child.style.setProperty(name, value);
       }
     }
   }
@@ -290,10 +305,12 @@ class EntityProgressMultiBase extends HACore {
     return { type: `custom:${suffixedName(this._baseClass)}`, entities: [] } as unknown as LovelaceConfig;
   }
 
-  // Rows the aggregator occupies: explicit `rows`, else one per entity.
+  // Rows the aggregator occupies: explicit `rows`, else one per entity; columns
+  // take a vertical card's, plus the row its upright bar needs (minGridRows).
   get _rows(): number {
     const config = this.#config;
     if (config && is.number(config.rows)) return config.rows;
+    if (this.#isColumns) return CARD.layout.orientations.vertical.grid.grid_rows + 1;
     return is.array(config?.entities) ? Math.max(1, config.entities.length) : 1;
   }
 }
@@ -326,7 +343,11 @@ class EntityProgressMultiCard extends EntityProgressMultiBase {
   _applySizing() {
     const container = this._container;
     if (!container || this._children.length === 0) return;
-    const apply = () => this._distributeHeight(container.clientHeight);
+    // clientHeight counts the padding the columns' frame adds.
+    const apply = () => {
+      const { paddingTop, paddingBottom } = getComputedStyle(container);
+      this._distributeHeight(container.clientHeight - parseFloat(paddingTop) - parseFloat(paddingBottom));
+    };
     requestAnimationFrame(apply);
     const observer = new ResizeObserver(apply);
     observer.observe(container);

@@ -11,6 +11,7 @@ import {
   BAR_AROUND_ICON,
   ICON_ANIMATIONS,
   OWN_TRIGGER_ANIMATIONS,
+  contentShape,
 } from '../config/schema.js';
 import { ActionHelper, type CacheValue } from '../dom/dom-helpers.js';
 import { StatusLabel } from '../dom/status-label.js';
@@ -234,6 +235,8 @@ class HABase extends HACore {
       hideName: this._cardView.isStaticallyHidden(CARD.style.dynamic.hiddenComponent.name.label),
       singleLine: this._cardView.config.density === 'single_line',
       hideSecondaryInfo: this._cardView.isStaticallyHidden(CARD.style.dynamic.hiddenComponent.secondary_info.label),
+      contentOrder: this._cardView.contentOrder,
+      contentShape: contentShape(this._cardView.config),
     };
   }
 
@@ -303,7 +306,7 @@ class HABase extends HACore {
   // bar_ring: the arc left after the gap, as a ratio of the circle (styles.ts);
   // an unset ring removes its vars. Under center_zero, `start` places the zero.
   #applyRingGeometry(cardKey: string) {
-    const { start = 0, gap = 0 } = this._cardView.config.bar_ring ?? {};
+    const { start = 0, gap = 0, softness } = this._cardView.config.bar_ring ?? {};
     const openArc = Math.min(Math.max(gap, 0), RING_MAX_GAP);
     const arcStart = this._cardView.config.center_zero ? start - (360 - openArc) / 2 : start;
     const { isRing, isSegmented, config } = this._cardView;
@@ -313,6 +316,7 @@ class HABase extends HACore {
       ['--ring-start', `${arcStart}deg`, arcStart !== 0],
       ['--ring-axis', `${start}deg`, start !== 0],
       ['--ring-span-ratio', 1 - openArc / 360, openArc > 0],
+      ['--ring-softness', `${Math.max(softness ?? 0, 0)}px`, softness !== undefined],
     ];
     vars.forEach(([prop, value, isSet]) => {
       if (isSet) this._dom.setStyle(cardKey, prop, value);

@@ -64,6 +64,7 @@
       - [`status_label`](#status_label)
       - [`density`](#density)
       - [`layout`](#layout)
+      - [`content_order`](#content_order)
       - [`frameless`](#frameless)
       - [`marginless`](#marginless)
       - [`height`](#height)
@@ -97,6 +98,7 @@
     - [`entities`](#multi-entities)
     - [The value, and which side it sits on](#multi-value)
     - [`rows`](#multi-rows)
+    - [`layout` and `bar_position`](#multi-layout)
     - [`bar_aligned`](#bar_aligned)
 
 ## Introduction
@@ -631,12 +633,13 @@ _Unit selection_:
 - Otherwise, if `max_value` is an entity, the default unit (%) will be used.
 - Otherwise, the `unit` is automatically determined based on the current value:
   - If the entity is a `timer` the unit will be 's' (seconds).
-  - If the entity is a `duration`: By default, the internal value in the card is
-    expressed in seconds. If you do not specify a unit, we will display the
-    duration based on what is defined in the Home Assistant entity, using a
-    natural format (e.g., 2h 32min). If you want to display the value in
-    seconds, set the unit to 's'. If you prefer a HH:MM:SS format, you can use
-    either timer or flextimer.
+  - If the entity is a `duration` (`device_class: duration`, or a time
+    `unit_of_measurement`): the card works in the entity's own unit (e.g., `h`),
+    and `min_value`, `max_value`, `watermark` and `alert_when` are read in that
+    unit. Without a `unit`, the duration is displayed in a natural format (e.g.,
+    2h 32min). A time `unit` (`d`, `h`, `min`, `s`, `ms`) converts the value,
+    and the bounds are then read in that unit. `timer` and `flextimer` display
+    HH:MM:SS, with the bounds in seconds.
   - If the entity is a `counter`, no unit ('') will be displayed.
   - Otherwise, the `unit` defined in Home Assistant for the entity will be used
     (e.g., °C, kWh, etc.).
@@ -1844,8 +1847,8 @@ bar_color_mode: segment
 
 > [!NOTE]
 >
-> [`density: compact`](#density) restricts this to `top`, `bottom`, or
-> `background` — any other value falls back to `top` while `compact` is active.
+> [`density: compact`](#density) restricts this to `top`, `bottom`, `background`
+> or `icon` — any other value falls back to `top` while `compact` is active.
 > [`density: single_line`](#density) clears it back to `default` instead: the
 > bar sits in the row itself there.
 
@@ -1938,6 +1941,9 @@ with any other `bar_position`.
   and the arc is centred on it.
 - `gap` [Number] _(default: 0)_: the part of the circle left open, in degrees
   (capped at 330).
+- `softness` [Number] _(default: 1)_: the width of the ring's inner edge blend,
+  in px; `0` for a hard edge. Unset, the theme's `--epb-ring-softness` applies
+  ([theme](theme.md)).
 
 The fill, the theme zones, the watermarks, the peak markers and the
 `rainbow_full` marker all follow the arc. The ring fills clockwise from `start`;
@@ -2236,7 +2242,12 @@ bar_max_width: 100px
 > `ltr`)_
 
 Adjusts the progress bar direction to display from right to left. `up` fills a
-vertical bar from the bottom, `down` from the top.
+vertical bar from the bottom, `down` from the top. They apply to
+[`bar_position`](#bar_position) `overlay` with `layout: vertical`, to
+`background`, and to `default` with `layout: vertical`: there the bar stands
+upright in the stack, its texts outside it, in the order
+[`content_order`](#content_order) sets; [`bar_size`](#bar_size) is ignored and
+the card takes one more grid row.
 
 With [`bar_position: icon`](#bar_position), the ring takes `clockwise` (default)
 or `counterclockwise`; `ltr` and `rtl` are read as those two, and the editor
@@ -2684,8 +2695,8 @@ _Default value_:
 [![Card OK][Card-OK]](#compatibility)
 [![Template OK][Template-OK]](#compatibility)
 
-> **`density`** [String] ➡️ {`default` | `compact` | `single_line`} _(optional,
-> default: `default`)_:
+> **`density`** [String] ➡️ {`default` | `compact` | `single_line` |
+> `single_column`} _(optional, default: `default`)_:
 
 A preset that reshapes the card into a smaller footprint. Rather than juggling
 `layout`/`bar_position`/`hide`/`multiline` by hand to get there, each value sets
@@ -2764,6 +2775,22 @@ displays is dropped - it is the same content on a single line:
 Unlike `compact`, it doesn't touch `grid_options`: `layout: horizontal` already
 resolves to a single grid row.
 
+##### `single_column`
+
+The vertical twin of `single_line`: icon, name, value, then the bar standing
+upright under them, as one column. It is the shape a column of a
+[Multi in `layout: vertical`](#multi-layout) takes.
+
+- Forces [`layout`](#layout)`: vertical`. In the visual editor `single_column`
+  is offered only while the layout is vertical, and picking horizontal puts the
+  density back to `default`.
+- [`bar_position`](#bar_position) is `default`, or `overlay` to put the bar
+  behind the texts; any other value falls back to `default`.
+- [`bar_orientation`](#bar_orientation) is `up`, or `down` to fill from the top;
+  any other value falls back to `up`.
+- Clears [`multiline`](#multiline).
+- [`content_order`](#content_order) takes the lines of a `vertical` card.
+
 _Examples:_
 
 ```yaml
@@ -2784,6 +2811,12 @@ type: custom:entity-progress-card
 entity: sensor.cpu_usage
 density: single_line
 bar_size: small
+```
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.cpu_usage
+density: single_column
 ```
 
 [🔼 Back to top]
@@ -2807,7 +2840,8 @@ different layouts based on your visual preferences:
 > [`density: compact`](#density) works with either value - it hides
 > `name`/`secondary_info` instead of narrowing the column once this is
 > `vertical`, since vertical has no matching narrow shape of its own.
-> [`density: single_line`](#density) forces `horizontal` outright.
+> [`density: single_line`](#density) forces `horizontal` outright,
+> `single_column` forces `vertical`.
 
 _Examples:_
 
@@ -2815,6 +2849,84 @@ _Examples:_
 type: custom:entity-progress-card
 ····
 layout: vertical
+```
+
+[🔼 Back to top]
+
+#### `content_order`
+
+[![Card OK][Card-OK]](#compatibility)
+[![Template OK][Template-OK]](#compatibility)
+
+> **`content_order`** [List of lines] ➡️
+> {`name`|`name_info`|`info`|`state_content`|`value`|`bar`} _(optional, default:
+> the layout's own lines)_
+
+Places each block of the card on a line of your choice. `name_info` is the
+[`name_info`](#name_info) text, `info` the [`custom_info`](#custom_info) (or
+Template's `secondary`) one, `state_content` the
+[`state_content`](#state_content) text, `value` the entity's value. Each line
+takes a style of its own: the first the name's, the next ones the secondary
+info's, whatever block they hold.
+
+| Layout                                                                    | Lines             | Default                                                    |
+| ------------------------------------------------------------------------- | ----------------- | ---------------------------------------------------------- |
+| `vertical`, `bar_position: default`                                       | stacked, centered | `[[name, name_info], [info, state_content, value], [bar]]` |
+| `horizontal`, `bar_position: default`                                     | two               | `[[name, name_info], [info, state_content, value, bar]]`   |
+| `horizontal`, [`bar_position: compact_below`](#bar_position)              | one, over the bar | `[[name, name_info, info, state_content, value]]`          |
+| [`density: single_line`](#density)                                        | one, bar in it    | `[[name, name_info, info, state_content, value, bar]]`     |
+| either, `bar_position: below`, `top`, `bottom`, `overlay` or `background` | as above, no bar  | `[[name, name_info], [info, state_content, value]]`        |
+
+- A partial list is enough: a block it leaves out goes next to its host
+  (`name_info` after `name`, `value` after `info`, `state_content` before
+  `value`), `bar` on a line of its own, any other at the end of the last line.
+- A plain list is one line in horizontal, one block per line in vertical:
+  `[bar, name, value]` stacks the three.
+- In horizontal a third line joins the second. Where the bar is drawn outside
+  the text (`compact_below`, `below`, `top`, `bottom`, `overlay`, `background`),
+  a `bar` in the list is ignored.
+- Two texts of a line are `·` apart, a blank one skipped; a `value` closing a
+  horizontal line sits at its right end.
+- [`text_effect`](#text_effect) applies to each text of an `overlay` or
+  `background` card.
+- Template has no `name_info`, `state_content` or `value` block.
+- It only orders: hiding a block is [`hide`](#hide)'s job. In the editor, a
+  block's ✕ adds it to a list `hide` (never to a Jinja one), and picking it
+  again takes it back out. A text with no field behind it (no `name_info`,
+  `custom_info` or `state_content`) takes no room.
+- An ordered row places its own bar:
+  [`reverse_secondary_info_row`](#reverse_secondary_info_row) has no effect.
+- [`bar_aligned`](#bar_aligned) measures the text block before the bar; a line
+  opening on the bar has nothing to align.
+- A [Multi](#multi) row is a `single_line` one: one line, top level for every
+  row or on a single row.
+
+> [!NOTE]
+>
+> Ignored with `bar_position: icon` or `density: compact`. In the visual editor
+> each line is a row of chips, dragged into place (Home Assistant 2023.9 or
+> later); picking a chip in a row moves it out of the others. In vertical, an
+> empty last row opens a new line.
+
+_Examples_:
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.battery
+layout: vertical
+bar_orientation: up
+content_order:
+  - [name]
+  - [bar]
+  - [value]
+```
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.battery
+content_order:
+  - [name, value]
+  - [info, bar]
 ```
 
 [🔼 Back to top]
@@ -3404,6 +3516,9 @@ When using the list syntax, the following elements are available:
 - progress_bar: Hides the visual progress bar.
 - shape: Hides the circular shape behind the icon, keeping the icon itself
   visible (Card only).
+- name_info: Hides [`name_info`](#name_info) only (Card/Badge only).
+- info: Hides [`custom_info`](#custom_info) only (Card/Badge only).
+- state_content: Hides [`state_content`](#state_content) only (Card/Badge only).
 
 _Static example_:
 
@@ -3959,7 +4074,7 @@ available for Templates as well:
 | `bar_position`               | string (optional)         | `default`    | Position of the progress bar         | [Config Ref.](#bar_position)               |
 | `bar_single_line`            | boolean (optional)        | `false`      | single-line mode for overlay bars    | [Config Ref.](#bar_single_line)            |
 | `bar_segments`               | integer (optional)        | —            | Render bar as discrete segments      | [Config Ref.](#bar_segments)               |
-| `bar_ring`                   | object (optional)         | —            | Start angle and gap of the ring      | [Config Ref.](#bar_ring)                   |
+| `bar_ring`                   | object (optional)         | —            | Start, gap and edge of the ring      | [Config Ref.](#bar_ring)                   |
 | `bar_effect`                 | string/list/jinja         | —            | Visual effects for the bar           | [Config Ref.](#bar_effect)                 |
 | `bar_color_mode`             | string (optional)         | `auto`       | Bar fill color rendering mode        | [Config Ref.](#bar_color_mode)             |
 | `bar_max_width`              | string (optional)         | -            | Limits the max width of the bar      | [Config Ref.](#bar_max_width)              |
@@ -3978,6 +4093,7 @@ available for Templates as well:
 | `min_width`                  | string (optional)         | —            | Minimum width                        | [Config Ref.](#min_width)                  |
 | `reverse_secondary_info_row` | boolean (optional)        | `false`      | Flip info bar layout                 | [Config Ref.](#reverse_secondary_info_row) |
 | `multiline`                  | boolean (optional)        | `false`      | Split secondary text on 2 lines      | [Config Ref.](#multiline)                  |
+| `content_order`              | list (optional)           | layout's own | Order of name, infos, value, bar     | [Config Ref.](#content_order)              |
 | `center_zero`                | boolean (optional)        | `false`      | Center the bar on 0                  | [Config Ref.](#center_zero)                |
 | `theme`                      | string (optional)         | —            | Applies a preset theme               | [Config Ref.](#theme)                      |
 | `hide`                       | list (optional)           | —            | Hide parts of the card               | [Config Ref.](#hide)                       |
@@ -4215,7 +4331,8 @@ Because a row is a whole card, every row option it accepts is the card's own:
 [`watermark`](#watermark), [`alert_when`](#alert_when) and the rest. What it
 does **not** accept is anything the row shape settles on its behalf: `layout`,
 `bar_position`, `bar_single_line`, `density`, `frameless`, `marginless`,
-`multiline`, `height` and `min_width`.
+`multiline`, `height` and `min_width`. The multi-card sets
+[`layout` and `bar_position`](#multi-layout) for all its rows at once.
 
 A stack's bars start at the same x on their own: [`bar_aligned`](#bar_aligned),
 on by default, gives every row the text column of the widest.
@@ -4341,6 +4458,16 @@ entities:
   - entity: sensor.printer_black_cartridge
 ```
 
+For any other order, [`content_order`](#content_order) takes one line, as on a
+`single_line` card, and replaces `reverse_secondary_info_row`:
+
+```yaml
+type: custom:entity-progress-multi-card
+content_order: [[value, name, bar]]
+entities:
+  - entity: sensor.printer_black_cartridge
+```
+
 > [!IMPORTANT]
 >
 > **`value_position` is deprecated since 1.6.3** (a console warning is logged) —
@@ -4386,6 +4513,43 @@ _Example_:
 ```yaml
 type: custom:entity-progress-multi-card
 rows: 2
+entities:
+  - entity: sensor.printer_black_cartridge
+  - entity: sensor.printer_cyan_cartridge
+  - entity: sensor.printer_magenta_cartridge
+  - entity: sensor.printer_yellow_cartridge
+```
+
+[🔼 Back to top]
+
+<a id="multi-layout"></a>
+
+### `layout` and `bar_position`
+
+[![Card OK][Card-OK]](#compatibility)
+
+> **`layout`** [String] ➡️ `horizontal` | `vertical` _(optional, default:
+> `horizontal`)_
+>
+> **`bar_position`** [String] ➡️ `default` | `overlay` _(optional, default:
+> `default`)_
+
+`entity-progress-multi-card` only, set at the top level. `vertical` turns the
+rows into columns side by side, each one a [`density: single_column`](#density)
+card, as `horizontal` makes each row a `single_line` one: icon, name and value,
+then the bar standing upright under them. With `bar_position: overlay`, the bar
+fills the column behind the texts.
+
+The bar fills from the bottom; a row set to
+[`bar_orientation: down`](#bar_orientation) fills from the top. Left unset,
+[`rows`](#multi-rows) is 3. [`content_order`](#content_order) takes the lines of
+a `vertical` card.
+
+_Example_:
+
+```yaml
+type: custom:entity-progress-multi-card
+layout: vertical
 entities:
   - entity: sensor.printer_black_cartridge
   - entity: sensor.printer_cyan_cartridge

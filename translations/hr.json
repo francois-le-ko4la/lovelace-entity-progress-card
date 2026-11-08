@@ -47,8 +47,9 @@
       "bar_effect_mode": "Efekt na traci",
       "bar_max_width_toggle": "Maks. širina trake",
       "bar_orientation": "Orijentacija",
-      "bar_ring_start": null,
-      "bar_ring_gap": null,
+      "bar_ring_start": "Početak prstena",
+      "bar_ring_gap": "Razmak prstena",
+      "bar_ring_softness": "Mekoća ruba prstena",
       "bar_scale": "Ljestvica",
       "bar_segments": "Segmenti",
       "bar_single_line": "Jedan redak",
@@ -59,6 +60,13 @@
       "center_zero": "Nula u sredini",
       "center_zero_growth_percent": "Postotak rasta",
       "center_zero_value": "Vrijednost sredine",
+      "content_order": "Redoslijed sadržaja",
+      "content_order_line_1": "Redak 1",
+      "content_order_line_2": "Redak 2",
+      "content_order_line_3": "Redak 3",
+      "content_order_line_4": "Redak 4",
+      "content_order_line_5": "Redak 5",
+      "content_order_line_6": "Redak 6",
       "custom_info": "Prilagođena sekundarna informacija",
       "custom_theme": "Zone prilagođene teme",
       "density": "Gustoća",
@@ -216,9 +224,14 @@
         "proportional": "Proporcionalno",
         "stacked": "Naslagano"
       },
+      "content_order": {
+        "info": "Informacije",
+        "value": "Vrijednost"
+      },
       "density": {
         "compact": "Kompaktno",
         "single_line": "Jedan redak",
+        "single_column": "Jedan stupac",
         "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
       },
       "enabled_disabled_mode": {
@@ -231,6 +244,7 @@
       },
       "hide": {
         "secondary_info": "Sekundarni info",
+        "info": "Informacije",
         "value": "Vrijednost"
       },
       "icon_animation": {

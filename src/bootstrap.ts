@@ -6,7 +6,7 @@ import { RegistrationHelper } from './utils/register.js';
 import { resolveEntitySuggestion } from './utils/entity-suggestions.js';
 import { installDiagnostic, CONSOLE_GLOBAL, consoleHelper } from './utils/diagnostic.js';
 import { audit } from './card/diagnostics/card-audit.js';
-import { cards, inspect } from './card/diagnostics/doctor.js';
+import { cards, inspect, jinja, history, copy } from './card/diagnostics/doctor.js';
 import { EntityProgressCard, EntityProgressBadge } from './card/elements/card-base.js';
 import { EntityProgressFeatures } from './card/elements/features.js';
 import { EntityProgressTemplateCard, EntityProgressTemplateBadge } from './card/elements/template-base.js';
@@ -62,10 +62,12 @@ function announce(): void {
     .filter(([, on]) => on)
     .map(([area]) => area);
   if (activeDebugAreas.length > 0) {
-    console.warn(
-      `${CARD.console.debugWarning}${activeDebugAreas.join(', ')}${CARD.console.debugWarningHint}`,
-      CARD.console.warnCss,
-    );
+    const { url, stored } = CARD_CONTEXT.debugSource;
+    const hints = [
+      url ? CARD.console.debugWarningHint : '',
+      stored ? `${CARD.console.debugStoredHint}${CONSOLE_GLOBAL}.debug(false).` : '',
+    ].join('');
+    console.warn(`${CARD.console.debugWarning}${activeDebugAreas.join(', ')}${hints}`, CARD.console.warnCss);
   }
 }
 
@@ -87,13 +89,13 @@ function registerRingValue(): void {
 function bootstrap(): void {
   registerComponents();
   registerRingValue();
-  installDiagnostic({ audit, cards, inspect });
+  installDiagnostic({ audit, cards, inspect, jinja, history, copy });
   announce();
 
   // noRegistration renders nothing, so the EPB.doctor.dump() cue never reaches
   // the reporter - emit the report automatically right after the banner (#108).
   if (CARD_CONTEXT.noRegistration) {
-    consoleHelper()?.doctor.dump();
+    void consoleHelper()?.doctor.dump();
   }
 }
 

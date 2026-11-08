@@ -1022,6 +1022,7 @@ bar_color_mode: rainbow
 | `--epb-progress-inner-radius`         | Progress Bar | Border     | Progress bar inner fill border radius                                                                                                                 | `4px`         |
 | `--epb-progress-bar-min-width`        | Progress Bar | Dimension  | Minimum bar width before it stops shrinking further                                                                                                   | `30px`        |
 | `--epb-bar-segment-gap`               | Progress Bar | Dimension  | `bar_segments` gap between cells (overrides computed value)                                                                                           | `2px`         |
+| `--epb-ring-softness`                 | Progress Bar | Dimension  | Inner edge softness of the `bar_position: icon` ring (`bar_ring.softness` wins); default `1px`                                                        | `0px`         |
 | `--epb-rainbow-marker-color`          | Marker       | Color      | `bar_color_mode: rainbow_full` marker color                                                                                                           | `#ffffff`     |
 | `--epb-rainbow-marker-opacity`        | Marker       | Opacity    | `bar_color_mode: rainbow_full` marker opacity                                                                                                         | `1`           |
 | `--epb-rainbow-marker-size`           | Marker       | Dimension  | `bar_color_mode: rainbow_full` marker width                                                                                                           | `5px`         |
@@ -1309,6 +1310,29 @@ div.secondary-info-wrapper
 > `--epb-detail-font-size`. Color, weight and letter spacing still do
 > (`--epb-detail-color`, `--epb-detail-font-weight`,
 > `--epb-detail-letter-spacing`).
+
+With [`content_order`](configuration.md#content_order), `div.content-section`
+holds one `div.content-line` per line instead:
+
+```text
+div.content-section
+ ├─ div.content-line.lead (first line; none on a single_line row)
+ │   ├─ div.content-group (consecutive texts, one ellipsis)
+ │   │   ├─ span.name-main[data-block=name]
+ │   │   └─ span.name-extra[data-block=name_info]
+ │   └─ div.content-group.value-end (a value closing the line)
+ │       └─ span.secondary-info-main[data-block=value]
+ └─ div.content-line.with-bar
+     ├─ div.content-group
+     │   ├─ span.secondary-info-extra-1[data-block=info]
+     │   └─ span.secondary-info-state[data-block=state_content]
+     └─ div.bar-container
+```
+
+> [!NOTE]
+>
+> The text variables follow the line, not the item: `--epb-name-*` style the
+> first line, `--epb-detail-*` every other line, whatever they hold.
 
 #### Template
 

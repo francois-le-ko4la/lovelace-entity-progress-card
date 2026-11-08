@@ -4,8 +4,8 @@
  * (StructureTemplates) assembled from them.
  */
 
-import { BAR_AROUND_ICON } from '../config/schema.js';
-import { CARD, CARD_CONTEXT, CONTENT_SLOT } from '../../utils/parameters.js';
+import { BAR_AROUND_ICON, contentKeyLines, type ContentShape } from '../config/schema.js';
+import { CARD, CARD_CONTEXT, CONTENT_SLOT, TEXT_HIDE_GROUP } from '../../utils/parameters.js';
 import { traceInstance } from '../../utils/log.js';
 
 // Shape of every CARD.htmlStructure.sections.*/elements.* entry actually
@@ -39,6 +39,10 @@ type StructureOptions = {
   hasLabel?: boolean;
   multiline?: boolean;
   barSingleLine?: boolean;
+  // content_order as contentOrderKey reads it; absent in the default order.
+  contentOrder?: string;
+  // contentShape(config), the layout the order is read in.
+  contentShape?: ContentShape | null;
 };
 
 const Element = (obj: StructureElementSpec, extraClass = '') => {
@@ -228,7 +232,9 @@ const StructureElements = {
     // Same slot vertical already uses: the bar sits after the content instead
     // of inside secondary-info, which is what makes it a sibling on the row.
     const after =
-      !isOverlay && !barElsewhere && (isVertical || isSingleLineRow) ? StructureElements.progressBar(options) : '';
+      !isOverlay && !barElsewhere && !options.contentOrder && (isVertical || isSingleLineRow)
+        ? StructureElements.progressBar(options)
+        : '';
     const ringProgress =
       options.barPosition === BAR_AROUND_ICON ? Element(CARD.htmlStructure.elements.ringProgress).html() : '';
     const content = before + rightContent + after + ringProgress;
@@ -246,6 +252,7 @@ const StructureElements = {
     nameHtml: string,
     secondaryInfoFn: (options: StructureOptions) => string,
   ) => {
+    if (options.contentOrder) return StructureElements.createOrderedBody(options);
     const body = (options.hideName ? '' : nameHtml) + secondaryInfoFn(options);
     if (options.barPosition === 'compact_below') {
       return Element(CARD.htmlStructure.sections.nameSecondaryRow).html(body) + StructureElements.progressBar(options);
@@ -256,6 +263,65 @@ const StructureElements = {
     // free: it still claims its share of the row's gap.
     if (!options.singleLine || body === '') return body;
     return Element(CARD.htmlStructure.sections.infoRow).html(body);
+  },
+
+  // content_order: one .content-line per line, one leaf per token (the span the
+  // text is written into, tagged data-block). A bar alone is a line of its own.
+  createOrderedBody: (options: StructureOptions) => {
+    const { elements } = CARD.htmlStructure;
+    const leaf = (spec: StructureElementSpec, token: string) => Element(spec).html('', { 'data-block': token });
+    const groupHidden: Record<string, boolean | undefined> = {
+      name: options.hideName,
+      secondary_info: options.hideSecondaryInfo,
+    };
+    const texts = (token: string, html: () => string) => (groupHidden[TEXT_HIDE_GROUP[token]] ? '' : html());
+    const leaves: Record<string, () => string> = {
+      name: () => texts('name', () => leaf(elements.nameMain, 'name')),
+      name_info: () => texts('name_info', () => leaf(elements.nameExtra, 'name_info')),
+      info: () =>
+        texts('info', () =>
+          options.multiline
+            ? Element(elements.infoLines).html(
+                Element(elements.secondaryInfoExtra).html() + Element(elements.secondaryInfoExtra2).html(),
+                { 'data-block': 'info' },
+              )
+            : leaf(elements.secondaryInfoExtra, 'info'),
+        ),
+      state_content: () => texts('state_content', () => leaf(elements.secondaryInfoState, 'state_content')),
+      value: () => texts('value', () => leaf(elements.secondaryInfoMain, 'value')),
+      bar: () => StructureElements.progressBar(options),
+    };
+    const group = (run: string[], extraClass = '') =>
+      Element(CARD.htmlStructure.sections.contentGroup, extraClass).html(run.map((token) => leaves[token]()).join(''));
+    // Consecutive texts share a group (its width cap, its one ellipsis); the
+    // bar splits them. A value closing the first horizontal line stands apart.
+    const line = (tokens: string[], index: number) => {
+      if (tokens.length === 1 && tokens[0] === 'bar') return leaves.bar();
+      const hasBar = tokens.includes('bar');
+      const valueEnd =
+        options.contentShape !== 'stack' &&
+        index === 0 &&
+        (!hasBar || options.contentShape === 'row') &&
+        tokens.length > 1 &&
+        tokens[tokens.length - 1] === 'value';
+      const runs: string[][] = [[]];
+      for (const token of valueEnd ? tokens.slice(0, -1) : tokens) {
+        if (token === 'bar') runs.push(['bar'], []);
+        else runs[runs.length - 1].push(token);
+      }
+      const html =
+        runs
+          .filter((run) => run.length > 0)
+          .map((run) => (run[0] === 'bar' ? leaves.bar() : group(run)))
+          .join('') + (valueEnd ? group(['value'], 'value-end') : '');
+      // .lead, not :first-child: overlay's bar comes first in .content. A
+      // single_line row has no title line.
+      const lead = index === 0 && options.contentShape !== 'row';
+      const classes = [lead ? 'lead' : '', hasBar ? 'with-bar' : ''].join(' ').trim();
+      return Element(CARD.htmlStructure.sections.contentLine, classes).html(html);
+    };
+    const lines = contentKeyLines(options.contentOrder).filter((tokens) => tokens.length > 0);
+    return lines.map(line).join('') + (options.contentShape === 'line' ? leaves.bar() : '');
   },
 
   contentFull: (options: StructureOptions) =>
@@ -274,8 +340,9 @@ const StructureElements = {
     ),
 
   ringLayers: () =>
+    Element(CARD.htmlStructure.elements.ringFill).html() +
     Object.values(CARD.htmlStructure.elements.ringMarks)
-      .map((mark) => Element(mark).html())
+      .map((mark) => Element(mark, CARD.htmlStructure.elements.ringLayer.class).html())
       .join('') +
     Element(CARD.htmlStructure.elements.ringMark).html() +
     Element(CARD.htmlStructure.elements.ringZero).html(),

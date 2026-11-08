@@ -5,7 +5,8 @@
 
 import { CARD, CARD_CONTEXT, HA_CONTEXT } from '../../utils/parameters.js';
 import type { ValueKind } from '../../utils/ha-context.js';
-import { assertDefined, is } from '../../utils/common-checks.js';
+import { assertDefined, has, is } from '../../utils/common-checks.js';
+import { resolveDurationUnit } from '../../utils/display-defaults.js';
 import { traceInstance } from '../../utils/log.js';
 import { HassProviderSingleton } from '../../utils/hass-provider.js';
 import { NumberFormatter } from './formatting.js';
@@ -19,14 +20,26 @@ type NameTokenType = 'text' | 'entity' | 'device' | 'area' | 'floor';
 // EditorFieldsType.entityName / types.stateContent in schema.ts).
 type NameToken = { type: NameTokenType; text?: string };
 
-const KINDS_WITHOUT_HISTORY: ReadonlySet<ValueKind> = new Set(['timer', 'counter', 'duration']);
+const KINDS_WITHOUT_HISTORY: ReadonlySet<ValueKind> = new Set(['timer', 'counter']);
 
-// A duration sensor reads as seconds for its own state only, not an attribute.
+// A duration (device class or time unit) converts its own state only.
 const valueKindOf = (entityId: string, attribute: unknown): ValueKind => {
   const kind = domainProfile(HassProviderSingleton.getEntityDomain(entityId)).kind;
   if (kind) return kind;
-  const deviceClass = HassProviderSingleton.getInstance().getEntityProp(entityId, HA_CONTEXT.attributes.deviceClass);
-  return deviceClass === HA_CONTEXT.deviceClasses.duration && !is.nonEmptyString(attribute) ? 'duration' : 'default';
+  if (is.nonEmptyString(attribute)) return 'default';
+  const hass = HassProviderSingleton.getInstance();
+  const isDuration =
+    hass.getEntityProp(entityId, HA_CONTEXT.attributes.deviceClass) === HA_CONTEXT.deviceClasses.duration ||
+    has.own(CARD.config.duration.secondsPerUnit, hass.getEntityProp(entityId, HA_CONTEXT.attributes.unit));
+  return isDuration ? 'duration' : 'default';
+};
+
+// One unit of a duration's state in the card's working unit; 1 otherwise.
+const durationFactorOf = (entityId: string, configUnit: string | undefined): number => {
+  if (valueKindOf(entityId, null) !== 'duration') return 1;
+  const unit = HassProviderSingleton.getInstance().getEntityProp<string>(entityId, HA_CONTEXT.attributes.unit);
+  const target = resolveDurationUnit(configUnit);
+  return is.nullish(unit) || target === null ? 1 : (NumberFormatter.convertDurationUnit(1, unit, target) ?? 1);
 };
 
 // The range an entity carries itself (input_number, number, counter), shared by
@@ -59,6 +72,9 @@ class EntityHelper {
   #state: string | null = null;
   #domain: string | null = null;
   #valueKind: ValueKind | null = null;
+  // null: the entity's own unit.
+  #durationUnit: string | null = null;
+  #workingUnit: string | null = null;
   // undefined: not resolved since the last refresh.
   #defaultColor: string | null | undefined = undefined;
   #stateContent: string[] = [];
@@ -128,6 +144,10 @@ class EntityHelper {
 
   get isMain(): boolean {
     return this.#isMain;
+  }
+
+  set durationUnit(newValue: string | null) {
+    this.#durationUnit = newValue;
   }
 
   set nameTokens(tok: unknown) {
@@ -221,7 +241,7 @@ class EntityHelper {
   get unit(): string | null {
     if (!this.#isValid) return null;
     if (this.valueKind === 'timer') return CARD.config.unit.flexTimer;
-    if (this.valueKind === 'duration') return CARD.config.unit.second;
+    if (this.valueKind === 'duration') return this.#workingUnit;
     if (this.valueKind === 'counter') return CARD.config.unit.disable;
     // Neither carries unit_of_measurement: climate uses the global unit
     // system, weather its own per-attribute `<attr>_unit` key.
@@ -285,7 +305,7 @@ class EntityHelper {
     this.#isValid = this.#hassProvider.hasEntity(this.#entity);
 
     if (!this.#isValid) {
-      this.#state = HA_CONTEXT.entity.state.notFound;
+      this.#state = CARD.config.entityNotFound;
       return;
     }
 
@@ -388,19 +408,20 @@ class EntityHelper {
     // CF5 - issue (critical) resolved - getEntityProp returns null (never
     // undefined), so the guard never matched and a missing unit crashed in
     // durationToSeconds
-    const seconds = is.nullish(unit) ? null : NumberFormatter.durationToSeconds(value, unit);
-    this.#reading = scalarReading(seconds ?? 0);
-    this.#isValid = seconds !== null;
+    const target = is.nullish(unit) ? null : (this.#durationUnit ?? unit);
+    const converted = target === null ? null : NumberFormatter.convertDurationUnit(value, unit, target);
+    this.#workingUnit = converted === null ? null : target;
+    this.#reading = scalarReading(converted ?? 0);
+    this.#isValid = converted !== null;
   }
 }
 
-// Whether the recorder keeps a numeric history worth reading: none for an
-// attribute, nor for a timer, a counter or a duration. The one rule the card
-// fetches history by and the editor offers peak_marker by.
+// The one rule for a usable numeric history (no attribute, timer or counter):
+// the card fetches by it, the editor offers peak_marker by it.
 const hasUsableHistory = (entity: unknown, attribute?: unknown): entity is string =>
   is.nonEmptyString(entity) &&
   !is.nonEmptyString(attribute) &&
   !KINDS_WITHOUT_HISTORY.has(valueKindOf(entity, attribute));
 
-export { EntityHelper, hasUsableHistory, ownRangeOf };
+export { EntityHelper, durationFactorOf, hasUsableHistory, ownRangeOf };
 export type { Reading, NameTokenType };

@@ -47,8 +47,9 @@
       "bar_effect_mode": "Riba efekt",
       "bar_max_width_toggle": "Riba max laius",
       "bar_orientation": "Suund",
-      "bar_ring_start": null,
-      "bar_ring_gap": null,
+      "bar_ring_start": "Rõnga algus",
+      "bar_ring_gap": "Rõnga vahe",
+      "bar_ring_softness": "Rõnga serva pehmus",
       "bar_scale": "Skaala",
       "bar_segments": "Segmendid",
       "bar_single_line": "Üherealine",
@@ -59,6 +60,13 @@
       "center_zero": "Null keskel",
       "center_zero_growth_percent": "Kasvuprotsent",
       "center_zero_value": "Keskväärtus",
+      "content_order": "Sisu järjekord",
+      "content_order_line_1": "Rida 1",
+      "content_order_line_2": "Rida 2",
+      "content_order_line_3": "Rida 3",
+      "content_order_line_4": "Rida 4",
+      "content_order_line_5": "Rida 5",
+      "content_order_line_6": "Rida 6",
       "custom_info": "Kohandatud sekundaarne teave",
       "custom_theme": "Kohandatud teema tsoonid",
       "density": "Tihedus",
@@ -216,9 +224,14 @@
         "proportional": "Proportsionaalne",
         "stacked": "Virnastatud"
       },
+      "content_order": {
+        "info": "Teave",
+        "value": "Väärtus"
+      },
       "density": {
         "compact": "Kompaktne",
         "single_line": "Üherealine",
+        "single_column": "Üheveeruline",
         "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
       },
       "enabled_disabled_mode": {
@@ -231,6 +244,7 @@
       },
       "hide": {
         "secondary_info": "Lisainfo",
+        "info": "Teave",
         "value": "Väärtus"
       },
       "icon_animation": {

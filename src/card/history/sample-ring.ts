@@ -25,6 +25,11 @@ class SampleRing {
     return this.#size;
   }
 
+  // Oldest first, for EPB.doctor.history().
+  toSamples(): { t: number; value: number }[] {
+    return Array.from({ length: this.#size }, (_, index) => ({ t: this.timeAt(index), value: this.valueAt(index) }));
+  }
+
   timeAt(index: number): number {
     return this.#times[this.#slot(index)];
   }

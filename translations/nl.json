@@ -47,8 +47,9 @@
       "bar_effect_mode": "Effect op de balk",
       "bar_max_width_toggle": "Max. balkbreedte",
       "bar_orientation": "Oriëntatie",
-      "bar_ring_start": null,
-      "bar_ring_gap": null,
+      "bar_ring_start": "Begin van de ring",
+      "bar_ring_gap": "Opening van de ring",
+      "bar_ring_softness": "Zachtheid van de ringrand",
       "bar_scale": "Schaal",
       "bar_segments": "Segmenten",
       "bar_single_line": "Eén regel",
@@ -59,6 +60,13 @@
       "center_zero": "Nul in het midden",
       "center_zero_growth_percent": "Groeipercentage",
       "center_zero_value": "Centrumwaarde",
+      "content_order": "Volgorde van de inhoud",
+      "content_order_line_1": "Regel 1",
+      "content_order_line_2": "Regel 2",
+      "content_order_line_3": "Regel 3",
+      "content_order_line_4": "Regel 4",
+      "content_order_line_5": "Regel 5",
+      "content_order_line_6": "Regel 6",
       "custom_info": "Aangepaste secundaire info",
       "custom_theme": "Aangepaste themazones",
       "density": "Dichtheid",
@@ -216,9 +224,14 @@
         "proportional": "Proportioneel",
         "stacked": "Gestapeld"
       },
+      "content_order": {
+        "info": "Info",
+        "value": "Waarde"
+      },
       "density": {
         "compact": "Compact",
         "single_line": "Eén regel",
+        "single_column": "Eén kolom",
         "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
       },
       "enabled_disabled_mode": {
@@ -231,6 +244,7 @@
       },
       "hide": {
         "secondary_info": "Secundaire info",
+        "info": "Info",
         "value": "Waarde"
       },
       "icon_animation": {

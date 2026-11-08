@@ -22,7 +22,7 @@ describe('the hide chips offer exactly what the schema allows', () => {
     });
   }
 
-  test('a card can hide all seven of them', () => {
-    assert.equal(EditorFactory.hideChipsItems('card').length, 7);
+  test('a card can hide all ten of them', () => {
+    assert.equal(EditorFactory.hideChipsItems('card').length, 10);
   });
 });

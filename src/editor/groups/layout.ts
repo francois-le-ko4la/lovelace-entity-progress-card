@@ -2,7 +2,23 @@ import { CARD, HA_CONTEXT } from '../../utils/parameters.js';
 import { is } from '../../utils/common-checks.js';
 import { type LovelaceConfig } from '../../utils/types.js';
 import { parseLength, serializeLength, convertLengthValue } from '../../utils/length.js';
-import { DENSITY_MODES, HAS_EFFECT, YamlSchemaFactory, densityOverrides } from '../../card/config/schema.js';
+import {
+  DENSITY_MODES,
+  HAS_EFFECT,
+  YamlSchemaFactory,
+  densityOverrides,
+  CONTENT_ORDER_TOKENS,
+  TEMPLATE_CONTENT_ORDER_TOKENS,
+  completeOrder,
+  completeLines,
+  contentShape,
+  contentHoldsBar,
+  defaultLines,
+  readLines,
+  hideTargetOf,
+  isHiddenToken,
+  type ContentShape,
+} from '../../card/config/schema.js';
 import { EditorFieldsType, draftToggle, TITLE } from '../fields/base.js';
 
 // A CSS-length option (e.g. min_width) edited as a number+unit composite: a
@@ -200,30 +216,26 @@ const applyDensityConstraints = (config: LovelaceConfig): LovelaceConfig => {
   return next;
 };
 
+// single_line is a horizontal row, single_column a vertical stack: each the
+// density the other layout cannot offer (densityOverrides).
+const otherLayoutDensity = (layout: unknown) =>
+  layout === CARD.layout.orientations.vertical.label ? 'single_line' : 'single_column';
+
 const themeLayoutField = (badge: boolean) =>
   badge
     ? {}
     : {
         layout: EditorFieldsType.select('layout', {
-          // Picking vertical wins over a single_line card rather than being
-          // undone by applyDensityConstraints on the next keystroke: the
-          // density goes back to default, and its chip list loses
-          // single_line for as long as the layout stays vertical.
+          // A new layout wins over the density bound to the other one rather
+          // than being undone by applyDensityConstraints: back to default.
           onChange: (value: unknown, config: LovelaceConfig) =>
-            value === CARD.layout.orientations.vertical.label && config.density === 'single_line'
-              ? { ...config, density: undefined }
-              : config,
+            config.density === otherLayoutDensity(value) ? { ...config, density: undefined } : config,
         }),
         density: {
           name: 'density',
           type: 'density',
           virtual: true,
-          // single_line lays the card out as one horizontal row - there is
-          // no vertical form of it to offer (see applyDensityRule).
-          modes: (c: LovelaceConfig) =>
-            c.layout === CARD.layout.orientations.vertical.label
-              ? DENSITY_MODES.filter((mode) => mode !== 'single_line')
-              : DENSITY_MODES,
+          modes: (c: LovelaceConfig) => DENSITY_MODES.filter((mode) => mode !== otherLayoutDensity(c.layout)),
           // 'default' resolves to no key at all, so a card that never left
           // it keeps a clean YAML.
           resolveVirtual: (c: LovelaceConfig) => (c.density as string) ?? 'default',
@@ -252,6 +264,123 @@ const themeLayoutField = (badge: boolean) =>
         },
       };
 
+const writeOrder = (config: LovelaceConfig, order: unknown, standard: unknown) => ({
+  ...config,
+  content_order: JSON.stringify(order) === JSON.stringify(standard) ? undefined : order,
+});
+
+// A ✕ hides its chip, a hidden one picked again shows it: in a list hide only,
+// never a Jinja one (null: refused).
+const toggleHidden = (
+  config: LovelaceConfig,
+  value: readonly string[],
+  shown: readonly string[],
+  template: boolean,
+): LovelaceConfig | null => {
+  const removed = shown.filter((token) => !value.includes(token));
+  const added = value.filter((token) => isHiddenToken(config, token, template));
+  if (removed.length === 0 && added.length === 0) return config;
+  if (is.jinja(config.hide)) return null;
+  const unhidden = added.map((token) => hideTargetOf(token, template));
+  // Hidden by its group (hide: [secondary_info]): only that chip can show it.
+  if (unhidden.some((target) => !(config.hide as unknown[]).includes(target))) return null;
+  const hide = [
+    ...(is.array(config.hide) ? (config.hide as string[]) : []).filter((target) => !unhidden.includes(target)),
+    ...removed.map((token) => hideTargetOf(token, template)),
+  ];
+  return { ...config, hide: hide.length > 0 ? hide : undefined };
+};
+
+const flatOrderField = (
+  name: string,
+  type: string,
+  tokens: readonly string[],
+  shape: ContentShape,
+  template: boolean,
+) => {
+  const tokensOf = (c: LovelaceConfig) => tokens.filter((token) => !isHiddenToken(c, token, template));
+  return {
+    name,
+    type,
+    target: 'content_order',
+    noLabel: true,
+    virtual: true,
+    showIf: (c: LovelaceConfig) => contentShape(c) === shape,
+    resolveVirtual: (c: LovelaceConfig) =>
+      completeOrder(is.array(c.content_order) ? readLines(c.content_order, shape)[0] : [], tokensOf(c)),
+    onVirtualChange: (value: unknown, config: LovelaceConfig): LovelaceConfig | null => {
+      if (!is.array(value)) return null;
+      const next = toggleHidden(config, value as string[], tokensOf(config), template);
+      return next && writeOrder(next, value, tokensOf(next));
+    },
+  };
+};
+
+// A chip row per line (horizontal: two; stack: one more, empty, to open a new
+// line). A chip picked in a row leaves the others.
+const lineOrderFields = (type: string, tokens: readonly string[], template: boolean) => {
+  const linesShape = (c: LovelaceConfig) => contentShape(c) === 'lines';
+  const shapeOf = (c: LovelaceConfig) => (linesShape(c) ? 'lines' : 'stack');
+  // The bar is a chip only where it sits among the texts.
+  const tokensOf = (c: LovelaceConfig) =>
+    tokens.filter((token) => (contentHoldsBar(c) || token !== 'bar') && !isHiddenToken(c, token, template));
+  const current = (c: LovelaceConfig): string[][] => {
+    const shape = shapeOf(c);
+    const lines = is.array(c.content_order)
+      ? completeLines(readLines(c.content_order, shape, contentHoldsBar(c)), tokensOf(c))
+      : defaultLines(tokensOf(c), shape);
+    return shape === 'lines' && lines.length < 2 ? [...lines, []] : lines;
+  };
+  const rows = (c: LovelaceConfig) => {
+    const lines = current(c);
+    if (linesShape(c)) return 2;
+    return Math.min(tokensOf(c).length, lines.length + ((lines[lines.length - 1]?.length ?? 0) > 0 ? 1 : 0));
+  };
+  const lineField = (index: number) => ({
+    name: `content_order_line_${index + 1}`,
+    type: (c: LovelaceConfig) => (contentHoldsBar(c) ? type : `${type}_no_bar`),
+    target: 'content_order',
+    virtual: true,
+    showIf: (c: LovelaceConfig) => ['lines', 'stack'].includes(contentShape(c) ?? '') && index < rows(c),
+    resolveVirtual: (c: LovelaceConfig) => current(c)[index] ?? [],
+    onVirtualChange: (value: unknown, config: LovelaceConfig): LovelaceConfig | null => {
+      const lines = current(config);
+      if (!is.array(value)) return null;
+      const hidden = toggleHidden(config, value as string[], lines[index] ?? [], template);
+      if (!hidden) return null;
+      const next = Array.from({ length: Math.max(lines.length, index + 1) }, (_, row) =>
+        row === index ? (value as string[]) : (lines[row] ?? []).filter((token) => !value.includes(token)),
+      );
+      const written = linesShape(config) ? next : next.filter((line) => line.length > 0);
+      return writeOrder(hidden, written, defaultLines(tokensOf(hidden), shapeOf(config)));
+    },
+  });
+  return {
+    content_order_group: EditorFieldsType.sectionLabel('content_order_group', {
+      labelKey: 'content_order',
+      showIf: (c: LovelaceConfig) => contentShape(c) !== null,
+    }),
+    ...Object.fromEntries(tokens.map((_, index) => [`content_order_line_${index + 1}`, lineField(index)])),
+  };
+};
+
+const contentOrderField = (template: boolean, badge: boolean) => {
+  if (badge) return {};
+  const tokens = template ? TEMPLATE_CONTENT_ORDER_TOKENS : CONTENT_ORDER_TOKENS;
+  const type = template ? 'content_order_template' : 'content_order';
+  return {
+    ...lineOrderFields(type, tokens, template),
+    content_order_row: flatOrderField(
+      'content_order_row',
+      `${type}_no_bar`,
+      tokens.filter((token) => token !== 'bar'),
+      'line',
+      template,
+    ),
+    content_order_single_line: flatOrderField('content_order_single_line', type, tokens, 'row', template),
+  };
+};
+
 // Also split out of theme(): frameless/marginless/height/min_width/layout
 // are the card's own sizing/shape, a different concern from its color/bar
 // appearance above. Smaller win than markers() (5 fields vs ~28) but the
@@ -274,6 +403,7 @@ const layout = (badge: boolean) => ({
 });
 
 export {
+  contentOrderField,
   lengthField,
   themeMaxWidthFields,
   themeCardLayoutFields,

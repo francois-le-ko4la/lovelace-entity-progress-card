@@ -30,15 +30,14 @@ function boundValue(bound: Bound): number | null {
 const boundState = (bound: Bound): string | null => (isEntityBound(bound) ? bound.state : null);
 
 const isFaultState = (state: string | null): state is string => {
-  const { unavailable, unknown, notFound } = HA_CONTEXT.entity.state;
-  return state === unavailable || state === unknown || state === notFound;
+  const { unavailable, unknown } = HA_CONTEXT.entity.state;
+  return state === unavailable || state === unknown || state === CARD.config.entityNotFound;
 };
 
 // The fixed colour of an unreadable entity; `unknown` keeps its own colour.
 const faultColor = (state: string | null): string | null => {
-  const { unavailable, notFound } = HA_CONTEXT.entity.state;
-  if (state === unavailable) return CARD.style.color.unavailable;
-  return state === notFound ? CARD.style.color.notFound : null;
+  if (state === HA_CONTEXT.entity.state.unavailable) return CARD.style.color.unavailable;
+  return state === CARD.config.entityNotFound ? CARD.style.color.notFound : null;
 };
 
 // Only an entity can be in a fault state: a number or nothing is always usable.
@@ -47,8 +46,11 @@ const boundUsable = (bound: Bound): boolean => !isEntityBound(bound) || !isFault
 // A bound in a fault state reads as unset: its 0 is not a value.
 const usableBoundValue = (bound: Bound) => (boundUsable(bound) ? boundValue(bound) : null);
 
-function refreshBound(bound: Bound): void {
-  if (isEntityBound(bound)) bound.refresh();
+// durationUnit: the main entity's, so a duration bound reads in the same unit.
+function refreshBound(bound: Bound, durationUnit: string | null = null): void {
+  if (!isEntityBound(bound)) return;
+  bound.durationUnit = durationUnit;
+  bound.refresh();
 }
 
 export {

@@ -11,8 +11,16 @@
  */
 
 import { CARD, HA_CONTEXT } from './parameters.js';
-import { is } from './common-checks.js';
+import { has, is } from './common-checks.js';
 import type { ValueKind } from './ha-context.js';
+
+// The unit a duration entity, its min/max and thresholds read in: a time `unit`
+// (seconds for timer/flextimer), else null for the entity's own.
+const resolveDurationUnit = (configUnit: string | undefined): string | null => {
+  const { timer, flexTimer, second } = CARD.config.unit;
+  if (configUnit === timer || configUnit === flexTimer) return second;
+  return configUnit && has.own(CARD.config.duration.secondsPerUnit, configUnit) ? configUnit : null;
+};
 
 const resolveDisplayUnit = (
   configUnit: string | undefined,
@@ -53,4 +61,4 @@ const resolveDisplayDecimal = (
   return unit === CARD.config.unit.default ? CARD.config.decimal.percentage : CARD.config.decimal.other;
 };
 
-export { resolveDisplayUnit, resolveDisplayDecimal };
+export { resolveDisplayUnit, resolveDisplayDecimal, resolveDurationUnit };

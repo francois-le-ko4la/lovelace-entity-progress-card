@@ -379,6 +379,11 @@ page, numbered, each with a `config` state (`✅ ok`, `❌ invalid`,
 has a range to compute. `EPB.doctor.inspect(2)` shows one of them — or
 `EPB.doctor.inspect($0)` after picking it in the DevTools' Elements tab — with
 the value and the range its bar is drawn from, and the config it ended up with.
+`EPB.doctor.jinja(2)` lists its Jinja fields, each with Home Assistant's last
+result or error, `EPB.doctor.history(2)` the samples behind its
+`trend_indicator` and `peak_marker`, and `EPB.doctor.copy(2)` prints an issue
+report for it — the same as the editor's bug icon — and copies it when the
+browser allows (otherwise run `copy($_)` right after).
 
 It prints an anonymized report — card and Home Assistant versions, browser, dark
 mode / reduced motion status, registered card types, whether the required HA
@@ -388,11 +393,16 @@ into your issue. Chrome, Edge and Opera only give their exact version and
 operating system over HTTPS; elsewhere, the user agent line is all there is.
 
 It also flags a **duplicate resource load** on its own
-(`duplicate load: ⚠️ YES`) — a common, hard-to-diagnose cause of erratic
-behavior where the card ends up installed **twice** (e.g. via HACS _and_ a
-leftover manual resource in **Settings → Dashboards → Resources**). If you see
-this warning, remove the extra resource entry first — it resolves most
-"impossible to reproduce" issues on its own.
+(`duplicate load: ⚠️ YES`, followed by the URLs loaded) — a common,
+hard-to-diagnose cause of erratic behavior where the card ends up installed
+**twice** (e.g. via HACS _and_ a leftover manual resource in **Settings →
+Dashboards → Resources**). If you see this warning, remove the extra resource
+entry first — it resolves most "impossible to reproduce" issues on its own.
+
+The `sha-256` lines give the first 12 characters of the card and editor files as
+your browser received them: compare them with the `sha256:` digest GitHub shows
+beside each file of the release to make sure you run the published one. They
+need HTTPS.
 
 #### 🔎 Enable debug logging (`?debug=…`)
 
@@ -424,10 +434,15 @@ For a card that misbehaves only when other cards/modules are present,
 shows lifecycle churn, registration problems, and outside interference at once.
 Copy the console output into your issue.
 
+Without access to the resource URL, `EPB.debug('card,registration')` in the
+console keeps the same areas on in this browser, across reloads; reload the page
+to apply it, and run `EPB.debug(false)` to turn them off. `EPB.debug()` shows
+what is saved.
+
 > [!NOTE]
 >
-> `?debug=…` only turns logging on — it changes nothing else, and has no effect
-> when the query is absent. Remove it once you're done.
+> `?debug=…` and `EPB.debug()` only turn logging on — they change nothing else.
+> Remove the query, or run `EPB.debug(false)`, once you're done.
 
 #### Open an issue on GitHub
 

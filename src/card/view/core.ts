@@ -1,15 +1,18 @@
-import { HA_CONTEXT, CARD, CARD_CONTEXT } from '../../utils/parameters.js';
+import { HA_CONTEXT, CARD, CARD_CONTEXT, TEXT_HIDE_GROUP } from '../../utils/parameters.js';
 import { type LovelaceConfig, type Config } from '../../utils/types.js';
 import { is } from '../../utils/common-checks.js';
 import {
   densityForcedHide,
   BAR_AROUND_ICON,
   HAS_EFFECT,
+  isUpright,
+  contentOrderKey,
   OWN_TRIGGER_ANIMATIONS,
   YamlSchemaFactory,
   type Infer,
 } from '../config/schema.js';
 import { traceInstance } from '../../utils/log.js';
+import { resolveDurationUnit } from '../../utils/display-defaults.js';
 import { type ProgressSettings, type RawProgress } from './progress-math.js';
 import { type ProgressDisplay } from './progress-display.js';
 import { ThemeManager } from '../color/theme-manager.js';
@@ -117,11 +120,21 @@ abstract class ViewCore<E = unknown> {
   }
 
   get isVerticalBar(): boolean {
-    return (
-      (this.config.bar_orientation === 'up' || this.config.bar_orientation === 'down') &&
-      ((this.config.layout === 'vertical' && this.config.bar_position === 'overlay') ||
-        this.config.bar_position === 'background')
-    );
+    return isUpright(this.config) && HAS_EFFECT.barOrientationUp(this.config);
+  }
+
+  // Per config, not per hass update: secondaryInfoMain reads it on each one.
+  #contentOrder: { config: Config; key: string | undefined } | null = null;
+
+  get contentOrder(): string | undefined {
+    const { config } = this;
+    if (this.#contentOrder?.config !== config) this.#contentOrder = { config, key: contentOrderKey(config) };
+    return this.#contentOrder.key;
+  }
+
+  // An order of its own: one leaf per token, each text in a slot of its own.
+  get isContentOrdered(): boolean {
+    return this.contentOrder !== undefined;
   }
 
   // bar_position: icon - the bar is the ring around the icon.
@@ -139,13 +152,19 @@ abstract class ViewCore<E = unknown> {
     const { entity } = this._configHelper.config;
     this._currentValue = new EntityHelper();
     if (is.string(entity)) this._currentValue.entityId = entity;
+    this._currentValue.durationUnit = resolveDurationUnit(this._configHelper.config.unit);
     this._currentValue.stateContent = this._configHelper.stateContent ?? [];
+  }
+
+  // The unit every duration bound follows: the main entity's, once refreshed.
+  get _durationUnit(): string | null {
+    return this._currentValue.valueKind === 'duration' ? this._currentValue.unit : null;
   }
 
   refresh(hass: HomeAssistant) {
     this._hassProvider.hass = hass;
     this._currentValue.refresh();
-    this._watermark.refresh();
+    this._watermark.refresh(this._durationUnit);
     // Computed once per refresh instead of live in isBatteryCharging: with
     // battery_adaptive, a single refresh reads it 3x (resolvedTheme +
     // icon-anim-battery-charging + its -shifted variant), each a same-device
@@ -466,6 +485,15 @@ abstract class ViewCore<E = unknown> {
     if (densityForcedHide(this.config ?? {}).includes(component)) return true;
     if (this.jinjaState.resolvedHide) return this.jinjaState.resolvedHide.has(component);
     return is.array(this.config?.hide) && this.config.hide.some((target) => target === component);
+  }
+
+  // A text goes with its own target, and ordered with its group's too: blanked,
+  // not classed, so :empty drops the leaf and its " · ".
+  isTextHidden(token: string): boolean {
+    return (
+      this.hasComponentHiddenFlag(token) ||
+      (this.isContentOrdered && this.hasComponentHiddenFlag(TEXT_HIDE_GROUP[token]))
+    );
   }
 
   // Takes the whole bag: tap/hold/doubleTap is the shape _configHelper.action

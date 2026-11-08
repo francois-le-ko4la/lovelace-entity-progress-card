@@ -47,8 +47,9 @@
       "bar_effect_mode": "تأثير الشريط",
       "bar_max_width_toggle": "أقصى عرض للشريط",
       "bar_orientation": "اتجاه",
-      "bar_ring_start": null,
-      "bar_ring_gap": null,
+      "bar_ring_start": "بداية الحلقة",
+      "bar_ring_gap": "فجوة الحلقة",
+      "bar_ring_softness": "نعومة حافة الحلقة",
       "bar_scale": "المقياس",
       "bar_segments": "الأجزاء",
       "bar_single_line": "سطر واحد",
@@ -59,6 +60,13 @@
       "center_zero": "صفر في الوسط",
       "center_zero_growth_percent": "نسبة النمو",
       "center_zero_value": "قيمة المركز",
+      "content_order": "ترتيب المحتوى",
+      "content_order_line_1": "السطر 1",
+      "content_order_line_2": "السطر 2",
+      "content_order_line_3": "السطر 3",
+      "content_order_line_4": "السطر 4",
+      "content_order_line_5": "السطر 5",
+      "content_order_line_6": "السطر 6",
       "custom_info": "معلومات إضافية (ثانوية)",
       "custom_theme": "مناطق السمة المخصصة",
       "density": "الكثافة",
@@ -216,9 +224,14 @@
         "proportional": "تناسبي",
         "stacked": "مكدس"
       },
+      "content_order": {
+        "info": "معلومات",
+        "value": "القيمة"
+      },
       "density": {
         "compact": "مضغوط",
         "single_line": "سطر واحد",
+        "single_column": "عمود واحد",
         "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
       },
       "enabled_disabled_mode": {
@@ -231,6 +244,7 @@
       },
       "hide": {
         "secondary_info": "معلومات ثانوية",
+        "info": "معلومات",
         "value": "القيمة"
       },
       "icon_animation": {

@@ -519,6 +519,7 @@ class HACore extends HTMLElement {
     CARD.htmlStructure.elements.nameMain.class,
     CARD.htmlStructure.elements.nameExtra.class,
     CARD.htmlStructure.elements.secondaryInfoMain.class,
+    CARD.htmlStructure.elements.secondaryInfoState.class,
     CARD.htmlStructure.elements.secondaryInfoExtra.class,
     CARD.htmlStructure.elements.secondaryInfoExtra2.class,
     CARD.htmlStructure.elements.progressBar.lowWatermark.class,

@@ -63,6 +63,9 @@ const STATES_CSS = css`
 ha-card.${CARD.style.dynamic.barAroundIcon}.${CARD.style.dynamic.hiddenComponent.progress_bar.class} .${CARD.htmlStructure.elements.shape.class}::after {
   content: none;
 }
+ha-card.${CARD.style.dynamic.barAroundIcon}.${CARD.style.dynamic.hiddenComponent.progress_bar.class} .${CARD.htmlStructure.elements.ringFill.class} {
+  display: none;
+}
 ha-card.${CARD.style.dynamic.barAroundIcon}.${CARD.style.dynamic.hiddenComponent.progress_bar.class}:not(.progress-badge) .${CARD.htmlStructure.elements.shape.class} {
   --current-shape-size: var(--shape-default-size);
 }

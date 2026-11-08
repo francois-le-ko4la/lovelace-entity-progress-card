@@ -84,7 +84,7 @@ const circularBackgroundField = () => ({
 // Feature's own build below, no template/badge distinction needed.
 // Badge and badgeTemplate opt out (see YamlSchemaFactory's own
 // .delete(['multiline'])): the row is too small for a second line there.
-// density: compact/single_line clear it too (see schema.ts's applyDensityRule).
+// The single-row densities clear it too (densityOverrides).
 const multilineField = (badge: boolean) =>
   badge
     ? {}
@@ -134,15 +134,15 @@ const barSegmentsField = () => ({
 });
 
 const barRingFields = () => {
-  const field = (key: 'start' | 'gap') => ({
+  const field = (key: 'start' | 'gap' | 'softness') => ({
     [`bar_ring.${key}`]: EditorFieldsType.number(`bar_ring.${key}`, {
-      type: 'degrees',
+      type: key === 'softness' ? 'pixels' : 'degrees',
       labelKey: `bar_ring_${key}`,
       width: 'half',
       showIf: (c: LovelaceConfig) => c.bar_position === BAR_AROUND_ICON,
     }),
   });
-  return { ...field('start'), ...field('gap') };
+  return { ...field('start'), ...field('gap'), ...field('softness') };
 };
 
 // Virtual: status_label's bare-string shorthand is past what the generic

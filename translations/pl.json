@@ -47,8 +47,9 @@
       "bar_effect_mode": "Efekt na pasku",
       "bar_max_width_toggle": "Maks. szerokość paska",
       "bar_orientation": "Orientacja",
-      "bar_ring_start": null,
-      "bar_ring_gap": null,
+      "bar_ring_start": "Początek pierścienia",
+      "bar_ring_gap": "Przerwa pierścienia",
+      "bar_ring_softness": "Miękkość krawędzi pierścienia",
       "bar_scale": "Skala",
       "bar_segments": "Segmenty",
       "bar_single_line": "Jedna linia",
@@ -59,6 +60,13 @@
       "center_zero": "Zero na środku",
       "center_zero_growth_percent": "Procent wzrostu",
       "center_zero_value": "Wartość środkowa",
+      "content_order": "Kolejność zawartości",
+      "content_order_line_1": "Wiersz 1",
+      "content_order_line_2": "Wiersz 2",
+      "content_order_line_3": "Wiersz 3",
+      "content_order_line_4": "Wiersz 4",
+      "content_order_line_5": "Wiersz 5",
+      "content_order_line_6": "Wiersz 6",
       "custom_info": "Niestandardowa info pomocnicza",
       "custom_theme": "Strefy niestandardowego motywu",
       "density": "Gęstość",
@@ -216,9 +224,14 @@
         "proportional": "Proporcjonalny",
         "stacked": "Ułożony"
       },
+      "content_order": {
+        "info": "Informacje",
+        "value": "Wartość"
+      },
       "density": {
         "compact": "Kompaktowy",
         "single_line": "Jedna linia",
+        "single_column": "Jedna kolumna",
         "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
       },
       "enabled_disabled_mode": {
@@ -231,6 +244,7 @@
       },
       "hide": {
         "secondary_info": "Info dodatkowe",
+        "info": "Informacje",
         "value": "Wartość"
       },
       "icon_animation": {

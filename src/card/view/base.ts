@@ -263,7 +263,7 @@ class ViewBase extends ViewCore<ViewBase> {
   }
 
   get isNotFound(): boolean {
-    return this.faultyEntity?.state === HA_CONTEXT.entity.state.notFound;
+    return this.faultyEntity?.state === CARD.config.entityNotFound;
   }
 
   get isAvailable(): boolean {
@@ -378,6 +378,10 @@ class ViewBase extends ViewCore<ViewBase> {
     return this.#peak.resolved;
   }
 
+  get peakSamples(): { t: number; value: number }[] {
+    return this.#peak.samples;
+  }
+
   get secondaryInfoMain(): string | null {
     const fault = this.faultyEntity;
     if (fault) return this.#faultLabel(fault);
@@ -386,14 +390,30 @@ class ViewBase extends ViewCore<ViewBase> {
     if (reading.kind === 'timer' && reading.state === HA_CONTEXT.entity.state.idle)
       return this._currentValue.formatedEntityState;
 
-    const additionalInfo = this._currentValue.stateContentToString;
-    if (this.hasComponentHiddenFlag(CARD.style.dynamic.hiddenComponent.value.label)) return additionalInfo;
+    // Ordered (content_order), state_content has a leaf: stateContentText.
+    const additionalInfo = this.isContentOrdered ? '' : this.#stateContent;
+    if (this.isTextHidden(CARD.style.dynamic.hiddenComponent.value.label)) return additionalInfo;
     const valueInfo =
       this._currentValue.valueKind === 'duration' && !this._configHelper.config.unit
         ? this._currentValue.formatedEntityState
         : formatProgress(this.#progress);
 
     return additionalInfo === '' ? valueInfo : [additionalInfo, valueInfo].join(CARD.config.separator);
+  }
+
+  get stateContentText(): string {
+    return this.isContentOrdered && !this.faultyEntity ? this.#stateContent : '';
+  }
+
+  get #stateContent(): string {
+    return this.isTextHidden(CARD.style.dynamic.hiddenComponent.state_content.label)
+      ? ''
+      : this._currentValue.stateContentToString;
+  }
+
+  // The name leaf of an ordered card, blanked like the other texts.
+  get nameText(): string | null {
+    return this.isContentOrdered && this.isTextHidden(CARD.style.dynamic.hiddenComponent.name.label) ? '' : this.name;
   }
 
   get name(): string | null {
@@ -451,10 +471,10 @@ class ViewBase extends ViewCore<ViewBase> {
 
   refresh(hass: HomeAssistant) {
     super.refresh(hass); // _hassProvider, _currentValue, the watermark's bounds
-    for (const bound of [this.#maxValue, this.#minValue]) refreshBound(bound);
-    this.#alertBounds.refresh();
+    for (const bound of [this.#maxValue, this.#minValue]) refreshBound(bound, this._durationUnit);
+    this.#alertBounds.refresh(this._durationUnit);
     this._configHelper.checkConfig();
-    this.#entityCollection.refreshAll();
+    this.#entityCollection.refreshAll(this._durationUnit);
 
     if (!this.isAvailable) return;
 

@@ -47,8 +47,9 @@
       "bar_effect_mode": "바 효과",
       "bar_max_width_toggle": "바 최대 너비",
       "bar_orientation": "방향",
-      "bar_ring_start": null,
-      "bar_ring_gap": null,
+      "bar_ring_start": "링 시작",
+      "bar_ring_gap": "링 간격",
+      "bar_ring_softness": "링 가장자리 부드러움",
       "bar_scale": "배율",
       "bar_segments": "세그먼트",
       "bar_single_line": "한 줄 표시",
@@ -59,6 +60,13 @@
       "center_zero": "중앙에 영점",
       "center_zero_growth_percent": "성장률",
       "center_zero_value": "중앙값",
+      "content_order": "콘텐츠 순서",
+      "content_order_line_1": "1번째 줄",
+      "content_order_line_2": "2번째 줄",
+      "content_order_line_3": "3번째 줄",
+      "content_order_line_4": "4번째 줄",
+      "content_order_line_5": "5번째 줄",
+      "content_order_line_6": "6번째 줄",
       "custom_info": "사용자 정의 보조 정보",
       "custom_theme": "사용자 지정 테마 구간",
       "density": "밀도",
@@ -216,9 +224,14 @@
         "proportional": "비례",
         "stacked": "누적"
       },
+      "content_order": {
+        "info": "정보",
+        "value": "값"
+      },
       "density": {
         "compact": "컴팩트",
         "single_line": "한 줄 표시",
+        "single_column": "한 열 표시",
         "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
       },
       "enabled_disabled_mode": {
@@ -231,6 +244,7 @@
       },
       "hide": {
         "secondary_info": "보조 정보",
+        "info": "정보",
         "value": "값"
       },
       "icon_animation": {

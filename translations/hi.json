@@ -47,8 +47,9 @@
       "bar_effect_mode": "बार पर प्रभाव",
       "bar_max_width_toggle": "बार की अधिकतम चौड़ाई",
       "bar_orientation": "अभिविन्यास",
-      "bar_ring_start": null,
-      "bar_ring_gap": null,
+      "bar_ring_start": "रिंग की शुरुआत",
+      "bar_ring_gap": "रिंग का अंतराल",
+      "bar_ring_softness": "रिंग किनारे की कोमलता",
       "bar_scale": "स्केल",
       "bar_segments": "खंड",
       "bar_single_line": "एक पंक्ति",
@@ -59,6 +60,13 @@
       "center_zero": "शून्य केंद्र में",
       "center_zero_growth_percent": "वृद्धि प्रतिशत",
       "center_zero_value": "केंद्र मान",
+      "content_order": "सामग्री का क्रम",
+      "content_order_line_1": "पंक्ति 1",
+      "content_order_line_2": "पंक्ति 2",
+      "content_order_line_3": "पंक्ति 3",
+      "content_order_line_4": "पंक्ति 4",
+      "content_order_line_5": "पंक्ति 5",
+      "content_order_line_6": "पंक्ति 6",
       "custom_info": "कस्टम द्वितीयक जानकारी",
       "custom_theme": "कस्टम थीम ज़ोन",
       "density": "घनत्व",
@@ -216,9 +224,14 @@
         "proportional": "आनुपातिक",
         "stacked": "स्टैक्ड"
       },
+      "content_order": {
+        "info": "जानकारी",
+        "value": "मूल्य"
+      },
       "density": {
         "compact": "कॉम्पैक्ट",
         "single_line": "एक पंक्ति",
+        "single_column": "एक स्तंभ",
         "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
       },
       "enabled_disabled_mode": {
@@ -231,6 +244,7 @@
       },
       "hide": {
         "secondary_info": "सहायक जानकारी",
+        "info": "जानकारी",
         "value": "मूल्य"
       },
       "icon_animation": {

@@ -3,7 +3,7 @@
 
 import { is } from '../../utils/common-checks.js';
 import { HA_CONTEXT, CARD } from '../../utils/parameters.js';
-import { hasUsableHistory } from '../values/entity-helper.js';
+import { durationFactorOf, hasUsableHistory } from '../values/entity-helper.js';
 import type { HomeAssistant } from '../../utils/hass-provider.js';
 import type { LoggerInstance } from '../../utils/log.js';
 import type { Config } from '../../utils/types.js';
@@ -60,11 +60,11 @@ export class HistorySeeding {
     return await promise;
   }
 
-  // [] when the entity is ineligible (attribute:, timer/counter/duration: the
-  // recorder keeps no history for them) or there is no live connection.
+  // [] when the entity is ineligible (attribute:, timer/counter: the recorder
+  // keeps no history for them) or there is no live connection.
   async #fetchUncached(windowSeconds: number): Promise<HistoryPoint[]> {
     const log = this.#host.log();
-    const { entity, attribute } = this.#host.config();
+    const { entity, attribute, unit } = this.#host.config();
     if (!hasUsableHistory(entity, attribute)) {
       log?.debug('_fetchHistory: ineligible', { entity, attribute });
       return [];
@@ -87,9 +87,11 @@ export class HistorySeeding {
     })) as Record<string, { s: string; lu: number }[]> | undefined;
     log?.debug('_fetchHistory: raw result', result);
 
+    // A duration is recorded in the entity's unit: brought to the card's.
+    const factor = durationFactorOf(entity, unit);
     const points = (result?.[entity] ?? [])
       .map((point) => {
-        const value = Number(point.s);
+        const value = Number(point.s) * factor;
         const timestamp = point.lu * 1000;
         return Number.isFinite(value) && Number.isFinite(timestamp) ? { t: timestamp, value } : null;
       })

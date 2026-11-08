@@ -47,8 +47,9 @@
       "bar_effect_mode": "Hiệu ứng thanh",
       "bar_max_width_toggle": "Chiều rộng tối đa của thanh",
       "bar_orientation": "Hướng",
-      "bar_ring_start": null,
-      "bar_ring_gap": null,
+      "bar_ring_start": "Điểm bắt đầu vòng",
+      "bar_ring_gap": "Khoảng hở vòng",
+      "bar_ring_softness": "Độ mềm mép vòng",
       "bar_scale": "Tỷ lệ",
       "bar_segments": "Phân đoạn",
       "bar_single_line": "Một dòng",
@@ -59,6 +60,13 @@
       "center_zero": "零点居中",
       "center_zero_growth_percent": "Tỷ lệ tăng trưởng",
       "center_zero_value": "Giá trị tâm",
+      "content_order": "Thứ tự nội dung",
+      "content_order_line_1": "Dòng 1",
+      "content_order_line_2": "Dòng 2",
+      "content_order_line_3": "Dòng 3",
+      "content_order_line_4": "Dòng 4",
+      "content_order_line_5": "Dòng 5",
+      "content_order_line_6": "Dòng 6",
       "custom_info": "Thông tin phụ tùy chỉnh",
       "custom_theme": "Vùng chủ đề tùy chỉnh",
       "density": "Mật độ",
@@ -216,9 +224,14 @@
         "proportional": "Theo tỷ lệ",
         "stacked": "Xếp chồng"
       },
+      "content_order": {
+        "info": "Thông tin",
+        "value": "Giá trị"
+      },
       "density": {
         "compact": "Gọn",
         "single_line": "Một dòng",
+        "single_column": "Một cột",
         "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
       },
       "enabled_disabled_mode": {
@@ -231,6 +244,7 @@
       },
       "hide": {
         "secondary_info": "Thông tin phụ",
+        "info": "Thông tin",
         "value": "Giá trị"
       },
       "icon_animation": {

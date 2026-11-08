@@ -8,7 +8,7 @@ import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import { load as loadYaml } from 'js-yaml';
 
-import { toYaml } from '../../../src/editor/data/yaml-writer.js';
+import { toYaml } from '../../../src/card/diagnostics/yaml-writer.js';
 
 const CARD = 'custom:entity-progress-card';
 

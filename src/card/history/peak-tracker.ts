@@ -16,6 +16,10 @@ class PeakTracker {
     this.#windowMs = windowMs;
   }
 
+  get samples(): { t: number; value: number }[] {
+    return this.#ring.toSamples();
+  }
+
   seed(samples: Sample[]) {
     const sorted = samples.filter((sample) => Number.isFinite(sample.value)).sort((a, b) => a.t - b.t);
     this.#ring.reset(sorted.length);

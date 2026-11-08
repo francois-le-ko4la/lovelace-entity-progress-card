@@ -11,7 +11,7 @@ import {
   centerZeroFields,
 } from '../fields/misc.js';
 import { arrayOrJinjaModeField } from '../fields/value.js';
-import { themeMaxWidthFields } from './layout.js';
+import { themeMaxWidthFields, contentOrderField } from './layout.js';
 import { hideChipsItems } from './general.js';
 
 // A theme is either a preset (dropdown, existing behavior) or a custom set of
@@ -178,9 +178,11 @@ const themeCardOnlyFields = (template: boolean, badge: boolean) =>
           type: (c: LovelaceConfig) =>
             c.density === 'compact'
               ? 'bar_position_density_compact'
-              : c.layout === 'vertical'
-                ? 'bar_position_no_compact_below'
-                : 'bar_position',
+              : c.density === 'single_column'
+                ? 'bar_position_column'
+                : c.layout === 'vertical'
+                  ? 'bar_position_no_compact_below'
+                  : 'bar_position',
           labelKey: LABEL_POSITION,
           width: 'half',
           showIf: (c: LovelaceConfig) => c.density !== 'single_line',
@@ -226,6 +228,7 @@ const themeBarSizingFields = (template: boolean, badge: boolean) => {
       // have no bar_position/layout besides it: 'up' never applies.
       type: (c: LovelaceConfig) => {
         if (c.bar_position === BAR_AROUND_ICON) return 'bar_orientation_ring';
+        if (c.density === 'single_column') return 'bar_orientation_upright';
         return !badge && HAS_EFFECT.barOrientationUp(c) ? 'bar_orientation' : 'bar_orientation_no_up';
       },
       width: 'half',
@@ -316,6 +319,7 @@ const theme = (template: boolean, badge: boolean) => {
       // this on bar_color_mode would just hide it with no way back.
       ...centerZeroFields(),
       ...barEffectFields(),
+      ...contentOrderField(template, badge),
       // ── Hide ─────────────────────────────────────────────────────────────
       ...arrayOrJinjaModeField('hide'),
       hide_chips: EditorFieldsType.select('hide_chips', {

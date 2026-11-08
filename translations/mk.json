@@ -47,8 +47,9 @@
       "bar_effect_mode": "Ефект на лентата",
       "bar_max_width_toggle": "Макс. ширина на лентата",
       "bar_orientation": "Ориентација",
-      "bar_ring_start": null,
-      "bar_ring_gap": null,
+      "bar_ring_start": "Почеток на прстенот",
+      "bar_ring_gap": "Отвор на прстенот",
+      "bar_ring_softness": "Мекост на работ на прстенот",
       "bar_scale": "Скала",
       "bar_segments": "Сегменти",
       "bar_single_line": "Еден ред",
@@ -59,6 +60,13 @@
       "center_zero": "Нула во центарот",
       "center_zero_growth_percent": "Процент на растеж",
       "center_zero_value": "Централна вредност",
+      "content_order": "Редослед на содржината",
+      "content_order_line_1": "Ред 1",
+      "content_order_line_2": "Ред 2",
+      "content_order_line_3": "Ред 3",
+      "content_order_line_4": "Ред 4",
+      "content_order_line_5": "Ред 5",
+      "content_order_line_6": "Ред 6",
       "custom_info": "Прилагодена секундарна информација",
       "custom_theme": "Зони на прилагодена тема",
       "density": "Густина",
@@ -216,9 +224,14 @@
         "proportional": "Пропорционално",
         "stacked": "Наредено"
       },
+      "content_order": {
+        "info": "Информации",
+        "value": "Вредност"
+      },
       "density": {
         "compact": "Компактно",
         "single_line": "Еден ред",
+        "single_column": "Една колона",
         "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
       },
       "enabled_disabled_mode": {
@@ -231,6 +244,7 @@
       },
       "hide": {
         "secondary_info": "Секундарно инфо",
+        "info": "Информации",
         "value": "Вредност"
       },
       "icon_animation": {

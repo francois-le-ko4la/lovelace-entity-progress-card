@@ -64,8 +64,8 @@ const groupMemberDomain = (memberIds: unknown): string | null => {
   return domains.size === 1 ? [...domains][0] : null;
 };
 
-// hui-tile-card.ts _computeStateColor: a light's own rgb_color, lifted when too
-// pale to read on the card (HSV: white keeps its hue at V 225, pastels get S 0.4).
+// hui-tile-card.ts _computeStateColor: a light's own rgb_color, lifted when
+// too pale to read (HSV: white keeps its hue at V 225, pastels get S 0.4).
 const lightColor = (rgb: unknown): string | null => {
   if (!Array.isArray(rgb) || rgb.length !== 3 || !rgb.every(Number.isFinite)) return null;
   const [red, green, blue] = rgb as [number, number, number];

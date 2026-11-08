@@ -167,9 +167,6 @@ class EntityProgressTemplateBase extends HABase {
     this._dom.setHTML(CARD.htmlStructure.elements.nameMain.class, `${content}`.trim());
   }
 
-  // Template has no secondary-info-main slot at all (see
-  // StructureElements.secondaryInfoWrapperMinimal), so neither line needs the
-  // &nbsp; spacer card/badge adds before main.
   _renderSecondary(content: unknown) {
     this._renderSecondaryLines(content, (line) => line.trim());
   }

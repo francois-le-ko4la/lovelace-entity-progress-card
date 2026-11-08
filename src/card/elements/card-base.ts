@@ -76,11 +76,15 @@ class EntityProgressCardBase extends HABase {
     return [
       {
         className: CARD.htmlStructure.elements.nameMain.class,
-        value: cardView.name,
+        value: cardView.nameText,
       },
       {
         className: CARD.htmlStructure.elements.secondaryInfoMain.class,
         value: cardView.secondaryInfoMain,
+      },
+      {
+        className: CARD.htmlStructure.elements.secondaryInfoState.class,
+        value: cardView.stateContentText,
       },
     ];
   }
@@ -88,8 +92,13 @@ class EntityProgressCardBase extends HABase {
   // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION ─────────────────────────────
   // _renderJinjaNumber below is Card-only - absent from the template schema.
   _getJinjaHandlers(content: unknown): Record<string, () => void> {
+    const base = this._baseJinjaHandlers(content);
     return {
-      ...this._baseJinjaHandlers(content),
+      ...base,
+      hide: () => {
+        base.hide();
+        this.#repaintHideableTexts();
+      },
       ...this._badgeJinjaHandlers(content),
       custom_info: () => this._renderCustomInfo(content),
       name_info: () => this._renderNameInfo(content),
@@ -125,16 +134,28 @@ class EntityProgressCardBase extends HABase {
     });
   }
 
-  // Line 1 only gets the &nbsp; spacer in single-line mode, where it precedes
-  // the main span on the same line; line 2 always carries main here (card/badge
-  // has that slot), unlike Template's own _renderSecondary.
+  // Trimmed, no spacer: the " · " between two texts is CSS's, and :empty must
+  // see a blank one as empty.
   _renderCustomInfo(content: unknown) {
-    const multiline = Boolean(this._cardView.config.multiline);
-    this._renderSecondaryLines(content, (line, isSecond) => (isSecond || !multiline ? `${line}&nbsp;` : line));
+    this.#texts.custom_info = content;
+    const hidden = this._cardView.isTextHidden(CARD.style.dynamic.hiddenComponent.info.label);
+    this._renderSecondaryLines(hidden ? '' : content, (line) => line.trim());
   }
 
   _renderNameInfo(content: unknown) {
-    this._dom.setHTML(CARD.htmlStructure.elements.nameExtra.class, `&nbsp;${content}`);
+    this.#texts.name_info = content;
+    const hidden = this._cardView.isTextHidden(CARD.style.dynamic.hiddenComponent.name_info.label);
+    this._dom.setHTML(CARD.htmlStructure.elements.nameExtra.class, hidden ? '' : String(content).trim());
+  }
+
+  // A Jinja hide can change after the texts it hides were pushed.
+  #texts: { custom_info?: unknown; name_info?: unknown } = {};
+
+  #repaintHideableTexts() {
+    const { custom_info: customInfo, name_info: nameInfo } = this.#texts;
+    if (customInfo !== undefined && this._cardView.config.custom_info) this._renderCustomInfo(customInfo);
+    if (nameInfo !== undefined && this._cardView.config.name_info) this._renderNameInfo(nameInfo);
+    this._processStandardFields();
   }
 }
 

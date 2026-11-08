@@ -47,8 +47,9 @@
       "bar_effect_mode": "Efekt na liště",
       "bar_max_width_toggle": "Max. šířka lišty",
       "bar_orientation": "Orientace",
-      "bar_ring_start": null,
-      "bar_ring_gap": null,
+      "bar_ring_start": "Začátek prstence",
+      "bar_ring_gap": "Mezera prstence",
+      "bar_ring_softness": "Měkkost okraje prstence",
       "bar_scale": "Měřítko",
       "bar_segments": "Segmenty",
       "bar_single_line": "Jeden řádek",
@@ -59,6 +60,13 @@
       "center_zero": "Nula uprostřed",
       "center_zero_growth_percent": "Procento růstu",
       "center_zero_value": "Hodnota středu",
+      "content_order": "Pořadí obsahu",
+      "content_order_line_1": "Řádek 1",
+      "content_order_line_2": "Řádek 2",
+      "content_order_line_3": "Řádek 3",
+      "content_order_line_4": "Řádek 4",
+      "content_order_line_5": "Řádek 5",
+      "content_order_line_6": "Řádek 6",
       "custom_info": "Vlastní sekundární info",
       "custom_theme": "Zóny vlastního motivu",
       "density": "Hustota",
@@ -216,9 +224,14 @@
         "proportional": "Proporcionální",
         "stacked": "Skládaný"
       },
+      "content_order": {
+        "info": "Informace",
+        "value": "Hodnota"
+      },
       "density": {
         "compact": "Kompaktní",
         "single_line": "Jeden řádek",
+        "single_column": "Jeden sloupec",
         "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
       },
       "enabled_disabled_mode": {
@@ -231,6 +244,7 @@
       },
       "hide": {
         "secondary_info": "Sekundární info",
+        "info": "Informace",
         "value": "Hodnota"
       },
       "icon_animation": {

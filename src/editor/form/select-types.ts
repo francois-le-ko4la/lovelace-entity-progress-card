@@ -10,15 +10,19 @@ const from = (variant: SchemaVariant, field: string): SchemaLookup => ({ variant
 // Only where every language agreed on the very same string - a near-match would
 // silently retranslate it. Here rather than in base.ts so the dropdown test
 // reads the same table the editor does.
+const SHARED_BAR = 'shared.bar';
 const REUSED_OPTION_LABELS: Record<string, Record<string, string>> = {
   hide: {
-    progress_bar: 'shared.bar',
+    progress_bar: SHARED_BAR,
     shape: 'force_circular_background_mode',
     icon: 'icon',
     name: 'name',
     unit: 'unit',
+    name_info: 'name_info',
+    state_content: 'state_content',
   },
-  status_label_color_source: { bar: 'shared.bar', icon: 'icon' },
+  status_label_color_source: { bar: SHARED_BAR, icon: 'icon' },
+  content_order: { name: 'name', name_info: 'name_info', state_content: 'state_content', bar: SHARED_BAR },
   value_source_mode: { entity: 'shared.ent' },
 };
 
@@ -62,11 +66,14 @@ const SELECT_TYPES: Record<string, string | [group: string, keys: readonly strin
   bar_orientation: ['bar_orientation', ['ltr', 'rtl', 'up', 'down']],
   bar_orientation_no_up: ['bar_orientation', ['ltr', 'rtl']],
   bar_orientation_ring: ['bar_orientation', ['clockwise', 'counterclockwise']],
+  bar_orientation_upright: ['bar_orientation', ['up', 'down']],
   bar_position: ['bar_position', from('card', 'bar_position')],
   bar_position_no_compact_below: ['bar_position', BAR_POSITIONS.filter((position) => position !== 'compact_below')],
   bar_position_density_compact: ['bar_position', DENSITY_COMPACT_BAR_POSITIONS],
   bar_position_feature: ['bar_position', from('feature', 'bar_position')],
   bar_position_badge: ['bar_position', from('badge', 'bar_position')],
+  // density: single_column's, and a Multi in columns.
+  bar_position_column: ['bar_position', from('multiCard', 'bar_position')],
   bar_color_mode: ['bar_color_mode', from('card', 'bar_color_mode')],
   bar_scale: ['bar_scale', from('card', 'bar_scale')],
   icon_animation: ['icon_animation', from('card', 'icon_animation')],

@@ -11,8 +11,18 @@ import {
   type PeakMark,
   YamlSchemaFactory,
 } from '../../../src/card/config/schema.js';
+import { CONTENT_ORDER_TOKENS } from '../../../src/card/config/schema/enums.js';
+import { HIDE_TARGETS, TEXT_HIDE_GROUP } from '../../../src/utils/parameters.js';
 
 const ENTITY = 'sensor.test';
+
+describe('TEXT_HIDE_GROUP', () => {
+  test('files every content_order text under a group the card can hide', () => {
+    const texts = CONTENT_ORDER_TOKENS.filter((token) => token !== 'bar');
+    assert.deepEqual(Object.keys(TEXT_HIDE_GROUP).sort(), [...texts].sort());
+    for (const group of Object.values(TEXT_HIDE_GROUP)) assert.ok(HIDE_TARGETS.includes(group), group);
+  });
+});
 
 describe('entityOf/attributeOf/jinjaOf', () => {
   test('read their own sub-field off an {entity, attribute} object', () => {
@@ -46,9 +56,11 @@ describe('config negotiation - an invalid value degrades to its default, never r
 
 describe('text_effect', () => {
   const effectOf = (value: unknown) =>
-    (YamlSchemaFactory.card.validate({ entity: ENTITY, bar_position: 'overlay', text_effect: value }).config as {
-      text_effect?: string;
-    })?.text_effect;
+    (
+      YamlSchemaFactory.card.validate({ entity: ENTITY, bar_position: 'overlay', text_effect: value }).config as {
+        text_effect?: string;
+      }
+    )?.text_effect;
 
   test('keeps every listed value', () => {
     ['none', 'shadow', 'halo', 'outline', 'plate', 'contrast'].forEach((value) => assert.equal(effectOf(value), value));
@@ -141,8 +153,13 @@ describe('YamlSchemaFactory.<type>.fieldOptions - allowed values read off the li
       'secondary_info',
       'progress_bar',
       'shape',
+      'name_info',
+      'info',
+      'state_content',
     ]);
-    assert.equal(YamlSchemaFactory.badgeTemplate.fieldOptions('hide')?.includes('unit'), false);
+    for (const target of ['unit', 'name_info', 'info', 'state_content']) {
+      assert.equal(YamlSchemaFactory.badgeTemplate.fieldOptions('hide')?.includes(target), false, target);
+    }
   });
 
   test('a field with no enumerable values has none', () => {
@@ -222,5 +239,82 @@ describe('MARK_FACTORIZATION.resolve - one cascade for every mark', () => {
     assert.equal(peakMarkShown(true), true);
     assert.equal(peakMarkShown({}), true);
     assert.equal(peakMarkShown('red'), true);
+  });
+});
+
+describe('content_order', () => {
+  const VERTICAL = { entity: ENTITY, layout: 'vertical' };
+  const negotiated = (variant: 'card' | 'template', config: Record<string, unknown>) =>
+    YamlSchemaFactory[variant].validate(config).config as Record<string, unknown>;
+
+  test('a partial list is completed in the default order', () => {
+    assert.deepEqual(negotiated('card', { ...VERTICAL, content_order: ['bar'] }).content_order, [
+      'bar',
+      'name',
+      'name_info',
+      'info',
+      'state_content',
+      'value',
+    ]);
+  });
+
+  test('duplicates and unknown tokens drop out', () => {
+    assert.deepEqual(negotiated('card', { ...VERTICAL, content_order: ['value', 'icon', 'value'] }).content_order, [
+      'state_content',
+      'value',
+      'name',
+      'name_info',
+      'info',
+      'bar',
+    ]);
+  });
+
+  test('Template has no value token', () => {
+    assert.deepEqual(negotiated('template', { ...VERTICAL, content_order: ['value', 'bar'] }).content_order, [
+      'bar',
+      'name',
+      'info',
+    ]);
+  });
+
+  test('lines keep their place, a missing token next to its host or closing the last line', () => {
+    assert.deepEqual(
+      negotiated('card', { entity: ENTITY, content_order: [['value', 'name'], ['bar'], []] }).content_order,
+      [['state_content', 'value', 'name', 'name_info'], ['bar'], ['info']],
+    );
+    assert.deepEqual(negotiated('card', { entity: ENTITY, content_order: [[], ['name', 'name']] }).content_order, [
+      [],
+      ['name', 'name_info', 'info', 'state_content', 'value'],
+      ['bar'],
+    ]);
+  });
+
+  test('horizontal default and compact_below order too', () => {
+    for (const config of [{ entity: ENTITY }, { entity: ENTITY, bar_position: 'compact_below' }]) {
+      assert.deepEqual(negotiated('card', { ...config, content_order: ['bar'] }).content_order, [
+        'bar',
+        'name',
+        'name_info',
+        'info',
+        'state_content',
+        'value',
+      ]);
+    }
+  });
+
+  test('inert where nothing can move', () => {
+    for (const config of [
+      { entity: ENTITY, bar_position: 'icon' },
+      { entity: ENTITY, density: 'compact' },
+      { ...VERTICAL, density: 'compact' },
+    ]) {
+      assertUndefined(negotiated('card', { ...config, content_order: ['bar'] }).content_order);
+    }
+  });
+
+  test('up stands the bar in the vertical stack, bar_size dropping out', () => {
+    const config = negotiated('card', { ...VERTICAL, bar_orientation: 'up', bar_size: 'large' });
+    assert.equal(config.bar_orientation, 'up');
+    assert.equal(config.bar_size, 'small');
   });
 });

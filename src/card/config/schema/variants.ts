@@ -27,7 +27,11 @@ import {
   hideTargetsWithout,
   ACTION_FIELDS,
   ICON_ACTION_FIELDS,
+  CONTENT_ORDER_TOKENS,
+  TEMPLATE_CONTENT_ORDER_TOKENS,
 } from './enums.js';
+
+const TEMPLATE_ABSENT_HIDE_TARGETS = ['unit', 'name_info', 'info', 'state_content'];
 import { struct } from './struct.js';
 
 // Shared by card's own `hide` and multiRow's array-only variant below.
@@ -155,6 +159,7 @@ const YamlSchemaFactory = {
           'name_info',
           'custom_info',
           'multiline',
+          'content_order',
           'state_content',
           'badge_icon',
           'badge_color',
@@ -258,6 +263,8 @@ const YamlSchemaFactory = {
           types.object({
             start: types.optionalNumberWithDefault(0),
             gap: types.optionalNumberWithDefault(0),
+            // px; unset leaves the theme's --epb-ring-softness, else 1px.
+            softness: types.optionalNumber(),
           }),
         ),
         // No forced default (like `theme`): unset stays absent. The legacy
@@ -267,9 +274,8 @@ const YamlSchemaFactory = {
           Object.values(CARD.layout.orientations).map((e) => e.label),
           'horizontal',
         ), // [('horizontal', 'vertical')]
-        // 'compact' forces layout: horizontal and bar_position into
-        // {top, bottom, background} - see applyDensityRule for the full
-        // rewrite/clear list this triggers.
+        // 'compact' forces bar_position into DENSITY_COMPACT_BAR_POSITIONS -
+        // see applyDensityRule for the full rewrite/clear list this triggers.
         density: types.enumsWithDefault(DENSITY_MODES, 'default'),
         bar_aligned: barAligned(false),
         min_width: types.optionalString(),
@@ -298,6 +304,7 @@ const YamlSchemaFactory = {
         // Badge/badgeTemplate opt out (see their own .delete(['multiline'])):
         // the row is too small for a second line there.
         multiline: types.optionalBooleanWithDefault(false),
+        content_order: types.orderedTokens(CONTENT_ORDER_TOKENS),
         state_content: types.optional(types.fallbackTo(types.stateContent, SKIP_PROPERTY)),
 
         // ─── Badges ─────────────────────────────────────────────────────────
@@ -408,9 +415,11 @@ const YamlSchemaFactory = {
         // when both apply, same precedence as Card's own ViewBase.iconColor
         // (theme.iconColor || config.color).
         theme: types.theme(PERCENT_THEME_KEYS),
-        // Re-declared without 'unit' - Template has no `unit`/`disable_unit`
-        // (deleted above) to hide in the first place.
-        hide: types.jinjaOrArrayWithValidatedElem(hideTargetsWithout('unit')),
+        // No unit, name_info, custom_info or state_content (deleted above):
+        // Template's secondary text is secondary_info's to hide.
+        hide: types.jinjaOrArrayWithValidatedElem(hideTargetsWithout(...TEMPLATE_ABSENT_HIDE_TARGETS)),
+        // No name_info or value token: Template has neither slot.
+        content_order: types.orderedTokens(TEMPLATE_CONTENT_ORDER_TOKENS),
         // Jinja-only - see configuration.md#alert_when.
         alert_when: types.optional(types.object({ jinja: types.optionalString() })),
       })
@@ -420,6 +429,7 @@ const YamlSchemaFactory = {
         'name',
         'secondary',
         'multiline',
+        'content_order',
         'percent',
         'icon',
         'color',
@@ -515,12 +525,18 @@ const YamlSchemaFactory = {
     return YamlSchemaFactory.multiAggregator.extend({
       // Grid rows the card occupies; one per entity when unset.
       rows: types.optional(types.number),
+      // vertical: the rows become columns side by side (multi-rows.ts), each
+      // bar upright under its texts, or behind them.
+      layout: types.enumsWithDefault(
+        Object.values(CARD.layout.orientations).map((e) => e.label),
+        'horizontal',
+      ),
+      bar_position: types.enumsWithDefault(['default', 'overlay'], 'default'),
     });
   },
 
-  // Same, minus `rows`: a Multi Feature is always exactly one HA feature row,
-  // never more (see EntityProgressMultiFeature._applySizing). Everything else
-  // it drops, it drops because its rows do (multiFeatureRow above).
+  // Minus `rows` and the columns: one HA feature row, always (_applySizing).
+  // The rest it drops because its rows do (multiFeatureRow above).
   get multiFeature() {
     return asAggregator(YamlSchemaFactory.multiFeatureRow);
   },
@@ -530,7 +546,7 @@ const YamlSchemaFactory = {
   get badgeTemplate() {
     return YamlSchemaFactory.template
       .delete(BADGE_DELETED_FIELDS)
-      .extend(badgeOverrides(hideTargetsWithout('unit', 'shape')));
+      .extend(badgeOverrides(hideTargetsWithout(...TEMPLATE_ABSENT_HIDE_TARGETS, 'shape')));
   },
 };
 

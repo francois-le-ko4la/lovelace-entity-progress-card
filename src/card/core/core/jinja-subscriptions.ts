@@ -31,6 +31,8 @@ class JinjaSubscriptions {
   // Signatures HA rejected as un-renderable, one per field: any edit changes
   // the signature and retries by construction.
   #failedSignatures = new Map<string, string>();
+  // What HA last answered per field, for EPB.doctor.jinja().
+  #lastAnswers = new Map<string, { result?: unknown; error?: string; at: number }>();
 
   constructor(host: JinjaSubscriptionsHost) {
     this.#host = host;
@@ -100,8 +102,34 @@ class JinjaSubscriptions {
   }
 
   #onMessage(key: string, msg: JinjaMessage) {
-    if (is.nullish(msg.error)) this.render(key, msg.result);
-    else this.#host.onFailure(key, String(msg.error));
+    if (is.nullish(msg.error)) {
+      this.#lastAnswers.set(key, { result: msg.result, at: Date.now() });
+      this.render(key, msg.result);
+    } else {
+      this.#fail(key, String(msg.error));
+    }
+  }
+
+  #fail(key: string, error: string) {
+    this.#lastAnswers.set(key, { error, at: Date.now() });
+    this.#host.onFailure(key, error);
+  }
+
+  // One row per Jinja field of the config: its template, whether a
+  // subscription is live, and HA's last answer.
+  diagnose(): Record<string, unknown>[] {
+    const resourceManager = this.#host.resourceManager();
+    return Object.entries(this.validFields).map(([key, template]) => {
+      const answer = this.#lastAnswers.get(key);
+      return {
+        field: key,
+        template,
+        subscribed: Boolean(resourceManager?.has(`template-${key}`)),
+        result: answer && 'result' in answer ? answer.result : '',
+        error: answer?.error ?? '',
+        at: answer ? new Date(answer.at).toLocaleTimeString() : '',
+      };
+    });
   }
 
   // A multi-step script can push one intermediate result per entity change
@@ -198,6 +226,7 @@ class JinjaSubscriptions {
   clear() {
     this.#templateSignatures.clear();
     this.#failedSignatures.clear();
+    this.#lastAnswers.clear();
   }
 
   // HA's 'template_error' also covers a render that blew its time budget:
@@ -243,7 +272,7 @@ class JinjaSubscriptions {
     // An unclosed delimiter can only be refused: recorded like an HA rejection.
     if (jinjaKind(template) === 'malformed') {
       this.#failedSignatures.set(subscriptionKey, signature);
-      host.onFailure(key, 'unclosed delimiter');
+      this.#fail(key, 'unclosed delimiter');
       host.report(
         `${key}: the Jinja template has an unclosed delimiter and was not sent to Home Assistant. ` +
           'Please close it ({{ ... }}, {% ... %} or {# ... #}). This field stays empty until the template changes.',
@@ -292,7 +321,7 @@ class JinjaSubscriptions {
       // must stay retryable, or a valid template dies for the session.
       if (JinjaSubscriptions.#isTemplateError(error)) {
         this.#failedSignatures.set(subscriptionKey, signature);
-        host.onFailure(key, (error as { message?: string })?.message ?? String(error));
+        this.#fail(key, (error as { message?: string })?.message ?? String(error));
       }
       host.report(
         `${key}: Home Assistant rejected the Jinja template (${(error as { message?: string })?.message ?? error}). ` +

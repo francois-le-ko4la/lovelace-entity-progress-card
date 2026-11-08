@@ -43,6 +43,7 @@ cross-variant compatibility badges).
   - [Visual Effects](#visual-effects)
     - [`bar_effect`: shimmer, gradient, glass, radius](#effect-bar-effects)
     - [`bar_segments`: discrete blocks instead of a continuous fill](#effect-bar-segments)
+    - [`bar_ring`: shape the ring around the icon](#effect-bar-ring)
     - [`interpolate`: smooth color transitions between zones](#effect-interpolate)
     - [`force_circular_background`: the icon's circle, always on](#effect-force-circular-background)
     - [`icon_animation`: washing_machine, battery_charging, spin, ping…](#effect-icon-animation)
@@ -208,6 +209,7 @@ work out on its own.
 | `state_content`              | string/list (optional)    | depends on domain         | Attribute to show near value          | [Config Ref.][config-state_content]              |
 | `custom_info`                | Jinja (optional)          | —                         | Extra info near value                 | [Config Ref.][config-custom_info]                |
 | `multiline`                  | boolean (optional)        | `false`                   | Split secondary text on 2 lines       | [Config Ref.][config-multiline]                  |
+| `content_order`              | list (optional)           | layout's own              | Order of name, infos, value and bar   | [Config Ref.][config-content_order]              |
 | `name_info`                  | Jinja (optional)          | —                         | Extra info near name                  | [Config Ref.][config-name_info]                  |
 | `bar_stack`                  | Map (optional)            | —                         | Combine several entities in one bar   | [Config Ref.][config-bar_stack]                  |
 | **Styling Options**          |                           |                           |                                       |                                                  |
@@ -221,7 +223,7 @@ work out on its own.
 | `bar_position`               | string (optional)         | `default`                 | Position of the progress bar          | [Config Ref.][config-bar_position]               |
 | `bar_single_line`            | boolean (optional)        | `false`                   | single-line mode for overlay bars     | [Config Ref.][config-bar_single_line]            |
 | `bar_segments`               | integer (optional)        | —                         | Render bar as discrete segments       | [Config Ref.][config-bar_segments]               |
-| `bar_ring`                   | object (optional)         | —                         | Start angle and gap of the ring       | [Config Ref.][config-bar_ring]                   |
+| `bar_ring`                   | object (optional)         | —                         | Start, gap and edge of the ring       | [Config Ref.][config-bar_ring]                   |
 | `bar_effect`                 | string/list/jinja         | —                         | Visual effects for the bar            | [Config Ref.][config-bar_effect]                 |
 | `bar_color_mode`             | string (optional)         | `auto`                    | Bar fill color rendering mode         | [Config Ref.][config-bar_color_mode]             |
 | `bar_scale`                  | string (optional)         | `linear`                  | Value-to-width mapping (linear/log)   | [Config Ref.][config-bar_scale]                  |
@@ -760,7 +762,7 @@ fixed min/max.
 | `bar_position`               | string (optional)         | Position of the progress bar                                                   | [Config Ref.][config-bar_position]               |
 | `bar_single_line`            | boolean (optional)        | single-line mode for overlay bars                                              | [Config Ref.][config-bar_single_line]            |
 | `bar_segments`               | integer (optional)        | Render bar as discrete segments                                                | [Config Ref.][config-bar_segments]               |
-| `bar_ring`                   | object (optional)         | Start angle and gap of the ring                                                | [Config Ref.][config-bar_ring]                   |
+| `bar_ring`                   | object (optional)         | Start, gap and edge of the ring                                                | [Config Ref.][config-bar_ring]                   |
 | `bar_effect`                 | string/list/jinja         | Visual effects for the bar                                                     | [Config Ref.][config-bar_effect]                 |
 | `bar_color_mode`             | string (optional)         | Bar fill color rendering mode                                                  | [Config Ref.][config-bar_color_mode]             |
 | `bar_max_width`              | string (optional)         | Limits the maximum width of the bar                                            | [Config Ref.][config-bar_max_width]              |
@@ -779,6 +781,7 @@ fixed min/max.
 | `min_width`                  | string (optional)         | Set a minimum width for the template to ensure consistent layout.              | [Config Ref.][config-min_width]                  |
 | `reverse_secondary_info_row` | boolean (optional)        | Flip info bar layout.                                                          | [Config Ref.][config-reverse_secondary_info_row] |
 | `multiline`                  | boolean (optional)        | Split secondary text on 2 lines.                                               | [Config Ref.][config-multiline]                  |
+| `content_order`              | list (optional)           | Place name, name_info, info, state_content, value and bar on lines.            | [Config Ref.][config-content_order]              |
 | `center_zero`                | boolean (optional)        | Center the bar on 0.                                                           | [Config Ref.][config-center_zero]                |
 | `theme`                      | string (optional)         | Applies a preset theme                                                         | [Config Ref.][config-theme]                      |
 | `hide`                       | list (optional)           | Hide parts of the card.                                                        | [Config Ref.][config-hide]                       |
@@ -916,7 +919,7 @@ view's other badges, not as the dashboard's main focus.
 | `bar_size`                   | string (optional)      | `small`                   | Size of the progress bar              | [Config Ref.][config-bar_size]                   |
 | `bar_position`               | string (optional)      | `default`                 | Bar under the text or around the icon | [Config Ref.][config-bar_position]               |
 | `bar_segments`               | integer (optional)     | —                         | Render bar as discrete segments       | [Config Ref.][config-bar_segments]               |
-| `bar_ring`                   | object (optional)      | —                         | Start angle and gap of the ring       | [Config Ref.][config-bar_ring]                   |
+| `bar_ring`                   | object (optional)      | —                         | Start, gap and edge of the ring       | [Config Ref.][config-bar_ring]                   |
 | `bar_effect`                 | string/list/jinja      | —                         | Visual effects for the bar            | [Config Ref.][config-bar_effect]                 |
 | `bar_color_mode`             | string (optional)      | `auto`                    | Bar fill color rendering mode         | [Config Ref.][config-bar_color_mode]             |
 | `bar_scale`                  | string (optional)      | `linear`                  | Value-to-width mapping (linear/log)   | [Config Ref.][config-bar_scale]                  |
@@ -1041,7 +1044,7 @@ already exposes directly.
 | `bar_size`                   | string (optional)  | Customize the size or thickness of the progress bar.                           | [Config Ref.][config-bar_size]                   |
 | `bar_position`               | string (optional)  | Bar under the text or around the icon                                          | [Config Ref.][config-bar_position]               |
 | `bar_segments`               | integer (optional) | Render bar as discrete segments                                                | [Config Ref.][config-bar_segments]               |
-| `bar_ring`                   | object (optional)  | Start angle and gap of the ring                                                | [Config Ref.][config-bar_ring]                   |
+| `bar_ring`                   | object (optional)  | Start, gap and edge of the ring                                                | [Config Ref.][config-bar_ring]                   |
 | `bar_effect`                 | string/list/jinja  | Visual effects for the bar                                                     | [Config Ref.][config-bar_effect]                 |
 | `bar_color_mode`             | string (optional)  | Bar fill color rendering mode                                                  | [Config Ref.][config-bar_color_mode]             |
 | `bar_orientation`            | string (optional)  | Define the direction of the progress bar (e.g., `ltr`, `rtl`).                 | [Config Ref.][config-bar_orientation]            |
@@ -1507,6 +1510,49 @@ bar_segments: 10
 </details>
 
 Works with any orientation, size, or color mode/effect.
+
+[🔼 Back to top]
+
+<a id="effect-bar-ring"></a>
+
+#### `bar_ring`: shape the ring around the icon
+
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/effect-bar-ring-dark-94518c.png">
+  <img src="images/effect-bar-ring-light-4b3285.png"
+    alt="bar_ring"
+    width="500"/>
+</picture>
+
+With [`bar_position: icon`][config-bar_position], the bar is a ring around the
+icon. `bar_ring` opens it like a dial, and `softness` sets how its inner edge
+blends: `0` for a crisp edge, a few pixels for a glow:
+<details>
+<summary>Show YAML</summary>
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.battery
+bar_position: icon
+bar_ring:
+  start: 225
+  gap: 90
+```
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.battery
+bar_position: icon
+bar_size: xlarge
+bar_ring:
+  softness: 0
+```
+
+</details>
+
+[`bar_segments`](#effect-bar-segments) cuts the ring into blocks too.
+`--epb-ring-softness` sets the softness for a whole theme.
 
 [🔼 Back to top]
 
@@ -2527,51 +2573,33 @@ same width.
 type: custom:mushroom-template-card
 entity: device_tracker.printer
 primary: Printer
-secondary: |-
-  {% if is_state('sensor.printer', 'idle') %}
-    Idle
-  {% elif is_state('sensor.printer', 'printing') %}
-    Printing
-  {% elif is_state('sensor.printer', 'unavailable') %}
-    Unavailable
-  {% else %}
-    {{ states('sensor.printer') }}
+secondary: "{{ state_translated('sensor.printer') }}"
+icon: >-
+  {{ 'mdi:printer-off' if is_state('sensor.printer', 'unavailable')
+     else 'mdi:printer' }}
+color: >-
+  {{ 'disabled' if is_state('sensor.printer', 'unavailable') else 'amber' }}
+badge_icon: >-
+  {% set black = states('sensor.printer_black_ink') %}
+  {% set color = states('sensor.printer_color_ink') %}
+  {% set paper = states('sensor.printer_paper') %}
+  {% set known = black | is_number and color | is_number
+     and paper | is_number %}
+  {% if not known %}mdi:exclamation-thick
+  {% elif paper | int in [1, 13] %}mdi:tray-alert
+  {% elif black | int < 10 or color | int < 10 %}mdi:water
+  {% else %}mdi:check
   {% endif %}
-icon: |-
-  {% if is_state('sensor.printer', 'unavailable') %}
-    mdi:printer-off
-  {% else %}
-    mdi:printer
-  {% endif %}
-color: |-
-  {% if is_state('sensor.printer', 'unavailable') %}
-    disabled
-  {% else %}
-    amber
-  {% endif %}
-badge_icon: |-
-  {% set black = states('sensor.printer_black_ink') | int(0) %}
-  {% set color = states('sensor.printer_color_ink') | int(0) %}
-  {% set paper = states('sensor.printer_paper') | int(0) %}
-  {% if paper == 1 or paper == 13 %}
-    mdi:tray-alert
-  {% elif black < 10 or color < 10 %}
-    mdi:water
-  {% else %}
-    mdi:home
-  {% endif %}
-badge_color: |-
-  {% set black = states('sensor.printer_black_ink') | int(0) %}
-  {% set color = states('sensor.printer_color_ink') | int(0) %}
-  {% set paper = states('sensor.printer_paper') | int(0) %}
-  {% if paper == 1 %}
-    orange
-  {% elif paper == 13 %}
-    red
-  {% elif black < 10 or color < 10 %}
-    orange
-  {% else %}
-    green
+badge_color: >-
+  {% set black = states('sensor.printer_black_ink') %}
+  {% set color = states('sensor.printer_color_ink') %}
+  {% set paper = states('sensor.printer_paper') %}
+  {% set known = black | is_number and color | is_number
+     and paper | is_number %}
+  {% if not known %}orange
+  {% elif paper | int == 13 %}red
+  {% elif paper | int == 1 or black | int < 10 or color | int < 10 %}orange
+  {% else %}green
   {% endif %}
 tap_action:
   action: none
@@ -2598,7 +2626,8 @@ grid_options:
 A third-party card can host our features too: the Mushroom Template card takes
 an [`entity-progress-multi-feature`](#multi) under its content
 (`features_position: bottom`), one bar per cartridge. The badge is the
-template's own — it turns orange under 10 % ink or on a paper fault.
+template's own — it turns orange under 10 % ink or on a paper fault, and shows
+the tile's orange exclamation mark when a sensor is unavailable.
 
 [🔼 Back to top]
 
@@ -3250,6 +3279,8 @@ track solar cycles from your dashboard.
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#state_content
 [config-custom_info]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#custom_info
+[config-content_order]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#content_order
 [config-multiline]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#multiline
 [config-name_info]:

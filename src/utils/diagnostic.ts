@@ -1,9 +1,9 @@
 // window.EPB (EPB_DEV, EPB_RC… under a suffix), the card's browser console
 // helper: version, help() and the doctor tools - see troubleshooting.md.
 
-import { VERSION, CARD_CONTEXT, HA_CONTEXT } from './parameters.js';
+import { VERSION, CARD_CONTEXT, HA_CONTEXT, isBundleEntry } from './parameters.js';
 import { CONSTRUCTED_SHEETS, CONSTRUCTIBLE_STYLESHEETS } from './styles.js';
-import { currentHass, editorFileReport } from './hass-provider.js';
+import { currentHass, editorFileReport, sidecarUrl } from './hass-provider.js';
 
 interface RegisteredEntry {
   type: string;
@@ -11,14 +11,22 @@ interface RegisteredEntry {
 }
 
 type Doctor = {
-  dump: () => string;
+  dump: () => Promise<string>;
   audit: () => Promise<string>;
   cards: () => HTMLElement[];
   inspect: (target: unknown) => Record<string, unknown> | null;
+  jinja: (target: unknown) => Record<string, unknown>[] | null;
+  history: (target: unknown) => Record<string, unknown> | null;
+  copy: (target: unknown) => string | null;
 };
 // What the card side brings: it reads card code, which utils/ doesn't.
 type CardTools = Omit<Doctor, 'dump'>;
-type ConsoleHelper = { version: string; help: () => string; doctor: Doctor };
+type ConsoleHelper = {
+  version: string;
+  help: () => string;
+  debug: (areas?: string | false) => string;
+  doctor: Doctor;
+};
 // What 1.6.2 published, kept as an alias: version and dump, audit added since.
 type LegacyDiagnostic = { version: string } & Doctor;
 type BrandVersion = { brand: string; version: string };
@@ -50,8 +58,8 @@ declare global {
 // Client Hints still carry the real ones, and only over https.
 let uaHints: UaHints | null = null;
 
-// Asked once at load, so dump() and the editor's copy stay synchronous: Safari
-// refuses a clipboard write that follows an await.
+// Asked once at load, so the editor's copy stays synchronous: Safari refuses a
+// clipboard write that follows an await.
 const requestUaHints = async (): Promise<void> => {
   const uaData = (navigator as Navigator & { userAgentData?: UaData }).userAgentData;
   if (!uaData) return;
@@ -95,8 +103,20 @@ const browserOf = (hints: UaHints | null, secure: boolean): string => {
   return `${nameOf(hints)} — ${platformOf(hints)}`;
 };
 
-// What dump() prints - also what the editor's issue report opens with.
-function environmentReport(): string {
+// HA imports module resources (no <script> tag): only Resource Timing sees
+// their URLs.
+const bundleUrls = (): string[] => [
+  ...new Set(
+    performance
+      .getEntriesByType('resource')
+      .filter((entry) => isBundleEntry(entry, CARD_CONTEXT.bundleStem))
+      .map(({ name }) => name),
+  ),
+];
+
+// What dump() prints - also what the editor's issue report opens with, minus
+// the digests (see requestUaHints).
+function environmentReport(extraLines: string[] = []): string {
   const hass = currentHass();
   // Badges and features register in lists of their own (RegistrationHelper).
   // One type listed twice is the resource loaded twice: HACS plus a manual one.
@@ -127,14 +147,39 @@ function environmentReport(): string {
     `dark mode      : ${window.matchMedia?.('(prefers-color-scheme: dark)')?.matches ?? 'n/a'}`,
     `reduced motion : ${window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches ?? 'n/a'}`,
     `EPB registered : ${epbEntries.map((card) => `${card.type}@${card.version ?? '?'}`).join(', ') || 'none'}`,
-    `duplicate load : ${duplicates ? '⚠️ YES — remove one of the two resources!' : 'no'}`,
+    `duplicate load : ${duplicates ? `⚠️ YES — remove one of the resources: ${bundleUrls().join(', ') || 'URLs unknown'}` : 'no'}`,
     `HA elements    : ha-card=${Boolean(customElements.get('ha-card'))} ha-selector=${Boolean(customElements.get(HA_CONTEXT.elements.selector))} action-handler=${Boolean(customElements.get(HA_CONTEXT.elements.actionHandler))}`,
     `constructed CSS: ${constructedCss}`,
     `editor         : ${editorFileReport()}`,
     `audit          : run ${CONSOLE_GLOBAL}.doctor.audit() to list cards to review`,
+    ...extraLines,
     '=========================================',
   ].join('\n');
 }
+
+// The first 12 hex digits of the file as served, to hold against the digest
+// GitHub shows beside a release asset.
+const DIGEST_LENGTH = 12;
+const digestOf = async (url: string): Promise<string> => {
+  if (!globalThis.crypto?.subtle) return 'unavailable (https only)';
+  try {
+    const response = await fetch(url, { cache: 'force-cache' });
+    if (!response.ok) return `unavailable (HTTP ${response.status})`;
+    const digest = new Uint8Array(await crypto.subtle.digest('SHA-256', await response.arrayBuffer()));
+    return [...digest]
+      .map((byte) => byte.toString(16).padStart(2, '0'))
+      .join('')
+      .slice(0, DIGEST_LENGTH);
+  } catch {
+    return 'unavailable';
+  }
+};
+
+const digestLines = async (): Promise<string[]> => {
+  const editorUrl = sidecarUrl('editor.js');
+  const [card, editor] = await Promise.all([digestOf(CARD_CONTEXT.moduleUrl), digestOf(editorUrl)]);
+  return [`sha-256 card   : ${card} — ${CARD_CONTEXT.moduleUrl || 'URL unknown'}`, `sha-256 editor : ${editor}`];
+};
 
 const COMMANDS: [string, string][] = [
   ['version', 'the version running'],
@@ -142,6 +187,10 @@ const COMMANDS: [string, string][] = [
   ['doctor.audit()', 'every card, on every dashboard, to review'],
   ['doctor.cards()', 'the cards on this page, numbered'],
   ['doctor.inspect(n | $0)', 'one of them: its value, range and config'],
+  ['doctor.jinja(n | $0)', 'its Jinja fields: subscribed or not, last result or error'],
+  ['doctor.history(n | $0)', 'the samples behind its trend_indicator and peak_marker'],
+  ['doctor.copy(n | $0)', 'an issue report for it: environment and commented YAML'],
+  ['debug(areas | false)', 'debug areas kept across reloads (card,editor… or all); false clears'],
   ['help()', 'this list'],
 ];
 const helpText = (): string => {
@@ -157,6 +206,37 @@ const printed = (report: string): string => {
   return report;
 };
 
+const DEBUG_AREA_NAMES = [...Object.keys(CARD_CONTEXT.debug), 'all'];
+const storage = (): Storage | null => {
+  try {
+    return localStorage;
+  } catch {
+    return null;
+  }
+};
+
+// Flags are read when a card is built: a change waits for the next reload.
+const debug = (areas?: string | false): string => {
+  const store = storage();
+  if (!store) return printed('debug: this browser blocks localStorage, use ?debug= on the resource URL.');
+  const key = CARD_CONTEXT.debugStorageKey;
+  if (areas === undefined) return printed(`debug: saved ${store.getItem(key) || 'none'}`);
+  if (areas === false) {
+    store.removeItem(key);
+    return printed('debug: cleared, reload the page to apply.');
+  }
+  const asked = areas
+    .split(',')
+    .map((area) => area.trim())
+    .filter(Boolean);
+  const unknown = asked.filter((area) => !DEBUG_AREA_NAMES.includes(area));
+  if (asked.length === 0 || unknown.length > 0) {
+    return printed(`debug: unknown area ${unknown.join(', ') || '(none)'}; one of ${DEBUG_AREA_NAMES.join(', ')}.`);
+  }
+  store.setItem(key, asked.join(','));
+  return printed(`debug: ${asked.join(', ')} saved, reload the page to apply.`);
+};
+
 // The first copy of a name keeps it, locked: a second load of the same bundle
 // is what dump() reports as a duplicate, not a reason to swap the helper.
 const publish = (name: string, descriptor: PropertyDescriptor): void => {
@@ -167,8 +247,11 @@ const publish = (name: string, descriptor: PropertyDescriptor): void => {
 function installDiagnostic(cardTools: CardTools): void {
   if (CONSOLE_GLOBAL in window) return;
   requestUaHints();
-  const doctor: Doctor = Object.freeze({ dump: () => printed(environmentReport()), ...cardTools });
-  const helper: ConsoleHelper = Object.freeze({ version: VERSION, help: () => printed(helpText()), doctor });
+  const doctor: Doctor = Object.freeze({
+    dump: async () => printed(environmentReport(await digestLines())),
+    ...cardTools,
+  });
+  const helper: ConsoleHelper = Object.freeze({ version: VERSION, help: () => printed(helpText()), debug, doctor });
   publish(CONSOLE_GLOBAL, { value: helper });
   let warned = false;
   const legacy: LegacyDiagnostic = Object.freeze({ version: VERSION, ...doctor });

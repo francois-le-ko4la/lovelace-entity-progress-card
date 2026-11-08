@@ -2,6 +2,7 @@
 // row wins), then the row shape. Pure, so the editor's resolve can be held to
 // it (test/editor/factorization.test.ts).
 
+import { CARD } from '../../utils/parameters.js';
 import { is } from '../../utils/common-checks.js';
 import { AGGREGATOR_FIELDS } from './schema.js';
 import type { LovelaceConfig } from '../../utils/types.js';
@@ -10,10 +11,18 @@ import type { LovelaceConfig } from '../../utils/types.js';
 // derived ones the negotiated config carries (a child re-derives its own).
 const NOT_ROW_OPTIONS = new Set<string>([...AGGREGATOR_FIELDS, 'centerZero', 'resolvedUnit', 'resolvedDecimal']);
 
+const VERTICAL = CARD.layout.orientations.vertical.label;
+
 // The row shape itself, which is the aggregator's to impose and not the
 // user's - hence absent from YamlSchemaFactory.multiRow.
-const toRowConfig = (row: Record<string, unknown>): LovelaceConfig =>
-  ({ ...row, density: 'single_line', frameless: true, marginless: true }) as unknown as LovelaceConfig;
+// The density settles the rest (densityOverrides).
+const rowShape = (config: LovelaceConfig): Record<string, unknown> =>
+  config.layout === VERTICAL
+    ? { density: 'single_column', bar_position: config.bar_position }
+    : { density: 'single_line' };
+
+const toRowConfig = (config: LovelaceConfig, row: Record<string, unknown>): LovelaceConfig =>
+  ({ ...row, ...rowShape(config), frameless: true, marginless: true }) as unknown as LovelaceConfig;
 
 // `entities` accepts a bare entity id as shorthand for { entity }.
 const asRow = (row: unknown): Record<string, unknown> => (is.plainObject(row) ? { ...row } : { entity: row as string });
@@ -26,7 +35,7 @@ const rowConfigsOf = (config: LovelaceConfig | null): LovelaceConfig[] => {
   for (const [key, value] of Object.entries(config)) {
     if (!NOT_ROW_OPTIONS.has(key)) shared[key] = value;
   }
-  return config.entities.map((item) => toRowConfig({ ...shared, ...asRow(item) }));
+  return config.entities.map((item) => toRowConfig(config, { ...shared, ...asRow(item) }));
 };
 
 export { asRow, rowConfigsOf };

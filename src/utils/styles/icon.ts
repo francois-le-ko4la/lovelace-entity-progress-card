@@ -27,6 +27,12 @@ const ICON_CSS = css`
   margin-top: unset !important;
 }
 
+/* The ring is 44px across, wider than the 36px section: without the card's
+   padding to spill into, ha-card's overflow: hidden cut its edge. */
+ha-card.${CARD.style.dynamic.barAroundIcon}.${CARD.style.dynamic.marginless}:not(.progress-badge) .${CARD.htmlStructure.sections.icon.class} {
+  --current-shape-size: max(var(--shape-default-size), 44px);
+}
+
 /* === SHAPE & ICON === */
 .${CARD.htmlStructure.elements.shape.class} {
   position: relative;
@@ -87,63 +93,82 @@ ha-card.${CARD.style.dynamic.barAroundIcon}.progress-badge {
 ha-card.${CARD.style.dynamic.barAroundIcon}.progress-badge.xsmall { --ring-width: var(--epb-progress-bar-size, 3px); }
 ha-card.${CARD.style.dynamic.barAroundIcon}.progress-badge.medium { --ring-width: var(--epb-progress-bar-size, 5px); }
 ha-card.${CARD.style.dynamic.barAroundIcon}.progress-badge.large { --ring-width: var(--epb-progress-bar-size, 6px); }
-ha-card.${CARD.style.dynamic.barAroundIcon} .${CARD.htmlStructure.elements.shape.class}::after {
+/* The ring's geometry, on .shape: its ::after (the track) and .ring-fill (the
+   value) inherit it. */
+ha-card.${CARD.style.dynamic.barAroundIcon} .${CARD.htmlStructure.elements.shape.class} {
   /* A colour, or a theme's zones as a conic gradient (ThemeManager, isRing). */
   --ring-paint: var(--epb-progress-bar-color, var(${CARD.style.dynamic.progressBar.color.var}, ${CARD.style.dynamic.progressBar.color.default}));
   --ring-track: var(${CARD.style.dynamic.progressBar.background.var}, var(--divider-color));
   --ring-cut: calc(100% - var(--ring-width));
   /* bar_ring: the arc starts at --ring-start and spans --ring-span-ratio of the
-     circle; what is left is the gap, painted over with the card's background. */
+     circle; the gap is masked out, not painted over: a frameless card has no
+     background to paint it with (#149). */
   --ring-span: calc(var(--ring-span-ratio, 1) * 360deg);
   --ring-fill: calc(var(${CARD.style.dynamic.ringValue.var}, 0) * var(--ring-span));
   /* The filled arc runs from --ring-from to --ring-to. */
   --ring-from: 0deg;
   --ring-to: var(--ring-fill);
-  --ring-gap-cover: conic-gradient(from var(--ring-start, 0deg), transparent var(--ring-span), var(--ha-card-background, var(--card-background-color)) 0);
+  --ring-arc: conic-gradient(from var(--ring-start, 0deg), #000 var(--ring-span), transparent 0);
+  /* The inner edge: bar_ring.softness (--ring-softness), else the theme's. */
+  --ring-edge: radial-gradient(farthest-side, transparent var(--ring-cut), #000 calc(var(--ring-cut) + var(--ring-softness, var(--epb-ring-softness, 1px))));
+  --ring-mask: var(--ring-edge), var(--ring-arc), var(--ring-gaps, linear-gradient(#000 0 0));
+}
+ha-card.${CARD.style.dynamic.barAroundIcon} .${CARD.htmlStructure.elements.shape.class}::after,
+ha-card.${CARD.style.dynamic.barAroundIcon} .${CARD.htmlStructure.elements.ringFill.class} {
   content: '';
   position: absolute;
   inset: calc(-1 * var(--ring-offset));
   border-radius: 50%;
   pointer-events: none;
-  /* Past the value: the track, over the card's own opaque background - a theme's
-     track is translucent, and the zones painted underneath showed through it. */
-  background:
-    var(--ring-gaps, none),
-    var(--ring-gap-cover),
-    conic-gradient(from var(--ring-start, 0deg), var(--ring-track) var(--ring-from), transparent 0 var(--ring-to), var(--ring-track) 0),
-    conic-gradient(from var(--ring-start, 0deg), var(--ha-card-background, var(--card-background-color)) var(--ring-from), transparent 0 var(--ring-to), var(--ha-card-background, var(--card-background-color)) 0),
-    var(--ring-effect, none),
-    var(--ring-paint);
-  -webkit-mask: radial-gradient(farthest-side, transparent var(--ring-cut), #000 calc(var(--ring-cut) + 1px));
-  mask: radial-gradient(farthest-side, transparent var(--ring-cut), #000 calc(var(--ring-cut) + 1px));
+  background: var(--ring-track);
+  -webkit-mask: var(--ring-mask);
+  -webkit-mask-composite: source-in;
+  mask: var(--ring-mask);
+  mask-composite: intersect;
 }
-/* bar_segments: the arc cut into --ring-segments blocks, each gap a wedge of the
-   card's background over fill and track alike (center_zero: N per arm). */
-ha-card.${CARD.style.dynamic.barAroundIcon}.bar-segmented .${CARD.htmlStructure.elements.shape.class}::after {
+/* The value on a layer of its own over the track, never under it: a translucent
+   track showed the paint through, and no background is sure to be opaque. */
+ha-card.${CARD.style.dynamic.barAroundIcon} .${CARD.htmlStructure.elements.ringFill.class} {
+  z-index: 1;
+  background: var(--ring-effect, none), var(--ring-paint);
+  -webkit-mask: var(--ring-mask), conic-gradient(from var(--ring-start, 0deg), transparent var(--ring-from), #000 0 var(--ring-to), transparent 0);
+  -webkit-mask-composite: source-in;
+  mask: var(--ring-mask), conic-gradient(from var(--ring-start, 0deg), transparent var(--ring-from), #000 0 var(--ring-to), transparent 0);
+  mask-composite: intersect;
+}
+.${CARD.htmlStructure.elements.ringFill.class} {
+  display: none;
+}
+ha-card.${CARD.style.dynamic.barAroundIcon} .${CARD.htmlStructure.elements.ringFill.class} {
+  display: block;
+}
+/* bar_segments: the arc cut into --ring-segments blocks, each gap a wedge masked
+   out of fill and track alike (center_zero: N per arm). */
+ha-card.${CARD.style.dynamic.barAroundIcon}.bar-segmented .${CARD.htmlStructure.elements.shape.class} {
   --ring-segment: calc(var(--ring-span) / var(--ring-segments, 1));
   --ring-half-gap: calc(var(--ring-segment) * 0.1);
   --ring-gaps: repeating-conic-gradient(
     from var(--ring-start, 0deg),
-    var(--ha-card-background, var(--card-background-color)) 0 var(--ring-half-gap),
-    transparent 0 calc(var(--ring-segment) - var(--ring-half-gap)),
-    var(--ha-card-background, var(--card-background-color)) 0 var(--ring-segment)
+    transparent 0 var(--ring-half-gap),
+    #000 0 calc(var(--ring-segment) - var(--ring-half-gap)),
+    transparent 0 var(--ring-segment)
   );
 }
-/* bar_effect: a white sweep along the filled arc. glass lets the track show
-   through, like the bar's transparent .inner. */
-ha-card.${CARD.style.dynamic.barAroundIcon}.${CARD.style.dynamic.progressBar.effect.glass.class} .${CARD.htmlStructure.elements.shape.class}::after {
-  --ring-paint: var(--ring-track);
+/* bar_effect: a white sweep along the filled arc. glass lets the track below
+   show through, like the bar's transparent .inner. */
+ha-card.${CARD.style.dynamic.barAroundIcon}.${CARD.style.dynamic.progressBar.effect.glass.class} .${CARD.htmlStructure.elements.shape.class} {
+  --ring-paint: transparent;
   --ring-effect: conic-gradient(from var(--ring-start, 0deg), rgba(255, 255, 255, 0.3) var(--ring-from), rgba(255, 255, 255, 0.1) var(--ring-to), transparent 0);
 }
-ha-card.${CARD.style.dynamic.barAroundIcon}.${CARD.style.dynamic.progressBar.effect.gradient.class} .${CARD.htmlStructure.elements.shape.class}::after {
+ha-card.${CARD.style.dynamic.barAroundIcon}.${CARD.style.dynamic.progressBar.effect.gradient.class} .${CARD.htmlStructure.elements.shape.class} {
   --ring-effect: conic-gradient(from var(--ring-start, 0deg), rgba(255, 255, 255, 0.4) var(--ring-from), transparent var(--ring-to));
 }
-ha-card.${CARD.style.dynamic.barAroundIcon}.${CARD.style.dynamic.progressBar.effect.gradientReverse.class} .${CARD.htmlStructure.elements.shape.class}::after {
+ha-card.${CARD.style.dynamic.barAroundIcon}.${CARD.style.dynamic.progressBar.effect.gradientReverse.class} .${CARD.htmlStructure.elements.shape.class} {
   --ring-effect: conic-gradient(from var(--ring-start, 0deg), transparent var(--ring-from), rgba(255, 255, 255, 0.4) var(--ring-to));
 }
 /* center_zero: the zero sits mid-arc, the signed value grows each way from it
    by up to half the arc. */
-ha-card.${CARD.style.dynamic.barAroundIcon}.center-zero .${CARD.htmlStructure.elements.shape.class}::after {
+ha-card.${CARD.style.dynamic.barAroundIcon}.center-zero .${CARD.htmlStructure.elements.shape.class} {
   --ring-half: calc(var(--ring-span) / 2);
   --ring-from: calc(var(--ring-half) - max(var(${CARD.style.dynamic.ringValue.var}, 0) * -1, 0) * var(--ring-half));
   --ring-to: calc(var(--ring-half) + max(var(${CARD.style.dynamic.ringValue.var}, 0), 0) * var(--ring-half));
@@ -186,7 +211,10 @@ ha-card.${CARD.style.dynamic.barAroundIcon}.transition-ready .${CARD.htmlStructu
 /* rainbow_full around the icon: every zone, all the way round, and a pill at
    the value instead of a fill - the bar's own value mark, bent onto the ring. */
 ha-card.${CARD.style.dynamic.barAroundIcon}.rainbow-full-bar .${CARD.htmlStructure.elements.shape.class}::after {
-  background: var(--ring-gap-cover), var(--ring-paint);
+  background: var(--ring-paint);
+}
+ha-card.${CARD.style.dynamic.barAroundIcon}.rainbow-full-bar .${CARD.htmlStructure.elements.ringFill.class} {
+  display: none;
 }
 .${CARD.htmlStructure.elements.ringMark.class} {
   display: none;
@@ -222,8 +250,7 @@ ha-card.${CARD.style.dynamic.barAroundIcon}.${CARD.style.dynamic.progressBar.ori
 }
 /* bar_position: icon - the bar's marks, a layer each round the ring, carrying
    the bar's own shown/wm-* classes (core.ts). Zones are arcs, points pills. */
-.${CARD.htmlStructure.elements.ringMarks.low.class}, .${CARD.htmlStructure.elements.ringMarks.high.class}, .${CARD.htmlStructure.elements.ringMarks.range.class},
-.${CARD.htmlStructure.elements.ringMarks.min.class}, .${CARD.htmlStructure.elements.ringMarks.max.class}, .${CARD.htmlStructure.elements.ringMarks.avg.class} {
+.${CARD.htmlStructure.elements.ringLayer.class} {
   display: none;
 }
 ha-card.${CARD.style.dynamic.barAroundIcon} .${CARD.htmlStructure.elements.ringMarks.low.class} {
@@ -268,10 +295,7 @@ ha-card.${CARD.style.dynamic.barAroundIcon} .${CARD.htmlStructure.elements.ringM
   --ring-mark-line: var(--epb-peak-marker-line-size, var(--peak-average-line-size, var(--peak-marker-line-size, 2px)));
   --ring-mark-at: var(--peak-average-value-num, 0);
 }
-ha-card.${CARD.style.dynamic.barAroundIcon} .${CARD.style.dynamic.markShown}:is(
-    .${CARD.htmlStructure.elements.ringMarks.low.class}, .${CARD.htmlStructure.elements.ringMarks.high.class}, .${CARD.htmlStructure.elements.ringMarks.range.class},
-    .${CARD.htmlStructure.elements.ringMarks.min.class}, .${CARD.htmlStructure.elements.ringMarks.max.class}, .${CARD.htmlStructure.elements.ringMarks.avg.class}
-  ) {
+ha-card.${CARD.style.dynamic.barAroundIcon} .${CARD.style.dynamic.markShown}.${CARD.htmlStructure.elements.ringLayer.class} {
   display: block;
   position: absolute;
   z-index: 1;
@@ -280,12 +304,11 @@ ha-card.${CARD.style.dynamic.barAroundIcon} .${CARD.style.dynamic.markShown}:is(
 }
 /* A zone: the same ring, cut by the same mask, painted over its own arc. */
 ha-card.${CARD.style.dynamic.barAroundIcon} :is(.${CARD.htmlStructure.elements.ringMarks.low.class}, .${CARD.htmlStructure.elements.ringMarks.high.class}, .${CARD.htmlStructure.elements.ringMarks.range.class}):is(.wm-area, .wm-blended, .wm-striped) {
-  --ring-cut: calc(100% - var(--ring-width));
   inset: calc(-1 * var(--ring-offset));
   border-radius: 50%;
   background: var(--ring-zone);
-  -webkit-mask: radial-gradient(farthest-side, transparent var(--ring-cut), #000 calc(var(--ring-cut) + 1px));
-  mask: radial-gradient(farthest-side, transparent var(--ring-cut), #000 calc(var(--ring-cut) + 1px));
+  -webkit-mask: var(--ring-edge);
+  mask: var(--ring-edge);
 }
 ha-card.${CARD.style.dynamic.barAroundIcon}
   :is(.${CARD.htmlStructure.elements.ringMarks.low.class}, .${CARD.htmlStructure.elements.ringMarks.high.class}, .${CARD.htmlStructure.elements.ringMarks.range.class}):is(.wm-area, .wm-blended, .wm-striped) {
@@ -322,7 +345,8 @@ ha-card.${CARD.style.dynamic.barAroundIcon}
   white-space: nowrap;
 }
 /* Counter-clockwise: the whole ring mirrored about its start axis, zones included. */
-ha-card.${CARD.style.dynamic.barAroundIcon} .${CARD.htmlStructure.elements.shape.class}::after {
+ha-card.${CARD.style.dynamic.barAroundIcon} .${CARD.htmlStructure.elements.shape.class}::after,
+ha-card.${CARD.style.dynamic.barAroundIcon} .${CARD.htmlStructure.elements.ringFill.class} {
   transform: rotate(calc((1 - var(--ring-flip, 1)) * var(--ring-axis, 0deg))) scaleX(var(--ring-flip, 1));
 }
 

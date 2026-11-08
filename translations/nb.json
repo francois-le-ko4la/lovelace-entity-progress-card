@@ -47,8 +47,9 @@
       "bar_effect_mode": "Effekt på stolpen",
       "bar_max_width_toggle": "Maks. stolpebredde",
       "bar_orientation": "Retning",
-      "bar_ring_start": null,
-      "bar_ring_gap": null,
+      "bar_ring_start": "Ringens start",
+      "bar_ring_gap": "Ringens åpning",
+      "bar_ring_softness": "Mykhet i ringens kant",
       "bar_scale": "Skala",
       "bar_segments": "Segmenter",
       "bar_single_line": "Én linje",
@@ -59,6 +60,13 @@
       "center_zero": "Null i midten",
       "center_zero_growth_percent": "Vekstprosent",
       "center_zero_value": "Senterverdi",
+      "content_order": "Innholdsrekkefølge",
+      "content_order_line_1": "Linje 1",
+      "content_order_line_2": "Linje 2",
+      "content_order_line_3": "Linje 3",
+      "content_order_line_4": "Linje 4",
+      "content_order_line_5": "Linje 5",
+      "content_order_line_6": "Linje 6",
       "custom_info": "Egendefinert sekundær info",
       "custom_theme": "Tilpassede temasoner",
       "density": "Tetthet",
@@ -216,9 +224,14 @@
         "proportional": "Proporsjonal",
         "stacked": "Stablet"
       },
+      "content_order": {
+        "info": "Info",
+        "value": "Verdi"
+      },
       "density": {
         "compact": "Kompakt",
         "single_line": "Én linje",
+        "single_column": "Én kolonne",
         "default": "@ui.panel.lovelace.editor.action-editor.actions.default_action|Default"
       },
       "enabled_disabled_mode": {
@@ -231,6 +244,7 @@
       },
       "hide": {
         "secondary_info": "Sekundær info",
+        "info": "Info",
         "value": "Verdi"
       },
       "icon_animation": {

@@ -20,6 +20,20 @@ function watermarkEntity(mark: unknown): string {
   return is.nonEmptyString(entity) ? entity : '';
 }
 
+const withoutBar = (keys: readonly string[]) => keys.filter((key) => key !== 'bar');
+
+const NUMBER_SELECTORS: Record<string, () => Record<string, unknown>> = {
+  number: () => ({ number: {} }),
+  decimal: () => ({ number: { min: 0, max: 10, mode: 'box' } }),
+  opacity: () => ({ number: { min: 0, max: 1, step: 0.05, mode: 'box' } }),
+  slider: () => ({ number: { min: 0, max: 300, step: 1, mode: 'slider', unit_of_measurement: 'px' } }),
+  // Below 2, buildSegmentCells never builds any cell - same
+  // floor as its own count >= 2 check.
+  bar_segments: () => ({ number: { min: 2, max: 10, step: 1, mode: 'box' } }),
+  degrees: () => ({ number: { min: 0, max: 360, step: 1, mode: 'box', unit_of_measurement: '°' } }),
+  pixels: () => ({ number: { min: 0, max: 10, step: 0.5, mode: 'box', unit_of_measurement: 'px' } }),
+};
+
 // `options`: the translated option labels, group -> value -> label.
 const selectorForType = (
   type: string,
@@ -49,6 +63,14 @@ const selectorForType = (
   // some enum members) - keeps just the given keys, same translated labels.
   const pickOptions = (source: Record<string, string>, keys: readonly string[]): Record<string, string> =>
     Object.fromEntries(keys.map((key) => [key, source[key]]));
+  // Draggable chips: select's `reorder`, HA 2023.9+ (frontend#17468).
+  const buildOrderChips = (keys: readonly string[]) => ({
+    select: {
+      multiple: true,
+      reorder: true,
+      options: keys.map((value) => ({ value, label: options.content_order?.[value] ?? value })),
+    },
+  });
   const tileImage = (value: string) => ({
     // see
     // https://github.com/home-assistant/frontend/blob/dev/src/panels/lovelace/editor/config-elements/hui-tile-card-editor.ts#L158
@@ -65,14 +87,7 @@ const selectorForType = (
     attribute: () => ({ attribute: { entity_id: effectiveEntity(config) ?? '' } }),
     maxValueAttribute: () => ({ attribute: { entity_id: entityOf(config.max_value) ?? '' } }),
     minValueAttribute: () => ({ attribute: { entity_id: entityOf(config.min_value) ?? '' } }),
-    number: () => ({ number: {} }),
-    decimal: () => ({ number: { min: 0, max: 10, mode: 'box' } }),
-    opacity: () => ({ number: { min: 0, max: 1, step: 0.05, mode: 'box' } }),
-    slider: () => ({ number: { min: 0, max: 300, step: 1, mode: 'slider', unit_of_measurement: 'px' } }),
-    // Below 2, buildSegmentCells never builds any cell - same
-    // floor as its own count >= 2 check.
-    bar_segments: () => ({ number: { min: 2, max: 10, step: 1, mode: 'box' } }),
-    degrees: () => ({ number: { min: 0, max: 360, step: 1, mode: 'box', unit_of_measurement: '°' } }),
+    ...NUMBER_SELECTORS,
     template: () => ({ template: {} }),
     toggle: () => ({ boolean: {} }),
     action: () => ({ 'ui-action': {} }),
@@ -87,6 +102,11 @@ const selectorForType = (
     default: () => ({ text: { mode: 'box' } }),
     // The one select whose options carry an image, hence not in SELECT_TYPES.
     layout: () => buildBoxSelect(options.layout, tileImage),
+    content_order: () => buildOrderChips(schemaOptions('card', 'content_order')),
+    content_order_template: () => buildOrderChips(schemaOptions('template', 'content_order')),
+    // compact_below's line: the bar keeps its own row below it.
+    content_order_no_bar: () => buildOrderChips(withoutBar(schemaOptions('card', 'content_order'))),
+    content_order_template_no_bar: () => buildOrderChips(withoutBar(schemaOptions('template', 'content_order'))),
     // watermark.low/.high can be a bare {entity,...} or wrap it one level
     // deeper ({value: {entity,...}, as, type, opacity, color}) - unwrap
     // before reading .entity, same shape as types.watermarkMark elsewhere.

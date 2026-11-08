@@ -1,4 +1,4 @@
-import { HA_CONTEXT } from '../../utils/parameters.js';
+import { CARD, HA_CONTEXT } from '../../utils/parameters.js';
 import { type LovelaceConfig } from '../../utils/types.js';
 import { HAS_EFFECT } from '../../card/config/schema.js';
 import {
@@ -104,13 +104,24 @@ const buildMulti = (feature: boolean) => ({
       entities: { name: 'entities', type: 'multi_row_editor' },
     },
   },
-  // The aggregator's own: rows, the grid span a Feature doesn't have (one HA
-  // row, see _applySizing), and bar_aligned, which lines its rows up.
+  // The aggregator's own: layout (rows or columns) and rows, the grid span a
+  // Feature doesn't have (one HA row), and bar_aligned, which lines them up.
   layout: {
     title: TITLE.layout,
     icon: HA_CONTEXT.icons.aspectRatio,
     fields: {
-      ...(feature ? {} : { rows: EditorFieldsType.number('rows', { width: 'half' }) }),
+      ...(feature
+        ? {}
+        : {
+            layout: EditorFieldsType.select('layout'),
+            bar_position: EditorFieldsType.select('bar_position', {
+              type: 'bar_position_column',
+              labelKey: LABEL_POSITION,
+              width: 'half',
+              showIf: (c: LovelaceConfig) => c.layout === CARD.layout.orientations.vertical.label,
+            }),
+            rows: EditorFieldsType.number('rows', { width: 'half' }),
+          }),
       // On when unset (the Multi's default); off writes false. A name written
       // in YAML survives an off/on. bar_max_width leaves nothing to align.
       bar_aligned: EditorFieldsType.toggle('bar_aligned', {
@@ -132,6 +143,24 @@ const buildMulti = (feature: boolean) => ({
 // settles for it, never a second form written by hand. Anything hand-written
 // here would drift the day a card option moves section, gains a placeholder
 // or grows a simple/advanced switch - which is exactly what it did.
+// A row is single_line whatever its own config says (toRowConfig), and a
+// vertical card when the shared layout makes it a column.
+type ShowIf = (c: LovelaceConfig) => boolean;
+const isColumn = (c: LovelaceConfig) => c.layout === CARD.layout.orientations.vertical.label;
+const rowOrderShowIf = (key: string, showIf: ShowIf | undefined): ShowIf => {
+  if (key === 'content_order_group') return () => true;
+  if (key === 'content_order_single_line') return (c) => !isColumn(c);
+  return (c) => isColumn(c) && (showIf?.(c) ?? true);
+};
+const rowOrder = <S extends { fields: Record<string, unknown> }>(section: S): S => {
+  const fields = Object.entries(section.fields).map(([key, field]) => {
+    if (!key.startsWith('content_order_')) return [key, field];
+    const def = field as { showIf?: ShowIf };
+    return [key, { ...def, showIf: rowOrderShowIf(key, def.showIf) }];
+  });
+  return { ...section, fields: Object.fromEntries(fields) };
+};
+
 const buildMultiRow = (feature: boolean) => {
   const card = build({ template: false, badge: false });
   // The frame, the layout and where the bar sits are the aggregator's, not
@@ -141,12 +170,14 @@ const buildMultiRow = (feature: boolean) => {
   return {
     general: card.general,
     content: dropFields(card.content, ['multiline']),
-    theme: dropFields(card.theme, [
-      'bar_position',
-      // A few px of icon can't carry a circular background - gone from the
-      // Feature row's own schema too (multiFeatureRow).
-      ...(feature ? ['force_circular_background_mode'] : []),
-    ]),
+    theme: rowOrder(
+      dropFields(card.theme, [
+        'bar_position',
+        // A few px of icon can't carry a circular background - gone from the
+        // Feature row's own schema too (multiFeatureRow).
+        ...(feature ? ['force_circular_background_mode'] : []),
+      ]),
+    ),
     ...Object.fromEntries(
       MARKER_SECTIONS.filter((key) => key in card && !(feature && FEATURE_ROW_DROPPED_SECTIONS.includes(key))).map(
         (key) => [key, card[key]],

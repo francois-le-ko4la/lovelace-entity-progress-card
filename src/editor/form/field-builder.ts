@@ -62,11 +62,23 @@ class FieldBuilder {
   // The `editor.option` node of the translations tree: one level deeper than
   // localizeGroup models (option group -> value -> label), so typed loosely as
   // a nested string map rather than mirroring the whole translations.json.
+  #optionsCache: { source: unknown; language: string; value: Record<string, Record<string, string>> } | null = null;
+
   get #localizedOptions(): Record<string, Record<string, string>> {
+    const options = this.#hassProvider.localizeGroup('editor.option');
+    const language = this.#hassProvider.language;
+    // Read on every field update pass: rebuilt only when the translations
+    // node or the language changes.
+    const cached = this.#optionsCache;
+    if (cached && cached.source === options && cached.language === language) return cached.value;
+    this.#optionsCache = { source: options, language, value: this.#buildLocalizedOptions(options) };
+    return this.#optionsCache.value;
+  }
+
+  #buildLocalizedOptions(options: Record<string, string>): Record<string, Record<string, string>> {
     // CF5 - issue (minor) resolved - localize() returns the key string before
     // translations load; select builders then crashed on
     // Object.entries(undefined). Fall back to the default language.
-    const options = this.#hassProvider.localizeGroup('editor.option');
     const tree = (is.plainObject(options)
       ? options
       : (buildTranslationTree(CARD.config.language).editor as Record<string, unknown>).option) as unknown as Record<
@@ -365,7 +377,7 @@ class FieldBuilder {
     return this.#registerFieldEl(field, el);
   }
 
-  buildExpansionPanel(section: string, def: SectionDef): DocumentFragment | HTMLElement {
+  buildExpansionPanel(def: SectionDef): DocumentFragment | HTMLElement {
     if (def.flat) {
       const frag = document.createDocumentFragment();
       for (const field of Object.values(def.fields)) {
