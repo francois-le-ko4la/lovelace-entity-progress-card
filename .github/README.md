@@ -165,7 +165,7 @@ Home Assistant 2026.6 or newer. On an older version, go to [In YAML](#in-yaml).
    <!-- markdownlint-disable MD013 -->
    <picture>
      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/card-picker-dark-6af7b9.png">
-     <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/card-picker-light-bbf8a3.png" alt="Entity-first card picker" width="500"/>
+     <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/card-picker-light-bbf8a3.png" alt="Entity-first card picker" width="700"/>
    </picture>
    <!-- markdownlint-enable MD013 -->
 
