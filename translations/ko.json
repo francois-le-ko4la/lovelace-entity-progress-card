@@ -180,7 +180,8 @@
         "gradient_reverse": "역 그라디언트",
         "radius": "둥근 모서리",
         "shimmer": "시머",
-        "shimmer_reverse": "역 시머"
+        "shimmer_reverse": "역 시머",
+        "wave": "물결"
       },
       "bar_orientation": {
         "ltr": "LTR",

@@ -28,6 +28,7 @@
     "check:i18n-split": "node scripts/check-i18n-split.js",
     "check:chrome92": "eslint --config eslint.chrome92.config.mjs \"src/**/*.{js,ts}\"",
     "docs:options": "node scripts/option-map.js",
+    "docs:readme": "node scripts/readme-stable.js",
     "lint:md": "markdownlint-cli2 \"**/*.md\" \"#node_modules\"",
     "lint:unused": "knip",
     "format:md": "prettier --write \"**/*.md\" \"!node_modules/**\"",

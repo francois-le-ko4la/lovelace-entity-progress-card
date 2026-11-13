@@ -40,18 +40,18 @@ ${DOWN_BAR} .${CARD.htmlStructure.elements.progressBar.half.class}.negative-zone
   clip-path: inset(calc(100% - var(--segment-fill)) 0 0 0);
 }
 
-.vertical.down-orientation.${CARD.style.dynamic.progressBar.effect.glass.class} {
+${DOWN_BAR}.${CARD.style.dynamic.progressBar.effect.glass.class} {
   --progress-effect: linear-gradient(180deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
   --progress-effect-neg: linear-gradient(0deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
 }
-.vertical.down-orientation.${CARD.style.dynamic.progressBar.effect.gradient.class},
-.vertical.down-orientation.${CARD.style.dynamic.progressBar.effect.gradientReverse.class} {
+${DOWN_BAR}.${CARD.style.dynamic.progressBar.effect.gradient.class},
+${DOWN_BAR}.${CARD.style.dynamic.progressBar.effect.gradientReverse.class} {
   --progress-effect-gradient: var(--progress-effect-gradient-down-modern, linear-gradient(180deg, rgba(255, 255, 255, 0.4), transparent));
   --progress-effect-gradient-rev: var(--progress-effect-gradient-rev-down-modern, linear-gradient(0deg, rgba(255, 255, 255, 0.4), transparent));
 }
 @supports (background: color-mix(in srgb, red, blue)) {
-  .vertical.down-orientation.${CARD.style.dynamic.progressBar.effect.gradient.class},
-  .vertical.down-orientation.${CARD.style.dynamic.progressBar.effect.gradientReverse.class} {
+  ${DOWN_BAR}.${CARD.style.dynamic.progressBar.effect.gradient.class},
+  ${DOWN_BAR}.${CARD.style.dynamic.progressBar.effect.gradientReverse.class} {
     --progress-effect-gradient-down-modern: linear-gradient(
       180deg,
       color-mix(in srgb, white 40%, var(--progress-bar-color, var(--state-icon-color))),
@@ -66,11 +66,11 @@ ${DOWN_BAR} .${CARD.htmlStructure.elements.progressBar.half.class}.negative-zone
 }
 ${DOWN_BAR}${BAR_EFFECT_GRADIENTS} .${CARD.htmlStructure.elements.progressBar.inner.class}.positive::before { transform-origin: center bottom; }
 ${DOWN_BAR}.${CARD.style.dynamic.progressBar.centerZero}${BAR_EFFECT_GRADIENTS} .${CARD.htmlStructure.elements.progressBar.inner.class}.negative::before { transform-origin: center top; }
-.vertical.down-orientation.${CARD.style.dynamic.progressBar.effect.shimmer.class} {
+${DOWN_BAR}.${CARD.style.dynamic.progressBar.effect.shimmer.class} {
   --shimmer-direction: 180deg;
   --shimmer-animation: shimmer-ttb;
 }
-.vertical.down-orientation.${CARD.style.dynamic.progressBar.effect.shimmerReverse.class} {
+${DOWN_BAR}.${CARD.style.dynamic.progressBar.effect.shimmerReverse.class} {
   --shimmer-direction: 180deg;
   --shimmer-animation: shimmer-btt;
 }

@@ -9,7 +9,7 @@ import { CHIPS_HOST_STYLE } from '../../utils/styles/editor.js';
 import { is } from '../../utils/common-checks.js';
 import { defineElement } from '../../utils/register.js';
 import type { LovelaceConfig } from '../../utils/types.js';
-import { BAR_AROUND_ICON, densityForcedHide } from '../../card/config/schema.js';
+import { BAR_AROUND_ICON, HAS_EFFECT, densityForcedHide } from '../../card/config/schema.js';
 
 /**
  * Shared base for the editor's chip-based selector custom elements: builds
@@ -164,6 +164,8 @@ class EntityProgressEffectChips extends MultiSelectChipsBase {
   static #AUTO_COLOR_ONLY = (c: LovelaceConfig) => c.bar_color_mode === 'auto' || is.nullish(c.bar_color_mode);
   // The ring draws no .inner for radius or shimmer to act on.
   static #STRAIGHT_BAR_ONLY = (c: LovelaceConfig) => c.bar_position !== BAR_AROUND_ICON;
+  // The crest rides the top of a fill rising upward.
+  static #RISING_FILL_ONLY = (c: LovelaceConfig) => c.bar_orientation === 'up' && HAS_EFFECT.barOrientationUp(c);
   static #EFFECTS: { value: string; showIf?: (c: LovelaceConfig) => boolean }[] = [
     { value: 'radius', showIf: EntityProgressEffectChips.#STRAIGHT_BAR_ONLY },
     { value: 'glass', showIf: EntityProgressEffectChips.#AUTO_COLOR_ONLY },
@@ -171,6 +173,7 @@ class EntityProgressEffectChips extends MultiSelectChipsBase {
     { value: 'gradient_reverse', showIf: EntityProgressEffectChips.#AUTO_COLOR_ONLY },
     { value: 'shimmer', showIf: EntityProgressEffectChips.#STRAIGHT_BAR_ONLY },
     { value: 'shimmer_reverse', showIf: EntityProgressEffectChips.#STRAIGHT_BAR_ONLY },
+    { value: 'wave', showIf: EntityProgressEffectChips.#RISING_FILL_ONLY },
   ];
 
   // Shared with the runtime guard in HACore._handleBarEffect - see

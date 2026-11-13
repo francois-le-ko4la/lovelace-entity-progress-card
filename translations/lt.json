@@ -180,7 +180,8 @@
         "gradient_reverse": "Apverstas gradientas",
         "radius": "Suapvalinti kampai",
         "shimmer": "Blizgesys",
-        "shimmer_reverse": "Apverstas blizgesys"
+        "shimmer_reverse": "Apverstas blizgesys",
+        "wave": "Banga"
       },
       "bar_orientation": {
         "ltr": "LTR",

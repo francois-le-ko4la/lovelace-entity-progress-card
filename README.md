@@ -1,100 +1,94 @@
+<!-- Generated from .github/README.md by `npm run docs:readme`: do not edit. -->
+<!-- markdownlint-disable MD013 -->
+<picture>
+  <source media="(prefers-color-scheme: dark) and (prefers-reduced-motion: reduce)" srcset="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/epc-logo/epc-icon-black-6f3254.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/epc-logo/epc-icon-black-hdr-dd43b7.jpg">
+  <source media="(prefers-reduced-motion: reduce)" srcset="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/epc-logo/epc-icon-dc8ccf.svg">
+  <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/epc-logo/epc-icon-hdr-dc49e7.jpg" alt="Entity Progress Card logo" width="120" align="right" />
+</picture>
+<!-- markdownlint-enable MD013 -->
+
 # Lovelace Entity Progress Card
 
-[![Home Assistant][ha-badge]][repo-link] [![HACS Custom][hacs-badge]][hacs-link]
+[![Home Assistant][ha-badge]][ha-link]
+[![Marketplace][marketplace-badge]][marketplace-link]
+[![HACS Custom][hacs-badge]][hacs-link]
 [![Latest stable release][release-badge]][release-link]
 [![License][license-badge]][GPL-3.0 license]
+[![Documentation][docs-badge]][docs-link]
+[![Docs (main)][docs-dev-badge]][docs-dev-link]
 [![Discord][discord-badge]][discord-link]
 
-A modern Entity progress card for Home Assistant's Lovelace UI.
-<div>
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/thumbnail-c81470.png" alt="thumbnail" width="100%" style="max-width: 1200px;" align="top" />
-<!-- markdownlint-disable-next-line MD013 -->
-<img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/showcase-loop-363fce.gif" alt="Entity Progress Card Showcase" width="100%" style="max-width: 1200px;" />
-</div>
-<br />
+A progress bar card for Home Assistant: a battery, a washing machine cycle or a
+tank level, shown as a bar with its color and icon.
 
-> Thousands of Home Assistant dashboards run this card, every day. On a
-> wall-mounted tablet. A phone. A screen that never turns off.
+<!-- markdownlint-disable MD013 -->
+<picture>
+  <source media="(prefers-reduced-motion: reduce)" srcset="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/showcase-still-a94bcc.png">
+  <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/showcase-loop-363fce.gif" alt="A dashboard of Entity Progress Cards: room temperature, fan, light, batteries, energy, printer ink, washing machine and more" width="100%" style="max-width: 1000px;" />
+</picture>
+<!-- markdownlint-enable MD013 -->
+
+> Thousands of Home Assistant dashboards run this card, every day: on a
+> wall-mounted tablet, a phone, a screen that never turns off. Read at a glance,
+> from across the room.
 >
-> A glance is all it takes. A battery. A washing machine. A boiler. Read at a
-> distance, in half a second — not deciphered.
+> Add an entity and it's done: the right unit, the right icon, the right math,
+> no YAML. Want more? The Template variants take a Jinja template in every
+> field.
 >
-> Want simple? One click, and it's done. The right unit. The right icon. The
-> right math. Resolved automatically, the moment you add an entity. No YAML
-> required.
->
-> Want more? Every value can be a Jinja template. As deep as you want to go.
->
-> Not another progress bar. The progress bar that disappears — because it simply
-> does what it's supposed to.
+> Not another progress bar: the one that disappears, because it simply does what
+> it's supposed to.
 
 ## 🚀 Features
 
-- **7 variants, one consistent card**: a full dashboard card, a compact badge, a
-  native Tile feature, several bars stacked into one — plain YAML or
-  Jinja-powered, your call. Pick the shape that fits. Keep the same options.
-- **Native visual editor**: point, click, done — most variants ship a full
-  editor styled straight from Home Assistant's own design tokens, not a generic
-  form bolted on top. No YAML required to get started (Tile Feature and
-  Multi-Card/Multi-Feature are still YAML-only).
-- **It finds you first**: pick a compatible entity — sensor, cover, fan, light,
-  humidifier, climate, counter, timer — in Home Assistant's own
+- **7 variants, one card**: a dashboard card, a compact badge, a Tile feature,
+  or several bars stacked into one; most options carry over between them.
+- **Visual editor**: every variant has one, styled like Home Assistant's own. No
+  YAML needed to get started.
+- **Suggested for you**: in Home Assistant's
   [entity-first card picker](https://developers.home-assistant.io/blog/2026/05/27/custom-card-suggestions/)
-  (2026.6+), and this card raises its hand. Pre-filled. Ready to use. No blank
-  YAML stub to figure out.
-- **Set it and forget it**: the right unit, icon and percentage math are
-  resolved automatically from the entity's own domain — a sensible result out of
-  the box, YAML or editor either way, before you override anything.
-- **Visual effects, built in**: the bar sweeps, glows and shifts through
-  full-theme gradients on its own — shimmer, glass, rainbow, segmented, or your
-  own [`custom_theme`][config-custom_theme] color zones — and icons spin, pulse,
-  or react to what the entity is actually doing. All combinable. No `card_mod`
-  needed.
-- **Alerts that find you**: cross an [`alert_when`][config-alert_when] threshold
-  and the card reacts on its own — a glowing border, a tinted background, a
-  status pill, static or Jinja-driven. Pair it with `center_zero` for
-  bidirectional flows like charge/discharge in a single bar.
-- **Reference lines that read as intent**: [`watermark`][config-watermark] marks
-  a low/high threshold — blended, striped, triangle, round, or a hard line —
-  sourced from a fixed value, another entity, or a Jinja template. Each side can
-  override its own color/opacity/style, or just hide with a single `false`.
-- **Knows where it's been**: [`trend_indicator`][config-trend_indicator] reads a
-  real history window to show ↑/↓/flat instead of reacting to a single noisy
-  sample; [`peak_marker`][config-peak_marker] marks the min/max/average observed
-  over that same window directly on the bar. Both seed themselves from Home
-  Assistant's own history on load — no separate helper entity needed.
-- **Jinja everywhere**: skip the helper sensors — the Template variants compute
-  the percentage, color, icon and text directly in YAML, non-linear math and
-  multi-sensor logic included.
-- **Style without reverse-engineering the DOM**: every color, spacing, border
-  and animation is exposed as a documented CSS variable (58 `--epb-*` hooks, see
-  the [Theme Guide]) — apply them from a theme, or point `card_mod` at exactly
-  the ones that matter instead of guessing at internal class names. Zero runtime
-  dependencies, so nothing extra to break.
-- **Accessibility first**: screen readers announce the right value, not a pile
-  of divs. Motion backs off automatically for anyone with "Reduce Motion" set
-  system-wide. Tap, hold, double-tap — all native Home Assistant actions,
-  nothing reinvented.
-- **41-language i18n**: editor and error messages localized, not just the
-  README.
-  <!-- markdownlint-disable-next-line MD013 -->
-  🇸🇦 🇧🇩 🇨🇿 🇩🇰 🇩🇪 🇬🇷 🇬🇧 🇪🇸 🇫🇮 🇫🇷 🇮🇳 🇭🇷 🇮🇩 🇮🇹 🇯🇵 🇰🇷 🇲🇰 🇳🇴 (bokmål) 🇳🇱 🇵🇱 🇵🇹 🇷🇴 🇸🇪
-  🇹🇭 🇹🇷 🇺🇦 🇻🇳 🇨🇳.
+  (2026.6+), pick a sensor, light, cover, fan or timer, and the card is offered,
+  already filled in.
+- **Sensible defaults**: the unit, icon and percentage come from the entity
+  itself, before you change anything.
+- **Visual effects**: shimmer, glass, rainbow or segmented bars, your own color
+  zones, and icons that move with the entity's state, with no `card_mod`
+  ([`bar_effect`][config-bar_effect], [`custom_theme`][config-custom_theme],
+  [`icon_animation`][config-icon_animation]). Each one has a screenshot in the
+  [Cookbook][cookbook].
+- **Alerts**: past a threshold, the card glows, tints its background or shows a
+  status pill ([`alert_when`][config-alert_when]).
+- **Reference lines**: a mark at a low or high threshold, from a fixed value,
+  another entity or a template ([`watermark`][config-watermark]).
+- **History**: an ↑/↓ arrow from the real trend, and the lowest, highest and
+  average values marked on the bar ([`trend_indicator`][config-trend_indicator],
+  [`peak_marker`][config-peak_marker]).
+- **Templates**: the Template variants compute the percentage, color, icon and
+  text with Jinja, Home Assistant's template language, without a helper sensor.
+- **Styling**: every color, spacing and animation is a documented CSS variable,
+  to set from your Home Assistant theme or `card_mod` ([Theme Guide]).
+- **Accessible**: screen readers announce the value, and motion stops when your
+  device asks for reduced motion ([details](#accessibility)).
+- **41 languages**: the editor and the card's messages follow your Home
+  Assistant language ([list](#-language--numbers)).
+
+<a id="installation"></a>
 
 ## 📦 Installation
+
+Requires Home Assistant 2024.0 or newer. The Home Assistant app and any recent
+browser work; for an older tablet or wall panel, check the table below.
 
 <a id="prerequisites"></a>
 
 <details>
-<summary><strong>Prerequisites / Browser compatibility (click to expand)</strong></summary>
+<summary><strong>Browser compatibility (click to expand)</strong></summary>
 
-|      Platform       |        Browsers        |                    |                          |                        |                      |
-| :-----------------: | :--------------------: | :----------------: | :----------------------: | :--------------------: | :------------------: |
-|   ![HA][ha-logo]    | ![Chrome][chrome-logo] | ![Edge][edge-logo] | ![Firefox][firefox-logo] | ![Safari][safari-logo] | ![Opera][opera-logo] |
-| **Home Assistant**  |       **Chrome**       |      **Edge**      |       **Firefox**        |       **Safari**       |      **Opera**       |
-|      `2024.0+`      |         `98+`          |       `98+`        |          `94+`           |        `15.4+`         |        `84+`         |
-| Full visual effects |         `111+`         |       `111+`       |          `113+`          |        `16.2+`         |        `97+`         |
+|                     | ![HA][ha-logo]<br>**Home Assistant** | ![Chrome][chrome-logo]<br>**Chrome** | ![Edge][edge-logo]<br>**Edge** | ![Firefox][firefox-logo]<br>**Firefox** | ![Safari][safari-logo]<br>**Safari** | ![Opera][opera-logo]<br>**Opera** |
+| ------------------- | :----------------------------------: | :----------------------------------: | :----------------------------: | :-------------------------------------: | :----------------------------------: | :-------------------------------: |
+| Works               |              `2024.0+`               |                `98+`                 |             `98+`              |                  `94+`                  |               `15.4+`                |               `84+`               |
+| Full visual effects |                                      |                `111+`                |             `111+`             |                 `113+`                  |               `16.2+`                |               `97+`               |
 
 > Ensure your Home Assistant instance is up to date to support this custom card.
 >
@@ -116,22 +110,21 @@ A modern Entity progress card for Home Assistant's Lovelace UI.
 </details>
 
 `entity-progress-card` is available in [HACS](https://hacs.xyz) (Home Assistant
-Community Store).
+Community Store). Since Home Assistant 2026.11, HACS is built in as the
+[Marketplace](https://www.home-assistant.io/integrations/marketplace): the steps
+below stay the same, under **Marketplace**.
 
-Use this link to directly go to the repository in HACS
+Use this link to go directly to the repository in HACS or the Marketplace:
 
 [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=francois-le-ko4la&repository=lovelace-entity-progress-card&category=plugin)
 
-> [!TIP]
->
-> If you are unable to use the button above, follow the steps below:
->
-> ✅ Add this repository to HACS: Go to **HACS** ➡️ **Integrations** ➡️ **`⋮`**
-> ➡️ **Custom repositories**.
->
-> ✅ Paste the URL of this repository and select **Dashboard** as the category.
->
-> ✅ Install the Entity Progress Card from HACS.
+Or, step by step:
+
+1. Open **HACS** (called **Marketplace** from Home Assistant 2026.11). No HACS
+   yet? [Install it first](https://hacs.xyz/docs/use/download/download/).
+2. Look up **Entity Progress Card**.
+3. Click **Download**, then refresh the page (on a tablet: close and reopen the
+   app).
 
 <details>
 <summary><strong>Manual Installation (click to expand)</strong></summary>
@@ -139,11 +132,13 @@ Use this link to directly go to the repository in HACS
 Download `entity-progress-card.js` from the latest release into `/config/www/`,
 then declare it as a resource:
 
-- Go to **Settings** ➡️ **Dashboards** ➡️ **Resources** ➡️ **`⋮`** ➡️ **Add
-  Resource**
+- Turn on **Advanced mode** in your user profile if **Resources** is missing.
+- Go to **Settings** ➡️ **Dashboards**, open the three-dot menu (**`⋮`**) at the
+  top right, then **Resources** ➡️ **Add resource**
 - URL: `/local/entity-progress-card.js`
 - Type: `JavaScript Module`
-- Save, then reload the browser cache (**`CTRL`** + **`F5`** or clear cache)
+- Save, then reload the page (**`CTRL`** + **`F5`** on a computer; on a tablet,
+  close and reopen the app)
 
 </details>
 
@@ -154,42 +149,51 @@ then declare it as a resource:
 > and the language file you need — or all of them — next to the `.js` file:
 > without the editor, Home Assistant offers its YAML editor instead; without the
 > language file, the visual editor falls back to English. The cards themselves
-> work and stay translated either way, and HACS brings these files down for you.
+> work and stay translated either way, and HACS (or the Marketplace) brings
+> these files down for you. No extra resource is needed: the card loads them
+> from its own folder.
 
 ## 📝 Usage
 
-### 🖱️ Don't write YAML — just pick the entity
+Two ways in: pick the entity and let the card fill itself in, or write the YAML.
+
+### From the card picker
+
+Home Assistant 2026.6 or newer. On an older version, go to [In YAML](#in-yaml).
 
 1. Open Home Assistant's native "Add Card" picker and search for your entity.
 
    <!-- markdownlint-disable MD013 -->
    <picture>
      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/card-picker-dark-6af7b9.png">
-     <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/card-picker-light-bbf8a3.png" alt="Entity-first card picker" width="700"/>
+     <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/card-picker-light-bbf8a3.png" alt="Entity-first card picker" width="500"/>
    </picture>
    <!-- markdownlint-enable MD013 -->
 
+   Example: a light. Type its name and pick it: the bar shows its brightness,
+   from 0 to 100 %.
+
 2. Click **Entity Progress Card** — it's already there, pre-filled.
-3. Enjoy.
+3. Fine-tune it in the visual editor: every option gets its own field, styled
+   straight from Home Assistant's own design tokens.
 
-<details>
-<summary><strong>Then tweak it — the visual editor (click to expand)</strong></summary>
+   <details>
+   <summary><strong>Show a screenshot of the visual editor</strong></summary>
 
-No YAML here either — every option gets its own field, styled straight from Home
-Assistant's own design tokens.
+   <!-- markdownlint-disable MD013 -->
+   <picture>
+     <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/editor-dark-72b347.png">
+     <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/editor-light-cfbfe0.png" alt="Editor" width="700"/>
+   </picture>
+   <!-- markdownlint-enable MD013 -->
 
-<!-- markdownlint-disable MD013 -->
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/editor-dark-72b347.png">
-  <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/editor-light-cfbfe0.png" alt="Editor" width="700"/>
-</picture>
-<!-- markdownlint-enable MD013 -->
+   </details>
 
-</details>
+### In YAML
 
-### 🚀 Or write it yourself
-
-Point it at an entity, and it works:
+Open your dashboard, select **Edit dashboard**, then **Add card** and
+**Manual**. Paste this with your own entity ID (**Settings** ➡️ **Devices &
+services** ➡️ **Entities**), then **Save**:
 
 ```yaml
 type: custom:entity-progress-card
@@ -198,20 +202,59 @@ name: Washing Machine
 icon: mdi:washing-machine
 ```
 
-Want a specific color, a different bar style, an alert when it crosses a
-threshold? Same options work the same way across all **7 variants** — Card,
+Want the bar to turn red when a battery runs low (under 10 %)? One line does it:
+
+<!-- markdownlint-disable MD013 -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/theme-critical-low-dark-dbf8b1.png">
+  <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/theme-critical-low-light-6df2e8.png" alt="Bars at 25, 50, 75 and 95 %: yellow, green, green, green" width="750"/>
+</picture>
+<!-- markdownlint-enable MD013 -->
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.phone_battery_level
+theme: critical_when_low
+```
+
+Your own limit, red under 20 %? Set your zones with a [custom theme]. A battery
+you charge? `theme: battery_adaptive` also warns when it stays near 100 % on the
+charger. Every theme, with its colors, is in the [Theme Guide].
+
+Colors, bar styles, alerts: most options work across all **7 variants** — Card,
 Template Card, Badge, Badge Template, Tile Feature, Multi-Card, Multi-Feature.
+The [option map] shows which ones each accepts.
 
 ## 📚 Guides
 
 That's enough to get started. Past that, here's where the rest of the depth
 lives — pick whichever guide matches what you're trying to do:
 
-| Guide                                  | What's in it                                                                                                                                                 |
-| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 🍳 [Cookbook][cookbook]                | Every variant's option summary, every visual effect with a screenshot, and real-world recipes (washing machine brands, an SSL countdown, a sun-tracking bar) |
-| 🎨 [Theme Guide]                       | All 12 built-in themes with their exact value ranges, the full `--epb-*` CSS API, and the DOM reference for `card_mod`/UI-X styling                          |
-| 📖 [Full Configuration Reference][FCR] | Every option, every variant — type, default, and a working example                                                                                           |
+| Guide                                                 | What's in it                                                                                                                                                   |
+| ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 🍳&nbsp;[Cookbook][cookbook]                          | Ready-made recipes (washing machine brands, an SSL countdown, a sun-tracking bar), a screenshot of every visual effect, and each variant's options at a glance |
+| 🎨&nbsp;[Theme&nbsp;Guide][Theme Guide]               | All 12 built-in themes with their exact value ranges, the full `--epb-*` CSS API, and the DOM reference for `card_mod`/UI-X styling                            |
+| 📖&nbsp;[Full&nbsp;Configuration&nbsp;Reference][FCR] | Every option, every variant — type, default, and a working example                                                                                             |
+| 🗺️&nbsp;[Option&nbsp;map][Option map]                 | Which options each of the 7 variants accepts, in one table                                                                                                     |
+
+<!-- doc-version -->
+
+These guides describe the latest stable release. Testing a release candidate, or
+using an older release? Open the
+[repository](https://github.com/francois-le-ko4la/lovelace-entity-progress-card)
+on GitHub and pick its tag.
+<!-- /doc-version -->
+
+## 🚨 Errors, Deprecations & Troubleshooting
+
+A card showing a message is not broken, and nothing in your Home Assistant has
+changed: often, an entity is just offline.
+
+- The card says `Unavailable`, `Unknown` or `not found`? See [what it means and
+  what to do][unavailable-entities].
+- Anything else: the [Errors, Deprecations & Troubleshooting Guide].
+- Still stuck? Ask on [Discord] or open a [GitHub issue][GitHub Issues]: a
+  screenshot is enough.
 
 <a id="accessibility"></a>
 
@@ -239,19 +282,17 @@ The card is designed to work well for everyone, out of the box.
 
 </details>
 
-## 🌍 Language & Number Support
+<a id="language-and-numbers"></a>
 
-🌟 Our goal is to make this card a seamless and intuitive tool for users
-worldwide, eliminating language barriers and ensuring proper data formatting for
-every region. The card defaults to the language set in the user's profile, and
-is translated into **41 languages**.
+## 🌍 Language & numbers
+
+The card uses the language of your Home Assistant profile and formats numbers
+for that region. It is translated into **41 languages**.
 
 <details>
 <summary><strong>Full language list & number formatting (click to expand)</strong></summary>
 
-### 📖 Text Display
-
-We strive to make this card as inclusive as possible, with support for:
+**Supported languages**
 
 <!-- markdownlint-disable MD060 -->
 
@@ -311,7 +352,7 @@ We strive to make this card as inclusive as possible, with support for:
 
 More languages may be added in the future to enhance accessibility!
 
-### 🔢 Intelligent Number Formatting
+**Number formatting**
 
 Numbers are displayed based on your regional preferences, using:
 
@@ -323,11 +364,6 @@ By default, the card uses standard Arabic numerals (0-9) for maximum
 compatibility.
 
 </details>
-
-## 🚨 Errors, Deprecations & Troubleshooting
-
-Need help? Find solutions and important updates in the [Errors, Deprecations &
-Troubleshooting Guide].
 
 ## 🧪 Code quality
 
@@ -351,7 +387,8 @@ keeps the GitHub Actions up to date.
 
 ## 👥 Contributing
 
-Want more features? Want to improve this card? Contributions are welcome! 🚀  
+Want more features? Want to improve this card? Contributions are welcome! 🚀
+
 Check out the [Contributing Guide] to get started.
 
 ## 🙏 Credits & Acknowledgements
@@ -417,9 +454,15 @@ This project is licensed under the [GPL-3.0 license].
 
 [ha-badge]:
   https://img.shields.io/badge/Home%20Assistant-blue?style=flat&logo=homeassistant&logoColor=white&color=blue
+[docs-dev-badge]:
+  https://img.shields.io/github/last-commit/francois-le-ko4la/lovelace-entity-progress-card/main?path=docs&label=Docs%20(main)&logo=github&style=flat
+[docs-badge]:
+  https://img.shields.io/endpoint?url=https%3A%2F%2Ffrancois-le-ko4la.github.io%2Flovelace-entity-progress-card%2Fbadge.json&style=flat
 [discord-badge]:
   https://img.shields.io/badge/Discord-%235865F2?style=flat&logo=Discord&logoColor=white&color=%235865F2
 [hacs-badge]: https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=flat
+[marketplace-badge]:
+  https://img.shields.io/badge/Marketplace-2026.11%2B-41BDF5.svg?style=flat&logo=homeassistant&logoColor=white
 [release-badge]:
   https://img.shields.io/github/v/release/francois-le-ko4la/lovelace-entity-progress-card?label=latest%20stable&style=flat&color=blue
 [license-badge]:
@@ -436,8 +479,9 @@ This project is licensed under the [GPL-3.0 license].
   https://img.shields.io/badge/TypeScript-strict-3178C6?style=flat&logo=typescript&logoColor=white
 [prettier-badge]:
   https://img.shields.io/badge/code%20style-prettier-ff69b4?style=flat&logo=prettier&logoColor=white
-[repo-link]: https://github.com/francois-le-ko4la/lovelace-entity-progress-card
+[ha-link]: https://www.home-assistant.io
 [hacs-link]: https://hacs.xyz
+[marketplace-link]: https://www.home-assistant.io/integrations/marketplace
 [release-link]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/releases/latest
 [ci-link]:
@@ -453,17 +497,26 @@ This project is licensed under the [GPL-3.0 license].
 [GPL-3.0 license]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/LICENSE
 [discord-link]: https://discord.gg/tyMQ2SfyNG
+[docs-dev-link]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card
+[docs-link]: https://francois-le-ko4la.github.io/lovelace-entity-progress-card/
 [Discord]: https://discord.gg/tyMQ2SfyNG
 [GitHub Issues]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/issues
 [Errors, Deprecations & Troubleshooting Guide]:
-  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/troubleshooting.md
+  https://francois-le-ko4la.github.io/lovelace-entity-progress-card/troubleshooting/
+[unavailable-entities]:
+  https://francois-le-ko4la.github.io/lovelace-entity-progress-card/troubleshooting/#what-you-see-and-what-to-do
 [Contributing Guide]:
-  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/contributing.md
+  https://francois-le-ko4la.github.io/lovelace-entity-progress-card/contributing/
 [Theme Guide]:
-  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/theme.md
+  https://francois-le-ko4la.github.io/lovelace-entity-progress-card/theme/
+[custom theme]:
+  https://francois-le-ko4la.github.io/lovelace-entity-progress-card/theme/#custom-theme
 [cookbook]:
-  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/cookbook.md
+  https://francois-le-ko4la.github.io/lovelace-entity-progress-card/cookbook/
+[Option map]:
+  https://francois-le-ko4la.github.io/lovelace-entity-progress-card/option-map/
 [ha-logo]: https://avatars.githubusercontent.com/u/13844975?s=64&v=4
 [chrome-logo]:
   https://raw.githubusercontent.com/alrra/browser-logos/main/src/chrome/chrome_64x64.png
@@ -476,14 +529,18 @@ This project is licensed under the [GPL-3.0 license].
 [opera-logo]:
   https://raw.githubusercontent.com/alrra/browser-logos/main/src/opera/opera_64x64.png
 [FCR]:
-  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md
+  https://francois-le-ko4la.github.io/lovelace-entity-progress-card/configuration/
 [config-alert_when]:
-  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#alert_when
+  https://francois-le-ko4la.github.io/lovelace-entity-progress-card/configuration/#alert_when
 [config-watermark]:
-  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#watermark
+  https://francois-le-ko4la.github.io/lovelace-entity-progress-card/configuration/#watermark
 [config-custom_theme]:
-  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#custom_theme
+  https://francois-le-ko4la.github.io/lovelace-entity-progress-card/configuration/#custom_theme
 [config-trend_indicator]:
-  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#trend_indicator
+  https://francois-le-ko4la.github.io/lovelace-entity-progress-card/configuration/#trend_indicator
 [config-peak_marker]:
-  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#peak_marker
+  https://francois-le-ko4la.github.io/lovelace-entity-progress-card/configuration/#peak_marker
+[config-bar_effect]:
+  https://francois-le-ko4la.github.io/lovelace-entity-progress-card/configuration/#bar_effect
+[config-icon_animation]:
+  https://francois-le-ko4la.github.io/lovelace-entity-progress-card/configuration/#icon_animation

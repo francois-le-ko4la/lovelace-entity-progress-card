@@ -180,7 +180,8 @@
         "gradient_reverse": "উল্টো গ্রেডিয়েন্ট",
         "radius": "বৃত্তাকার কোণ",
         "shimmer": "শিমার",
-        "shimmer_reverse": "উল্টো শিমার"
+        "shimmer_reverse": "উল্টো শিমার",
+        "wave": "ঢেউ"
       },
       "bar_orientation": {
         "ltr": "LTR",

@@ -150,7 +150,7 @@ class EntityProgressMultiBase extends HACore {
     return container;
   }
 
-  // Children are our own entity-progress-feature elements - defined at module
+  // Children are our own entity-progress-card elements - defined at module
   // load, so document.createElement + setConfig + hass is synchronous (no
   // loadCardHelpers). setConfig before append so connectedCallback renders with
   // the config already in place.

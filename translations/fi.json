@@ -180,7 +180,8 @@
         "gradient_reverse": "Liukuväri käänteinen",
         "radius": "Pyöristetyt kulmat",
         "shimmer": "Hohto",
-        "shimmer_reverse": "Hohto käänteinen"
+        "shimmer_reverse": "Hohto käänteinen",
+        "wave": "Aalto"
       },
       "bar_orientation": {
         "ltr": "LTR",

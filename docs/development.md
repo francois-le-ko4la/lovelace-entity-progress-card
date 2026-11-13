@@ -1722,7 +1722,7 @@ reasoning survives a maintainer handoff instead of living only in chat history.
 - **suffix** (`?suffix=rc`) renames and nothing else: every element, editor and
   card-picker entry of that copy gets `-rc` / `(rc)`, and its diagnostic becomes
   `EPB_RC` — a test copy of the shipped file beside a HACS install, no dev build
-  needed (`docs/rc-testing.md`, Method 2). Lowercase letters and digits, 16 at
+  needed (`docs/rc-testing.md`, Advanced). Lowercase letters and digits, 16 at
   most, or it is ignored; a dev build defaults to `dev` (`suffixOf`). Every tag
   goes through `suffixedName()`. One limit: two copies of the **same version**
   share one host table (its key is fixed at build time), so the second one's

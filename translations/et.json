@@ -180,7 +180,8 @@
         "gradient_reverse": "Gradient pööratud",
         "radius": "Ümarad nurgad",
         "shimmer": "Sära",
-        "shimmer_reverse": "Sära pööratud"
+        "shimmer_reverse": "Sära pööratud",
+        "wave": "Laine"
       },
       "bar_orientation": {
         "ltr": "LTR",

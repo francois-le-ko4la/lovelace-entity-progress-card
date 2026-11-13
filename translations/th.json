@@ -180,7 +180,8 @@
         "gradient_reverse": "ไล่สีย้อน",
         "radius": "มุมโค้งมน",
         "shimmer": "แวววาว",
-        "shimmer_reverse": "แวววาวย้อน"
+        "shimmer_reverse": "แวววาวย้อน",
+        "wave": "คลื่น"
       },
       "bar_orientation": {
         "ltr": "LTR",

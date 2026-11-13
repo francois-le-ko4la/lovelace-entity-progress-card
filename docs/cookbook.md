@@ -1,6 +1,6 @@
 <a id="top"></a>
 
-# 🍳 Cookbook
+# Cookbook
 
 Full options, every variant, and the longer real-world recipes — more depth than
 the [README](../README.md)'s quickstart calls for, but useful once you're past
@@ -8,98 +8,30 @@ the basics. See [`configuration.md`](configuration.md) if you want the
 authoritative reference instead (every option, every type, every default,
 cross-variant compatibility badges).
 
-## Table of Contents
-
-- 🧩 [Variant reference](#variant-reference) — which one, then options,
-  defaults, and quick examples
-  - 🧱 [Entity Progress Components](#components)
-    - [Component Overview](#components-overview)
-    - [Purpose & Use Cases](#purpose)
-      - [Entity Progress Card](#purpose-progress-card)
-      - [When to Use the Template Version?](#purpose-template)
-      - [Badge vs. Card – Which One?](#purpose-badge)
-  - [Entity Progress Card](#card)
-    - [Options](#card-options)
-    - [Getting Started](#card-getting-started)
-    - [Power Features](#card-power-features)
-  - [Entity Progress Card Template](#card-template)
-    - [Options](#card-template-options)
-    - [Getting Started](#card-template-getting-started)
-    - [Power Features](#card-template-power-features)
-  - [Entity Progress Badge](#badge)
-    - [Options](#badge-options)
-    - [Getting Started](#badge-getting-started)
-  - [Entity Progress Badge Template](#badge-template)
-    - [Options](#badge-template-options)
-    - [Getting Started](#badge-template-getting-started)
-  - [Entity Progress Tile Feature](#tile-feature)
-    - [Options](#tile-feature-options)
-    - [Getting Started](#tile-feature-getting-started)
-  - [Entity Progress Multi-Card / Multi-Feature](#multi)
-    - [Options](#multi-options)
-    - [Getting Started](#multi-getting-started)
-- ✨ [Effects & formatting](#effects-formatting) — cross-cutting, work the same
-  on every variant
-  - [Visual Effects](#visual-effects)
-    - [`bar_effect`: shimmer, gradient, glass, radius](#effect-bar-effects)
-    - [`bar_segments`: discrete blocks instead of a continuous fill](#effect-bar-segments)
-    - [`bar_ring`: shape the ring around the icon](#effect-bar-ring)
-    - [`interpolate`: smooth color transitions between zones](#effect-interpolate)
-    - [`force_circular_background`: the icon's circle, always on](#effect-force-circular-background)
-    - [`icon_animation`: washing_machine, battery_charging, spin, ping…](#effect-icon-animation)
-    - [`alert_when`: the card reacts on its own](#effect-alert-when)
-    - [`watermark`: markers without leaving the bar](#effect-watermark)
-    - [`bar_color_mode: segment`: theme zones as distinct blocks](#effect-segment)
-    - [`bar_color_mode: rainbow_full`: the whole theme, always visible](#effect-rainbow)
-    - [`status_label`: a GitHub-style pill, colored automatically](#effect-status-label)
-    - [`trend_indicator`: which way the value is moving](#effect-trend-indicator)
-    - [`peak_marker`: min/max/average, right on the bar](#effect-peak-marker)
-    - [`custom_theme`: your own color zones](#effect-custom-theme)
-    - [`bar_stack`: several entities, one bar](#effect-bar-stack)
-    - [`center_zero`: bidirectional bars](#effect-center-zero)
-    - [`hide: [shape]`: drop the icon's circular background](#effect-hide-shape)
-    - [`density: compact`: the smallest useful footprint, either layout](#effect-density-compact)
-  - [Display Formatting](#display-formatting)
-    - [`unit_position`: currency-style values](#format-unit-position)
-    - [`value_compact`: abbreviate large numbers](#format-value-compact)
-    - [`value_sign`: force an explicit +/-](#format-value-sign)
-- 🌟 [Real-world recipes](#real-world-recipes) — full narrative walkthroughs
-  - [Recreate the Showcase](#recreate-the-showcase)
-    - [Living room — full rainbow, centered, with a status pill](#showcase-living-room)
-    - [Garage — a pulsing alert on a vertical thermometer](#showcase-garage)
-    - [Energy — two bars and a net balance, in one Tile feature](#showcase-energy)
-    - [Printer — ink levels in a Mushroom Template card](#showcase-printer)
-  - 🧺
-    [The Laundry Mystery: Decoding Washer Entities Across Brands](#laundry-mystery)
-  - 🌀
-    [Washing Machine Progress: Three Brands, Three Approaches](#washing-machine-three-brands)
-  - 🧮 [Cracking a Complex Case with a Simple Helper](#simple-helper)
-  - 🔒 [Don't Let It Expire! (SSL Certificate Countdown)](#ssl-expiry)
-  - 🌅 [Follow the Sun](#follow-the-sun)
-
----
-
-<a id="variant-reference"></a>
+> [!NOTE]
+>
+> New here? Install the card first: see
+> [Installation](../README.md#installation). To use a YAML below, edit your
+> dashboard, add a card, choose **Manual**, paste the YAML, then **Save**:
+> nothing changes until you save. Something shows an error? See
+> [Troubleshooting](troubleshooting.md). Time left on a washing machine? See
+> [The Laundry Mystery](#laundry-mystery).
 
 ## Variant reference
 
 Which one to use, and how to configure it once you've picked: an overview to
 help you decide, then options, defaults, and quick examples. One chapter per
-variant after the overview, same structure throughout: `Options`,
-`Getting Started`, and (where it applies) `Power Features` linking out to the
-recipes below.
+variant after the overview (Multi-Card and Multi-Feature share one), same
+structure throughout: `Options`, `Getting Started`, and for the Card and the
+Card Template, `Recipes` linking out to the walkthroughs below.
 
 <a id="components"></a>
 
-### 🧱 Entity Progress Components
-
-This documentation is meant to help you understand and use the different Entity
-Progress components in Home Assistant (cards and badges, both standard and
-template versions), providing clear guidance.
+### Entity Progress Components
 
 <a id="components-overview"></a>
 
-#### 📚 Component Overview
+#### Component Overview
 
 | Component                                      | Description                                                      |
 | ---------------------------------------------- | ---------------------------------------------------------------- |
@@ -117,11 +49,11 @@ complexity, and UI layout.
 
 <a id="purpose"></a>
 
-#### 🎯 Purpose & Use Cases
+#### Purpose & Use Cases
 
 <a id="purpose-progress-card"></a>
 
-##### ✅ Entity Progress Card
+##### Entity Progress Card
 
 This card is ideal when:
 
@@ -141,16 +73,20 @@ _Examples_:
 
 <a id="purpose-template"></a>
 
-##### 🧠 When to Use the Template Version?
+##### When to Use the Template Version?
 
 Use the Template version (card or badge) when:
 
 - You need to calculate the percentage manually from multiple sensor values
   (e.g., water tank level from height readings).
 - Your use case involves conditional logic, math, or non-linear scales.
-- You want to use Jinja2 templates directly in the YAML, without creating extra
-  helpers or sensors.
+- You want to use Jinja2 templates (Home Assistant's template language, the one
+  of **Settings** ➡️ **Tools** ➡️ **Template**) directly in the YAML, without
+  creating extra helpers (**Settings** ➡️ **Devices & services** ➡️ **Helpers**)
+  or sensors. Not available in a Multi-Card row: stack Template cards instead.
 - You need maximum flexibility without being restricted by the standard options.
+
+If you don't write templates, use the standard card.
 
 _Examples_:
 
@@ -162,7 +98,7 @@ _Examples_:
 
 <a id="purpose-badge"></a>
 
-##### 🔳 Badge vs. Card – Which One?
+##### Badge vs. Card – Which One?
 
 | Use a **Card** when…                         | Use a **Badge** when…                      |
 | -------------------------------------------- | ------------------------------------------ |
@@ -176,21 +112,21 @@ _Examples_:
 
 <a id="card"></a>
 
-### 🧩 Entity Progress Card
+### Entity Progress Card
 
 The one you'll reach for by default: one entity, one bar, zero surprises. Drop
 it in, and it already knows what to show — right unit, right icon, right math,
 no config needed to get something useful on screen.
 
-Strong on: tap/hold/double-tap actions, theme-driven colors, and every
+Best for: tap/hold/double-tap actions, theme-driven colors, and every
 [visual effect](#visual-effects) (shimmer, rainbow, alerts, watermarks…) without
-touching a template. Reach for it for a vacuum's cleaning progress, a device's
+touching a template. Use it for a vacuum's cleaning progress, a device's
 remaining battery, or any sensor whose percentage Home Assistant can already
 work out on its own.
 
 <a id="card-options"></a>
 
-#### 🛠️ Options
+#### Options
 
 <details>
 <summary>Show options</summary>
@@ -271,7 +207,7 @@ external entity via `max_value`.
 
 <a id="card-getting-started"></a>
 
-#### 🧪 Getting Started
+#### Getting Started
 
 > [!TIP]
 >
@@ -283,12 +219,40 @@ external entity via `max_value`.
 > [!IMPORTANT]
 >
 > Some examples below highlight interoperability with other popular Home
-> Assistant projects. To replicate them, ensure the following are set up:
+> Assistant projects. To replicate them, install these custom cards from HACS
+> (only for the examples that use them):
 >
-> 📌
-> [vertical-stack-in-card](https://github.com/ofekashery/vertical-stack-in-card)
-> 📌 [auto-entities](https://github.com/thomasloven/lovelace-auto-entities) 📌
-> [card_mod](https://github.com/thomasloven/lovelace-card-mod)
+> - [vertical-stack-in-card](https://github.com/ofekashery/vertical-stack-in-card)
+> - [auto-entities](https://github.com/thomasloven/lovelace-auto-entities)
+> - [card_mod](https://github.com/thomasloven/lovelace-card-mod)
+
+**Basic usage**:
+
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/rgb-dark-6333fb.png">
+  <img src="images/rgb-light-fe5a2f.png"
+    alt="A card in a custom RGB purple, icon and bar"
+    width="369"/>
+</picture>
+
+<br />
+<details>
+<summary>Show YAML</summary>
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.hp_envy_6400_series_tri_color_cartridge
+name: RVB
+icon: mdi:grain
+color: rgb(110, 65, 171)
+bar_color: rgb(110, 65, 171)
+icon_tap_action:
+  action: more-info
+```
+
+</details>
+<br />
 
 **A pulsing alert on threshold** — the card reacts on its own, no template
 needed:
@@ -349,34 +313,6 @@ bar_stack:
       color: '#FFB703'
     - entity: sensor.circuit_garage_power
       color: '#06D6A0'
-```
-
-</details>
-<br />
-
-**Basic usage**:
-
-<picture>
-  <source media="(prefers-color-scheme: dark)"
-    srcset="images/rgb-dark-6333fb.png">
-  <img src="images/rgb-light-fe5a2f.png"
-    alt="Example RVB"
-    width="369"/>
-</picture>
-
-<br />
-<details>
-<summary>Show YAML</summary>
-
-```yaml
-type: custom:entity-progress-card
-entity: sensor.hp_envy_6400_series_tri_color_cartridge
-name: RVB
-icon: mdi:grain
-color: rgb(110, 65, 171)
-bar_color: rgb(110, 65, 171)
-icon_tap_action:
-  action: more-info
 ```
 
 </details>
@@ -490,7 +426,7 @@ grid_options:
   <source media="(prefers-color-scheme: dark)"
     srcset="images/rgb-loop-dark-14a99a.gif">
   <img src="images/rgb-loop-light-9993e1.gif"
-    alt="RVB icon animation"
+    alt="The same card, its icon bouncing (card_mod)"
     width="369"/>
 </picture>
 
@@ -537,7 +473,7 @@ combined with `auto-entities` for dynamic listing and
   <source media="(prefers-color-scheme: dark)"
     srcset="images/stack-dark-0010ff.gif">
   <img src="images/stack-light-11c5dd.gif"
-    alt="Stack"
+    alt="Eight battery cards in a stack, red when low, green when charged"
     width="750"/>
 </picture>
 
@@ -700,7 +636,7 @@ cards:
 
 <a id="card-power-features"></a>
 
-#### 🚀 Power Features
+#### Recipes
 
 Real-world setups that go beyond a quick config — brand-specific washing machine
 quirks, deriving a percentage from a start/end time via a Helper, an SSL
@@ -719,17 +655,17 @@ certificate expiry countdown:
 
 <a id="card-template"></a>
 
-### 🧩 Entity Progress Card Template
+### Entity Progress Card Template
 
 When the base Card's math doesn't cover your case — multi-sensor formulas,
 non-linear scales, conditional colors — this is where you drop into Jinja and
 take over.
 
-Strong on: every field (`name`, `percent`, `bar_color`, `icon`…) becomes its own
-template, so nothing is off-limits. Reach for it for a water tank's level
-computed from a height sensor, a laundry cycle's remaining time derived from a
-template sensor, or any percentage that needs conditional logic instead of a
-fixed min/max.
+Best for: every field (`name`, `percent`, `bar_color`, `icon`…) becomes its own
+template, so nothing is off-limits. Use it for a water tank's level computed
+from a height sensor, a laundry cycle's remaining time derived from a template
+sensor, or any percentage that needs conditional logic instead of a fixed
+min/max.
 
 > [!NOTE]
 >
@@ -738,57 +674,57 @@ fixed min/max.
 
 <a id="card-template-options"></a>
 
-#### 🛠️ Options
+#### Options
 
 <details>
 <summary>Show options</summary>
 
-| **Option**                   | **Type**                  | **Description**                                                                | **Link**                                         |
-| :--------------------------- | :------------------------ | :----------------------------------------------------------------------------- | :----------------------------------------------- |
-| **Data Options**             |                           |                                                                                |                                                  |
-| `entity`                     | string (optional)         | Entity ID.                                                                     | [Config Ref.][config-entity]                     |
-| `fast_refresh`               | boolean (optional)        | Refresh `now()` templates every second                                         | [Config Ref.][config-fast_refresh]               |
-| **Jinja Options**            |                           |                                                                                |                                                  |
-| `name`                       | JINJA                     | Renders the customized entity name                                             | [Config Ref.][name-jinja]                        |
-| `icon`                       | JINJA                     | Main icon shown on the card                                                    | [Config Ref.][icon-jinja]                        |
-| `secondary`                  | JINJA                     | Renders the secondary content (e.g., unit, status, additional info)            | [Config Ref.][secondary-jinja]                   |
-| `percent`                    | JINJA                     | Numerical value representing progress (0–100%), affects progress bar width     | [Config Ref.][percent-jinja]                     |
-| `color`                      | JINJA                     | Dynamic color for the icon and shape, adapted using `ThemeManager`             | [Config Ref.][color-jinja]                       |
-| `bar_color`                  | JINJA                     | Dynamic progress bar color, also handled through `ThemeManager`                | [Config Ref.][bar_color-jinja]                   |
-| **Styling Options**          |                           |                                                                                |                                                  |
-| `badge_icon`                 | Jinja (optional)          | Dynamic badge icon                                                             | [Config Ref.][config-badge_icon]                 |
-| `badge_color`                | Jinja (optional)          | Dynamic badge color                                                            | [Config Ref.][config-badge_color]                |
-| `bar_size`                   | string (optional)         | Customize the size or thickness of the progress bar.                           | [Config Ref.][config-bar_size]                   |
-| `bar_position`               | string (optional)         | Position of the progress bar                                                   | [Config Ref.][config-bar_position]               |
-| `bar_single_line`            | boolean (optional)        | single-line mode for overlay bars                                              | [Config Ref.][config-bar_single_line]            |
-| `bar_segments`               | integer (optional)        | Render bar as discrete segments                                                | [Config Ref.][config-bar_segments]               |
-| `bar_ring`                   | object (optional)         | Start, gap and edge of the ring                                                | [Config Ref.][config-bar_ring]                   |
-| `bar_effect`                 | string/list/jinja         | Visual effects for the bar                                                     | [Config Ref.][config-bar_effect]                 |
-| `bar_color_mode`             | string (optional)         | Bar fill color rendering mode                                                  | [Config Ref.][config-bar_color_mode]             |
-| `bar_max_width`              | string (optional)         | Limits the maximum width of the bar                                            | [Config Ref.][config-bar_max_width]              |
-| `bar_aligned`                | boolean/string (optional) | Bars start at the same x                                                       | [Config Ref.][config-bar_aligned]                |
-| `bar_orientation`            | string (optional)         | Define the direction of the progress bar (e.g., `ltr`, `rtl`).                 | [Config Ref.][config-bar_orientation]            |
-| `icon_animation`             | string (optional)         | Animate icon on active state                                                   | [Config Ref.][config-icon_animation]             |
-| `force_circular_background`  | boolean (optional)        | Force icon circle background.                                                  | [Config Ref.][config-force_circular_background]  |
-| `trend_indicator`            | string (optional)         | Displays trend icons.                                                          | [Config Ref.][config-trend_indicator]            |
-| `status_label`               | string/Map (optional)     | Status pill on the card                                                        | [Config Ref.][config-status_label]               |
-| `text_effect`                | string (optional)         | Text readability effect (`shadow`, `halo`, `outline`, `plate`, `contrast`).    | [Config Ref.][config-text_effect]                |
-| `density`                    | string (optional)         | Smaller footprint preset (`default`, `compact`, `single_line`).                | [Config Ref.][config-density]                    |
-| `layout`                     | string (optional)         | Adjust the overall layout (e.g., `horizontal`, `vertical`).                    | [Config Ref.][config-layout]                     |
-| `frameless`                  | boolean (optional)        | Remove the default card border and background for a seamless, flat appearance. | [Config Ref.][config-frameless]                  |
-| `marginless`                 | boolean (optional)        | Remove vertical margin for a more compact template display.                    | [Config Ref.][config-marginless]                 |
-| `height`                     | string (optional)         | Card height                                                                    | [Config Ref.][config-height]                     |
-| `min_width`                  | string (optional)         | Set a minimum width for the template to ensure consistent layout.              | [Config Ref.][config-min_width]                  |
-| `reverse_secondary_info_row` | boolean (optional)        | Flip info bar layout.                                                          | [Config Ref.][config-reverse_secondary_info_row] |
-| `multiline`                  | boolean (optional)        | Split secondary text on 2 lines.                                               | [Config Ref.][config-multiline]                  |
-| `content_order`              | list (optional)           | Place name, name_info, info, state_content, value and bar on lines.            | [Config Ref.][config-content_order]              |
-| `center_zero`                | boolean (optional)        | Center the bar on 0.                                                           | [Config Ref.][config-center_zero]                |
-| `theme`                      | string (optional)         | Applies a preset theme                                                         | [Config Ref.][config-theme]                      |
-| `hide`                       | list (optional)           | Hide parts of the card.                                                        | [Config Ref.][config-hide]                       |
-| `watermark`                  | map (optional)            | Adds min/max overlays.                                                         | [Config Ref.][config-watermark]                  |
-| `alert_when`                 | map (optional)            | Highlight card on threshold crossing                                           | [Config Ref.][config-alert_when]                 |
-| **Behavior & Actions**       |                           |                                                                                |                                                  |
-| `xyz_action`                 | map (optional)            | Configure custom actions (e.g., `tap`, `hold`, etc.).                          | [Config Ref.][config-xyz_action]                 |
+| **Option**                   | **Type**                     | **Default**  | **Description**                                                                | **Link**                                         |
+| :--------------------------- | :--------------------------- | :----------- | :----------------------------------------------------------------------------- | :----------------------------------------------- |
+| **Data Options**             |                              |              |                                                                                |                                                  |
+| `entity`                     | string (optional)            | —            | Entity ID.                                                                     | [Config Ref.][config-entity]                     |
+| `fast_refresh`               | boolean (optional)           | `false`      | Refresh `now()` templates every second                                         | [Config Ref.][config-fast_refresh]               |
+| **Jinja Options**            |                              |              |                                                                                |                                                  |
+| `name`                       | Jinja (optional)             | —            | Renders the customized entity name                                             | [Config Ref.][name-jinja]                        |
+| `icon`                       | Jinja (optional)             | —            | Main icon shown on the card                                                    | [Config Ref.][icon-jinja]                        |
+| `secondary`                  | Jinja (optional)             | —            | Renders the secondary content (e.g., unit, status, additional info)            | [Config Ref.][secondary-jinja]                   |
+| `percent`                    | Jinja (optional)             | —            | Numerical value representing progress (0–100%), affects progress bar width     | [Config Ref.][percent-jinja]                     |
+| `color`                      | Jinja (optional)             | —            | Dynamic color for the icon and shape: a color name or any CSS color            | [Config Ref.][color-jinja]                       |
+| `bar_color`                  | Jinja (optional)             | —            | Dynamic progress bar color: a color name or any CSS color                      | [Config Ref.][bar_color-jinja]                   |
+| **Styling Options**          |                              |              |                                                                                |                                                  |
+| `badge_icon`                 | Jinja (optional)             | —            | Dynamic badge icon                                                             | [Config Ref.][config-badge_icon]                 |
+| `badge_color`                | Jinja (optional)             | —            | Dynamic badge color                                                            | [Config Ref.][config-badge_color]                |
+| `bar_size`                   | string (optional)            | `small`      | Customize the size or thickness of the progress bar.                           | [Config Ref.][config-bar_size]                   |
+| `bar_position`               | string (optional)            | `default`    | Position of the progress bar                                                   | [Config Ref.][config-bar_position]               |
+| `bar_single_line`            | boolean (optional)           | `false`      | single-line mode for overlay bars                                              | [Config Ref.][config-bar_single_line]            |
+| `bar_segments`               | integer (optional)           | —            | Render bar as discrete segments                                                | [Config Ref.][config-bar_segments]               |
+| `bar_ring`                   | object (optional)            | —            | Start, gap and edge of the ring                                                | [Config Ref.][config-bar_ring]                   |
+| `bar_effect`                 | string/list/Jinja (optional) | —            | Visual effects for the bar                                                     | [Config Ref.][config-bar_effect]                 |
+| `bar_color_mode`             | string (optional)            | `auto`       | Bar fill color rendering mode                                                  | [Config Ref.][config-bar_color_mode]             |
+| `bar_max_width`              | string (optional)            | -            | Limits the maximum width of the bar                                            | [Config Ref.][config-bar_max_width]              |
+| `bar_aligned`                | boolean/string (optional)    | `false`      | Lines the bar up with the cards sharing its group name                         | [Config Ref.][config-bar_aligned]                |
+| `bar_orientation`            | string (optional)            | `ltr`        | Define the direction of the progress bar (e.g., `ltr`, `rtl`).                 | [Config Ref.][config-bar_orientation]            |
+| `icon_animation`             | string (optional)            | `none`       | Animate icon on active state                                                   | [Config Ref.][config-icon_animation]             |
+| `force_circular_background`  | boolean (optional)           | `false`      | Force icon circle background.                                                  | [Config Ref.][config-force_circular_background]  |
+| `trend_indicator`            | string (optional)            | `false`      | Displays trend icons.                                                          | [Config Ref.][config-trend_indicator]            |
+| `status_label`               | string/Map (optional)        | —            | Status pill on the card                                                        | [Config Ref.][config-status_label]               |
+| `text_effect`                | string (optional)            | `none`       | Text readability effect (`shadow`, `halo`, `outline`, `plate`, `contrast`).    | [Config Ref.][config-text_effect]                |
+| `density`                    | string (optional)            | `default`    | Smaller footprint preset (`default`, `compact`, `single_line`).                | [Config Ref.][config-density]                    |
+| `layout`                     | string (optional)            | `horizontal` | Adjust the overall layout (e.g., `horizontal`, `vertical`).                    | [Config Ref.][config-layout]                     |
+| `frameless`                  | boolean (optional)           | `false`      | Remove the default card border and background for a seamless, flat appearance. | [Config Ref.][config-frameless]                  |
+| `marginless`                 | boolean (optional)           | `false`      | Remove vertical margin for a more compact template display.                    | [Config Ref.][config-marginless]                 |
+| `height`                     | string (optional)            | —            | Card height                                                                    | [Config Ref.][config-height]                     |
+| `min_width`                  | string (optional)            | —            | Set a minimum width for the template to ensure consistent layout.              | [Config Ref.][config-min_width]                  |
+| `reverse_secondary_info_row` | boolean (optional)           | `false`      | Flip info bar layout.                                                          | [Config Ref.][config-reverse_secondary_info_row] |
+| `multiline`                  | boolean (optional)           | `false`      | Split secondary text on 2 lines.                                               | [Config Ref.][config-multiline]                  |
+| `content_order`              | list (optional)              | layout's own | Place name, name_info, info, state_content, value and bar on lines.            | [Config Ref.][config-content_order]              |
+| `center_zero`                | boolean (optional)           | `false`      | Center the bar on 0.                                                           | [Config Ref.][config-center_zero]                |
+| `theme`                      | string (optional)            | —            | Applies a preset theme                                                         | [Config Ref.][config-theme]                      |
+| `hide`                       | list (optional)              | —            | Hide parts of the card.                                                        | [Config Ref.][config-hide]                       |
+| `watermark`                  | map (optional)               | —            | Adds min/max overlays.                                                         | [Config Ref.][config-watermark]                  |
+| `alert_when`                 | map (optional)               | —            | Highlight card on threshold crossing                                           | [Config Ref.][config-alert_when]                 |
+| **Behavior & Actions**       |                              |              |                                                                                |                                                  |
+| `xyz_action`                 | map (optional)               | see defaults | Configure custom actions (e.g., `tap`, `hold`, etc.).                          | [Config Ref.][config-xyz_action]                 |
 
 </details>
 <br />
@@ -799,7 +735,7 @@ See [Full Configuration Reference][FCR].
 
 <a id="card-template-getting-started"></a>
 
-#### 🧪 Getting Started
+#### Getting Started
 
 <picture>
   <source media="(prefers-color-scheme: dark)"
@@ -868,7 +804,7 @@ tap_action:
 
 <a id="card-template-power-features"></a>
 
-#### 🚀 Power Features
+#### Recipes
 
 A dynamic sun-tracking bar — progress toward the next sunrise/sunset, live
 countdown, color that flips with the horizon — entirely computed in Jinja:
@@ -881,18 +817,18 @@ countdown, color that flips with the horizon — entirely computed in Jinja:
 
 <a id="badge"></a>
 
-### 🧩 Entity Progress Badge
+### Entity Progress Badge
 
 The Card, shrunk to fit a header row — same read at a glance, a fraction of the
 space.
 
-Strong on: dashboard headers, sidebars, and anywhere a full card would crowd the
-layout. Reach for it for a quick battery or Wi-Fi glance sitting next to your
-view's other badges, not as the dashboard's main focus.
+Best for: dashboard headers, sidebars, and anywhere a full card would crowd the
+layout. Use it for a quick battery or Wi-Fi glance sitting next to your view's
+other badges, not as the dashboard's main focus.
 
 <a id="badge-options"></a>
 
-#### 🛠️ Options
+#### Options
 
 <details>
 <summary>Show options</summary>
@@ -951,7 +887,7 @@ See [Full Configuration Reference][FCR]. We use the same syntax as the card.
 
 <a id="badge-getting-started"></a>
 
-#### 🧪 Getting Started
+#### Getting Started
 
 <picture>
   <source media="(prefers-color-scheme: dark)"
@@ -1006,15 +942,15 @@ bar_effect: shimmer
 
 <a id="badge-template"></a>
 
-### 🧩 Entity Progress Badge Template
+### Entity Progress Badge Template
 
 Same shrink, but Jinja-powered end to end — for when a badge needs the same
 custom math as the Card Template.
 
-Strong on: the same conditional logic and multi-sensor formulas as the Card
-Template, at badge size. Reach for it when a header row needs a computed
-percentage — a tank level, a custom quota — instead of a value Home Assistant
-already exposes directly.
+Best for: the same conditional logic and multi-sensor formulas as the Card
+Template, at badge size. Use it when a header row needs a computed percentage —
+a tank level, a custom quota — instead of a value Home Assistant already exposes
+directly.
 
 > [!NOTE]
 >
@@ -1023,42 +959,42 @@ already exposes directly.
 
 <a id="badge-template-options"></a>
 
-#### 🛠️ Options
+#### Options
 
 <details>
 <summary>Show options</summary>
 
-| **Option**                   | **Type**           | **Description**                                                                | **Link**                                         |
-| :--------------------------- | :----------------- | :----------------------------------------------------------------------------- | :----------------------------------------------- |
-| **Data Options**             |                    |                                                                                |                                                  |
-| `entity`                     | string (optional)  | Entity ID.                                                                     | [Config Ref.][config-entity]                     |
-| `fast_refresh`               | boolean (optional) | Refresh `now()` templates every second                                         | [Config Ref.][config-fast_refresh]               |
-| **Jinja Options**            |                    |                                                                                |                                                  |
-| `name`                       | JINJA              | Renders the customized entity name                                             | [Config Ref.][name-jinja]                        |
-| `icon`                       | JINJA              | Main icon shown on the card                                                    | [Config Ref.][icon-jinja]                        |
-| `secondary`                  | JINJA              | Renders the secondary content (e.g., unit, status, additional info)            | [Config Ref.][secondary-jinja]                   |
-| `percent`                    | JINJA              | Numerical value representing progress (0–100%), affects progress bar width     | [Config Ref.][percent-jinja]                     |
-| `color`                      | JINJA              | Dynamic color for the icon and shape, adapted using `ThemeManager`             | [Config Ref.][color-jinja]                       |
-| `bar_color`                  | JINJA              | Dynamic progress bar color, also handled through `ThemeManager`                | [Config Ref.][bar_color-jinja]                   |
-| **Styling Options**          |                    |                                                                                |                                                  |
-| `bar_size`                   | string (optional)  | Customize the size or thickness of the progress bar.                           | [Config Ref.][config-bar_size]                   |
-| `bar_position`               | string (optional)  | Bar under the text or around the icon                                          | [Config Ref.][config-bar_position]               |
-| `bar_segments`               | integer (optional) | Render bar as discrete segments                                                | [Config Ref.][config-bar_segments]               |
-| `bar_ring`                   | object (optional)  | Start, gap and edge of the ring                                                | [Config Ref.][config-bar_ring]                   |
-| `bar_effect`                 | string/list/jinja  | Visual effects for the bar                                                     | [Config Ref.][config-bar_effect]                 |
-| `bar_color_mode`             | string (optional)  | Bar fill color rendering mode                                                  | [Config Ref.][config-bar_color_mode]             |
-| `bar_orientation`            | string (optional)  | Define the direction of the progress bar (e.g., `ltr`, `rtl`).                 | [Config Ref.][config-bar_orientation]            |
-| `frameless`                  | boolean (optional) | Remove the default card border and background for a seamless, flat appearance. | [Config Ref.][config-frameless]                  |
-| `marginless`                 | boolean (optional) | Remove vertical margin for a more compact template display.                    | [Config Ref.][config-marginless]                 |
-| `min_width`                  | string (optional)  | Set a minimum width for the template to ensure consistent layout.              | [Config Ref.][config-min_width]                  |
-| `reverse_secondary_info_row` | boolean (optional) | Flip info bar layout.                                                          | [Config Ref.][config-reverse_secondary_info_row] |
-| `center_zero`                | boolean (optional) | Center the bar on 0.                                                           | [Config Ref.][config-center_zero]                |
-| `theme`                      | string (optional)  | Applies a preset theme                                                         | [Config Ref.][config-theme]                      |
-| `hide`                       | list (optional)    | Hide parts of the card.                                                        | [Config Ref.][config-hide]                       |
-| `watermark`                  | map (optional)     | Adds min/max overlays.                                                         | [Config Ref.][config-watermark]                  |
-| `alert_when`                 | map (optional)     | Highlight card on threshold crossing                                           | [Config Ref.][config-alert_when]                 |
-| **Behavior & Actions**       |                    |                                                                                |                                                  |
-| `xyz_action`                 | map (optional)     | Configure custom actions (e.g., `tap`, `hold`, etc.).                          | [Config Ref.][config-xyz_action]                 |
+| **Option**                   | **Type**                     | **Default**  | **Description**                                                                | **Link**                                         |
+| :--------------------------- | :--------------------------- | :----------- | :----------------------------------------------------------------------------- | :----------------------------------------------- |
+| **Data Options**             |                              |              |                                                                                |                                                  |
+| `entity`                     | string (optional)            | —            | Entity ID.                                                                     | [Config Ref.][config-entity]                     |
+| `fast_refresh`               | boolean (optional)           | `false`      | Refresh `now()` templates every second                                         | [Config Ref.][config-fast_refresh]               |
+| **Jinja Options**            |                              |              |                                                                                |                                                  |
+| `name`                       | Jinja (optional)             | —            | Renders the customized entity name                                             | [Config Ref.][name-jinja]                        |
+| `icon`                       | Jinja (optional)             | —            | Main icon shown on the card                                                    | [Config Ref.][icon-jinja]                        |
+| `secondary`                  | Jinja (optional)             | —            | Renders the secondary content (e.g., unit, status, additional info)            | [Config Ref.][secondary-jinja]                   |
+| `percent`                    | Jinja (optional)             | —            | Numerical value representing progress (0–100%), affects progress bar width     | [Config Ref.][percent-jinja]                     |
+| `color`                      | Jinja (optional)             | —            | Dynamic color for the icon and shape: a color name or any CSS color            | [Config Ref.][color-jinja]                       |
+| `bar_color`                  | Jinja (optional)             | —            | Dynamic progress bar color: a color name or any CSS color                      | [Config Ref.][bar_color-jinja]                   |
+| **Styling Options**          |                              |              |                                                                                |                                                  |
+| `bar_size`                   | string (optional)            | `small`      | Customize the size or thickness of the progress bar.                           | [Config Ref.][config-bar_size]                   |
+| `bar_position`               | string (optional)            | `default`    | Bar under the text or around the icon                                          | [Config Ref.][config-bar_position]               |
+| `bar_segments`               | integer (optional)           | —            | Render bar as discrete segments                                                | [Config Ref.][config-bar_segments]               |
+| `bar_ring`                   | object (optional)            | —            | Start, gap and edge of the ring                                                | [Config Ref.][config-bar_ring]                   |
+| `bar_effect`                 | string/list/Jinja (optional) | —            | Visual effects for the bar                                                     | [Config Ref.][config-bar_effect]                 |
+| `bar_color_mode`             | string (optional)            | `auto`       | Bar fill color rendering mode                                                  | [Config Ref.][config-bar_color_mode]             |
+| `bar_orientation`            | string (optional)            | `ltr`        | Define the direction of the progress bar (e.g., `ltr`, `rtl`).                 | [Config Ref.][config-bar_orientation]            |
+| `frameless`                  | boolean (optional)           | `false`      | Remove the default card border and background for a seamless, flat appearance. | [Config Ref.][config-frameless]                  |
+| `marginless`                 | boolean (optional)           | `false`      | Remove vertical margin for a more compact template display.                    | [Config Ref.][config-marginless]                 |
+| `min_width`                  | string (optional)            | —            | Set a minimum width for the template to ensure consistent layout.              | [Config Ref.][config-min_width]                  |
+| `reverse_secondary_info_row` | boolean (optional)           | `false`      | Flip info bar layout.                                                          | [Config Ref.][config-reverse_secondary_info_row] |
+| `center_zero`                | boolean (optional)           | `false`      | Center the bar on 0.                                                           | [Config Ref.][config-center_zero]                |
+| `theme`                      | string (optional)            | —            | Applies a preset theme                                                         | [Config Ref.][config-theme]                      |
+| `hide`                       | list (optional)              | —            | Hide parts of the card.                                                        | [Config Ref.][config-hide]                       |
+| `watermark`                  | map (optional)               | —            | Adds min/max overlays.                                                         | [Config Ref.][config-watermark]                  |
+| `alert_when`                 | map (optional)               | —            | Highlight card on threshold crossing                                           | [Config Ref.][config-alert_when]                 |
+| **Behavior & Actions**       |                              |              |                                                                                |                                                  |
+| `xyz_action`                 | map (optional)               | see defaults | Configure custom actions (e.g., `tap`, `hold`, etc.).                          | [Config Ref.][config-xyz_action]                 |
 
 </details>
 <br />
@@ -1069,7 +1005,7 @@ See [Full Configuration Reference][FCR].
 
 <a id="badge-template-getting-started"></a>
 
-#### 🧪 Getting Started
+#### Getting Started
 
 <picture>
   <source media="(prefers-color-scheme: dark)"
@@ -1146,21 +1082,21 @@ color: |-
 
 <a id="tile-feature"></a>
 
-### 🧩 Entity Progress Tile Feature
+### Entity Progress Tile Feature
 
 The **Entity Progress Tile Feature** (`entity-progress-feature`) embeds a
 progress bar directly inside a standard Home Assistant **Tile** card. It renders
 as a native feature row and supports overlay positions (`top`, `bottom`) that
 anchor the bar to the card edge without increasing the tile height.
 
-Strong on: staying inside the Tile card's own layout — its icon, its name, its
-tap actions — instead of adding a second card next to it. Reach for it when a
-Tile already shows the entity you care about and just needs a progress row
-bolted on, not a replacement.
+Best for: staying inside the Tile card's own layout — its icon, its name, its
+tap actions — instead of adding a second card next to it. Use it when a Tile
+already shows the entity you care about and just needs a progress row bolted on,
+not a replacement.
 
 <a id="tile-feature-options"></a>
 
-#### 🛠️ Options
+#### Options
 
 <details>
 <summary>Show options</summary>
@@ -1199,7 +1135,7 @@ See [Full Configuration Reference][FCR].
 
 <a id="tile-feature-getting-started"></a>
 
-#### 🧪 Getting Started
+#### Getting Started
 
 <picture>
   <source media="(prefers-color-scheme: dark)"
@@ -1268,38 +1204,36 @@ features:
 
 <a id="multi"></a>
 
-### 🧩 Entity Progress Multi-Card / Multi-Feature
+### Entity Progress Multi-Card / Multi-Feature
 
 Several entities, one card: instead of a wall of individual bars, stack them
 under a single header.
 
-Strong on: keeping a related group visually together without eating a grid cell
-per entity. Reach for it for a room's three window sensors, a car's tire
-pressures, or any small cluster of bars that only makes sense read side by side.
-
-> [!NOTE]
->
-> New in 1.6.1. YAML only for now — no visual editor yet.
+Best for: keeping a related group visually together without eating a grid cell
+per entity. Use it for a room's three window sensors, a car's tire pressures, or
+any small cluster of bars that only makes sense read side by side.
 
 `entity-progress-multi-card` and `entity-progress-multi-feature` stack several
 progress bars into a single card or a single Tile feature, instead of one bar
-per entity/feature. Each bar is a real `entity-progress-feature` under the hood,
-so it keeps its own more-info tap, its own colors, and its own state — the
-aggregator only stacks them and divides the available height.
+per entity/feature. Each bar is a real `entity-progress-card` in
+`density: single_line` under the hood, so it keeps its own more-info tap, its
+own colors, and its own state — the aggregator only stacks them and divides the
+available height.
 
 <a id="multi-options"></a>
 
-#### 🛠️ Options
+#### Options
 
 <details>
 <summary>Show options</summary>
 
-| **Option**                   | **Type**                  | **Default**        | **Description**                                            | **Link**                                         |
-| :--------------------------- | :------------------------ | :----------------- | :--------------------------------------------------------- | :----------------------------------------------- |
-| `entities`                   | list (required)           | —                  | List of row configs, at minimum an `entity` each           | [Config Ref.][config-entities]                   |
-| `reverse_secondary_info_row` | boolean (optional)        | `false`            | Puts the bar before the text instead of after it           | [Config Ref.][config-reverse_secondary_info_row] |
-| `bar_aligned`                | boolean/string (optional) | `true`             | Every row's bar starts at the same x                       | [Config Ref.][config-bar_aligned]                |
-| `rows`                       | integer (optional)        | one row per entity | `entity-progress-multi-card` only — Sections grid row span | [Config Ref.][config-rows]                       |
+| **Option**                   | **Type**                  | **Default**              | **Description**                                                          | **Link**                                         |
+| :--------------------------- | :------------------------ | :----------------------- | :----------------------------------------------------------------------- | :----------------------------------------------- |
+| `entities`                   | list (required)           | —                        | List of row configs, at minimum an `entity` each                         | [Config Ref.][config-entities]                   |
+| `reverse_secondary_info_row` | boolean (optional)        | `false`                  | Puts the bar before the text instead of after it                         | [Config Ref.][config-reverse_secondary_info_row] |
+| `bar_aligned`                | boolean/string (optional) | `true`                   | Every row's bar starts at the same x                                     | [Config Ref.][config-bar_aligned]                |
+| `rows`                       | integer (optional)        | one row per entity       | `entity-progress-multi-card` only — Sections grid row span               | [Config Ref.][config-rows]                       |
+| `layout` / `bar_position`    | string (optional)         | `horizontal` / `default` | `entity-progress-multi-card` only — rows as columns, bar behind the text | [Config Ref.][config-multi-layout]               |
 
 </details>
 <br />
@@ -1311,7 +1245,16 @@ shared default; a row can override it individually. `bar_size` defaults to
 Each row is a whole [`entity-progress-card`](configuration.md#standard) in
 [`density: single_line`](configuration.md#density), so it shows its value by
 default and takes the card's own options. Use `hide: ['value']` to turn the
-value off, and `hide: ['icon', 'name']` for bars and values alone.
+value off, and `hide: ['icon', 'name']` for bars and values alone. A row takes
+every [Card option](#card-options) except `layout`, `bar_position`,
+`bar_single_line`, `density`, `frameless`, `marginless`, `multiline`, `height`
+and `min_width`: the multi-card sets those for all its rows.
+
+Rows are plain cards, not Template cards: `color` and `bar_color` take fixed
+values, not Jinja. For a color that follows the value, use
+[`theme`](configuration.md#theme) or
+[`custom_theme`](configuration.md#custom_theme); for a color that depends on a
+condition, stack Template cards instead of a Multi-Card.
 
 **Lining the bars up.** A Multi does it on its own:
 [`bar_aligned`](configuration.md#bar_aligned), on by default, gives every row
@@ -1326,7 +1269,7 @@ See [Full Configuration Reference][FCR].
 
 <a id="multi-getting-started"></a>
 
-#### 🧪 Getting Started
+#### Getting Started
 
 **Standalone card**:
 
@@ -1416,40 +1359,28 @@ grid_options:
 Cross-cutting, work the same on every variant above, not tied to any one of
 them.
 
-<a id="visual-effects"></a>
-
-### ✨ Visual Effects
+### Visual Effects
 
 Most of what makes this card feel alive doesn't show up in a static screenshot.
 Each GIF below is captured straight from
 [`docs/demo-dashboard.yaml`](demo-dashboard.yaml) — the card's own showroom — so
 what you see is exactly what you get, at real speed.
 
-This chapter doesn't walk through every single one yet — captures take time —
-but every option below is real, shipped, and documented in full in
-[`configuration.md`](configuration.md), whether or not it has a GIF here
-already:
-
-- **Bar**: [`bar_effect`](configuration.md#bar_effect) (shimmer,
-  shimmer_reverse, gradient, gradient_reverse, glass, radius),
-  [`bar_segments`](configuration.md#bar_segments),
-  [`bar_color_mode`](configuration.md#bar_color_mode) (segment, rainbow,
-  rainbow_full), [`bar_orientation`](configuration.md#bar_orientation) (rtl, up,
-  down), [`bar_stack`](configuration.md#bar_stack) (stacked, proportional, net)
-- **Icon**: [`icon_animation`](configuration.md#icon_animation) (spin, pulse,
-  bounce, shake, ping, reveal, washing_machine, battery_charging),
-  [`force_circular_background`](configuration.md#force_circular_background),
-  [`hide: [shape]`](configuration.md#hide)
-- **Alerts & markers**: [`alert_when`](configuration.md#alert_when) (static,
-  blink, ping — border, background, or label),
-  [`watermark`](configuration.md#watermark) (blended, area, striped, triangle,
-  round, line), [`status_label`](configuration.md#status_label),
-  [`trend_indicator`](configuration.md#trend_indicator)
-- **Color & theme**: [`custom_theme`](configuration.md#custom_theme),
-  [`interpolate`](configuration.md#interpolate),
-  [`center_zero`](configuration.md#center_zero)
-- **Layout**: [`layout`](configuration.md#layout) (horizontal, vertical),
-  [`density`](configuration.md#density) (compact, either layout)
+With a capture below: [`bar_effect`](#effect-bar-effects),
+[`bar_segments`](#effect-bar-segments), [`bar_ring`](#effect-bar-ring),
+[`interpolate`](#effect-interpolate),
+[`force_circular_background`](#effect-force-circular-background),
+[`icon_animation`](#effect-icon-animation), [`alert_when`](#effect-alert-when),
+[`watermark`](#effect-watermark), [`bar_color_mode`](#effect-segment),
+[`status_label`](#effect-status-label),
+[`trend_indicator`](#effect-trend-indicator),
+[`peak_marker`](#effect-peak-marker), [`custom_theme`](#effect-custom-theme),
+[`bar_stack`](#effect-bar-stack), [`center_zero`](#effect-center-zero),
+[`hide: [shape]`](#effect-hide-shape) and
+[`density: compact`](#effect-density-compact). Every other option, such as
+[`bar_orientation`](configuration.md#bar_orientation) or
+[`layout`](configuration.md#layout), is documented in
+[`configuration.md`](configuration.md).
 
 <a id="effect-bar-effects"></a>
 
@@ -1459,7 +1390,7 @@ already:
   <source media="(prefers-color-scheme: dark)"
     srcset="images/effect-shimmer-dark-e9015b.gif">
   <img src="images/effect-shimmer-light-359803.gif"
-    alt="bar_effect showcase"
+    alt="A light sweep looping across a battery bar (shimmer)"
     width="369"/>
 </picture>
 
@@ -1481,6 +1412,8 @@ bar_effect:
 </details>
 
 See [`bar_effect`](configuration.md#bar_effect) for the full list.
+`critical_when_low` turns red under 10 %; for another limit, e.g. 20 %, see
+[`custom_theme`](#effect-custom-theme).
 
 [🔼 Back to top]
 
@@ -1492,7 +1425,7 @@ See [`bar_effect`](configuration.md#bar_effect) for the full list.
   <source media="(prefers-color-scheme: dark)"
     srcset="images/effect-bar-segments-dark-57a697.png">
   <img src="images/effect-bar-segments-light-bcb482.png"
-    alt="bar_segments"
+    alt="A battery bar at 42 % split into ten blocks"
     width="369"/>
 </picture>
 
@@ -1521,7 +1454,7 @@ Works with any orientation, size, or color mode/effect.
   <source media="(prefers-color-scheme: dark)"
     srcset="images/effect-bar-ring-dark-94518c.png">
   <img src="images/effect-bar-ring-light-4b3285.png"
-    alt="bar_ring"
+    alt="Four rings around a battery icon: dial, segments, hard and soft edge"
     width="500"/>
 </picture>
 
@@ -1564,7 +1497,7 @@ bar_ring:
   <source media="(prefers-color-scheme: dark)"
     srcset="images/effect-interpolate-dark-58644a.png">
   <img src="images/effect-interpolate-light-132ff7.png"
-    alt="interpolate"
+    alt="A litter level at 20 %, its color blended between two zones"
     width="369"/>
 </picture>
 
@@ -1598,7 +1531,7 @@ custom_theme:
   <source media="(prefers-color-scheme: dark)"
     srcset="images/effect-force-circular-background-dark-71f31a.png">
   <img src="images/effect-force-circular-background-light-3bd067.png"
-    alt="force_circular_background"
+    alt="An idle timer whose icon keeps its round grey disc"
     width="369"/>
 </picture>
 
@@ -1620,13 +1553,13 @@ force_circular_background: true
 
 <a id="effect-icon-animation"></a>
 
-#### `icon_animation`: washing_machine, battery_charging, spin, ping…
+#### `icon_animation`: washing_machine, battery_charging, spin, ping
 
 <picture>
   <source media="(prefers-color-scheme: dark)"
     srcset="images/effect-icon-animation-dark-478027.gif">
   <img src="images/effect-icon-animation-light-3071e5.gif"
-    alt="icon_animation showcase"
+    alt="Animated icons: a washing machine, a charging battery, a fan, a light"
     width="807"/>
 </picture>
 
@@ -1635,7 +1568,8 @@ and `battery_charging` check the entity's own domain-specific status, no config
 needed beyond the name; the rest (`spin`, `pulse`, `bounce`, `shake`, `ping`,
 `reveal`) play on any entity with a genuine active/inactive state — see
 [`icon_animation`](configuration.md#icon_animation) for exactly how each one is
-detected.
+detected. In the capture, top row: washing machine, EV; bottom row: fan, light,
+in the order of the code blocks below.
 
 <br />
 <details>
@@ -1720,7 +1654,7 @@ icon_animation: battery_charging
   <source media="(prefers-color-scheme: dark)"
     srcset="images/alert-pulsing-dark-55b731.gif">
   <img src="images/alert-pulsing-light-fbd411.gif"
-    alt="alert_when ping"
+    alt="A ring bursting around the card when the value crosses a threshold"
     width="429"/>
 </picture>
 
@@ -1898,7 +1832,7 @@ the other five (`blended`, `area`, `triangle`, `round`, `line`) each look like.
   <source media="(prefers-color-scheme: dark)"
     srcset="images/effect-segment-dark-7e699d.png">
   <img src="images/effect-segment-light-74b70a.png"
-    alt="bar_color_mode: segment"
+    alt="A temperature bar drawn in the theme's color blocks"
     width="369"/>
 </picture>
 
@@ -1965,7 +1899,7 @@ See [`bar_color_mode`](configuration.md#bar_color_mode) for `segment` and plain
   <source media="(prefers-color-scheme: dark)"
     srcset="images/effect-status-label-dark-bff5a0.png">
   <img src="images/effect-status-label-light-de7ec5.png"
-    alt="status_label"
+    alt="Four temperatures, each with a pill: glacial, cool, temperate, scorching"
     width="750"/>
 </picture>
 
@@ -2012,7 +1946,7 @@ object form and `color_source`.
   <source media="(prefers-color-scheme: dark)"
     srcset="images/effect-trend-dark-b83afd.png">
   <img src="images/effect-trend-light-287c61.png"
-    alt="trend_indicator"
+    alt="A temperature card with a trend icon in its top-right corner"
     width="369"/>
 </picture>
 
@@ -2039,7 +1973,7 @@ trend_indicator: true
   <source media="(prefers-color-scheme: dark)"
     srcset="images/effect-peak-marker-dark-97d0f3.png">
   <img src="images/effect-peak-marker-light-f865e5.png"
-    alt="peak_marker"
+    alt="A battery bar with a small mark at the recent peak"
     width="369"/>
 </picture>
 
@@ -2074,7 +2008,7 @@ peak_marker:
   <source media="(prefers-color-scheme: dark)"
     srcset="images/effect-custom-theme-dark-6d2b7d.png">
   <img src="images/effect-custom-theme-light-b752be.png"
-    alt="custom_theme"
+    alt="A litter level at 20 % in orange, icon set by its zone"
     width="369"/>
 </picture>
 
@@ -2113,7 +2047,7 @@ custom_theme:
   <source media="(prefers-color-scheme: dark)"
     srcset="images/effect-bar-stack-dark-e151fb.png">
   <img src="images/effect-bar-stack-light-448549.png"
-    alt="bar_stack"
+    alt="Two stacked bars: a battery breakdown and a net power total"
     width="750"/>
 </picture>
 
@@ -2188,7 +2122,7 @@ auto-shaded colors.
   <source media="(prefers-color-scheme: dark)"
     srcset="images/effect-center-zero-dark-0d72cb.png">
   <img src="images/effect-center-zero-light-a8e3ec.png"
-    alt="center_zero"
+    alt="A power card at -750 W, its bar filling left from the middle"
     width="369"/>
 </picture>
 
@@ -2221,7 +2155,7 @@ mode, which combines naturally with it.
   <source media="(prefers-color-scheme: dark)"
     srcset="images/effect-hide-shape-dark-45efd2.png">
   <img src="images/effect-hide-shape-light-2122fe.png"
-    alt="hide: shape"
+    alt="A temperature card whose icon has no round background"
     width="369"/>
 </picture>
 
@@ -2251,7 +2185,7 @@ Same result, via CSS instead of YAML: the
   <source media="(prefers-color-scheme: dark)"
     srcset="images/effect-density-compact-dark-8bf5ed.png">
   <img src="images/effect-density-compact-light-0ffec8.png"
-    alt="density: compact"
+    alt="Two compact battery cards, the bar along the top edge"
     width="369"/>
 </picture>
 
@@ -2285,9 +2219,7 @@ view's own grid sizing.
 
 ---
 
-<a id="display-formatting"></a>
-
-### 🔢 Display Formatting
+### Display Formatting
 
 Not animated, but just as much about the card reading correctly at a glance —
 how the number itself is shown.
@@ -2300,7 +2232,7 @@ how the number itself is shown.
   <source media="(prefers-color-scheme: dark)"
     srcset="images/format-unit-position-dark-9baaba.png">
   <img src="images/format-unit-position-light-a19e85.png"
-    alt="unit_position"
+    alt="A Litecoin balance with the symbol first: Ł42.00"
     width="369"/>
 </picture>
 
@@ -2331,7 +2263,7 @@ unit_spacing: no-space
   <source media="(prefers-color-scheme: dark)"
     srcset="images/format-value-compact-dark-206465.png">
   <img src="images/format-value-compact-light-6cca54.png"
-    alt="value_compact"
+    alt="A total energy shortened to 1.25MWh"
     width="369"/>
 </picture>
 
@@ -2349,8 +2281,8 @@ unit_spacing: no-space
 </details>
 <br />
 
-`1200` becomes `1.2k`, `1500000` becomes `1.5M` — locale-aware, trailing zeros
-trimmed (`1.2k`, not `1.20k`).
+`1200` becomes `1.2K`, `1500000` becomes `1.5M` — locale-aware, trailing zeros
+trimmed (`1.2K`, not `1.20K`).
 
 [🔼 Back to top]
 
@@ -2362,7 +2294,7 @@ trimmed (`1.2k`, not `1.20k`).
   <source media="(prefers-color-scheme: dark)"
     srcset="images/format-value-sign-dark-6cad82.png">
   <img src="images/format-value-sign-light-760ff1.png"
-    alt="value_sign"
+    alt="A net power card showing +700.00 W, sign included"
     width="369"/>
 </picture>
 
@@ -2389,21 +2321,17 @@ glance — most useful on `center_zero`/`bar_stack: { mode: net }` cards.
 
 ---
 
-<a id="real-world-recipes"></a>
-
 ## Real-world recipes
 
 Full narrative walkthroughs (why, how, and the YAML that got there), the ones
-linked from each variant's `Power Features` above.
+linked from the Card and Card Template `Recipes` above.
 
-<a id="recreate-the-showcase"></a>
-
-### 🌟 Recreate the Showcase
+### Recreate the Showcase
 
 The GIF at the top of the [README](../README.md) isn't a mockup — it's this
 project's own [demo dashboard](demo-dashboard.yaml) (the "EP Showcase" view),
 built from ordinary options combined a bit more generously than usual. Here's
-exactly how three of its cards are put together.
+exactly how four of its cards are put together; the others are in the same file.
 
 <a id="showcase-living-room"></a>
 
@@ -2413,7 +2341,7 @@ exactly how three of its cards are put together.
   <source media="(prefers-color-scheme: dark)"
     srcset="images/showcase-living-room-dark-f82ca7.png">
   <img src="images/showcase-living-room-light-3cc099.png"
-    alt="Living room"
+    alt="A living room at 21.5 °C on a blue-to-red bar, a Temperate pill"
     width="750"/>
 </picture>
 
@@ -2454,7 +2382,7 @@ condition needed for a fixed label.
   <source media="(prefers-color-scheme: dark)"
     srcset="images/showcase-garage-dark-f30a6e.gif">
   <img src="images/showcase-garage-light-3e9dac.gif"
-    alt="Garage"
+    alt="A tall garage card at 35 °C, a red hot pill, a bar ending in red"
     width="218"/>
 </picture>
 
@@ -2497,7 +2425,7 @@ Same `rainbow_full` idea as Living room, this time
   <source media="(prefers-color-scheme: dark)"
     srcset="images/showcase-energy-dark-6f38c2.png">
   <img src="images/showcase-energy-light-f38c8f.png"
-    alt="Energy"
+    alt="Consumption and production bars above a net bar centered on zero"
     width="750"/>
 </picture>
 
@@ -2635,7 +2563,7 @@ the tile's orange exclamation mark when a sensor is unavailable.
 
 <a id="laundry-mystery"></a>
 
-### 🧺 The Laundry Mystery: Decoding Washer Entities Across Brands
+### The Laundry Mystery: Decoding Washer Entities Across Brands
 
 **Why?**
 
@@ -2653,9 +2581,10 @@ flexibility to adapt to entity variations based on the integration used.
 **Searching for Entities**
 
 Before configuring your card, it's essential to research the specific entities
-for your washing machine integration. To do this, you will need to explore Home
-Assistant's developer tools to pinpoint the necessary information. Let's take
-this personal integration as an example:
+for your washing machine integration: open **Settings** ➡️ **Devices &
+services** ➡️ **Entities** and search for "washing", then look for the entities
+that show the program state, the progress or the time left. Let's take this
+personal integration as an example:
 
 - **`sensor.washing_machine_operation_state`**: This entity is very specific to
   my washing machine brand and the **Home Connect** integration that comes with
@@ -2729,7 +2658,7 @@ manner.
 
 <a id="washing-machine-three-brands"></a>
 
-### 🌀 Washing Machine Progress: Three Brands, Three Approaches
+### Washing Machine Progress: Three Brands, Three Approaches
 
 **Why?**
 
@@ -2842,7 +2771,7 @@ icon_animation: washing_machine
 
 <a id="simple-helper"></a>
 
-### 🧮 Cracking a Complex Case with a Simple Helper
+### Cracking a Complex Case with a Simple Helper
 
 **Why?**
 
@@ -2932,7 +2861,7 @@ the user experience.
 
 <a id="ssl-expiry"></a>
 
-### 🔒 Don't Let It Expire! (SSL Certificate Countdown)
+### Don't Let It Expire! (SSL Certificate Countdown)
 
 This example is similar to the previous one that used a Home Assistant helper
 but relying more on system-level tools — offering potentially greater efficiency
@@ -3113,11 +3042,9 @@ These topics are beyond the scope of this guide.
 
 ---
 
-<a id="follow-the-sun"></a>
+### Follow the Sun
 
-### 🌅 Follow the Sun
-
-**🧐 Why?**
+**Why?**
 
 You want a visual representation of the sun's next event (sunrise or sunset) and
 the progress until it happens, directly in your Home Assistant dashboard.
@@ -3125,25 +3052,25 @@ Instead of showing static time values, you aim to give users contextual, visual
 feedback on when the next sun transition will occur, and how far along we are
 toward it.
 
-**⚙️ How?**
+**How?**
 
 This card uses `custom:entity-progress-card-template` and dynamic Jinja2
 templates to show:
 
-- 📛 name Dynamically shows:
+- `name` shows:
   - Next Rise: HH:MM if sunrise is next,
   - Next Setting: HH:MM if sunset is next,
   - or a fallback if sun data isn't available.
-- 🎨 bar_color & color
+- `bar_color` and `color`:
   - Bar turns orange when the sun is above the horizon.
   - Turns light gray / invisible when it's below the horizon.
-- 📄 secondary Displays a live countdown (e.g., in 02:34:12) until the next sun
+- `secondary` shows a live countdown (e.g., in 02:34:12) until the next sun
   event, accounting for whether sunrise or sunset is next.
-- 📊 percent Calculates progress between the last and the next sun event.
+- `percent` is the progress between the last and the next sun event.
   - For example, at 50%: you're halfway between yesterday's and today's sunrise.
   - Or halfway between yesterday's and today's sunset, depending on current
     time.
-- 🖱️ tap_action Opens the standard more-info view for the sun.sun entity when
+- `tap_action` opens the standard more-info view for the `sun.sun` entity when
   tapped.
 
 <picture>
@@ -3245,7 +3172,7 @@ grid_options:
 
 </details>
 
-**✅ Conclusion**
+**Conclusion**
 
 This card provides a beautiful and intuitive sun progress indicator, using both
 visual (progress bar + color) and textual (countdown + time) information. It
@@ -3375,6 +3302,8 @@ track solar cycles from your dashboard.
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#multi-entities
 [config-rows]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#multi-rows
+[config-multi-layout]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#multi-layout
 [name-jinja]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#name-jinja
 [icon-jinja]:

@@ -180,7 +180,8 @@
         "gradient_reverse": "Omvänd gradient",
         "radius": "Rundade hörn",
         "shimmer": "Glans",
-        "shimmer_reverse": "Omvänd glans"
+        "shimmer_reverse": "Omvänd glans",
+        "wave": "Våg"
       },
       "bar_orientation": {
         "ltr": "LTR",

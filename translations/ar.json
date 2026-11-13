@@ -180,7 +180,8 @@
         "gradient_reverse": "تدرج معكوس",
         "radius": "حواف دائرية",
         "shimmer": "لمعان",
-        "shimmer_reverse": "لمعان معكوس"
+        "shimmer_reverse": "لمعان معكوس",
+        "wave": "موجة"
       },
       "bar_orientation": {
         "ltr": "LTR",

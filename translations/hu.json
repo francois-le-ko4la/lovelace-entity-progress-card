@@ -180,7 +180,8 @@
         "gradient_reverse": "Fordított átmenet",
         "radius": "Lekerekített sarkok",
         "shimmer": "Csillogás",
-        "shimmer_reverse": "Fordított csillogás"
+        "shimmer_reverse": "Fordított csillogás",
+        "wave": "Hullám"
       },
       "bar_orientation": {
         "ltr": "LTR",

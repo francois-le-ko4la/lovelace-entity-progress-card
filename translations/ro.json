@@ -180,7 +180,8 @@
         "gradient_reverse": "Gradient inversat",
         "radius": "Colțuri rotunjite",
         "shimmer": "Luciu",
-        "shimmer_reverse": "Luciu inversat"
+        "shimmer_reverse": "Luciu inversat",
+        "wave": "Val"
       },
       "bar_orientation": {
         "ltr": "LTR",

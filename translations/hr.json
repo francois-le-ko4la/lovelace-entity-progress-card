@@ -180,7 +180,8 @@
         "gradient_reverse": "Obrnuti prijelaz",
         "radius": "Zaobljeni uglovi",
         "shimmer": "Sjaj",
-        "shimmer_reverse": "Obrnuti sjaj"
+        "shimmer_reverse": "Obrnuti sjaj",
+        "wave": "Val"
       },
       "bar_orientation": {
         "ltr": "LTR",

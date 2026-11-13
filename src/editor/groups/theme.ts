@@ -234,7 +234,9 @@ const themeBarSizingFields = (template: boolean, badge: boolean) => {
       width: 'half',
     }),
     bar_size: EditorFieldsType.select('bar_size', {
-      ...badgeRestrictedType(badge, 'bar_size_no_xlarge'),
+      // single_line/single_column draw xlarge as large (densityOverrides).
+      type: (c: LovelaceConfig) =>
+        badge || c.density === 'single_line' || c.density === 'single_column' ? 'bar_size_no_xlarge' : 'bar_size',
       width: 'half',
       // Shown, it always sits next to bar_segments: bar_single_line and
       // text_effect need the very positions it is hidden in.

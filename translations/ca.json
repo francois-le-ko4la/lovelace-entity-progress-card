@@ -180,7 +180,8 @@
         "gradient_reverse": "Degradat invers",
         "radius": "Cantonades arrodonides",
         "shimmer": "Resplendor",
-        "shimmer_reverse": "Resplendor invers"
+        "shimmer_reverse": "Resplendor invers",
+        "wave": "Onada"
       },
       "bar_orientation": {
         "ltr": "LTR",

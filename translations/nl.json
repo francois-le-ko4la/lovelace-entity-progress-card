@@ -180,7 +180,8 @@
         "gradient_reverse": "Omgekeerd verloop",
         "radius": "Afgeronde hoeken",
         "shimmer": "Glinstering",
-        "shimmer_reverse": "Omgekeerde glinstering"
+        "shimmer_reverse": "Omgekeerde glinstering",
+        "wave": "Golf"
       },
       "bar_orientation": {
         "ltr": "LTR",

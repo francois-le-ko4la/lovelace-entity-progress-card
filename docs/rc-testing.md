@@ -1,155 +1,79 @@
-# 🧪 Testing a Release Candidate (RC) – Safely
+# Testing a Release Candidate (RC)
 
-We provide a process designed to be as safe as possible, but please always
-verify your backups before proceeding.
-
-> [!WARNING]
->
-> **Development Status**
->
-> - Release candidate version - not intended for production use
-> - Potential bugs and instabilities may occur
-> - Features subject to change before final release
-> - Thorough testing required before wider deployment
-
-> [!IMPORTANT]
->
-> Join the Discord server and go to the #rc-testing channel to:
->
-> - Get the latest release candidate info
-> - Ask questions and get help from the maintainers and community
-> - Check for known issues or required changes
-
-## 🚦 Two ways to test
-
-- **[Method 1 — HACS pre-release](#-method-1--hacs-pre-release-quick-production-install)**:
-  installs the RC directly on your production setup, through HACS itself.
-  Quickest option, and open to anyone — but it does update your live
-  installation, so make sure you have a backup.
-- **[Method 2 — Manual isolated install](#-method-2--manual-isolated-install-side-by-side-zero-risk)**:
-  the RC runs side-by-side with your stable card, under a different type
-  (`custom:entity-progress-card-rc`), with zero risk to your production config.
-  Better suited for deeper testing, or if you'd rather not touch your live setup
-  at all.
-
-Both are equally welcome — pick whichever fits how you like to test.
-
-### ⚡ Method 1 — HACS pre-release (quick, production install)
+A release candidate (RC) is the next version, published as a pre-release before
+everyone gets it. Testing it helps catch problems before the stable release.
 
 > [!WARNING]
 >
-> This installs the RC over your current version, like any normal HACS update.
-> Make sure you have a recent backup/snapshot of your Home Assistant config
-> before proceeding, and expect to roll back if something breaks.
+> An RC may contain bugs, and its features can still change before the stable
+> release. Make sure you have a recent backup of Home Assistant before you
+> install one.
 
-#### ⬇️ Install the RC version
+## Install the RC
 
-- go into the repository in HACS ➡️ click ⋮ (upper right) ➡️ choose
-  **Redownload** ➡️ choose **"Need a different version?"**
-- The release candidate (e.g. `x.y.z-rcN`) now shows up as a pre release
-- Install it like you would any other update, then reload the browser cache
-  (**`CTRL`** + **`F5`** or clear cache).
+The RC installs like any update, over your current version: your existing cards
+run it right away, with nothing to change in their YAML.
 
-#### 🧪 Test the RC Card in Lovelace
+- **HACS** (Home Assistant before 2026.11): **HACS** in the sidebar, search for
+  the card, then **⋮** ➡️ **Redownload** ➡️ **Need a different version?**, and
+  pick the release candidate (`x.y.z-rcN`).
+- **Marketplace** (HACS's name from Home Assistant 2026.11): **Settings** ➡️
+  **Marketplace**, search for the card, then **⋮** ➡️ **Install another
+  version**, and pick the release candidate (`x.y.z-rcN`).
 
-This RC build is the same `custom:entity-progress-card` type as the stable
-release — there's no separate `-rc` type here, and nothing to duplicate or
-change in your YAML. Your existing cards are already running the RC as soon as
-HACS finishes updating.
+Then refresh the page without the cache: `Ctrl` + `F5` (`Cmd` + `Shift` + `R` on
+a Mac), or clear the browser cache.
 
-#### 🧼 Cleanup / Rolling back
+## Go back to the stable version
 
-If you want to go back to the stable version then use **Redownload** and pick
-the latest stable version.
+Use **Redownload** (HACS) or **Install another version** (Marketplace) again and
+pick the latest version without `-rc` in its name, or restore your backup. Your
+dashboards stay as they are.
 
-### 🧰 Method 2 — Manual isolated install (side-by-side, zero risk)
+## Advanced: test the RC next to the stable card
 
-> [!WARNING]
->
-> To avoid interfering with your HA environment or HACS-installed versions, **do
-> not** overwrite the HACS installation. Instead, follow this isolated setup
-> process.
+To try an RC without touching your live cards, load it a second time under its
+own name. Your existing cards keep the stable version.
 
-#### ⬇️ Install the RC version
+<details>
+<summary>Show the steps</summary>
 
-##### 📁 Copy it to a test directory
+This needs access to your Home Assistant files (the File editor or Samba add-on,
+or a terminal).
 
-From the RC's release page on GitHub, download `entity-progress-card.js`, its
-editor `entity-progress-card-editor.js`, and the
-`entity-progress-card-<lang>.json` file of your language — or all of them. In
-your Home Assistant config folder, create a `test` folder and put them there:
+1. From the RC's page on
+   [GitHub releases](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/releases),
+   download:
+   - `entity-progress-card.js` (required);
+   - `entity-progress-card-editor.js`, the visual editor (without it, Home
+     Assistant shows its YAML editor for the test cards);
+   - the file of your language, e.g. `entity-progress-card-fr.json` (without it,
+     the visual editor is in English).
 
-```sh
-mkdir -p config/www/test/
-```
+   If unsure, download them all.
 
-> [!NOTE]
->
-> They go together: without the editor file, Home Assistant offers its own YAML
-> editor for the test cards; without the language file, the visual editor falls
-> back to English.
+2. Put them in a new folder, `/config/www/test/` (in a terminal:
+   `mkdir -p /config/www/test`). Home Assistant serves the `www` folder as
+   `/local/`.
+3. Add a resource: **Settings** ➡️ **Dashboards** ➡️ **Resources** ➡️ **⋮** ➡️
+   **Add resource**, with the URL
+   `/local/test/entity-progress-card.js?suffix=rc` and the type
+   `JavaScript Module`. Then refresh the page without the cache.
+4. Duplicate a card, open it in the card editor, select **Show code editor** and
+   add `-rc` at the end of its type: `custom:entity-progress-card-rc` (the same
+   for the other variants, e.g. `custom:entity-progress-feature-rc`). The stable
+   and RC cards now run side by side.
 
-##### ➕ Add the resource, with a suffix
+`?suffix=rc` gives every element of this copy an `-rc` name
+(`custom:entity-progress-card-rc`, `custom:entity-progress-feature-rc`…). Any
+lowercase word or number works (`?suffix=test`), up to 16 characters. In the
+browser console, this copy's diagnostic helper is `EPB_RC`.
 
-- Go to **Settings** ➡️ **Dashboards** ➡️ **Resources** ➡️ **`⋮`** ➡️ **Add
-  Resource**
-- Set:
-  - URL: `/local/test/entity-progress-card.js?suffix=rc`
-  - Type: `JavaScript Module`
-- Save
-- reload the browser cache (**`CTRL`** + **`F5`** or clear cache).
+You can load several copies side by side, each with its own suffix, next to the
+version installed through HACS or the Marketplace.
 
-`?suffix=rc` registers every element of this copy under an `-rc` name
-(`custom:entity-progress-card-rc`, `custom:entity-progress-feature-rc`, …) next
-to the stable ones HACS installed, and its diagnostic answers to `EPB_RC`. Any
-lowercase word or number works (`?suffix=test`), up to 16 characters. The two
-copies find their own editor and language files, even with the same file name.
+When you're done, remove the resource, delete the files from
+`/config/www/test/`, and delete the `-rc` cards (they show an error once the
+resource is gone).
 
-#### 🧪 Test the RC Card in Lovelace
-
-##### How to use the RC version
-
-We strongly recommend duplicating an existing card and modifying only the type.
-
-Your original card:
-
-```yaml
-type: custom:entity-progress-card
-```
-
-Copy a card or create your test card with:
-
-```yaml
-type: custom:entity-progress-card-rc
-```
-
-This allows side-by-side testing of the stable and RC versions.
-
-#### 🧼 Cleanup (Optional)
-
-Once you're done testing:
-
-- Remove the resource definition
-- Delete `entity-progress-card.js`, `entity-progress-card-editor.js` and the
-  `entity-progress-card-*.json` files from `/config/www/test/`
-
-## ✅ Testing Checklist
-
-A standard checklist, whichever method you used:
-
-- [ ] Card loads without errors
-- [ ] All existing features work as expected
-- [ ] New RC features function properly
-- [ ] No console errors in browser dev tools
-- [ ] Performance is ok
-- [ ] Mobile/tablet display works correctly
-
-## 📝 Providing Feedback
-
-Feedback will be done on Discord only. When reporting issues, please include:
-
-- Home Assistant version
-- Browser type and version
-- Console error messages (if any)
-- Card configuration that causes issues
-- Screenshots of unexpected behavior
+</details>

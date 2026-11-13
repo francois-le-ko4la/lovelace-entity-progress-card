@@ -21,7 +21,7 @@ const PERCENT_GLUED_LOCALES = new Set(['es-419']);
 
 // Intl's compact notation abbreviates the WORD for a magnitude, per locale -
 // 'тыс.' in Russian, 'tis.' in Czech, 'K' (kelvin's letter) in English. Only
-// 3 of this card's 39 languages yield the SI 'k'. So a value carrying a unit
+// a few of this card's languages yield the SI 'k'. So a value carrying a unit
 // is scaled here instead: SI prefixes are spelled the same in every language,
 // and 1500 W is meant to read 1.5 kW, not 1.5 thousand W.
 const SI_PREFIXES: readonly (readonly [string, number])[] = [
@@ -121,7 +121,8 @@ const NumberFormatter = {
     const shownUnit = scaled?.unit ?? unit;
     // A unit that cannot take a prefix gets no abbreviation either: Intl's
     // suffix is a word in most locales, and '1,6 k m³' is worse than '1600 m³'.
-    const abbreviate = compact && scaled === null && !unit;
+    // 0 has no magnitude to abbreviate: log10(0) makes the digit count NaN.
+    const abbreviate = compact && scaled === null && !unit && value !== 0 && Number.isFinite(value);
     // decimal is the precision of the raw value, where 1600 needs none, and a
     // compaction takes three significant digits away from it. Three are handed
     // back on the mantissa - 1650 W reads 1.65 kW, not 1.7 kW - rather than

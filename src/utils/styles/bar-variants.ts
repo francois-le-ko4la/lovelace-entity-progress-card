@@ -2,6 +2,18 @@ import { css } from './css-tag.js';
 import { CARD } from '../parameters.js';
 import { BAR_EFFECT_GRADIENTS } from './shared.js';
 
+// One period of a wave crest, 14px tall, filled below the line.
+const waveCrest = (width: number) =>
+  `url("data:image/svg+xml,${encodeURIComponent(
+    `<svg xmlns='http://www.w3.org/2000/svg' width='${width}' height='14'>` +
+      `<path d='M0 7Q${width / 4} 1 ${width / 2} 7T${width} 7V14H0Z'/></svg>`,
+  )}")`;
+// Chrome < 120 and Safari only read the prefixed mask properties.
+const mask = (property: string, value: string) => `-webkit-mask-${property}: ${value}; mask-${property}: ${value};`;
+// Up only: down fills from the top, and its crest would hang upside down.
+const WAVE_INNER = `.vertical-bar:not(.${CARD.style.dynamic.progressBar.orientation.down}).${CARD.style.dynamic.progressBar.effect.wave.class} .${CARD.htmlStructure.elements.progressBar.inner.class}.positive`;
+const BUBBLE = 'radial-gradient(circle, rgba(255, 255, 255, 0.5) 0 1.5px, transparent 2px) no-repeat';
+
 const BAR_VARIANTS_CSS = css`
 /* === RADIUS EFFECT === */
 /* positiveInner / negativeInner */
@@ -33,7 +45,7 @@ const BAR_VARIANTS_CSS = css`
   --progress-effect-neg: linear-gradient(270deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
 }
 
-.vertical.up-orientation.${CARD.style.dynamic.progressBar.effect.glass.class} {
+.vertical-bar.${CARD.style.dynamic.progressBar.effect.glass.class} {
   --progress-effect: linear-gradient(0deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
   --progress-effect-neg: linear-gradient(180deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
 }
@@ -64,15 +76,15 @@ const BAR_VARIANTS_CSS = css`
   }
 }
 
-.vertical.up-orientation.${CARD.style.dynamic.progressBar.effect.gradient.class},
-.vertical.up-orientation.${CARD.style.dynamic.progressBar.effect.gradientReverse.class} {
+.vertical-bar.${CARD.style.dynamic.progressBar.effect.gradient.class},
+.vertical-bar.${CARD.style.dynamic.progressBar.effect.gradientReverse.class} {
   --progress-effect-gradient: var(--progress-effect-gradient-up-modern, linear-gradient(0deg, rgba(255, 255, 255, 0.4), transparent));
   --progress-effect-gradient-rev: var(--progress-effect-gradient-rev-up-modern, linear-gradient(180deg, rgba(255, 255, 255, 0.4), transparent));
 }
 
 @supports (background: color-mix(in srgb, red, blue)) {
-  .vertical.up-orientation.${CARD.style.dynamic.progressBar.effect.gradient.class},
-  .vertical.up-orientation.${CARD.style.dynamic.progressBar.effect.gradientReverse.class} {
+  .vertical-bar.${CARD.style.dynamic.progressBar.effect.gradient.class},
+  .vertical-bar.${CARD.style.dynamic.progressBar.effect.gradientReverse.class} {
     --progress-effect-gradient-up-modern: linear-gradient(
       0deg,
       color-mix(in srgb, white 40%, var(--progress-bar-color, var(--state-icon-color))),
@@ -209,12 +221,12 @@ const BAR_VARIANTS_CSS = css`
 }
 
 /* --- Vertical --- */
-.vertical.up-orientation.${CARD.style.dynamic.progressBar.effect.shimmer.class} {
+.vertical-bar.${CARD.style.dynamic.progressBar.effect.shimmer.class} {
   --shimmer-direction: 0deg;
   --shimmer-animation: shimmer-btt;
 }
 
-.vertical.up-orientation.${CARD.style.dynamic.progressBar.effect.shimmerReverse.class} {
+.vertical-bar.${CARD.style.dynamic.progressBar.effect.shimmerReverse.class} {
   --shimmer-direction: 0deg;
   --shimmer-animation: shimmer-ttb;
 }
@@ -237,6 +249,58 @@ const BAR_VARIANTS_CSS = css`
 @keyframes shimmer-ttb {
   0% { transform: translateY(-100%); }
   100% { transform: translateY(100%); }
+}
+
+/* ----- wave ----- */
+/* Two crests drifting apart (the back one paler) over the fill's top edge,
+   and bubbles rising through it. */
+@supports ((mask-image: none) or (-webkit-mask-image: none)) {
+  ${WAVE_INNER} {
+    background: none;
+  }
+
+  ${WAVE_INNER}::before,
+  ${WAVE_INNER}::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    ${mask('repeat', 'repeat-x, no-repeat')}
+  }
+
+  ${WAVE_INNER}::before {
+    background: var(--inner-background);
+    opacity: 0.5;
+    ${mask('image', `${waveCrest(90)}, linear-gradient(#000 0 0)`)}
+    ${mask('size', '90px 14px, 100% 100%')}
+    ${mask('position', '0 0, 0 13px')}
+    animation: wave-back 4.5s linear infinite;
+  }
+
+  ${WAVE_INNER}::after {
+    background:
+      ${BUBBLE}, ${BUBBLE}, ${BUBBLE}, ${BUBBLE},
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 18%, rgba(0, 0, 0, 0.28)),
+      var(--inner-background);
+    background-size: 6px 6px, 5px 5px, 6px 6px, 4px 4px, auto, auto;
+    ${mask('image', `${waveCrest(120)}, linear-gradient(#000 0 0)`)}
+    ${mask('size', '120px 14px, 100% 100%')}
+    ${mask('position', '0 7px, 0 20px')}
+    animation: wave-front 3s linear infinite, wave-bubbles 9s linear infinite;
+  }
+}
+
+@keyframes wave-back {
+  to { ${mask('position', '-90px 0, 0 13px')} }
+}
+
+@keyframes wave-front {
+  to { ${mask('position', '120px 7px, 0 20px')} }
+}
+
+@keyframes wave-bubbles {
+  from { background-position: 12% 120%, 38% 160%, 63% 110%, 86% 140%, 0 0, 0 0; }
+  to { background-position: 12% -20%, 38% -40%, 63% -60%, 86% -30%, 0 0, 0 0; }
 }
 `;
 

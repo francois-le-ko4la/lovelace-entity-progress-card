@@ -180,7 +180,8 @@
         "gradient_reverse": "Обратен градиент",
         "radius": "Заоблени агли",
         "shimmer": "Сјај",
-        "shimmer_reverse": "Обратен сјај"
+        "shimmer_reverse": "Обратен сјај",
+        "wave": "Бран"
       },
       "bar_orientation": {
         "ltr": "LTR",

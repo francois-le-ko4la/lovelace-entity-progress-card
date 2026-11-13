@@ -190,8 +190,10 @@ class ThemeManager {
     let nextThemeData: ThemeZone | null = null;
     let ratio = 0;
 
-    if (this.#value >= (style[style.length - 1].max ?? Infinity)) {
-      themeData = style[style.length - 1];
+    // Zones sort by min: with one nested in another, the last is not the top.
+    const top = style.reduce((highest, zone) => ((zone.max ?? Infinity) >= (highest.max ?? Infinity) ? zone : highest));
+    if (this.#value >= (top.max ?? Infinity)) {
+      themeData = top;
     } else if (this.#value < (style[0].min ?? -Infinity)) {
       themeData = style[0];
     } else {

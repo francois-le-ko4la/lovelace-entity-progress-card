@@ -18,13 +18,11 @@ import { StatusLabel } from '../dom/status-label.js';
 import { BadgeIcon } from '../dom/badge-icon.js';
 import { IconManager } from './base/icon-manager.js';
 import { Alert } from '../dom/alert.js';
-import { Marks } from '../dom/marks.js';
-import { type LovelaceConfig, type Config } from '../../utils/types.js';
+import { type LovelaceConfig } from '../../utils/types.js';
 import { type StructureOptions } from '../dom/structure.js';
 import { gridOptionsOf } from './base/layout.js';
-import { applyJinjaNumber } from './base/jinja-number.js';
 import { splitAtFirstBreak } from './base/split-break.js';
-import { HACore, RING_MAX_GAP, TREND_ICONS, type JinjaNumberProp, JINJA_NUMBER_KEY } from './core.js';
+import { HACore, RING_MAX_GAP, TREND_ICONS, JINJA_NUMBER_KEY } from './core.js';
 
 /**
  * Extends HACore with entity rendering: icon, badge, shape, trend, hidden
@@ -617,25 +615,6 @@ class HABase extends HACore {
       badge_icon: () => this._renderBadgeIcon(content),
       badge_color: () => this._renderBadgeColor(content),
     };
-  }
-
-  // Shared by EntityProgressCardBase/EntityProgressTemplateBase's own
-  // _getJinjaHandlers below.
-  _watermarkJinjaHandlers(content: unknown): Record<string, () => void> {
-    return Marks.jinjaHandlers((getJinja, viewProp) =>
-      this._applyJinjaNumber(content, getJinja, viewProp, () => this._updateCSS()),
-    );
-  }
-
-  // Every Jinja-pushed number shares this guard/parse/skip-if-unchanged -
-  // only `repaint` differs per option.
-  _applyJinjaNumber(
-    content: unknown,
-    getJinja: (c: Config) => string | undefined,
-    viewProp: JinjaNumberProp,
-    repaint: () => void,
-  ) {
-    applyJinjaNumber(this._cardView, content, getJinja, viewProp, repaint);
   }
 
   _onJinjaFailure(key: string, message: string) {

@@ -3,6 +3,8 @@ import { FeatureView, type ViewBase } from '../view/base.js';
 import { DOMHelper } from '../dom/dom-helpers.js';
 import { HACore } from '../core/core.js';
 import type { LovelaceConfig } from '../../utils/types.js';
+import type { HomeAssistant } from '../../utils/hass-provider.js';
+import { jinjaOf } from '../config/schema.js';
 
 /**
  * HA CARD "entity-progress-feature"
@@ -155,8 +157,17 @@ class EntityProgressFeatures extends HACore {
   // ─── JINJA TEMPLATE RENDERING - CUSTOMIZATION ─────────────────────────────
 
   _getJinjaHandlers(content: unknown): Record<string, () => void> {
+    // min/max feed the view's progress, which the bar's CSS derives from. Not
+    // refresh(): it re-runs the whole Jinja scan on every push.
+    const repaintRange = () => {
+      this._cardView.refresh(this.hass as HomeAssistant);
+      this._updateCSS();
+    };
     return {
       bar_effect: () => this._refreshBarEffect(content), // base
+      min_value: () => this._applyJinjaNumber(content, (c) => jinjaOf(c.min_value), 'minValue', repaintRange),
+      max_value: () => this._applyJinjaNumber(content, (c) => jinjaOf(c.max_value), 'maxValue', repaintRange),
+      ...this._watermarkJinjaHandlers(content),
     };
   }
 }

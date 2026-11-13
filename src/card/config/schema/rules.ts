@@ -43,16 +43,23 @@ const isDefaultRow = (c: ConfigLike) =>
 const STACK_DENSITIES = ['default', 'single_column'];
 const isStackDensity = (c: ConfigLike) => STACK_DENSITIES.includes((c.density as string | undefined) ?? 'default');
 
+// xlarge would send the bar below the text (applyBelowBarPositionRule): a
+// density that settles the shape keeps it at large instead.
+const SIZES = CARD.style.bar.sizeOptions;
+const noXlarge = (c: ConfigLike): ConfigLike => (c.bar_size === SIZES.xlarge ? { bar_size: SIZES.large } : {});
+
 // What a density forces: single_line a horizontal row holding the bar,
 // single_column a vertical stack, bar upright; compact keeps it off the text.
 const densityOverrides = (c: ConfigLike): ConfigLike => {
-  if (c.density === 'single_line') return { layout: HORIZONTAL, bar_position: 'default', multiline: false };
+  if (c.density === 'single_line')
+    return { layout: HORIZONTAL, bar_position: 'default', multiline: false, ...noXlarge(c) };
   if (c.density === 'single_column')
     return {
       layout: CARD.layout.orientations.vertical.label,
       bar_position: c.bar_position === 'overlay' ? 'overlay' : 'default',
       bar_orientation: c.bar_orientation === 'down' ? 'down' : 'up',
       multiline: false,
+      ...noXlarge(c),
     };
   if (c.density !== 'compact') return {};
   return {
@@ -67,11 +74,11 @@ const settled = (c: ConfigLike): ConfigLike => ({ ...c, ...densityOverrides(c) }
 
 // name, secondary_info and the bar stacked in one column.
 const isVerticalStack = (raw: ConfigLike) => {
-  const c = settled(raw);
+  const config = settled(raw);
   return (
-    c.layout === CARD.layout.orientations.vertical.label &&
-    (c.bar_position ?? 'default') === 'default' &&
-    isStackDensity(c)
+    config.layout === CARD.layout.orientations.vertical.label &&
+    (config.bar_position ?? 'default') === 'default' &&
+    isStackDensity(config)
   );
 };
 
@@ -84,15 +91,15 @@ type ContentShape = 'stack' | 'lines' | 'line' | 'row';
 // Positions drawing the bar outside the text: only the texts are ordered there.
 const BAR_OUTSIDE_TEXT = ['below', 'top', 'bottom', 'overlay', 'background'];
 const contentShape = (raw: ConfigLike): ContentShape | null => {
-  const c = settled(raw);
-  if (c.density === 'single_line') return 'row';
-  if (!isStackDensity(c)) return null;
-  const position = (c.bar_position as string | undefined) ?? 'default';
-  const horizontal = (c.layout ?? HORIZONTAL) === HORIZONTAL;
+  const config = settled(raw);
+  if (config.density === 'single_line') return 'row';
+  if (!isStackDensity(config)) return null;
+  const position = (config.bar_position as string | undefined) ?? 'default';
+  const horizontal = (config.layout ?? HORIZONTAL) === HORIZONTAL;
   if (position === 'compact_below') return horizontal ? 'line' : null;
   if (position !== 'default' && !BAR_OUTSIDE_TEXT.includes(position)) return null;
   if (horizontal) return 'lines';
-  return c.layout === CARD.layout.orientations.vertical.label ? 'stack' : null;
+  return config.layout === CARD.layout.orientations.vertical.label ? 'stack' : null;
 };
 // Only bar_position: default puts the bar among the texts.
 const contentHoldsBar = (c: ConfigLike) => (c.bar_position ?? 'default') === 'default';
@@ -164,11 +171,11 @@ const contentOrderKey = (c: ConfigLike): string | undefined => {
 const HAS_EFFECT = {
   // Only these three lay the bar out vertically (HACore#_addBaseClasses).
   barOrientationUp: (raw: ConfigLike) => {
-    const c = settled(raw);
+    const config = settled(raw);
     return (
-      (c.layout === CARD.layout.orientations.vertical.label && c.bar_position === 'overlay') ||
-      c.bar_position === 'background' ||
-      isVerticalStack(c)
+      (config.layout === CARD.layout.orientations.vertical.label && config.bar_position === 'overlay') ||
+      config.bar_position === 'background' ||
+      isVerticalStack(config)
     );
   },
   // These positions set the bar's thickness in CSS, whatever bar_size says; an

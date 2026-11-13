@@ -180,7 +180,8 @@
         "gradient_reverse": "反向漸層",
         "radius": "圓角",
         "shimmer": "微光",
-        "shimmer_reverse": "反向微光"
+        "shimmer_reverse": "反向微光",
+        "wave": "波浪"
       },
       "bar_orientation": {
         "ltr": "LTR",

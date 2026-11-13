@@ -81,7 +81,8 @@ export class PeakMarkerView {
   update() {
     if (!this.#tracker) return;
     const reading = this.#deps.reading();
-    if (reading.kind === 'scalar' && is.number(reading.value)) this.#tracker.push(reading.value);
+    const current = reading.kind === 'scalar' ? reading.value : reading.kind === 'ranged' ? reading.current : null;
+    if (is.number(current)) this.#tracker.push(current);
     const peaks = this.#tracker.peaks();
     this.#positions = peaks && {
       min: this.#deps.toPercent(peaks.min),

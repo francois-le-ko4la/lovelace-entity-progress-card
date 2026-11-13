@@ -180,7 +180,8 @@
         "gradient_reverse": "उल्टा ग्रेडिएंट",
         "radius": "गोल कोने",
         "shimmer": "चमक",
-        "shimmer_reverse": "उल्टी चमक"
+        "shimmer_reverse": "उल्टी चमक",
+        "wave": "लहर"
       },
       "bar_orientation": {
         "ltr": "LTR",

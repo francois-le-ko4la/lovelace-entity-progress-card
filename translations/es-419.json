@@ -180,7 +180,8 @@
         "gradient_reverse": "Degradado inverso",
         "radius": "Esquinas redondeadas",
         "shimmer": "Destello",
-        "shimmer_reverse": "Destello inverso"
+        "shimmer_reverse": "Destello inverso",
+        "wave": "Ola"
       },
       "bar_orientation": {
         "ltr": "LTR",

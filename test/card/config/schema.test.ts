@@ -91,6 +91,28 @@ describe('bar_orientation speaks the words of its bar_position', () => {
   });
 });
 
+describe('a density that settles the shape keeps the bar off below', () => {
+  const shapeOf = (config: Record<string, unknown>) =>
+    YamlSchemaFactory.card.validate({ entity: ENTITY, bar_size: 'xlarge', ...config }).config as {
+      bar_size?: string;
+      bar_position?: string;
+    };
+
+  test('single_line and single_column bring xlarge back to large, in place', () => {
+    for (const density of ['single_line', 'single_column']) {
+      const { bar_size: size, bar_position: position } = shapeOf({ density });
+      assert.equal(size, 'large', density);
+      assert.equal(position, 'default', density);
+    }
+  });
+
+  test('the default density keeps xlarge, below the text', () => {
+    const { bar_size: size, bar_position: position } = shapeOf({});
+    assert.equal(size, 'xlarge');
+    assert.equal(position, 'below');
+  });
+});
+
 describe('YamlSchemaFactory.<type>.fieldDefault - real schema defaults, not a hand-copied table', () => {
   test('bar_orientation defaults to ltr on every type that has it', () => {
     assert.equal(YamlSchemaFactory.card.fieldDefault('bar_orientation'), 'ltr');

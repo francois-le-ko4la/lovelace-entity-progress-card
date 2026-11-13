@@ -180,7 +180,8 @@
         "gradient_reverse": "Обратный градиент",
         "radius": "Скруглённые углы",
         "shimmer": "Мерцание",
-        "shimmer_reverse": "Обратное мерцание"
+        "shimmer_reverse": "Обратное мерцание",
+        "wave": "Волна"
       },
       "bar_orientation": {
         "ltr": "LTR",

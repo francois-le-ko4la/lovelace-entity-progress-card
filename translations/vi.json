@@ -180,7 +180,8 @@
         "gradient_reverse": "Dốc màu ngược",
         "radius": "Góc bo tròn",
         "shimmer": "Lấp lánh",
-        "shimmer_reverse": "Lấp lánh ngược"
+        "shimmer_reverse": "Lấp lánh ngược",
+        "wave": "Sóng"
       },
       "bar_orientation": {
         "ltr": "LTR",

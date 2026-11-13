@@ -180,7 +180,8 @@
         "gradient_reverse": "Odwrócony gradient",
         "radius": "Zaokrąglone rogi",
         "shimmer": "Połysk",
-        "shimmer_reverse": "Odwrócony połysk"
+        "shimmer_reverse": "Odwrócony połysk",
+        "wave": "Fala"
       },
       "bar_orientation": {
         "ltr": "LTR",

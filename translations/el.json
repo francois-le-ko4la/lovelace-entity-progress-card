@@ -180,7 +180,8 @@
         "gradient_reverse": "Ντεγκραντέ αντίστροφο",
         "radius": "Στρογγυλεμένες γωνίες",
         "shimmer": "Αχτινοβολία",
-        "shimmer_reverse": "Αχτινοβολία αντίστροφη"
+        "shimmer_reverse": "Αχτινοβολία αντίστροφη",
+        "wave": "Κύμα"
       },
       "bar_orientation": {
         "ltr": "LTR",

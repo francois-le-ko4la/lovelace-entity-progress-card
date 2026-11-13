@@ -180,7 +180,8 @@
         "gradient_reverse": "Gradien terbalik",
         "radius": "Sudut membulat",
         "shimmer": "Kilau",
-        "shimmer_reverse": "Kilau terbalik"
+        "shimmer_reverse": "Kilau terbalik",
+        "wave": "Gelombang"
       },
       "bar_orientation": {
         "ltr": "LTR",

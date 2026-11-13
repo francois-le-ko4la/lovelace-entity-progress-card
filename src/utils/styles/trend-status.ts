@@ -30,7 +30,7 @@ const TREND_STATUS_CSS = css`
    ============================================================================= */
 
 /* GitHub-label-style pill, mutually exclusive with .trend-indicator
-   (schema.ts's HAS_EFFECT.trendIndicator). Same recipe as Primer's own dark-theme issue
+   (schema.ts's HAS_EFFECT.trendIndicator; alert_when's pill, below). Same recipe as Primer's own dark-theme issue
    labels (@primer/react IssueLabelToken.module.css): a translucent tint for the
    background, border/text the same hue lightened just enough to stay legible.
    --epb-label-color/-background-color/-border-color override each separately. */
@@ -106,6 +106,12 @@ const TREND_STATUS_CSS = css`
 ha-card.label-left .status-label {
   right: auto;
   left: 4px;
+}
+
+/* alert_when's pill takes the trend's corner while the alert is active: the
+   trend comes back once it ends, or stays when the pill sits on the left. */
+ha-card.alert-label:not(.label-left) .trend-indicator {
+  display: none;
 }
 `;
 

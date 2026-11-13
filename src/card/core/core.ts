@@ -26,22 +26,9 @@ import { AutoRefresh } from './core/auto-refresh.js';
 import { applyBarEffects, barEffectsOf } from './core/bar-effect.js';
 import { syncAlignedBars } from './core/aligned-bars-sync.js';
 import { watchInterference } from './core/interference.js';
-import { type LovelaceConfig } from '../../utils/types.js';
+import { type LovelaceConfig, type Config } from '../../utils/types.js';
+import { applyJinjaNumber, JINJA_NUMBER_KEY, type JinjaNumberProp } from './base/jinja-number.js';
 import { type StructureOptions } from '../dom/structure.js';
-
-// Every Jinja-pushed numeric option, as named on the view - see
-// HABase._applyJinjaNumber.
-type JinjaNumberProp = 'minValue' | 'maxValue' | 'watermarkLow' | 'watermarkHigh' | 'alertAbove' | 'alertBelow';
-
-// The option each one answers for, as the subscription is keyed.
-const JINJA_NUMBER_KEY: Record<JinjaNumberProp, string> = {
-  minValue: 'min_value',
-  maxValue: 'max_value',
-  watermarkLow: 'watermark.low',
-  watermarkHigh: 'watermark.high',
-  alertAbove: 'alert_when.above',
-  alertBelow: 'alert_when.below',
-};
 
 // HABase#_applyTrendVisuals's own icon-per-direction map - shared by every
 // instance (never overridden, never mutated), not rebuilt per card.
@@ -649,6 +636,22 @@ class HACore extends HTMLElement {
     this._handleBarEffect(barEffectsOf(content));
   }
 
+  // Shared by every variant with a watermark: Card, Badge, Template, Feature.
+  _watermarkJinjaHandlers(content: unknown): Record<string, () => void> {
+    return Marks.jinjaHandlers((getJinja, viewProp) =>
+      this._applyJinjaNumber(content, getJinja, viewProp, () => this._updateCSS()),
+    );
+  }
+
+  _applyJinjaNumber(
+    content: unknown,
+    getJinja: (c: Config) => string | undefined,
+    viewProp: JinjaNumberProp,
+    repaint: () => void,
+  ) {
+    applyJinjaNumber(this._cardView, content, getJinja, viewProp, repaint);
+  }
+
   // ─── TEMPLATE PROCESSING ──────────────────────────────────────────────────
 
   _validateProcessJinjaFields(): boolean {
@@ -683,4 +686,3 @@ class HACore extends HTMLElement {
 }
 
 export { JINJA_NUMBER_KEY, TREND_ICONS, RING_MAX_GAP, HACore };
-export type { JinjaNumberProp };

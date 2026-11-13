@@ -180,7 +180,8 @@
         "gradient_reverse": "Verlauf umgekehrt",
         "radius": "Abgerundete Ecken",
         "shimmer": "Schimmer",
-        "shimmer_reverse": "Schimmer umgekehrt"
+        "shimmer_reverse": "Schimmer umgekehrt",
+        "wave": "Welle"
       },
       "bar_orientation": {
         "ltr": "LTR",

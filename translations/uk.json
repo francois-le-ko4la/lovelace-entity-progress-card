@@ -180,7 +180,8 @@
         "gradient_reverse": "Зворотній градієнт",
         "radius": "Заокруглені кути",
         "shimmer": "Мерехтіння",
-        "shimmer_reverse": "Зворотнє мерехтіння"
+        "shimmer_reverse": "Зворотнє мерехтіння",
+        "wave": "Хвиля"
       },
       "bar_orientation": {
         "ltr": "LTR",

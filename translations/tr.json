@@ -180,7 +180,8 @@
         "gradient_reverse": "Ters gradyan",
         "radius": "Yuvarlatılmış köşeler",
         "shimmer": "Parıltı",
-        "shimmer_reverse": "Ters parıltı"
+        "shimmer_reverse": "Ters parıltı",
+        "wave": "Dalga"
       },
       "bar_orientation": {
         "ltr": "LTR",

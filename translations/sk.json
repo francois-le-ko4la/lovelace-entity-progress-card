@@ -180,7 +180,8 @@
         "gradient_reverse": "Prechod obrátenou",
         "radius": "Zaoblené rohy",
         "shimmer": "Trblietanie",
-        "shimmer_reverse": "Trblietanie obrátenou"
+        "shimmer_reverse": "Trblietanie obrátenou",
+        "wave": "Vlna"
       },
       "bar_orientation": {
         "ltr": "LTR",

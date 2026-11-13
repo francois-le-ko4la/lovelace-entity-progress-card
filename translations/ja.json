@@ -180,7 +180,8 @@
         "gradient_reverse": "逆グラデーション",
         "radius": "角丸",
         "shimmer": "シマー",
-        "shimmer_reverse": "逆シマー"
+        "shimmer_reverse": "逆シマー",
+        "wave": "波"
       },
       "bar_orientation": {
         "ltr": "LTR",

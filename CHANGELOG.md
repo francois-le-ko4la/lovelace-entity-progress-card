@@ -41,6 +41,8 @@ them rewritten, or `unit: s`.
   `contrast` keeps the text readable over an `overlay` or `background` bar.
 - **Serbian**, in Cyrillic and Latin: 41 languages.  
   ➡️ feat: add Serbian translations (Cyrillic & Latin) #145 (@cpmarexel2f)
+- **[`bar_effect`][bar_effect] `wave`** turns a bar filling upward into water: a
+  moving wave on top, bubbles rising through it.
 
 #### 🧩 Arrange the texts and the bar with `content_order`
 
@@ -138,6 +140,8 @@ them rewritten, or `unit: s`.
 - **[`density: compact`][density]** accepts
   [`bar_position: icon`][bar_position]: the ring around the icon, the icon alone
   once `layout: vertical`.
+- **Tile Feature**: [`min_value`][min_value], [`max_value`][max_value] and
+  [`watermark`][watermark] take a Jinja template, like the Card.
 
 ### 🐛 Fixes
 
@@ -146,6 +150,8 @@ them rewritten, or `unit: s`.
   `counter`), else the card's default, instead of always 0 and 100.
 - **A `binary_sensor` with `device_class: light`** no longer takes the color of
   a lit bulb.
+- **[`value_compact`][value_compact]** shows `0` on a value with no unit (or a
+  hidden one) instead of failing to display it.
 - An unavailable **[`min_value`][min_value]** entity or a failed Jinja range no
   longer draws a wrong bar silently; **[`alert_when`][alert_when]** and a Jinja
   **[`watermark`][watermark]** no longer react to a 0 that is not a value.
@@ -168,15 +174,43 @@ them rewritten, or `unit: s`.
   ➡️ [Bug]: Frameless affects segment dividers & gap #149 (@addit248)
 - **[`bar_position: icon`][bar_position]** with [`marginless`][marginless]: the
   ring is no longer cut at the card's edge.
+- **[`bar_position: background`][bar_position]** with
+  [`bar_orientation`][bar_orientation] `up` or `down`: the
+  [`bar_effect`][bar_effect] gradients, glass and shimmer run along the bar
+  instead of across it.
+- **[`custom_theme`][custom_theme]** with one zone inside another: a value past
+  the inner zone takes the outer zone's color, as documented.
+- **[`alert_when`][alert_when]** `highlight: label` no longer draws its label
+  under the [`trend_indicator`][trend_indicator] icon while the alert is active.
+- **[`density: single_line`][density]** with [`bar_size: xlarge`][bar_size]
+  keeps the bar on the row, drawn `large`, instead of moving it below the text.
 
 ### 📚 Documentation
 
+- The documentation has its own site, searchable, with light and dark themes:
+  <https://francois-le-ko4la.github.io/lovelace-entity-progress-card/>.
+- README: badges for the documentation site and the development documentation.
 - Cookbook: a Mushroom Template card hosting a Multi-Feature (printer ink
   levels).
 - Docs images follow your theme: every cookbook, theme and README screenshot has
   a light and a dark version, with transparent corners.
 - Demo dashboard: a Mushroom Template card hosting the Feature.
 - Cookbook: a `bar_ring` recipe (dial, segments, edge softness).
+- Installing, testing an RC and rolling back with the Home Assistant Marketplace
+  (2026.11+), next to HACS.
+- New logo, in the README and on the documentation site.
+- A clearer README: what the card is up front, a color example, help right after
+  the guides, install steps that work on a tablet.
+- Troubleshooting shows each message the card can display, what it means and
+  what to do.
+- The deprecated options table lists every migrated option, `text_shadow`
+  included.
+- Multi-Card / Multi-Feature: a row is a standard card, with a visual editor.
+- Configuration: find an option from what you want to see, how to paste an
+  example, and every option checked against the code.
+- Theme Guide: the predefined themes side by side, custom themes, color names
+  and CSS variables, with screenshots.
+- Cookbook, Contributing and RC testing: shorter paths to the common tasks.
 
 ### 🧹 Under the hood
 
@@ -191,6 +225,80 @@ them rewritten, or `unit: s`.
 
 ➡️ **Full Changelog**:
 <https://github.com/francois-le-ko4la/lovelace-entity-progress-card/compare/1.6.3...1.6.4>
+
+## 1.6.4-rc4
+
+### ✨ New
+
+- **[`bar_effect`][bar_effect] `wave`**: water fill with two drifting crests and
+  rising bubbles, on a bar filling `up` (`bar_position: background`, `overlay`
+  in `layout: vertical`, or the upright bar of `layout: vertical`); not with
+  `gradient`, `gradient_reverse`, `shimmer` or `shimmer_reverse`.
+
+### 🔧 Improvements
+
+- **Tile Feature**: [`min_value`][min_value], [`max_value`][max_value] and
+  [`watermark`][watermark] `low`/`high` accept `{ jinja: ... }` (the value
+  stayed blank).
+
+### 🐛 Fixes
+
+- **[`bar_effect`][bar_effect]** `glass`, `gradient`, `gradient_reverse`,
+  `shimmer` and `shimmer_reverse` follow `.vertical-bar` instead of the
+  `vertical` layout: right direction with `bar_position: background` and
+  `bar_orientation` `up` or `down` in `layout: horizontal`.
+- **[`value_compact`][value_compact]** without a unit (or with `hide: [unit]`)
+  shows `0` instead of throwing a `RangeError` in `Intl.NumberFormat`.
+- **[`peak_marker`][peak_marker]** on a `number` or `input_number` entity
+  follows the live value again (since 1.6.4-rc1, only the history loaded with
+  the card counted).
+- **[`custom_theme`][custom_theme]** with nested zones: a value above the inner
+  zone's `max` takes the zone with the lowest `min`, no longer the inner one.
+- **[`alert_when`][alert_when]** `highlight: label`: while the alert is active,
+  the pill hides [`trend_indicator`][trend_indicator] in its corner (both were
+  drawn at the top right); a pill on the left keeps it.
+- **[`density`][density]** `single_line` and `single_column` draw
+  [`bar_size: xlarge`][bar_size] as `large` instead of switching `bar_position`
+  to `below`.
+
+### 📚 Documentation
+
+- README, `rc-testing.md` and `troubleshooting.md`: the Marketplace (Home
+  Assistant 2026.11+) next to HACS — install, **Install another version**,
+  `/local/community/` resource URL.
+- New logo, in the README and on the documentation site.
+- README: says what the card is up front, shorter Features, a color example and
+  where to paste the YAML in Usage, help right after Guides, install steps that
+  work on a tablet; the showcase GIF stays still with Reduce Motion.
+- Troubleshooting: each message the card shows, with a screenshot, what it means
+  and what to do; the reassurance comes first.
+- Troubleshooting: the deprecated options table adds `text_shadow` and the old
+  `watermark` side keys (`low_as`, `low_color`, `disable_low` and `high_*`).
+- Cookbook and Configuration: a Multi row is a standard card (`color` stays a
+  plain value), with a visual editor since 1.6.3.
+- `docs/`: headings without emoji, no in-page tables of contents.
+- Configuration: an "I want to…" table, paste steps, Multi-Card and
+  Multi-Feature compatibility labels, and every option checked against the code
+  (defaults, fallbacks, Template and Multi limits).
+- Theme Guide: a table of the predefined themes, `custom_theme` and
+  `bar_color_mode` with screenshots, color names, CSS variables by target.
+- Cookbook: basic usage first, a Default column in the Template tables.
+- Contributing: reporting a bug and checking a change in Home Assistant;
+  `rc-testing.md` rewritten.
+- README: a badge for the documentation site (the version it shows) and one for
+  the development documentation on `main`; the Home Assistant badge opens
+  home-assistant.io.
+- GitHub shows the development README; HACS and the documentation site show the
+  stable one, which says where to find an RC's or an older release's
+  documentation.
+
+### 🧹 Under the hood
+
+- `scripts/gen-logo.js` writes every version of the logo (SVG and PNG).
+- Documentation site built from this repository (`mkdocs.yml`, `scripts/docs/`)
+  and published by `.github/workflows/pages.yml` on each stable release.
+- `npm run docs:readme` writes `README.md` from `.github/README.md` for a stable
+  release; a test checks them from a stable `VERSION`.
 
 ## 1.6.4-rc3
 
@@ -4377,7 +4485,7 @@ Thanks to everyone who reported, tested and contributed 🙏
   wired (`editor`, `interactionHandler`). A console warning is printed whenever
   a non-shipped configuration is active; normal prod loads stay quiet.
   - Users: how to turn on logging to diagnose an issue →
-    [troubleshooting.md](troubleshooting.md#-enable-debug-logging-debug).
+    [troubleshooting.md](troubleshooting.md#enable-debug-logging-debug).
   - Maintainers: the full mechanism, all areas, and how to add one →
     [development.md](development.md#logging--debugging).
 - **New `?noRegistration` diagnostic mode**: loads the whole module (banner,
@@ -8087,6 +8195,8 @@ experience:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#center_zero
 [watermark]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#watermark
+[custom_theme]:
+  https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#custom_theme
 [bar_scale]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/blob/main/docs/configuration.md#bar_scale
 [multiline]:

@@ -1,7 +1,20 @@
 import { is, toNumberOrNull } from '../../../utils/common-checks.js';
 import { type Config } from '../../../utils/types.js';
 import { type ViewCore } from '../../view/core.js';
-import { type JinjaNumberProp, JINJA_NUMBER_KEY } from '../core.js';
+
+// Every Jinja-pushed numeric option, as named on the view - see
+// HACore._applyJinjaNumber.
+type JinjaNumberProp = 'minValue' | 'maxValue' | 'watermarkLow' | 'watermarkHigh' | 'alertAbove' | 'alertBelow';
+
+// The option each one answers for, as the subscription is keyed.
+const JINJA_NUMBER_KEY: Record<JinjaNumberProp, string> = {
+  minValue: 'min_value',
+  maxValue: 'max_value',
+  watermarkLow: 'watermark.low',
+  watermarkHigh: 'watermark.high',
+  alertAbove: 'alert_when.above',
+  alertBelow: 'alert_when.below',
+};
 
 // Every Jinja-pushed number shares this guard/parse/skip-if-unchanged -
 // only `repaint` differs per option.
@@ -26,4 +39,5 @@ const applyJinjaNumber = (
   repaint();
 };
 
-export { applyJinjaNumber };
+export { applyJinjaNumber, JINJA_NUMBER_KEY };
+export type { JinjaNumberProp };

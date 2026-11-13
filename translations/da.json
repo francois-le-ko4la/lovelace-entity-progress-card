@@ -180,7 +180,8 @@
         "gradient_reverse": "Omvendt gradient",
         "radius": "Afrundede hjørner",
         "shimmer": "Glans",
-        "shimmer_reverse": "Omvendt glans"
+        "shimmer_reverse": "Omvendt glans",
+        "wave": "Bølge"
       },
       "bar_orientation": {
         "ltr": "LTR",

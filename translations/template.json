@@ -180,7 +180,8 @@
         "gradient_reverse": "",
         "radius": "",
         "shimmer": "",
-        "shimmer_reverse": ""
+        "shimmer_reverse": "",
+        "wave": ""
       },
       "bar_orientation": {
         "ltr": "",

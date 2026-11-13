@@ -19,10 +19,10 @@ const VARIANTS: [SchemaVariant, string][] = [
   ['card', 'Card'],
   ['template', 'Template'],
   ['badge', 'Badge'],
-  ['badgeTemplate', 'Badge Tpl'],
+  ['badgeTemplate', 'Badge Template'],
   ['feature', 'Feature'],
-  ['multiCard', 'Multi Card'],
-  ['multiFeature', 'Multi Feat.'],
+  ['multiCard', 'Multi-Card'],
+  ['multiFeature', 'Multi-Feature'],
 ];
 
 const FORMS: Record<string, unknown> = {
@@ -121,7 +121,9 @@ const naming = (files: string[], key: string) =>
 function collect(): Row[] {
   const editorKeys = Object.fromEntries(Object.entries(FORMS).map(([variant, form]) => [variant, writtenKeys(form)]));
   const configuration = read(CONFIGURATION);
-  const sections = new Set([...configuration.matchAll(/^#{3,4} `([a-z_]+)`/gm)].map((match) => match[1]));
+  const sections = new Set(
+    [...configuration.matchAll(/^#{3,4} `([a-z_]+)`$|<a id="([a-z_]+)"><\/a>/gm)].map((match) => match[1] ?? match[2]),
+  );
   const docCards = DOC_SOURCES.flatMap(yamlCards);
   const demo = collectCards(loadYaml(read(DEMO)), DEMO).map((card) => card.config as Config);
   const readers = [...tsFiles('src/card'), ...tsFiles('src/utils')];
@@ -155,6 +157,7 @@ function collect(): Row[] {
 }
 
 const STATE_MARK: Record<EditState, string> = { editor: '✅', yaml: '📝', single: '➖' };
+const NOT_ACCEPTED = '✕';
 
 // Prose lines stay within markdownlint's 80 columns.
 const wrap = (words: string[], width = 80) =>
@@ -170,11 +173,23 @@ const wrap = (words: string[], width = 80) =>
     )
     .filter(Boolean);
 
+// YAML flow style, as a reader would write it: `{low: 20, as: auto}`.
+const flow = (value: unknown): string => {
+  if (Array.isArray(value)) return `[${value.map(flow).join(', ')}]`;
+  if (value && typeof value === 'object')
+    return `{${Object.entries(value)
+      .map(([key, item]) => `${key}: ${flow(item)}`)
+      .join(', ')}}`;
+  return String(value);
+};
+
 const defaultText = (value: unknown) => {
   // A table cell is never empty: markdownlint's compact table style.
   if (value === undefined || typeof value === 'symbol') return '—';
-  return `\`${typeof value === 'object' ? JSON.stringify(value) : String(value)}\``.replace(/\|/g, '\\|');
+  return `\`${flow(value)}\``.replace(/\|/g, '\\|');
 };
+
+const nameOf = (row: Row) => (row.section ? `[\`${row.key}\`](configuration.md#${row.section})` : `\`${row.key}\``);
 
 const statusOf = (row: Row) => {
   const missing = (
@@ -206,30 +221,38 @@ function render(rows: Row[]): string {
     '# Option map',
     '',
     ...wrap(
-      `Every YAML option the schema accepts, followed across the ${VARIANTS.length} variants, the visual editors, the card's code, the documentation, the demo dashboard and the tests.`.split(
+      `Which of the ${VARIANTS.length} variants accept each YAML option, and whether the visual editor has a field for it. Older spellings, which the migration rewrites, are in [Deprecated Options](troubleshooting.md#deprecated-options).`.split(
+        ' ',
+      ),
+    ),
+    '',
+    ...wrap(
+      'The gaps and the last columns of the matrix are coverage data for maintainers: a gap is a missing test, example or demo card, not an option that misbehaves.'.split(
         ' ',
       ),
     ),
     '',
     '## Gaps',
     '',
+    '| Gap | Options |',
+    '| :-- | :-- |',
+    ...Object.entries(gapsOf(rows)).map(
+      ([title, list]) => `| ${title} (${list.length}) | ${list.length ? list.map(nameOf).join(', ') : 'None'} |`,
+    ),
+    '',
   ];
-  for (const [title, list] of Object.entries(gapsOf(rows))) {
-    out.push(`### ${title} (${list.length})`, '');
-    out.push(
-      ...(list.length
-        ? wrap(list.map((row, index) => `\`${row.key}\`${index < list.length - 1 ? ',' : ''}`))
-        : ['None.']),
-      '',
-    );
-  }
   out.push(
     '## Matrix',
     '',
-    '✅ in the editor · 📝 YAML only · ➖ a single value, nothing to edit ·',
-    '· not accepted. _Readers_ (files in `src/card` and `src/utils`) and',
-    '_Tests_ (files in `test/`) count the files naming the option, not uses.',
-    '_Status_ is ✅ when all four counts are above zero, else ⚠️ and the zeros.',
+    `- ${STATE_MARK.editor} an editor field writes it`,
+    `- ${STATE_MARK.yaml} YAML only`,
+    `- ${STATE_MARK.single} a single value, nothing to edit`,
+    `- ${NOT_ACCEPTED} not accepted`,
+    '',
+    '_Readers_ (files in `src/card` and `src/utils`) and _Tests_ (files in',
+    '`test/`) count the files naming the option, not uses. _Status_ is ✅ when',
+    'all four counts are above zero, else ⚠️ and the zeros: a coverage gap, not',
+    'an option that misbehaves.',
     '',
   );
   const header = [
@@ -247,10 +270,9 @@ function render(rows: Row[]): string {
     `| ${header.map((_, index) => (index === 0 || index === 8 || index === 13 ? ':--' : ':-:')).join(' | ')} |`,
   );
   for (const row of rows) {
-    const name = row.section ? `[\`${row.key}\`](configuration.md#${row.section})` : `\`${row.key}\``;
     const cells = [
-      name + (NOTES[row.key] ? ' ¹' : ''),
-      ...VARIANTS.map(([variant]) => (variant in row.states ? STATE_MARK[row.states[variant]] : '·')),
+      nameOf(row) + (NOTES[row.key] ? ' ¹' : ''),
+      ...VARIANTS.map(([variant]) => (variant in row.states ? STATE_MARK[row.states[variant]] : NOT_ACCEPTED)),
       defaultText(row.fieldDefault),
       row.readers,
       row.examples,

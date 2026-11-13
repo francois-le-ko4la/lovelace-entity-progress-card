@@ -34,10 +34,12 @@ const options = [...new Set(VARIANTS.flatMap((variant) => YamlSchemaFactory[vari
 // Badges per (option, variant), counted over every section naming the option.
 const badges = new Map<string, number>();
 const documented = new Set<string>();
-const sections = text.split(/^#{3,4} `([a-z_]+)`(?: \(Jinja\))?$/m);
-for (let index = 1; index < sections.length; index += 2) {
-  const heading = sections[index];
-  const body = sections[index + 1].split(/^#{2,4} /m)[0];
+// A heading names its option, or ends with it in brackets after the keys it
+// covers: `tap_action`, … (`xyz_action`).
+const sections = text.split(/^#{3,4} (?:`([a-z_]+)`(?: \(Jinja\))?|`[a-z_]+`, .*\(`([a-z_]+)`\))$/m);
+for (let index = 1; index < sections.length; index += 3) {
+  const heading = sections[index] ?? sections[index + 1];
+  const body = sections[index + 2].split(/^#{2,4} /m)[0];
   if (GROUPED[heading]) for (const option of options) if (GROUPED[heading].test(option)) documented.add(option);
   documented.add(heading);
   for (const [badge, variant] of Object.entries(BADGES))

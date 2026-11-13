@@ -24,7 +24,8 @@ const tableUnder = (text: string, heading: string): string[] => {
   const end = rows.findIndex((row) => !row.startsWith('|'));
   return rows
     .slice(0, end)
-    .map((row) => /^\| `([a-z_]+)`/.exec(row)?.[1])
+    // A cell is the bare option or its link: `name` or [`name`](#name).
+    .map((row) => /^\| \[?`([a-z_]+)`/.exec(row)?.[1])
     .filter((option): option is string => Boolean(option))
     .map((option) => (ACTIONS.test(option) ? GROUPED_ACTIONS : option));
 };
@@ -54,11 +55,11 @@ const assertSame = (listed: string[], expected: Set<string>) => {
 describe('the cookbook option tables list what each variant accepts', () => {
   const cookbook = read(COOKBOOK);
   const VARIANT_HEADINGS: [string, SchemaVariant][] = [
-    ['### 🧩 Entity Progress Card\n', 'card'],
-    ['### 🧩 Entity Progress Card Template\n', 'template'],
-    ['### 🧩 Entity Progress Badge\n', 'badge'],
-    ['### 🧩 Entity Progress Badge Template\n', 'badgeTemplate'],
-    ['### 🧩 Entity Progress Tile Feature\n', 'feature'],
+    ['\n### Entity Progress Card\n', 'card'],
+    ['\n### Entity Progress Card Template\n', 'template'],
+    ['\n### Entity Progress Badge\n', 'badge'],
+    ['\n### Entity Progress Badge Template\n', 'badgeTemplate'],
+    ['\n### Entity Progress Tile Feature\n', 'feature'],
   ];
   for (const [heading, variant] of VARIANT_HEADINGS)
     test(variant, () => assertSame(tableUnder(cookbook, heading), owed(variant)));
@@ -66,9 +67,9 @@ describe('the cookbook option tables list what each variant accepts', () => {
   // A row takes the card's own options: the Multi table lists the aggregator's,
   // and the ones the Multi part of the reference documents for itself.
   test('Multi', () => {
-    const listed = tableUnder(cookbook, '### 🧩 Entity Progress Multi-Card / Multi-Feature');
+    const listed = tableUnder(cookbook, '### Entity Progress Multi-Card / Multi-Feature');
     const reference = read(REFERENCE);
-    const multiPart = reference.slice(reference.indexOf('## 🧩 entity-progress-multi-card'));
+    const multiPart = reference.slice(reference.indexOf('## Multi-Card and Multi-Feature'));
     const ownSections = [...multiPart.matchAll(/^### `([a-z_]+)`$/gm)].map((match) => match[1]);
     const accepted = owed('multiCard', 'multiFeature');
     for (const option of [...AGGREGATOR_FIELDS.filter((field) => field !== 'type'), ...ownSections])
@@ -81,7 +82,7 @@ describe('the cookbook option tables list what each variant accepts', () => {
 // or owns have their own section under "Specific options" instead.
 test("the reference's template common options are the templates' shared ones", () => {
   const reference = read(REFERENCE);
-  const start = reference.indexOf('## 🧩 entity-progress-card-template');
+  const start = reference.indexOf('## Template and Badge Template');
   const templatePart = reference.slice(start, reference.indexOf('\n## ', start + 1));
   const specific = new Set([...templatePart.matchAll(/^#### `([a-z_]+)`/gm)].map((match) => match[1]));
   const expected = new Set([...owed('template', 'badgeTemplate')].filter((option) => !specific.has(option)));

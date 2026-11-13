@@ -62,6 +62,12 @@ const sharedRules = {
       selector: ':matches(CallExpression, NewExpression) > Identifier.arguments[name="undefined"]',
       message: 'No literal undefined as an argument (JS-W1042): omit it, or read the absent value off an object.',
     },
+    // DeepSource JS-C1002 flags one-letter variables, not parameters, loop
+    // counters or i/j/k.
+    {
+      selector: ':not(ForStatement) > VariableDeclaration > VariableDeclarator > Identifier.id[name=/^[^ijk]$/]',
+      message: 'Variable name too short (JS-C1002): rename it.',
+    },
   ],
   // console.log is banned (the usual accidental-debug-leftover offender);
   // everything else here has a deliberate, structured use (Logger,

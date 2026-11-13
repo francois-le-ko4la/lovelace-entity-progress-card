@@ -180,7 +180,8 @@
         "gradient_reverse": "Apgriezts gradients",
         "radius": "Noapaļoti stūri",
         "shimmer": "Mirdzums",
-        "shimmer_reverse": "Apgriezts mirdzums"
+        "shimmer_reverse": "Apgriezts mirdzums",
+        "wave": "Vilnis"
       },
       "bar_orientation": {
         "ltr": "LTR",

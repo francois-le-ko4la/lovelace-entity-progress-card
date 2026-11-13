@@ -180,7 +180,8 @@
         "gradient_reverse": "Sfumatura inversa",
         "radius": "Angoli arrotondati",
         "shimmer": "Riflesso",
-        "shimmer_reverse": "Riflesso inverso"
+        "shimmer_reverse": "Riflesso inverso",
+        "wave": "Onda"
       },
       "bar_orientation": {
         "ltr": "LTR",

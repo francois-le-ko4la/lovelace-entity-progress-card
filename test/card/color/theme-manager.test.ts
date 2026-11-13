@@ -74,6 +74,20 @@ describe('ThemeManager - custom_theme (user-defined zones)', () => {
     theme.value = 50;
     assert.equal(theme.barColor, null);
   });
+
+  test('with one zone nested in another, the lowest min wins, never the inner zone past its max', () => {
+    const theme = new ThemeManager();
+    theme.customTheme = [
+      { min: 0, max: 100, color: '#ff0000' },
+      { min: 10, max: 20, color: '#00ff00' },
+    ];
+    theme.value = 50;
+    assert.equal(theme.barColor, '#ff0000');
+    theme.value = 15;
+    assert.equal(theme.barColor, '#ff0000');
+    theme.value = 150;
+    assert.equal(theme.barColor, '#ff0000');
+  });
 });
 
 describe('ThemeManager - linear theme (light) without interpolation', () => {
