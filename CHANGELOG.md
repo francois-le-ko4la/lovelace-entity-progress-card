@@ -188,7 +188,8 @@ them rewritten, or `unit: s`.
 ### 📚 Documentation
 
 - The documentation has its own site, searchable, with light and dark themes:
-  <https://francois-le-ko4la.github.io/lovelace-entity-progress-card/>.
+  <https://francois-le-ko4la.github.io/lovelace-entity-progress-card/>; the card
+  picker's documentation link opens it.
 - README: badges for the documentation site and the development documentation.
 - Cookbook: a Mushroom Template card hosting a Multi-Feature (printer ink
   levels).
@@ -291,6 +292,7 @@ them rewritten, or `unit: s`.
 - GitHub shows the development README; HACS and the documentation site show the
   stable one, which says where to find an RC's or an older release's
   documentation.
+- The card picker's documentation link opens the documentation site.
 
 ### 🧹 Under the hood
 

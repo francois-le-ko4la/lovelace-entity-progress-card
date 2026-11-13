@@ -10,7 +10,7 @@ const CARD_DESCRIPTION = 'A cool custom card to show current entity status with 
 const BADGE_DESCRIPTION = 'A cool custom badge to show current entity status with a progress bar.';
 
 const META = {
-  documentation: `https://github.com/francois-le-ko4la/lovelace-entity-progress-card/tree/${VERSION}`,
+  documentation: 'https://francois-le-ko4la.github.io/lovelace-entity-progress-card/',
   types: {
     card: {
       typeName: 'entity-progress-card',
