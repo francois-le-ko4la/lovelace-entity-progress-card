@@ -28,7 +28,8 @@ OUT_DIR = Path(__file__).resolve().parent.parent / "docs" / "images" / "epc-logo
 SIZE = 480  # four times the README's 120 px
 STOPS = 3  # the mark's white up to 2^3 times SDR white
 # A JPEG has no transparency: the corners take the page's background.
-# "self": the render finds the mark on its own (dark tile, dark page).
+# "self": the render finds the mark on its own; the tile takes the page's
+# background too, so no frame shows around it.
 # "tile-black": a light page is white too, so the mark is found on a copy
 # with the tile and the page turned black.
 VERSIONS = {
@@ -120,6 +121,8 @@ def ultra_hdr(base: Image.Image, mask: Image.Image) -> bytes:
 def main() -> None:
     for name, (svg_name, background, mask_mode) in VERSIONS.items():
         svg = (OUT_DIR / svg_name).read_text(encoding="utf-8")
+        if mask_mode == "self":
+            svg = re.sub(r'(<rect[^>]*fill=")[^"]*"', rf'\g<1>{background}"', svg)
         base = render(svg, background)
         mask = base if mask_mode == "self" else render(
             re.sub(r'(<rect[^>]*fill=")[^"]*"', r'\g<1>#000000"', svg), "#000000")

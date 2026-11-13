@@ -1,14 +1,15 @@
 <!-- Generated from .github/README.md by `npm run docs:readme`: do not edit. -->
+
+# Lovelace Entity Progress Card
+
 <!-- markdownlint-disable MD013 -->
 <picture>
   <source media="(prefers-color-scheme: dark) and (prefers-reduced-motion: reduce)" srcset="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/epc-logo/epc-icon-black-6f3254.svg">
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/epc-logo/epc-icon-black-hdr-dd43b7.jpg">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/epc-logo/epc-icon-black-hdr-b063b4.jpg">
   <source media="(prefers-reduced-motion: reduce)" srcset="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/epc-logo/epc-icon-dc8ccf.svg">
   <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/epc-logo/epc-icon-hdr-dc49e7.jpg" alt="Entity Progress Card logo" width="120" align="right" />
 </picture>
 <!-- markdownlint-enable MD013 -->
-
-# Lovelace Entity Progress Card
 
 [![Home Assistant][ha-badge]][ha-link]
 [![Marketplace][marketplace-badge]][marketplace-link]
