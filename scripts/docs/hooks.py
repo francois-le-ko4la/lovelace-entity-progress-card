@@ -32,6 +32,9 @@ def _details(match: re.Match) -> str:
 BACK_TO_TOP = re.compile(r'^(?:\[🔼 Back to top\](?:: #top)?|<a id="top"></a>)\n\n?', re.M)
 
 
+DARK_HDR_LOGO = re.compile(r"images/epc-logo/epc-icon-black-hdr-[0-9a-f]{6}\.jpg")
+
+
 # The site documents stable releases: their release candidates stay on GitHub.
 RC_SECTION = re.compile(r"^## [^\n]*-rc\d+\)?\n.*?(?=^## |\Z)", re.S | re.M)
 
@@ -79,6 +82,7 @@ def _local(markdown: str, repo_url: str, site_url: str) -> str:
 def on_files(files, config):
     readme = Path(config.config_file_path).parent / config.extra.get("readme", "README.md")
     content = _local(readme.read_text(encoding="utf-8"), config.repo_url, config.site_url)
+    content = DARK_HDR_LOGO.sub(config.extra["logo_dark_hdr"], content)
     files.append(File.generated(config, "index.md", content=content))
     changelog = (Path(config.config_file_path).parent / "CHANGELOG.md").read_text(encoding="utf-8")
     changelog = RC_SECTION.sub("", changelog).replace("](docs/", "](")

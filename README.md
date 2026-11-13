@@ -1,7 +1,4 @@
 <!-- Generated from .github/README.md by `npm run docs:readme`: do not edit. -->
-
-# Lovelace Entity Progress Card
-
 <!-- markdownlint-disable MD013 -->
 <picture>
   <source media="(prefers-color-scheme: dark) and (prefers-reduced-motion: reduce)" srcset="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/epc-logo/epc-icon-black-6f3254.svg">
@@ -10,6 +7,8 @@
   <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/epc-logo/epc-icon-hdr-dc49e7.jpg" alt="Entity Progress Card logo" width="120" align="right" />
 </picture>
 <!-- markdownlint-enable MD013 -->
+
+# Lovelace Entity Progress Card
 
 [![Home Assistant][ha-badge]][ha-link]
 [![Marketplace][marketplace-badge]][marketplace-link]
@@ -239,9 +238,8 @@ lives — pick whichever guide matches what you're trying to do:
 | 🗺️&nbsp;[Option&nbsp;map][Option map]                 | Which options each of the 7 variants accepts, in one table                                                                                                     |
 
 <!-- doc-version -->
-
-These guides describe the latest stable release. Testing a release candidate, or
-using an older release? Open the
+These guides describe the latest stable release. Testing a release candidate,
+or using an older release? Open the
 [repository](https://github.com/francois-le-ko4la/lovelace-entity-progress-card)
 on GitHub and pick its tag.
 <!-- /doc-version -->
@@ -504,20 +502,13 @@ This project is licensed under the [GPL-3.0 license].
 [Discord]: https://discord.gg/tyMQ2SfyNG
 [GitHub Issues]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/issues
-[Errors, Deprecations & Troubleshooting Guide]:
-  https://francois-le-ko4la.github.io/lovelace-entity-progress-card/troubleshooting/
-[unavailable-entities]:
-  https://francois-le-ko4la.github.io/lovelace-entity-progress-card/troubleshooting/#what-you-see-and-what-to-do
-[Contributing Guide]:
-  https://francois-le-ko4la.github.io/lovelace-entity-progress-card/contributing/
-[Theme Guide]:
-  https://francois-le-ko4la.github.io/lovelace-entity-progress-card/theme/
-[custom theme]:
-  https://francois-le-ko4la.github.io/lovelace-entity-progress-card/theme/#custom-theme
-[cookbook]:
-  https://francois-le-ko4la.github.io/lovelace-entity-progress-card/cookbook/
-[Option map]:
-  https://francois-le-ko4la.github.io/lovelace-entity-progress-card/option-map/
+[Errors, Deprecations & Troubleshooting Guide]: https://francois-le-ko4la.github.io/lovelace-entity-progress-card/troubleshooting/
+[unavailable-entities]: https://francois-le-ko4la.github.io/lovelace-entity-progress-card/troubleshooting/#what-you-see-and-what-to-do
+[Contributing Guide]: https://francois-le-ko4la.github.io/lovelace-entity-progress-card/contributing/
+[Theme Guide]: https://francois-le-ko4la.github.io/lovelace-entity-progress-card/theme/
+[custom theme]: https://francois-le-ko4la.github.io/lovelace-entity-progress-card/theme/#custom-theme
+[cookbook]: https://francois-le-ko4la.github.io/lovelace-entity-progress-card/cookbook/
+[Option map]: https://francois-le-ko4la.github.io/lovelace-entity-progress-card/option-map/
 [ha-logo]: https://avatars.githubusercontent.com/u/13844975?s=64&v=4
 [chrome-logo]:
   https://raw.githubusercontent.com/alrra/browser-logos/main/src/chrome/chrome_64x64.png
@@ -529,19 +520,11 @@ This project is licensed under the [GPL-3.0 license].
   https://raw.githubusercontent.com/alrra/browser-logos/main/src/safari/safari_64x64.png
 [opera-logo]:
   https://raw.githubusercontent.com/alrra/browser-logos/main/src/opera/opera_64x64.png
-[FCR]:
-  https://francois-le-ko4la.github.io/lovelace-entity-progress-card/configuration/
-[config-alert_when]:
-  https://francois-le-ko4la.github.io/lovelace-entity-progress-card/configuration/#alert_when
-[config-watermark]:
-  https://francois-le-ko4la.github.io/lovelace-entity-progress-card/configuration/#watermark
-[config-custom_theme]:
-  https://francois-le-ko4la.github.io/lovelace-entity-progress-card/configuration/#custom_theme
-[config-trend_indicator]:
-  https://francois-le-ko4la.github.io/lovelace-entity-progress-card/configuration/#trend_indicator
-[config-peak_marker]:
-  https://francois-le-ko4la.github.io/lovelace-entity-progress-card/configuration/#peak_marker
-[config-bar_effect]:
-  https://francois-le-ko4la.github.io/lovelace-entity-progress-card/configuration/#bar_effect
-[config-icon_animation]:
-  https://francois-le-ko4la.github.io/lovelace-entity-progress-card/configuration/#icon_animation
+[FCR]: https://francois-le-ko4la.github.io/lovelace-entity-progress-card/configuration/
+[config-alert_when]: https://francois-le-ko4la.github.io/lovelace-entity-progress-card/configuration/#alert_when
+[config-watermark]: https://francois-le-ko4la.github.io/lovelace-entity-progress-card/configuration/#watermark
+[config-custom_theme]: https://francois-le-ko4la.github.io/lovelace-entity-progress-card/configuration/#custom_theme
+[config-trend_indicator]: https://francois-le-ko4la.github.io/lovelace-entity-progress-card/configuration/#trend_indicator
+[config-peak_marker]: https://francois-le-ko4la.github.io/lovelace-entity-progress-card/configuration/#peak_marker
+[config-bar_effect]: https://francois-le-ko4la.github.io/lovelace-entity-progress-card/configuration/#bar_effect
+[config-icon_animation]: https://francois-le-ko4la.github.io/lovelace-entity-progress-card/configuration/#icon_animation

@@ -35,6 +35,8 @@ STOPS = 3  # the mark's white up to 2^3 times SDR white
 VERSIONS = {
     "epc-icon-hdr": ("epc-icon-dc8ccf.svg", "#ffffff", "tile-black"),
     "epc-icon-black-hdr": ("epc-icon-black-6f3254.svg", "#0d1117", "self"),
+    # The docs site's dark background (docs/stylesheets/extra.css), set in mkdocs.yml.
+    "epc-icon-black-site-hdr": ("epc-icon-black-6f3254.svg", "#111111", "self"),
 }
 
 RENDER_JS = """

@@ -8,6 +8,8 @@ edit_uri: edit/main/docs/
 extra:
   # The home page is built from this file (this repository's README.md).
   readme: README.md
+  # The README's dark HDR logo is cut for GitHub's background: this one for the site's.
+  logo_dark_hdr: images/epc-logo/epc-icon-black-site-hdr-d90b9a.jpg
 
 extra_css:
   - stylesheets/extra.css

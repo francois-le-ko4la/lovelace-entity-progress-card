@@ -2,3 +2,4 @@ node_modules/
 dist/
 test-dist/
 site/
+__pycache__/
