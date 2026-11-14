@@ -52,8 +52,9 @@ tank level, shown as a bar with its color and icon.
   already filled in.
 - **Sensible defaults**: the unit, icon and percentage come from the entity
   itself, before you change anything.
-- **Visual effects**: shimmer, glass, rainbow or segmented bars, your own color
-  zones, and icons that move with the entity's state, with no `card_mod`
+- **Visual effects**: shimmer, glass, water, rainbow or segmented bars, your
+  own color zones, and icons that move with the entity's state, with no
+  `card_mod`
   ([`bar_effect`][config-bar_effect], [`custom_theme`][config-custom_theme],
   [`icon_animation`][config-icon_animation]). Each one has a screenshot in the
   [Cookbook][cookbook].

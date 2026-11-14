@@ -2140,6 +2140,13 @@ views:
             bar_effect:
               - radius
               - shimmer
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            name: wave
+            bar_position: background
+            bar_orientation: up
+            bar_effect:
+              - wave
       - type: grid
         cards:
           - type: heading
@@ -8383,6 +8390,28 @@ views:
             theme: critical_when_low
             bar_effect:
               - shimmer
+      - type: grid
+        cards:
+          - type: heading
+            heading: '✨ bar_effect: wave (Cookbook - visual effects)'
+            heading_style: title
+          - type: markdown
+            content: |
+              {% raw %}
+              📁 `effect-wave.gif`
+              {% endraw %}
+            grid_options:
+              columns: 12
+              rows: 1
+          - type: custom:entity-progress-card-dev
+            entity: input_number.epb_demo_battery
+            bar_position: background
+            bar_orientation: up
+            bar_effect:
+              - wave
+            grid_options:
+              columns: 6
+              rows: 2
       - type: grid
         cards:
           - type: heading

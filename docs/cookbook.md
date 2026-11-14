@@ -1384,7 +1384,7 @@ With a capture below: [`bar_effect`](#effect-bar-effects),
 
 <a id="effect-bar-effects"></a>
 
-#### `bar_effect`: shimmer, gradient, glass, radius
+#### `bar_effect`: shimmer, wave, gradient, glass, radius
 
 <picture>
   <source media="(prefers-color-scheme: dark)"
@@ -1407,6 +1407,34 @@ entity: sensor.phone_battery
 theme: critical_when_low
 bar_effect:
   - shimmer
+```
+
+</details>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+    srcset="images/effect-wave-dark-2239e4.gif">
+  <img src="images/effect-wave-light-e8f9a6.gif"
+    alt="Water filling a battery card, waves drifting on top (wave)"
+    width="369"/>
+</picture>
+
+`wave` turns an upright fill into water: two drifting crests, bubbles rising
+through it.
+
+<details>
+<summary>Show YAML</summary>
+
+```yaml
+type: custom:entity-progress-card
+entity: sensor.phone_battery
+bar_position: background
+bar_orientation: up
+bar_effect:
+  - wave
+grid_options:
+  columns: 6
+  rows: 2
 ```
 
 </details>
