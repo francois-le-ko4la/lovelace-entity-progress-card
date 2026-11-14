@@ -108,8 +108,6 @@ _Examples_:
 
 [🔼 Back to top]
 
----
-
 <a id="card"></a>
 
 ### Entity Progress Card
@@ -651,8 +649,6 @@ certificate expiry countdown:
 
 [🔼 Back to top]
 
----
-
 <a id="card-template"></a>
 
 ### Entity Progress Card Template
@@ -813,8 +809,6 @@ countdown, color that flips with the horizon — entirely computed in Jinja:
 
 [🔼 Back to top]
 
----
-
 <a id="badge"></a>
 
 ### Entity Progress Badge
@@ -937,8 +931,6 @@ bar_effect: shimmer
 <br />
 
 [🔼 Back to top]
-
----
 
 <a id="badge-template"></a>
 
@@ -1078,8 +1070,6 @@ color: |-
 
 [🔼 Back to top]
 
----
-
 <a id="tile-feature"></a>
 
 ### Entity Progress Tile Feature
@@ -1199,8 +1189,6 @@ features:
 <br />
 
 [🔼 Back to top]
-
----
 
 <a id="multi"></a>
 
@@ -1349,8 +1337,6 @@ grid_options:
 <br />
 
 [🔼 Back to top]
-
----
 
 <a id="effects-formatting"></a>
 
@@ -2246,8 +2232,6 @@ view's own grid sizing.
 
 [🔼 Back to top]
 
----
-
 ### Display Formatting
 
 Not animated, but just as much about the card reading correctly at a glance —
@@ -2347,8 +2331,6 @@ value_sign: true
 glance — most useful on `center_zero`/`bar_stack: { mode: net }` cards.
 
 [🔼 Back to top]
-
----
 
 ## Real-world recipes
 
@@ -2589,8 +2571,6 @@ the tile's orange exclamation mark when a sensor is unavailable.
 
 [🔼 Back to top]
 
----
-
 <a id="laundry-mystery"></a>
 
 ### The Laundry Mystery: Decoding Washer Entities Across Brands
@@ -2683,8 +2663,6 @@ integrations while displaying relevant information in a clear and consistent
 manner.
 
 [🔼 Back to top]
-
----
 
 <a id="washing-machine-three-brands"></a>
 
@@ -2797,8 +2775,6 @@ icon_animation: washing_machine
 
 [🔼 Back to top]
 
----
-
 <a id="simple-helper"></a>
 
 ### Cracking a Complex Case with a Simple Helper
@@ -2886,8 +2862,6 @@ duration. This solution effectively extends our card usage vision, and enhances
 the user experience.
 
 [🔼 Back to top]
-
----
 
 <a id="ssl-expiry"></a>
 
@@ -3069,8 +3043,6 @@ Let's Encrypt certificate, it's recommended to:
 These topics are beyond the scope of this guide.
 
 [🔼 Back to top]
-
----
 
 ### Follow the Sun
 
