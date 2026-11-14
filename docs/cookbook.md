@@ -233,7 +233,7 @@ external entity via `max_value`.
     srcset="images/rgb-dark-6333fb.png">
   <img src="images/rgb-light-fe5a2f.png"
     alt="A card in a custom RGB purple, icon and bar"
-    width="369"/>
+    width="308"/>
 </picture>
 
 <br />
@@ -259,10 +259,10 @@ needed:
 
 <picture>
   <source media="(prefers-color-scheme: dark)"
-    srcset="images/alert-pulsing-dark-55b731.gif">
-  <img src="images/alert-pulsing-light-fbd411.gif"
+    srcset="images/alert-pulsing-dark-6b333b.png">
+  <img src="images/alert-pulsing-light-e33ce5.png"
     alt="A pulsing alert on threshold"
-    width="429"/>
+    width="358"/>
 </picture>
 
 <details>
@@ -292,7 +292,7 @@ with [`bar_stack`](configuration.md#bar_stack):
     srcset="images/bar-stack-circuits-dark-740b64.png">
   <img src="images/bar-stack-circuits-light-27f256.png"
     alt="Three circuits, one bar"
-    width="369"/>
+    width="308"/>
 </picture>
 
 <br />
@@ -325,7 +325,7 @@ bar_stack:
     srcset="images/rgb-vertical-dark-62f252.png">
   <img src="images/rgb-vertical-light-260a94.png"
     alt="Example vertical"
-    width="178"/>
+    width="149"/>
 </picture>
 
 <br />
@@ -354,10 +354,10 @@ grid_options:
 
 <picture>
   <source media="(prefers-color-scheme: dark)"
-    srcset="images/battery-dashboard-dark-39f350.png">
-  <img src="images/battery-dashboard-light-bb2098.png"
+    srcset="images/battery-dashboard-dark-a2e32b.png">
+  <img src="images/battery-dashboard-light-462c48.png"
     alt="battery dashboard"
-    width="750"/>
+    width="625"/>
 </picture>
 
 <br />
@@ -398,7 +398,7 @@ sort:
     srcset="images/litter-box-dark-31d741.png">
   <img src="images/litter-box-light-325102.png"
     alt="Litter box"
-    width="369"/>
+    width="308"/>
 </picture>
 
 <br />
@@ -424,10 +424,10 @@ grid_options:
 
 <picture>
   <source media="(prefers-color-scheme: dark)"
-    srcset="images/rgb-loop-dark-14a99a.gif">
-  <img src="images/rgb-loop-light-9993e1.gif"
+    srcset="images/rgb-loop-dark-0e323e.png">
+  <img src="images/rgb-loop-light-f1da66.png"
     alt="The same card, its icon bouncing (card_mod)"
-    width="369"/>
+    width="308"/>
 </picture>
 
 <br />
@@ -471,10 +471,10 @@ combined with `auto-entities` for dynamic listing and
 
 <picture>
   <source media="(prefers-color-scheme: dark)"
-    srcset="images/stack-dark-0010ff.gif">
-  <img src="images/stack-light-11c5dd.gif"
+    srcset="images/stack-dark-4c4bae.png">
+  <img src="images/stack-light-7038fa.png"
     alt="Eight battery cards in a stack, red when low, green when charged"
-    width="750"/>
+    width="625"/>
 </picture>
 
 <br />
@@ -520,7 +520,7 @@ cards:
     srcset="images/vertical-stack-dark-01e7c0.png">
   <img src="images/vertical-stack-light-a96601.png"
     alt="Native vertical-stack"
-    width="750"/>
+    width="625"/>
 </picture>
 
 <br />
@@ -552,7 +552,7 @@ needed:
     srcset="images/native-entities-dark-df506c.png">
   <img src="images/native-entities-light-ceaee5.png"
     alt="Native entities"
-    width="750"/>
+    width="625"/>
 </picture>
 
 <br />
@@ -583,7 +583,7 @@ entities:
     srcset="images/native-height-override-dark-708f79.png">
   <img src="images/native-height-override-light-007f89.png"
     alt="height override"
-    width="750"/>
+    width="625"/>
 </picture>
 <br />
 <br />
@@ -596,7 +596,7 @@ seamless block:
     srcset="images/native-grid-dark-f3c8b9.png">
   <img src="images/native-grid-light-3aac7e.png"
     alt="Native grid"
-    width="750"/>
+    width="625"/>
 </picture>
 
 <br />
@@ -742,7 +742,7 @@ See [Full Configuration Reference][FCR].
     srcset="images/template-card-simple-dark-24df96.png">
   <img src="images/template-card-simple-light-3090b8.png"
     alt="Template Card simple example"
-    width="369"/>
+    width="308"/>
 </picture>
 
 <br />
@@ -894,7 +894,7 @@ See [Full Configuration Reference][FCR]. We use the same syntax as the card.
     srcset="images/kitchen-fan-dark-8d4006.png">
   <img src="images/kitchen-fan-light-95093c.png"
     alt="Badge simple example"
-    width="195"/>
+    width="162"/>
 </picture>
 
 <br />
@@ -916,10 +916,10 @@ icon: mdi:air-conditioner
 
 <picture>
   <source media="(prefers-color-scheme: dark)"
-    srcset="images/badge-shimmer-dark-0dba36.gif">
-  <img src="images/badge-shimmer-light-c6e0c5.gif"
+    srcset="images/badge-shimmer-dark-56539b.png">
+  <img src="images/badge-shimmer-light-a7b2b5.png"
     alt="Badge with theme and bar effect"
-    width="213"/>
+    width="178"/>
 </picture>
 
 <br />
@@ -1012,7 +1012,7 @@ See [Full Configuration Reference][FCR].
     srcset="images/demo-light-dark-f90346.png">
   <img src="images/demo-light-light-355d4b.png"
     alt="Badge Template simple example"
-    width="195"/>
+    width="162"/>
 </picture>
 
 <br />
@@ -1048,7 +1048,7 @@ percent: |-
     srcset="images/disk-usage-dark-53ff18.png">
   <img src="images/disk-usage-light-6b1be5.png"
     alt="Badge Template color escalation"
-    width="231"/>
+    width="192"/>
 </picture>
 
 <br />
@@ -1142,7 +1142,7 @@ See [Full Configuration Reference][FCR].
     srcset="images/tile-feature-simple-dark-afbffe.png">
   <img src="images/tile-feature-simple-light-074ff9.png"
     alt="Tile Feature simple example"
-    width="369"/>
+    width="308"/>
 </picture>
 
 <br />
@@ -1168,7 +1168,7 @@ increasing the card height:
     srcset="images/tile-feature-overlay-dark-b70696.png">
   <img src="images/tile-feature-overlay-light-3e3795.png"
     alt="Tile Feature overlay mode"
-    width="369"/>
+    width="308"/>
 </picture>
 
 <br />
@@ -1278,7 +1278,7 @@ See [Full Configuration Reference][FCR].
     srcset="images/multi-card-standalone-dark-bca4bc.png">
   <img src="images/multi-card-standalone-light-beebee.png"
     alt="Multi-Card standalone"
-    width="750"/>
+    width="625"/>
 </picture>
 
 <br />
@@ -1313,7 +1313,7 @@ entities:
     srcset="images/multi-feature-tile-dark-d6bcb5.png">
   <img src="images/multi-feature-tile-light-6cae22.png"
     alt="Multi-Feature inside a Tile card"
-    width="369"/>
+    width="308"/>
 </picture>
 
 <br />
@@ -1362,7 +1362,7 @@ them.
 ### Visual Effects
 
 Most of what makes this card feel alive doesn't show up in a static screenshot.
-Each GIF below is captured straight from
+Each animation below is captured straight from
 [`docs/demo-dashboard.yaml`](demo-dashboard.yaml) — the card's own showroom — so
 what you see is exactly what you get, at real speed.
 
@@ -1388,10 +1388,10 @@ With a capture below: [`bar_effect`](#effect-bar-effects),
 
 <picture>
   <source media="(prefers-color-scheme: dark)"
-    srcset="images/effect-shimmer-dark-e9015b.gif">
-  <img src="images/effect-shimmer-light-359803.gif"
+    srcset="images/effect-shimmer-dark-650810.png">
+  <img src="images/effect-shimmer-light-bb0bd8.png"
     alt="A light sweep looping across a battery bar (shimmer)"
-    width="369"/>
+    width="308"/>
 </picture>
 
 A light sweep loops continuously across the bar — the "still working" cue for
@@ -1411,12 +1411,15 @@ bar_effect:
 
 </details>
 
+`critical_when_low` turns red under 10 %; for another limit, e.g. 20 %, see
+[`custom_theme`](#effect-custom-theme).
+
 <picture>
   <source media="(prefers-color-scheme: dark)"
-    srcset="images/effect-wave-dark-2239e4.gif">
-  <img src="images/effect-wave-light-e8f9a6.gif"
+    srcset="images/effect-wave-dark-342631.png">
+  <img src="images/effect-wave-light-4b32b5.png"
     alt="Water filling a battery card, waves drifting on top (wave)"
-    width="369"/>
+    width="308"/>
 </picture>
 
 `wave` turns an upright fill into water: two drifting crests, bubbles rising
@@ -1440,8 +1443,6 @@ grid_options:
 </details>
 
 See [`bar_effect`](configuration.md#bar_effect) for the full list.
-`critical_when_low` turns red under 10 %; for another limit, e.g. 20 %, see
-[`custom_theme`](#effect-custom-theme).
 
 [🔼 Back to top]
 
@@ -1454,7 +1455,7 @@ See [`bar_effect`](configuration.md#bar_effect) for the full list.
     srcset="images/effect-bar-segments-dark-57a697.png">
   <img src="images/effect-bar-segments-light-bcb482.png"
     alt="A battery bar at 42 % split into ten blocks"
-    width="369"/>
+    width="308"/>
 </picture>
 
 Battery-cell style — both the track and the fill are split into blocks, gaps
@@ -1483,7 +1484,7 @@ Works with any orientation, size, or color mode/effect.
     srcset="images/effect-bar-ring-dark-94518c.png">
   <img src="images/effect-bar-ring-light-4b3285.png"
     alt="Four rings around a battery icon: dial, segments, hard and soft edge"
-    width="500"/>
+    width="625"/>
 </picture>
 
 With [`bar_position: icon`][config-bar_position], the bar is a ring around the
@@ -1526,7 +1527,7 @@ bar_ring:
     srcset="images/effect-interpolate-dark-58644a.png">
   <img src="images/effect-interpolate-light-132ff7.png"
     alt="A litter level at 20 %, its color blended between two zones"
-    width="369"/>
+    width="308"/>
 </picture>
 
 Without it, `custom_theme` zones cut sharply from one color to the next. With
@@ -1560,7 +1561,7 @@ custom_theme:
     srcset="images/effect-force-circular-background-dark-71f31a.png">
   <img src="images/effect-force-circular-background-light-3bd067.png"
     alt="An idle timer whose icon keeps its round grey disc"
-    width="369"/>
+    width="308"/>
 </picture>
 
 The opposite of [`hide: [shape]`](#effect-hide-shape) — forces the circular
@@ -1585,10 +1586,10 @@ force_circular_background: true
 
 <picture>
   <source media="(prefers-color-scheme: dark)"
-    srcset="images/effect-icon-animation-dark-478027.gif">
-  <img src="images/effect-icon-animation-light-3071e5.gif"
+    srcset="images/effect-icon-animation-dark-30d1e1.png">
+  <img src="images/effect-icon-animation-light-cef77d.png"
     alt="Animated icons: a washing machine, a charging battery, a fan, a light"
-    width="807"/>
+    width="672"/>
 </picture>
 
 The icon itself reacts to what the entity is actually doing. `washing_machine`
@@ -1651,10 +1652,10 @@ not just the icon - both read the same `battery_charging` attribute:
 
 <picture>
   <source media="(prefers-color-scheme: dark)"
-    srcset="images/battery-charging-dark-004c7c.gif">
-  <img src="images/battery-charging-light-926b55.gif"
+    srcset="images/battery-charging-dark-f0b2b5.png">
+  <img src="images/battery-charging-light-28a0ae.png"
     alt="theme: battery_adaptive"
-    width="369"/>
+    width="308"/>
 </picture>
 
 <br />
@@ -1680,10 +1681,10 @@ icon_animation: battery_charging
 
 <picture>
   <source media="(prefers-color-scheme: dark)"
-    srcset="images/alert-pulsing-dark-55b731.gif">
-  <img src="images/alert-pulsing-light-fbd411.gif"
+    srcset="images/alert-pulsing-dark-6b333b.png">
+  <img src="images/alert-pulsing-light-e33ce5.png"
     alt="A ring bursting around the card when the value crosses a threshold"
-    width="429"/>
+    width="358"/>
 </picture>
 
 A ring bursts around the card the moment a threshold is crossed — impossible to
@@ -1714,10 +1715,10 @@ shows up while the alert is actually active:
 
 <picture>
   <source media="(prefers-color-scheme: dark)"
-    srcset="images/effect-alert-label-dark-84f1c4.gif">
-  <img src="images/effect-alert-label-light-e8e8a4.gif"
+    srcset="images/effect-alert-label-dark-53c66c.png">
+  <img src="images/effect-alert-label-light-6589ee.png"
     alt="alert_when highlight: label"
-    width="750"/>
+    width="625"/>
 </picture>
 
 <br />
@@ -1812,7 +1813,7 @@ the same entity-or-Jinja pattern applied to thresholds that don't alert.
     srcset="images/effect-watermark-dark-68f3ff.png">
   <img src="images/effect-watermark-light-d3101b.png"
     alt="watermark types"
-    width="369"/>
+    width="308"/>
 </picture>
 
 Low/high reference lines drawn directly on the bar — six styles
@@ -1824,7 +1825,7 @@ at a glance:
     srcset="images/all-watermark-dark-94af50.png">
   <img src="images/all-watermark-light-8c880c.png"
     alt="all watermark types"
-    width="750"/>
+    width="625"/>
 </picture>
 
 <br />
@@ -1861,7 +1862,7 @@ the other five (`blended`, `area`, `triangle`, `round`, `line`) each look like.
     srcset="images/effect-segment-dark-7e699d.png">
   <img src="images/effect-segment-light-74b70a.png"
     alt="A temperature bar drawn in the theme's color blocks"
-    width="369"/>
+    width="308"/>
 </picture>
 
 Each theme zone renders as its own colored block, visible up to the current
@@ -1893,7 +1894,7 @@ bar_color_mode: segment
     srcset="images/effect-rainbow-full-dark-332f3c.png">
   <img src="images/effect-rainbow-full-light-1052d3.png"
     alt="bar_color_mode: rainbow_full"
-    width="369"/>
+    width="308"/>
 </picture>
 
 The track shows the theme's complete gradient end to end, with a marker sliding
@@ -1928,7 +1929,7 @@ See [`bar_color_mode`](configuration.md#bar_color_mode) for `segment` and plain
     srcset="images/effect-status-label-dark-bff5a0.png">
   <img src="images/effect-status-label-light-de7ec5.png"
     alt="Four temperatures, each with a pill: glacial, cool, temperate, scorching"
-    width="750"/>
+    width="625"/>
 </picture>
 
 A short piece of text — `glacial`, `scorching`, `ok` — with no color to pick
@@ -1975,7 +1976,7 @@ object form and `color_source`.
     srcset="images/effect-trend-dark-b83afd.png">
   <img src="images/effect-trend-light-287c61.png"
     alt="A temperature card with a trend icon in its top-right corner"
-    width="369"/>
+    width="308"/>
 </picture>
 
 A small chevron in the top-right corner — up, down, or flat. Shares that corner
@@ -2002,7 +2003,7 @@ trend_indicator: true
     srcset="images/effect-peak-marker-dark-97d0f3.png">
   <img src="images/effect-peak-marker-light-f865e5.png"
     alt="A battery bar with a small mark at the recent peak"
-    width="369"/>
+    width="308"/>
 </picture>
 
 Marks the minimum, maximum, and average value seen over a time window, directly
@@ -2037,7 +2038,7 @@ peak_marker:
     srcset="images/effect-custom-theme-dark-6d2b7d.png">
   <img src="images/effect-custom-theme-light-b752be.png"
     alt="A litter level at 20 % in orange, icon set by its zone"
-    width="369"/>
+    width="308"/>
 </picture>
 
 Not every value fits a built-in theme. Define your own value-range → color (+
@@ -2076,7 +2077,7 @@ custom_theme:
     srcset="images/effect-bar-stack-dark-e151fb.png">
   <img src="images/effect-bar-stack-light-448549.png"
     alt="Two stacked bars: a battery breakdown and a net power total"
-    width="750"/>
+    width="625"/>
 </picture>
 
 Three modes, three different questions answered:
@@ -2151,7 +2152,7 @@ auto-shaded colors.
     srcset="images/effect-center-zero-dark-0d72cb.png">
   <img src="images/effect-center-zero-light-a8e3ec.png"
     alt="A power card at -750 W, its bar filling left from the middle"
-    width="369"/>
+    width="308"/>
 </picture>
 
 For anything that fluctuates around a baseline — a power balance, a temperature
@@ -2184,7 +2185,7 @@ mode, which combines naturally with it.
     srcset="images/effect-hide-shape-dark-45efd2.png">
   <img src="images/effect-hide-shape-light-2122fe.png"
     alt="A temperature card whose icon has no round background"
-    width="369"/>
+    width="308"/>
 </picture>
 
 For a flatter look, without `card_mod`:
@@ -2214,7 +2215,7 @@ Same result, via CSS instead of YAML: the
     srcset="images/effect-density-compact-dark-8bf5ed.png">
   <img src="images/effect-density-compact-light-0ffec8.png"
     alt="Two compact battery cards, the bar along the top edge"
-    width="369"/>
+    width="308"/>
 </picture>
 
 One option, two shapes depending on [`layout`](configuration.md#layout):
@@ -2261,7 +2262,7 @@ how the number itself is shown.
     srcset="images/format-unit-position-dark-9baaba.png">
   <img src="images/format-unit-position-light-a19e85.png"
     alt="A Litecoin balance with the symbol first: Ł42.00"
-    width="369"/>
+    width="308"/>
 </picture>
 
 <br />
@@ -2292,7 +2293,7 @@ unit_spacing: no-space
     srcset="images/format-value-compact-dark-206465.png">
   <img src="images/format-value-compact-light-6cca54.png"
     alt="A total energy shortened to 1.25MWh"
-    width="369"/>
+    width="308"/>
 </picture>
 
 <br />
@@ -2323,7 +2324,7 @@ trimmed (`1.2K`, not `1.20K`).
     srcset="images/format-value-sign-dark-6cad82.png">
   <img src="images/format-value-sign-light-760ff1.png"
     alt="A net power card showing +700.00 W, sign included"
-    width="369"/>
+    width="308"/>
 </picture>
 
 <br />
@@ -2356,10 +2357,11 @@ linked from the Card and Card Template `Recipes` above.
 
 ### Recreate the Showcase
 
-The GIF at the top of the [README](../README.md) isn't a mockup — it's this
-project's own [demo dashboard](demo-dashboard.yaml) (the "EP Showcase" view),
-built from ordinary options combined a bit more generously than usual. Here's
-exactly how four of its cards are put together; the others are in the same file.
+The animation at the top of the [README](../README.md) isn't a mockup — it's
+this project's own [demo dashboard](demo-dashboard.yaml) (the "EP Showcase"
+view), built from ordinary options combined a bit more generously than usual.
+Here's exactly how four of its cards are put together; the others are in the
+same file.
 
 <a id="showcase-living-room"></a>
 
@@ -2370,7 +2372,7 @@ exactly how four of its cards are put together; the others are in the same file.
     srcset="images/showcase-living-room-dark-f82ca7.png">
   <img src="images/showcase-living-room-light-3cc099.png"
     alt="A living room at 21.5 °C on a blue-to-red bar, a Temperate pill"
-    width="750"/>
+    width="625"/>
 </picture>
 
 <br />
@@ -2408,10 +2410,10 @@ condition needed for a fixed label.
 
 <picture>
   <source media="(prefers-color-scheme: dark)"
-    srcset="images/showcase-garage-dark-f30a6e.gif">
-  <img src="images/showcase-garage-light-3e9dac.gif"
+    srcset="images/showcase-garage-dark-f2c769.png">
+  <img src="images/showcase-garage-light-2812d0.png"
     alt="A tall garage card at 35 °C, a red hot pill, a bar ending in red"
-    width="218"/>
+    width="181"/>
 </picture>
 
 <br />
@@ -2454,7 +2456,7 @@ Same `rainbow_full` idea as Living room, this time
     srcset="images/showcase-energy-dark-6f38c2.png">
   <img src="images/showcase-energy-light-f38c8f.png"
     alt="Consumption and production bars above a net bar centered on zero"
-    width="750"/>
+    width="625"/>
 </picture>
 
 <br />
@@ -2518,7 +2520,7 @@ same width.
     srcset="images/printer-dark-408ef3.png">
   <img src="images/printer-light-32de1e.png"
     alt="A Mushroom Template card with two ink-level bars"
-    width="369"/>
+    width="308"/>
 </picture>
 
 <br />
@@ -3103,10 +3105,10 @@ templates to show:
 
 <picture>
   <source media="(prefers-color-scheme: dark)"
-    srcset="images/follow-the-sun-dark-7c98fe.gif">
-  <img src="images/follow-the-sun-light-286564.gif"
+    srcset="images/follow-the-sun-dark-5e680f.png">
+  <img src="images/follow-the-sun-light-2c1008.png"
     alt="Follow the Sun"
-    width="369"/>
+    width="308"/>
 </picture>
 
 <br />

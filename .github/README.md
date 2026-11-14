@@ -23,8 +23,10 @@ tank level, shown as a bar with its color and icon.
 
 <!-- markdownlint-disable MD013 -->
 <picture>
-  <source media="(prefers-reduced-motion: reduce)" srcset="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/showcase-still-a94bcc.png">
-  <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/showcase-loop-363fce.gif" alt="A dashboard of Entity Progress Cards: room temperature, fan, light, batteries, energy, printer ink, washing machine and more" width="100%" style="max-width: 1000px;" />
+  <source media="(prefers-color-scheme: dark) and (prefers-reduced-motion: reduce)" srcset="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/showcase-still-dark-1f5e80.png">
+  <source media="(prefers-reduced-motion: reduce)" srcset="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/showcase-still-light-f29ca8.png">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/showcase-loop-dark-dd6ff7.png">
+  <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/showcase-loop-light-f9d31b.png" alt="A dashboard of Entity Progress Cards: room temperature, fan, light, batteries, energy, printer ink, washing machine and more" width="100%" style="max-width: 1000px;" />
 </picture>
 <!-- markdownlint-enable MD013 -->
 
@@ -51,8 +53,9 @@ tank level, shown as a bar with its color and icon.
   already filled in.
 - **Sensible defaults**: the unit, icon and percentage come from the entity
   itself, before you change anything.
-- **Visual effects**: shimmer, glass, rainbow or segmented bars, your own color
-  zones, and icons that move with the entity's state, with no `card_mod`
+- **Visual effects**: shimmer, glass, water, rainbow or segmented bars, your
+  own color zones, and icons that move with the entity's state, with no
+  `card_mod`
   ([`bar_effect`][config-bar_effect], [`custom_theme`][config-custom_theme],
   [`icon_animation`][config-icon_animation]). Each one has a screenshot in the
   [Cookbook][cookbook].
@@ -206,7 +209,7 @@ Want the bar to turn red when a battery runs low (under 10 %)? One line does it:
 <!-- markdownlint-disable MD013 -->
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/theme-critical-low-dark-dbf8b1.png">
-  <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/theme-critical-low-light-6df2e8.png" alt="Bars at 25, 50, 75 and 95 %: yellow, green, green, green" width="750"/>
+  <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/theme-critical-low-light-6df2e8.png" alt="Bars at 25, 50, 75 and 95 %: yellow, green, green, green" width="625"/>
 </picture>
 <!-- markdownlint-enable MD013 -->
 
