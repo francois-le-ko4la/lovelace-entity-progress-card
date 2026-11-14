@@ -4835,10 +4835,6 @@ card_param: cards
 
 [🔼 Back to top]
 
----
-
-Next: the [Cookbook](cookbook.md), with a capture of the main effects.
-
 [🔼 Back to top]: #top
 [yaml-only]: https://img.shields.io/badge/YAML-Only-orange.svg?style=flat
 [Card-OK]: https://img.shields.io/badge/Card-OK-green.svg?style=flat

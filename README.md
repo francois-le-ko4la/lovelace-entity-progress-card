@@ -26,8 +26,8 @@ tank level, shown as a bar with its color and icon.
 <picture>
   <source media="(prefers-color-scheme: dark) and (prefers-reduced-motion: reduce)" srcset="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/showcase-still-dark-1f5e80.png">
   <source media="(prefers-reduced-motion: reduce)" srcset="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/showcase-still-light-f29ca8.png">
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/showcase-loop-dark-dd6ff7.png">
-  <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/showcase-loop-light-f9d31b.png" alt="A dashboard of Entity Progress Cards: room temperature, fan, light, batteries, energy, printer ink, washing machine and more" width="100%" style="max-width: 1000px;" />
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/showcase-loop-dark-f889b1.png">
+  <img src="https://raw.githubusercontent.com/francois-le-ko4la/lovelace-entity-progress-card/main/docs/images/showcase-loop-light-566059.png" alt="A dashboard of Entity Progress Cards: room temperature, fan, light, batteries, energy, printer ink, washing machine and more" width="100%" style="max-width: 1000px;" />
 </picture>
 <!-- markdownlint-enable MD013 -->
 

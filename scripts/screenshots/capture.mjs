@@ -88,6 +88,18 @@ if (opts.whole) await page.addInitScript(() => localStorage.setItem('dockedSideb
 let lastIcon = Date.now();
 page.on('response', (res) => /\/static\/mdi\//.test(res.url()) && (lastIcon = Date.now()));
 
+// HA's WebSocket goes through here: while an animation is recorded, its messages to the page are held
+// back and delivered after, so nothing HA renders (Jinja, states) changes between frames.
+let holdWs = false;
+const heldWs = [];
+let releaseWs = () => {};
+await page.routeWebSocket(/\/api\/websocket$/, (ws) => {
+  const server = ws.connectToServer();
+  ws.onMessage((message) => server.send(message));
+  server.onMessage((message) => (holdWs ? heldWs.push(message) : ws.send(message)));
+  releaseWs = () => heldWs.splice(0).forEach((message) => ws.send(message));
+});
+
 await page.goto(new URL(opts.view, base.endsWith('/') ? base : `${base}/`).href, { waitUntil: 'networkidle', timeout: 60000 });
 const started = Date.now();
 const allFound = async () => {
@@ -208,10 +220,13 @@ const recordGif = async (card, haCard, file) => {
       }
     };
   });
+  holdWs = true;
   for (let i = 0; i < total; i += 1) {
     await page.evaluate((t) => window.__epbAnimations.forEach((a) => { a.currentTime = t; }), (i * 1000) / gifFps);
     await page.screenshot({ clip: box, omitBackground: apng, path: path.join(dir, `${String(i).padStart(4, '0')}.png`) });
   }
+  holdWs = false;
+  releaseWs();
   await page.evaluate(() => {
     window.__epbAnimations.forEach((a) => a.play());
     window.Date = window.__epbRealDate;

@@ -508,10 +508,6 @@ the card, then **⋮** ➡️ **Install another version**, and pick the previous
 
 Your dashboards stay intact.
 
----
-
-_This troubleshooting guide is inspired by open source best practices._
-
 [latest release]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/releases/latest
 [all releases]:

@@ -111,7 +111,7 @@ see [`bar_color_mode`](#bar_color_mode).
     srcset="images/theme-battery-adaptive-dark-9509c1.png">
   <img src="images/theme-battery-adaptive-light-b70ee1.png"
     alt="Battery bars: red when nearly empty, or nearly full while charging"
-    width="750"/>
+    width="625"/>
 </picture>
 
 Use this for a phone or laptop battery. Unplugged, it uses the zones of
@@ -147,7 +147,7 @@ theme: battery_adaptive
     srcset="images/theme-critical-low-dark-dbf8b1.png">
   <img src="images/theme-critical-low-light-6df2e8.png"
     alt="Bars at 25, 50, 75 and 95 %: yellow, green, green, green"
-    width="750"/>
+    width="625"/>
 </picture>
 
 Use for a value that is only a problem near zero, such as a battery or a stock.
@@ -189,7 +189,7 @@ theme: critical_when_low
     srcset="images/theme-optimal-low-dark-c676a3.png">
   <img src="images/theme-optimal-low-light-7b1203.png"
     alt="Bars at 25, 50, 75 and 95 %: light green, yellow, orange, red"
-    width="750"/>
+    width="625"/>
 </picture>
 
 Use for a value where low is good, such as a load or a usage. Green at the
@@ -232,7 +232,7 @@ theme: optimal_when_low
     srcset="images/theme-critical-high-dark-a473f3.png">
   <img src="images/theme-critical-high-light-d40664.png"
     alt="Bars at 25, 50, 75 and 95 %: green, green, yellow, red"
-    width="750"/>
+    width="625"/>
 </picture>
 
 Use for a value that is only a problem near 100 %, such as CPU, RAM or disk
@@ -274,7 +274,7 @@ theme: critical_when_high
     srcset="images/theme-optimal-high-dark-95f174.png">
   <img src="images/theme-optimal-high-light-ea6d23.png"
     alt="Bars at 25, 50, 75 and 95 %: orange, yellow, light green, green"
-    width="750"/>
+    width="625"/>
 </picture>
 
 Use for a value where high is good. Red under 20 %, green at the top, in five
@@ -317,7 +317,7 @@ theme: optimal_when_high
     srcset="images/theme-critical-extreme-dark-c8644b.png">
   <img src="images/theme-critical-extreme-light-d2d29f.png"
     alt="Bars at 25, 50, 75 and 95 %: yellow, green, yellow, red"
-    width="750"/>
+    width="625"/>
 </picture>
 
 Use when both ends are a problem, such as a tank (too empty or too full). Red
@@ -362,7 +362,7 @@ theme: critical_when_extreme
     srcset="images/theme-critical-extreme-center-dark-466609.png">
   <img src="images/theme-critical-extreme-center-light-0c848a.png"
     alt="A bar at -750 W: green near zero, red at both ends"
-    width="750"/>
+    width="625"/>
 </picture>
 
 Use with [`center_zero`](configuration.md#center_zero) for a value that swings
@@ -414,7 +414,7 @@ theme: critical_when_extreme_center
     srcset="images/theme-light-dark-d902d7.png">
   <img src="images/theme-light-light-347fff.png"
     alt="Bars at 25, 50, 75 and 95 %: dim grey to warm yellow"
-    width="750"/>
+    width="625"/>
 </picture>
 
 Use for a light's brightness. The color moves smoothly from dim grey to warm
@@ -466,7 +466,7 @@ icon_tap_action:
     srcset="images/theme-temperature-dark-6d4d36.png">
   <img src="images/theme-temperature-light-8e7bfe.png"
     alt="Bars at -10, 10, 22 and 35 °C: blue, cyan, green, red"
-    width="750"/>
+    width="625"/>
 </picture>
 
 `min_value` and `max_value` are optional. Without them the bar runs from `0` to
@@ -523,7 +523,7 @@ icon_tap_action:
     srcset="images/theme-humidity-dark-40868c.png">
   <img src="images/theme-humidity-light-1d9e3b.png"
     alt="Bars at 25, 50, 75 and 95 %: orange, green, indigo, purple"
-    width="750"/>
+    width="625"/>
 </picture>
 
 Use for indoor humidity. Green from 40 to 60 %, red under 20 % (too dry), purple
@@ -569,7 +569,7 @@ icon_tap_action:
     srcset="images/theme-voc-dark-a31be6.png">
   <img src="images/theme-voc-light-3eb117.png"
     alt="Bars at 150, 400, 10000 and 35000 ppb: green, yellow, red, purple"
-    width="750"/>
+    width="625"/>
 </picture>
 
 Use for volatile organic compounds (VOC), in ppb. Green up to 300, red over
@@ -629,7 +629,7 @@ icon_tap_action:
     srcset="images/theme-pm-dark-2e34bc.png">
   <img src="images/theme-pm-light-cbd961.png"
     alt="Bars at 6, 20, 100 and 180 µg/m³: green, yellow, red, purple"
-    width="750"/>
+    width="625"/>
 </picture>
 
 Use for fine particles (PM 2.5), in µg/m³. Green up to 12, red over 55, purple
@@ -701,7 +701,7 @@ above:
     srcset="images/theme-custom-example-dark-8a4d09.png">
   <img src="images/theme-custom-example-light-f7994a.png"
     alt="Battery cards: red at 15 %, green at 50 %, orange at 90 %"
-    width="750"/>
+    width="625"/>
 </picture>
 
 ```yaml
@@ -787,7 +787,7 @@ bar keeps a single color (this is normal).
     srcset="images/theme-bar-color-modes-dark-469fc3.png">
   <img src="images/theme-bar-color-modes-light-a69201.png"
     alt="At 69 %: solid green, blocks, a gradient, a full gradient and a marker"
-    width="750"/>
+    width="625"/>
 </picture>
 
 A battery at 69 % with `optimal_when_high`, top to bottom: `auto` paints one
@@ -1051,7 +1051,7 @@ too, if you use those).
     srcset="images/theme-card-mod-example-dark-4eb745.png">
   <img src="images/theme-card-mod-example-light-6b32c4.png"
     alt="Card with a dashed orange border, an orange bar and monospace text"
-    width="450"/>
+    width="375"/>
 </picture>
 
 <details>

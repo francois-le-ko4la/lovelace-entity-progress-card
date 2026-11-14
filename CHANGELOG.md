@@ -193,10 +193,11 @@ them rewritten, or `unit: s`.
 - README: badges for the documentation site and the development documentation.
 - Cookbook: a Mushroom Template card hosting a Multi-Feature (printer ink
   levels).
-- Docs images follow your theme: every cookbook, theme and README screenshot has
-  a light and a dark version, with transparent corners.
+- Docs images follow your theme: every cookbook, theme and README screenshot and
+  animation has a light and a dark version, with transparent corners.
 - Demo dashboard: a Mushroom Template card hosting the Feature.
 - Cookbook: a `bar_ring` recipe (dial, segments, edge softness).
+- Cookbook: a `bar_effect: wave` capture.
 - Installing, testing an RC and rolling back with the Home Assistant Marketplace
   (2026.11+), next to HACS.
 - New logo, in the README and on the documentation site.
@@ -217,6 +218,8 @@ them rewritten, or `unit: s`.
 
 - The editor rebuilds its option labels only when the language changes.
 - The issue report is built by the card itself, so the console can make it too.
+- `scripts/screenshots/` captures the docs' images and animations (cards, whole
+  view, APNG) from the demo dashboard.
 
 > We care about getting the details right — but even so, something here might
 > have slipped through. You don't need to be a developer to notice it. If

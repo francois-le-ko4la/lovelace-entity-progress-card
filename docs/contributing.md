@@ -220,10 +220,6 @@ Entity Progress Card better for everyone.
 
 **Happy Contributing!** 🚀
 
----
-
-_This contribution guide is inspired by open source best practices._
-
 [Discord]: https://discord.gg/tyMQ2SfyNG
 [GitHub Issues]:
   https://github.com/francois-le-ko4la/lovelace-entity-progress-card/issues

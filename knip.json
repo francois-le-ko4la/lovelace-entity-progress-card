@@ -5,7 +5,7 @@
     "scripts/**/*.{js,mjs}",
     "test/**/*.test.ts"
   ],
-  "ignoreBinaries": ["ffmpeg"],
+  "ignoreBinaries": ["ffmpeg", "apngopt"],
   "ignore": [
     "src/utils/translations.js",
     "docs/assets/**"
