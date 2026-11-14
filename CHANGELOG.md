@@ -4,7 +4,7 @@ All notable changes to the Entity Progress Card are documented here, most recent
 first. See [`docs/rc-testing.md`](docs/rc-testing.md) for how to try a release
 candidate safely before it becomes stable.
 
-## 1.6.4 (soon)
+## 1.6.4
 
 **The colors Home Assistant would pick.**
 
