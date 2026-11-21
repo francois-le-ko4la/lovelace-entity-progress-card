@@ -8,6 +8,7 @@ import {
   MultiFeatureRowConfigHelper,
 } from '../../../src/card/config/config-helpers.js';
 import type { LovelaceConfig } from '../../../src/utils/types.js';
+import { HassProviderSingleton } from '../../../src/utils/hass-provider.js';
 
 const TEST_ENTITY = 'sensor.test';
 const CAPACITY_ENTITY = 'sensor.capacity';
@@ -319,6 +320,45 @@ describe('BaseConfigHelper.wasSetByUser - telling a written option from a defaul
     const helper = helperFor({ entity: TEST_ENTITY, center_zero: true });
     assert.equal(helper.config.min_value, -100);
     assert.equal(helper.wasSetByUser('min_value'), false);
+  });
+});
+
+// An unknown bar_stack entity used to be dropped from the total without a word,
+// where the same typo in min_value showed an error.
+describe('_checkHAEnvironment - bar_stack entities', () => {
+  const STACKED = 'sensor.stacked';
+  const checked = (entities: Record<string, unknown>[]) => {
+    HassProviderSingleton.getInstance().hass = {
+      states: {
+        [TEST_ENTITY]: { entity_id: TEST_ENTITY, state: '10', attributes: {} },
+        [STACKED]: { entity_id: STACKED, state: '5', attributes: { level: 3 } },
+      },
+      locale: { language: 'en' },
+      entities: {},
+      devices: {},
+      areas: {},
+      floors: {},
+    } as never;
+    const helper = new CardConfigHelper();
+    helper.config = asConfig({ entity: TEST_ENTITY, bar_stack: { entities } });
+    helper.checkConfig();
+    return helper;
+  };
+
+  test('known entities and attributes pass', () => {
+    assert.equal(checked([{ entity: STACKED }, { entity: STACKED, attribute: 'level' }]).isValid, true);
+  });
+
+  test('an unknown entity is a config error on its own path', () => {
+    const helper = checked([{ entity: STACKED }, { entity: 'sensor.typo' }]);
+    assert.equal(helper.isValid, false);
+    assert.match(helper.msg?.content ?? '', /^bar_stack\.entities\.1\.entity:/);
+  });
+
+  test('a missing attribute is one too', () => {
+    const helper = checked([{ entity: STACKED, attribute: 'nope' }]);
+    assert.equal(helper.isValid, false);
+    assert.match(helper.msg?.content ?? '', /^bar_stack\.entities\.0\.attribute:/);
   });
 });
 

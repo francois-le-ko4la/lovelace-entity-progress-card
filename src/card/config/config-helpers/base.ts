@@ -564,6 +564,10 @@ class BaseConfigHelper {
       }),
       ...checkValueConfig(this.config.alert_when?.above, ALERT_ABOVE_ENTITY_PATH, 'alert_when.above.attribute'),
       ...checkValueConfig(this.config.alert_when?.below, ALERT_BELOW_ENTITY_PATH, 'alert_when.below.attribute'),
+      // An unknown bar_stack entity used to be silently dropped from the total.
+      ...(is.array(this.config.bar_stack?.entities) ? this.config.bar_stack.entities : []).flatMap((item, index) =>
+        checkValueConfig(item, `bar_stack.entities.${index}.entity`, `bar_stack.entities.${index}.attribute`),
+      ),
     ];
 
     const failed = checks.find((c) => c.condition);

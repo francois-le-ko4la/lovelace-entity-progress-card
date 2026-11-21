@@ -403,7 +403,11 @@ class EntityHelper {
 
   _manageRangedEntity() {
     const { min, max } = assertDefined(ownRangeOf(this.#entity), `EntityHelper: no range for '${this.#domain}'`);
-    this.#reading = { kind: 'ranged', current: parseFloat(this.#state as string), min, max };
+    // #150: an explicit attribute replaces the state, never the entity's own range.
+    const raw = this.#attribute ? this.#hassProvider.getEntityAttribute(this.#entity, this.#attribute) : this.#state;
+    const current = is.numericString(raw) || is.number(raw) ? parseFloat(String(raw)) : NaN;
+    if (Number.isNaN(current)) this.#isValid = false;
+    this.#reading = { kind: 'ranged', current: Number.isNaN(current) ? 0 : current, min, max };
   }
 
   _manageDurationEntity() {

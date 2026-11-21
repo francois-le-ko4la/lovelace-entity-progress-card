@@ -95,13 +95,12 @@ const cardLayoutOptions = (inputs: GridInputs) => {
   const columns = minGridColumns(config);
   layout.grid.grid_min_rows = rows;
   layout.grid.grid_min_columns = columns;
-  // compact pins the card to its smallest size, ceiling included; an explicit
-  // `grid_options` still wins.
+  // compact starts at its smallest size: height pinned, width only floored (#151);
+  // an explicit `grid_options` still wins.
   if (config.density === 'compact') {
     layout.grid.grid_rows = rows;
     layout.grid.grid_columns = columns;
     layout.grid.grid_max_rows = rows;
-    layout.grid.grid_max_columns = columns;
   }
   return layout.grid;
 };

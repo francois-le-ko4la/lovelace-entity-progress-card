@@ -4,6 +4,64 @@ All notable changes to the Entity Progress Card are documented here, most recent
 first. See [`docs/rc-testing.md`](docs/rc-testing.md) for how to try a release
 candidate safely before it becomes stable.
 
+## 1.6.5 (soon)
+
+### 🔧 Improvements
+
+- **[`attribute`][attribute]** now works on `counter`, `number` and
+  `input_number`: the card shows that attribute instead of the state, still on
+  the entity's own range.
+- **[`density: compact`][density]** can be widened: it starts at 3 columns and
+  no longer stops there (4 columns fit three cards per row on a phone).  
+  ➡️ [Enhancement]: Column Size : 4 #151 (@FoxP)
+- **[`bar_stack`][bar_stack]**: an entry whose entity or attribute doesn't exist
+  shows a configuration error instead of being left out of the total; an
+  `unavailable` entity is still left out.
+
+### 🐛 Fixes
+
+- **[`min_value`][min_value] / [`max_value`][max_value]** read from an
+  `input_number`, `number` or `counter` attribute (`attribute: min`) use that
+  attribute instead of the state (both bounds took the same value: `Div0`).  
+  ➡️ [Bug]: input_number attributes ignored in min_value/max_value, causing Div0
+  #150 (@timlaing)
+
+### 📚 Documentation
+
+- Configuration: what [`attribute`][attribute] does on a `timer`, `counter`,
+  `number` and `input_number`.
+- Development guide checked against the code: card lifecycle, editor,
+  validation, CI, and the rules a contributor needs.
+
+## 1.6.5-rc1
+
+### 🔧 Improvements
+
+- **[`attribute`][attribute]** now works on `counter`, `number` and
+  `input_number`: the card shows that attribute instead of the state, still on
+  the entity's own range.
+- **[`density: compact`][density]** can be widened: it starts at 3 columns and
+  no longer stops there (4 columns fit three cards per row on a phone).  
+  ➡️ [Enhancement]: Column Size : 4 #151 (@FoxP)
+- **[`bar_stack`][bar_stack]**: an entry whose entity or attribute doesn't exist
+  shows a configuration error instead of being left out of the total; an
+  `unavailable` entity is still left out.
+
+### 🐛 Fixes
+
+- **[`min_value`][min_value] / [`max_value`][max_value]** read from an
+  `input_number`, `number` or `counter` attribute (`attribute: min`) use that
+  attribute instead of the state (both bounds took the same value: `Div0`).  
+  ➡️ [Bug]: input_number attributes ignored in min_value/max_value, causing Div0
+  #150 (@timlaing)
+
+### 📚 Documentation
+
+- Configuration: what [`attribute`][attribute] does on a `timer`, `counter`,
+  `number` and `input_number`.
+- Development guide checked against the code: card lifecycle, editor,
+  validation, CI, and the rules a contributor needs.
+
 ## 1.6.4
 
 **The colors Home Assistant would pick.**

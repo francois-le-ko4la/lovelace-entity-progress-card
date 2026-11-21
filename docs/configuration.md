@@ -435,13 +435,14 @@ All entities that have an attribute containing a numeric value are supported.
 This allows the card to work with a wide range of sensors, statistics, or other
 entities exposing numeric data through their attributes.
 
-`attribute` is ignored on these entities, which use their own value and range
-(it must still exist on the entity, or the card shows an attribute-not-found
-error):
+A timer ignores `attribute`, [`min_value`](#min_value) and
+[`max_value`](#max_value): it always shows its elapsed time against its own
+duration (the attribute must still exist on the entity, or the card shows an
+attribute-not-found error).
 
-- counter
-- number, input_number
-- timer
+On a counter, number or input_number, `attribute` replaces the state only: the
+attribute is read as a plain number, still against the entity's own range unless
+you set [`min_value`](#min_value) / [`max_value`](#max_value).
 
 On a duration sensor, an attribute is read as a plain number, without duration
 conversion.
@@ -790,7 +791,9 @@ A [`counter`](https://www.home-assistant.io/integrations/counter/) carries
 `minimum`/`maximum`, and a
 [`number`](https://www.home-assistant.io/integrations/number/) or `input_number`
 carries `min`/`max`. The card reads those attributes and scales the bar on them,
-so such an entity needs no bounds at all to render correctly.
+so such an entity needs no bounds at all to render correctly. With
+[`attribute`](#attribute), that attribute is read instead of the state, against
+the same range.
 
 Write `min_value` or `max_value` yourself and **yours wins** — fixed value,
 entity or Jinja alike. The entity's own range is a default, not a ceiling you
@@ -1171,6 +1174,10 @@ a Stacked/Proportional/Net mode switch.
 | ---------- | ---------------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `mode`     | `stacked` / `proportional` / `net` | `stacked` | See below                                                                                                                                                                                                              |
 | `entities` | List                               | —         | Each entry: `entity` _(required)_, `attribute` _(optional)_, `color` _(optional, falls back to an automatic shade of the main entity's own color; ignored in `net` mode)_, `subtract` _(optional boolean — see below)_ |
+
+An entry whose entity or attribute does not exist in Home Assistant is a
+configuration error, as for [`min_value`](#min_value). An entity that exists but
+is `unavailable` or `unknown` is left out of the total until it reports again.
 
 _Example (`stacked`, home battery breakdown)_:
 
@@ -2763,10 +2770,10 @@ needs to be forced.
 
 > [!NOTE]
 >
-> In a Sections view, `compact` pins the card's size outright - both the minimum
-> it's allowed to shrink to _and_ the default/maximum it's born and capped at -
-> instead of just narrowing how far a manual resize could go. Turning it on
-> through the visual editor writes an explicit
+> In a Sections view, `compact` sets the card's default size to its smallest
+> one. The height is pinned there (minimum and maximum alike); the width is only
+> a minimum, so the card can still be widened (e.g. 4 columns, three cards per
+> row on a phone). Turning it on through the visual editor writes an explicit
 > `grid_options: { columns: 3, rows: 1 }` into the card's own config (the
 > previous `grid_options`, if any, comes back automatically the moment `compact`
 > is switched back off) - a card already placed with its own size otherwise

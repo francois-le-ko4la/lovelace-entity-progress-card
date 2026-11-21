@@ -96,6 +96,10 @@ Three gates, each named for when you run it. Each one contains the previous:
   entity must degrade into a visible error state or a safe default — never into
   an uncaught exception (Home Assistant would replace the card with a red error
   card).
+- **One owner per rule.** A list of allowed values or a predicate
+  (`ICON_ANIMATIONS`, `hasUsableHistory`, the schema enums) lives in one place;
+  every consumer derives from it instead of restating it. A restated copy is how
+  an option ends up accepted by the config and then never painted.
 
 ## Object architecture
 
@@ -120,25 +124,32 @@ Three gates, each named for when you run it. Each one contains the previous:
 `src/card/` is split by what a module is. A part split off one class lives under
 it.
 
-| Folder         | Holds                                                                                                                              |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `elements/`    | The custom elements: `card-base`, `features`, `template-base`, `multi`.                                                            |
-| `core/`        | `HACore` (`core.ts`, its parts in `core/`) and `HABase` (`base.ts`, its parts in `base/`).                                         |
-| `view/`        | The views and what they resolve: `progress-math`, `watermark-view`, `bound-value`, `jinja-state`, …                                |
-| `config/`      | `schema.ts` + `schema/`, `config-helpers.ts` + `config-helpers/`, `factorization`, `multi-rows`.                                   |
-| `dom/`         | `dom-helpers`, `structure`, `marks`, `alert`, `badge-icon`, `status-label`, `aligned-bars`.                                        |
-| `values/`      | Entity and value helpers: `entity-helper`, `device-probes`, `formatting`, `ha-state`, `unit-helper`.                               |
-| `color/`       | Theme and colour: `theme-manager`, `bar-colors` (bar colour and gradients from a view), `entity-collection`, `diverging-gradient`. |
-| `history/`     | What changes over time: `trend-tracker`, `peak-tracker`, `change-tracker`, `sample-ring`, `history-seeding`, `peak-marker-view`.   |
-| `diagnostics/` | `doctor` and `card-audit` (`EPB.doctor`).                                                                                          |
+| Folder         | Holds                                                                                                                                                                                                 |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `elements/`    | The custom elements: `card-base`, `features`, `template-base`, `multi`, plus `layout-methods`.                                                                                                        |
+| `core/`        | `HACore` (`core.ts`, its parts in `core/`) and `HABase` (`base.ts`, its parts in `base/`).                                                                                                            |
+| `view/`        | The views and what they resolve: `progress-math`, `watermark-view`, `bound-value`, `jinja-state`, …                                                                                                   |
+| `config/`      | `schema.ts` + `schema/`, `config-helpers.ts` + `config-helpers/`, `factorization`, `multi-rows`.                                                                                                      |
+| `dom/`         | `dom-helpers`, `structure`, `marks`, `alert`, `badge-icon`, `status-label`, `aligned-bars`, `text-contrast` (`TextContrast`).                                                                         |
+| `values/`      | Entity and value helpers: `entity-helper`, `device-probes`, `formatting`, `ha-state`, `unit-helper`.                                                                                                  |
+| `color/`       | Theme and colour: `theme-manager`, `bar-colors` (bar colour and gradients from a view), `entity-collection`, `diverging-gradient`, `text-contrast` (the pure colour math `dom/text-contrast` caches). |
+| `history/`     | What changes over time: `trend-tracker`, `peak-tracker`, `change-tracker`, `sample-ring`, `history-seeding`, `peak-marker-view`.                                                                      |
+| `diagnostics/` | `doctor`, `card-audit` (`EPB.doctor`) and `yaml-writer`.                                                                                                                                              |
 
 - A barrel (`schema.ts`, `config-helpers.ts`, `dom-helpers.ts`) sits next to its
   folder and re-exports only that folder.
 - No other barrel: import a module from the file that defines it.
 - Layers, bottom-up: `utils`, `values`, `config`, `color`, `history`, `view`,
-  `dom`, `core`, `elements`; ESLint (`import-x/no-restricted-paths`) rejects an
-  import from a higher folder, and `card/` never imports `editor/`.
-- `test/card/<folder>/` mirrors `src/card/<folder>/`.
+  `dom`, `core`, `diagnostics`, `elements`; ESLint
+  (`import-x/no-restricted-paths`) rejects an import from a higher folder, and
+  `card/` never imports `editor/`.
+- `test/card/<folder>/` mirrors `src/card/<folder>/` for the logic tests;
+  `core/`, `dom/` and `elements/` need a DOM and are tested under
+  `test/dom/card/`.
+- A part split off a class gets what it needs through a `Deps`/`Host` type (lazy
+  getters such as `view: () => ViewCore`, callbacks: `AutoRefreshDeps`,
+  `JinjaSubscriptionsHost`, `IconManagerDeps`), never the element itself. It
+  goes on `HACore` when the Feature needs it too, on `HABase` otherwise.
 
 `src/editor/` follows the same rule: `elements/` (`base`, `editors`, `chips`,
 `list-editors/`), `form/` (`field-builder`, `dom-helper`, `select-types`),
@@ -208,19 +219,24 @@ classDiagram
 Everything under `HACore` ships in the bundle; everything under `EditorBase` in
 the editor file.
 
-| Class                                        | Responsibility                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `HACore`                                     | Shadow DOM setup, `setConfig`/`set hass` contract, render pipeline, resource lifecycle, WebSocket watching, Jinja subscription management. Abstract.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| `HABase`                                     | Entity-driven rendering: icon, badge, shape, trend, hidden components, standard text fields, base Jinja handlers. Abstract.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| `EntityProgressCardBase`                     | Full card behavior (auto-refresh for timers, CSS updates, standard fields).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| `EntityProgressCard` / `EntityProgressBadge` | Concrete card/badge: static metadata (`_cardStructure`, `_baseClass`), stub config.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| `EntityProgressTemplateBase`                 | Jinja-first variants: every visible field comes from a template subscription.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| `EntityProgressFeatures`                     | Tile feature (progress bar embedded in a native Tile card), including the row-size fix for `top`/`bottom` positions. Extends `HACore` directly (not `EntityProgressCardBase`) and has its own `_updateCSS()` — a separate implementation from Card/Badge's shared one, not a missing one. Its view (`FeatureView`) still extends `ViewBase` and its HTML still comes from the same `StructureElements.progressBar` builder as Card/Badge, so anything `ViewBase` exposes (theme, watermark, `bar_stack`, `center_zero`, `peak_marker`, …) works identically here. `entity` is optional: `set context()` falls back to the parent Tile's own entity (`LovelaceCardFeatureContext.entity_id`) when the feature's own config omits one. Has its own visual editor (`EntityProgressFeatureEditor`, `EditorFactory.buildFeature()`) - see below. |
+| Class                                        | Responsibility                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `HACore`                                     | Shadow DOM setup, `setConfig`/`set hass` contract, render pipeline, resource lifecycle, WebSocket watching, Jinja subscription management. Not instantiated directly (not declared `abstract`).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `HABase`                                     | Entity-driven rendering: icon, badge, shape, trend, hidden components, standard text fields, base Jinja handlers. Not instantiated directly (not declared `abstract`).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `EntityProgressCardBase`                     | Full card behavior (auto-refresh for timers, CSS updates, standard fields).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `EntityProgressCard` / `EntityProgressBadge` | Concrete card/badge: static metadata (`_baseClass`; the Badge also sets `_structureType`, `_hasInnerBadge`). The stub config (`getStubConfig`, `_stubExtras`) lives in `HABase`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `EntityProgressTemplateBase`                 | Jinja-first variants: every visible field comes from a template subscription.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| `EntityProgressFeatures`                     | Tile feature (progress bar embedded in a native Tile card), including the row-size fix for `top`/`bottom` positions. Extends `HACore` directly (not `EntityProgressCardBase`) and uses `HACore`'s own `_updateCSS()` (only `EntityProgressTemplateBase` overrides it). Its view (`FeatureView`) still extends `ViewBase` and its HTML still comes from the same `StructureElements.progressBar` builder as Card/Badge, so anything `ViewBase` exposes (theme, watermark, `bar_stack`, `center_zero`, `peak_marker`, …) works identically here. `entity` is optional: `set context()` falls back to the parent Tile's own entity (`LovelaceCardFeatureContext.entity_id`) when the feature's own config omits one. Has its own visual editor (`EntityProgressFeatureEditor`, `EditorFactory.buildFeature()`) - see below. |
 
 Each concrete class carries **static** metadata consumed by the shared pipeline:
-`_cardStructure` (an `ObjStructure` instance), `_cardStyle` (CSS text),
-`_baseClass` (CSS class / type name), `_hiddenComponents`,
-`_hasDisabledIconTap`, …
+`_structureType` (the key `cardStructure` hands to `ObjStructure.forType`),
+`_cardStyle` (CSS text), `_baseClass` (CSS class / type name),
+`_hiddenComponents`, `_hasInnerBadge`, `_cardElement`, `_domKeys`, …
+
+A variant extending `HACore` must implement `_handleHassUpdate()` and
+`_getJinjaHandlers()`; the hooks it may override are `_updateCSS`,
+`_structureOptions`, `_buildStyle` and `_updateDynamicElements` (JSDoc on
+`HACore`).
 
 ### View hierarchy
 
@@ -262,13 +278,13 @@ this is the diagram's "Config helpers + validation" layer; see
 | --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `HassProviderSingleton`                                   | Single access point to the `hass` object: entity props, attributes, names/areas/floors, localization, locale-aware formatting. Shared by all cards on the page.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | `ChangeTracker`                                           | Per-card filter deciding whether a `hass` update concerns this card (reference comparison of watched entities' state objects).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| `EntityHelper`                                            | Wraps one entity (unbound when the card has none): its value kind (`timer`, `counter`, `number`, `duration`, `default`, from `HA_CONTEXT.domains` then the device class or a time unit), value extraction, validity/availability, default color (resolved once per refresh).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| `EntityHelper`                                            | Wraps one entity (unbound when the card has none): its value kind (`timer`, `counter`, `number`, `duration`, `default`, from `HA_CONTEXT.domains` then the device class or a time unit), value extraction, validity/availability, default color (resolved once per refresh). The same class reads the main entity **and** every entity-valued end (`min_value`/`max_value`/`watermark`/`alert_when` through `bound-value.ts`, `bar_stack` entities), so a per-domain reading rule applies to all of them: an explicit `attribute` replaces a `counter`/`number`/`input_number` state and keeps that entity's own range (#150).                                                                                                                                                                                                                                                                                  |
 | `hasUsableHistory`                                        | The one rule for what the recorder keeps a usable numeric history of (no attribute, no `timer`/`counter` value kind): the card fetches history by it, the editor offers `peak_marker` by it.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | `boundFrom` / `boundValue` / `boundUsable`                | `bound-value.ts`: a `min_value`/`max_value`/`watermark`/`alert_when` end - a number, an `EntityHelper` or `null` (unset, or fed by Jinja) - decided once from the config; `null` and numbers are never in a fault state.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| `ha-state.ts`                                             | HA's own reading of a domain/state pair, over the `HA_CONTEXT` mirrors of HA frontend/core: `isStateActive` (`state_active.ts`), `stateColor` (`state_color.ts`: the first `--state-*-color` candidate HA's themes define wins, cached per domain/device class/state, battery and group rules included), `isToggleDomain` (where the tile card icon toggles by default), `domainTraits` (our own per-domain value kind, percent attribute, animation).                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `ha-state.ts`                                             | HA's own reading of a domain/state pair, over the `HA_CONTEXT` mirrors of HA frontend/core: `isStateActive` (`state_active.ts`), `stateColor` (`state_color.ts`: the first `--state-*-color` candidate HA's themes define wins, cached per domain/device class/state, battery and group rules included), `isToggleDomain` (where the tile card icon toggles by default), `domainProfile` (our own per-domain value kind, percent attribute, animation). An activity that is not a domain/state pair (a washing machine or a charging car reported as a plain `sensor`) has its own `ViewCore` predicate (`isWashingMachineActive`, …); never fold it into `isEntityActive`.                                                                                                                                                                                                                                     |
 | `EntityCollectionHelper`                                  | The `bar_stack` feature: `proportional` mode renormalizes shares against the combined total (a.k.a. "100% stacked"), `stacked` places each entity at its own position on the min/max scale, `net` reduces everything to one algebraic total. Width/share math always runs on `#magnitude` (`Math.abs`) - a raw negative value must never produce a negative width. An entity counts as negative (`net`'s sign, or the arm it lands in with `center_zero`) via `#isNegative`: marked `subtract`, **or** its own raw value is already negative - checking both instead of just flipping the sign on `subtract` avoids double-negating an already-negative value back to positive. With `center_zero`, `stacked`/`proportional` split by that same `#isNegative` into two independent arm gradients (`getDivergingGradients`) applied via dedicated CSS variables (`--stack-*`) instead of the single shared fill. |
 | `resolveProgressInput` / `progress-display.ts`            | Validates what a refresh resolves into a `ProgressInput` (a refused value falls back to its default); pure functions print it: unit, timer and locale formatting, theme value. The view holds the resulting `Progress` and rebuilds it on each refresh.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| `ProgressMath`                                            | The percentage formulas themselves (min/max, reversed, `bar_scale`, center-zero), immutable: the whole input comes in through the constructor, so no formula reads what it was not given. `resolveProgressInput` feeds it.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| `ProgressMath`                                            | The percentage formulas themselves (min/max, reversed, `bar_scale`, center-zero), immutable: the whole input comes in through the constructor, so no formula reads what it was not given. `resolveProgressInput` feeds it. `percentFor` is unclamped on purpose: marks and markers past the range need it; clamping belongs to painting.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | `UnitHelper`                                              | `values/unit-helper.ts`: a unit and its display flag, held by the view.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | `ThemeManager`                                            | Built-in & custom themes: color/icon per value zone, `segment`/`rainbow` gradients, HA color name adaptation.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | `NumberFormatter`                                         | Value/unit/duration formatting (`Intl.NumberFormat`, timedelta parsing).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
@@ -307,16 +323,19 @@ through the child's own height variable.
   height, without `rowMetrics`; `rows` defaults to a vertical card's plus one.
   The Feature has no `layout`: always rows.
 - **Validation**: the aggregator's own keys (`AGGREGATOR_FIELDS`: `entities`,
-  `rows`) by its schema; each row by the full card schema, in its child. A row
-  identity (`ROW_IDENTITY_FIELDS`: `entity`, `attribute`, `name`, `icon`) is
-  never shared.
+  `rows`, `type`) by its schema; each row by the full card schema, in its child.
+  A row identity (`ROW_IDENTITY_FIELDS`: `entity`, `attribute`, `name`, `icon`)
+  is never shared.
 - **The two variants** differ only in two hooks: the card wraps the stack in its
   own `ha-card` and lets the Sections grid impose the height (`getGridOptions`,
   `rows`); the feature renders bare in its tile row, takes HA's
   `--feature-height` as its unit, and hides each child's shape through
   `forceHidden`, called before `setConfig`. What a slice of a 42 px row can't
   hold (icon actions, `trend_indicator`, `status_label`, the icon badge,
-  `alert_when`) its row schema, `multiFeatureRow`, doesn't accept at all.
+  `alert_when`) its row schema, `multiFeatureRow`, doesn't accept at all. The
+  feature is always exactly one HA feature row: rows shrink instead of spanning
+  more (growing to N rows was tried, and HA's row reservation did not follow,
+  #126).
 - **Bars line up** through `bar_aligned`, true by default here: a row knows it
   is one by its `.multi-item` parent (see
   [Rendering & performance](#rendering--performance)).
@@ -343,7 +362,7 @@ sequenceDiagram
     HA->>El: hass = …
     Note over El: guarded: some managers may not exist yet
     HA->>El: append to DOM
-    Note over El: connectedCallback()<br/>resources, render, listeners
+    Note over El: connectedCallback()<br/>resources, render, dynamic elements,<br/>hass update + Jinja watch, listeners
     loop every state change in the installation
         HA->>El: hass = …
         Note over El: ChangeTracker filters,<br/>refresh only if a watched entity moved
@@ -361,7 +380,12 @@ Two consequences drive the code style:
 2. **`connectedCallback` can run many times** (view navigation, edit mode, DOM
    moves). Everything it does must be idempotent: listeners are attached once
    (`ActionHelper.#initialized`), the render is guarded by `#isRendered`,
-   resource re-creation is keyed.
+   resource re-creation is keyed. `render()` also runs from `setConfig`, on a
+   detached element: anything that measures (`getComputedStyle`, layout) is
+   redone in `connectedCallback` (`_applyAlertClasses`). `cleanup()` drops the
+   WS listeners with the ResourceManager, so `_jinjaSubscriptions.watch()` —
+   idempotent, a no-op without `hass` or a ResourceManager — is re-armed from
+   both `set hass` and `connectedCallback`.
 
 ### Function chain
 
@@ -369,14 +393,17 @@ Two consequences drive the code style:
 
 ```text
 setConfig
- ├─ reset()                      # if already rendered (editor keystroke)
+ ├─ _cardView.config = {…}             # validation + negotiation (ConfigHelper)
+ ├─ _jinjaSubscriptions.invalidate()
+ ├─ _registerWatchedEntities()         # rebuild the ChangeTracker watch set
+ ├─ reset()                            # if already rendered (editor keystroke)
  │   ├─ remove 'transition-ready' class
- │   ├─ _dom.destroy()           # clear element map + caches
- │   └─ shadowRoot.innerHTML = ''  (adoptedStyleSheets survive)
- ├─ _cardView.config = {…}       # validation + negotiation (ConfigHelper)
- ├─ _registerWatchedEntities()   # rebuild the ChangeTracker watch set
+ │   ├─ #isRendered = false
+ │   ├─ _dom.destroy()                 # clear element map + caches
+ │   ├─ shadowRoot.innerHTML = ''      (adoptedStyleSheets survive)
+ │   └─ HABase: icon manager reset, status label repaint forgotten
  ├─ render()
- └─ _handleHassUpdate()          # if hass already known
+ └─ _handleHassUpdate()                # if hass already known
 ```
 
 **`render()`** (once per connection/config, guarded by `#isRendered`):
@@ -386,10 +413,13 @@ render
  ├─ _createCardElements()
  │   ├─ adopt shared CSSStyleSheet   (or legacy <style> fallback)
  │   ├─ create card element, register it in DOMHelper
- │   ├─ _buildStyle()                # base classes, watermark, bar effect
  │   └─ card.replaceChildren(clone)  # <template> cache keyed by structure options
  ├─ shadowRoot.replaceChildren(…)
  ├─ _storeDOM()                      # register the few dynamic elements (_domKeys)
+ ├─ _buildStyle()                    # base classes, watermark, bar effect; after
+ │                                   # _storeDOM: marks need their elements registered
+ ├─ buildSegmentCells()              # bar_segments
+ ├─ #syncAlignedBars()               # bar_aligned
  └─ RAF → add 'transition-ready'     # enables CSS transitions after first paint
 ```
 
@@ -402,16 +432,22 @@ the very first paint — transitions are only enabled one frame later.
 set hass
  ├─ ChangeTracker.hassState = hass   # reference-compare watched entities
  ├─ if first hass or a watched entity changed:
- │   ├─ HassProviderSingleton.hass = hass
- │   └─ _handleHassUpdate()
- │       └─ refresh()
- │           ├─ _cardView.refresh(hass)      # recompute values/percent/theme
- │           ├─ _manageErrorMessage()        # error card state
- │           └─ _updateDynamicElements()
- │               ├─ _showIcon / _showBadge / _manageShape / _updateTrend
- │               ├─ _updateCSS()             # CSS custom properties via DOMHelper
- │               └─ _processJinjaFields()    # throttled; no-op if subscribed
- └─ _watchWebSocket()                 # once
+ │   ├─ _hassProvider.hass = hass
+ │   └─ _handleHassUpdate()          # per variant; Card shown, Multi has none
+ │       ├─ refresh()
+ │       │   ├─ _cardView.refresh(hass)      # recompute values/percent/theme
+ │       │   ├─ _manageErrorMessage()        # error card state; stops here if shown
+ │       │   └─ _updateDynamicElements()
+ │       │       ├─ _showIcon / _showBadge / _manageShape / _updateTrend
+ │       │       ├─ _updateCSS()             # CSS custom properties via DOMHelper
+ │       │       ├─ _repaintStatusLabel()
+ │       │       ├─ _applyConditionalClasses()
+ │       │       ├─ _jinjaSubscriptions.process()  # throttled; no-op if subscribed
+ │       │       └─ _processStandardFields()
+ │       ├─ _manageAutoRefresh()
+ │       └─ _seedTrendHistoryOnce() / _seedPeakMarkerHistoryOnce()
+ ├─ _ensureResourceManager()
+ └─ _jinjaSubscriptions.watch()      # whenever not already watching
 ```
 
 All DOM writes in this chain go through `DOMHelper`: value-cached (no-op if
@@ -419,7 +455,11 @@ unchanged) and RAF-batched (one flush per frame). An idle card whose watched
 entities did not change costs **one Map lookup and n reference comparisons** per
 hass update — nothing else. Cards with **no** watched entity (pure Jinja
 template cards) skip the refresh entirely: their content arrives via push
-subscriptions.
+subscriptions. A card refreshes only for the entities `_registerWatchedEntities`
+registers (main entity, same-device peers, every value-shaped option,
+`bar_stack` entities) plus a fixed set of hass context keys (language,
+formatters, registries): an option that reads another entity and is not
+registered there never refreshes.
 
 **`disconnectedCallback()`**:
 
@@ -427,7 +467,21 @@ subscriptions.
 disconnectedCallback
  ├─ ResourceManager.cleanup()   # intervals, listeners, WS subscriptions, observers
  ├─ _resourceManager = null
- └─ clear template-subscription signatures  # allows resubscription on reconnect
+ ├─ _jinjaSubscriptions.clear() # signatures, failures, last answers: resubscribe on reconnect
+ └─ interference observer disconnected (debug only)
+```
+
+**`connectedCallback()`**:
+
+```text
+connectedCallback
+ ├─ _ensureResourceManager()
+ ├─ render()                    # no-op if already rendered
+ ├─ _updateDynamicElements()
+ ├─ if hass: _handleHassUpdate() + _jinjaSubscriptions.watch()
+ ├─ interference observer (?debug=interference)
+ ├─ #syncAlignedBars()
+ └─ HABase: ActionHelper.init() (once), _applyAlertClasses()
 ```
 
 ### The local tick (auto-refresh)
@@ -452,18 +506,26 @@ unchanged.
 
 ### Registration
 
-At module load, in `src/bootstrap.ts`:
+At module load, `bootstrap()` calls `registerComponents()` in
+`src/bootstrap.ts`:
 
 ```js
-RegistrationHelper.registerCard(META.types.card, EntityProgressCard);
-RegistrationHelper.registerBadge(META.types.badge, EntityProgressBadge);
+RegistrationHelper.registerCard(
+  { ...META.types.card, getEntitySuggestion: resolveEntitySuggestion },
+  EntityProgressCard,
+);
+RegistrationHelper.registerBadge(
+  { ...META.types.badge, getEntitySuggestion: resolveEntitySuggestion },
+  EntityProgressBadge,
+);
+RegistrationHelper.registerCard(META.types.template, EntityProgressTemplateCard);
 RegistrationHelper.registerCardFeature(META.types.feature, EntityProgressFeatures);
-…
+… // Badge Template, Multi Card, Multi Feature
 ```
 
 The editors register later, from their own file: `src/editor/entry.ts` defines
-each one under `devName(META.types.*.editor)` when `getConfigElement()` imports
-it. The bundle only ever holds the tag name.
+each one under `suffixedName(META.types.*.editor)` when `getConfigElement()`
+imports it. The bundle only ever holds the tag name.
 
 `RegistrationHelper` does two things per component:
 
@@ -513,10 +575,9 @@ Conventions relied upon:
   element (created lazily if absent, as the HA frontend does) and emits
   `hass-action` events; HA executes more-info/toggle/navigate.
 - **Native components** are reused in the editor (`ha-selector`,
-  `ha-expansion-panel`, `ha-filter-chip`, `ha-button`, `ha-svg-icon`) and in the
-  card (`ha-card`, `ha-icon`, `ha-state-icon`, `ha-alert`). This keeps look &
-  feel aligned with each HA release, at the cost of depending on their (stable)
-  public behavior.
+  `ha-expansion-panel`, `ha-button`, `ha-svg-icon`) and in the card (`ha-card`,
+  `ha-icon`, `ha-state-icon`, `ha-alert`). This keeps look & feel aligned with
+  each HA release, at the cost of depending on their (stable) public behavior.
 - **Theming** goes through HA CSS custom properties (`--primary-color`,
   `--state-icon-color`, `--ha-card-*`) plus the card's public `--epb-*` API (see
   [Theme Guide](theme.md)); dark-mode switches need no JavaScript. The `--epb-*`
@@ -589,7 +650,11 @@ Techniques used to keep N cards cheap on a dashboard that updates constantly:
      general-purpose debounce building block — see
      `ResourceManager.setTimeout(handler, ms, id)`'s own cancel-and-replace-
      by-id semantics, used the same way for the Jinja render debounce
-     ([Jinja template subscriptions](#jinja-template-subscriptions)).
+     ([Jinja template subscriptions](#jinja-template-subscriptions)). Any
+     deferred work in card code goes through
+     `ResourceManager.setTimeout(fn, ms, id)`: `cleanup()` cancels it on
+     disconnect and a repeated id replaces the pending call. A bare `setTimeout`
+     can fire on a detached card.
 4. **Reference-based change detection** (`ChangeTracker`), so the per-update
    cost of an idle card is a few `!==`.
 5. **Compositor-only animations.** The bar fill animates with
@@ -647,8 +712,8 @@ where the browser allows it.
   not by writing fallback code — `scripts/lib/esbuild-settings.js` holds
   `target: 'es2021'` and `NATIVE_CLASS_FEATURES`, read by `build.js`'s minifier
   and by `test.js`, so the tests compile as the shipped bundle does;
-  `npm run check:es-target` (part of the release build) re-verifies that
-  language floor on the **minified** output. This is the direct fix for
+  `npm run check:es-target` (in `check:github`, after `build:prod`) re-verifies
+  that language floor on the **minified** output. This is the direct fix for
   [issue #128](https://github.com/francois-le-ko4la/lovelace-entity-progress-card/issues/128)
   (filed against Chrome 92): the build used to target `es2022`, which let
   esbuild emit class `static {}` blocks — a hard `SyntaxError` on Chrome 92,
@@ -674,18 +739,19 @@ where the browser allows it.
   neither mechanism catches them: esbuild's target rewrites syntax and leaves
   `Object.hasOwn` exactly as written, and `es-check` only parses. Two modules
   encapsulate the ones this card uses — `common-checks.ts`'s `has.own` and
-  `browser-support.ts`'s `deepClone` — each picking the modern API or a fallback
-  on `IN_SUPPORTED_MATRIX`; every other module goes through them.
+  `browser-support.ts`'s `cloneValue` — each picking the modern API or a
+  fallback on `IN_SUPPORTED_MATRIX`; every other module goes through them.
   `npm run check:chrome92` (in `check:push`, local only — Chrome 92 is best
   effort, not something a release runner should block on) re-runs
   `eslint-plugin-compat` against `Chrome >= 92` with those two files exempted,
   so a direct call anywhere else is a finding. It reads source rather than the
   bundle, and sees globals and static methods but not prototype methods on an
-  untyped receiver — a pass is encouraging, not proof. The worked example:
-  `Object.hasOwn` sat unguarded in `formatting.ts` for months, harmless because
-  nothing on a load-time path reached it, until a `peak_marker` schema default
-  began calling it _while the schema was being built_ — taking the whole card
-  down on Chrome 92, on every dashboard.
+  untyped receiver (`arr.findLast`) — a pass is encouraging, not proof: a
+  post-92 API still goes only through the two guarded modules. The worked
+  example: `Object.hasOwn` sat unguarded in `formatting.ts` for months, harmless
+  because nothing on a load-time path reached it, until a `peak_marker` schema
+  default began calling it _while the schema was being built_ — taking the whole
+  card down on Chrome 92, on every dashboard.
 - **Visual/CSS degradation** is a separate, manual mechanism — there's no build
   target or linter for "does this gradient look right on Safari 15.4". Effects
   that use a modern CSS feature (`color-mix()`, `round()`, Constructable
@@ -748,21 +814,30 @@ view (`jinjaMinValue`, `jinjaWatermarkLow`, `jinjaAlertAbove`, …) and read wit
 getter/`isAlertActive` — never written directly into a `Bound`, which only
 understands numbers and entity IDs.
 
-Key mechanics (`_processJinjaFields` / `_subscribeToTemplate`):
+Key mechanics (`JinjaSubscriptions.process` / `subscribe`,
+`core/core/jinja-subscriptions.ts`):
 
 - **Signature dedup.** Each subscription is identified by
   `template + '\0' + entity-variable`. If an identical subscription is live or
   in flight, the call is a no-op — refreshes cost zero WS traffic. The signature
   is reserved _before_ the `await`, which also prevents concurrent duplicate
   subscriptions; a superseded in-flight subscription unsubscribes itself on
-  resolution.
+  resolution. The dedup is bypassed twice on purpose: `setConfig` blanks the
+  signatures (`invalidate()`; a new config empties the views' pushed values, so
+  HA must resend), and Template cards force `resubscribeAll()` on each
+  auto-refresh tick, because a `now()` template only re-pushes once a minute
+  (#127).
 - **Invalidation.** Signatures are cleared when the WS drops (`disconnected`
-  event), on `disconnectedCallback`, and on subscription failure (allowing
-  retry). Orphan subscriptions (field removed from config) are cleaned on the
-  next processing cycle.
-- **Throttling.** `_processJinjaFields` runs through `throttleDebounce(300 ms)`:
-  leading execution for responsiveness, trailing execution only for calls
-  rejected by the throttle.
+  event) and on `disconnectedCallback` (`clear()`, failures included). Orphan
+  subscriptions (field removed from config) are cleaned on the next processing
+  cycle.
+- **Failure policy.** A template HA refuses (`template_error`) or an unclosed
+  delimiter is remembered per field (`#failedSignatures`) and not resent until
+  its text changes; a timeout or transport error stays retryable
+  (`#isTemplateError`).
+- **Throttling.** `JinjaSubscriptions.process` runs through
+  `throttleDebounce(300 ms)`: leading execution for responsiveness, trailing
+  execution only for calls rejected by the throttle.
 - **Result handling.** `render_template` returns **native types** — handlers
   normalize (`list` or comma-string for `bar_effect`/`hide`, number or numeric
   string for `percent`) and render errors are caught and logged rather than
@@ -787,13 +862,13 @@ Key mechanics (`_processJinjaFields` / `_subscribeToTemplate`):
 `BaseConfigHelper` subclasses run the raw YAML through a schema built with the
 `types` combinators (`YamlSchemaFactory`), one helper per variant:
 
-| Helper                                                 | Schema                                  | Extends             |
-| ------------------------------------------------------ | --------------------------------------- | ------------------- |
-| `CardConfigHelper`                                     | `card` (legacy migrations, defaults)    | `BaseConfigHelper`  |
-| `BadgeConfigHelper` / `FeatureConfigHelper`            | `badge` / `feature`                     | `CardConfigHelper`  |
-| `TemplateConfigHelper` / `BadgeTemplateConfigHelper`   | `template` / `badgeTemplate`            | `BaseConfigHelper`  |
-| `MultiCardConfigHelper` / `MultiFeatureConfigHelper`   | `multiCard` / `multiFeature`            | `MultiConfigHelper` |
-| `MultiRowConfigHelper` / `MultiFeatureRowConfigHelper` | `multiRow` / `multiFeatureRow` (editor) | `MultiConfigHelper` |
+| Helper                                                 | Schema                                  | Extends                                      |
+| ------------------------------------------------------ | --------------------------------------- | -------------------------------------------- |
+| `CardConfigHelper`                                     | `card` (legacy migrations, defaults)    | `BaseConfigHelper`                           |
+| `BadgeConfigHelper` / `FeatureConfigHelper`            | `badge` / `feature`                     | `CardConfigHelper`                           |
+| `TemplateConfigHelper` / `BadgeTemplateConfigHelper`   | `template` / `badgeTemplate`            | `BaseConfigHelper`                           |
+| `MultiCardConfigHelper` / `MultiFeatureConfigHelper`   | `multiCard` / `multiFeature`            | `MultiConfigHelper`                          |
+| `MultiRowConfigHelper` / `MultiFeatureRowConfigHelper` | `multiRow` / `multiFeatureRow` (editor) | `MultiConfigHelper` / `MultiRowConfigHelper` |
 
 Principles:
 
@@ -803,7 +878,25 @@ Principles:
 - The negotiated config (`_configHelper.config`) is what views consume; the raw
   config is what the editor round-trips, so user YAML is never rewritten behind
   their back.
-- Deprecated options are detected and logged with a migration hint.
+- **Two stages.** The schema never reads hass. Entity and attribute existence is
+  checked afterwards by `checkConfig` → `_checkHAEnvironment`, with one
+  `checkValueConfig` rule for every value-shaped option and every
+  `bar_stack.entities` entry: a new entity-bearing option adds its call there,
+  never a validator check.
+- **Order on `set config`**: `_customizeConfig` (migration) → `_applyDefaults`
+  (domain-derived defaults, e.g. the `attribute` of the entity and of an
+  entity-valued `max_value`) → schema `parse`.
+- **Error codes.** A validator throws `invalid(path, ERROR_CODES.x)`, never a
+  raw code. Severity `error` makes the config invalid, `info` negotiates
+  silently. Every code needs a `card.msg.<code>` translation, or `getMessage`
+  shows `Unknown message code`.
+- **User value or default?** Both look the same after `parse`: ask
+  `configHelper.wasSetByUser(key)` (snapshot taken after migration, before
+  defaults), never compare to the default.
+- Deprecated options are detected and logged with a migration hint. The editor's
+  **Migrate config** button (`migrateDeprecatedConfig`, `config-flow.ts`) reuses
+  that runtime migration and adds the removals and aliases that must not apply
+  silently: a rename or a removal touches both.
 - **Migration is per-class, not automatic** —
   `BaseConfigHelper._customizeConfig` calls `_migrateLegacyOptions`
   polymorphically, but only `CardConfigHelper` (Card/Badge/Feature) overrode it
@@ -920,11 +1013,16 @@ apart without a line of code in common to give them away.
 Jinja results rendered as HTML (`name`, `secondary`, `custom_info`, `name_info`)
 pass through the allowlist sanitizer in `DOMHelper.setHTML`:
 
-- Tags: `b`, `i`, `u`, `span`, `div`, `br` — anything else is unwrapped (text
-  preserved); `script`/`style`/`iframe`/`object`/`embed` are dropped with their
-  content.
-- Attributes: `class`, plus `style` restricted to `color` / `background-color`.
-  Event handlers and URLs never survive.
+- Tags: `b`, `i`, `u`, `span`, `div` — anything else is unwrapped (text
+  preserved); `script`/`style`/`iframe`/`object`/`embed`/`template`/`noscript`
+  and comments are dropped with their content. `<br>` never reaches the
+  sanitizer: `splitAtFirstBreak` (`core/base/split-break.ts`) consumes it first,
+  as the `multiline` split of `custom_info`/`secondary` (removed when
+  `multiline` is off).
+- Attributes: `class`, plus `style` filtered by property name to `color`,
+  `background-color`, `font-size`, `font-weight`, `text-align`, `width`,
+  `display`, `position`, `z-index` (`position: fixed` can escape the card: an
+  accepted exception, #129). Event handlers and URLs never survive.
 
 Rationale: templates are authored by the dashboard owner, but they often
 interpolate strings the owner does _not_ control (media titles, network device
@@ -969,7 +1067,7 @@ Early on, this project used that same preload trick — it's a genuinely clever
 piece of community engineering, and it was the right call at the time: it's what
 let this card have a real visual editor at all, years before writing one this
 way would even have been an option. As the editor grew, the project moved to a
-factory built directly on `ha-selector` (`EditorBase#getSelectorForType`, see
+factory built directly on `ha-selector` (`FieldBuilder#getSelectorForType`, see
 below) — `ha-selector` is itself HA's own dispatcher component: mount it with a
 `.selector` config object and it renders whichever concrete widget HA currently
 ships for that selector type. That means this editor picks up HA's own selector
@@ -987,18 +1085,19 @@ editor mounts, it's already registered.
 
 #### `ha-selector` — for anything HA's own selector system already models
 
-`EditorBase#getSelectorForType` maps this project's own field-type strings to a
-native `Selector` config object — the exact shape HA's own built-in card editors
-pass to `<ha-selector>` (cross-checked against HA's source, e.g. the `box`-mode
-`select` with tile images mirrors `hui-tile-card-editor.ts`, linked directly in
-the code). This covers most of the field surface:
-entity/attribute/action/color/icon/text/number/boolean pickers, and any generic
-dropdown.
+`FieldBuilder#getSelectorForType` (`editor/form/field-builder.ts`, delegating to
+`selectorForType` in `field-builder/selectors.ts`) maps this project's own
+field-type strings to a native `Selector` config object — the exact shape HA's
+own built-in card editors pass to `<ha-selector>` (cross-checked against HA's
+source, e.g. the `box`-mode `select` with tile images mirrors
+`hui-tile-card-editor.ts`, linked directly in the code). This covers most of the
+field surface: entity/attribute/action/color/icon/text/number/boolean pickers,
+and any generic dropdown.
 
 Check [HA's own `Selector` union type][ha-selector-ts] before building anything
 custom — if the shape you need already exists there, mapping it in
-`#getSelectorForType` is the whole job, and it stays free of maintenance as HA's
-own widget evolves.
+`selectorForType` is the whole job, and it stays free of maintenance as HA's own
+widget evolves.
 
 [ha-selector-ts]:
   https://github.com/home-assistant/frontend/blob/dev/src/data/selector.ts
@@ -1011,16 +1110,20 @@ progressive-disclosure "+" picker (confirmed by checking `ha-form`'s own
 `LOAD_ELEMENTS` registry — see the `entity-progress-action-picker` note above).
 For those, two class families follow the same template-method pattern:
 
-- `ChipsBase`/`SingleSelectChipsBase` (`editor/elements/chips.ts`) — chip sets
-  and 2-mode segmented pills.
+- `ChipsBase`/`MultiSelectChipsBase` (`editor/elements/chips.ts`) — chip sets
+  (`EntityProgressEffectChips`, `EntityProgressHideChips`) and the 2-mode
+  segmented pill (`EntityProgressModeChips`, directly on `ChipsBase`).
 - `ListEditorBase` (`editor/elements/list-editors/`) — repeatable row editors
-  (`bar_stack` entities, `custom_theme` zones) and `EntityProgressActionPicker`.
+  (`bar_stack` entities, `custom_theme` zones, Multi rows). The
+  `EntityProgressActionPicker` lives in the same folder but is a plain
+  `HTMLElement`.
 
 **Construction**: plain `HTMLElement` subclasses, their own shadow DOM, a
 build-once/render-on-`value`-change lifecycle, dispatching a
-`VALUE_CHANGED_EVENT` that bubbles out — the same event contract `<ha-selector>`
-itself uses, so `EditorBase#onChanged` handles both kinds of field identically
-without knowing which one it's talking to.
+`HA_CONTEXT.events.valueChanged` (`value-changed`) event that bubbles out — the
+same event contract `<ha-selector>` itself uses, so `EditorBase#onChanged`
+handles both kinds of field identically without knowing which one it's talking
+to.
 
 **Reproducing HA's look & feel**: styled from HA's own CSS custom properties,
 not one-off colors, with a fallback chain that keeps working on HA installs
@@ -1033,8 +1136,8 @@ still on the pre-WebAwesome theme system:
 --chip-standby-text: var(--wa-color-brand-on-normal, var(--primary-text-color));
 ```
 
-(`CHIPS_HOST_STYLE`, `styles.ts`) — "loud" = selected/active, "normal" =
-standby/inactive, traced directly from `ha-button.ts`'s own
+(`CHIPS_HOST_STYLE`, `utils/styles/editor.ts`) — "loud" = selected/active,
+"normal" = standby/inactive, traced directly from `ha-button.ts`'s own
 `:host([variant="brand"])` block and `wa.globals.ts`. Every left-hand variable
 is HA-owned; every fallback resolves to a pre-WebAwesome HA variable, never a
 literal color, so theming keeps working either way.
@@ -1052,25 +1155,30 @@ HA for free.
 
 ### `EditorFactory` builds the field-def tree
 
-`EditorFactory.build(template, badge)` produces the whole `static _fields` tree
-consumed by `EditorBase`, one entry per panel: `general`, `content`, `theme`,
-`markers`, `layout`, `interactions`. Every section function takes the same two
-booleans (`template`/`badge`) identifying which of the four editable variants
-(Card/Badge/Template/Badge Template) is being built, and returns a plain object
-of field definitions — there's no class hierarchy here, just parameterized
-functions returning data.
+`build({ template, badge })` (`editor/groups/build.ts`, exposed as
+`EditorFactory.build` by the `factory.ts` facade) produces the whole
+`static _fields` tree consumed by `EditorBase`, one entry per panel: `general`,
+`content`, `theme`, `markers`, `interactions`, `layout`. The two booleans
+identify which of the four Card-family variants (Card/Badge/Template/Badge
+Template) is being built; each section function takes the ones it needs
+(`general(template)`, `interactions(badge)`, `layout(badge)`, the others both)
+and returns a plain object of field definitions — there's no class hierarchy
+here, just parameterized functions returning data. `buildFeature()`,
+`buildMulti(feature)` and `buildMultiRow(feature)` compose the Feature and Multi
+editors the same way.
 
-The `theme` panel in particular is assembled from a dozen small
+The `theme` panel in particular is assembled from a handful of small
 `themeXxxFields(...)` helpers (`themeModeFields`, `themeColorModeFields`,
 `themeCardOnlyFields`, `themeBarSizingFields`, …) instead of one large function
 — this is deliberate, not just tidiness: `theme()`'s own body would trip
 `sonarjs/cognitive-complexity`'s 15-branch cap if every card-type ternary lived
 inline. Adding a field to that panel usually means extending the right existing
 `themeXxxFields` helper, not adding to `theme()` itself.
-`valueField`/`nestedValueField` are the equivalent factories for the 3-way
-(standard/entity/jinja) value fields
+`valueField`/`nestedValueField` (`editor/fields/value.ts`) are the equivalent
+factories for the 3-way (standard/entity/jinja) value fields
 (`min_value`/`max_value`/`watermark.low`/`.high`/`alert_when.above`/ `.below`) —
-one implementation, five call sites.
+one implementation, three call sites (`valueRangeFields`, `wmSide`,
+`alertField`).
 
 - A declarative **field map** (`static _fields`) organized in expansion panels;
   each field is an `ha-selector` (or a custom element:
@@ -1085,7 +1193,7 @@ one implementation, five call sites.
   `double_tap_action`, `icon_double_tap_action`) - the same UX as `ha-form`'s
   native `optional_actions` field type, built on this custom engine instead
   since the editor isn't `ha-form`-based. `_visible_actions` (ephemeral) tracks
-  manually-revealed keys; `interactions()` in `factory.ts` derives the
+  manually-revealed keys; `interactions()` in `groups/general.ts` derives the
   hidden/shown split.
 
 ### `EditorBase` runtime conventions
@@ -1094,8 +1202,8 @@ one implementation, five call sites.
   tile's `context`. `EditorBase` keeps `context.entity_id` under
   `_context_entity` (an ephemeral key, never written), negotiates defaults off
   it when the feature sets no entity of its own, and an entity-gated field asks
-  `effectiveEntity()` (`factory.ts`), never `c.entity` alone. The entity field
-  itself shows only what the YAML holds.
+  `effectiveEntity()` (`editor/fields/base.ts`), never `c.entity` alone. The
+  entity field itself shows only what the YAML holds.
 - **Render once, update forever**: the DOM is built on first
   `connectedCallback`; every subsequent `setConfig` only pushes values,
   visibility (`showIf`) and dynamic selectors through `EditorDOMHelper` (same
@@ -1112,17 +1220,18 @@ one implementation, five call sites.
   and are stripped before `config-changed` is dispatched (never round-tripped to
   the saved YAML), but survive across a `setConfig` round-trip like the rest of
   `#config` does.
-- **Draft-preservation pattern**: when a toggle/mode-switch (`badge_toggle`,
+- **Draft-preservation pattern**: when a toggle/mode-switch (`badge.toggle`,
   `icon_animation_mode`, `min_value_mode`, …) discards a value to switch shape,
   stash it in a matching `_<field>_<mode>_draft` key first (one draft per
   _other_ mode, e.g. `_min_value_entity_draft` + `_min_value_jinja_draft` for
   `min_value_mode`'s 3-way switch) instead of just dropping it. Re-entering that
   mode later reads the draft back before falling to a blank default, so
   switching jinja → standard → jinja restores the typed template instead of
-  starting over. `valueField`/`nestedValueField` in `factory.ts` are the
+  starting over. `valueField`/`nestedValueField` in `fields/value.ts` are the
   reference implementation for the 3-way (standard/ entity/jinja) case; every
-  2-way jinja toggle (`hide_mode`, `bar_effect_mode`, `status_label_toggle`, …)
-  follows the same shape with one draft each way.
+  2-way jinja toggle (`hide_mode`, `bar_effect_mode`, …) follows the same shape
+  with one draft each way; a plain on/off section toggle (`status_label.toggle`)
+  goes through `draftToggle` instead.
 - **Inert options are parked, not kept**: on every write, an
   `OPTIONS_WITHOUT_EFFECT` entry (`INERT_OPTIONS` plus `bar_size`) that has no
   effect in the new config moves to `_<key>_inert_draft` and leaves the YAML; it
@@ -1137,16 +1246,17 @@ one implementation, five call sites.
   row must agree on when each goes half vs. full — if field B's `showIf` can go
   false while field A stays visible and half-width, A needs a matching
   conditional width (falling back to `100%`) or it ends up alone with empty
-  space beside it. `EditorFactory.themeBarSizingFields` is the most elaborate
-  real example (four different pairing rules depending on card type, spelled out
-  in its own header comment) - read it before adding a new field to that same
-  panel.
+  space beside it. `themeBarSizingFields` (`groups/theme.ts`) is the most
+  elaborate real example (four different pairing rules depending on card type,
+  spelled out in its own header comment) - read it before adding a new field to
+  that same panel.
 - Custom elements that edit an **array of row-objects** (`bar_stack`'s entities,
   `custom_theme`'s zones) share `ListEditorBase`: a label, a list container, the
   build-once/render-on-change lifecycle, and `_deleteRow`/`_updateItem` — the
-  same template-method pattern `ChipsBase`/`SingleSelectChipsBase` use for the
-  chip family. A concrete row editor only implements
-  `_buildDOM()`/`_render()`/`_dispatch()` and its own per-field builders.
+  same template-method pattern `ChipsBase`/`MultiSelectChipsBase` use for the
+  chip family. A concrete row editor only implements the abstract
+  `_buildDOM()`/`_dispatch()`/`_rowClass`/`_buildRow()` and its own per-field
+  builders.
 
 ### Shared values: one factorisation
 
@@ -1175,7 +1285,7 @@ and a property test holds the invariant over random configs.
 ## Internationalization
 
 All user-visible strings live in two module-level constants — **41 languages**,
-248 leaf keys:
+252 leaf keys:
 
 ```js
 const TRANSLATION_KEYS = ['card.msg.entityNotFound', 'editor.field.unit', …]; // stated once
@@ -1187,10 +1297,10 @@ const TRANSLATIONS_FLAT = {
 ```
 
 Not a per-language nested tree: the key path (`editor.field.unit`) used to be
-repeated in full 39 times, once per language object — restructured (1.6.2) into
-a shared key list plus flat value arrays, cutting the shipped bundle by ~27%. A
-value identical to English (roughly half of them, mostly untranslated technical
-terms) is stored as the sentinel `0` instead of the string again.
+repeated in full once per language object — restructured (1.6.2) into a shared
+key list plus flat value arrays, cutting the shipped bundle by ~27%. A value
+identical to English (roughly half of them, mostly untranslated technical terms)
+is stored as the sentinel `0` instead of the string again.
 
 - Lookup goes through `HassProviderSingleton.localize('editor.field.unit')` — a
   dot-path resolver over the active language's **reconstructed** nested tree
@@ -1315,9 +1425,9 @@ translated in the language you expect.
 ### The translation table is cut in two
 
 Roughly 89% of the translated text is editor-only — measured on
-`translations/*.json`, `editor.*` weighs 114 KB across the 39 languages against
-16 KB for `card.*`. A dashboard that is merely displayed never reads a single
-one of those keys, so they do not ship inside the bundle.
+`translations/*.json` when there were 39 languages (41 now), `editor.*` weighed
+114 KB against 16 KB for `card.*`. A dashboard that is merely displayed never
+reads a single one of those keys, so they do not ship inside the bundle.
 
 The cut is positional. `TRANSLATION_KEYS` lists every key once;
 `EDITOR_KEY_START` is the index of the first `editor.*` one, and
@@ -1383,8 +1493,8 @@ The build then fails if any module was bundled into both files: a second
 would all look fine until they drifted. Neither file has an `import` or `export`
 statement left, so both still load as a classic script (#108).
 
-`src/` knows none of this: `src/editor/` imports `../card/schema.js` like any
-other module, and the tests bundle it that way — a DOM test that mounts an
+`src/` knows none of this: `src/editor/` imports `card/config/schema.js` like
+any other module, and the tests bundle it that way — a DOM test that mounts an
 editor imports `src/editor/entry.js` itself. `test/bundle-suite.ts` is the one
 that loads the real pair from `dist/`, the editor file after the bundle.
 
@@ -1475,12 +1585,12 @@ Checklist for a new YAML option, in the order that avoids back-tracking:
 5. **Editor** — add the field to the relevant `static _fields` maps
    (`EditorFactory`), with `showIf` for conditional visibility and
    `onChange`/`onClear` if the YAML shape differs from the UI shape. A new
-   select type needs an entry in `SELECT_TYPES` (editor/elements/base.ts) and an
-   option map in the translations. **Never restate the allowed values there**:
-   point the entry at the schema with `from(variant, field)` — dot paths work
-   (`from('card', 'watermark.type')`) — so the dropdown lists exactly what that
-   variant validates, in the enum's own order. Only a genuine editor-side
-   restriction (offering less than the schema accepts, like
+   select type needs an entry in `SELECT_TYPES` (editor/form/select-types.ts)
+   and an option map in the translations. **Never restate the allowed values
+   there**: point the entry at the schema with `from(variant, field)` — dot
+   paths work (`from('card', 'watermark.type')`) — so the dropdown lists exactly
+   what that variant validates, in the enum's own order. Only a genuine
+   editor-side restriction (offering less than the schema accepts, like
    `bar_position_density_compact`) is written out by hand.
 6. **Translations** — `editor.field.<name>` label (+ `editor.option.<name>` map
    for selects/chips) via `node scripts/translations.js add-key …`, then
@@ -1492,7 +1602,11 @@ Checklist for a new YAML option, in the order that avoids back-tracking:
 8. **Documentation** — a section in [`docs/configuration.md`](configuration.md)
    (badges, type, example, back-to-top link) and a line in the release notes.
    Then `npm run docs:options` regenerates the [option map](option-map.md):
-   where each option is accepted, edited, documented, shown and tested.
+   where each option is accepted, edited, documented, shown and tested. Tests
+   hold the three together: `editor-coverage` fails on a schema option with no
+   editor field (add one, or a reasoned `YAML_ONLY` entry), `doc-option-tables`
+   on option tables that differ from the schema, and `doc-examples` validates
+   every YAML block of the docs against the schema.
 9. **Watched entities** — if the option can reference another entity, add it to
    `_registerWatchedEntities` so state changes trigger a refresh.
 10. **Value-shape/mark reuse** — if the option is a value/entity/jinja triad
@@ -1522,12 +1636,12 @@ Checklist for a new YAML option, in the order that avoids back-tracking:
   imports now that the module split exists; nothing currently prevents a future
   circular import from creeping in except this rule). Notable custom rules:
   `eqeqeq: 'smart'` (bans `==`/ `!=` except the `x == null` null-or-undefined
-  idiom, used once in `common-checks.ts`), `no-console` (only
-  `debug`/`info`/`warn`/`error`/ `groupCollapsed`/`groupEnd` allowed —
-  `console.log` is banned everywhere except one inline-disabled call in the
-  startup banner), and `lines-between-class-members: 'always'` (no exception for
-  short members — every class member gets a blank line before it).
-  `npm run lint` / `make lint`.
+  idiom, used a few times, e.g. `is.nullish` in `common-checks.ts`),
+  `no-console` (only `debug`/`info`/`warn`/`error`/ `groupCollapsed`/`groupEnd`
+  allowed — `console.log` is banned everywhere except one inline-disabled call
+  in the startup banner), and `lines-between-class-members` (a blank line before
+  and after every method, none between two consecutive fields). `npm run lint` /
+  `make lint`.
 - **Nearly all TypeScript** (`tsconfig.json`: `allowJs`, `checkJs: false`
   project-wide, `strict: true`): `src/` is virtually 100% `.ts` — the one
   remaining `.js` file, `translations.js`, is generated and never hand-edited
@@ -1563,6 +1677,12 @@ Checklist for a new YAML option, in the order that avoids back-tracking:
 - **DeepSource** also runs as a CI status check (third-party static analysis,
   separate from ESLint) — treat its findings the same as an ESLint error: fix
   the root cause, don't suppress unless the finding is a false positive.
+- **Measuring a perf or size change**:
+  `node scripts/compare-bundles.js a.js b.js` (size, parse and compile time; not
+  evaluation) and `node scripts/compare-hass-updates.js a.js b.js` (the
+  `set hass` hot path; only the ratio between the two bundles carries over).
+  Compare against a release asset
+  (`gh release download <tag> -p entity-progress-card.js`).
 - `make help` lists every available target (build, lint, type-check, format,
   i18n, release-dry-run...) with a one-line description.
 - **Identifier naming** (a followed convention, not lint-enforced): classes
@@ -1608,23 +1728,28 @@ reasoning survives a maintainer handoff instead of living only in chat history.
 
 ## Release process
 
-- **Versioning**: `const VERSION = 'x.y.z[-dev]'` in `src/utils/parameters.ts`
-  is the single source of truth displayed in the console banner; keep it in sync
-  with the git tag. `-dev` marks unreleased builds. `package.json`'s own
+- **Versioning**: `const VERSION = 'x.y.z[-dev]'` in `src/utils/meta.ts` is the
+  single source of truth displayed in the console banner; keep it in sync with
+  the git tag. `-dev` marks unreleased builds. `package.json`'s own
   `"version": "1.0.0"` is a deliberately frozen stub — this package is never
   published to npm (`private: true`), so it has no consumer; don't bump it,
   `VERSION` above is the only one that matters.
 - **CI** (`.github/workflows/`), path-scoped where relevant so a PR only
   triggers the checks that matter for what it touches:
-  - `validate-hacs.yaml` — **not** path-scoped, runs on every push/PR: HACS
-    validation (`hacs/action`, category `plugin`). Deliberately unscoped — it
-    checks `hacs.json`/README compliance too, not just `src/`, so a path filter
-    would risk missing a manifest/README-only regression.
+  - `validate-hacs.yaml` — **not** path-scoped, runs on every push and on PRs
+    from this repository (a fork PR is skipped: it has neither a release nor a
+    committed `dist/`, so the check could only fail, #142): HACS validation
+    (`hacs/action`, category `plugin`). Deliberately unscoped — it checks
+    `hacs.json`/README compliance too, not just `src/`, so a path filter would
+    risk missing a manifest/README-only regression.
   - `validate-js.yaml` — on `src/**`/`test/**`/`scripts/**`/
     `.github/workflows/**`/`translations/**`/`eslint.config.mjs`/
     `package.json`/`package-lock.json` changes: `npm run check:github`, the same
     gate `release.yaml` runs — whatever would block a release blocks the push
-    that feeds it.
+    that feeds it. Its jobs are derived from the `check:github` script by
+    `scripts/ci-matrix.js`: add a check to the script, not to the workflow.
+    Steps before `build:prod` run as parallel jobs, the rest as one chain, so a
+    check that needs `dist/` goes after it.
   - `validate-i18n.yaml` — on `translations/**` changes:
     `npm run i18n:validate:structure` (well-formed JSON + template structure
     only — no JS sync required, so a translation-only PR isn't blocked on
@@ -1638,32 +1763,34 @@ reasoning survives a maintainer handoff instead of living only in chat history.
     reachable from `main` — hence the `fetch-depth: 0` checkout), then
     `npm run check:github`, then uploads the artifact to the release assets.
     That single gate opens on `check:release-flags` (safety net — fails if the
-    committed `DEBUG_DEFAULTS` baseline has any flag left `true`; `dev` is
-    URL-derived so it isn't checked here, see
-    [Logging & debugging](#logging--debugging)) and ends on `build:prod`
-    (esbuild, `--target=es2021`, pinned as a devDependency — re-forces
-    `DEBUG_DEFAULTS` all-`false` in the built output regardless of the source
-    state, see `scripts/lib/release-flags.js`), a `node --check` sanity pass on
-    the minified output and `npm run check:es-target` (`es-check es2022` plus
-    the static-block check, catches syntax newer than the language floor that
-    `node --check` alone can't - Node's own parser is newer than the target, see
-    issue #128). The upload glob, `dist/entity-progress-card[.-]*`, takes the
-    bundle, its editor file and its language files, never the `_dev` build. HACS
-    serves those assets.
+    committed `DEBUG_DEFAULTS` baseline has any flag left `true`; `dev` is not a
+    committed flag but baked per build, so it isn't checked here, see
+    [Logging & debugging](#logging--debugging)), runs the code checks, then
+    `build:prod` (esbuild, `--target=es2021`, pinned as a devDependency —
+    re-forces `DEBUG_DEFAULTS` all-`false` in the built output regardless of the
+    source state, see `scripts/lib/release-flags.js`), and ends by verifying the
+    built files: a `node --check` sanity pass on both minified files,
+    `npm run check:es-target` (`es-check es2022` plus the static-block check,
+    catches syntax newer than the language floor that `node --check` alone
+    can't - Node's own parser is newer than the target, see issue #128) and
+    `check:i18n-split`; `test:dom` closes it, running the DOM test suite. The
+    upload glob, `dist/entity-progress-card[.-]*`, takes the bundle, its editor
+    file and its language files, never the `_dev` build. HACS serves those
+    assets.
 - **Two build modes** (`scripts/build.js`, esbuild): `build:test` →
   `entity-progress-card_dev.js` (debug baseline left as committed) and
   `build:prod` (`--prod`) → `entity-progress-card.js` (minified,
   `DEBUG_DEFAULTS` re-forced all-`false`, see `scripts/lib/release-flags.js`),
   each with its `-editor.js` and `-<lang>.json` files beside it (see
-  [The editor file](#the-editor-file)). `dev` mode isn't baked into either — it
-  follows the served filename/URL at runtime (see
-  [Logging & debugging](#logging--debugging)). Only `build:prod` is minified and
-  safe to ship.
+  [The editor file](#the-editor-file)). `dev` mode is baked per build
+  (`__EPB_DEV_BUILD__`: on in the `_dev` file only), or forced with `?dev=true`
+  on the resource URL (see [Logging & debugging](#logging--debugging)). Only
+  `build:prod` is minified and safe to ship.
 - **Language floor**: the esbuild target is `es2021`, with class features
   declared native (`NATIVE_CLASS_FEATURES`) — private fields, `??=` and optional
   chaining are fine. esbuild lowers any other newer syntax, class `static {}`
   blocks included; a build config that stops doing so fails
-  `npm run check:es-target` in the release build, even though its output runs in
+  `npm run check:es-target` in `check:github`, even though its output runs in
   dev (modern browser) and passes `node --check` (Node's parser is newer than
   the target). Test a release build locally with
   `npm run build:prod && npm run check:es-target` when in doubt.
@@ -1673,6 +1800,12 @@ reasoning survives a maintainer handoff instead of living only in chat history.
   HACS plugins (e.g. Mushroom) ship a pure `src/` + release setup.
 - Release notes are drafted in `CHANGELOG.md` during the RC cycle, then promoted
   to the GitHub release body.
+- **`README.md` is generated**: edit `.github/README.md` (what GitHub shows on
+  `main`), then run `npm run docs:readme` for a stable release (HACS and the
+  docs site read the root file at the tag). `readme-stable.test` fails on drift.
+- **The docs site** (MkDocs: `mkdocs.yml`, `scripts/docs/hooks.py`) is built by
+  `pages.yml` on a stable release only. Docs stay written for GitHub and the
+  hooks adapt them; `mkdocs build` checks a doc change locally.
 - **`docs/images/` is content-addressed and append-only.** README.md is the only
   doc HACS renders in its own in-app viewer, and that viewer needs absolute
   `raw.githubusercontent.com/.../main/...` URLs to resolve at all — every other
@@ -1705,7 +1838,8 @@ reasoning survives a maintainer handoff instead of living only in chat history.
 - **dev** (`-dev` suffix on every registered element name, so a dev build
   coexists with the shipped one) is **baked in per build** (`__EPB_DEV_BUILD__`,
   injected by `scripts/build.js` — `true` in `entity-progress-card_dev.js`,
-  `false` in the shipped file), not URL-derived. This is also why
+  `false` in the shipped file); `?dev=true` on the resource URL also turns it on
+  (`DEV_MODE`, `parameters.ts`). This is also why
   [`docs/demo-dashboard-dev.yaml`](demo-dashboard-dev.yaml) exists as its own
   file rather than a URL flag on `demo-dashboard.yaml`: every card type in it
   carries the same `-dev` suffix, so it only renders against the dev build, side
@@ -1778,16 +1912,16 @@ reasoning survives a maintainer handoff instead of living only in chat history.
 **Debug areas** (each traces via a `Logger` that wraps the class's
 `_loggedMethods` — `👉` / `✅` / `❌` with timing — or logs directly):
 
-| Area                 | Wired in                                 | Traces                                                                        |
-| -------------------- | ---------------------------------------- | ----------------------------------------------------------------------------- |
-| `card`               | `HACore`/`HABase` (`core/`)              | lifecycle (connect / disconnect / **adopted** / setConfig / refresh / render) |
-| `editor`             | `EditorBase` (`editor/elements/base.ts`) | `setConfig` in, `config-changed` out                                          |
-| `interactionHandler` | `ActionHelper` (`dom-helpers.ts`)        | tap / hold / double-tap action resolution                                     |
-| `ressourceManager`   | `ResourceManager`/`DOMHelper`            | timers / listeners / subscriptions                                            |
-| `hass`               | `HassProviderSingleton`                  | first hass (HA version, language, connection), language change                |
-| `registration`       | `RegistrationHelper` (`register.ts`)     | every `define` (ok/skipped) + `customCards` push, with timing                 |
-| `instances`          | value-helper + view class constructors   | per-class instantiation counter (`traceInstance`, leak probe)                 |
-| `interference`       | `HACore` `MutationObserver` on the host  | external mutations of our own host element (card-mod &c)                      |
+| Area                 | Wired in                                            | Traces                                                                        |
+| -------------------- | --------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `card`               | `HACore`/`HABase` (`core/`)                         | lifecycle (connect / disconnect / **adopted** / setConfig / refresh / render) |
+| `editor`             | `EditorBase` (`editor/elements/base.ts`)            | `setConfig` in, `config-changed` out                                          |
+| `interactionHandler` | `ActionHelper` (`dom/dom-helpers/action-helper.ts`) | tap / hold / double-tap action resolution                                     |
+| `ressourceManager`   | `ResourceManager`/`DOMHelper` (`dom/dom-helpers/`)  | timers / listeners / subscriptions                                            |
+| `hass`               | `HassProviderSingleton`                             | first hass (HA version, language, connection), language change                |
+| `registration`       | `RegistrationHelper` (`register.ts`)                | every `define` (ok/skipped) + `customCards` push, with timing                 |
+| `instances`          | value-helper + view class constructors              | per-class instantiation counter (`traceInstance`, leak probe)                 |
+| `interference`       | `HACore` `MutationObserver` on the host             | external mutations of our own host element (card-mod &c)                      |
 
 To add a debug area: add it to `DEBUG_DEFAULTS` and the `CARD_CONTEXT.debug`
 object (`parameters.ts`), the `CLEAN_DEBUG_DEFAULTS_BODY` literal

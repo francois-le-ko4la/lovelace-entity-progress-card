@@ -199,7 +199,7 @@ class DOMHelper {
   // have no multiline option at all (see
   // StructureElements.secondaryInfoWrapperMinimal) and must never wrap, while
   // custom_info/secondary's own <br> is already consumed by
-  // HABase#_splitAtFirstBreak before it ever reaches this sanitizer - a literal
+  // splitAtFirstBreak (core/base/split-break.ts) before it ever reaches this sanitizer - a literal
   // <br> surviving to this point would only ever be an unhandled edge case, not
   // a feature to preserve.
   static #SAFE_HTML_TAGS = new Set(['B', 'I', 'U', 'SPAN', 'DIV']);

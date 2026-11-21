@@ -15,11 +15,13 @@ import { EntityHelper } from '../../../src/card/values/entity-helper.js';
 import { HassProviderSingleton } from '../../../src/utils/hass-provider.js';
 
 const TEMPERATURE = 'sensor.temperature';
+const RANGE = 'input_number.range';
 
 HassProviderSingleton.getInstance().hass = {
   states: {
     [TEMPERATURE]: { entity_id: TEMPERATURE, state: '21', attributes: { device_class: 'temperature' } },
     'sensor.gone': { entity_id: 'sensor.gone', state: 'unavailable', attributes: {} },
+    [RANGE]: { entity_id: RANGE, state: '50', attributes: { min: 0, max: 100, step: 1 } },
   },
   locale: { language: 'en', number_format: 'comma_decimal' },
   config: { unit_system: { temperature: '°C' } },
@@ -107,6 +109,23 @@ describe('an entity bound reads through its helper', () => {
     refreshBound(bound);
     assert.equal(boundUsable(bound), true);
     assert.equal(usableBoundValue(bound), bound.current);
+  });
+
+  test('an explicit attribute of a ranged entity is read, not its state (#150)', () => {
+    for (const [attribute, expected] of [
+      ['min', 0],
+      ['max', 100],
+    ] as const) {
+      const bound = entityBound({ entity: RANGE, attribute });
+      refreshBound(bound);
+      assert.equal(usableBoundValue(bound), expected, attribute);
+    }
+  });
+
+  test('the attribute replaces the state, the entity keeps its own range (#150)', () => {
+    const bound = entityBound({ entity: RANGE, attribute: 'step' });
+    refreshBound(bound);
+    assert.deepEqual(bound.reading, { kind: 'ranged', current: 1, min: 0, max: 100 });
   });
 });
 
