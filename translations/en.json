@@ -172,6 +172,7 @@
         "auto": "Auto",
         "rainbow": "Rainbow",
         "rainbow_full": "Rainbow (full)",
+        "segment_full": "Segment (full)",
         "segment": "Segment"
       },
       "bar_effect": {

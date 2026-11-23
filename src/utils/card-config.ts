@@ -356,6 +356,7 @@ const style = {
         shimmer: { label: 'shimmer', class: 'progress-bar-effect-shimmer' },
         shimmerReverse: { label: 'shimmer_reverse', class: 'progress-bar-effect-shimmer-reverse' },
         wave: { label: 'wave', class: 'progress-bar-effect-wave' },
+        boil: { label: 'boil', class: 'progress-bar-effect-boil' },
       },
       // Single source of truth for mutually-exclusive effects (both
       // EntityProgressEffectChips - the visual editor - and
@@ -364,12 +365,13 @@ const style = {
       // never drift apart.
       effectIncompatibilities: {
         glass: ['gradient', 'gradient_reverse'],
-        gradient: ['gradient_reverse', 'glass', 'wave'],
-        gradient_reverse: ['gradient', 'glass', 'wave'],
-        shimmer: ['shimmer_reverse', 'wave'],
-        shimmer_reverse: ['shimmer', 'wave'],
-        // wave paints both of .inner's pseudo-elements.
-        wave: ['gradient', 'gradient_reverse', 'shimmer', 'shimmer_reverse'],
+        gradient: ['gradient_reverse', 'glass', 'wave', 'boil'],
+        gradient_reverse: ['gradient', 'glass', 'wave', 'boil'],
+        shimmer: ['shimmer_reverse', 'wave', 'boil'],
+        shimmer_reverse: ['shimmer', 'wave', 'boil'],
+        // wave and boil paint both of .inner's pseudo-elements.
+        wave: ['gradient', 'gradient_reverse', 'shimmer', 'shimmer_reverse', 'boil'],
+        boil: ['gradient', 'gradient_reverse', 'shimmer', 'shimmer_reverse', 'wave'],
       },
       centerZero: 'center-zero',
     },

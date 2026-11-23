@@ -403,7 +403,7 @@ class EntityHelper {
 
   _manageRangedEntity() {
     const { min, max } = assertDefined(ownRangeOf(this.#entity), `EntityHelper: no range for '${this.#domain}'`);
-    // #150: an explicit attribute replaces the state, never the entity's own range.
+    // #150: an explicit attribute replaces the state, never the own range.
     const raw = this.#attribute ? this.#hassProvider.getEntityAttribute(this.#entity, this.#attribute) : this.#state;
     const current = is.numericString(raw) || is.number(raw) ? parseFloat(String(raw)) : NaN;
     if (Number.isNaN(current)) this.#isValid = false;

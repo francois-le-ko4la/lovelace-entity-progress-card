@@ -174,6 +174,7 @@ class EntityProgressEffectChips extends MultiSelectChipsBase {
     { value: 'shimmer', showIf: EntityProgressEffectChips.#STRAIGHT_BAR_ONLY },
     { value: 'shimmer_reverse', showIf: EntityProgressEffectChips.#STRAIGHT_BAR_ONLY },
     { value: 'wave', showIf: EntityProgressEffectChips.#RISING_FILL_ONLY },
+    { value: 'boil', showIf: EntityProgressEffectChips.#RISING_FILL_ONLY },
   ];
 
   // Shared with the runtime guard in HACore._handleBarEffect - see

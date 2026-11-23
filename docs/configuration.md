@@ -743,12 +743,12 @@ to `0`) to override this.
 > reach down to `-50°C`) — only `max_value` defaults from the theme (see its own
 > section below). `[min_value, max_value]` is the visible "scope" a theme's
 > zones get projected across (see [`bar_color_mode`](#bar_color_mode)
-> `segment`/`rainbow`): by default that scope is the theme's positive branch
-> only (`0` to `max_value`), which is assumed to be what's actually in view
-> unless you explicitly widen `min_value` yourself. Pulling `min_value` down to
-> the theme's own lowest bound automatically would instead stretch the _entire_
-> theme range (including zones for values the entity may never reach) across the
-> visible bar.
+> `segment`/`rainbow`/`rainbow_full`/`segment_full`): by default that scope is
+> the theme's positive branch only (`0` to `max_value`), which is assumed to be
+> what's actually in view unless you explicitly widen `min_value` yourself.
+> Pulling `min_value` down to the theme's own lowest bound automatically would
+> instead stretch the _entire_ theme range (including zones for values the
+> entity may never reach) across the visible bar.
 >
 > With `center_zero` active and a built-in real-world-value theme, the
 > negative-branch default described above (negative of `max_value`) is instead
@@ -848,7 +848,7 @@ _Default_:
 > the `center_zero` case). Setting `max_value` explicitly (to any value,
 > including `100`) always overrides this and is used as-is.
 >
-> [`bar_color_mode`](#bar_color_mode) `segment`/`rainbow` projects a theme's
+> [`bar_color_mode`](#bar_color_mode) (every mode but `auto`) projects a theme's
 > zones onto `[min_value, max_value]` — that range is the visible "scope": zones
 > (or the parts of zones) that fall inside it get stretched proportionally
 > across the bar, and anything outside it is clipped or omitted, not stretched
@@ -1820,8 +1820,8 @@ keeps its size and its text; only the straight bar goes.
   counter-clockwise.
 - [`bar_color`](#bar_color), [`theme`](#theme) and
   [`bar_color_mode`](#bar_color_mode) color it: `segment` and `rainbow` show
-  each zone at its place round the ring, `rainbow_full` paints every zone all
-  the way round with a pin at the value.
+  each zone at its place round the ring, `rainbow_full` and `segment_full` paint
+  every zone all the way round with a pin at the value.
 - [`watermark`](#watermark) and [`peak_marker`](#peak_marker) are drawn on the
   ring: a zone as an arc, a point as a tick across it. On a ring, `striped` and
   `blended` read as `area`, `triangle` and `round` as the same pin.
@@ -1919,16 +1919,16 @@ bar_segments: 10
 ```
 
 Works with any bar orientation, size and effect, and with every color mode but
-`rainbow_full` (see the note below). The visual editor offers a numeric field
-from 2 to 10; YAML accepts any number of 2 or more.
+`rainbow_full` and `segment_full` (see the note below). The visual editor offers
+a numeric field from 2 to 10; YAML accepts any number of 2 or more.
 
 > [!NOTE]
 >
 > `bar_segments` doesn't combine with [`bar_color_mode`](#bar_color_mode)
-> `rainbow_full` (no single fill fraction to cut into cells — the whole track is
-> always shown, with a moving marker instead) or [`bar_stack`](#bar_stack) (one
-> fill fraction per entity, not one for the whole bar) — either one clears
-> `bar_segments` automatically.
+> `rainbow_full` or `segment_full` (no single fill fraction to cut into cells —
+> the whole track is always shown, with a moving marker instead) or
+> [`bar_stack`](#bar_stack) (one fill fraction per entity, not one for the whole
+> bar) — either one clears `bar_segments` automatically.
 
 [🔼 Back to top]
 
@@ -1958,8 +1958,9 @@ rows can't use `icon`.
   `--epb-ring-softness` applies ([theme](theme.md)).
 
 The fill, the theme zones, the watermarks, the peak markers and the
-`rainbow_full` marker all follow the arc. The ring fills clockwise from `start`;
-[`bar_orientation`](#bar_orientation) `counterclockwise` reverses it.
+`rainbow_full`/`segment_full` marker all follow the arc. The ring fills
+clockwise from `start`; [`bar_orientation`](#bar_orientation) `counterclockwise`
+reverses it.
 
 _Example_ (thermostat dial, open at the bottom):
 
@@ -2066,8 +2067,9 @@ name is ignored. The visual editor offers `glass`, `gradient` and
 [![Multi-Card OK][MultiCard-OK]](#compatibility)
 [![Multi-Feature OK][MultiFeature-OK]](#compatibility)
 
-> **`bar_color_mode`** [String] ➡️ {`auto`|`segment`|`rainbow`|`rainbow_full`}
-> _(optional, default: `auto`)_
+> **`bar_color_mode`** [String] ➡️
+> {`auto`|`segment`|`rainbow`|`rainbow_full`|`segment_full`} _(optional,
+> default: `auto`)_
 
 Controls how theme colors are applied to the progress bar fill.
 
@@ -2086,6 +2088,9 @@ Preview in the Cookbook: [`segment`](cookbook.md#effect-segment),
   pill-shaped marker slides along it to show where the current value sits.
   Useful when the zones themselves (not how full the bar is) are what matters at
   a glance.
+- `segment_full` — like `rainbow_full`, but each zone is a solid block with a
+  hard edge, as in `segment`: the whole scale is always shown, and the marker
+  shows the value.
 
 > [!NOTE]
 >
@@ -2128,6 +2133,18 @@ max_value: 40
 bar_color_mode: rainbow_full
 ```
 
+```yaml
+type: custom:entity-progress-card
+entity: sensor.chlorinator_orp
+min_value: 450
+max_value: 1000
+custom_theme:
+  - {min: 450, max: 650, color: orange}
+  - {min: 650, max: 750, color: green}
+  - {min: 750, max: 1000, color: orange}
+bar_color_mode: segment_full
+```
+
 **Edge cases: `bar_color_mode`**
 
 - `bar_color_mode` also works with [`center_zero`](#center_zero): each arm
@@ -2146,7 +2163,9 @@ bar_color_mode: rainbow_full
   -100%/+100% scale and each arm reads its own 0-100% of the theme, as on a
   card. `bar_stack` doesn't exist on Template either, so `rainbow_full` is
   always available.
-- `rainbow_full`'s marker can be restyled by overriding
+- `segment_full` follows every `rainbow_full` rule above; with
+  [`bar_stack`](#bar_stack) it falls back to `segment`.
+- The `rainbow_full`/`segment_full` marker can be restyled by overriding
   `--epb-rainbow-marker-size` (default `5px` for `bar_size: xsmall`/`small`,
   `7px`/`9px`/`12px` for `medium`/`large`/`xlarge`),
   `--epb-rainbow-marker-color` (default: whatever color the icon currently

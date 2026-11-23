@@ -6,6 +6,16 @@ candidate safely before it becomes stable.
 
 ## 1.6.5 (soon)
 
+### ✨ New
+
+- **[`bar_color_mode`][bar_color_mode] `segment_full`**: every theme zone as a
+  solid block across the whole bar, with a marker at the value (`rainbow_full`
+  without the blending).  
+  ➡️ [Enhancement]: Customizable color segments for the template card #152
+  (@FoxP)
+- **[`bar_effect`][bar_effect] `boil`**: `wave` with a rolling boil and steam
+  rising above the liquid, on an upright bar (`bar_orientation: up`).
+
 ### 🔧 Improvements
 
 - **[`attribute`][attribute]** now works on `counter`, `number` and
@@ -32,6 +42,19 @@ candidate safely before it becomes stable.
   `number` and `input_number`.
 - Development guide checked against the code: card lifecycle, editor,
   validation, CI, and the rules a contributor needs.
+
+## 1.6.5-rc2
+
+### ✨ New
+
+- **[`bar_color_mode`][bar_color_mode] `segment_full`**: every theme zone as a
+  solid block across the whole bar, with a marker at the value (`rainbow_full`
+  without the blending). With [`bar_stack`][bar_stack], it falls back to
+  `segment`.  
+  ➡️ [Enhancement]: Customizable color segments for the template card #152
+  (@FoxP)
+- **[`bar_effect`][bar_effect] `boil`**: `wave` with a rolling boil and steam
+  rising above the liquid, on an upright bar (`bar_orientation: up`).
 
 ## 1.6.5-rc1
 

@@ -90,6 +90,28 @@ describe('ThemeManager - custom_theme (user-defined zones)', () => {
   });
 });
 
+describe('ThemeManager - segment_full (#152)', () => {
+  const twoZones = () => {
+    const theme = new ThemeManager();
+    theme.customTheme = [
+      { min: 0, max: 40, color: '#ff0000' },
+      { min: 40, max: 100, color: '#0000ff' },
+    ];
+    return theme;
+  };
+  const HARD_STOPS = '#ff0000 0.00%, #ff0000 40.00%, #0000ff 40.00%, #0000ff 100.00%';
+
+  test('paints every zone with hard edges, whatever the value', () => {
+    for (const fill of [0, 20, 100]) {
+      assert.match(twoZones().buildGradient(fill, 'segment_full') ?? '', new RegExp(`${HARD_STOPS}\\)$`));
+    }
+  });
+
+  test('segment stays clipped at the value', () => {
+    assert.equal(twoZones().buildGradient(0, 'segment'), null);
+  });
+});
+
 describe('ThemeManager - linear theme (light) without interpolation', () => {
   test('picks the step the value falls into, no blending, by default', () => {
     const theme = new ThemeManager();
@@ -178,6 +200,7 @@ describe('ThemeManager - center_zero arms on a percent-scaled theme', () => {
     const theme = themed('critical_when_high');
     assert.equal(theme.buildFloorGradient(40, 'segment'), expected);
     assert.equal(theme.buildFloorGradient(0, 'rainbow_full'), expected);
+    assert.equal(theme.buildFloorGradient(0, 'segment_full'), expected);
   });
 
   test('no floor gradient for an empty arm or without a color mode', () => {

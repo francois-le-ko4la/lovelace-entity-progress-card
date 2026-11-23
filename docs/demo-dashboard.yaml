@@ -2137,6 +2137,13 @@ views:
             bar_orientation: up
             bar_effect:
               - wave
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_temperature
+            name: boil
+            bar_position: background
+            bar_orientation: up
+            bar_effect:
+              - boil
       - type: grid
         cards:
           - type: heading
@@ -2231,6 +2238,37 @@ views:
             name: 'bar_color_mode: rainbow_full (always shows the full gradient)'
             theme: optimal_when_high
             bar_color_mode: rainbow_full
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_battery
+            name: 'bar_color_mode: segment_full (every zone, value marker)'
+            theme: optimal_when_high
+            bar_color_mode: segment_full
+          - type: custom:entity-progress-card
+            entity: input_number.epb_demo_temperature
+            name: 'segment_full, raw-value custom_theme (#152)'
+            min_value: -20
+            max_value: 40
+            custom_theme:
+              - min: -20
+                max: 10
+                color: blue
+              - min: 10
+                max: 18
+                color: orange
+              - min: 18
+                max: 24
+                color: green
+              - min: 24
+                max: 30
+                color: orange
+              - min: 30
+                max: 40
+                color: red
+            bar_color_mode: segment_full
+            density: compact
+            grid_options:
+              columns: 4
+              rows: 1
           - type: custom:entity-progress-card
             entity: input_number.epb_demo_battery
             name: custom_theme (per-zone colors)

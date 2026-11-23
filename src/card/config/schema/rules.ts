@@ -8,6 +8,7 @@ import {
   DENSITY_COMPACT_BAR_POSITIONS,
   RING_ORIENTATIONS,
   CONTENT_ORDER_TOKENS,
+  isFullScaleColorMode,
 } from './enums.js';
 import { statusLabelObj } from './marks.js';
 
@@ -27,11 +28,11 @@ const hasTheme = (c: ConfigLike) => !is.nullish(c.theme) || is.nonEmptyArray(c.c
 
 const hasStack = (c: ConfigLike) => is.nonEmptyArray((c.bar_stack as { entities?: unknown } | undefined)?.entities);
 
-// rainbow_full's pill needs a 16px bar row, vertical's only from large up:
+// The full-scale marker pill needs a 16px bar row, vertical's only from large:
 // styles.ts grows it (.rainbow-full-raised), minGridRows reserves the row.
 const raisesRainbowFullRow = (c: ConfigLike) =>
   c.layout === CARD.layout.orientations.vertical.label &&
-  c.bar_color_mode === 'rainbow_full' &&
+  isFullScaleColorMode(c.bar_color_mode) &&
   ['xsmall', 'small', 'medium'].includes(c.bar_size as string);
 
 // Badge and Multi rows carry no layout/bar_position key at all, and render as
@@ -197,7 +198,7 @@ const HAS_EFFECT = {
   barColorMode: hasTheme,
   interpolate: (c: ConfigLike) => hasTheme(c) && (is.nullish(c.bar_color_mode) || c.bar_color_mode === 'auto'),
   // Neither has a single fill fraction for cells to cut into.
-  barSegments: (c: ConfigLike) => c.bar_color_mode !== 'rainbow_full' && !hasStack(c),
+  barSegments: (c: ConfigLike) => !isFullScaleColorMode(c.bar_color_mode) && !hasStack(c),
   // A text column beside the bar: a single_line row's, or the value next to a
   // default-row bar. bar_max_width pins the bar instead.
   barAligned: (c: ConfigLike) => !c.bar_max_width && (c.density === 'single_line' || HAS_EFFECT.barMaxWidth(c)),

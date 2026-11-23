@@ -53,7 +53,11 @@ const HORIZONTAL = CARD.layout.orientations.horizontal.label;
 // 'single_column' is its vertical twin: the stack, its bar upright.
 const DENSITY_MODES = ['default', 'compact', 'single_line', 'single_column'];
 
-const BAR_COLOR_MODES = ['auto', 'segment', 'rainbow', 'rainbow_full'];
+const BAR_COLOR_MODES = ['auto', 'segment', 'rainbow', 'rainbow_full', 'segment_full'];
+
+// The whole theme on the track, the value as a moving marker (#152).
+const FULL_SCALE_COLOR_MODES = ['rainbow_full', 'segment_full'];
+const isFullScaleColorMode = (mode: unknown) => FULL_SCALE_COLOR_MODES.includes(mode as string);
 
 const BAR_SCALES = ['linear', 'log'];
 
@@ -220,6 +224,7 @@ export {
   HORIZONTAL,
   DENSITY_MODES,
   BAR_COLOR_MODES,
+  isFullScaleColorMode,
   BAR_SCALES,
   BAR_STACK_MODES,
   ICON_ACTION_FIELDS,

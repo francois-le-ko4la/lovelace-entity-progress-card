@@ -172,6 +172,7 @@
         "auto": "자동",
         "rainbow": "무지개",
         "rainbow_full": "무지개 (전체)",
+        "segment_full": "세그먼트 (전체)",
         "segment": "세그먼트"
       },
       "bar_effect": {

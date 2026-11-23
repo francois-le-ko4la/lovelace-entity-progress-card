@@ -4,7 +4,7 @@ import { HassProviderSingleton } from '../../../utils/hass-provider.js';
 import { isToggleDomain } from '../../values/ha-state.js';
 import { type Validator, type Path, ValidationError, type ErrorLike, type ErrorSummary } from './errors.js';
 import { HAS_EFFECT, hasStack, INERT_OPTIONS, translateOrientation, densityOverrides } from './rules.js';
-import { rawThemeRange } from './enums.js';
+import { rawThemeRange, isFullScaleColorMode } from './enums.js';
 import { types } from './types.js';
 
 // Reads a field's real default off the live validator instead of a
@@ -142,14 +142,11 @@ function struct<T>(
     for (const key of ['color', 'bar_color']) if (result[key] === 'state') result[key] = undefined;
   };
 
-  // rainbow_full paints the whole track at once with a single moving marker
-  // (.rainbow-full-bar in styles.ts) - generalizes to center_zero fine (each
-  // arm gets its own gradient + a zero-centered marker formula). bar_stack's
-  // per-entity segments have no single position for one marker, so that
-  // combination falls back to plain 'rainbow' instead.
+  // bar_stack has no single position for the full-scale marker: fall back to
+  // the clipped twin.
   const applyRainbowFullRule = (result: Record<string, unknown>) => {
-    if (result.bar_color_mode === 'rainbow_full' && hasStack(result)) {
-      result.bar_color_mode = 'rainbow';
+    if (isFullScaleColorMode(result.bar_color_mode) && hasStack(result)) {
+      result.bar_color_mode = result.bar_color_mode === 'segment_full' ? 'segment' : 'rainbow';
     }
   };
 

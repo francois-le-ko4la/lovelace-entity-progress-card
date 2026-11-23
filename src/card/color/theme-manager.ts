@@ -7,6 +7,7 @@ import { CARD, CARD_CONTEXT, HA_CONTEXT, THEME } from '../../utils/parameters.js
 import { cssColorVar } from '../../utils/ha-context.js';
 import { assertDefined, has, is } from '../../utils/common-checks.js';
 import { traceInstance } from '../../utils/log.js';
+import { isFullScaleColorMode } from '../config/schema/enums.js';
 
 // Theme "zones" come from either the built-in THEME table (parameters.ts) or
 // a user's custom_theme YAML array - both are arrays of { min?, max?, color?,
@@ -336,12 +337,9 @@ class ThemeManager {
   ) {
     if (!this.#isValid || !this.#currentStyle || mode === 'auto') return null;
 
-    // rainbow_full paints the whole window, not just up to fillPercent - the
-    // value is a moving marker instead (.rainbow-full-bar, styles.ts), so it
-    // skips the guard below. The window/toLocal/style computation right after
-    // still applies to it (same center_zero per-arm windowing as segment/
-    // rainbow).
-    if (mode !== 'rainbow_full' && !isRing && !(fillPercent > 0)) return null;
+    // A full-scale mode paints the whole window, the value is a marker.
+    const isFullScale = isFullScaleColorMode(mode);
+    if (!isFullScale && !isRing && !(fillPercent > 0)) return null;
 
     const style = this.#armStyle(window, valueRange);
     if (!style) return null;
@@ -355,14 +353,12 @@ class ThemeManager {
     // style is already windowed to this arm's own slice, so this works
     // identically for a single-arm bar and each of center_zero's two arms.
     if (isRing && style.length > 0) {
-      const stops =
-        mode === 'segment'
-          ? ThemeManager.#fullSegmentStops(style, defaultColor, ThemeManager.#ringAt)
-          : ThemeManager.#fullRainbowStops(style, defaultColor, ThemeManager.#ringAt);
+      const stops = ThemeManager.#fullStops(mode, style, defaultColor, ThemeManager.#ringAt);
       return `conic-gradient(from var(--ring-start, 0deg), ${stops.join(', ')})`;
     }
-    if (mode === 'rainbow_full') {
-      return ThemeManager.#buildFullRainbowGradient(style, defaultColor, direction);
+    if (isFullScale) {
+      if (style.length === 0) return null;
+      return `linear-gradient(${direction}, ${ThemeManager.#fullStops(mode, style, defaultColor).join(', ')})`;
     }
 
     const visible = style.filter((level) => (level.min ?? 0) < fillPercent);
@@ -459,9 +455,7 @@ class ThemeManager {
     const at = (half: number) => (pos: number) =>
       `calc(${(50 + half * (pos / 2)).toFixed(2)}% * var(--ring-span-ratio, 1))`;
     const stopsOf = (style: ThemeZone[], position: (pos: number) => string) =>
-      mode === 'segment'
-        ? ThemeManager.#fullSegmentStops(style, defaultColor, position)
-        : ThemeManager.#fullRainbowStops(style, defaultColor, position);
+      ThemeManager.#fullStops(mode, style, defaultColor, position);
 
     const posStyle = this.#armStyle(perArm ? [0, 100] : posWindow, valueRange);
     const posStops = posStyle?.length ? stopsOf(posStyle, at(1)) : [];
@@ -481,15 +475,13 @@ class ThemeManager {
   buildFloorGradient(fillPercent: number, mode: string, defaultColor: string | null = null): string | null {
     const zones = this.#currentStyle;
     if (!this.#isValid || !zones?.length || mode === 'auto') return null;
-    if (mode !== 'rainbow_full' && !(fillPercent > 0)) return null;
+    if (!isFullScaleColorMode(mode) && !(fillPercent > 0)) return null;
     const [first] = [...zones].sort((a, b) => (a.min ?? 0) - (b.min ?? 0));
     const color = ThemeManager.#zoneColor(first, defaultColor);
     return `linear-gradient(${color}, ${color})`;
   }
 
-  // Shared by #buildSegmentGradient/#buildRainbowGradient/
-  // #buildFullRainbowGradient below - a zone's own bar/color, falling back to
-  // defaultColor then the plain default.
+  // A zone's own bar/color, else defaultColor, else the plain default.
   static #zoneColor(level: ThemeZone, defaultColor: string | null): string {
     return ThemeManager.adaptColor(level.bar_color || level.color || null) || defaultColor || CARD.style.color.default;
   }
@@ -532,14 +524,11 @@ class ThemeManager {
     return `linear-gradient(${direction}, ${stops.join(', ')})`;
   }
 
-  // rainbow_full's gradient: every zone in `style` laid out edge-to-edge,
-  // same "hold, then fade" shape as 'rainbow' above, just unclipped by
-  // fillPercent since the whole window is always shown. `style` is already
-  // windowed and `direction` already accounts for a reversed window (shared
-  // with segment/rainbow), so this needs no window/direction logic of its own.
-  static #buildFullRainbowGradient(style: ThemeZone[], defaultColor: string | null, direction: string): string | null {
-    if (style.length === 0) return null;
-    return `linear-gradient(${direction}, ${ThemeManager.#fullRainbowStops(style, defaultColor).join(', ')})`;
+  // Every zone over the whole track: hard edges for segment, fades otherwise.
+  static #fullStops(mode: string, style: ThemeZone[], defaultColor: string | null, at = ThemeManager.#percentAt) {
+    return mode === 'segment' || mode === 'segment_full'
+      ? ThemeManager.#fullSegmentStops(style, defaultColor, at)
+      : ThemeManager.#fullRainbowStops(style, defaultColor, at);
   }
 
   static #fullRainbowStops(style: ThemeZone[], defaultColor: string | null, at = ThemeManager.#percentAt): string[] {

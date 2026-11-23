@@ -15,6 +15,7 @@ import {
   SCHEMA_DEFAULTS,
   BAR_SIZES,
   raisesRainbowFullRow,
+  isFullScaleColorMode,
 } from '../config/schema.js';
 import { ResourceManager, DOMHelper, ActionHelper } from '../dom/dom-helpers.js';
 import { JinjaSubscriptions } from './core/jinja-subscriptions.js';
@@ -562,7 +563,7 @@ class HACore extends HTMLElement {
           (cls === orientationClasses.up && config.bar_orientation === 'down'),
       ]),
       [CARD.style.dynamic.progressBar.centerZero, Boolean(config.center_zero)],
-      ['rainbow-full-bar', config.bar_color_mode === 'rainbow_full'],
+      ['rainbow-full-bar', isFullScaleColorMode(config.bar_color_mode)],
       ['rainbow-full-raised', raisesRainbowFullRow(config)],
       ['vertical-bar', isVerticalBar],
       ['horizontal-bar', !isVerticalBar],
@@ -581,6 +582,7 @@ class HACore extends HTMLElement {
   // ─── DYNAMIC ELEMENTS UPDATE ──────────────────────────────────────────────
 
   _updateDynamicElements() {
+    this._toggleClasses(new Map([['dark-mode', Boolean(this.hass?.themes?.darkMode)]]));
     this._updateCSS();
     this._jinjaSubscriptions.process();
   }

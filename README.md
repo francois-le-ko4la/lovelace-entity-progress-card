@@ -8,7 +8,7 @@
 </picture>
 <!-- markdownlint-enable MD013 -->
 
-# Lovelace Entity Progress Card
+# Entity Progress Card
 
 [![Home Assistant][ha-badge]][ha-link]
 [![Marketplace][marketplace-badge]][marketplace-link]

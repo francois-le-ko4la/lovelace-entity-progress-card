@@ -775,12 +775,13 @@ The `bar_color_mode` parameter controls how theme colors are rendered on the
 progress bar. It needs a theme: set `theme` or `custom_theme`. Without one, the
 bar keeps a single color (this is normal).
 
-| Value          | Description                                                                     |
-| :------------- | :------------------------------------------------------------------------------ |
-| `auto`         | Default. The bar is filled with the solid color of the current zone.            |
-| `segment`      | Each zone is drawn as a distinct colored block up to the current value.         |
-| `rainbow`      | A smooth gradient flows across all visible zone colors.                         |
-| `rainbow_full` | The track always shows the full gradient; a marker slides to the current value. |
+| Value          | Description                                                                         |
+| :------------- | :---------------------------------------------------------------------------------- |
+| `auto`         | Default. The bar is filled with the solid color of the current zone.                |
+| `segment`      | Each zone is drawn as a distinct colored block up to the current value.             |
+| `rainbow`      | A smooth gradient flows across all visible zone colors.                             |
+| `rainbow_full` | The track always shows the full gradient; a marker slides to the current value.     |
+| `segment_full` | The track always shows every zone as a block; a marker slides to the current value. |
 
 <picture>
   <source media="(prefers-color-scheme: dark)"

@@ -37,6 +37,7 @@ const PUBLIC_EXPORTS = [
   'densityOverrides',
   'entityOf',
   'hideTargetOf',
+  'isFullScaleColorMode',
   'isHiddenToken',
   'isMarkOverride',
   'isToggleDomainEntity',

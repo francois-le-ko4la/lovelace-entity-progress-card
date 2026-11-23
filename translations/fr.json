@@ -172,6 +172,7 @@
         "auto": "Auto",
         "rainbow": "Arc-en-ciel",
         "rainbow_full": "Arc-en-ciel (complet)",
+        "segment_full": "Segmenté (complet)",
         "segment": "Segmenté"
       },
       "bar_effect": {

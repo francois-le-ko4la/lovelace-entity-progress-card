@@ -172,6 +172,7 @@
         "auto": "Automatikus",
         "rainbow": "Szivárvány",
         "rainbow_full": "Szivárvány (teljes)",
+        "segment_full": "Szegmens (teljes)",
         "segment": "Szegmens"
       },
       "bar_effect": {

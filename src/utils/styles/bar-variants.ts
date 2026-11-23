@@ -11,8 +11,19 @@ const waveCrest = (width: number) =>
 // Chrome < 120 and Safari only read the prefixed mask properties.
 const mask = (property: string, value: string) => `-webkit-mask-${property}: ${value}; mask-${property}: ${value};`;
 // Up only: down fills from the top, and its crest would hang upside down.
-const WAVE_INNER = `.vertical-bar:not(.${CARD.style.dynamic.progressBar.orientation.down}).${CARD.style.dynamic.progressBar.effect.wave.class} .${CARD.htmlStructure.elements.progressBar.inner.class}.positive`;
-const BUBBLE = 'radial-gradient(circle, rgba(255, 255, 255, 0.5) 0 1.5px, transparent 2px) no-repeat';
+const RISING_BAR = `.vertical-bar:not(.${CARD.style.dynamic.progressBar.orientation.down})`;
+const { wave: WAVE, boil: BOIL } = CARD.style.dynamic.progressBar.effect;
+const INNER = `.${CARD.htmlStructure.elements.progressBar.inner.class}.positive`;
+const WAVE_INNER = `${RISING_BAR}:is(.${WAVE.class}, .${BOIL.class}) ${INNER}`;
+const BOIL_INNER = `${RISING_BAR}.${BOIL.class} ${INNER}`;
+const BOIL_BAR = `${RISING_BAR}.${BOIL.class} .${CARD.htmlStructure.elements.progressBar.bar.class}`;
+const bubble = (radius: number) =>
+  `radial-gradient(circle, rgba(255, 255, 255, 0.55) 0 ${radius}px, transparent ${radius + 0.5}px) no-repeat`;
+const BUBBLE = bubble(1.5);
+// Same fill height as .inner.positive's --inner-size, read from .bar.
+const FILL_TOP = `calc(var(${CARD.style.dynamic.progressBar.stackSizePos.var}, max(var(${CARD.style.dynamic.progressBar.value.var}, 0), 0)) * 100%)`;
+const STEAM_PUFF = (alpha: number) =>
+  `radial-gradient(closest-side, rgba(var(--steam-rgb), ${alpha}), transparent) no-repeat`;
 
 const BAR_VARIANTS_CSS = css`
 /* === RADIUS EFFECT === */
@@ -301,6 +312,59 @@ const BAR_VARIANTS_CSS = css`
 @keyframes wave-bubbles {
   from { background-position: 12% 120%, 38% 160%, 63% 110%, 86% 140%, 0 0, 0 0; }
   to { background-position: 12% -20%, 38% -40%, 63% -60%, 86% -30%, 0 0, 0 0; }
+}
+
+/* ----- boil ----- */
+/* wave, with a rolling boil under the surface and steam rising off it. */
+@supports ((mask-image: none) or (-webkit-mask-image: none)) {
+  ${BOIL_INNER}::after {
+    background:
+      ${bubble(2)}, ${bubble(1.5)}, ${bubble(2.5)}, ${bubble(1)}, ${bubble(2)},
+      ${bubble(1.5)}, ${bubble(2.5)}, ${bubble(1)}, ${bubble(2)},
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0) 18%, rgba(0, 0, 0, 0.28)),
+      var(--inner-background);
+    background-size: 6px 6px, 4px 4px, 6px 6px, 3px 3px, 5px 5px, 4px 4px, 6px 6px, 3px 3px, 5px 5px, auto, auto;
+    animation: wave-front 2s linear infinite, boil-bubbles 3.5s linear infinite;
+  }
+
+  ${BOIL_BAR}::before,
+  ${BOIL_BAR}::after {
+    --steam-rgb: 110, 110, 110;
+    content: '';
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    bottom: calc(${FILL_TOP} - 11px);
+    height: 40px;
+    background: ${STEAM_PUFF(0.7)}, ${STEAM_PUFF(0.55)}, ${STEAM_PUFF(0.65)};
+    background-size: 30% 55%, 36% 70%, 26% 50%;
+    background-position: 12% 100%, 50% 100%, 88% 100%;
+    filter: blur(4px);
+    opacity: 0;
+    pointer-events: none;
+    animation: boil-steam 3.2s ease-out infinite;
+  }
+
+  ${BOIL_BAR}::after {
+    background-position: 30% 100%, 70% 100%, 95% 100%;
+    animation-delay: -1.6s;
+  }
+
+  .dark-mode${BOIL_BAR}::before,
+  .dark-mode${BOIL_BAR}::after {
+    --steam-rgb: 170, 170, 170;
+  }
+}
+
+@keyframes boil-bubbles {
+  from { background-position: 8% 110%, 20% 150%, 33% 120%, 45% 170%, 57% 105%, 68% 140%, 79% 125%, 88% 160%, 95% 115%, 0 0, 0 0; }
+  to { background-position: 10% -20%, 18% -50%, 35% -30%, 43% -60%, 59% -10%, 66% -40%, 81% -25%, 86% -55%, 97% -15%, 0 0, 0 0; }
+}
+
+@keyframes boil-steam {
+  0% { transform: translateY(8px) scale(0.8, 0.6); opacity: 0; }
+  25% { opacity: 1; }
+  100% { transform: translateY(-28px) scale(1.3, 1.5); opacity: 0; }
 }
 `;
 
